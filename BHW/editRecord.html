@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="../img/logo.png">
+    <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="css/exist.css">
+    <link rel="stylesheet" href="css/edit.css">
+    <title>Edit Record</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+</head>
+
+<body>
+
+<script>
+// Check if user is logged in
+fetch('php/getUserId.php')
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            // User is not logged in, redirect to role selection page
+            window.location.href = '../role.html';
+        }
+    })
+    .catch(error => {
+        console.error('Error checking session:', error);
+        window.location.href = '../role.html';
+    });
+</script>
+
+    <section id="sidebar">
+        <a href="#" class="brand">
+            <img src="../img/logo.png" alt="RHULogo" class="logo">
+            <span class="text">IHRRS</span>
+        </a>
+        <ul class="side-menu top">
+            <li>
+                <a href="dashboard.html">
+                    <i class="bx bxs-dashboard"></i>
+                    <span class="text">Dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a href="ITR.html">
+                    <i class="bx bxs-user"></i>
+                    <span class="text">Add New ITR</span>
+                </a>
+            </li>
+            <li>
+                <a href="searchPatient.html">
+                    <i class="bx bxs-notepad"></i>
+                    <span class="text">Patient Records</span>
+                </a>
+            </li>
+            <li>
+                <a href="history.html">
+                    <i class="bx bx-history"></i>
+                    <span class="text">Referral History</span>
+                </a>
+            </li>
+            <li>
+				<a href="reports.html">
+					<i class="bx bx-notepad"></i>
+					<span class="text">Reports</span>
+				</a>
+			</li>
+        </ul>
+        <ul class="side-menu">
+            <li>
+<a href="#" class="logout" onclick="return confirmLogout()">
+               <i class="bx bxs-log-out-circle"></i>
+                <span class="text">Logout</span>
+                </a>            </li>
+        </ul>
+    </section> 
+
+    <section id="content">
+        <nav>
+            <form action="#">
+                <div class="form-input">
+                    <input type="search" id="patientSearch" placeholder="Enter patient name..." name="search" autocomplete="off">
+                    <button type="button" class="search-btn" id="searchButton">
+                        <i class='bx bx-search'></i>
+                    </button>
+                    <div id="resultDropdown" class="dropdown-content"></div>
+                </div>
+            </form>
+            <div class="greeting">
+                <span id="userGreeting">Hello BHW!</span>
+            </div>
+            <a href="#" class="profile">
+                <img src="../img/profile.png">
+            </a>
+        </nav>
+
+        <main>
+            <div class="head-title">
+				<div class="left">
+					<h1>Edit Visit Information</h1>
+					<ul class="breadcrumb">
+						<li><a href="#">Edit Visit Information</a></li>
+						<li><i class="bx bx-chevron-right"></i></li>
+						<a class="active" href="#" onclick="history.back(); return false;">Go back</a>
+
+					</ul>
+				</div>
+			</div>
+        </main>
+    </section>
+
+    <div class="container-header">
+        <h2>VISIT DETAILS</h2>
+    </div>
+    
+
+
+    <form id="updateReferralForm" action="php/update_visit_info.php" method="POST">
+        
+    <div class="container">
+        <p style="display: flex; justify-content: space-between; align-items: center;">
+            <b>PERSONAL INFORMATION:</b>
+            <span id="togglePersonalInfo" class="view-all-btn">View All</span>
+        </p>
+        <div id="hiddenPersonalInfo" style="display: none;">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>First Name:</label>
+                    <input type="text" class="patient-first-name form-control" name="first_name" value="N/A">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Last Name:</label>
+                    <input type="text" class="patient-last-name form-control" name="last_name" value="N/A">
+                </div>
+                <div class="form-group">
+                    <label>Middle Name:</label>
+                    <input type="text" class="patient-middle-name form-control" name="middle_name" value="N/A">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Extension:</label>
+                <input type="text" class="patient-extension form-control" name="extension" value="N/A">
+            </div>
+        </div>
+        
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Birth Place:</label>
+                    <input type="text" class="patient-birth-place form-control" name="birthplace" value="N/A">
+                </div>
+                <div class="form-group">
+                    <label>Date of Birth:</label>
+                    <input type="date" class="date-of-birth form-control" name="date_of_birth">
+                </div>
+                <div class="form-group">
+                    <label>Age:</label>
+                    <input type="number" class="age form-control" name="age" value="N/A">
+                </div>
+            </div>
+        
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Permanent Address:</label>
+                    <input type="text" class="address form-control" name="address" value="N/A">
+                </div>
+            </div>
+        
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Civil Status:</label>
+                    <input type="text" class="civil-status form-control" name="civil_status" value="N/A">
+                </div>
+                <div class="form-group">
+                    <label>Mobile Number:</label>
+                    <input type="text" class="contact-number form-control" name="contact_number" value="N/A">
+                </div>
+            </div>
+        
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Religion:</label>
+                    <input type="text" class="religion form-control" name="religion" value="N/A">
+                </div>
+                <div class="form-group">
+                    <label>Occupation:</label>
+                    <input type="text" class="occupation form-control" name="occupation" value="N/A">
+                </div>
+            </div>
+        
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Educational Attainment:</label>
+                    <input type="text" class="educational-attainment form-control" name="educational_attainment" value="N/A">
+                </div>
+                <div class="form-group">
+                    <label>Birth Weight:</label>
+                    <input type="text" class="birth-weight form-control" name="birth_weight" value="N/A">
+                </div>
+                <div class="form-group">
+                    <label>Philhealth Member Number:</label>
+                    <input type="text" class="philhealth-member-no form-control" name="philhealth_member_no" value="N/A">
+                </div>
+                <div class="form-group">
+                    <label>Category:</label>
+                    <input type="text" class="category form-control" name="category" value="N/A">
+                </div>
+                <div class="form-group">
+                    <label>Family Serial Number:</label>
+                    <input type="text" class="family-serial-no form-control" name="family_serial_no" value="N/A">
+                </div>
+            </div>
+        
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Gender:</label>
+                    <input type="text" class="sex form-control" name="sex" value="N/A">
+                </div>
+                <div class="form-group">
+                    <label>4Ps Status:</label>
+                    <input type="text" class="fourps-status form-control" name="fourps_status" value="N/A">
+                </div>
+            </div>
+        
+        
+            
+         <!-- INITIAL ASSESSMENT / VISIT INFO -->
+<div class="additional-group box-group additional-fields">
+    <div class="additional-options">
+        <div class="form-row">
+            <div class="form-group">
+                <label>Patient Alert:</label>
+                <input type="text" class="patient-alert form-control" name="patient_alert" value="N/A">
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group" style="font-weight: bold;">
+                <label>Date of Visit:</label>
+                <input type="date" class="visit-date form-control" name="visit_date">
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group" style="font-weight: bold;">
+                <label>Chief Complaints:</label>
+                <textarea class="chief-complaints form-control" name="chief_complaints">N/A</textarea>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <label for="vitals"><b>Vital Signs:</b></label>
+            <div class="vitals-section">
+                <div class="form-group" style="font-weight: bold;">
+                    <label>Blood Pressure (mm Hg):</label>
+                    <input type="text" class="blood-pressure form-control"  name="blood_pressure" value="N/A">
+                </div>
+                <div class="form-group" style="font-weight: bold;">
+                    <label>Temperature (°C):</label>
+                    <input type="number" step="0.1" class="temperature form-control"  name="temperature" value="N/A">
+                </div>
+                <div class="form-group" style="font-weight: bold;">
+                    <label>Weight (kg):</label>
+                    <input type="number" step="0.1" class="weight form-control"  name="weight" value="N/A">
+                </div>
+                <div class="form-group" style="font-weight: bold;">
+                    <label>Height (cm):</label>
+                    <input type="number" step="0.1" class="height form-control"  name="height" value="N/A">
+                </div>
+                <div class="form-group" style="font-weight: bold;">
+                    <label>Pulse Rate (per minute):</label>
+                    <input type="number" class="pulse-rate form-control"  name="chest_rate" value="N/A">
+                </div>
+                <div class="form-group" style="font-weight: bold;">
+                    <label>Respiratory Rate (per minute):</label>
+                    <input type="number" class="respiratory-rate form-control"  name="respiratory_rate" value="N/A">
+                </div>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group" style="font-weight: bold;">
+                <label>Remarks:</label>
+                <textarea class="remarks form-control" name="remarks">N/A</textarea>
+            </div>
+        </div>
+    </div>
+</div>
+
+<br>
+<input type="hidden" id="visitIdField" name="visit_id">
+<input type="hidden" id="referralInput" />
+
+<div class="button-container">
+    <button class="submit-btn" id="submitButton">Submit</button>
+</div>
+
+</div>
+</form>
+
+
+
+<div id="myModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <img src="../img/verify.png" alt="Checkmark" class="checkmark-image">
+            <h3>Confirmation</h3>
+            <span class="close-btn" id="closeBtn">&times;</span>
+        </div>
+        <div class="modal-body">
+            <p>Update Individual Treatment Record?</p> 
+        </div>
+        
+        <div class="modal-footer">
+            <button id="yesButton" class="btn yes" type="button">Update & Refer to RHU</button>
+            <button id="noButton" class="btn maybe">Update & Don't Refer</button>
+            <button id="cancelBtn" class="btn cancel">Cancel</button>
+        </div>
+
+    </div>
+</div>
+ </div>
+
+ <input type="hidden" name="referral_status" value="pending">
+
+ <div id="myModal2" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+             <img src="../img/verify.png" alt="Checkmark" class="checkmark-image">
+            <h3>Confirm</h3>
+            <span class="close-btn" id="closeBtn2">&times;</span>
+        </div>
+        <div class="modal-body">
+            <p>Do you confirm on referring this patient to RHU?</p>
+        </div>
+        <div class="modal-footer">
+            <button id="noButton2" class="btn no">No</button>
+            <button id="yesButton2" class="btn yes" value="yes">Yes</button>
+        </div>
+    </div>
+</div>
+
+<div id="myModal3" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <img src="../img/check.png" alt="Checkmark" class="checkmark-image">
+            <h3>Appointment Successful</h3>
+            <span class="close-btn" id="closeBtn3" href="History.html">&times;</span>
+        </div>
+
+        <div class="modal-footer">
+            <button id="viewDetailsButton" class="btn yes">View Details</button>
+        </div>
+    </div>
+</div>
+
+<div id="myModal4" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <img src="../img/check.png" alt="Checkmark" class="checkmark-image">
+            <h3></h3>
+            <span class="close-btn" id="closeBtn4" href="History.html">&times;</span>
+        </div>
+        <div class="modal-footer">
+            <div class="modal-body">
+                <div class="modal-header">
+                    <h3 style="color: #033cad;">Record Successfully Updated</h3>
+                </div>
+                <div class="modal-footer">
+                    <p></p>
+            </div>
+            </div>
+        </div>
+    </div>
+</div> 
+
+<div id="myModal5" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <img src="../img/verify.png" alt="Checkmark" class="checkmark-image">
+            <h3>Record Successfully Updated</h3>
+            <span class="close-btn" id="closeBtn5">&times;</span>
+        </div>
+        <div class="modal-body">
+            <p>The patient record has been successfully added.</p>
+        </div>
+        <div class="modal-footer">
+            <button id="exitButton" href="History.html" class="btn no">Exit</button>
+        </div>
+    </div>
+</div>
+
+<div id="referralExistsModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <img src="../img/warning.png" alt="Checkmark" class="checkmark-image">
+            <h3>Referral already exists</h3>
+            <span class="close-btn" id="closeBtn5">&times;</span>
+        </div>
+        <div class="modal-body">
+            <p>Visit information are still successfully updated.</p>
+        </div>
+        <div class="modal-footer">
+    <button id="cancelBtn2" class="btn cancel">Close</button>
+</div>
+</div>
+</div>
+
+
+
+
+            <div class="form-container">
+                <div class="print-section">
+                    <button class="print-btn" id="printButton">Print</button>
+                </div>
+            </div>
+      
+    </div>
+
+    
+    <script src="js/editform1.js"></script>
+    <script src="js/script.js"></script>
+
+    <div id="logoutModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Confirm Logout</h3>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to logout?</p>
+            </div>
+            <div class="modal-footer">
+                <button onclick="closeModal()" class="btn yes">Cancel</button>
+                <button onclick="proceedLogout()" class="btn no">Yes, Logout</button>
+            </div>
+        </div>
+    </div>
+    
+
+
+
+<script>
+function confirmLogout() {
+    document.getElementById('logoutModal').style.display = 'block';
+    return false; // Prevent the default link behavior
+}
+
+function closeModal() {
+    document.getElementById('logoutModal').style.display = 'none';
+}
+
+function proceedLogout() {
+		 window.location.href = '../ADMIN/php/logout.php';
+}
+
+// Close modal when clicking outside
+window.onclick = function(event) {
+    const modal = document.getElementById('logoutModal');
+    if (event.target == modal) {
+        closeModal();
+    }
+}
+fetch('php/getUserName.php')
+    .then(response => response.json())
+    .then(data => {
+        if (data.full_name) {
+            document.getElementById('userGreeting').textContent = `Hello, ${data.full_name}!`;
+        } else {
+            document.getElementById('userGreeting').textContent = 'Hello, BHW!';
+        }
+    })
+    .catch(error => {
+        console.error('Error fetching user name:', error);
+        document.getElementById('userGreeting').textContent = 'Hello, BHW!';
+    });
+</script>
+</body>
+</html>

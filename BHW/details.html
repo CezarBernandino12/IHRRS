@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="../img/logo.png">
+    <link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/dashstyle.css">
+    <link rel="stylesheet" href="css/details.css">
+    <title>Referral Slip Preview</title>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <style>
+        /* Improved print styles for the referral form */
+        @media print {
+            @page {
+                size: A4;
+                margin: 10mm; /* Reduced margins */
+            }
+            
+            body * {
+                visibility: hidden;
+            }
+            
+            .referral-container, .referral-container * {
+                visibility: visible;
+            }
+            
+            .referral-container {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                max-width: 100%;
+                margin: 0;
+                padding: 10px;
+                box-shadow: none;
+                border: none;
+                font-size: 11pt; /* Slightly smaller font size */
+            }
+
+            /* Header adjustments */
+            .header-info {
+                margin-bottom: 15px;
+                padding-bottom: 10px;
+            }
+            
+            .header-info h3 {
+                margin: 3px 0;
+                font-size: 14pt;
+            }
+            
+            /* Compress spacing */
+            .form-group {
+                margin-bottom: 15px;
+            }
+            
+            .field-container {
+                margin-bottom: 10px;
+            }
+            
+            /* Make fields more compact */
+            .name-fields, .patient-info, .vitals {
+                gap: 10px;
+            }
+            
+            /* Reduce space in text areas */
+            .diagnosis-container, .treatment-container {
+                margin-top: 10px;
+            }
+            
+            /* Make chief complaints area shorter */
+            .complaints-container {
+                min-height: 40px;
+            }
+            
+            /* Make diagnosis and treatment areas shorter */
+            .diagnosis-container, 
+            .treatment-container {
+                min-height: 40px;
+            }
+            
+            /* Hide navigation elements */
+            .view-record-link, .footer-btn, .referral-form-footer {
+                display: none;
+            }
+            
+            /* Adjust form spacing */
+            .form-group-title {
+                margin-bottom: 5px;
+                font-size: 12pt;
+            }
+            
+            /* Adjust field label spacing */
+            .field-label {
+                margin-bottom: 2px;
+                font-size: 9pt;
+            }
+            
+            /* Adjust field value spacing */
+            .field-value {
+                font-size: 11pt;
+                line-height: 1.3;
+            }
+
+            /* Optimize page break and spacing */
+            .complaints-container,
+            .diagnosis-container,
+            .treatment-container {
+                page-break-inside: avoid;
+            }
+
+            /* Reduce the height for text containers */
+            .treatment-container textarea {
+                height: 60px !important;
+                min-height: 60px !important;
+            }
+
+            /* Make the page fit better */
+            textarea {
+                height: auto !important;
+                min-height: 40px !important;
+            }
+        }
+
+
+        /* Reduce default size of treatment text area */
+        .treatment-container textarea {
+            min-height: 80px;
+        }
+
+      
+    </style>
+</head>
+
+<body>
+
+    <section id="sidebar">
+        <a href="#" class="brand">
+            <img src="../img/logo.png" alt="RHULogo" class="logo">
+            <span class="text">IHRRS</span>
+        </a>
+        <ul class="side-menu top">
+            <li>
+                <a href="dashboard.html">
+                    <i class="bx bxs-dashboard"></i>
+                    <span class="text">Dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a href="ITR.html">
+                    <i class="bx bxs-user"></i>
+                    <span class="text">Add New ITR</span>
+                </a>
+            </li>
+            <li>
+                <a href="searchPatient.html">
+                    <i class="bx bxs-notepad"></i>
+                    <span class="text">Patient Records</span>
+                </a>
+            </li>
+            <li>
+                <a href="history.html">
+                    <i class="bx bx-history"></i>
+                    <span class="text">Referral History</span>
+                </a>
+            </li>
+            <li>
+                <a href="reports.html">
+                    <i class="bx bx-notepad"></i>
+                    <span class="text">Reports</span>
+                </a>
+            </li>
+        </ul>
+        <ul class="side-menu">
+            <li>
+                <a href="#" class="logout" onclick="return confirmLogout()">
+               <i class="bx bxs-log-out-circle"></i>
+                <span class="text">Logout</span>
+                </a>
+            </li>
+        </ul>
+    </section>
+
+    <section id="content">
+        <nav>
+            <form action="#">
+                <div class="form-input">
+                    <input type="search" id="patientSearch" placeholder="Enter patient name..." name="search" autocomplete="off">
+                    <button type="button" class="search-btn" id="searchButton">
+                        <i class="bx bx-search"></i>
+                    </button>
+                    <div id="resultDropdown" class="dropdown-content"></div>
+                    <script src="js/script.js"></script>
+                </div>
+            </form>
+            <div class="greeting">
+                <span id="userGreeting">Hello BHW!</span>
+            </div>
+            <a href="#" class="profile">
+                <img src="../img/profile.png">
+            </a>
+        </nav>
+
+        <main>
+            <div class="head-title">
+                <div class="left">
+                    <h1>Referral Slip Preview</h1>
+                    <ul class="breadcrumb">
+                        <li><a href="#">Referral Slip Preview</a></li>
+                        <li><i class="bx bx-chevron-right"></i></li>
+                        <a class="active" href="#" onclick="history.back(); return false;">Go back</a>
+                    </ul>
+                </div>
+            </div>
+        </main>
+    </section>
+
+<!-- Modified referral-container section with optimized layout -->
+
+<div class="referral-container">
+    <a id="viewRecordLink" href="#" class="view-record-link" style="float: right;">View Record</a>
+    <br>
+    
+    <div class="header-info">
+        <h3>Republic of the Philippines</h3>
+        <h3>Daet, Camarines Norte</h3>
+        <h3 id="barangay-info">Barangay 1</h3> <br>
+        <h2>Referral Slip</h2>
+    </div>
+
+    <div class="form-group">
+        <div class="name-fields">
+            <div class="field-container name-field">
+                <span class="field-label">Referral ID</span>
+                <div id="referral_id" class="field-value"></div>
+            </div>
+            <div class="field-container name-field">
+                <span class="field-label">Date</span>
+                <div id="date" class="field-value"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="form-group-title">Patient Information</div>
+        <div class="patient-info">
+            <div class="field-container patient-field">
+                <span class="field-label">Full Name</span>
+                <div id="name" class="field-value"></div>
+            </div>
+            <div class="field-container patient-field">
+                <span class="field-label">Age</span>
+                <div id="age" class="field-value"></div>
+            </div>
+        </div>
+        
+        <div class="patient-info">
+            <div class="field-container patient-field">
+                <span class="field-label">Address</span>
+                <div id="address" class="field-value"></div>
+            </div>
+            <div class="field-container patient-field">
+                <span class="field-label">Sex</span>
+                <div id="sex" class="field-value"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="form-group-title">Vital Signs</div>
+        <div class="vitals">
+            <div class="field-container vital-field">
+                <span class="field-label">Weight</span>
+                <div id="weight" class="field-value"></div>
+            </div>
+            <div class="field-container vital-field">
+                <span class="field-label">Height</span>
+                <div id="height" class="field-value"></div>
+            </div>
+        </div>
+        
+        <div class="vitals">
+            <div class="field-container vital-field">
+                <span class="field-label">Blood Pressure</span>
+                <div id="bp" class="field-value"></div>
+            </div>
+            <div class="field-container vital-field">
+                <span class="field-label">Temperature</span>
+                <div id="temp" class="field-value"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="form-group-title">Chief Complaints</div>
+        <div class="complaints-container">
+            <div id="complaints" class="field-value"></div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="form-group-title">Diagnosis <i>(To be filled out by the doctor only. Do not write anything.)</i></div>
+        <div class="diagnosis-container">
+            <div class="field-value diagnosis-field"></div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="form-group-title">Medications/Treatment <i>(To be filled out by the doctor only. Do not write anything.)</i></div>
+        <div class="treatment-container">
+            <textarea readonly style="height: 80px;"></textarea>
+        </div>
+    </div>
+    
+    <div class="form-group">
+        <div class="form-group-title">Signature</i></div>
+        <div>
+            <textarea readonly style="height: 50px;"></textarea>
+        </div>
+    </div>
+    <input type="hidden" id="visit-id" name="visit_id">
+        
+    <div class="referral-form-footer">
+        <button id="goBackBtn" class="footer-btn">Back to dashboard</button>
+        <button id="printBtn" class="footer-btns">Print</button>
+    </div>
+</div>
+
+<!-- Keep the existing JavaScript unchanged -->
+        <script>
+            const params = new URLSearchParams(window.location.search);
+            const referralId = params.get('referral_id');
+    
+            if (referralId) {
+                // First fetch user's barangay
+                fetch('php/getUserId.php')
+                    .then(response => response.json())
+                    .then(userData => {
+                        if (userData.barangay) {
+                            document.getElementById('barangay-info').textContent = userData.barangay;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching user data:', error);
+                    });
+
+                // Then fetch referral details
+                fetch(`php/getReferralDetails.php?referral_id=${referralId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Received data:', data); // Debug log
+                        if (data.error) {
+                            alert(data.error);
+                            return;
+                        }
+
+                        // Update the View Record link with visit_id
+                        if (data.visit_id) {
+                            const viewRecordLink = document.getElementById('viewRecordLink');
+                            viewRecordLink.href = `visitInfo.html?visit_id=${data.visit_id}`;
+                        } else {
+                            console.error('No visit_id found in referral data');
+                            document.getElementById("viewRecordLink").style.display = 'none'; // Hide link if no visit_id
+                        }
+
+                        document.getElementById('referral_id').textContent = data.referral_id || '';
+                        document.getElementById('date').textContent = data.referral_date || '';
+                        document.getElementById('name').textContent = data.name || '';
+                        document.getElementById('age').textContent = data.age || '';
+                        document.getElementById('address').textContent = data.address || '';
+                        document.getElementById('sex').textContent = data.sex || '';
+                        document.getElementById('weight').textContent = data.weight + ' kg';
+                        document.getElementById('height').textContent = data.height + ' cm';
+                        
+                        document.getElementById('bp').textContent = data.blood_pressure || '';
+                        document.getElementById('temp').textContent = data.temperature + ' °C';
+                        console.log('Chief complaints value:', data.chief_complaints); // Debug log
+                        document.getElementById('complaints').textContent = data.chief_complaints || '';
+                        
+                    })
+                    .catch(error => {
+                        console.error('Error fetching data:', error);
+                    });
+            } else {
+                alert("No referral ID provided in URL.");
+            }
+        </script>
+    <script>
+        function getReferralIdFromURL() {
+            let params = new URLSearchParams(window.location.search);
+            let referralId = params.get('referral_id');
+
+            if (!referralId) {
+                alert("❌ Error: No referral ID found in the URL.");
+                return null;
+            }
+
+            return referralId;
+        }
+
+        document.getElementById('goBackBtn').onclick = function () {
+            // Replace with your actual dashboard URL
+            window.location.href = 'dashboard.html';
+        };
+
+        document.getElementById('printBtn').onclick = function () {
+            window.print();
+        };
+    </script>
+
+<div id="logoutModal" class="modal">
+	<div class="modal-content">
+		<div class="modal-header">
+			<h3>Confirm Logout</h3>
+		</div>
+		<div class="modal-body">
+			<p>Are you sure you want to logout?</p>
+		</div>
+		<div class="modal-footer">
+			<button onclick="closeModal()" class="btn yes">Cancel</button>
+			<button onclick="proceedLogout()" class="btn no">Yes, Logout</button>
+		</div>
+	</div>
+</div>
+
+
+<script>
+function confirmLogout() {
+    document.getElementById('logoutModal').style.display = 'block';
+    return false; // Prevent the default link behavior
+}
+
+function closeModal() {
+    document.getElementById('logoutModal').style.display = 'none';
+}
+
+function proceedLogout() {
+		 window.location.href = '../ADMIN/php/logout.php';
+}
+
+// Close modal when clicking outside
+window.onclick = function(event) {
+    const modal = document.getElementById('logoutModal');
+    if (event.target == modal) {
+        closeModal();
+    }
+}
+fetch('php/getUserName.php')
+    .then(response => response.json())
+    .then(data => {
+        if (data.full_name) {
+            document.getElementById('userGreeting').textContent = `Hello, ${data.full_name}!`;
+        } else {
+            document.getElementById('userGreeting').textContent = 'Hello, BHW!';
+        }
+    })
+    .catch(error => {
+        console.error('Error fetching user name:', error);
+        document.getElementById('userGreeting').textContent = 'Hello, BHW!';
+    });
+</script>
+</body>
+</html>

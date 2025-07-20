@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="../img/logo.png">
+    <link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/searchstyle.css">
+    <link rel="stylesheet" href="css/dashstyle.css">
+    <title>Individual Treatment Record</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+</head>
+
+<body>
+    <section id="sidebar">
+        <a href="#" class="brand">
+            <img src="../img/logo.png" alt="RHULogo" class="logo">
+            <span class="text">IHRRS</span>
+        </a>
+        <ul class="side-menu top">
+            <li>
+				<a href="dashboard.html">
+					<i class="bx bxs-dashboard"></i>
+					<span class="text">Dashboard</span>
+				</a>
+			</li>
+			<li>
+                <a href="#" id="updateReferrals">
+                    <i class="bx bxs-user"></i>
+                    <span class="text">Pending Referrals</span>
+                </a>
+            </li>
+            
+            <script>
+            document.getElementById("updateReferrals").addEventListener("click", function (event) {
+                event.preventDefault(); // Prevent default navigation
+            
+                fetch("php/update_referrals.php") // Call PHP file
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data.message); // Log success message (optional)
+                    window.location.href = "pending.html"; // Redirect after updating
+                })
+                .catch(error => {
+                    console.error("Error updating referrals:", error);
+                    window.location.href = "pending.html"; // Still redirect even if an error occurs
+                });
+            });
+            </script>
+            
+			<li class="active">
+				<a href="searchPatient.html">
+					<i class="bx bxs-notepad"></i>
+					<span class="text">Patient Records</span>
+				</a>
+			</li>
+            <li>
+                <a href="history.html">
+                    <i class="bx bx-history"></i>
+                    <span class="text">Referral History</span>
+                </a>
+            </li>
+            <li>
+				<a href="reports.html">
+					<i class="bx bx-notepad"></i>
+					<span class="text">Reports</span>
+				</a>
+			</li>
+        </ul>
+        <ul class="side-menu">
+            <li>
+                <a href="#" class="logout" onclick="return confirmLogout()">
+               <i class="bx bxs-log-out-circle"></i>
+                <span class="text">Logout</span>
+                </a>
+            </li>
+        </ul>
+    </section>
+
+    <section id="content">
+        <nav>
+            <form action="#">
+                <div class="form-input">
+                    <input type="search" id="patientSearch" placeholder="Enter patient name..." name="search" autocomplete="off">
+                    <button type="button" class="search-btn" id="searchButton" onclick="searchPatient()">
+                        <i class="bx bx-search"></i>
+                    </button>
+                </div>
+            </form>
+            
+                <div class="greeting">
+                    <span id="userGreeting">Hello Nurse!</span>
+                </div>
+                <a href="#" class="profile">
+                    <img src="../img/nurse.png">
+                </a>
+            </nav>
+
+        <main>
+            <div class="head-title">
+                <div class="left">
+                    <h1>Search Patient Records</h1>
+                    <ul class="breadcrumb">
+                        <li><a href="#">Patient Records</a></li>
+                        <li><i class="bx bx-chevron-right"></i></li>
+                        <li><a class="active" href="#">Home</a></li>
+                    </ul>
+                </div>
+            </div>
+        </main>
+    </section>
+
+    <div class="patient-record-container">
+        <div class="results-header">
+            <h3>Results:</h3>
+        </div>
+        <div class="table-header">
+            <span class="column-title">Name</span>
+            <span class="column-title">Sex</span>
+            <span class="column-title">Birthday</span>
+        </div>
+        <div id="results">Search for a patient to view their records</div>
+    </div>   
+     
+	<div id="logoutModal" class="modal">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h3>Confirm Logout</h3>
+			</div>
+			<div class="modal-body">
+				<p>Are you sure you want to logout?</p>
+			</div>
+			<div class="modal-footer">
+				<button onclick="closeModal()" class="btn yes">Cancel</button>
+				<button onclick="proceedLogout()" class="btn no">Yes, Logout</button>
+			</div>
+		</div>
+	</div>
+
+    <script> 
+    function searchPatient() {
+        let query = document.getElementById("patientSearch").value;
+        let xhr = new XMLHttpRequest();
+        xhr.open("POST", "php/search_patient.php", true);
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                document.getElementById("results").innerHTML = xhr.responseText;
+            }
+        };
+        xhr.send("query=" + encodeURIComponent(query));
+    }
+    function selectPatient(patient_id) {
+        window.location.href = "record.html?patient_id=" + patient_id;
+}
+fetch('php/getUserName.php')
+    .then(response => response.json())
+    .then(data => {
+        if (data.full_name) {
+            document.getElementById('userGreeting').textContent = `Hello, ${data.full_name}!`;
+        } else {
+            document.getElementById('userGreeting').textContent = 'Hello, BHW!';
+        }
+    })
+    .catch(error => {
+        console.error('Error fetching user name:', error);
+        document.getElementById('userGreeting').textContent = 'Hello, BHW!';
+    });
+
+ 
+			function confirmLogout() {
+				document.getElementById('logoutModal').style.display = 'block';
+				return false; // Prevent the default link behavior
+			}
+			
+			function closeModal() {
+				document.getElementById('logoutModal').style.display = 'none';
+			}
+			
+			function proceedLogout() {
+				window.location.href = '../ADMIN/php/logout.php'; 
+			}
+			
+			// Close modal when clicking outside
+			window.onclick = function(event) {
+				const modal = document.getElementById('logoutModal');
+				if (event.target == modal) {
+					closeModal();
+				}
+			}
+                  // Check if user is logged in
+        fetch('php/getUserId.php')
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    // User is not logged in, redirect to role selection page
+                    window.location.href = '../role.html';
+                }
+            })
+            .catch(error => {
+                console.error('Error checking session:', error);
+                window.location.href = '../role.html';
+            });
+		
+			
+    </script>
+    
+</body>
+</html>

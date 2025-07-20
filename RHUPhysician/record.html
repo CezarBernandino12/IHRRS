@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="../img/logo.png">
+    <link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/form.css">
+    <title>Record</title>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+</head>
+
+<body>
+
+    <section id="sidebar">
+        <a href="#" class="brand">
+            <img src="../img/logo.png" alt="RHULogo" class="logo">
+            <span class="text">IHRRS</span>
+        </a>
+        <ul class="side-menu top">
+            <li>
+				<a href="dashboard.html">
+					<i class="bx bxs-dashboard"></i>
+					<span class="text">Dashboard</span>
+				</a>
+			</li>
+			<li>
+                <a href="#" id="updateReferrals">
+                    <i class="bx bxs-user"></i>
+                    <span class="text">Pending Referrals</span>
+                </a>
+            </li>
+            
+            <script>
+            document.getElementById("updateReferrals").addEventListener("click", function (event) {
+                event.preventDefault(); // Prevent default navigation
+            
+                fetch("php/update_referrals.php") // Call PHP file
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data.message); // Log success message (optional)
+                    window.location.href = "pending.html"; // Redirect after updating
+                })
+                .catch(error => {
+                    console.error("Error updating referrals:", error);
+                    window.location.href = "pending.html"; // Still redirect even if an error occurs
+                });
+            });
+            </script>
+            
+			<li class="active">
+				<a href="searchPatient.html">
+					<i class="bx bxs-notepad"></i>
+					<span class="text">Patient Records</span>
+				</a>
+			</li>
+            <li>
+                <a href="history.html">
+                    <i class="bx bx-history"></i>
+                    <span class="text">Referral History</span>
+                </a>
+            </li>
+            <li>
+				<a href="reports.html">
+					<i class="bx bx-notepad"></i>
+					<span class="text">Reports</span>
+				</a>
+			</li>
+        </ul>
+        <ul class="side-menu">
+            <li>
+                <a href="#" class="logout" onclick="return confirmLogout()">
+               <i class="bx bxs-log-out-circle"></i>
+                <span class="text">Logout</span>
+                </a>
+
+            </li>
+        </ul>
+    </section>
+
+    <section id="content">
+        <nav>
+            <form action="#">
+               
+            </form>
+            <div class="greeting">
+                <span id="userGreeting">Hello RHU Physician!</span>
+            </div>
+			<a href="#" class="profile">
+				<img src="../img/doctor.png">
+			</a>
+        </nav>
+
+        <main>
+            <div class="head-title">
+                <div class="left">
+                    <h1>Patient Records</h1>
+                    <ul class="breadcrumb">
+                        <li><a href="#">Patient Records</a></li>
+                        <li><i class="bx bx-chevron-right"></i></li>
+                        <li><a class="active" href="#">Home</a></li>
+                    </ul>
+                </div>
+            </div>
+        </main>
+    </section>
+
+    <div class="patient-header-container">
+        <div class="patient-name-container">
+            <span class="patient-name-label">PATIENT NAME</span>
+            <div class="patient-name">
+                
+                <div class="name-part">
+                    <span class="last-name">Last Name</span>
+                    <span class="name-label">Last Name</span>
+                </div>
+                <div class="name-part">
+                    <span class="first-name">First Name</span>
+                    <span class="name-label">First Name</span>
+                </div>
+                <div class="name-part">
+                    <span class="middle-name">Middle Name</span>
+                    <span class="name-label">Middle Name</span>
+                </div>
+                <div class="name-part">
+                    <span class="extension"></span>
+                    <span class="name-label">Extension</span>
+                </div>
+                
+            </div>
+        </div>
+
+       <div class="patient-id-box" hidden>
+           <div class="patient-id-container">
+                <span class="patient-id-label">ID</span>
+                <span class="id-number">00000</span>
+            </div>
+        </div> 
+    </div> 
+
+    <div class="patient-record-container">
+        <main class="patient-content">
+            <section class="personal-info-section">
+                <h2 class="section-title">Personal Information</h2>
+                <div class="detail">
+                    <strong>Address:</strong> <span class="underline">N/A</span>
+                </div>
+                <div class="detail">
+                    <strong>Age:</strong> <span class="underline">N/A</span>
+                </div>
+                <div class="detail">
+                    <strong>Gender:</strong> <span class="underline">N/A</span>
+                </div>
+                <div class="detail">
+                    <strong>Date of Birth:</strong> <span class="underline">N/A</span>
+                </div>
+                <div class="detail">
+                    <strong>Contact:</strong> <span class="underline">N/A</span>
+                </div>
+                <div class="detail">
+                    <strong>Family No:</strong> <span class="underline">N/A</span>
+                </div>
+                <div class="detail">
+                    <strong>Civil Status:</strong> <span class="underline">N/A</span>
+                </div>
+                <div class="detail">
+                    <strong>Birthplace:</strong> <span class="underline">N/A</span>
+                </div>
+                <div class="detail">
+                    <strong>Education:</strong> <span class="underline">N/A</span>
+                </div>
+                <div class="detail">
+                    <strong>Occupation:</strong> <span class="underline">N/A</span>
+                </div>
+                <div class="detail">
+                    <strong>Religion:</strong> <span class="underline">N/A</span>
+                </div>
+                <div class="detail">
+                    <strong>Birth Weight:</strong> <span class="underline">N/A</span>
+                </div>
+                <div class="detail">
+                    <strong>PhilHealth No:</strong> <span class="underline">N/A</span>
+                </div>
+                <div class="detail">
+                    <strong>Category:</strong> <span class="underline">N/A</span>
+                </div>
+                <div class="detail">
+                    <strong>4Ps Status:</strong> <span class="underline">N/A</span>
+                </div>
+            </section>                 
+    
+            <section class="patient-records-section">
+                <h2 class="section-title">Individual Treatment Records</h2>
+                
+                             
+            </section>
+            
+            
+        </main>
+    </div>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Get patient_id from the URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const patient_id = urlParams.get("patient_id");
+            function displayOrNA(value) {
+                  return (value !== null && value !== undefined && value !== "") ? value : "N/A";
+                }
+                function nothing(value) {
+                  return (value !== null && value !== undefined && value !== "") ? value : "--";
+                }
+    
+            if (patient_id) {
+                fetch(`php/patient_details.php?patient_id=${patient_id}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.patient) {
+                            // Populate the patient info fields
+                           document.querySelector(".last-name").textContent = displayOrNA(data.patient.last_name);
+document.querySelector(".first-name").textContent = displayOrNA(data.patient.first_name);
+document.querySelector(".middle-name").textContent = displayOrNA(data.patient.middle_name);
+document.querySelector(".extension").textContent = nothing(data.patient.extension);
+document.querySelector(".id-number").textContent = displayOrNA(data.patient.patient_id);
+
+let details = document.querySelectorAll(".detail .underline");
+details[0].textContent = displayOrNA(data.patient.address);
+details[1].textContent = data.patient.date_of_birth ? calculateAge(data.patient.date_of_birth) : "N/A";
+details[2].textContent = displayOrNA(data.patient.sex);
+details[3].textContent = displayOrNA(data.patient.date_of_birth);
+details[4].textContent = displayOrNA(data.patient.contact_number);
+details[5].textContent = displayOrNA(data.patient.family_serial_no);
+details[6].textContent = displayOrNA(data.patient.civil_status);
+details[7].textContent = displayOrNA(data.patient.birthplace);
+details[8].textContent = displayOrNA(data.patient.educational_attainment);
+details[9].textContent = displayOrNA(data.patient.occupation);
+details[10].textContent = displayOrNA(data.patient.religion);
+details[11].textContent = displayOrNA(data.patient.birth_weight);
+details[12].textContent = displayOrNA(data.patient.philhealth_member_no);
+details[13].textContent = displayOrNA(data.patient.category);
+details[14].textContent = displayOrNA(data.patient.fourps_status);
+
+                        }
+                        
+                        if (data.visit_history.length > 0) {
+                        let recordsContainer = document.querySelector(".patient-records-section");
+
+                        // Clear existing records before appending new ones
+                        recordsContainer.innerHTML = `
+                            <h2 class="section-title">Individual Treatment Records</h2> <br>
+                             
+                        `;
+
+                        data.visit_history.forEach(visit => {
+                            let recordDiv = document.createElement("div");
+                            recordDiv.classList.add("record");
+
+                            recordDiv.innerHTML = `
+                                <div class="record-header">
+                                    <div class="record-date">
+                                        <i class='bx bx-calendar'></i>
+                                        <span>${formatDate(visit.visit_date)}</span>
+                                    </div>
+                                   
+                                    <div class="record-actions">
+                                        <a href="visitInfo.html?visit_id=${visit.visit_id}" class="view-link">
+                                            <i class='bx bx-show'></i>
+                                            View
+                                        </a>
+                                    </div>
+                                </div>
+                                
+                                <div class="record-details">
+                                    <p class="last-updated" style="background-color: transparent;">
+                                        <i class='bx bx-user'></i>
+                                        Recorded by: <span>${visit.bhw_name || "Unknown"}</span>
+                                    </p>
+                                </div>
+                            `;
+
+                            recordsContainer.appendChild(recordDiv);
+                        });
+                    } else {
+                        document.querySelector(".patient-records-section").innerHTML += `
+                            <p>No visit history available.</p>
+                        `;
+                    }
+                })
+                .catch(error => console.error("Error fetching patient data:", error));
+        }
+    });
+
+    function formatDate(dateString) {
+        let options = { year: "numeric", month: "long", day: "numeric" };
+        return new Date(dateString).toLocaleDateString("en-US", options);
+    }
+
+    function viewRecord(visitId) {
+    // Redirect to visitInfo.html with visitId as a query parameter
+    window.location.href = `visitInfo.html?visit_id=${visitId}`;
+}
+
+
+
+
+
+    
+        function calculateAge(dob) {
+            let birthDate = new Date(dob);
+            let today = new Date();
+            let age = today.getFullYear() - birthDate.getFullYear();
+            let monthDiff = today.getMonth() - birthDate.getMonth();
+            
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+            
+            return age + " years old";
+        }
+
+
+     
+function confirmLogout() {
+    document.getElementById('logoutModal').style.display = 'block';
+    return false; // Prevent the default link behavior
+}
+
+function closeModal() {
+    document.getElementById('logoutModal').style.display = 'none';
+}
+
+function proceedLogout() {
+    window.location.href = '../role.html';
+}
+
+// Close modal when clicking outside
+window.onclick = function(event) {
+    const modal = document.getElementById('logoutModal');
+    if (event.target == modal) {
+        closeModal();
+    }
+}
+fetch('php/getUserName.php')
+    .then(response => response.json())
+    .then(data => {
+        if (data.full_name) {
+            document.getElementById('userGreeting').textContent = `Hello, ${data.full_name}!`;
+        } else {
+            document.getElementById('userGreeting').textContent = 'Hello, BHW!';
+        }
+    })
+    .catch(error => {
+        console.error('Error fetching user name:', error);
+        document.getElementById('userGreeting').textContent = 'Hello, BHW!';
+    });
+
+    </script>
+    <script src="js/logout.js"></script>
+    
+</body>
+</html>

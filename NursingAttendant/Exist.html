@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="../img/logo.png">
+    <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="css/exist.css">
+    <title>Individual Treatment Record</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+</head>
+
+<body>
+
+ 	<!-- Sidebar Section -->
+     <section id="sidebar">
+		<a href="#" class="brand">
+			<img src="../img/logo.png" alt="RHULogo" class="logo">
+			<span class="text">IHRRS</span>
+		</a>
+		<ul class="side-menu top">
+			<li class="active">
+				<a href="dashboard.html">
+					<i class="bx bxs-dashboard"></i>
+					<span class="text">Dashboard</span>
+				</a>
+			</li>
+			<li>
+                <a href="#" id="updateReferrals">
+                    <i class="bx bxs-user"></i>
+                    <span class="text">Pending Referrals</span>
+                </a>
+            </li>
+            
+            <script>
+            document.getElementById("updateReferrals").addEventListener("click", function (event) {
+                event.preventDefault(); // Prevent default navigation
+            
+                fetch("php/update_referrals.php") // Call PHP file
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data.message); // Log success message (optional)
+                    window.location.href = "pending.html"; // Redirect after updating
+                })
+                .catch(error => {
+                    console.error("Error updating referrals:", error);
+                    window.location.href = "pending.html"; // Still redirect even if an error occurs
+                });
+            });
+            </script>
+            
+			<li>
+				<a href="searchPatient.html">
+					<i class="bx bxs-notepad"></i>
+					<span class="text">Patient Records</span>
+				</a>
+			</li>
+            <li>
+                <a href="history.html">
+                    <i class="bx bx-history"></i>
+                    <span class="text">Referral History</span>
+                </a>
+            </li>
+            <li>
+				<a href="reports.html">
+					<i class="bx bx-notepad"></i>
+					<span class="text">Reports</span>
+				</a>
+			</li>
+		</ul>
+		<ul class="side-menu">
+            <li>
+				
+				<a href="#" class="logout" onclick="return confirmLogout()">
+               <i class="bx bxs-log-out-circle"></i>
+                <span class="text">Logout</span>
+                </a>
+			</li>
+		</ul>
+		<script>
+			function confirmLogout() {
+				document.getElementById('logoutModal').style.display = 'block';
+				return false; // Prevent the default link behavior
+			}
+			
+			function closeModal() {
+				document.getElementById('logoutModal').style.display = 'none';
+			}
+			
+			function proceedLogout() {
+				window.location.href = '../ADMIN/php/logout.php'; 
+			}
+			
+			// Close modal when clicking outside
+			window.onclick = function(event) {
+				const modal = document.getElementById('logoutModal');
+				if (event.target == modal) {
+					closeModal();
+				}
+			}
+		
+			</script>
+	</section>
+
+    <section id="content">
+        <nav>
+			<form action="#">
+				
+			</form>
+			<div class="greeting">
+                <span id="userGreeting">Hello Nurse!</span>
+            </div>
+			<a href="#" class="profile">
+				<img src="../img/nurse.png">
+			</a>
+		</nav>
+
+        <main>
+            <div class="head-title">
+            </div>
+        </main>
+    </section>
+
+    <div class="container-header">
+        <h2><span>INDIVIDUAL TREATMENT</span> RECORD</h2>
+    </div>
+
+    <div class="container">
+        <form class="personal-info-form" id="individualRecordForm">
+            <p><b>PERSONAL INFORMATION:</b></p>
+    
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Last Name:</label>
+                    <p>This is a Sample Text</p>
+                </div>
+                <div class="form-group">
+                    <label>First Name:</label>
+                    <p>This is a Sample Text</p>
+                </div>
+                <div class="form-group">
+                    <label>Middle Name:</label>
+                    <p>This is a Sample Text</p>
+                </div>
+            </div>
+    
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Birth Place:</label>
+                    <p>Manila</p>
+                </div>
+                <div class="form-group">
+                    <label>Date of Birth:</label>
+                    <p>11/21/2003</p>
+                </div>
+                <div class="form-group">
+                    <label>Age:</label>
+                    <p>29</p>
+                </div>
+            </div>
+    
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Permanent Address:</label>
+                    <p>Purok 1- Barangay 1 Daet, Camarines Norte</p>
+                </div>
+            </div>
+    
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Civil Status:</label>
+                    <p>Single</p>
+                </div>
+                <div class="form-group">
+                    <label>Mobile Number:</label>
+                    <p>09123456789</p>
+                </div>
+            </div>
+    
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Religion:</label>
+                    <p>Roman Catholic</p>
+                </div>
+                <div class="form-group">
+                    <label>Occupation:</label>
+                    <p>Teacher</p>
+                </div>
+            </div>
+    
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Educational Attainment:</label>
+                    <p>Secondary Education</p>
+                </div>
+                <div class="form-group">
+                    <label>Philhealth Member number:</label>
+                    <p>1234567890</p>
+                </div>
+                <div class="form-group">
+                    <label>Family Serial number:</label>
+                    <p>987654321</p>
+                </div>
+            </div>
+    
+            <div class="form-row">
+
+                <div class="form-group">
+                    <label>Patient Alert:</label>
+                    <p>Allergic to Penicillin</p>
+                </div>
+            </div>
+    
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Gender:</label>
+                    <p>Male</p>
+                </div>
+                <div class="form-group">
+                    <label>4Ps Status:</label>
+                    <p>Yes</p>
+                </div>
+            </div>
+    
+            <!-- INITIAL ASSESSMENT / VISIT INFO -->
+            <p><b>PATIENT VISIT SUMMARY:</b></p>
+            <div class="additional-group box-group additional-fields">
+                <div class="additional-options">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Date of Visit:</label>
+                            <p>2024-02-17</p>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Chief Complaints:</label>
+                            <p>Headache and fever</p>
+                        </div>
+                    </div>
+    
+                    <div class="form-row">
+                        <label for="vitals"><b>Vital Signs:</b></label>
+                        <div class="vitals-section">
+                            <div class="form-group">
+                                <label>Blood Pressure (mm Hg):</label>
+                                <p>12.4</p>
+                            </div>
+                            <div class="form-group">
+                                <label>Temperature (°C):</label>
+                                <p>37.5</p>
+                            </div>
+                            <div class="form-group">
+                                <label>Weight (kg):</label>
+                                <p>65</p>
+                            </div>
+                            <div class="form-group second-row">
+                                <label>Height (cm):</label>
+                                <p>55</p>
+                            </div>
+                            <div class="form-group second-row">
+                                <label>Pulse Rate (per minute):</label>
+                                <p>55</p>
+                            </div>
+                            <div class="form-group second-row">
+                                <label>Respiratory Rate (per minute):</label>
+                                <p>55</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Medicine Given:</label>
+                            <p></p>
+                        </div>
+                        <div class="form-group">
+                            <label>Quantity:</label>
+                            <p>1 tablet</p>
+                        </div>
+                    </div>
+            
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Remarks:</label>
+                            <p>Take after meals</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <p><b>PATIENT DIAGNOSIS:</b></p>
+            <div class="form-group-group">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="diagnosis">Diagnosis:</label>
+                        <select id="diagnosis" name="diagnosis">
+                            <option value="select">Select</option>
+                            <!-- Add actual diagnosis options here -->
+                            <option value="diagnosis1">Diagnosis 1</option>
+                            <option value="diagnosis2">Diagnosis 2</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="medication">Medication Given:</label>
+                        <select id="medication" name="medication">
+                            <option value="select">Select</option>
+                            <!-- Add actual medication options here -->
+                            <option value="med1">Medication 1</option>
+                            <option value="med2">Medication 2</option>
+                        </select>
+                    </div>
+            
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="quantity">Quantity:</label>
+                            <div class="quantity-controls">
+                                <button type="button" class="quantity-btn" id="decrease">-</button>
+                                <input type="number" id="quantity" name="quantity" value="1" min="1">
+                                <button type="button" class="quantity-btn" id="increase">+</button>
+                            </div>
+                        </div>
+                    </div>                    
+                    
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="instructions">Instructions:</label>
+                        <textarea id="instructions" name="instructions" placeholder="Enter your Diagnosis/Treatment/Medication/Instruction..."></textarea>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="remarks">Remarks:</label>
+                        <textarea id="remarks" name="remarks" placeholder="Enter your remarks..."></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="button-container">
+                <button class="print-btn">Print</button>
+                <button type="submit" class="submit-btn" id="submitButton">Record</button>
+            </div>
+       </form>
+    </div>
+
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <img src="../img/verify.png" alt="Checkmark" class="checkmark-image">
+                <h3>Confirmation</h3>
+                <span class="close-btn" id="closeBtn">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p>Do you confirm updating patient’s ITR?</p>
+            </div>
+            
+            <div class="modal-footer">
+                <button id="noButton" class="btn no" type="button">No</button>
+                <button id="yesButton" class="btn yes">Yes</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="myModal2" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <img src="../img/success.png" alt="Checkmark" class="checkmark-image">
+                <h3>Appointment Successful</h3>
+                <span class="close-btn" id="closeBtn3">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p>Patient Successfully Updated</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn yes">Confirm</button>
+            </div>
+        </div>
+    </div>
+    
+	<div id="logoutModal" class="modal">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h3>Confirm Logout</h3>
+			</div>
+			<div class="modal-body">
+				<p>Are you sure you want to logout?</p>
+			</div>
+			<div class="modal-footer">
+				<button onclick="closeModal()" class="btn yes">Cancel</button>
+				<button onclick="proceedLogout()" class="btn no">Yes, Logout</button>
+			</div>
+		</div>
+	</div>
+    
+
+    <script>
+        // Check if user is logged in
+        fetch('php/getUserId.php')
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    // User is not logged in, redirect to role selection page
+                    window.location.href = '../role.html';
+                }
+            })
+            .catch(error => {
+                console.error('Error checking session:', error);
+                window.location.href = '../role.html';
+            });
+            
+            fetch('php/getUserName.php')
+    .then(response => response.json())
+    .then(data => {
+        if (data.full_name) {
+            document.getElementById('userGreeting').textContent = `Hello, ${data.full_name}!`;
+        } else {
+            document.getElementById('userGreeting').textContent = 'Hello, BHW!';
+        }
+    })
+    .catch(error => {
+        console.error('Error fetching user name:', error);
+        document.getElementById('userGreeting').textContent = 'Hello, BHW!';
+    });
+        </script>
+ <script src="js/script.js"></script>
+</body>
+</html>

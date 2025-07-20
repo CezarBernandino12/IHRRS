@@ -1,0 +1,161 @@
+.patient-record-container {
+    width: 45%;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 2px 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 10%;
+    box-sizing: border-box;
+    margin-left: 30%;
+}
+
+.results-header {
+    text-align: left;
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+    padding: 12px 10px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+.table-header {
+    background-color: #f3f6fc;
+    color: #4b6cb7;
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    padding: 10px 10px;
+    font-size: 14px;
+    font-weight: bold;
+    border-bottom: 2px solid #a1a1a1;
+    text-transform: uppercase;
+    font-family: "system-ui", sans-serif;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.search-result {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    padding: 10px 5px;
+    border-bottom: 1px solid #ddd;
+    font-family: Arial, Helvetica, sans-serif;
+    align-items: center;
+    transition: background-color 0.3s ease;
+}
+
+.search-result span {
+    font-size: 16px;
+    color: #333;
+    padding: 5px 0;
+    text-align: left; 
+}
+
+.search-result:hover {
+    background-color: #eef5ff;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+    .patient-record-container {
+        margin: 5%;
+        padding: 15px;
+    }
+
+    .table-header,
+    .search-result {
+        grid-template-columns: 1fr 1fr 1fr;
+        padding: 10px 15px;
+        font-size: 13px;
+    }
+
+    .search-result span {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 768px) {
+    .table-header,
+    .search-result {
+        grid-template-columns: 1fr;
+        padding: 10px;
+    }
+
+    .table-header > div,
+    .search-result > span {
+        padding: 5px 0;
+    }
+
+    .search-result span {
+        font-size: 14px;
+    }
+}
+
+
+.no-results-container {
+    text-align: center;
+    padding: 50px 20px;
+    color: #666;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.no-results-img {
+    max-width: 250px;
+    width: 100%;
+    height: auto;
+    margin: 0 auto 20px;
+    display: block;
+}
+
+.no-results-title {
+    font-size: 28px;
+    font-weight: bold;
+    color: #D84040;
+    margin-bottom: 10px;
+}
+
+.no-results-text {
+    font-size: 16px;
+    color: #D84040;
+}
+
+.record-btn-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 20px;
+}
+
+.btn {
+  padding: 8px 16px;
+  background-color: rgb(30, 30, 63);
+  color: white;
+  text-decoration: none;
+  border-radius: 2px;
+  border: none;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.btn:hover {
+    background-color: #0056b3;
+}
+
+#results {
+    font-size: 18px;
+    color: #333333;
+    padding: 20px;
+    margin-bottom: 30px;
+    border-radius: 8px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+@media (max-width: 768px) {
+    #results {
+        font-size: 16px;
+        max-width: 90%;
+    }
+}

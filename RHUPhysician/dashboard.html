@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="icon" href="../img/logo.png">
+	<link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="css/dashstyle.css">
+	<link rel="stylesheet" href="css/referral.css">
+	<title>RHU Dashboard</title>
+</head>
+<body>
+
+	<!-- Sidebar Section -->
+	<section id="sidebar">
+		<a href="#" class="brand">
+			<img src="../img/logo.png" alt="RHULogo" class="logo">
+			<span class="text">IHRRS</span>
+		</a>
+		<ul class="side-menu top">
+			<li class="active">
+				<a href="dashboard.html">
+					<i class="bx bxs-dashboard"></i>
+					<span class="text">Dashboard</span>
+				</a>
+			</li>
+			<li>
+				<a href="#" id="updateReferrals">
+					<i class="bx bxs-user"></i>
+					<span class="text">Pending Referrals</span>
+				</a>
+			</li>
+			
+			<script>
+			document.getElementById("updateReferrals").addEventListener("click", function (event) {
+				event.preventDefault(); // Prevent default navigation
+			
+				fetch("php/update_referrals.php") // Call PHP file
+				.then(response => response.json())
+				.then(data => {
+					console.log(data.message); // Log success message (optional)
+					window.location.href = "pending.html"; // Redirect after updating
+				})
+				.catch(error => {
+					console.error("Error updating referrals:", error);
+					window.location.href = "pending.html"; // Still redirect even if an error occurs
+				});
+			});
+			</script>
+			
+			<li>
+				<a href="searchPatient.html">
+					<i class="bx bxs-notepad"></i>
+					<span class="text">Patient Records</span>
+				</a>
+			</li>
+			<li>
+                <a href="history.html">
+                    <i class="bx bx-history"></i>
+                    <span class="text">Referral History</span>
+                </a>
+            </li>
+			<li>
+				<a href="reports.html">
+					<i class="bx bx-notepad"></i>
+					<span class="text">Reports</span>
+				</a>
+			</li>
+		</ul>
+		<ul class="side-menu">
+			<li>
+				<a href="#" class="logout" onclick="return confirmLogout()">
+               <i class="bx bxs-log-out-circle"></i>
+                <span class="text">Logout</span>
+                </a>
+					
+		
+			</li>
+		</ul>
+	</section>
+
+	<!-- Main Content Section -->
+	<section id="content">
+		<nav>
+			<form action="#">
+				
+			</form>
+			<div class="greeting">
+                <span id="userGreeting">Hello RHU Physician!</span>
+            </div>
+			<a href="#" class="profile">
+				<img src="../img/doctor.png">
+			</a>
+		</nav>
+
+		<main>
+			<div class="head-title">
+				<div class="left">
+					<h1>Dashboard</h1>
+					<ul class="breadcrumb">
+						<li><a href="#">Dashboard</a></li>
+						<li><i class="bx bx-chevron-right"></i></li>
+						<li><a class="active" href="#">Home</a></li>
+					</ul>
+				</div>
+			</div>
+
+
+    <div class="dashboard-layout">
+		<div class="progress-container">
+			<div class="progress-circle-container">
+				<div class="title">Pending Referrals From BHS</div>
+				<h4 class="date">Loading date...</h4>
+				<div class="progress-circle">
+					<svg width="180" height="180" viewBox="0 0 180 180">
+						<circle class="circle-background" cx="90" cy="90" r="67" stroke-width="16" /> 
+						<circle class="progress-ring" id="progress-ring-1" cx="90" cy="90" r="67"></circle>
+					</svg>
+					<div class="progress-text" id="progress-text-1">0</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="progress-container">
+			<div class="progress-circle-container">
+				<div class="title">Total Consultations Today </div>
+				<h4 class="date">Loading date...</h4>
+				<div class="progress-circle">
+					<svg width="180" height="180" viewBox="0 0 180 180">
+						<circle class="circle-background" cx="90" cy="90" r="67" stroke-width="16" /> 
+						<circle class="progress-ring" id="progress-ring-2" cx="90" cy="90" r="67"></circle>
+					</svg>
+					<div class="progress-text" id="progress-text-2">0</div>
+				</div>
+			</div>
+		</div>
+
+	
+		
+    </div>
+
+
+<br> <br>
+            
+
+
+		<div class="history-container">
+			<div class="referral-summary-card">
+				<div class="content">
+					<div class="title-section">
+						<h3>Referred Patients by Nursing Attendant</h3>
+						<div class="date-display">
+							<i class="bx bx-calendar"></i>
+							<span id="currentDate"></span>
+						</div>
+					</div>
+					<div class="summary-stats">
+						<div class="stat-item">
+							<i class="bx bx-user-check"></i>
+							<span class="stat-value" id="totalReferrals">0</span>
+							<span class="stat-label">Total</span>
+						</div>
+						<div class="stat-item">
+							<i class="bx bx-time"></i>
+							<span class="stat-value" id="pendingReferrals">0</span>
+							<span class="stat-label">Pending</span>
+						</div>
+						<div class="stat-item">
+							<i class="bx bx-check-circle"></i>
+							<span class="stat-value" id="completedReferrals">0</span>
+							<span class="stat-label">Completed</span>
+						</div>
+					</div>
+				</div>
+			</div>
+			  
+			<div class="table-container">
+				<div class="table-header">
+					<div class="search-box">
+						<i class="bx bx-search"></i>
+						<input type="text" id="referralSearch" placeholder="Search...">
+					</div>
+					<div class="filter-options">
+						<select id="statusFilter">
+							<option value="all">All</option>
+							<option value="pending">Pending</option>
+							<option value="completed">Completed</option>
+							<option value="missed">Missed</option>
+						</select>
+					</div>
+				</div>
+
+				<table id="history-table" class="status">
+					<thead>
+						<tr>
+							<th>ID</th>
+							<th>Date</th>
+							<th>Patient</th>
+							<th>From</th>
+							<th>Status</th>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody>
+					</tbody>
+				</table>
+				
+				<div class="pagination" id="pagination">
+					<a href="#" class="prev"><i class="bx bx-chevron-left"></i></a>
+					<div class="page-numbers">
+						<a href="#" class="page-number active">1</a>
+						<a href="#" class="page-number">2</a>
+						<a href="#" class="page-number">3</a>
+					</div>
+					<a href="#" class="next"><i class="bx bx-chevron-right"></i></a>
+				</div>
+			</div>
+		</div>
+  
+
+		<div id="logoutModal" class="modal">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h3>Confirm Logout</h3>
+				</div>
+				<div class="modal-body">
+					<p>Are you sure you want to logout?</p>
+				</div>
+				<div class="modal-footer">
+					<button onclick="closeModal()" class="btn yes">Cancel</button>
+					<button onclick="proceedLogout()" class="btn no">Yes, Logout</button>
+				</div>
+			</div>
+		</div>
+	</main>	
+</section>
+<script>
+	document.addEventListener("DOMContentLoaded", () => {
+  const today = new Date().toISOString().split("T")[0];
+  const url = `php/fetch_dashboard_stats.php?date=${today}`;
+
+  // Show today's date in both containers
+  const formattedDate = new Date(today).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+
+  document.querySelectorAll(".date").forEach(el => el.textContent = formattedDate);
+
+  fetch(url)
+    .then(response => response.json())
+    .then(data => {
+      console.log("Dashboard Data:", data);
+
+      // Update values
+      updateProgress("progress-ring-1", "progress-text-1", data.pending_referrals, 100);
+      updateProgress("progress-ring-2", "progress-text-2", data.consultations, 100);
+    })
+    .catch(error => console.error("Error loading dashboard data:", error));
+});
+
+function updateProgress(ringId, textId, value, max = 100) {
+  const radius = 67;
+  const circumference = 2 * Math.PI * radius;
+  const percent = Math.min(value / max, 1);
+  const offset = circumference * (1 - percent);
+
+  const ring = document.getElementById(ringId);
+  const text = document.getElementById(textId);
+
+  ring.style.strokeDasharray = `${circumference}`;
+  ring.style.strokeDashoffset = `${offset}`;
+  text.textContent = value;
+}
+
+// Get the current date
+const today = new Date();
+const options = { year: 'numeric', month: 'long', day: 'numeric' };
+const formattedDate = today.toLocaleDateString('en-US', options);
+document.getElementById("currentDate").textContent = formattedDate;
+
+// Initialize statistics
+let referrals = [];
+
+function updateStatistics() {
+    const total = referrals.length;
+    const pending = referrals.filter(r => r.referral_status.toLowerCase() === 'pending').length;
+    const completed = referrals.filter(r => r.referral_status.toLowerCase() === 'completed').length;
+
+    document.getElementById('totalReferrals').textContent = total;
+    document.getElementById('pendingReferrals').textContent = pending;
+    document.getElementById('completedReferrals').textContent = completed;
+}
+
+function filterReferrals() {
+    const searchTerm = document.getElementById('referralSearch').value.toLowerCase();
+    const statusFilter = document.getElementById('statusFilter').value.toLowerCase();
+    
+    const filteredReferrals = referrals.filter(referral => {
+        const matchesSearch = 
+            referral.referral_id.toLowerCase().includes(searchTerm) ||
+            referral.patient_name.toLowerCase().includes(searchTerm) ||
+            referral.referral_from.toLowerCase().includes(searchTerm);
+        
+        const matchesStatus = statusFilter === 'all' || 
+            referral.referral_status.toLowerCase() === statusFilter;
+        
+        return matchesSearch && matchesStatus;
+    });
+
+    renderReferrals(filteredReferrals);
+}
+
+function renderReferrals(data) {
+    const tableBody = document.querySelector("#history-table tbody");
+    tableBody.innerHTML = "";
+
+    if (data.length === 0) {
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="6" style="text-align: center; padding: 20px;">
+                    No referrals found matching your criteria.
+                </td>
+            </tr>
+        `;
+        return;
+    }
+
+    data.forEach(referral => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+            <td>${referral.referral_id}</td>
+            <td>${formatDate(referral.referral_date)}</td>
+            <td>${referral.patient_name}</td>
+            <td>${referral.referral_from}</td>
+            <td class="${referral.referral_status.toLowerCase()}">${referral.referral_status}</td>
+            <td>
+                <a href="UpdateVisitInfo.html?visit_id=${referral.visit_id}" class="view-icon">
+                    <i class="bx bx-show"></i>
+                </a>
+            </td>
+        `;
+        tableBody.appendChild(row);
+    });
+}
+
+// Event Listeners
+document.getElementById('referralSearch').addEventListener('input', filterReferrals);
+document.getElementById('statusFilter').addEventListener('change', filterReferrals);
+
+// Fetch referrals
+function fetchReferrals() {
+    fetch("php/fetch_referrals1.php")
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                console.error(data.error);
+                return;
+            }
+            referrals = data;
+            updateStatistics();
+            renderReferrals(data);
+        })
+        .catch(error => {
+            console.error("Error fetching referrals:", error);
+        });
+}
+
+// Initial fetch
+fetchReferrals();
+
+function formatDate(dateString) {
+    if (!dateString) return "N/A";
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return "Invalid Date";
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return `${date.toLocaleDateString('en-US', options)} <br><span class="time">${date.toLocaleTimeString()}</span>`;
+}
+
+
+function confirmLogout() {
+    document.getElementById('logoutModal').style.display = 'block';
+    return false; // Prevent the default link behavior
+}
+
+function closeModal() {
+    document.getElementById('logoutModal').style.display = 'none';
+}
+
+function proceedLogout() {
+    window.location.href = '../role.html';
+}
+
+// Close modal when clicking outside
+window.onclick = function(event) {
+    const modal = document.getElementById('logoutModal');
+    if (event.target == modal) {
+        closeModal();
+    }
+}
+fetch('php/getUserName.php')
+    .then(response => response.json())
+    .then(data => {
+        if (data.full_name) {
+            document.getElementById('userGreeting').textContent = `Hello, ${data.full_name}!`;
+        } else {
+            document.getElementById('userGreeting').textContent = 'Hello, BHW!';
+        }
+    })
+    .catch(error => {
+        console.error('Error fetching user name:', error);
+        document.getElementById('userGreeting').textContent = 'Hello, BHW!';
+    });
+
+</script>
+	<script src="js/script.js"></script>
+	<script src="js/logout.js"></script>
+</body>
+</html>

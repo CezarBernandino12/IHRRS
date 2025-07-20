@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="../img/logo.png">
+    <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="css/form.css">
+    <title>Individual Treatment Record</title>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+</head>
+
+<body>
+
+	<section id="sidebar">
+		<a href="#" class="brand">
+			<img src="../img/logo.png" alt="RHULogo" class="logo">
+			<span class="text">Hello User</span>
+		</a>
+		<ul class="side-menu top">
+			<li>
+				<a href="dashboard.html">
+					<i class="bx bxs-dashboard"></i>
+					<span class="text">Dashboard</span>
+				</a>
+			</li>
+			<li class="active">
+				<a href= "ITR.html">
+					<i class="bx bxs-user"></i>
+					<span class="text">Add New ITR</span>
+				</a>
+			</li>
+			<li>
+				<a href="searchPatient.html">
+					<i class="bx bxs-notepad"></i>
+					<span class="text">Patient Records</span>
+				</a>
+			</li>
+			<li>
+				<a href="history.html">
+					<i class="bx bx-history"></i>
+					<span class="text">Referral History</span>
+				</a>
+			</li>
+            <li>
+				<a href="reports.html">
+					<i class="bx bx-notepad"></i>
+					<span class="text">Reports</span>
+				</a>
+			</li>
+        </ul>
+		<ul class="side-menu">
+			<li>
+<a href="#" class="logout" onclick="return confirmLogout()">
+               <i class="bx bxs-log-out-circle"></i>
+                <span class="text">Logout</span>
+                </a>			</li>
+          
+		</ul>
+	</section>
+
+    <section id="content">
+        <nav>
+            <form action="#">
+                <div class="form-input">
+                    <input type="search" id="patientSearch" placeholder="Enter patient name..." name="search" autocomplete="off">
+                    <button type="button" class="search-btn" id="searchButton">
+                        <i class='bx bx-search'></i>
+                    </button>
+                    <div id="resultDropdown" class="dropdown-content"></div>
+                </div>
+            </form>
+            <a href="notif.html" class="notification">
+                <i class='bx bxs-bell'></i>
+            </a>
+            <a href="#" class="profile">
+                <img src="../img/profile.jpg">
+            </a>
+        </nav>
+
+        <main>
+            <div class="head-title">
+				<div class="left">
+					<h1>Add Individual Treatment Record</h1>
+					<ul class="breadcrumb">
+						<li><a href="#">Add ITR</a></li>
+						<li><i class="bx bx-chevron-right"></i></li>
+                        <li><a class="active" href="dashboard.html">Home</a></li>
+
+					</ul>
+				</div>
+			</div>
+        </main>
+    </section>
+
+    <div class="container-header">
+        <h2>INDIVIDUAL TREATMENT RECORD (ITR)</h2>
+    </div>
+
+    <div class="container">
+        <form class="personal-info-form" id="individualRecordForm" action="php/saveInitialAssessment.php" method="POST">
+            <input type="hidden" name="form_type" value="individual_record">
+
+            <p><b>PERSONAL INFORMATION:</b></p>
+
+            <div class="form-container">
+                <!-- Column 1 -->
+                <div class="form-group">
+                    <label for="lastName" class="required">Last Name:</label>
+                    <input type="text" name="lastName" id="lastName" placeholder="Enter Last Name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="firstName" class="required">First Name:</label>
+                    <input type="text" name="firstName" id="firstName" placeholder="Enter First Name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="middleName" class="required">Middle Name:</label>
+                    <input type="text" name="middleName" id="middleName" placeholder="Enter Middle Name" required>
+                </div>
+                <div class="form-group">
+                    <label for="extension">Ext:</label>
+                    <select id="extension" name="extension">
+                        <option value="">Select</option>
+                        <option value="Jr.">Jr. (Junior)</option>
+                        <option value="Sr.">Sr. (Senior)</option>
+                        <option value="II">II (the Second)</option>
+                        <option value="III">III (the Third)</option>
+                        <option value="IV">IV (the Fourth)</option>
+                        <option value="V">V (the Fifth)</option>
+                        <option value="other">Other (Enter manually)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="birthPlace" class="required">Birth Place:</label>
+                    <input type="text" id="birthPlace" name="birthplace" placeholder="Birth place" required>
+                </div>
+                
+
+                <!-- Column 2 -->
+                <div class="form-group">
+                    <label for="permanent_address" class="required">Address:</label>
+                    <select name="permanent_address" id="permanent_address" class="form-control select2">
+                        <option value="">Select Address</option>
+                    </select>
+                </div>        
+
+          
+                    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                <div class="form-group">
+                    <label for="dob" class="required">Date of Birth:</label>
+                    <input type="date" id="dob" name="dob"  value="2017-02-08" onchange="calculateAge()" required> 
+                    <label id="age-display" >Age: </label>
+                </div>
+                <input type="hidden" id="age-input" name="age">
+
+                <div class="form-group">
+                    <label for="civilStatus" class="required">Civil Status:</label>
+                    <select name="civilStatus" id="civilStatus">
+                        <option value="">Select</option>
+                        <option value="Single">Single</option>
+                        <option value="Married">Married</option>
+                        <option value="Widowed">Widowed</option>
+                        <option value="Separated">Separated</option>
+                    </select>
+                </div>
+
+   
+
+                <div class="form-group">
+                    <label for="mobile">Mobile Number:</label>
+                    <input type="text" name="mobile" id="mobile" placeholder="Mobile no." />
+                    <small id="mobileError" style="color: red; display: none;">Invalid mobile number</small>
+                </div>
+                <script>document.getElementById("mobile").addEventListener("blur", function () {
+                    const mobileInput = this.value.trim();
+                    const errorMsg = document.getElementById("mobileError");
+                
+                    // Regex: starts with 09 and has exactly 11 digits
+                    const isValid = /^09\d{9}$/.test(mobileInput);
+                
+                    if (!isValid) {
+                        errorMsg.style.display = "inline";
+                    } else {
+                        errorMsg.style.display = "none";
+                    }
+                });
+                </script>
+                
+                <div class="form-group">
+                    <label for="religion">Religion:</label>
+                    <select name="religion" id="religion" class="form-control select2">
+                        <option value="">Select Religion</option>
+                        <option value="Roman Catholic">Roman Catholic</option>
+                        <option value="Aglipayan">Aglipayan</option>
+                        <option value="Islam">Islam</option>
+                        <option value="Iglesia ni Cristo">Iglesia ni Cristo</option>
+                        <option value="Assemblies of God">Assemblies of God</option>
+                        <option value="United Methodist Church">United Methodist Church</option>
+                        <option value="other">Other (Enter manually)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="occupation">Occupation:</label>
+                    <input type="text" name="occupation" placeholder="Enter occupation">
+                </div>
+                <div class="form-group">
+                    <label for="education">Educational Attainment:</label>
+                    <select name="education">
+                        <option value="">Select</option>
+                        <option value="Primary Education">Primary Education</option>
+                        <option value="Secondary Education">Secondary Education</option>
+                        <option value="Tertiary Education">Tertiary Education</option>
+                        <option value="Postgraduate">Postgraduate</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="birth_weight">Birth Weight (kg):</label>
+                    <input type="number" name="birth_weight" placeholder="Enter birth weight">
+                </div>
+                
+                <div class="form-group">
+                    <label for="philhealth">Philhealth Member number:</label>
+                    <input type="number" name="philhealth" id="philhealth" placeholder="Philhealth Member no." value="1111">
+                </div>
+                <div class="form-group">
+                    <label for="category">Category:</label>
+                    <select name="category">
+                        <option value="">Select</option>
+                        <option value="NHTS">NHTS</option>
+                        <option value="LGU">LGU</option>
+                        <option value="Private">Private</option>
+                        <option value="Self-Employed">Self-Employed</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="familySerialNo">Family Serial number:</label>
+                    <input type="number" name="familySerialNo" id="familySerialNo" placeholder="Family Serial no." value="1111">
+                </div>
+                <br>
+
+                <div class="form-group">
+                    <label for="sex" class="required">Sex:</label>
+                    <div id="sex" class="radio-group">
+                        <label class="radio-option" id="sex">
+                            <input type="radio" name="sex" value="Male" onchange="calculateAgeAndDisplaySections()"> 
+                            Male
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="sex" value="Female" onchange="calculateAgeAndDisplaySections()"> 
+                            Female
+                        </label>
+                    </div>
+                </div> 
+
+                <div class="form-group">
+                    <label for="4ps">4Ps Status:</label>
+                    <div id="4ps" class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="4ps" value="Yes"> Yes
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="4ps" value="No"> No
+                        </label>
+                    </div>
+                </div>
+               
+
+                <!-- Warning Section -->
+                <div class="form-group full-width">
+                    <div class="warning" id="warning" style="color: red; display: none;">
+                        Patient already exists.
+                    </div>
+                </div>
+            </div>
+            <br> <br> <br>
+
+            <p><b>PATIENT VISIT SUMMARY:</b></p>
+            <div class="additional-group box-group additional-fields">
+
+                <div class="additional-options">
+
+                    <div class="form-group"  style ="width: 200px;">
+                        <label for="alert">Patient Alert:</label>
+                        <select name="patient_alert" id="patient_alert">
+                            <option value="">Select (if any)</option>
+                            <option value="Impairment">Impairment</option>
+                            <option value="Allergic Reactions">Allergic Reactions</option>
+                            <option value="Disability">Disability</option>
+                            <option value="Drugs">Drugs</option>
+                            <option value="other">Other (Enter manually)</option>
+                        </select>
+                    </div>
+<br>
+<div class="additonal-group"> 
+    <label for="dov" class="required">Date of Visit:</label>
+    <input type="date" name="dov" id="dov" required>
+</div>
+
+
+
+                     <!-- Do not remove -->    <input type="hidden" name="user_id" id="user_id" hidden>
+
+                    <script>
+                        fetch('php/getUserId.php')
+                          .then(response => response.json())
+                          .then(data => {
+                            if (data.user_id) {
+                              document.getElementById("user_id").value = data.user_id;
+                            } else {
+                              console.error("User not logged in.");
+                              // Optionally redirect to login
+                              // window.location.href = "BHWlogin.html";
+                            }
+                          })
+                          .catch(error => console.error("Error fetching user ID:", error));
+                      </script>
+
+
+                    <div class="additonal-group">
+                        <label for="chief_complaints" class="required">Chief Complaints:</label>
+                        <textarea type="text" name="chief_complaints" id="chief_complaints" class="tall-input" placeholder="Enter complaints"></textarea>
+                    </div>
+
+                    <label for="vitals"><b>Vital Signs:</b></label>
+                    <div class="vitals-section box-group">
+                        <div class="additional-group vitals-item">
+                            <label for="bmi">BMI:</label>
+                            <input type="number" step="any" name="bmi" id="bmi" placeholder="BMI will appear here" readonly>
+                        </div>
+                        <div class="additional-group" hidden>
+                            <label for="space"></label>
+                          
+                        </div>
+                        
+                        <div class="additional-group vitals-item">
+                            <label for="height" class="required">Height (cm):</label>
+                            <input type="number" step="any" name="height" id="height" placeholder="Enter height (e.g, 160)" oninput="calculateBMI()" required>
+                        </div>
+                        
+                        <div class="additional-group vitals-item">
+                            <label for="weight" class="required">Weight (kg):</label>
+                            <input type="number" step="any" name="weight" id="weight" placeholder="Enter weight (e.g, 50.2)" oninput="calculateBMI()" required>
+                        </div>
+                        
+                        <div class="additional-group vitals-item">
+                            <label for="temp" class="required">Temperature (°C):</label>
+                            <input type="number" step="any" id="temp" name="temp" placeholder="Enter temperature (e.g, 38.2)" required>
+                        </div>
+                        
+                        <div class="additional-group vitals-item">
+                            <label for="bp" class="required">Blood Pressure (mm Hg):</label>
+                            <input type="text" step="any" id="bp" name="bp" placeholder="Enter BP (e.g., 120/80)" required>
+                        </div>
+                       
+                        
+                        
+                        <div class="additional-group vitals-item">
+                            <label for="pr">Chest Rate (per min.):</label>
+                            <input type="number" step="any" name="pr">
+                        </div>
+                      
+                        <div class="additional-group vitals-item">
+                            <label for="rr">Respiratory Rate (per min.):</label>
+                            <input type="number" step="any" name="rr">
+                        </div>
+                    </div>
+
+                
+                   
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="form-group">
+                    <label for="treatment">Treatment:</label>
+                    <select id="treatment" name="treatment">
+                        <option value="">Select treatment (if no referral)</option>
+                        <option value="Weighing only">Weighing only</option>
+                        <option value="Immunization">Immunization</option>
+                        <option value="BP only">BP only</option>
+                        <option value="other">Other (Enter manually)</option>
+                    </select>
+                </div> <br>
+
+                <div id="medicine-container">
+                    <div class="medicine-entry" style="display: flex; gap: 10px; align-items: center;">
+                        <div class="form-group" style="flex: 1;"> 
+                            <label for="medicine_given[]">Medication Given:</label>
+                            <select name="medicine_given[]" class="medicine-select" style="width: 200px;">
+                                <option value="">Select</option>
+                                <option value="Paracetamol">Paracetamol</option>
+                                <option value="Ibuprofen">Ibuprofen</option>
+                                <option value="Amoxicillin">Amoxicillin</option>
+                                <option value="other">Other (Enter manually)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="quantity_given[]">Quantity:</label>
+                            <div class="quantity-container" style="display: flex; gap: 5px;">
+                                <button type="button" class="btn-minus">−</button>
+                                <input type="number" name="quantity_given[]" value="0" min="0" style="height: 17px;">
+                                <button type="button" class="btn-plus">+</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="add-medicine-container">
+                    <button type="button" id="add-medicine" class="add-medicine">+ Add</button>
+                </div>
+                
+            
+            </div>
+            
+            <div class="form-group">
+                <label for="remarks">Remarks:</label>
+                <textarea type="text" name="remarks" class="tall-input" placeholder="Enter Remarks"></textarea>
+            </div>
+
+        <div class="form-container">
+            <div class="print-section">
+            </div>
+        
+            <div class="button-container">
+                <button type="submit" class="submit-btn" id="submitButton">Submit</button>
+            </div>
+            
+        </form>
+
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                                 
+                const today = new Date().toISOString().split('T')[0];
+                document.getElementById("dov").value = today;
+            
+            });
+            function calculateBMI() {
+                const heightInput = document.getElementById('height').value;
+                const weightInput = document.getElementById('weight').value;
+                const bmiField = document.getElementById('bmi');
+            
+                const height = parseFloat(heightInput);
+                const weight = parseFloat(weightInput);
+            
+                if (height > 0 && weight > 0) {
+                    // Convert height from cm to meters
+                    const heightInMeters = height / 100;
+                    const bmi = weight / (heightInMeters * heightInMeters);
+                    bmiField.value = bmi.toFixed(2);
+                } else {
+                    bmiField.value = '';
+                }
+            }
+            
+            const addressSelect = document.getElementById('permanent_address');
+const religionSelect = document.getElementById('religion');
+const extensionSelect = document.getElementById('extension');
+const medicineSelects = document.querySelectorAll('.medicine-select');
+const treatmentSelect = document.getElementById('treatment');
+const patientAlertSelect = document.getElementById('patient_alert');
+
+// Fetch addresses for permanent address
+fetch('php/get_addresses.php')
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            console.error(data.error);
+            return;
+        }
+
+        // Clear old address options
+        for (let i = addressSelect.options.length - 1; i > 0; i--) {
+            addressSelect.remove(i);
+        }
+
+        // Add fetched options
+        data.forEach(address => {
+            const option = new Option(address, address);
+            addressSelect.appendChild(option);
+        });
+
+        // Add 'Other'
+        addressSelect.appendChild(new Option("Other (Enter manually)", "other"));
+    })
+    .catch(error => console.error('Error fetching addresses:', error));
+
+// "Other" for Permanent Address
+addressSelect.addEventListener("change", function () {
+    if (this.value === "other") {
+        const userInput = prompt("Enter address:");
+        if (userInput) {
+            const newOption = new Option(userInput, userInput, true, true);
+            this.appendChild(newOption);
+
+            // OPTIONAL: Save to database
+            fetch('php/save_custom_option.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `category=address&value=${encodeURIComponent(userInput)}`
+            }).then(response => response.json())
+              .then(data => {
+                  if (!data.success) {
+                      console.error('Failed to save address.');
+                  }
+              })
+              .catch(error => console.error('Error:', error));
+        } else {
+            this.value = "";
+        }
+    }
+});
+
+// "Other" for Religion
+religionSelect.addEventListener("change", function () {
+    if (this.value === "other") {
+        const userInput = prompt("Enter religion:");
+        if (userInput) {
+            const newOption = new Option(userInput, userInput, true, true);
+            this.appendChild(newOption);
+
+            fetch('php/save_custom_option.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `category=religion&value=${encodeURIComponent(userInput)}`
+            }).then(response => response.json())
+              .then(data => {
+                  if (!data.success) {
+                      console.error('Failed to save religion.');
+                  }
+              })
+              .catch(error => console.error('Error:', error));
+        } else {
+            this.value = "";
+        }
+    }
+});
+
+// "Other" for Extension
+extensionSelect.addEventListener("change", function () {
+    if (this.value === "other") {
+        const userInput = prompt("Enter extension:");
+        if (userInput) {
+            const newOption = new Option(userInput, userInput, true, true);
+            this.appendChild(newOption);
+
+            fetch('php/save_custom_option.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `category=extension&value=${encodeURIComponent(userInput)}`
+            }).then(response => response.json())
+              .then(data => {
+                  if (!data.success) {
+                      console.error('Failed to save extension.');
+                  }
+              })
+              .catch(error => console.error('Error:', error));
+        } else {
+            this.value = "";
+        }
+    }
+});
+
+// "Other" for Patient Alert
+patientAlertSelect.addEventListener("change", function () {
+    if (this.value === "other") {
+        const userInput = prompt("Enter patient alert:");
+        if (userInput) {
+            const newOption = new Option(userInput, userInput, true, true);
+            this.appendChild(newOption);
+
+            fetch('php/save_custom_option.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `category=patient_alert&value=${encodeURIComponent(userInput)}`
+            }).then(response => response.json())
+              .then(data => {
+                  if (!data.success) {
+                      console.error('Failed to save patient alert.');
+                  }
+              })
+              .catch(error => console.error('Error:', error));
+        } else {
+            this.value = "";
+        }
+    }
+});
+
+// "Other" for each Medicine
+medicineSelects.forEach(select => {
+    select.addEventListener("change", function () {
+        if (this.value === "other") {
+            const userInput = prompt("Enter: Medicine name (dosage)");
+            if (userInput) {
+                const newOption = new Option(userInput, userInput, true, true);
+                this.appendChild(newOption);
+
+                fetch('php/save_custom_option.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `category=medicine&value=${encodeURIComponent(userInput)}`
+                }).then(response => response.json())
+                  .then(data => {
+                      if (!data.success) {
+                          console.error('Failed to save medicine.');
+                      }
+                  })
+                  .catch(error => console.error('Error:', error));
+            } else {
+                this.value = "";
+            }
+        }
+    });
+});
+
+// "Other" for Treatment
+treatmentSelect.addEventListener("change", function () {
+    if (this.value === "other") {
+        const userInput = prompt("Enter treatment:");
+        if (userInput) {
+            const newOption = new Option(userInput, userInput, true, true);
+            this.appendChild(newOption);
+
+            fetch('php/save_custom_option.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `category=treatment&value=${encodeURIComponent(userInput)}`
+            }).then(response => response.json())
+              .then(data => {
+                  if (!data.success) {
+                      console.error('Failed to save treatment.');
+                  }
+              })
+              .catch(error => console.error('Error:', error));
+        } else {
+            this.value = "";
+        }
+    }
+});
+
+function loadCustomOptions(selectElement, category) {
+    fetch(`php/get_custom_options.php?category=${category}`)
+        .then(response => response.json())
+        .then(options => {
+            options.forEach(optionValue => {
+                const option = new Option(optionValue, optionValue);
+                selectElement.appendChild(option);
+            });
+            selectElement.appendChild(new Option("Other (Enter manually)", "other"));
+        })
+        .catch(error => console.error('Error fetching options:', error));
+}
+
+// Example:
+loadCustomOptions(religionSelect, 'religion');
+loadCustomOptions(extensionSelect, 'extension');
+loadCustomOptions(treatmentSelect, 'treatment');
+loadCustomOptions(patientAlertSelect, 'patient_alert');
+// For medicine-selects, you can loop each one
+medicineSelects.forEach(select => loadCustomOptions(select, 'medicine'));
+                                 
+                                    document.querySelectorAll('label.required').forEach(function (label) {
+                    const inputId = label.getAttribute('for');
+                    const input = document.getElementById(inputId);
+            
+                    if (input) {
+                        input.addEventListener("input", function () {
+                            if (input.value.trim() !== "") {
+                                label.classList.remove("required");
+                            } else {
+                                label.classList.add("required");
+                            }
+                        });
+                    }
+                });
+                const sexRadios = document.querySelectorAll('input[name="sex"]');
+            const sexLabel = document.querySelector('label[for="sex"]');
+            
+            sexRadios.forEach(radio => {
+                radio.addEventListener('change', function () {
+                    if (document.querySelector('input[name="sex"]:checked')) {
+                        sexLabel.classList.remove('required');
+                    }
+                });
+            });
+            
+                const today = new Date().toISOString().split('T')[0];
+                document.getElementById("dov").setAttribute("max", today);
+            
+                              
+                document.getElementById("add-medicine").addEventListener("click", function() {
+    let container = document.getElementById("medicine-container");
+    let newEntry = container.firstElementChild.cloneNode(true);
+    
+    // Reset values in the cloned elements
+    newEntry.querySelector("select").value = "";
+    newEntry.querySelector("input[type='number']").value = "0";
+    
+    // Append the new entry to the container
+    container.appendChild(newEntry);
+
+    // Scroll the form container to the bottom to prevent overlap
+    container.scrollIntoView({ behavior: 'smooth', block: 'end' });
+});
+
+                
+                document.addEventListener("click", function(event) {
+                    if (event.target.classList.contains("btn-plus")) {
+                        let input = event.target.previousElementSibling;
+                        input.value = parseInt(input.value) + 1;
+                    } else if (event.target.classList.contains("btn-minus")) {
+                        let input = event.target.nextElementSibling;
+                        if (parseInt(input.value) > 0) {
+                            input.value = parseInt(input.value) - 1;
+                        }
+                    }
+                });    
+            </script>
+                                
+                                
+              <!-- MODAL -->
+            <div id="myModal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <img src="../img/verify.png" alt="Checkmark" class="checkmark-image">
+                        <h3>Confirmation</h3>
+                        <span class="close-btn" id="closeBtn">&times;</span>
+                    </div>
+             <br><br>
+                    <div class="modal-footer">
+                        <button id="yesButton" class="btn yes">Save, refer to RHU</button>
+                        <button id="noButton" class="btn maybe" type="button">Save, don't refer</button>
+                        <button id="cancelBtn" class="btn cancel">Cancel</button>
+                    </div>
+
+                </div>
+            </div>
+             </div>
+
+             <input type="hidden" name="referral_status" value="pending">
+
+             <div id="myModal2" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                         <img src="../img/verify.png" alt="Checkmark" class="checkmark-image">
+                        <h3>Confirm</h3>
+                        <span class="close-btn" id="closeBtn2">&times;</span>
+                    </div>
+                    <div class="modal-body">
+                        <p>Do you confirm on referring this patient?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="yesButton2" class="btn yes" value="yes">Yes</button>
+                        <button id="noButton2" class="btn no">No</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="myModal3" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <img src="../img/check.png" alt="Checkmark" class="checkmark-image">
+                        <h3></h3>
+                        <span class="close-btn" id="closeBtn3">&times;</span>
+                    </div>
+
+                    <div class="modal-footer">
+                        <div class="modal-header">
+                            <h3 style="color: #033cad;">Appointment Successful</h3>
+                        </div>
+                    </div>
+                    
+                    <div class="modal-footer">
+                    <button id="viewDetailsButton" class="btn yes">View Details</button>
+                </div>
+            </div>
+            </div>
+        
+            <div id="myModal4" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <img src="../img/check.png" alt="Checkmark" class="checkmark-image">
+                        <h3></h3>
+                        <span class="close-btn" id="closeBtn4">&times;</span>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="modal-body">
+                            <p>Record successfully added.</p>
+                        </div>
+                    </div>
+                </div>
+            </div> 
+            
+            <div id="myModal5" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <img src="../img/verify.png" alt="Checkmark" class="checkmark-image">
+                        <h3>Record Added</h3>
+                        <span class="close-btn" id="closeBtn5">&times;</span>
+                    </div>
+                    <div class="modal-body">
+                        <p>The patient record has been successfully added.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="exitButton" class="btn yes">Exit</button>
+                    </div>
+                </div>
+            </div>
+
+        <div id="patientExistsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+             <h2>Patient Already Exists</h2>
+             <span class="close-btn" id="closeBtn">&times;</span>
+         </div>
+
+    <div class="modal-body">
+        <p>Patient with the same Name and Date of Birth was found. Would you like to use the existing patient record or add a new one?</p>
+    </div>
+
+    <div class="modal-footer">
+        <button id="useExistingBtn" class="btn yes">Use Existing</button>
+        <button id="addNewBtn" class="btn yes">Add New</button>
+        <button id="cancelBtn" class="btn cancel">Cancel</button>
+    </div>
+
+</div>
+</div>
+
+
+
+
+
+
+              <script src="js/form.js"></script>
+
+        
+
+             <div id="successMessage" style="display: none; color: green;">
+                Patient information successfully saved!
+            </div>
+            
+            <!-- Error Message -->
+            <div id="errorMessage" style="display: none; color: red;">
+                Error saving data.
+            </div>
+            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+            <script src="js/form.js"></script>
+
+
+
+    
+    <script src="js/form.js"></script>
+    <script src="js/script.js"></script>
+    <script src="js/modal.js"></script>
+</body>
+</html>

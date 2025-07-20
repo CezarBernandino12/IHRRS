@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="icon" href="../img/logo.png">
+	<link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="css/dashstyle.css">
+	<title>RHU Dashboard</title>
+</head>
+<body>
+
+	<!-- Sidebar Section -->
+	<section id="sidebar">
+		<a href="#" class="brand">
+			<img src="../img/logo.png" alt="RHULogo" class="logo">
+			<span class="text">IHRRS</span>
+		</a>
+		<ul class="side-menu top">
+			<li class="active">
+				<a href="dashboard.html">
+					<i class="bx bxs-dashboard"></i>
+					<span class="text">Dashboard</span>
+				</a>
+			</li>
+			<li>
+				<a href="#" id="updateReferrals">
+					<i class="bx bxs-user"></i>
+					<span class="text">Pending Referrals</span>
+				</a>
+			</li>
+			
+			<script>
+			document.getElementById("updateReferrals").addEventListener("click", function (event) {
+				event.preventDefault(); // Prevent default navigation
+			
+				fetch("php/update_referrals.php") // Call PHP file
+				.then(response => response.json())
+				.then(data => {
+					console.log(data.message); // Log success message (optional)
+					window.location.href = "pending.html"; // Redirect after updating
+				})
+				.catch(error => {
+					console.error("Error updating referrals:", error);
+					window.location.href = "pending.html"; // Still redirect even if an error occurs
+				});
+			});
+			</script>
+			
+			<li>
+				<a href="searchPatient.html">
+					<i class="bx bxs-notepad"></i>
+					<span class="text">Patient Records</span>
+				</a>
+			</li>
+			<li>
+                <a href="history.html">
+                    <i class="bx bx-history"></i>
+                    <span class="text">Referral History</span>
+                </a>
+            </li>
+			<li>
+				<a href="reports.html">
+					<i class="bx bx-notepad"></i>
+					<span class="text">Reports</span>
+				</a>
+			</li>
+		</ul>
+		<ul class="side-menu">
+			<li>
+				
+				<a href="#" class="logout" onclick="return confirmLogout()">
+               <i class="bx bxs-log-out-circle"></i>
+                <span class="text">Logout</span>
+                </a>			
+		
+			</li>
+		</ul>
+		<script>
+			function confirmLogout() {
+				document.getElementById('logoutModal').style.display = 'block';
+				return false; // Prevent the default link behavior
+			}
+			
+			function closeModal() {
+				document.getElementById('logoutModal').style.display = 'none';
+			}
+			
+			function proceedLogout() {
+				window.location.href = '../ADMIN/php/logout.php'; 
+			}
+			
+			// Close modal when clicking outside
+			window.onclick = function(event) {
+				const modal = document.getElementById('logoutModal');
+				if (event.target == modal) {
+					closeModal();
+				}
+			}
+		
+			</script>
+	</section>
+
+	<!-- Main Content Section -->
+	<section id="content">
+		<nav>
+			<form action="#">
+				
+			</form>
+			<div class="greeting">
+                <span id="userGreeting">Hello Nurse!</span>
+            </div>
+			<a href="#" class="profile">
+				<img src="../img/nurse.png">
+			</a>
+		</nav>
+		<main>
+			<div class="head-title">
+				<div class="left">
+					<h1>Dashboard</h1>
+					<ul class="breadcrumb">
+						<li><a href="#">Dashboard</a></li>
+						<li><i class="bx bx-chevron-right"></i></li>
+						<li><a class="active" href="#">Home</a></li>
+					</ul>
+				</div>
+			</div>
+
+
+    <div class="dashboard-layout">
+		<div class="progress-container">
+			<div class="progress-circle-container">
+				<div class="title">Pending Referrals From BHS</div>
+				<p class="date">Loading date...</p>
+				<div class="progress-circle">
+					<svg width="180" height="180" viewBox="0 0 180 180">
+						<circle class="circle-background" cx="90" cy="90" r="67" stroke-width="16" /> 
+						<circle class="progress-ring" id="progress-ring-1" cx="90" cy="90" r="67"></circle>
+					</svg>
+					<div class="progress-text" id="progress-text-1">0</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="progress-container">
+			<div class="progress-circle-container">
+				<div class="title">Total Consultations Today </div>
+				<p class="date">Loading date...</p>
+				<div class="progress-circle">
+					<svg width="180" height="180" viewBox="0 0 180 180">
+						<circle class="circle-background" cx="90" cy="90" r="67" stroke-width="16" /> 
+						<circle class="progress-ring" id="progress-ring-2" cx="90" cy="90" r="67"></circle>
+					</svg>
+					<div class="progress-text" id="progress-text-2">0</div>
+				</div>
+			</div>
+		</div>
+
+		<ul class="box-info">
+
+			<li class="mrr"> 
+				<div class="icon-container">
+					<img src="../img/history.png" alt="Add Record" class="icon-img">
+				</div>
+				<div class="text">
+					<a href="pending.html">
+						<h3>Pending Refferals</h3>
+					</a>
+				</div>
+			</li>    
+			<li class="mrr">
+				<div class="icon-container">
+					<img src="../img/record.png" alt="Add Record" class="icon-img">
+				</div>
+				<div class="text">
+					<a href="searchPatient.html">
+						<h3>View Patient Record</h3>
+					</a>
+				</div>
+			</li>    
+
+		
+		</ul>		
+		
+    </div>
+
+	<div id="logoutModal" class="modal">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h3>Confirm Logout</h3>
+			</div>
+			<div class="modal-body">
+				<p>Are you sure you want to logout?</p>
+			</div>
+			<div class="modal-footer">
+				<button onclick="closeModal()" class="btn yes">Cancel</button>
+				<button onclick="proceedLogout()" class="btn no">Yes, Logout</button>
+			</div>
+		</div>
+	</div>
+
+	</main>	
+</section>
+<script>
+	document.addEventListener("DOMContentLoaded", () => {
+  const today = new Date().toISOString().split("T")[0];
+  const url = `php/fetch_dashboard_stats.php?date=${today}`;
+
+  // Show today's date in both containers
+  const formattedDate = new Date(today).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+
+  document.querySelectorAll(".date").forEach(el => el.textContent = formattedDate);
+
+  fetch(url)
+    .then(response => response.json())
+    .then(data => {
+      console.log("Dashboard Data:", data);
+
+      // Update values
+      updateProgress("progress-ring-1", "progress-text-1", data.pending_referrals, 100);
+      updateProgress("progress-ring-2", "progress-text-2", data.consultations, 100);
+    })
+    .catch(error => console.error("Error loading dashboard data:", error));
+});
+
+function updateProgress(ringId, textId, value, max = 100) {
+  const radius = 67;
+  const circumference = 2 * Math.PI * radius;
+  const percent = Math.min(value / max, 1);
+  const offset = circumference * (1 - percent);
+
+  const ring = document.getElementById(ringId);
+  const text = document.getElementById(textId);
+
+  ring.style.strokeDasharray = `${circumference}`;
+  ring.style.strokeDashoffset = `${offset}`;
+  text.textContent = value;
+}
+fetch('php/getUserName.php')
+    .then(response => response.json())
+    .then(data => {
+        if (data.full_name) {
+            document.getElementById('userGreeting').textContent = `Hello, ${data.full_name}!`;
+        } else {
+            document.getElementById('userGreeting').textContent = 'Hello, BHW!';
+        }
+    })
+    .catch(error => {
+        console.error('Error fetching user name:', error);
+        document.getElementById('userGreeting').textContent = 'Hello, BHW!';
+    });
+
+
+// Check if user is logged in
+fetch('php/getUserId.php')
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            // User is not logged in, redirect to role selection page
+            window.location.href = '../role.html';
+        }
+    })
+    .catch(error => {
+        console.error('Error checking session:', error);
+        window.location.href = '../role.html';
+    });
+
+</script>
+	<script src="js/script.js"></script>
+</body>
+</html>

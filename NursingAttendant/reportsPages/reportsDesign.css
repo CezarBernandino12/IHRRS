@@ -1,0 +1,572 @@
+
+
+
+    h2 {
+        color: #1e3a8a;
+    }
+
+    .filter-form {
+        background: linear-gradient(to right, #f8f9fa, #e9ecef);
+        padding: 1.5rem;
+        border-radius: 10px;
+        margin-bottom: 2rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .filter-form label {
+        margin-right: 15px;
+        font-weight: bold;
+        color: #0a3363;
+    }
+
+    .filter-form input[type="date"],
+    .filter-form select {
+        padding: 6px 10px;
+        border: 1px solid #61a7cf;
+        border-radius: 6px;
+        background-color: #ffffff;
+        color: #1e3a8a;
+    }
+
+    .filter-form input[type="text"] {
+        flex: 1;
+        min-width: 250px;
+        padding: 0.75rem 1rem;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+    }
+
+    .filter-form input[type="text"]:focus {
+        border-color: #1c538a;
+        box-shadow: 0 0 0 3px rgba(28, 83, 138, 0.1);
+        outline: none;
+    }
+
+    .filter-form button {
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .filter-form button[type="submit"] {
+        background: #1c538a;
+        color: white;
+    }
+
+    .filter-form button[type="submit"]:hover {
+        background: #16416b;
+        transform: translateY(-1px);
+    }
+
+    .btn-success {
+        background: #28a745;
+        color: white;
+    }
+
+    .btn-success:hover {
+        background: #218838;
+        transform: translateY(-1px);
+    }
+
+    .btn-danger {
+        background: #dc3545;
+        color: white;
+    }
+
+    .btn-danger:hover {
+        background: #c82333;
+        transform: translateY(-1px);
+    }
+
+    .btn-print {
+        background: #6c757d;
+        color: white;
+    }
+
+    .btn-print:hover {
+        background: #5a6268;
+        transform: translateY(-1px);
+    }
+
+    .print-container {
+        display: flex;
+        justify-content: flex-end;
+        
+    }
+    .btn-print {
+        margin-bottom: 0px;
+        text-align: right;
+        background-color: #1c538a;
+        color: white;
+        border: none;
+        padding: 8px 14px;
+        height: 35px;
+        border-radius: 6px;
+        cursor: pointer;
+    }
+
+    .btn-print:hover {
+        background-color: #112f4d;
+    }
+
+    /* Modern Table Styling */
+    table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        margin: 1.5rem 0;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        background: white;
+    }
+
+    thead {
+        background: linear-gradient(135deg, #1c538a, #2c6cb0);
+        color: white;
+    }
+
+    th {
+        padding: 1.2rem 1.5rem;
+        text-align: left;
+        font-weight: 600;
+        font-size: 0.95rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+    }
+
+    td {
+        padding: 1.2rem 1.5rem;
+        border-bottom: 1px solid #edf2f7;
+        font-size: 0.95rem;
+        color: #4a5568;
+        transition: all 0.2s ease;
+    }
+
+    tbody tr {
+        transition: all 0.2s ease;
+    }
+
+    tbody tr:hover {
+        background: #f8fafc;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    /* Zebra striping for better readability */
+    tbody tr:nth-child(even) {
+        background: #f8fafc;
+    }
+
+    /* Status indicators */
+    td.status {
+        font-weight: 600;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        text-align: center;
+        display: inline-block;
+    }
+
+    td.status.completed {
+        background: #c6f6d5;
+        color: #2f855a;
+    }
+
+    td.status.pending {
+        background: #fefcbf;
+        color: #975a16;
+    }
+
+    td.status.cancelled {
+        background: #fed7d7;
+        color: #c53030;
+    }
+
+    /* Responsive table */
+    @media (max-width: 768px) {
+        table {
+            display: block;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            border-radius: 8px;
+        }
+
+        th, td {
+            padding: 1rem;
+            white-space: nowrap;
+        }
+
+        th:first-child,
+        td:first-child {
+            position: sticky;
+            left: 0;
+            background: white;
+            z-index: 1;
+        }
+
+        tbody tr:hover td:first-child {
+            background: #f8fafc;
+        }
+    }
+
+    /* Print styles for table */
+    @media print {
+        table {
+            box-shadow: none;
+            border: 1px solid #e2e8f0;
+        }
+
+        thead {
+            background: #1c538a !important;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        th {
+            color: white !important;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        tbody tr:hover {
+            background: none !important;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        td {
+            border-color: #e2e8f0;
+        }
+    }
+
+    body {
+        font-family: Arial, sans-serif;
+      }
+  
+      .print-header {
+        display: none;
+      }
+  
+      .print-area {
+        padding: 20px;
+        background-color: #f9f9f9;
+      }
+  
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+      }
+  
+      table, th, td {
+        border: 0px solid black;
+      }
+  
+      th, td {
+        padding: 8px;
+        text-align: left;
+      }
+  
+      .no-print {
+        margin-bottom: 20px;
+      }
+      
+  
+      /* PRINT STYLES */
+      @media print {
+        body * {
+          visibility: hidden;
+        }
+        @page {
+            size: landscape;
+          }
+  
+        .print-area, .print-area * {
+          visibility: visible;
+        }
+  
+        .print-area {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 100%;
+        }
+  
+        .print-header {
+          display: block;
+          text-align: center;
+          margin-bottom: 20px;
+        }
+  
+        .no-print {
+          display: none;
+        }
+      }
+
+    /* Enhanced Treatment History Report Styles */
+    .history-container {
+        margin: 2rem auto;
+        padding: 2rem;
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    /* Matched Patients List Enhancement */
+    .matched-patients {
+        background: #f8f9fa;
+        padding: 1.5rem;
+        border-radius: 10px;
+        margin-bottom: 2rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .matched-patients h4 {
+        color: #1c538a;
+        margin-bottom: 1rem;
+        font-size: 1.1rem;
+    }
+
+    .matched-patients ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .matched-patients li {
+        margin: 0.5rem 0;
+    }
+
+    .matched-patients a {
+        display: block;
+        padding: 0.75rem 1rem;
+        background: white;
+        border-radius: 8px;
+        color: #495057;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        border: 1px solid #dee2e6;
+    }
+
+    .matched-patients a:hover {
+        background: #e9ecef;
+        transform: translateX(5px);
+        border-color: #1c538a;
+    }
+
+    /* Print Area Enhancement */
+    .print-area {
+        background: white;
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .print-header {
+        text-align: center;
+        margin-bottom: 2rem;
+        padding-bottom: 2rem;
+        border-bottom: 2px solid #e9ecef;
+    }
+
+    .print-header h3 {
+        color: #1c538a;
+        margin: 0.5rem 0;
+        font-size: 1.2rem;
+    }
+
+    .print-header h2 {
+        color: #1c538a;
+        margin: 1rem 0;
+        font-size: 1.5rem;
+    }
+
+    /* Patient Info Section */
+    .patient-info {
+        background: #f8f9fa;
+        padding: 1.5rem;
+        border-radius: 10px;
+        margin-bottom: 2rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .patient-info strong {
+        color: #1c538a;
+        margin-right: 0.5rem;
+    }
+
+    /* No Records Message Enhancement */
+    .no-records {
+        text-align: center;
+        padding: 1.5rem;
+        margin: 1rem 0;
+        background: linear-gradient(to right, #fff5f5, #fff0f0);
+        border-radius: 8px;
+        border: 1px solid #fed7d7;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+        position: relative;
+        overflow: hidden;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .no-records::before {
+        content: '📋';
+        font-size: 1.8rem;
+        display: inline-block;
+        margin-right: 0.5rem;
+        vertical-align: middle;
+        color: #e53e3e;
+    }
+
+    .no-records p {
+        color: #c53030;
+        font-size: 1rem;
+        font-weight: 600;
+        margin: 0;
+        display: inline-block;
+        vertical-align: middle;
+    }
+
+    .no-records .sub-text {
+        color: #e53e3e;
+        font-size: 0.85rem;
+        margin-top: 0.5rem;
+        opacity: 0.8;
+        display: block;
+    }
+
+    .no-records .suggestion {
+        margin-top: 0.75rem;
+        padding: 0.5rem 1rem;
+        background: rgba(255, 255, 255, 0.8);
+        border-radius: 6px;
+        display: inline-block;
+        color: #4a5568;
+        font-size: 0.85rem;
+        border: 1px solid #e2e8f0;
+        backdrop-filter: blur(4px);
+    }
+
+    .no-records .suggestion strong {
+        color: #2d3748;
+        font-weight: 600;
+    }
+
+    /* Animation for the message */
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-5px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .no-records {
+        animation: fadeIn 0.2s ease-out;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .no-records {
+            padding: 1rem;
+            margin: 0.75rem 0;
+        }
+
+        .no-records p {
+            font-size: 0.95rem;
+        }
+
+        .no-records .suggestion {
+            padding: 0.4rem 0.75rem;
+            font-size: 0.8rem;
+        }
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .history-container {
+            padding: 1rem;
+            margin: 1rem;
+        }
+
+        .filter-form {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .filter-form input[type="text"] {
+            width: 100%;
+        }
+
+        .filter-form button {
+            width: 100%;
+            justify-content: center;
+        }
+
+        table {
+            display: block;
+            overflow-x: auto;
+        }
+
+        th, td {
+            padding: 0.75rem;
+            font-size: 0.9rem;
+        }
+    }
+
+    /* Print Styles Enhancement */
+    @media print {
+        .history-container {
+            box-shadow: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .filter-form,
+        .btn-print,
+        .btn-success,
+        .btn-danger {
+            display: none;
+        }
+
+        .print-area {
+            box-shadow: none;
+            padding: 0;
+        }
+
+        table {
+            box-shadow: none;
+        }
+
+        thead {
+            background: #1c538a !important;
+            color: white !important;
+            -webkitprint-color-adjust: exact;
+        }
+
+        tbody tr:hover {
+            background: none;
+        }
+    }

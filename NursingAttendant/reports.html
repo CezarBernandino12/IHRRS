@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="icon" href="../img/logo.png">
+	<link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="css/dashstyle.css">
+	<title>DOCTOR Dashboard</title>
+</head>
+<style>
+    #content main .box-info {
+        display: flex;
+        flex-direction: row;
+        gap: 20px;
+        width: 100%;
+        max-width: 1200px;
+        padding: 20px;
+        justify-content: flex-start;
+        overflow-x: auto;
+        scroll-behavior: smooth;
+        margin-top: 3%;
+        animation: fadeIn 1s forwards;
+    }
+
+    #content main .box-info li {
+        flex: 0 0 auto;
+        width: 250px;
+        height: 160px;
+        padding: 20px;
+        border-radius: 20px;
+        box-shadow: 0 4px 8px rgba(183, 189, 199, 0.616);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+        position: relative;
+        color: var(--dark);
+        background: #fff;
+        overflow: hidden;
+        opacity: 0;
+        animation: fadeIn 1.8s forwards;
+    }
+
+    #content main .box-info li .icon-img {
+        width: 60px;
+        height: auto;
+        object-fit: contain;
+        margin-bottom: 15px;
+    }
+
+    #content main .box-info li:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 8px 16px rgba(108, 110, 114, 0.616);
+    }
+
+    #content main .box-info li .text {
+        text-align: center;
+    }
+
+    #content main .box-info li .text h3 {
+        font-size: 18px;
+        font-weight: 600;
+        margin: 0;
+        color: #000;
+        letter-spacing: 0.5px;
+    }
+
+    #content main .box-info li.mrr {
+        background: #C6E7FF;
+    }
+
+    /* Animation delay for staggered appearance */
+    #content main .box-info li:nth-child(1) { animation-delay: 0.1s; }
+    #content main .box-info li:nth-child(2) { animation-delay: 0.2s; }
+    #content main .box-info li:nth-child(3) { animation-delay: 0.3s; }
+    #content main .box-info li:nth-child(4) { animation-delay: 0.4s; }
+
+    @keyframes fadeIn {
+        0% {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        100% {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Responsive Design */
+    @media screen and (max-width: 768px) {
+        #content main .box-info {
+            padding: 15px;
+        }
+        #content main .box-info li {
+            width: 220px;
+            height: 150px;
+        }
+        #content main .box-info li .icon-img {
+            width: 50px;
+        }
+        #content main .box-info li .text h3 {
+            font-size: 16px;
+        }
+    }
+
+    @media screen and (max-width: 480px) {
+        #content main .box-info {
+            padding: 10px;
+        }
+        #content main .box-info li {
+            width: 200px;
+            height: 140px;
+            padding: 15px;
+        }
+        #content main .box-info li .icon-img {
+            width: 45px;
+        }
+        #content main .box-info li .text h3 {
+            font-size: 14px;
+        }
+    }
+</style>
+<body>
+
+	<!-- Sidebar Section -->
+	<section id="sidebar">
+		<a href="#" class="brand">
+			<img src="../img/logo.png" alt="RHULogo" class="logo">
+			<span class="text">IHRRS</span>
+		</a>
+		<ul class="side-menu top">
+			<li>
+				<a href="dashboard.html">
+					<i class="bx bxs-dashboard"></i>
+					<span class="text">Dashboard</span>
+				</a>
+			</li>
+			<li>
+				<a href="#" id="updateReferrals">
+					<i class="bx bxs-user"></i>
+					<span class="text">Pending Referrals</span>
+				</a>
+			</li>
+			
+			<script>
+			document.getElementById("updateReferrals").addEventListener("click", function (event) {
+				event.preventDefault(); // Prevent default navigation
+			
+				fetch("php/update_referrals.php") // Call PHP file
+				.then(response => response.json())
+				.then(data => {
+					console.log(data.message); // Log success message (optional)
+					window.location.href = "pending.html"; // Redirect after updating
+				})
+				.catch(error => {
+					console.error("Error updating referrals:", error);
+					window.location.href = "pending.html"; // Still redirect even if an error occurs
+				});
+			});
+			</script>
+			
+			<li>
+				<a href="searchPatient.html">
+					<i class="bx bxs-notepad"></i>
+					<span class="text">Patient Records</span>
+				</a>
+			</li>
+			<li>
+                <a href="history.html">
+                    <i class="bx bx-history"></i>
+                    <span class="text">Referral History</span>
+                </a>
+            </li>
+			<li class="active">
+				<a href="reports.html">
+					<i class="bx bx-notepad"></i>
+					<span class="text">Reports</span>
+				</a>	
+			</li>
+		</ul>
+		<ul class="side-menu">
+			<li>
+				<a href="#" class="logout" onclick="return confirmLogout()">
+               <i class="bx bxs-log-out-circle"></i>
+                <span class="text">Logout</span>
+                </a>			
+			</li>
+		</ul>
+	</section>
+
+	<!-- Main Content Section -->
+	<section id="content">
+		<nav>
+			<form action="#">
+				
+			</form>
+			<div class="greeting">
+                <span id="userGreeting">Hello Nurse!</span>
+            </div>
+			<a href="#" class="profile">
+				<img src="../img/nurse.png">
+			</a>
+		</nav>
+
+		<main>
+			<div class="head-title">
+				<div class="left">
+					<h1>Reports</h1>
+					<ul class="breadcrumb">
+						<li><a href="#">Reports</a></li>
+						<li><i class="bx bx-chevron-right"></i></li>
+						<li><a class="active" href="dashboard.html">Home</a></li>
+					</ul>
+				</div>
+			</div>
+
+
+   
+			<ul class="box-info">
+					  
+				<a href="reportsPages/treatment_history_report.php">
+					<li class="mrr">
+					  <div class="">
+						<img src="../img/treatment.png" alt="Referrals" class="icon-img">
+					  </div>
+					  <div class="text">
+						<h3>Patient Treatment History Report</h3>
+					  </div>
+					</li>
+				  </a>
+				<a href="reportsPages/medicine_utilization_report.php">
+					<li class="mrr">
+					  <div class="icon-container">
+						<img src="../img/meds.png" alt="Medicines" class="icon-img">
+					  </div>
+					  <div class="text">
+						<h3>Medicine Utilization Report</h3>
+					  </div>
+					</li>
+				  </a>
+			
+
+				<a href="reportsPages/referral_summary_report.php">
+				  <li class="mrr">
+					<div class="icon-container">
+					  <img src="../img/referred.png" alt="Visit Report" class="icon-img">
+					</div>
+					<div class="text">
+					  <h3>Referral Intake Summary Report</h3>
+					</div>
+				  </li>
+				</a>
+			
+				<a href="reportsPages/disease_surveillance_report.php">
+				  <li class="mrr">
+					<div class="icon-container">
+					  <img src="../img/survey.png" alt="Referrals" class="icon-img">
+					</div>
+					<div class="text">
+					  <h3>Disease Surveillance Report</h3>
+					</div>
+				  </li>
+				</a>
+			
+		</ul>
+
+
+		
+	<div id="logoutModal" class="modal">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h3>Confirm Logout</h3>
+			</div>
+			<div class="modal-body">
+				<p>Are you sure you want to logout?</p>
+			</div>
+			<div class="modal-footer">
+				<button onclick="closeModal()" class="btn yes">Cancel</button>
+				<button onclick="proceedLogout()" class="btn no">Yes, Logout</button>
+			</div>
+		</div>
+	</div>
+	</main>	
+</section>	
+<script>
+	function confirmLogout() {
+		document.getElementById('logoutModal').style.display = 'block';
+		return false; // Prevent the default link behavior
+	}
+	
+	function closeModal() {
+		document.getElementById('logoutModal').style.display = 'none';
+	}
+	
+	function proceedLogout() {
+		window.location.href = '../ADMIN/php/logout.php'; 
+	}
+	
+	// Close modal when clicking outside
+	window.onclick = function(event) {
+		const modal = document.getElementById('logoutModal');
+		if (event.target == modal) {
+			closeModal();
+		}
+	}
+	      // Check if user is logged in
+		  fetch('php/getUserId.php')
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    // User is not logged in, redirect to role selection page
+                    window.location.href = '../role.html';
+                }
+            })
+            .catch(error => {
+                console.error('Error checking session:', error);
+                window.location.href = '../role.html';
+            });
+
+	</script>
+	<script src="js/script.js"></script>
+</body>
+</html>

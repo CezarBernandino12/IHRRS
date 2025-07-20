@@ -1,0 +1,112 @@
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    overflow: auto;
+    transition: opacity 0.3s ease;
+  }
+  
+  .modal-content {
+    background-color: #fff;
+    margin: 5% auto;
+    padding: 20px;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  }
+  
+  .modal-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    margin-bottom: 10px;
+  }
+  
+  .modal-header .checkmark-image {
+    width: 100px; 
+    height: auto;
+    border-radius: 50%;  
+  }
+  
+  .modal-header h3 {
+    font-size: 18px;
+    color: #333;
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+  }
+  
+  .modal-body {
+    font-size: 16px;
+    color: #555;
+    margin: 10px 0;
+  }
+  
+  .modal-body p {
+    background-color: transparent;
+    margin: 0;
+  }
+  
+  .modal-footer {
+    display: flex;
+    justify-content: center;
+    margin-top: 15px;
+  }
+  
+  .modal-footer .btn {
+    padding: 8px 20px;
+    margin: 0 8px;
+    border: none;
+    cursor: pointer;
+    border-radius: 20px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    color: white;
+  }
+  
+  .maybe {
+    background-color: green;
+  }
+  
+  .yes {
+    background-color: blue;
+  }
+  
+  .cancel, .no {
+    background-color: red;
+  }
+  
+  /* Hover effects */
+  .maybe:hover {
+    background-color: darkgreen;
+  }
+  
+  .yes:hover {
+    background-color: darkblue;
+  }
+  
+  .cancel:hover {
+    background-color: darkred;
+  }
+  
+  .close-btn {
+    position: absolute;
+  top: -10px;
+  right: -5px;
+    font-size: 30px;
+    color: #333;
+    cursor: pointer;
+  }
+  
+  .close-btn:hover {
+    color: #fa4141;
+  }
+  
+  
