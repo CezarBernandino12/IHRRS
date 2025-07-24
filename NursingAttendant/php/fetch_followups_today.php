@@ -10,7 +10,7 @@ try {
     JOIN patients p ON f.patient_id = p.patient_id
     JOIN users u ON f.set_by = u.user_id
     WHERE f.followup_status = 'Pending'
-    AND DATE(f.date) >= CURDATE()
+    AND DATE(f.date) = CURDATE()
     ORDER BY f.date DESC
 ");
 

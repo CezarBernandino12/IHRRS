@@ -189,7 +189,9 @@
                 <div class="detail">
                     <strong>4Ps Status:</strong> <span class="underline">N/A</span>
                 </div>
-            </section>                 
+                
+            </section>     
+                     
     
             <section class="patient-records-section">
                 <h2 class="section-title">Individual Treatment Records</h2>
@@ -199,9 +201,28 @@
             
             
         </main>
+         <button id="summaryBtn">Patient Record Summary</button>  
     </div>
     
     <script>
+
+               // Get the patient_id from the URL
+  const params = new URLSearchParams(window.location.search);
+  const patientId = params.get('patient_id');
+
+  // Build URLs with the patient_id
+  if (patientId) {
+
+    document.getElementById('summaryBtn').onclick = () => {
+      window.location.href = `patientSummary.html?patient_id=${patientId}`;
+    };
+  } else {
+    // Optionally disable buttons if patient_id is not found
+   
+    document.getElementById('summaryBtn').disabled = true;
+    console.warn('No patient_id in URL');
+  }
+
         document.addEventListener("DOMContentLoaded", function() {
             // Get patient_id from the URL
             const urlParams = new URLSearchParams(window.location.search);

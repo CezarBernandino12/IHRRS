@@ -72,7 +72,7 @@ $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 			<img src="../../img/logo.png" alt="RHULogo" class="logo">
 			<span class="text">Hello User</span>
 		</a>
-		<ul class="side-menu top">
+	<ul class="side-menu top">
 			<li>
 				<a href="../dashboard.html">
 					<i class="bx bxs-dashboard"></i>
@@ -80,9 +80,33 @@ $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 				</a>
 			</li>
 			<li>
-				<a href= "../ITR.html">
+				<a href="#" id="updateReferrals">
 					<i class="bx bxs-user"></i>
-					<span class="text">Add ITR</span>
+					<span class="text">Pending Referrals</span>
+				</a>
+			</li>
+			
+			<script>
+			document.getElementById("updateReferrals").addEventListener("click", function (event) {
+				event.preventDefault(); // Prevent default navigation
+			
+				fetch("php/update_referrals.php") // Call PHP file
+				.then(response => response.json())
+				.then(data => {
+					console.log(data.message); // Log success message (optional)
+					window.location.href = "../pending.html"; // Redirect after updating
+				})
+				.catch(error => {
+					console.error("Error updating referrals:", error);
+					window.location.href = "../pending.html"; // Still redirect even if an error occurs
+				});
+			});
+			</script>
+			
+				<li>
+				<a href="../followUpConsultations.html">
+					<i class="bx bxs-user"></i>
+					<span class="text">Follow-Up Visits</span>
 				</a>
 			</li>
 			<li>
@@ -91,19 +115,19 @@ $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 					<span class="text">Patient Records</span>
 				</a>
 			</li>
-
 			<li>
-				<a href="../history.html">
-					<i class="bx bx-history"></i>
-					<span class="text">Referral History</span>
-				</a>
-			</li>
-            <li class="active">
+                <a href="../history.html">
+                    <i class="bx bx-history"></i>
+                    <span class="text">Referral History</span>
+                </a>
+            </li>
+			<li class="active">
 				<a href="../reports.html">
 					<i class="bx bx-notepad"></i>
 					<span class="text">Reports</span>
 				</a>
 			</li>
+		
 		</ul>
 		<ul class="side-menu">
 			<li>

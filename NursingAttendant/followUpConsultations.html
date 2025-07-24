@@ -48,6 +48,12 @@
             });
             </script>
             
+            	<li>
+				<a href="followUpConsultations.html">
+					<i class="bx bxs-user"></i>
+					<span class="text">Follow-Up Visits</span>
+				</a>
+			</li>
 			<li>
 				<a href="searchPatient.html">
 					<i class="bx bxs-notepad"></i>
@@ -99,11 +105,11 @@
 
 		<main>
             
-            <div class="head-title">
+              <div class="head-title">
                 <div class="left">
-                  <h1>Pending Referrals</h1>
+                  <h1>Follow-up Consultations</h1>
                   <ul class="breadcrumb">
-                    <li><a href="#">Pending Referrals</a></li>
+                    <li><a href="#">Follow-up Consultations</a></li>
                     <li><i class="bx bx-chevron-right"></i></li>
                     <li><a class="active" href="#">Home</a></li>
                   </ul>
@@ -112,14 +118,13 @@
 
 <br>
 
-            <div class="history-container">
+               <div class="history-container">
                 <div class="referral-summary-card">
                     <div class="content">
-                      <h3>Referrals Today</h3>
+                      <h3>Today</h3>
                       <span id="currentDate"></span>
                     </div>
                   </div>
-                  
 <script>
     // Get the current date
     const today = new Date();
@@ -131,14 +136,43 @@
   // Display the date in the element
   document.getElementById("currentDate").textContent = formattedDate;
 </script>
-                <table id="history-table" class="status">
+             <table id="todayFollowups-table" class="status">
                     <thead>
                         <tr>
+                       
                             <th>Date</th>
                             <th>Patient Name</th>
                             <th>Scheduled by</th>
                             <th>Status</th>
                             <th>Action</th>
+                            
+                        </tr>
+                    </thead>
+                    <tbody>
+                       
+                        <!-- Dynamic referral data will be inserted here by JavaScript -->
+                    </tbody>
+                    
+                </table> <br><br>
+
+                
+                 <div class="referral-summary-card">
+                    <div class="content">
+                      <h3>Future Consultations</h3>
+                      
+                    </div>
+                  </div>
+
+                  <table id="followups-table" class="status">
+                    <thead>
+                        <tr>
+                       
+                            <th>Date</th>
+                            <th>Patient Name</th>
+                            <th>Scheduled by</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                            
                         </tr>
                     </thead>
                     <tbody>
@@ -158,7 +192,8 @@
             </div>
 
 
-   <!-- Confirmation Modal -->
+
+               <!-- Confirmation Modal -->
 <div id="confirmModal" class="modal">
     <div class="modal-content" style="height: 250px;">
       <div class="modal-header">
@@ -174,8 +209,9 @@
       </div>
     </div>
   </div>
-  
-  <!-- Success Modal -->
+
+
+    <!-- Success Modal -->
   <div id="successModal" class="modal">
     <div class="modal-content">
       <div class="modal-header">
@@ -189,28 +225,29 @@
       </div>
     </div>
   </div>
-  
-	<div id="logoutModal" class="modal">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h3>Confirm Logout</h3>
-			</div>
-			<div class="modal-body">
-				<p>Are you sure you want to logout?</p>
-			</div>
-			<div class="modal-footer">
-				<button onclick="closeModal()" class="btn no">Cancel</button>
-				<button onclick="proceedLogout()" class="btn yes">Yes, Logout</button>
-			</div>
-		</div>
-	</div>
-  
 
+
+            <div id="logoutModal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>Confirm Logout</h3>
+                    </div>
+                    <div class="modal-body">
+                        <p>Are you sure you want to logout?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button onclick="closeModal()" class="btn yes">Cancel</button>
+                        <button onclick="proceedLogout()" class="btn no">Yes, Logout</button>
+                    </div>
+                </div>
+            </div>
 	   </main>	
 </section>
 
+
 <script>
-document.addEventListener("DOMContentLoaded", function () {
+	document.addEventListener("DOMContentLoaded", function () {
+    fetchFollowupsToday();
     fetchFollowups();
 
     const confirmModal = document.getElementById("confirmModal");
@@ -218,13 +255,13 @@ document.addEventListener("DOMContentLoaded", function () {
     const confirmNo = document.getElementById("confirmNo");
     const successModal = document.getElementById("successModal");
     const closeSuccessModal = document.getElementById("closeSuccessModal");
-    let selectedReferralId = null;
+    let selectedFollowupId = null;
 
-    function fetchFollowups() {
+      function fetchFollowups() {
         fetch("php/fetch_followups.php")
             .then(response => response.json())
             .then(data => {
-                const tableBody = document.querySelector("#history-table tbody");
+                const tableBody = document.querySelector("#followups-table tbody");
                 tableBody.innerHTML = "";
 
                 if (data.error) {
@@ -235,13 +272,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 data.forEach(followup => {
                     const row = document.createElement("tr");
-                    const isCompleted = followup.status === "Completed";
+                    const isCompleted = followup.followup_status === "Completed";
                     row.innerHTML = `
                         
                         <td>${formatDate(followup.date)}</td>
                         <td>${followup.patient_name}</td>
                         <td>${followup.full_name}</td>
-                        <td class="${followup.status.toLowerCase()}">${followup.status}</td>
+                        <td class="${followup.followup_status.toLowerCase()}">${followup.followup_status}</td>
                         <td>
                             <a href="#" class="view-icon ${isCompleted ? 'unforward-link' : 'forward-link'}" data-id="${followup.followup_id}">
                                 <i class="bx ${isCompleted ? 'bx-undo' : 'bx-send'}"></i> ${isCompleted ? 'Undo' : 'Mark as Completed'}
@@ -264,14 +301,14 @@ document.addEventListener("DOMContentLoaded", function () {
                     link.addEventListener("click", function (e) {
                         e.preventDefault();
                         e.stopPropagation();
-                        selectedReferralId = this.getAttribute("data-id");
-                        const isUnforward = this.classList.contains("unforward-link");
+                        selectedFollowupId = this.getAttribute("data-id");
+                        const isUndo = this.classList.contains("unforward-link");
                         
                         // Update modal text based on action
                         const modalBody = document.querySelector("#confirmModal .modal-body p");
-                        modalBody.textContent = isUnforward ? 
-                            "Are you sure you want to undo forwarding this referral?" : 
-                            "Are you sure you want to forward this referral to the physician?";
+                        modalBody.textContent = isUndo ? 
+                            "Are you sure you want to undo?" : 
+                            "Are you sure you want to mark this as Completed?";
                             
                         confirmModal.style.display = "flex";
                     });
@@ -282,7 +319,72 @@ document.addEventListener("DOMContentLoaded", function () {
             });
     }
 
-    // Show success modal
+
+
+
+        function fetchFollowupsToday() {
+        fetch("php/fetch_followups_today.php")
+            .then(response => response.json())
+            .then(data => {
+                const tableBody = document.querySelector("#todayFollowups-table tbody");
+                tableBody.innerHTML = "";
+
+                if (data.error) {
+                    console.error(data.error);
+                    tableBody.innerHTML = `<tr><td colspan="6">Error fetching data</td></tr>`;
+                    return;
+                }
+
+                data.forEach(followup => {
+                    const row = document.createElement("tr");
+                    const isCompleted = followup.followup_status === "Completed";
+                    row.innerHTML = `
+                        
+                        <td>${formatDate(followup.date)}</td>
+                        <td>${followup.patient_name}</td>
+                        <td>${followup.full_name}</td>
+                        <td class="${followup.followup_status.toLowerCase()}">${followup.followup_status}</td>
+                        <td>
+                            <a href="#" class="view-icon ${isCompleted ? 'unforward-link' : 'forward-link'}" data-id="${followup.followup_id}">
+                                <i class="bx ${isCompleted ? 'bx-undo' : 'bx-send'}"></i> ${isCompleted ? 'Undo' : 'Mark as Completed'}
+                            </a>
+                        </td>
+                    `;
+
+                    row.style.cursor = "pointer";
+                    row.addEventListener("click", function (e) {
+                        if (!e.target.closest(".forward-link") && !e.target.closest(".unforward-link")) {
+                            window.location.href = `UpdateVisitInfo.html?visit_id=${followup.visit_id}`;
+                        }
+                    });
+
+                    tableBody.appendChild(row);
+                });
+
+                // Attach listener for forward/unforward buttons
+                document.querySelectorAll(".forward-link, .unforward-link").forEach(link => {
+                    link.addEventListener("click", function (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        selectedFollowupId = this.getAttribute("data-id");
+                        const isUndo = this.classList.contains("unforward-link");
+                        
+                        // Update modal text based on action
+                        const modalBody = document.querySelector("#confirmModal .modal-body p");
+                        modalBody.textContent = isUndo ? 
+                            "Are you sure you want to undo?" : 
+                            "Are you sure you want to mark this as Completed??";
+                            
+                        confirmModal.style.display = "flex";
+                    });
+                });
+            })
+            .catch(error => {
+                console.error("Error fetching referrals:", error);
+            });
+    }
+
+           // Show success modal
     function showSuccessModal() {
         successModal.style.display = "block";
 
@@ -300,40 +402,44 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     confirmYes.addEventListener("click", () => {
-        if (selectedReferralId) {
-            const isUnforward = document.querySelector(`[data-id="${selectedReferralId}"]`).classList.contains("unforward-link");
-            fetch("php/update_referral_status.php", {
+        if (selectedFollowupId) {
+            const isUndo = document.querySelector(`[data-id="${selectedFollowupId}"]`).classList.contains("unforward-link");
+            fetch("php/update_followups.php", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    referral_id: selectedReferralId,
-                    new_status: isUnforward ? "Pending" : "Forwarded to Physician"
+                    followup_id: selectedFollowupId,
+                    new_status: isUndo ? "Pending" : "Completed"
                 })
             })
             .then(res => res.json())
             .then(response => {
                 if (response.success) {
                     confirmModal.style.display = "none";
-                    selectedReferralId = null;
+                    selectedFollowupId = null;
                     showSuccessModal(); // Show success modal
                 } else {
                     alert("Failed to update referral status.");
                     confirmModal.style.display = "none";
-                    selectedReferralId = null;
+                    selectedFollowupId = null;
                 }
             })
             .catch(error => {
                 console.error("Error updating referral status:", error);
                 confirmModal.style.display = "none";
-                selectedReferralId = null;
+                selectedFollowupId = null;
             });
         }
     });
 
     confirmNo.addEventListener("click", () => {
         confirmModal.style.display = "none";
-        selectedReferralId = null;
+        selectedFollowupId = null;
     });
+
+
+
+
 
     function formatDate(dateString) {
         if (!dateString) return "N/A";
@@ -347,11 +453,25 @@ document.addEventListener("DOMContentLoaded", function () {
 document.getElementById('searchForm').addEventListener('submit', function(e) {
     e.preventDefault();
     const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-    const table = document.getElementById('history-table');
+    const table = document.getElementById('followups-table');
     const rows = table.getElementsByTagName('tr');
 
     for (let i = 1; i < rows.length; i++) { // Start from 1 to skip header row
         const row = rows[i];
+        const referralId = row.cells[0].textContent.toLowerCase();
+        const patientName = row.cells[2].textContent.toLowerCase();
+        
+        if (referralId.includes(searchTerm) || patientName.includes(searchTerm)) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    }
+    const table2 = document.getElementById('todayFollowups-table');
+    const rows2 = table2.getElementsByTagName('tr');
+
+       for (let i = 1; i < rows2.length; i++) { // Start from 1 to skip header row
+        const row = rows2[i];
         const referralId = row.cells[0].textContent.toLowerCase();
         const patientName = row.cells[2].textContent.toLowerCase();
         
@@ -366,7 +486,7 @@ document.getElementById('searchForm').addEventListener('submit', function(e) {
 // Add event listener for real-time search
 document.getElementById('searchInput').addEventListener('keyup', function() {
     const searchTerm = this.value.toLowerCase();
-    const table = document.getElementById('history-table');
+    const table = document.getElementById('todayFollowups-table');
     const rows = table.getElementsByTagName('tr');
 
     for (let i = 1; i < rows.length; i++) {
@@ -380,7 +500,43 @@ document.getElementById('searchInput').addEventListener('keyup', function() {
             row.style.display = 'none';
         }
     }
+    const table2 = document.getElementById('followups-table');
+    const rows2 = table2.getElementsByTagName('tr');
+
+    for (let i = 1; i < rows2.length; i++) {
+        const row = rows2[i];
+        const referralId = row.cells[0].textContent.toLowerCase();
+        const patientName = row.cells[2].textContent.toLowerCase();
+        
+        if (referralId.includes(searchTerm) || patientName.includes(searchTerm)) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    }
 });
+
+
+function confirmLogout() {
+    document.getElementById('logoutModal').style.display = 'block';
+    return false; // Prevent the default link behavior
+}
+
+function closeModal() {
+    document.getElementById('logoutModal').style.display = 'none';
+}
+
+function proceedLogout() {
+    window.location.href = '../role.html';
+}
+
+// Close modal when clicking outside
+window.onclick = function(event) {
+    const modal = document.getElementById('logoutModal');
+    if (event.target == modal) {
+        closeModal();
+    }
+}
 fetch('php/getUserName.php')
     .then(response => response.json())
     .then(data => {
@@ -393,40 +549,8 @@ fetch('php/getUserName.php')
     .catch(error => {
         console.error('Error fetching user name:', error);
         document.getElementById('userGreeting').textContent = 'Hello, BHW!';
-    }); 
-    function confirmLogout() {
-            document.getElementById('logoutModal').style.display = 'block';
-            return false; // Prevent the default link behavior
-        }
-        
-        function closeModal() {
-            document.getElementById('logoutModal').style.display = 'none';
-        }
-        
-        function proceedLogout() {
-            window.location.href = '../ADMIN/php/logout.php'; 
-        }
-        
-        // Close modal when clicking outside
-        window.onclick = function(event) {
-            const modal = document.getElementById('logoutModal');
-            if (event.target == modal) {
-                closeModal();
-            }
-        } 
-              // Check if user is logged in
-              fetch('php/getUserId.php')
-            .then(response => response.json())
-            .then(data => {
-                if (data.error) {
-                    // User is not logged in, redirect to role selection page
-                    window.location.href = '../role.html';
-                }
-            })
-            .catch(error => {
-                console.error('Error checking session:', error);
-                window.location.href = '../role.html';
-            });
+    });
+
 </script>
 	<script src="js/script.js"></script>
     <script src="js/history.js"></script>
