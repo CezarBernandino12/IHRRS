@@ -315,9 +315,10 @@
     </div>
     
     <div class="form-group">
-        <div class="form-group-title">Signature</i></div>
+        <div class="form-group-title">BHW Signature</i></div>
         <div>
             <textarea readonly style="height: 50px;"></textarea>
+            <span id="bhwName">BHW</span>
         </div>
     </div>
     <input type="hidden" id="visit-id" name="visit_id">
@@ -452,8 +453,9 @@ fetch('php/getUserName.php')
     .then(data => {
         if (data.full_name) {
             document.getElementById('userGreeting').textContent = `Hello, ${data.full_name}!`;
+            document.getElementById('bhwName').textContent = data.full_name; // Update BHW name in details
         } else {
-            document.getElementById('userGreeting').textContent = 'Hello, BHW!';
+            document.getElementById('userGreeting').textContent = `Hello, ${data.full_name}!`;
         }
     })
     .catch(error => {
