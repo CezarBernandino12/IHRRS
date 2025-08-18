@@ -24,13 +24,16 @@ $from_date = $_GET['from_date'] ?? '';
 $to_date = $_GET['to_date'] ?? '';
 $sex = $_GET['sex'] ?? '';
 $age_group = $_GET['age_group'] ?? '';
+$purok = $_GET['purok'] ?? ''; // Use 'purok' for address filtering
+$bmi = $_GET['bmi'] ?? '';
 
 // Build query with filters
 $sql = "SELECT v.*, p.first_name, p.last_name, p.age, p.sex FROM bhs_visits v 
         JOIN patients p ON v.patient_id = p.patient_id 
-        WHERE 1";
+        WHERE p.address LIKE :barangay"; // Always require barangay match
 
 $params = [];
+$params['barangay'] = '%' . $barangayName . '%'; // Always set this param
 
 if (!empty($from_date) && !empty($to_date)) {
     $sql .= " AND DATE(v.visit_date) BETWEEN :from_date AND :to_date";
@@ -50,6 +53,29 @@ if (!empty($age_group)) {
         case 'adult': $sql .= " AND p.age BETWEEN 20 AND 59"; break;
         case 'senior':$sql .= " AND p.age >= 60"; break;
     }
+}
+
+if (!empty($purok)) {
+    // Use 'purok' for address filtering
+    $sql .= " AND p.address LIKE :purok";
+    $params['purok'] = '%' . $purok . '%';
+}
+
+if (!empty($bmi)) {
+    switch ($bmi) {
+        case 'underweight': $sql .= " AND v.bmi < 18.5"; break;
+        case 'normal':  $sql .= " AND v.bmi >= 18.5 AND v.bmi <= 24.9"; break;
+        case 'overweight': $sql .= " AND v.bmi >= 25 AND v.bmi <= 29.9"; break;
+        case 'class1':  $sql .= " AND v.bmi >= 30 AND v.bmi <= 34.9"; break;
+        case 'class2': $sql .= " AND v.bmi >= 35 AND v.bmi <= 39.9"; break;
+        case 'class3':$sql .= " AND v.bmi >= 40"; break;
+    }
+}
+
+// Add this condition to filter by barangay in address
+if (!empty($barangayName) && $barangayName !== 'N/A') {
+    $sql .= " AND p.address LIKE :barangay";
+    $params['barangay'] = '%' . $barangayName . '%';
 }
 
 $stmt = $pdo->prepare($sql);
@@ -163,7 +189,7 @@ $most_dispensed_quantity = current($medicine_counts);
                 <div class="left">
                   <h1>Dispensary</h1>
                   <ul class="breadcrumb">
-                    <li><a href="#">Patient Visit Report</a></li>
+                    <li><a href="#">BHS Dispensary Report</a></li>
                     <li><i class="bx bx-chevron-right"></i></li>
                     <li><a class="active" href="#" onclick="history.back(); return false;">Go back</a></li>
                   </ul>
@@ -174,51 +200,122 @@ $most_dispensed_quantity = current($medicine_counts);
             </div>
 
 <div class="history-container">
+
+    
 	
 
 <!-- Filter Form -->
 <form method="GET" class="filter-form">
-    <div class="form-row">
-        <div class="form-item">
-            <label for="from_date">From:</label>
-            <input type="date" name="from_date" id="from_date" class="form-control" value="<?= htmlspecialchars($from_date) ?>">
-        </div>
-
-        <div class="form-item">
-            <label for="to_date">To:</label>
-            <input type="date" name="to_date" id="to_date" class="form-control" value="<?= htmlspecialchars($to_date) ?>">
-        </div>
-
-        <div class="form-item">
-            <label for="sex">Sex:</label>
-            <select name="sex" id="sex" class="form-control">
-                <option value="">All</option>
-                <option value="Male" <?= $sex == 'Male' ? 'selected' : '' ?>>Male</option>
-                <option value="Female" <?= $sex == 'Female' ? 'selected' : '' ?>>Female</option>
-            </select>
-        </div>
-
-        <div class="form-item">
-            <label for="age_group">Age Group:</label>
-            <select name="age_group" id="age_group" class="form-control">
-                <option value="">All</option>
-                <option value="child" <?= $age_group == 'child' ? 'selected' : '' ?>>Child (0–12)</option>
-                <option value="teen" <?= $age_group == 'teen' ? 'selected' : '' ?>>Teen (13–19)</option>
-                <option value="adult" <?= $age_group == 'adult' ? 'selected' : '' ?>>Adult (20–59)</option>
-                <option value="senior" <?= $age_group == 'senior' ? 'selected' : '' ?>>Senior (60+)</option>
-            </select>
-        </div>
-        
-        <div class="form-item-wrapper">
-            <button type="submit" class="btn-submit">Filter</button>
-        </div>
-    </div>
-
-    <div class="form-submit">
+    <h2>Dispensary - <?php echo htmlspecialchars($barangayName); ?></h2> <br>
+   
+    
+    <!-- Filter Modal Trigger -->
+   
+        <div class="form-submit">
+               <button type="button" class="btn-export" id="openFilterModal">Filter</button>
         <button type="button" class="btn-export" onclick="exportTableToExcel('reportTable')">Export to Excel</button>
         <button type="button" class="btn-export" onclick="exportTableToPDF()">Export to PDF</button>
         <button type="button" class="btn-print" onclick="printDiv()">Print this page</button>
     </div>
+
+    <!-- Filter Modal -->
+    <div id="filterModal" class="modal" style="display:none;">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3>Apply Filters</h3>
+            </div>
+            <form method="GET" id="filterForm">
+                <div class="modal-body">
+                    <div class="form-row">
+                        <div class="form-item">
+                            <label for="from_date">From:</label>
+                            <input type="date" name="from_date" id="from_date" class="form-control" value="<?= htmlspecialchars($from_date) ?>">
+                        </div>
+                        <div class="form-item">
+                            <label for="to_date">To:</label>
+                            <input type="date" name="to_date" id="to_date" class="form-control" value="<?= htmlspecialchars($to_date) ?>">
+                        </div>
+                        <div class="form-item">
+                            <label for="sex">Sex:</label>
+                            <select name="sex" id="sex" class="form-control">
+                                <option value="">All</option>
+                                <option value="Male" <?= $sex == 'Male' ? 'selected' : '' ?>>Male</option>
+                                <option value="Female" <?= $sex == 'Female' ? 'selected' : '' ?>>Female</option>
+                            </select>
+                        </div>
+                        <div class="form-item">
+                            <label for="age_group">Age Group:</label>
+                            <select name="age_group" id="age_group" class="form-control">
+                                <option value="">All</option> 
+                                <option value="child" <?= $age_group == 'child' ? 'selected' : '' ?>>Child (0–12)</option>
+                                <option value="teen" <?= $age_group == 'teen' ? 'selected' : '' ?>>Teen (13–19)</option>
+                                <option value="adult" <?= $age_group == 'adult' ? 'selected' : '' ?>>Adult (20–59)</option>
+                                <option value="senior" <?= $age_group == 'senior' ? 'selected' : '' ?>>Senior (60+)</option>
+                            </select> </div>
+                        <div class="form-item">
+                            <label for="purok">Address (by purok):</label>
+                            <select name="purok" id="purok" class="form-control">
+                                <option value="">All</option>
+                                <?php
+                                // Fetch puroks that match the barangay name in the value
+                                $purok_stmt = $pdo->prepare("SELECT value FROM custom_options WHERE value LIKE ?");
+                                $purok_stmt->execute(['%' . $barangayName . '%']);
+                                $selected_purok = $_GET['purok'] ?? '';
+                                while ($row = $purok_stmt->fetch()) {
+                                    $value = $row['value'];
+                                    $selected = ($selected_purok === $value) ? 'selected' : '';
+                                    echo "<option value=\"" . htmlspecialchars($value) . "\" $selected>" . htmlspecialchars($value) . "</option>";
+                                }
+                                ?>
+                            </select>
+                        </div>
+
+
+                             <div class="form-item">
+                            <label for="bmi">BMI:</label>
+                            <select name="bmi" id="bmi" class="form-control">
+                                <option value="">All</option> </div>
+                                <option value="underweight" <?= $bmi == 'underweight' ? 'selected' : '' ?>>Underweight (less than 18.5 )</option>
+                                <option value="normal" <?= $bmi == 'normal' ? 'selected' : '' ?>>Normal (18.5 to 24.9)</option>
+                                <option value="overweight" <?= $bmi == 'overweight' ? 'selected' : '' ?>>Overweight (25 to 29.9)</option>
+                                <option value="class1" <?= $bmi == 'class1' ? 'selected' : '' ?>>Class 1 - Moderate obesity (30 to 34.9)</option>
+                                <option value="class2" <?= $bmi == 'class2' ? 'selected' : '' ?>>Class 2 - Severe obesity (35 to 39.9)</option>
+                                <option value="class3" <?= $bmi == 'class3' ? 'selected' : '' ?>>Class 3 - Morbid obesity (40 or greater)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" style="text-align:right;">
+                    <button type="button" class="btn" id="closeFilterModal">Cancel</button>
+                    <button type="submit" class="btn-submit">Apply Filter</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+    // Modal logic for filter
+    document.getElementById('openFilterModal').onclick = function() {
+        document.getElementById('filterModal').style.display = 'block';
+    };
+    document.getElementById('closeFilterModal').onclick = function() {
+        document.getElementById('filterModal').style.display = 'none';
+    };
+    // Submit modal form
+    document.getElementById('filterForm').onsubmit = function() {
+        document.getElementById('filterModal').style.display = 'none';
+        return true; // allow form submit
+    };
+    // Close modal when clicking outside
+    window.addEventListener('click', function(event) {
+        var modal = document.getElementById('filterModal');
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
+    });
+    </script>
+
+
 </form>
 
 <div class="main-content">
@@ -234,28 +331,8 @@ $most_dispensed_quantity = current($medicine_counts);
   <h2>DISPENSARY</h2>
 </div>
 <div class="report-content">
-<!-- Summary Section -->
-<div class="summary-container">
-    <div class="summary">
-        <h3><i class="bx bx-file"></i> Summary:</h3>
-        <ul class="summary-list">
-            <li><strong>Total Patients:</strong> <?= $total_patients ?></li>
-            <li><strong>Total Medicines Dispensed:</strong> <?= $total_medicines_dispensed ?></li>
-            <li><strong>Most Dispensed Medicine:</strong> <?= htmlspecialchars($most_dispensed_medicine) ?> (<?= $most_dispensed_quantity ?>)</li>
-        </ul>
-    </div>
 
-    <div class="summary">
-        <h3><i class="bx bx-filter-alt"></i> Selected Filters:</h3>
-        <ul class="summary-list">
-            <li><strong>From:</strong> <?= $from_date ? htmlspecialchars($from_date) : 'All' ?></li>
-            <li><strong>To:</strong> <?= $to_date ? htmlspecialchars($to_date) : 'All' ?></li>
-            <li><strong>Sex:</strong> <?= $sex ? htmlspecialchars($sex) : 'All' ?></li>
-            <li><strong>Age Group:</strong> <?= $age_group ? ucfirst(htmlspecialchars($age_group)) : 'All' ?></li>
-        </ul>
-    </div>
-</div>
-<br>
+
 
 <!-- Table with Visit Details -->
 <?php if ($visits): ?>
@@ -314,8 +391,28 @@ $most_dispensed_quantity = current($medicine_counts);
     <?php endforeach; ?>
     </tbody>
 </table>
-           
+           <br>
+<!-- Summary Section -->
+<div class="summary-container">
+    <div class="summary">
+        <h3><i class="bx bx-file"></i> Summary:</h3>
+        <ul class="summary-list">
+            <li><strong>Total Patients:</strong> <?= $total_patients ?></li>
+            <li><strong>Total Medicines Dispensed:</strong> <?= $total_medicines_dispensed ?></li>
+            <li><strong>Most Dispensed Medicine:</strong> <?= htmlspecialchars($most_dispensed_medicine) ?> (<?= $most_dispensed_quantity ?>)</li>
+        </ul>
+    </div>
 
+    <div class="summary">
+        <h3><i class="bx bx-filter-alt"></i> Selected Filters:</h3>
+        <ul class="summary-list">
+            <li><strong>From:</strong> <?= $from_date ? htmlspecialchars($from_date) : 'All' ?></li>
+            <li><strong>To:</strong> <?= $to_date ? htmlspecialchars($to_date) : 'All' ?></li>
+            <li><strong>Sex:</strong> <?= $sex ? htmlspecialchars($sex) : 'All' ?></li>
+            <li><strong>Age Group:</strong> <?= $age_group ? ucfirst(htmlspecialchars($age_group)) : 'All' ?></li>
+        </ul>
+    </div>
+</div>
 <?php else: ?>
     <p>No visits found for the selected filters.</p>
 <?php endif; ?>
