@@ -22,6 +22,10 @@ $from_date = $_GET['from_date'] ?? '';
 $to_date = $_GET['to_date'] ?? '';
 $referral_status = $_GET['status'] ?? '';
 $bhw_id = $_GET['bhw'] ?? '';
+$sex = $_GET['sex'] ?? '';
+$age_group = $_GET['age_group'] ?? '';
+$status = $_GET['status'] ?? '';
+
 
 // Fetch BHWs for dropdown
 $bhw_stmt = $pdo->query("SELECT user_id, full_name FROM users WHERE role = 'BHW'");
@@ -33,9 +37,10 @@ $sql = "SELECT r.*, p.first_name, p.last_name, p.sex, p.age, v.visit_date, v.chi
         JOIN bhs_visits v ON r.visit_id = v.visit_id
         JOIN patients p ON r.patient_id = p.patient_id
         JOIN users u ON r.referred_by = u.user_id
-        WHERE 1=1";
+        WHERE p.address LIKE :barangay";
 
 $params = [];
+$params['barangay'] = '%' . $barangayName . '%';
 
 if (!empty($from_date) && !empty($to_date)) {
     $sql .= " AND DATE(r.referral_date) BETWEEN :from AND :to";
@@ -51,6 +56,18 @@ if (!empty($referral_status)) {
 if (!empty($bhw_id)) {
     $sql .= " AND r.referred_by = :bhw";
     $params['bhw'] = $bhw_id;
+}
+if (!empty($sex)) {
+    $sql .= " AND p.sex = :sex";
+    $params['sex'] = $sex;
+}
+if (!empty($age_group)) {
+    switch ($age_group) {
+        case 'child': $sql .= " AND p.age < 13"; break;
+        case 'teen':  $sql .= " AND p.age BETWEEN 13 AND 19"; break;
+        case 'adult': $sql .= " AND p.age BETWEEN 20 AND 59"; break;
+        case 'senior':$sql .= " AND p.age >= 60"; break;
+    }
 }
 
 $sql .= " ORDER BY r.referral_date DESC";
@@ -157,17 +174,99 @@ $rows = $stmt->fetchAll();
 	
 
 <form method="GET" class="filter-form">
-    <div class="form-row">
-        <div class="form-item">
-            <label for="from_date">From:</label>
-            <input type="date" name="from_date" id="from_date" value="<?= htmlspecialchars($from_date) ?>">
-        </div>
+    <h2>Referral Report - BHS <?php echo htmlspecialchars($barangayName); ?></h2> <br>
 
-        <div class="form-item">
-            <label for="to_date">To:</label>
-            <input type="date" name="to_date" id="to_date" value="<?= htmlspecialchars($to_date) ?>">
-        </div>
+   
+    <!-- Filter Modal Trigger -->
+   
+        <div class="form-submit">
+               <button type="button" class="btn-export" id="openFilterModal">Filter</button>
+        <button type="button" class="btn-export" onclick="exportTableToExcel('reportTable')">Export to Excel</button>
+        <button type="button" class="btn-export" onclick="exportTableToPDF()">Export to PDF</button>
+        <button type="button" class="btn-print" onclick="printDiv()">Print this page</button>
+    </div>
 
+    <!-- Modern Filter Tags Display -->
+    <div class="selected-filters" style="margin: 20px 0;">
+        <h3 style="margin-bottom: 10px;"><i class="bx bx-filter-alt"></i> Selected Filters:</h3>
+        <div id="filterTags" style="display: flex; flex-wrap: wrap; gap: 8px;">
+            <?php
+            // Helper for tag rendering
+            function renderTag($label, $param, $value) {
+                $display = htmlspecialchars($label . ': ' . $value);
+                $url = $_GET;
+                unset($url[$param]);
+                $query = http_build_query($url);
+                echo '<span class="filter-tag" style="background:#e3e6ea;color:#222;padding:6px 12px;border-radius:16px;display:inline-flex;align-items:center;font-size:14px;">';
+                echo $display;
+                echo ' <a href="?' . $query . '" style="margin-left:8px;color:#888;text-decoration:none;font-weight:bold;" title="Remove filter">&times;</a>';
+                echo '</span>';
+            }
+
+            // Render tags for each filter if set
+            if ($from_date) renderTag('From', 'from_date', $from_date);
+            if ($to_date) renderTag('To', 'to_date', $to_date);
+            if ($sex) renderTag('Sex', 'sex', $sex);
+            if ($status) renderTag('Status', 'status', $status);
+            if ($bhw_id) renderTag('Bhw', 'bhw', $bhw_id);
+            if ($age_group) {
+                $age_labels = [
+                    'child' => 'Child (0–12)', 'teen' => 'Teen (13–19)',
+                    'adult' => 'Adult (20–59)', 'senior' => 'Senior (60+)'
+                ];
+                renderTag('Age Group', 'age_group', $age_labels[$age_group] ?? ucfirst($age_group));
+            }
+        
+            // If no filters, show "All"
+            if (
+                !$from_date && !$to_date && !$sex && !$age_group &&
+                !$status && !$bhw_id 
+            ) {
+                echo '<span style="color:#888;">All</span>';
+            }
+            ?>
+        </div>
+    </div>
+    <style>
+        .filter-tag a:hover { color: #e15759; }
+    </style>
+
+
+  <!-- Filter Modal -->
+    <div id="filterModal" class="modal" style="display:none;">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3>Apply Filters</h3>
+            </div>
+            <form method="GET" id="filterForm">
+                <div class="modal-body">
+                    <div class="form-row">
+                        <div class="form-item">
+                            <label for="from_date">From:</label>
+                            <input type="date" name="from_date" id="from_date" class="form-control" value="<?= htmlspecialchars($from_date) ?>">
+                        </div>
+                        <div class="form-item">
+                            <label for="to_date">To:</label>
+                            <input type="date" name="to_date" id="to_date" class="form-control" value="<?= htmlspecialchars($to_date) ?>">
+                        </div>
+                        <div class="form-item">
+                            <label for="sex">Sex:</label>
+                            <select name="sex" id="sex" class="form-control">
+                                <option value="" <?= $sex == '' ? 'selected' : '' ?>>All</option>
+                                <option value="Male" <?= $sex == 'Male' ? 'selected' : '' ?>>Male</option>
+                                <option value="Female" <?= $sex == 'Female' ? 'selected' : '' ?>>Female</option>
+                            </select>
+                        </div>
+                        <div class="form-item">
+                            <label for="age_group">Age Group:</label>
+                            <select name="age_group" id="age_group" class="form-control">
+                                <option value="">All</option> 
+                                <option value="child" <?= $age_group == 'child' ? 'selected' : '' ?>>Child (0–12)</option>
+                                <option value="teen" <?= $age_group == 'teen' ? 'selected' : '' ?>>Teen (13–19)</option>
+                                <option value="adult" <?= $age_group == 'adult' ? 'selected' : '' ?>>Adult (20–59)</option>
+                                <option value="senior" <?= $age_group == 'senior' ? 'selected' : '' ?>>Senior (60+)</option>
+                            </select> </div>
+                            
         <div class="form-item">
             <label for="status">Status:</label>
             <select name="status" id="status">
@@ -180,7 +279,7 @@ $rows = $stmt->fetchAll();
         </div>
 
         <div class="form-item">
-            <label for="bhw">BHW:</label>
+            <label for="bhw">Referred by:</label>
             <select name="bhw" id="bhw">
                 <option value="">-- All --</option>
                 <?php foreach ($bhws as $bhw): ?>
@@ -189,17 +288,44 @@ $rows = $stmt->fetchAll();
                     </option>
                 <?php endforeach; ?>
             </select>
+        </div>       
+                            
+                        </div>
+                    </div>
+                     <div class="modal-footer" style="text-align:right;">
+                    <button type="button" class="btn" id="closeFilterModal">Cancel</button>
+                    <button type="submit" class="btn-submit">Apply Filter</button>
+                </div>
+              
+               
+            </form>
+              </div>
         </div>
-        <div class="form-item-wrapper">
-            <button type="submit">Filter</button>
-        </div>
-    </div>
 
-    <div class="form-submit">
-        <button type="button" onclick="exportTableToExcel('reportTable')">Export to Excel</button>
-        <button type="button" onclick="exportTableToPDF()">Export to PDF</button>
-        <button type="button" onclick="printDiv()">Print this page</button>
-    </div>
+
+
+    <script>
+    // Modal logic for filter
+    document.getElementById('openFilterModal').onclick = function() {
+        document.getElementById('filterModal').style.display = 'block';
+    };
+    document.getElementById('closeFilterModal').onclick = function() {
+        document.getElementById('filterModal').style.display = 'none';
+    };
+    // Submit modal form
+    document.getElementById('filterForm').onsubmit = function() {
+        document.getElementById('filterModal').style.display = 'none';
+        return true; // allow form submit
+    };
+    // Close modal when clicking outside
+    window.addEventListener('click', function(event) {
+        var modal = document.getElementById('filterModal');
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
+    });
+    </script>
+
 </form>
 
 
@@ -218,33 +344,157 @@ $rows = $stmt->fetchAll();
 <div class="report-content">
 
 
+<?php
+// Count sent referrals (matches current filters)
+$referral_count = count($rows);
+
+// Build visits-without-referral query using same filters
+$visit_sql = "SELECT COUNT(*) FROM bhs_visits v
+    JOIN patients p ON v.patient_id = p.patient_id
+    WHERE p.address LIKE :barangay
+    AND v.visit_id NOT IN (SELECT visit_id FROM referrals)";
+$visit_params = ['barangay' => '%' . $barangayName . '%'];
+
+// Apply filters to visits (reuse logic)
+if (!empty($from_date) && !empty($to_date)) {
+    $visit_sql .= " AND DATE(v.visit_date) BETWEEN :from AND :to";
+    $visit_params['from'] = $from_date;
+    $visit_params['to'] = $to_date;
+}
+if (!empty($sex)) {
+    $visit_sql .= " AND p.sex = :sex";
+    $visit_params['sex'] = $sex;
+}
+if (!empty($age_group)) {
+    switch ($age_group) {
+        case 'child': $visit_sql .= " AND p.age < 13"; break;
+        case 'teen':  $visit_sql .= " AND p.age BETWEEN 13 AND 19"; break;
+        case 'adult': $visit_sql .= " AND p.age BETWEEN 20 AND 59"; break;
+        case 'senior':$visit_sql .= " AND p.age >= 60"; break;
+    }
+}
+if (!empty($bhw_id)) {
+    $visit_sql .= " AND v.bhw_id = :bhw";
+    $visit_params['bhw'] = $bhw_id;
+}
+
+$visit_stmt = $pdo->prepare($visit_sql);
+$visit_stmt->execute($visit_params);
+$visits_without_referral = (int)$visit_stmt->fetchColumn();
+?>
+
+<!-- Pie Chart Section -->
+<div style="max-width:400px;margin:30px auto 30px auto;">
+    <canvas id="referralPieChart"></canvas>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const ctx = document.getElementById('referralPieChart').getContext('2d');
+const referralCount = <?= $referral_count ?>;
+const visitsWithoutReferral = <?= $visits_without_referral ?>;
+const pieChart = new Chart(ctx, {
+    type: 'pie',
+    data: {
+        labels: ['Sent Referrals', 'Visits Without Referral'],
+        datasets: [{
+            data: [referralCount, visitsWithoutReferral],
+            backgroundColor: ['#1c538a', '#e3e6ea'],
+            borderColor: ['#1c538a', '#e3e6ea'],
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: { position: 'bottom' },
+            title: {
+                display: true,
+                text: 'Referrals vs. Visits Without Referral'
+            }
+        }
+    }
+});
+</script>
+
+
+<!-- Referral Status Distribution Pie Chart -->
+<?php
+// Count referral statuses based on current filters
+$status_counts = [
+    'Completed' => 0,
+    'Uncompleted' => 0,
+    'Pending' => 0,
+    'Canceled' => 0
+];
+foreach ($rows as $row) {
+    $status = ucfirst(strtolower($row['referral_status']));
+    if (isset($status_counts[$status])) {
+        $status_counts[$status]++;
+    }
+}
+?>
+<div style="max-width:400px;margin:30px auto 30px auto;">
+    <canvas id="statusPieChart"></canvas>
+</div>
+<script>
+const statusCtx = document.getElementById('statusPieChart').getContext('2d');
+const statusData = {
+    labels: ['Completed', 'Uncompleted', 'Pending', 'Canceled'],
+    datasets: [{
+        data: [
+            <?= $status_counts['Completed'] ?>,
+            <?= $status_counts['Uncompleted'] ?>,
+            <?= $status_counts['Pending'] ?>,
+            <?= $status_counts['Canceled'] ?>
+        ],
+        backgroundColor: [
+            '#2e8540',    // Completed - green
+            '#d83933',    // Uncompleted - red
+            '#1c538a',    // Pending - blue
+            '#888888'     // Canceled - gray
+        ],
+        borderColor: [
+            '#2e8540',
+            '#d83933',
+            '#1c538a',
+            '#888888'
+        ],
+        borderWidth: 1
+    }]
+};
+const statusPieChart = new Chart(statusCtx, {
+    type: 'pie',
+    data: statusData,
+    options: {
+        responsive: true,
+        plugins: {
+            legend: { position: 'bottom' },
+            title: {
+                display: true,
+                text: 'Referral Status Distribution'
+            }
+        }
+    }
+});
+</script>
+
+
+
 <!-- Summary -->
 <div class="summary-container">
     <div class="summary">
-        <h4><i class="bx bx-filter-alt"></i> Factors Applied:</h4>
-        <ul class="summary-list">
-            <?php if (!empty($from_date) && !empty($to_date)): ?>
-                <li><strong>Date Range:</strong> <?= htmlspecialchars($from_date) ?> to <?= htmlspecialchars($to_date) ?></li>
-            <?php endif; ?>
-            <?php if (!empty($referral_status)): ?>
-                <li><strong>Status:</strong> <?= htmlspecialchars($referral_status) ?></li>
-            <?php endif; ?>
-            <?php if (!empty($bhw_id)): ?>
-                <?php
-                    $selected_bhw = array_filter($bhws, fn($b) => $b['user_id'] == $bhw_id);
-                    $bhw_name = $selected_bhw ? reset($selected_bhw)['full_name'] : 'Unknown BHW';
-                ?>
-                <li><strong>BHW:</strong> <?= htmlspecialchars($bhw_name) ?></li>
-            <?php endif; ?>
-            <?php if (empty($from_date) && empty($to_date) && empty($referral_status) && empty($bhw_id)): ?>
-                <li><em>No filters applied. Showing all referrals.</em></li>
-            <?php endif; ?>
-        </ul>
+        <h4><i class="bx bx-filter-alt"></i>Summary:</h4>
+    <ul  class="summary-list">
+        <li><strong>Total Referrals:</strong> <?= $referral_count ?></li>
+        <li><strong>Visits With Referral:</strong> <?= $referral_count ?></li>
+        <li><strong>Visits Without Referral:</strong> <?= $visits_without_referral ?></li>
+        <li><strong>Pending Referrals:</strong> <?= $status_counts['Pending'] ?></li>
+        <li><strong>Completed Referrals:</strong> <?= $status_counts['Completed'] ?></li>
+        <li><strong>Uncompleted Referrals:</strong> <?= $status_counts['Uncompleted'] ?></li>
+        <li><strong>Canceled Referrals:</strong> <?= $status_counts['Canceled'] ?></li>
+    </ul>
     </div>
 
-    <div class="summary">
-        <strong><i class="bx bx-file"></i> Total Records:</strong> <?= count($rows) ?>
-    </div>
 </div>
 
 
@@ -297,6 +547,10 @@ $rows = $stmt->fetchAll();
         <?php endforeach; ?>
     </tbody>
 </table>
+     <br>
+
+    <br> <br>
+     <span id="generated_by"></span>
 
 <?php else: ?>
     <p>No referrals found for the selected filters.</p>
@@ -405,14 +659,16 @@ function printDiv() {
     printWindow.focus();
     printWindow.print();
     printWindow.close();
-}
+} 
 fetch('../php/getUserName.php')
     .then(response => response.json())
     .then(data => {
         if (data.full_name) {
             document.getElementById('userGreeting').textContent = `Hello, ${data.full_name}!`;
+                   document.getElementById('generated_by').textContent = `Generated by: ${data.full_name}`;
         } else {
             document.getElementById('userGreeting').textContent = 'Hello, BHW!';
+              document.getElementById('generated_by').textContent = 'Generated by: N/A';
         }
     })
     .catch(error => {

@@ -22,8 +22,11 @@ $barangayName = $user ? $user['barangay'] : 'N/A';
 // Get filters
 $from_date = $_GET['from_date'] ?? '';
 $to_date = $_GET['to_date'] ?? '';
-$medicine = $_GET['medicine'] ?? '';
-$bhw_id = $_GET['bhw_id'] ?? '';
+// Accept multiple medicines
+$medicine = isset($_GET['medicine']) ? (array)$_GET['medicine'] : [];
+$bhw_id = $_GET['bhw'] ?? '';
+$sex = $_GET['sex'] ?? '';
+$age_group = $_GET['age_group'] ?? '';
 
 // Build SQL
 $sql = "SELECT m.*, v.visit_date, v.bhw_id, p.first_name, p.last_name, p.sex, p.age, u.full_name AS bhw_name
@@ -31,9 +34,11 @@ $sql = "SELECT m.*, v.visit_date, v.bhw_id, p.first_name, p.last_name, p.sex, p.
         JOIN bhs_visits v ON m.visit_id = v.visit_id
         JOIN patients p ON v.patient_id = p.patient_id
         LEFT JOIN users u ON v.bhw_id = u.user_id
-        WHERE 1=1";
+        WHERE p.address LIKE :barangay";
 
 $params = [];
+$params['barangay'] = '%' . $barangayName . '%';
+
 
 if (!empty($from_date) && !empty($to_date)) {
     $sql .= " AND DATE(m.dispensed_date) BETWEEN :from_date AND :to_date";
@@ -42,13 +47,32 @@ if (!empty($from_date) && !empty($to_date)) {
 }
 
 if (!empty($medicine)) {
-    $sql .= " AND m.medicine_name LIKE :medicine";
-    $params['medicine'] = "%$medicine%";
+    // Build placeholders for each selected medicine
+    $placeholders = [];
+    foreach ($medicine as $i => $med) {
+        $ph = ":medicine_$i";
+        $placeholders[] = $ph;
+        $params["medicine_$i"] = $med;
+    }
+    $sql .= " AND m.medicine_name IN (" . implode(',', $placeholders) . ")";
 }
 
 if (!empty($bhw_id)) {
     $sql .= " AND v.bhw_id = :bhw_id";
     $params['bhw_id'] = $bhw_id;
+}
+
+if (!empty($sex)) {
+    $sql .= " AND p.sex = :sex";
+    $params['sex'] = $sex;
+}
+if (!empty($age_group)) {
+    switch ($age_group) {
+        case 'child': $sql .= " AND p.age < 13"; break;
+        case 'teen':  $sql .= " AND p.age BETWEEN 13 AND 19"; break;
+        case 'adult': $sql .= " AND p.age BETWEEN 20 AND 59"; break;
+        case 'senior':$sql .= " AND p.age >= 60"; break;
+    }
 }
 
 $sql .= " ORDER BY m.dispensed_date DESC";
@@ -160,44 +184,190 @@ $bhws = $bhw_stmt->fetchAll();
 
 
 <form method="GET" class="filter-form">
-    <div class="form-row">
-        <div class="form-item">
-            <label for="from_date">From:</label>
-            <input type="date" name="from_date" id="from_date" class="form-control" value="<?= htmlspecialchars($from_date) ?>">
+      <h2>Medicine Dispensation Report - BHS <?php echo htmlspecialchars($barangayName); ?></h2> <br>
+
+    <!-- Filter Modal Trigger -->
+   
+        <div class="form-submit">
+               <button type="button" class="btn-export" id="openFilterModal">Filter</button>
+        <button type="button" class="btn-export" onclick="exportTableToExcel('reportTable')">Export to Excel</button>
+        <button type="button" class="btn-export" onclick="exportTableToPDF()">Export to PDF</button>
+        <button type="button" class="btn-print" onclick="printDiv()">Print this page</button>
+    </div>
+
+    <!-- Modern Filter Tags Display -->
+    <div class="selected-filters" style="margin: 20px 0;">
+        <h3 style="margin-bottom: 10px;"><i class="bx bx-filter-alt"></i> Selected Filters:</h3>
+        <div id="filterTags" style="display: flex; flex-wrap: wrap; gap: 8px;">
+            <?php
+            // Helper for tag rendering
+            function renderTag($label, $param, $value) {
+                $display = htmlspecialchars($label . ': ' . $value);
+                $url = $_GET;
+
+                // Special handling for multi-value filters like medicine[]
+                if (substr($param, -2) === '[]') {
+                    $base = substr($param, 0, -2);
+                    if (isset($url[$base]) && is_array($url[$base])) {
+                        // Remove only the specific value
+                        $url[$base] = array_values(array_diff($url[$base], [$value]));
+                        // If empty, unset to avoid empty param in URL
+                        if (empty($url[$base])) unset($url[$base]);
+                    }
+                    // For building query, use param[] syntax
+                    $query = http_build_query($url);
+                    // Fix for [] in query string
+                    $query = preg_replace('/%5B\d+%5D=/', '%5B%5D=', $query);
+                } else {
+                    unset($url[$param]);
+                    $query = http_build_query($url);
+                }
+
+                echo '<span class="filter-tag" style="background:#e3e6ea;color:#222;padding:6px 12px;border-radius:16px;display:inline-flex;align-items:center;font-size:14px;">';
+                echo $display;
+                echo ' <a href="?' . $query . '" style="margin-left:8px;color:#888;text-decoration:none;font-weight:bold;" title="Remove filter">&times;</a>';
+                echo '</span>';
+            }
+
+            // Render tags for each filter if set
+            if ($from_date) renderTag('From', 'from_date', $from_date);
+            if ($to_date) renderTag('To', 'to_date', $to_date);
+            if ($sex) renderTag('Sex', 'sex', $sex);
+            if ($bhw_id) renderTag('Bhw', 'bhw', $bhw_id);
+            if ($age_group) {
+                $age_labels = [
+                    'child' => 'Child (0–12)', 'teen' => 'Teen (13–19)',
+                    'adult' => 'Adult (20–59)', 'senior' => 'Senior (60+)'
+                ];
+                renderTag('Age Group', 'age_group', $age_labels[$age_group] ?? ucfirst($age_group));
+            }
+            if ($medicine) {
+                foreach ($medicine as $med) {
+                    renderTag('Medicine', 'medicine[]', $med);
+                }
+            }
+            // If no filters, show "All"
+            if (
+                !$from_date && !$to_date && !$sex && !$age_group &&
+                !$medicine && !$bhw_id 
+            ) {
+                echo '<span style="color:#888;">All</span>';
+            }
+            ?>
         </div>
+    </div>
+    <style>
+        .filter-tag a:hover { color: #e15759; }
+    </style>
+
+
+  <!-- Filter Modal -->
+    <div id="filterModal" class="modal" style="display:none;">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3>Apply Filters</h3>
+            </div>
+            <form method="GET" id="filterForm">
+                <div class="modal-body">
+                    <div class="form-row">
+                        <div class="form-item">
+                            <label for="from_date">From:</label>
+                            <input type="date" name="from_date" id="from_date" class="form-control" value="<?= htmlspecialchars($from_date) ?>">
+                        </div>
+                        <div class="form-item">
+                            <label for="to_date">To:</label>
+                            <input type="date" name="to_date" id="to_date" class="form-control" value="<?= htmlspecialchars($to_date) ?>">
+                        </div>
+                        <div class="form-item">
+                            <label for="sex">Sex:</label>
+                            <select name="sex" id="sex" class="form-control">
+                                <option value="" <?= $sex == '' ? 'selected' : '' ?>>All</option>
+                                <option value="Male" <?= $sex == 'Male' ? 'selected' : '' ?>>Male</option>
+                                <option value="Female" <?= $sex == 'Female' ? 'selected' : '' ?>>Female</option>
+                            </select>
+                        </div>
+                        <div class="form-item">
+                            <label for="age_group">Age Group:</label>
+                            <select name="age_group" id="age_group" class="form-control">
+                                <option value="">All</option> 
+                                <option value="child" <?= $age_group == 'child' ? 'selected' : '' ?>>Child (0–12)</option>
+                                <option value="teen" <?= $age_group == 'teen' ? 'selected' : '' ?>>Teen (13–19)</option>
+                                <option value="adult" <?= $age_group == 'adult' ? 'selected' : '' ?>>Adult (20–59)</option>
+                                <option value="senior" <?= $age_group == 'senior' ? 'selected' : '' ?>>Senior (60+)</option>
+                            </select> </div>
+
+                    <div class="form-item">
+                        <label for="medicine">Given Medicine:</label>
+                        <div id="medicine-checkboxes" style="max-height:150px;overflow-y:auto;border:1px solid #ccc;padding:8px;border-radius:6px;">
+                            <?php
+                            // Fetch medicines for checkboxes
+                            $medicine_stmt = $pdo->prepare("SELECT value FROM custom_options WHERE category = 'medicine' ");
+                            $medicine_stmt->execute();
+                            // Support multiple selection from GET
+                            $selected_medicines = isset($_GET['medicine']) ? (array)$_GET['medicine'] : [];
+                            while ($row = $medicine_stmt->fetch()) {
+                                $value = $row['value'];
+                                $checked = in_array($value, $selected_medicines) ? 'checked' : '';
+                                echo '<label style="display:block;margin-bottom:4px;text-align:left;font-weight:300;">';
+                                echo '<input type="checkbox" name="medicine[]" value="' . htmlspecialchars($value) . '" ' . $checked . '> ';
+                                echo htmlspecialchars($value);
+                                echo '</label>';
+                            }
+                            ?>
+                        </div>
+                        <small style="color:#888;">You may select multiple medicines.</small>
+                    </div>
 
         <div class="form-item">
-            <label for="to_date">To:</label>
-            <input type="date" name="to_date" id="to_date" class="form-control" value="<?= htmlspecialchars($to_date) ?>">
-        </div>
-
-        <div class="form-item">
-            <label for="medicine">Medicine:</label>
-            <input type="text" name="medicine" id="medicine" class="form-control" value="<?= htmlspecialchars($medicine) ?>" placeholder="Enter medicine name">
-        </div>
-
-        <div class="form-item">
-            <label for="bhw">BHW:</label>
-            <select name="bhw_id" id="bhw" class="form-control">
-                <option value="">All</option>
+            <label for="bhw">Dispensed by:</label>
+            <select name="bhw" id="bhw">
+                <option value="">-- All --</option>
                 <?php foreach ($bhws as $bhw): ?>
-                    <option value="<?= $bhw['user_id'] ?>" <?= $bhw_id == $bhw['user_id'] ? 'selected' : '' ?>>
+                    <option value="<?= $bhw['user_id'] ?>" <?= $bhw['user_id'] == $bhw_id ? 'selected' : '' ?>>
                         <?= htmlspecialchars($bhw['full_name']) ?>
                     </option>
                 <?php endforeach; ?>
             </select>
         </div>
 
-        <div class="form-item-wrapper">
-            <button type="submit" class="btn-submit">Filter</button>
-        </div>
-    </div>
 
-    <div class="form-submit">
-        <button type="button" class="btn-export" onclick="exportTableToExcel('reportTable')">📁 Export to Excel</button>
-        <button type="button" class="btn-export" onclick="exportTableToPDF()">📄 Export to PDF</button>
-        <button type="button" class="btn-print" onclick="printDiv()">🖨️ Print this page</button>
-    </div>
+                        
+                            
+                        </div>
+                    </div>
+                     <div class="modal-footer" style="text-align:right;">
+                    <button type="button" class="btn" id="closeFilterModal">Cancel</button>
+                    <button type="submit" class="btn-submit">Apply Filter</button>
+                </div>
+              
+               
+            </form>
+              </div>
+        </div>
+
+
+
+    <script>
+    // Modal logic for filter
+    document.getElementById('openFilterModal').onclick = function() {
+        document.getElementById('filterModal').style.display = 'block';
+    };
+    document.getElementById('closeFilterModal').onclick = function() {
+        document.getElementById('filterModal').style.display = 'none';
+    };
+    // Submit modal form
+    document.getElementById('filterForm').onsubmit = function() {
+        document.getElementById('filterModal').style.display = 'none';
+        return true; // allow form submit
+    };
+    // Close modal when clicking outside
+    window.addEventListener('click', function(event) {
+        var modal = document.getElementById('filterModal');
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
+    });
+    </script>
 </form>
 
 
@@ -225,7 +395,9 @@ $bhws = $bhw_stmt->fetchAll();
                 <li><strong>Date Range:</strong> <?= htmlspecialchars($from_date) ?> to <?= htmlspecialchars($to_date) ?></li>
             <?php endif; ?>
             <?php if (!empty($medicine)): ?>
-                <li><strong>Medicine:</strong> <?= htmlspecialchars($medicine) ?></li>
+                <li><strong>Medicine:</strong>
+                    <?= htmlspecialchars(implode(', ', $medicine)) ?>
+                </li>
             <?php endif; ?>
             <?php if (!empty($bhw_id)): ?>
                 <?php
@@ -246,7 +418,73 @@ $bhws = $bhw_stmt->fetchAll();
 </div>
 
 
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+<div style="margin: 30px 0;">
+    <h3 style="margin-bottom:10px;"><i class="bx bx-line-chart"></i> Medicine Dispensation Trends</h3>
+    <canvas id="dispensationChart" height="80"></canvas>
+</div>
+
+<script>
+// Prepare data for the chart
+const chartData = (() => {
+    // Group by date and medicine
+    const rows = <?php echo json_encode($rows); ?>;
+    const medicines = [...new Set(rows.map(r => r.medicine_name))];
+    // Get all unique dispensed dates (sorted)
+    const dates = [...new Set(rows.map(r => r.dispensed_date))].sort();
+
+    // Build a map: {medicine: {date: count}}
+    const medDateCount = {};
+    medicines.forEach(med => {
+        medDateCount[med] = {};
+        dates.forEach(date => {
+            medDateCount[med][date] = 0;
+        });
+    });
+    rows.forEach(r => {
+        if (medDateCount[r.medicine_name] && medDateCount[r.medicine_name][r.dispensed_date] !== undefined) {
+            medDateCount[r.medicine_name][r.dispensed_date] += Number(r.quantity_dispensed) || 1;
+        }
+    });
+
+    // Prepare datasets for Chart.js
+    const colors = [
+        '#3366cc', '#dc3912', '#ff9900', '#109618', '#990099', '#0099c6', '#dd4477', '#66aa00', '#b82e2e', '#316395'
+    ];
+    const datasets = medicines.map((med, idx) => ({
+        label: med,
+        data: dates.map(date => medDateCount[med][date]),
+        borderColor: colors[idx % colors.length],
+        backgroundColor: colors[idx % colors.length] + '33',
+        fill: false,
+        tension: 0.2
+    }));
+
+    return {dates, datasets};
+})();
+
+const ctx = document.getElementById('dispensationChart').getContext('2d');
+const dispensationChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: chartData.dates,
+        datasets: chartData.datasets
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: { display: true, position: 'top' },
+            title: { display: false }
+        },
+        scales: {
+            x: { title: { display: true, text: 'Dispensed Date' } },
+            y: { title: { display: true, text: 'Quantity Dispensed' }, beginAtZero: true }
+        }
+    }
+});
+</script>
     <table>
         <thead>
             <tr>
@@ -275,6 +513,11 @@ $bhws = $bhw_stmt->fetchAll();
             <?php endforeach; ?>
         </tbody>
     </table>
+
+     <br>
+
+    <br> <br>
+     <span id="generated_by"></span>
     
 <?php else: ?>
     <p>No records found for the selected filters.</p>
@@ -364,10 +607,12 @@ function printDiv() {
 fetch('../php/getUserName.php')
     .then(response => response.json())
     .then(data => {
-        if (data.full_name) {
+         if (data.full_name) {
             document.getElementById('userGreeting').textContent = `Hello, ${data.full_name}!`;
+                   document.getElementById('generated_by').textContent = `Generated by: ${data.full_name}`;
         } else {
             document.getElementById('userGreeting').textContent = 'Hello, BHW!';
+              document.getElementById('generated_by').textContent = 'Generated by: N/A';
         }
     })
     .catch(error => {
