@@ -385,10 +385,14 @@ document.addEventListener("click", function(event) {
                         </script>
                     </div>
 
-                    <div class="form-group">
-                        <label for="remarks">Instructions/Remarks:</label>
-                        <textarea type="text" name="remarks" class="tall-input" placeholder="Enter your instructions and remarks" required></textarea>
-                    </div>
+                   <div class="form-group">
+                            <label for="rhu_remarks">Instructions/Remarks:</label>
+                            <select id="rhu_remarks" name="rhu_remarks" class="select2">
+                                <option value="">Select</option>
+                                <option value="other">Other (Enter manually)</option>
+                            
+                            </select>
+                        </div>
 
                           <div>
                         <label for="followup">Schedule Follow-up Consultation:</label>
@@ -479,6 +483,13 @@ $(document).ready(function () {
         minimumResultsForSearch: 0
     });
 
+        // Initialize Select2 for treatment
+    $('#rhu_remarks').select2({
+        placeholder: "Select or type remarks",
+        allowClear: true,
+        minimumResultsForSearch: 0
+    });
+
     // Initialize Select2 for all medicine selects
     $('.medicine-select').select2({
         placeholder: "Select or type medication",
@@ -489,6 +500,7 @@ $(document).ready(function () {
     // Load custom diagnosis options
    
     loadCustomOptions('diagnosis', 'diagnosis');
+    loadCustomOptions('rhu_remarks', 'rhu_remarks');
 
     // Handle custom diagnosis entry
    
@@ -517,6 +529,33 @@ $(document).ready(function () {
             }
         }
     });
+
+
+        // Handle custom treatment entry
+    $('#rhu_remarks').on('change', function () {
+        if (this.value === 'other') {
+            const userInput = prompt("Enter your remarks:");
+            if (userInput) {
+                saveCustomOption('rhu_remarks', userInput)
+                    .then(data => {
+                        if (data.success) {
+                            const newOption = new Option(userInput, userInput, true, true);
+                            $('#rhu_remarks').append(newOption).trigger('change');
+                        } else {
+                            alert('Failed to save custom remarks.');
+                            $(this).val('').trigger('change');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        $(this).val('').trigger('change');
+                    });
+            } else {
+                $(this).val('').trigger('change');
+            }
+        }
+    });
+
 
     // Initialize medicine selects
     const medicineSelects = document.querySelectorAll('.medicine-select');
@@ -657,6 +696,7 @@ function saveCustomOption(category, value) {
 }
 
 const diagnosisSelect = document.getElementById('diagnosis');
+const remarksSelect = document.getElementById('rhu_remarks');
 const medicineSelects = document.querySelectorAll('.medicine-select');
 
 // Helper to load options from DB
@@ -720,6 +760,7 @@ function handleOtherSelection(selectElement, category, promptLabel) {
 
 // Apply handlers for each dropdown
 handleOtherSelection(diagnosisSelect, 'diagnosis', 'diagnosis');
+handleOtherSelection(remarksSelect, 'rhu_remarks', 'rhu_remarks');
 
 medicineSelects.forEach(select => {
     handleOtherSelection(select, 'medicine', 'medicine name (dosage)');
@@ -727,6 +768,7 @@ medicineSelects.forEach(select => {
 
 // Load options on page load
 loadCustomOptions(diagnosisSelect, 'diagnosis');
+loadCustomOptions(remarksSelect, 'rhu_remarks');
 medicineSelects.forEach(select => {
     loadCustomOptions(select, 'medicine');
 });
