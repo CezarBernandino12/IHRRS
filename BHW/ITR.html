@@ -497,9 +497,13 @@ document.addEventListener("click", function(event) {
             </div>
             
             <div class="form-group">
-                <label for="remarks">Remarks:</label>
-                <textarea type="text" name="remarks" class="tall-input" placeholder="Enter Remarks"></textarea>
-            </div>
+    <label for="remarks">Remarks:</label>
+    <select name="remarks" id="remarks" class="form-control">
+        <option value="">Select Remarks</option>
+        <option value="other">Other (Enter Manually)</option>
+    </select>
+    <input type="text" id="customRemarks" name="custom_remarks" class="tall-input" placeholder="Enter Remarks" style="display:none; margin-top:5px;">
+</div> 
             
 <input type="hidden" name="consent_given" id="consent_given" value="COLLECTION AND USE OF PERSONAL HEALTH INFORMATION">
 <input type="hidden" name="consent_method" id="consent_method" value="verbal">
@@ -570,6 +574,7 @@ const extensionSelect = document.getElementById('extension');
 const medicineSelects = document.querySelectorAll('.medicine-select');
 const treatmentSelect = document.getElementById('treatment');
 const patientAlertSelect = document.getElementById('patient_alert');
+const remarksSelect= document.getElementById('remarks');
 
 // Helper to load options from DB
 function loadCustomOptions(selectElement, category) {
@@ -637,6 +642,7 @@ handleOtherSelection(religionSelect, 'religion', 'religion');
 handleOtherSelection(extensionSelect, 'extension', 'extension');
 handleOtherSelection(treatmentSelect, 'treatment', 'treatment');
 handleOtherSelection(patientAlertSelect, 'patient_alert', 'patient alert');
+handleOtherSelection(remarksSelect, 'bhs_remarks', 'remarks');
 
 medicineSelects.forEach(select => {
     handleOtherSelection(select, 'medicine', 'medicine name (dosage)');
@@ -648,6 +654,8 @@ loadCustomOptions(religionSelect, 'religion');
 loadCustomOptions(extensionSelect, 'extension');
 loadCustomOptions(treatmentSelect, 'treatment');
 loadCustomOptions(patientAlertSelect, 'patient_alert');
+loadCustomOptions(remarksSelect, 'bhs_remarks');
+
 medicineSelects.forEach(select => {
     loadCustomOptions(select, 'medicine');
 });
@@ -932,5 +940,6 @@ fetch('php/getUserName.php')
         document.getElementById('userGreeting').textContent = 'Hello, BHW!';
     });
 </script>
+
 </body>
 </html>

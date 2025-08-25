@@ -618,18 +618,39 @@ function addExportStyles(doc) {
 function printDiv() {
     const divContents = document.querySelector(".print-area").innerHTML;
 
+    // Convert both Chart.js canvases to images
+    const pie1 = document.getElementById('referralPieChart');
+    const pie2 = document.getElementById('statusPieChart');
+    let img1 = '', img2 = '';
+
+    if (pie1) {
+        const src1 = pie1.toDataURL("image/png");
+        img1 = `<img id="printPie1" src="${src1}" style="max-width:100%;height:auto;">`;
+    }
+    if (pie2) {
+        const src2 = pie2.toDataURL("image/png");
+        img2 = `<img id="printPie2" src="${src2}" style="max-width:100%;height:auto;">`;
+    }
+
+    // Replace canvases with images in the print content
+    let printContent = divContents;
+    printContent = printContent.replace(
+        /<canvas[^>]*id="referralPieChart"[^>]*>[\s\S]*?<\/canvas>/,
+        img1
+    );
+    printContent = printContent.replace(
+        /<canvas[^>]*id="statusPieChart"[^>]*>[\s\S]*?<\/canvas>/,
+        img2
+    );
+
     const printWindow = window.open('', '', 'height=700,width=900');
     printWindow.document.write('<html><head><title>Print Report</title>');
-    
-    // Include styles for printing
     printWindow.document.write(`
         <style>
             body { font-family: Arial, sans-serif; font-size: 12px; color: black; }
             table { width: 100%; border-collapse: collapse; }
             th, td { border: 1px solid #000; padding: 4px; text-align: left; }
             thead { background-color: #f0f0f0; }
-            
-            /* Enhanced Status Styling for Print */
             .referral-status {
                 font-weight: bold;
                 padding: 4px 8px;
@@ -650,16 +671,42 @@ function printDiv() {
             }
         </style>
     `);
-
     printWindow.document.write('</head><body>');
-    printWindow.document.write(divContents);
+    printWindow.document.write(printContent);
     printWindow.document.write('</body></html>');
-
     printWindow.document.close();
-    printWindow.focus();
-    printWindow.print();
-    printWindow.close();
-} 
+
+    // Wait for both images to load before printing
+    printWindow.onload = function() {
+        const imgA = printWindow.document.getElementById('printPie1');
+        const imgB = printWindow.document.getElementById('printPie2');
+        let loaded = 0, needed = 0;
+        if (imgA) needed++;
+        if (imgB) needed++;
+        function tryPrint() {
+            loaded++;
+            if (loaded >= needed) {
+                printWindow.focus();
+                printWindow.print();
+                printWindow.close();
+            }
+        }
+        if (needed === 0) {
+            printWindow.focus();
+            printWindow.print();
+            printWindow.close();
+        } else {
+            if (imgA) {
+                imgA.onload = tryPrint;
+                if (imgA.complete) imgA.onload();
+            }
+            if (imgB) {
+                imgB.onload = tryPrint;
+                if (imgB.complete) imgB.onload();
+            }
+        }
+    };
+}
 fetch('../php/getUserName.php')
     .then(response => response.json())
     .then(data => {

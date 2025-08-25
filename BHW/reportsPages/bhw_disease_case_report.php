@@ -25,20 +25,20 @@ $to_date = $_GET['to_date'] ?? '';
 $sex = $_GET['sex'] ?? '';
 $age_group = $_GET['age_group'] ?? '';
 $purok = $_GET['purok'] ?? ''; // Use 'purok' for address filtering
-$bmi = $_GET['bmi'] ?? '';
-$medication = $_GET['medication'] ?? '';
-$treatment = $_GET['treatment'] ?? '';
+$diagnosis = $_GET['diagnosis'] ?? '';
+$diagnosis_status = $_GET['diagnosis_status'] ?? '';
+
 
 // Build query with filters
-$sql = "SELECT v.*, p.first_name, p.last_name, p.age, p.sex FROM bhs_visits v 
-        JOIN patients p ON v.patient_id = p.patient_id 
+$sql = "SELECT r.*, p.first_name, p.last_name, p.age, p.sex FROM rhu_consultations r 
+        JOIN patients p ON r.patient_id = p.patient_id 
         WHERE p.address LIKE :barangay"; // Always require barangay match
 
 $params = [];
 $params['barangay'] = '%' . $barangayName . '%'; // Always set this param
 
 if (!empty($from_date) && !empty($to_date)) {
-    $sql .= " AND DATE(v.visit_date) BETWEEN :from_date AND :to_date";
+    $sql .= " AND DATE(r.consultation_date) BETWEEN :from_date AND :to_date";
     $params['from_date'] = $from_date;
     $params['to_date'] = $to_date;
 }
@@ -63,70 +63,17 @@ if (!empty($purok)) {
     $params['purok'] = '%' . $purok . '%';
 }
 
-if (!empty($bmi)) {
-    switch ($bmi) {
-        case 'underweight': $sql .= " AND v.bmi < 18.5"; break;
-        case 'normal':  $sql .= " AND v.bmi >= 18.5 AND v.bmi <= 24.9"; break;
-        case 'overweight': $sql .= " AND v.bmi >= 25 AND v.bmi <= 29.9"; break;
-        case 'class1':  $sql .= " AND v.bmi >= 30 AND v.bmi <= 34.9"; break;
-        case 'class2': $sql .= " AND v.bmi >= 35 AND v.bmi <= 39.9"; break;
-        case 'class3':$sql .= " AND v.bmi >= 40"; break;
-    }
-}
-
-if (!empty($treatment)) {
-    switch ($treatment) {
-        case 'weighing': $sql .= " AND v.treatment LIKE '%weighing%' "; break;
-        case 'immunization':  $sql .= " AND v.treatment LIKE '%immunization%' "; break;
-        case 'bp': $sql .= " AND v.treatment LIKE '%bp%' "; break;
-        case 'prenatal':  $sql .= " AND v.treatment LIKE '%prenatal%' "; break;
-        case 'referred': $sql .= " AND v.treatment LIKE '%referred%' "; break;
-    }
-}
-if (!empty($medication)) {
-    // Use 'medication' for medicine filtering
-    $sql .= " AND EXISTS (
-        SELECT 1 FROM bhs_medicine_dispensed md
-        WHERE md.visit_id = v.visit_id
-        AND md.medicine_name LIKE :medication
-    )";
-    $params['medication'] = '%' . $medication . '%';
-}
-
-
 // Add this condition to filter by barangay in address
 if (!empty($barangayName) && $barangayName !== 'N/A') {
     $sql .= " AND p.address LIKE :barangay";
     $params['barangay'] = '%' . $barangayName . '%';
 }
 
+$sql .= " ORDER BY r.consultation_date DESC";
+
 $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $visits = $stmt->fetchAll();
-
-// Calculate summary data
-$total_patients = count(array_unique(array_column($visits, 'patient_id')));
-$total_medicines_dispensed = 0;
-$medicine_counts = [];
-
-foreach ($visits as $visit) {
-    // Get medicines dispensed for this visit
-    $med_stmt = $pdo->prepare("SELECT * FROM bhs_medicine_dispensed WHERE visit_id = ?");
-    $med_stmt->execute([$visit['visit_id']]);
-    $meds = $med_stmt->fetchAll();
-
-    if ($meds) {
-        foreach ($meds as $med) {
-            $total_medicines_dispensed += $med['quantity_dispensed'];
-            $medicine_counts[$med['medicine_name']] = ($medicine_counts[$med['medicine_name']] ?? 0) + $med['quantity_dispensed'];
-        }
-    }
-}
-
-// Find the most dispensed medicine
-arsort($medicine_counts);
-$most_dispensed_medicine = key($medicine_counts);
-$most_dispensed_quantity = current($medicine_counts);
 ?>
 
 <!DOCTYPE html>
@@ -209,9 +156,9 @@ $most_dispensed_quantity = current($medicine_counts);
             
             <div class="head-title">
                 <div class="left">
-                  <h1>Patient Summary Report</h1>
+                  <h1>Disease Cases</h1>
                   <ul class="breadcrumb">
-                    <li><a href="#">Patient Report</a></li>
+                    <li><a href="#">DCM Report</a></li>
                     <li><i class="bx bx-chevron-right"></i></li>
                     <li><a class="active" href="#" onclick="history.back(); return false;">Go back</a></li>
                   </ul>
@@ -228,7 +175,7 @@ $most_dispensed_quantity = current($medicine_counts);
 
 <!-- Filter Form -->
 <form method="GET" class="filter-form">
-    <h2>Patient Summary Report - BHS <?php echo htmlspecialchars($barangayName); ?></h2> <br>
+    <h2>Disease Cases Monitoring Report - BHS <?php echo htmlspecialchars($barangayName); ?></h2> <br>
    
     
     <!-- Filter Modal Trigger -->
@@ -260,6 +207,11 @@ $most_dispensed_quantity = current($medicine_counts);
             // Render tags for each filter if set
             if ($from_date) renderTag('From', 'from_date', $from_date);
             if ($to_date) renderTag('To', 'to_date', $to_date);
+          if ($diagnosis) {
+                foreach ($diagnosis as $diag) {
+                    renderTag('Diagnosis', 'diagnosis[]', $diag);
+                }
+            }
             if ($sex) renderTag('Sex', 'sex', $sex);
             if ($age_group) {
                 $age_labels = [
@@ -269,28 +221,12 @@ $most_dispensed_quantity = current($medicine_counts);
                 renderTag('Age Group', 'age_group', $age_labels[$age_group] ?? ucfirst($age_group));
             }
             if ($purok) renderTag('Purok', 'purok', $purok);
-            if ($bmi) {
-                $bmi_labels = [
-                    'underweight' => 'Underweight', 'normal' => 'Normal',
-                    'overweight' => 'Overweight', 'class1' => 'Class 1',
-                    'class2' => 'Class 2', 'class3' => 'Class 3'
-                ];
-                renderTag('BMI', 'bmi', $bmi_labels[$bmi] ?? $bmi);
-            }
-            if ($treatment) {
-                $treat_labels = [
-                    'weighing' => 'Weighing', 'immunization' => 'Immunization',
-                    'bp' => 'Blood Pressure', 'prenatal' => 'Prenatal',
-                    'referred' => 'Referred'
-                ];
-                renderTag('Treatment', 'treatment', $treat_labels[$treatment] ?? $treatment);
-            }
-            if ($medication) renderTag('Medicine', 'medication', $medication);
-
+            if ($diagnosis_status) renderTag('Status', 'diagnosis_status', $diagnosis_status);
+     
             // If no filters, show "All"
             if (
                 !$from_date && !$to_date && !$sex && !$age_group &&
-                !$purok && !$bmi && !$treatment && !$medication
+                !$purok && !$diagnosis_status && !$diagnosis
             ) {
                 echo '<span style="color:#888;">All</span>';
             }
@@ -354,44 +290,38 @@ $most_dispensed_quantity = current($medicine_counts);
                                 ?>
                             </select>
                         </div> 
+
+                                  <div class="form-item">
+                        <label for="diagnosis">Diagnoses:</label>
+                        <div id="medicine-checkboxes" style="max-height:150px;overflow-y:auto;border:1px solid #ccc;padding:8px;border-radius:6px;">
+                            <?php
+                            // Fetch medicines for checkboxes
+                            $diagnosis_stmt = $pdo->prepare("SELECT value FROM custom_options WHERE category = 'diagnosis' ");
+                            $diagnosis_stmt->execute();
+                            // Support multiple selection from GET
+                            $selected_diagnosis = isset($_GET['diagnosis']) ? (array)$_GET['diagnosis'] : [];
+                            while ($row = $diagnosis_stmt->fetch()) {
+                                $value = $row['value'];
+                                $checked = in_array($value, $selected_diagnosis) ? 'checked' : '';
+                                echo '<label style="display:block;margin-bottom:4px;text-align:left;font-weight:300;">';
+                                echo '<input type="checkbox" name="diagnosis[]" value="' . htmlspecialchars($value) . '" ' . $checked . '> ';
+                                echo htmlspecialchars($value);
+                                echo '</label>';
+                            }
+                            ?>
+                        </div>
+                        <small style="color:#888;">You may select multiple diagnoses.</small>
+                    </div>
+
+
                            <div class="form-item">
-                            <label for="treatment">Treatment:</label>
-                            <select name="treatment" id="treatment" class="form-control">
+                            <label for="diagnosis_status">Status:</label>
+                            <select name="diagnosis_status" id="diagnosis_status" class="form-control">
                                 <option value="">All</option> 
-                                <option value="weighing" <?= $treatment == 'weighing' ? 'selected' : '' ?>>Weighing</option>
-                                <option value="immunization" <?= $treatment == 'immunization' ? 'selected' : '' ?>>Immunization</option>
-                                <option value="bp" <?= $treatment == 'bp' ? 'selected' : '' ?>>Blood Pressure Reading</option>
-                                <option value="prenatal" <?= $treatment == 'prenatal' ? 'selected' : '' ?>>Prenatal Check-up</option>
-                                 <option value="referred" <?= $treatment == 'referred' ? 'selected' : '' ?>>Referred</option>
-                            </select> </div>
-
-                             <div class="form-item">
-                            <label for="bmi">BMI:</label>
-                            <select name="bmi" id="bmi" class="form-control">
-                                <option value="">All</option> 
-                                <option value="underweight" <?= $bmi == 'underweight' ? 'selected' : '' ?>>Underweight (less than 18.5 )</option>
-                                <option value="normal" <?= $bmi == 'normal' ? 'selected' : '' ?>>Normal (18.5 to 24.9)</option>
-                                <option value="overweight" <?= $bmi == 'overweight' ? 'selected' : '' ?>>Overweight (25 to 29.9)</option>
-                                <option value="class1" <?= $bmi == 'class1' ? 'selected' : '' ?>>Class 1 - Moderate obesity (30 to 34.9)</option>
-                                <option value="class2" <?= $bmi == 'class2' ? 'selected' : '' ?>>Class 2 - Severe obesity (35 to 39.9)</option>
-                                <option value="class3" <?= $bmi == 'class3' ? 'selected' : '' ?>>Class 3 - Morbid obesity (40 or greater)</option>
-                            </select> </div>
-
-                            <div class="form-item">
-                            <label for="medication">Given Medicine:</label>
-                            <select name="medication" id="medication" class="form-control">
-                                <option value="">All</option> 
-                                 <?php
-                                // Fetch puroks that match the barangay name in the value
-                                $medication_stmt = $pdo->prepare("SELECT value FROM custom_options WHERE category = 'medicine' ");
-                                $medication_stmt->execute();
-                                $selected_medication = $_GET['medication'] ?? '';
-                                while ($row = $medication_stmt->fetch()) {
-                                    $value = $row['value'];
-                                    $selected = ($selected_medication === $value) ? 'selected' : '';
-                                    echo "<option value=\"" . htmlspecialchars($value) . "\" $selected>" . htmlspecialchars($value) . "</option>";
-                                }
-                                ?>
+                                <option value="Ongoing" <?= $diagnosis_status == 'Ongoing' ? 'selected' : '' ?>>Ongoing</option>
+                                <option value="Treated" <?= $diagnosis_status == 'Treated' ? 'selected' : '' ?>>Treated</option>
+                                <option value="Deceased" <?= $diagnosis_status == 'Deceased' ? 'selected' : '' ?>>Deceased</option>
+                           
                             </select> </div>
                             
                         </div>
@@ -445,22 +375,101 @@ $most_dispensed_quantity = current($medicine_counts);
   <h3>Municipality of Daet</h3>
   <h2><?php echo htmlspecialchars($barangayName); ?></h2>
   <br> 
-  <h2>DISPENSARY</h2>
+  <h2>DISEASE CASE MONITORING REPORT</h2>
 </div>
 <div class="report-content">
 
+    <!-- Disease Frequency Over Time Line Chart -->
+    <div style="max-width: 800px; margin: 30px auto 0 auto; text-align:center;">
+        <h3>Disease Frequency Over Time</h3>
+        <canvas id="diseaseLineChart"></canvas>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        <?php
+        // Prepare disease frequency per date
+        $disease_dates = [];
+        foreach ($visits as $visit) {
+            $diag = $visit['diagnosis'] ?? '';
+            $date = isset($visit['consultation_date']) ? date('Y-m-d', strtotime($visit['consultation_date'])) : '';
+            if ($diag && $date) {
+                if (!isset($disease_dates[$diag])) $disease_dates[$diag] = [];
+                if (!isset($disease_dates[$diag][$date])) $disease_dates[$diag][$date] = 0;
+                $disease_dates[$diag][$date]++;
+            }
+        }
 
+        // Get all unique dates in range (sorted)
+        $all_dates = [];
+        foreach ($disease_dates as $diag => $dates) {
+            foreach ($dates as $date => $count) {
+                $all_dates[$date] = true;
+            }
+        }
+        $all_dates = array_keys($all_dates);
+        sort($all_dates);
 
-    <!-- Pie Chart Section -->
+        // Prepare datasets for Chart.js
+        $datasets = [];
+        $colors = [
+            '#4e79a7', '#f28e2b', '#e15759', '#76b7b2', '#59a14f', '#edc949',
+            '#af7aa1', '#ff9da7', '#9c755f', '#bab0ab', '#b07aa1', '#7a9cb0'
+        ];
+        $colorIndex = 0;
+        foreach ($disease_dates as $diag => $dates) {
+            $data = [];
+            foreach ($all_dates as $date) {
+                $data[] = isset($dates[$date]) ? $dates[$date] : 0;
+            }
+            $datasets[] = [
+                'label' => $diag,
+                'data' => $data,
+                'fill' => false,
+                'borderColor' => $colors[$colorIndex % count($colors)],
+                'backgroundColor' => $colors[$colorIndex % count($colors)],
+                'tension' => 0.2
+            ];
+            $colorIndex++;
+        }
+        ?>
+        const diseaseLineLabels = <?= json_encode($all_dates) ?>;
+        const diseaseLineDatasets = <?= json_encode($datasets) ?>;
+
+        if (diseaseLineDatasets.length > 0 && diseaseLineLabels.length > 0) {
+            const ctxDiseaseLine = document.getElementById('diseaseLineChart').getContext('2d');
+            new Chart(ctxDiseaseLine, {
+                type: 'line',
+                data: {
+                    labels: diseaseLineLabels,
+                    datasets: diseaseLineDatasets
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'top' },
+                        title: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: { display: true, text: 'Cases' }
+                        },
+                        x: {
+                            title: { display: true, text: 'Date' }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+
+    <!-- Pie Chart Section: Sex Distribution -->
     <div style="max-width: 400px; margin: 30px auto 0 auto; text-align:center;">
         <h3>Distribution of Patients by Sex</h3>
         <canvas id="sexPieChart"></canvas>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        // Prepare data for the pie chart (Sex distribution)
         <?php
-            // Count unique patients by sex for the current filtered visits
             $sex_counts = ['Male' => 0, 'Female' => 0];
             $unique_patients = [];
             foreach ($visits as $visit) {
@@ -500,7 +509,6 @@ $most_dispensed_quantity = current($medicine_counts);
         }
     </script>
 
-
     <!-- Age Group Distribution Bar Chart -->
     <div style="max-width: 500px; margin: 30px auto 0 auto; text-align:center;">
         <h3>Age Group Distribution</h3>
@@ -508,7 +516,6 @@ $most_dispensed_quantity = current($medicine_counts);
     </div>
     <script>
         <?php
-        // Prepare age group counts based on filtered visits (unique patients)
         $age_group_counts = [
             '0–5' => 0,
             '6–17' => 0,
@@ -572,305 +579,134 @@ $most_dispensed_quantity = current($medicine_counts);
     </script>
 
 
-    <!-- BMI Category Pie Chart -->
-    <div style="max-width: 400px; margin: 30px auto 0 auto; text-align:center;">
-        <h3>Distribution of Patients by BMI Category</h3>
-        <canvas id="bmiPieChart"></canvas>
-    </div>
-    <script>
-    <?php
-    // Prepare BMI category counts for unique patients (latest visit per patient)
-    $bmi_categories = [
-        'Underweight' => 0,
-        'Normal' => 0,
-        'Overweight' => 0,
-        'Class 1' => 0,
-        'Class 2' => 0,
-        'Class 3' => 0
-    ];
-    $latest_bmi_per_patient = [];
-    foreach ($visits as $visit) {
-        $pid = $visit['patient_id'];
-        // Only count the latest visit per patient for BMI
-        if (!isset($latest_bmi_per_patient[$pid]) || strtotime($visit['visit_date']) > strtotime($latest_bmi_per_patient[$pid]['visit_date'])) {
-            $latest_bmi_per_patient[$pid] = $visit;
-        }
-    }
-    foreach ($latest_bmi_per_patient as $visit) {
-        // Skip if BMI is empty, null, or not numeric
-        if (!isset($visit['bmi']) || $visit['bmi'] === '' || !is_numeric($visit['bmi'])) {
-            continue;
-        }
-        $bmi = floatval($visit['bmi']);
-        if ($bmi < 18.5) {
-            $bmi_categories['Underweight']++;
-        } elseif ($bmi >= 18.5 && $bmi <= 24.9) {
-            $bmi_categories['Normal']++;
-        } elseif ($bmi >= 25 && $bmi <= 29.9) {
-            $bmi_categories['Overweight']++;
-        } elseif ($bmi >= 30 && $bmi <= 34.9) {
-            $bmi_categories['Class 1']++;
-        } elseif ($bmi >= 35 && $bmi <= 39.9) {
-            $bmi_categories['Class 2']++;
-        } elseif ($bmi >= 40) {
-            $bmi_categories['Class 3']++;
-        }
-    }
-    ?>
-    const bmiLabels = <?= json_encode(array_keys($bmi_categories)) ?>;
-    const bmiData = <?= json_encode(array_values($bmi_categories)) ?>;
-
-    if (bmiData.reduce((a, b) => a + b, 0) > 0) {
-        const ctxBMI = document.getElementById('bmiPieChart').getContext('2d');
-        new Chart(ctxBMI, {
-            type: 'pie',
-            data: {
-                labels: bmiLabels,
-                datasets: [{
-                    data: bmiData,
-                    backgroundColor: [
-                        '#b2df8a', // Underweight
-                        '#1f77b4', // Normal
-                        '#ffbb78', // Overweight
-                        '#e15759', // Class 1
-                        '#f28e2b', // Class 2
-                        '#9467bd'  // Class 3
-                    ],
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: { position: 'bottom' },
-                    title: { display: false }
-                }
-            }
-        });
-    }
-    </script>
-
-    <!-- Treatment Distribution Bar Chart -->
-    <div style="max-width: 500px; margin: 30px auto 0 auto; text-align:center;">
-        <h3>Distribution of Treatments</h3>
-        <canvas id="treatmentBarChart"></canvas>
-    </div>
-    <script>
-    <?php
-    // Prepare treatment counts (count each treatment keyword in filtered visits)
-    $treatment_types = [
-        'Weighing' => 0,
-        'Immunization' => 0,
-        'Blood Pressure Reading' => 0,
-        'Prenatal Check-up' => 0,
-        'Referred' => 0
-    ];
-    foreach ($visits as $visit) {
-        $treat = strtolower($visit['treatment'] ?? '');
-        if (strpos($treat, 'weighing') !== false) $treatment_types['Weighing']++;
-        if (strpos($treat, 'immunization') !== false) $treatment_types['Immunization']++;
-        if (strpos($treat, 'bp') !== false || strpos($treat, 'blood pressure') !== false) $treatment_types['Blood Pressure Reading']++;
-        if (strpos($treat, 'prenatal') !== false) $treatment_types['Prenatal Check-up']++;
-        if (strpos($treat, 'referred') !== false) $treatment_types['Referred']++;
-    }
-    ?>
-    const treatmentLabels = <?= json_encode(array_keys($treatment_types)) ?>;
-    const treatmentData = <?= json_encode(array_values($treatment_types)) ?>;
-
-    if (treatmentData.reduce((a, b) => a + b, 0) > 0) {
-        const ctxTreat = document.getElementById('treatmentBarChart').getContext('2d');
-        new Chart(ctxTreat, {
-            type: 'bar',
-            data: {
-                labels: treatmentLabels,
-                datasets: [{
-                    label: 'Treatment Count',
-                    data: treatmentData,
-                    backgroundColor: [
-                        '#4e79a7', '#f28e2b', '#e15759', '#76b7b2', '#59a14f'
-                    ],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: { display: false },
-                    title: { display: false }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        title: { display: true, text: 'Count' }
-                    },
-                    x: {
-                        title: { display: true, text: 'Treatment' }
-                    }
-                }
-            }
-        });
-    }
-    </script>
-
-    <!-- Dispensed Medicines Bar Chart -->
-    <div style="max-width: 600px; margin: 30px auto 0 auto; text-align:center;">
-        <h3>Dispensed Medicines Distribution</h3>
-        <canvas id="medicineBarChart"></canvas>
-    </div>
-    <script>
-    <?php
-    // Prepare medicine counts for the bar chart
-    $med_labels = array_keys($medicine_counts);
-    $med_data = array_values($medicine_counts);
-    ?>
-    const medicineLabels = <?= json_encode($med_labels) ?>;
-    const medicineData = <?= json_encode($med_data) ?>;
-
-    if (medicineData.length > 0 && medicineData.reduce((a, b) => a + b, 0) > 0) {
-        const ctxMed = document.getElementById('medicineBarChart').getContext('2d');
-        new Chart(ctxMed, {
-            type: 'bar',
-            data: {
-                labels: medicineLabels,
-                datasets: [{
-                    label: 'Quantity Dispensed',
-                    data: medicineData,
-                    backgroundColor: '#4e79a7',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: { display: false },
-                    title: { display: false }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        title: { display: true, text: 'Quantity' }
-                    },
-                    x: {
-                        title: { display: true, text: 'Medicine' }
-                    }
-                }
-            }
-        });
-    }
-    </script>
-
 
 <!-- Summary Section -->
+<?php
+// Calculate total unique patients
+$unique_patient_ids = [];
+foreach ($visits as $visit) {
+    $unique_patient_ids[$visit['patient_id']] = true;
+}
+$total_patients = count($unique_patient_ids);
+?>
 <div class="summary-container">
     <div class="summary">
         <h3><i class="bx bx-file"></i> Summary:</h3>
         <ul class="summary-list">
-            <li><strong>Total Patients in Report:</strong> <?= $total_patients ?></li>
+            <li><strong>Total Unique Patients in Report:</strong> <?= $total_patients ?? 0 ?></li>
             <li>
                 <strong>By Sex:</strong>
-                Male – <?= $sex_counts['Male'] ?? 0 ?>,
-                Female – <?= $sex_counts['Female'] ?? 0 ?>
+                Male – <?= isset($sex_counts['Male']) ? $sex_counts['Male'] : 0 ?>,
+                Female – <?= isset($sex_counts['Female']) ? $sex_counts['Female'] : 0 ?>
             </li>
             <li>
                 <strong>By Age Group:</strong>
-                Children – <?= $age_group_counts['0–5'] + $age_group_counts['6–17'] ?>,
-                Adults – <?= $age_group_counts['18–59'] ?>,
-                Seniors – <?= $age_group_counts['60+'] ?>
+                Children (0–5): <?= isset($age_group_counts['0–5']) ? $age_group_counts['0–5'] : 0 ?>,
+                Children (6–17): <?= isset($age_group_counts['6–17']) ? $age_group_counts['6–17'] : 0 ?>,
+                Adults (18–59): <?= isset($age_group_counts['18–59']) ? $age_group_counts['18–59'] : 0 ?>,
+                Seniors (60+): <?= isset($age_group_counts['60+']) ? $age_group_counts['60+'] : 0 ?>
             </li>
             <li>
-                <strong>By BMI:</strong>
-                Underweight – <?= $bmi_categories['Underweight'] ?? 0 ?>,
-                Normal – <?= $bmi_categories['Normal'] ?? 0 ?>,
-                Overweight – <?= $bmi_categories['Overweight'] ?? 0 ?>,
-                Obese – <?= ($bmi_categories['Class 1'] ?? 0) + ($bmi_categories['Class 2'] ?? 0) + ($bmi_categories['Class 3'] ?? 0) ?>
-            </li>
-            <li>
-                <strong>Most Common Treatment Given:</strong>
-                <?php
-                    // Find most common treatment
-                    $max_treatment = '';
-                    $max_treatment_count = 0;
-                    foreach ($treatment_types as $treat => $count) {
-                        if ($count > $max_treatment_count) {
-                            $max_treatment = $treat;
-                            $max_treatment_count = $count;
+                <strong>Diseases and Case Counts:</strong>
+                <ul style="margin-top:5px;">
+                    <?php
+                    // Prepare disease breakdown by sex and age group
+                    $disease_summary = [];
+                    foreach ($visits as $visit) {
+                        $d = $visit['diagnosis'] ?? 'Unknown';
+                        $s = $visit['sex'] ?? 'Unknown';
+                        $a = (int)($visit['age'] ?? 0);
+                        if (!isset($disease_summary[$d])) {
+                            $disease_summary[$d] = [
+                                'total' => 0,
+                                'sex' => ['Male' => 0, 'Female' => 0],
+                                'age' => ['0–5' => 0, '6–17' => 0, '18–59' => 0, '60+' => 0]
+                            ];
+                        }
+                        $disease_summary[$d]['total']++;
+                        if (isset($disease_summary[$d]['sex'][$s])) $disease_summary[$d]['sex'][$s]++;
+                        // Age group
+                        if ($a >= 0 && $a <= 5) $disease_summary[$d]['age']['0–5']++;
+                        elseif ($a >= 6 && $a <= 17) $disease_summary[$d]['age']['6–17']++;
+                        elseif ($a >= 18 && $a <= 59) $disease_summary[$d]['age']['18–59']++;
+                        elseif ($a >= 60) $disease_summary[$d]['age']['60+']++;
+                    }
+                    if (count($disease_summary) === 0) {
+                        echo "<li style='color:#888;'>No disease cases found for the selected filters.</li>";
+                    } else {
+                        foreach ($disease_summary as $disease => $info) {
+                            echo "<li><strong>" . htmlspecialchars($disease) . "</strong>: ";
+                            echo $info['total'] . " case(s)";
+                            // Per sex
+                            echo " <span style='color:#666;'>(Male: {$info['sex']['Male']}, Female: {$info['sex']['Female']})</span>";
+                            // Per age group
+                            echo "<br><span style='margin-left:15px;color:#666;'>By Age: ";
+                            echo "0–5: {$info['age']['0–5']}, 6–17: {$info['age']['6–17']}, 18–59: {$info['age']['18–59']}, 60+: {$info['age']['60+']}";
+                            echo "</span>";
+                            echo "</li>";
                         }
                     }
-                    echo htmlspecialchars($max_treatment ?: 'N/A');
-                ?>
+                    ?>
+                </ul>
             </li>
             <li>
-                <strong>Most Dispensed Medicine:</strong>
-                <?= htmlspecialchars($most_dispensed_medicine ?: 'N/A') ?>
+                <strong>Filters Applied:</strong>
+                <span>
+                    <?php
+                    $filters = [];
+                    if ($from_date) $filters[] = "From: " . htmlspecialchars($from_date);
+                    if ($to_date) $filters[] = "To: " . htmlspecialchars($to_date);
+                    // Only show Sex if actually selected (not empty and not default)
+                    if (isset($_GET['sex']) && $sex !== '') $filters[] = "Sex: " . htmlspecialchars($sex);
+                    if ($age_group) {
+                        $age_labels = [
+                            'child' => 'Child (0–12)', 'teen' => 'Teen (13–19)',
+                            'adult' => 'Adult (20–59)', 'senior' => 'Senior (60+)'
+                        ];
+                        $filters[] = "Age Group: " . ($age_labels[$age_group] ?? htmlspecialchars($age_group));
+                    }
+                    if ($purok) $filters[] = "Purok: " . htmlspecialchars($purok);
+                    if ($diagnosis_status) $filters[] = "Status: " . htmlspecialchars($diagnosis_status);
+                    if ($diagnosis) {
+                        $diagnosis_list = is_array($diagnosis) ? $diagnosis : [$diagnosis];
+                        $filters[] = "Diagnosis: " . implode(', ', array_map('htmlspecialchars', $diagnosis_list));
+                    }
+                    echo $filters ? implode('; ', $filters) : "<span style='color:#888;'>None (All records shown)</span>";
+                    ?>
+                </span>
             </li>
         </ul>
     </div>
-    </div>
-
- 
-
+</div>
 
 <!-- Table with Visit Details -->
-<?php if ($visits): ?>
-	<table id="reportTable">
-    <thead>
-        <tr>
-            <th>Visit Date</th>
-            <th>Patient Name</th>
-            <th>Sex</th>
-            <th>Age</th>
-            <th>BMI</th>
-            <th>Weight</th>
-            <th>Height</th>
-            <th>Blood Pressure</th>
-            <th>Temperature</th>
-            <th>Chest Rate</th>
-            <th>Respiratory Rate</th>
-            <th>Chief Complaints</th>
-            <th>Treatment</th>
-            <th>Dispensed Medicines</th>
-        </tr>
-    </thead>
-    <tbody>
-    <?php foreach ($visits as $visit): ?>
-        <tr>
-            <td><?= date('Y-m-d', strtotime($visit['visit_date'])) ?></td>
-            <td><?= htmlspecialchars($visit['first_name'] . ' ' . $visit['last_name']) ?></td>
-            <td><?= htmlspecialchars($visit['sex']) ?></td>
-            <td><?= htmlspecialchars($visit['age']) ?></td>
-            <td><?= htmlspecialchars($visit['bmi']) ?></td>
-            <td><?= htmlspecialchars($visit['weight']) ?></td>
-            <td><?= htmlspecialchars($visit['height']) ?></td>
-            <td><?= htmlspecialchars($visit['blood_pressure']) ?></td>
-            <td><?= htmlspecialchars($visit['temperature']) ?></td>
-            <td><?= htmlspecialchars($visit['chest_rate']) ?></td>
-            <td><?= htmlspecialchars($visit['respiratory_rate']) ?></td>
-            <td><?= htmlspecialchars($visit['chief_complaints']) ?></td>
-            <td><?= htmlspecialchars($visit['treatment']) ?></td>
-            <td>
-                <?php
-                // Get dispensed medicines for this visit
-                $med_stmt = $pdo->prepare("SELECT * FROM bhs_medicine_dispensed WHERE visit_id = ?");
-                $med_stmt->execute([$visit['visit_id']]);
-                $meds = $med_stmt->fetchAll();
-
-                if ($meds) {
-                    foreach ($meds as $med) {
-                        echo htmlspecialchars($med['medicine_name']) . ' (Qty: ' . $med['quantity_dispensed'] . ')<br>';
-                    }
-                } else {
-                    echo "No medicines dispensed.";
-                }
-                ?>
-            </td>
-        </tr>
-    <?php endforeach; ?>
-    </tbody>
-</table>
-           <br>
-
-    <br> <br>
-     <span id="generated_by"></span>
-</div>
+<?php if ($visits && count($visits) > 0): ?>
+    <table id="reportTable">
+        <thead>
+            <tr>
+                <th>Disease Name</th>
+                <th>Patient Name</th>
+                <th>Sex</th>
+                <th>Age</th>
+                <th>Date Diagnosed</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+        <?php foreach ($visits as $visit): ?>
+            <tr>
+                <td><?= htmlspecialchars($visit['diagnosis']) ?></td>
+                <td><?= htmlspecialchars($visit['first_name'] . ' ' . $visit['last_name']) ?></td>
+                <td><?= htmlspecialchars($visit['sex']) ?></td>
+                <td><?= htmlspecialchars($visit['age']) ?></td>
+                <td><?= date('Y-m-d', strtotime($visit['consultation_date'])) ?></td>
+                <td><?= htmlspecialchars($visit['diagnosis_status']) ?></td>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+    <br>
+    <span id="generated_by"></span>
 <?php else: ?>
     <p>No visits found for the selected filters.</p>
 <?php endif; ?>
@@ -954,6 +790,7 @@ function printDiv() {
     chartsHTML += getChartImage('bmiPieChart', 'Distribution of Patients by BMI Category');
     chartsHTML += getChartImage('treatmentBarChart', 'Distribution of Treatments');
     chartsHTML += getChartImage('medicineBarChart', 'Dispensed Medicines Distribution');
+    chartsHTML += getChartImage('diseaseBarChart', 'Disease Frequency');
 
     // Clone the print area (table and summary)
     const originalArea = document.querySelector(".print-area").cloneNode(true);
@@ -981,6 +818,10 @@ function printDiv() {
     // Remove the header from the cloned area so it doesn't appear twice
     const headerInClone = originalArea.querySelector('.print-header');
     if (headerInClone) headerInClone.remove();
+
+    // *** REMOVE ALL CANVAS ELEMENTS FROM THE CLONED AREA ***
+    const canvases = originalArea.querySelectorAll('canvas');
+canvases.forEach(c => c.parentNode.removeChild(c));
 
     // Create print window and write content
     const printWindow = window.open('', '', 'height=900,width=1100');

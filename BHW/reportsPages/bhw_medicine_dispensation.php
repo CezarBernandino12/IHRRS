@@ -389,28 +389,30 @@ $bhws = $bhw_stmt->fetchAll();
 <?php if ($rows): ?>
     <div class="summary-container">
     <div class="summary">
-        <h4><i class="bx bx-filter-alt"></i> Factors Applied:</h4>
-        <ul class="summary-list">
-            <?php if (!empty($from_date) && !empty($to_date)): ?>
-                <li><strong>Date Range:</strong> <?= htmlspecialchars($from_date) ?> to <?= htmlspecialchars($to_date) ?></li>
-            <?php endif; ?>
-            <?php if (!empty($medicine)): ?>
-                <li><strong>Medicine:</strong>
-                    <?= htmlspecialchars(implode(', ', $medicine)) ?>
-                </li>
-            <?php endif; ?>
-            <?php if (!empty($bhw_id)): ?>
-                <?php
-                    $selected_bhw = array_filter($bhws, fn($b) => $b['user_id'] == $bhw_id);
-                    $bhw_name = $selected_bhw ? reset($selected_bhw)['full_name'] : 'Unknown BHW';
-                ?>
-                <li><strong>BHW:</strong> <?= htmlspecialchars($bhw_name) ?></li>
-            <?php endif; ?>
-            <?php if (empty($from_date) && empty($to_date) && empty($medicine) && empty($bhw_id)): ?>
-                <li><em>No filters applied. Showing all records.</em></li>
-            <?php endif; ?>
-        </ul>
+        <h4><i class="bx bx-filter-alt"></i>Summary:</h4>
+    <ul  class="summary-list">
+        <?php
+        // Summarize total quantity dispensed per medicine (after filters)
+        $medicine_totals = [];
+        foreach ($rows as $row) {
+            $med = $row['medicine_name'];
+            $qty = (int)$row['quantity_dispensed'];
+            if (!isset($medicine_totals[$med])) {
+                $medicine_totals[$med] = 0;
+            }
+            $medicine_totals[$med] += $qty;
+        }
+        if ($medicine_totals) {
+            foreach ($medicine_totals as $med => $total) {
+                echo '<li><strong>' . htmlspecialchars($med) . ':</strong> ' . $total . ' dispensed</li>';
+            }
+        } else {
+            echo '<li>No medicines dispensed for the selected filters.</li>';
+        }
+        ?>
+    </ul>
     </div>
+
 
     <div class="summary">
         <strong><i class="bx bx-file"></i> Total Records:</strong> <?= count($rows) ?>
@@ -582,10 +584,21 @@ async function exportTableToPDF() {
 function printDiv() {
     const divContents = document.querySelector(".print-area").innerHTML;
 
+    // Convert Chart.js canvas to image and replace in print content
+    const chartCanvas = document.getElementById('dispensationChart');
+    let chartImgHTML = '';
+    if (chartCanvas) {
+        const chartImg = chartCanvas.toDataURL("image/png");
+        chartImgHTML = `<img id="printChartImg" src="${chartImg}" style="max-width:100%;height:auto;">`;
+    }
+    // Replace the canvas with the image in the print content
+    let printContent = divContents.replace(
+        /<canvas[^>]*id="dispensationChart"[^>]*>[\s\S]*?<\/canvas>/,
+        chartImgHTML
+    );
+
     const printWindow = window.open('', '', 'height=700,width=900');
     printWindow.document.write('<html><head><title>Print Report</title>');
-    
-    // OPTIONAL: Minimal styles for cleaner layout
     printWindow.document.write(`
         <style>
             body { font-family: Arial, sans-serif; font-size: 12px; color: black; }
@@ -594,15 +607,30 @@ function printDiv() {
             thead { background-color: #f0f0f0; }
         </style>
     `);
-
     printWindow.document.write('</head><body>');
-    printWindow.document.write(divContents);
+    printWindow.document.write(printContent);
     printWindow.document.write('</body></html>');
-
     printWindow.document.close();
-    printWindow.focus();
-    printWindow.print();
-    printWindow.close();
+
+    // Wait for the image to load before printing
+    printWindow.onload = function() {
+        const img = printWindow.document.getElementById('printChartImg');
+        if (img) {
+            img.onload = function() {
+                printWindow.focus();
+                printWindow.print();
+                printWindow.close();
+            };
+            // If image is cached and already loaded
+            if (img.complete) {
+                img.onload();
+            }
+        } else {
+            printWindow.focus();
+            printWindow.print();
+            printWindow.close();
+        }
+    };
 }
 fetch('../php/getUserName.php')
     .then(response => response.json())
