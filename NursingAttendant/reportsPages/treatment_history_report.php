@@ -1,104 +1,142 @@
 <?php
+// Connect to DB
 require '../../php/db_connect.php';
 session_start();
 
-// Check login
 if (!isset($_SESSION['user_id'])) {
-    echo "User is not logged in.";
+    header("Location: ../../role.html");
     exit;
 }
 
-$userId = $_SESSION['user_id'];
-$search = trim($_GET['search'] ?? '');
-$patient_id = $_GET['patient_id'] ?? null;
+$userId = $_SESSION['user_id'];// or however you store the logged-in user's ID
 
-// Fetch user info (barangay)
+// Fetch user info
 $stmt = $pdo->prepare("SELECT barangay FROM users WHERE user_id = ?");
 $stmt->execute([$userId]);
 $user = $stmt->fetch();
-$barangayName = $user['barangay'] ?? 'N/A';
 
-$patientInfo = null;
-$matchedPatients = [];
-$rows = [];
-$lastVisitDate = 'N/A';
+$barangayName = $user ? $user['barangay'] : 'N/A';
 
-// Only perform search if input is provided
-if (!empty($search)) {
-    $stmt = $pdo->prepare("
-        SELECT 
-            patient_id,
-            CONCAT(first_name, ' ', middle_name, ' ', last_name) AS full_name,
-            sex,
-            age,
-            philhealth_member_no
-        FROM patients
-        WHERE CONCAT(first_name, ' ', middle_name, ' ', last_name) LIKE :search
-        ORDER BY last_name
-    ");
-    $stmt->execute(['search' => "%$search%"]);
-    $matchedPatients = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // If only one match and no patient ID selected, auto-use it
-    if (count($matchedPatients) === 1 && !$patient_id) {
-        $patientInfo = $matchedPatients[0];
-        $patient_id = $patientInfo['patient_id'];
-    } elseif ($patient_id) {
-        // Find the selected patient from the matched list
-        foreach ($matchedPatients as $p) {
-            if ($p['patient_id'] == $patient_id) {
-                $patientInfo = $p;
-                break;
-            }
-        }
-    }
 
-    // Fetch treatment history only if a valid patient is selected
-    if ($patientInfo && !empty($patientInfo['patient_id'])) {
-        // Fetch the treatment history for the selected patient
-        $sql = "
-        SELECT 
-            bv.visit_date,
-            bv.chief_complaints AS complaint,
-            rc.diagnosis,
-            GROUP_CONCAT(DISTINCT md.medicine_name SEPARATOR ', ') AS treatment,
-            bv.remarks
-        FROM bhs_visits bv
-        LEFT JOIN rhu_consultations rc ON bv.visit_id = rc.visit_id
-        LEFT JOIN rhu_medicine_dispensed md ON rc.consultation_id = md.consultation_id
-        WHERE bv.patient_id = :patient_id
-        GROUP BY bv.visit_id
-        ORDER BY bv.visit_date DESC
-        LIMIT 25
-        ";
+// Initialize filters
+$from_date = $_GET['from_date'] ?? '';
+$to_date = $_GET['to_date'] ?? '';
+$sex = $_GET['sex'] ?? '';
+$age_group = $_GET['age_group'] ?? '';
+$purok = $_GET['purok'] ?? ''; // Use 'purok' for address filtering
+$bmi = $_GET['bmi'] ?? '';
+$medication = $_GET['medication'] ?? '';
+$treatment = $_GET['treatment'] ?? '';
 
-        // Prepare the statement
-        $stmt = $pdo->prepare($sql);
+// Build query with filters
+$sql = "SELECT v.*, p.first_name, p.last_name, p.age, p.sex FROM bhs_visits v 
+        JOIN patients p ON v.patient_id = p.patient_id"; 
 
-        // Bind the parameters
-        $stmt->bindParam(':patient_id', $patient_id, PDO::PARAM_INT);
+$params = [];
+$params['barangay'] = '%' . $barangayName . '%'; // Always set this param
 
-        // Execute the query
-        $stmt->execute();
+if (!empty($from_date) && !empty($to_date)) {
+    $sql .= " AND DATE(v.visit_date) BETWEEN :from_date AND :to_date";
+    $params['from_date'] = $from_date;
+    $params['to_date'] = $to_date;
+}
 
-        // Fetch the results
-        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+if (!empty($sex)) {
+    $sql .= " AND p.sex = :sex";
+    $params['sex'] = $sex;
+}
+
+if (!empty($age_group)) {
+    switch ($age_group) {
+        case 'child': $sql .= " AND p.age < 13"; break;
+        case 'teen':  $sql .= " AND p.age BETWEEN 13 AND 19"; break;
+        case 'adult': $sql .= " AND p.age BETWEEN 20 AND 59"; break;
+        case 'senior':$sql .= " AND p.age >= 60"; break;
     }
 }
-?>
 
+if (!empty($purok)) {
+    // Use 'purok' for address filtering
+    $sql .= " AND p.address LIKE :purok";
+    $params['purok'] = '%' . $purok . '%';
+}
+
+if (!empty($bmi)) {
+    switch ($bmi) {
+        case 'underweight': $sql .= " AND v.bmi < 18.5"; break;
+        case 'normal':  $sql .= " AND v.bmi >= 18.5 AND v.bmi <= 24.9"; break;
+        case 'overweight': $sql .= " AND v.bmi >= 25 AND v.bmi <= 29.9"; break;
+        case 'class1':  $sql .= " AND v.bmi >= 30 AND v.bmi <= 34.9"; break;
+        case 'class2': $sql .= " AND v.bmi >= 35 AND v.bmi <= 39.9"; break;
+        case 'class3':$sql .= " AND v.bmi >= 40"; break;
+    }
+}
+
+if (!empty($treatment)) {
+    switch ($treatment) {
+        case 'weighing': $sql .= " AND v.treatment LIKE '%weighing%' "; break;
+        case 'immunization':  $sql .= " AND v.treatment LIKE '%immunization%' "; break;
+        case 'bp': $sql .= " AND v.treatment LIKE '%bp%' "; break;
+        case 'prenatal':  $sql .= " AND v.treatment LIKE '%prenatal%' "; break;
+        case 'referred': $sql .= " AND v.treatment LIKE '%referred%' "; break;
+    }
+}
+if (!empty($medication)) {
+    // Use 'medication' for medicine filtering
+    $sql .= " AND EXISTS (
+        SELECT 1 FROM bhs_medicine_dispensed md
+        WHERE md.visit_id = v.visit_id
+        AND md.medicine_name LIKE :medication
+    )";
+    $params['medication'] = '%' . $medication . '%';
+}
+
+
+// Add this condition to filter by barangay in address
+if (!empty($barangayName) && $barangayName !== 'N/A') {
+    $sql .= " AND p.address LIKE :barangay";
+    $params['barangay'] = '%' . $barangayName . '%';
+}
+
+$stmt = $pdo->prepare($sql);
+$stmt->execute($params);
+$visits = $stmt->fetchAll();
+
+// Calculate summary data
+$total_patients = count(array_unique(array_column($visits, 'patient_id')));
+$total_medicines_dispensed = 0;
+$medicine_counts = [];
+
+foreach ($visits as $visit) {
+    // Get medicines dispensed for this visit
+    $med_stmt = $pdo->prepare("SELECT * FROM bhs_medicine_dispensed WHERE visit_id = ?");
+    $med_stmt->execute([$visit['visit_id']]);
+    $meds = $med_stmt->fetchAll();
+
+    if ($meds) {
+        foreach ($meds as $med) {
+            $total_medicines_dispensed += $med['quantity_dispensed'];
+            $medicine_counts[$med['medicine_name']] = ($medicine_counts[$med['medicine_name']] ?? 0) + $med['quantity_dispensed'];
+        }
+    }
+}
+
+// Find the most dispensed medicine
+arsort($medicine_counts);
+$most_dispensed_medicine = key($medicine_counts);
+$most_dispensed_quantity = current($medicine_counts);
+?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="icon" href="../img/logo.png">
+	<link rel="icon" href="../../img/logo.png">
 	<link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
-	<link rel="stylesheet" href="../css/historyreport.css">
-    <link rel="stylesheet" href="reportsDesign.css">
-
-	<title>Referral Intake Summary Report</title>
+	<link rel="stylesheet" href="../css/reportsDesign.css">
+	<title>Dispensary</title>
 </head>
 <body>
 
@@ -116,33 +154,9 @@ if (!empty($search)) {
 				</a>
 			</li>
 			<li>
-				<a href="#" id="updateReferrals">
+				<a href= "../ITR.html">
 					<i class="bx bxs-user"></i>
-					<span class="text">Pending Referrals</span>
-				</a>
-			</li>
-			
-			<script>
-			document.getElementById("updateReferrals").addEventListener("click", function (event) {
-				event.preventDefault(); // Prevent default navigation
-			
-				fetch("php/update_referrals.php") // Call PHP file
-				.then(response => response.json())
-				.then(data => {
-					console.log(data.message); // Log success message (optional)
-					window.location.href = "../pending.html"; // Redirect after updating
-				})
-				.catch(error => {
-					console.error("Error updating referrals:", error);
-					window.location.href = "../pending.html"; // Still redirect even if an error occurs
-				});
-			});
-			</script>
-			
-				<li>
-				<a href="../followUpConsultations.html">
-					<i class="bx bxs-user"></i>
-					<span class="text">Follow-Up Visits</span>
+					<span class="text">Add ITR</span>
 				</a>
 			</li>
 			<li>
@@ -151,19 +165,19 @@ if (!empty($search)) {
 					<span class="text">Patient Records</span>
 				</a>
 			</li>
+
 			<li>
-                <a href="../history.html">
-                    <i class="bx bx-history"></i>
-                    <span class="text">Referral History</span>
-                </a>
-            </li>
-			<li class="active">
+				<a href="../history.html">
+					<i class="bx bx-history"></i>
+					<span class="text">Referral History</span>
+				</a>
+			</li>
+            <li class="active">
 				<a href="../reports.html">
 					<i class="bx bx-notepad"></i>
 					<span class="text">Reports</span>
 				</a>
 			</li>
-		
 		</ul>
 		<ul class="side-menu">
 			<li>
@@ -177,20 +191,15 @@ if (!empty($search)) {
 
 	<!-- Main Content Section -->
 	<section id="content">
-		<nav>
+    <nav>
 			<form action="#">
-				<div class="form-input">
-					<input type="search" placeholder="Search...">
-					<button type="submit" class="search-btn">
-						<i class="bx bx-search"></i>
-					</button>
-				</div>
+				
 			</form>
-			<a href="notif.html" class="notification">
-				<i class="bx bxs-bell"></i>
-			</a>
+			<div class="greeting">
+                <span id="userGreeting">Hello BHW!</span>
+            </div>
 			<a href="#" class="profile">
-				<img src="../../img/nurse.png">
+				<img src="../../img/profile.png">
 			</a>
 		</nav>
 
@@ -199,9 +208,9 @@ if (!empty($search)) {
             
             <div class="head-title">
                 <div class="left">
-                  <h1>Referral Intake Summary Report</h1>
+                  <h1>Patient Summary Report</h1>
                   <ul class="breadcrumb">
-                    <li><a href="#">Referral Intake Summary Report</a></li>
+                    <li><a href="#">Patient Report</a></li>
                     <li><i class="bx bx-chevron-right"></i></li>
                     <li><a class="active" href="#" onclick="history.back(); return false;">Go back</a></li>
                   </ul>
@@ -212,41 +221,218 @@ if (!empty($search)) {
             </div>
 
 <div class="history-container">
+
+    
 	
 
 <!-- Filter Form -->
-<form method="GET" class="filter-form" style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px; flex-wrap: wrap;">
+<form method="GET" class="filter-form">
+    <h2>Patient Summary Report - BHS <?php echo htmlspecialchars($barangayName); ?></h2> <br>
+   
+    
+    <!-- Filter Modal Trigger -->
+   
+        <div class="form-submit">
+               <button type="button" class="btn-export" id="openFilterModal">Filter</button>
+        <button type="button" class="btn-export" onclick="exportTableToExcel('reportTable')">Export to Excel</button>
+        <button type="button" class="btn-export" onclick="exportTableToPDF()">Export to PDF</button>
+        <button type="button" class="btn-print" onclick="printDiv()">Print this page</button>
+    </div>
 
-    <input type="text" name="search" placeholder="Search patient..." value="<?= htmlspecialchars($search) ?>">
-    <button type="submit" class="search-btn" style="background: dark blue; border: none; cursor: pointer;">
-        <i class="bx bx-search" style="font-size: 1.5rem;"></i>
-    </button>
+    <!-- Modern Filter Tags Display -->
+    <div class="selected-filters" style="margin: 20px 0;">
+        <h3 style="margin-bottom: 10px;"><i class="bx bx-filter-alt"></i> Selected Filters:</h3>
+        <div id="filterTags" style="display: flex; flex-wrap: wrap; gap: 8px;">
+            <?php
+            // Helper for tag rendering
+            function renderTag($label, $param, $value) {
+                $display = htmlspecialchars($label . ': ' . $value);
+                $url = $_GET;
+                unset($url[$param]);
+                $query = http_build_query($url);
+                echo '<span class="filter-tag" style="background:#e3e6ea;color:#222;padding:6px 12px;border-radius:16px;display:inline-flex;align-items:center;font-size:14px;">';
+                echo $display;
+                echo ' <a href="?' . $query . '" style="margin-left:8px;color:#888;text-decoration:none;font-weight:bold;" title="Remove filter">&times;</a>';
+                echo '</span>';
+            }
+
+            // Render tags for each filter if set
+            if ($from_date) renderTag('From', 'from_date', $from_date);
+            if ($to_date) renderTag('To', 'to_date', $to_date);
+            if ($sex) renderTag('Sex', 'sex', $sex);
+            if ($age_group) {
+                $age_labels = [
+                    'child' => 'Child (0–12)', 'teen' => 'Teen (13–19)',
+                    'adult' => 'Adult (20–59)', 'senior' => 'Senior (60+)'
+                ];
+                renderTag('Age Group', 'age_group', $age_labels[$age_group] ?? ucfirst($age_group));
+            }
+            if ($purok) renderTag('Purok', 'purok', $purok);
+            if ($bmi) {
+                $bmi_labels = [
+                    'underweight' => 'Underweight', 'normal' => 'Normal',
+                    'overweight' => 'Overweight', 'class1' => 'Class 1',
+                    'class2' => 'Class 2', 'class3' => 'Class 3'
+                ];
+                renderTag('BMI', 'bmi', $bmi_labels[$bmi] ?? $bmi);
+            }
+            if ($treatment) {
+                $treat_labels = [
+                    'weighing' => 'Weighing', 'immunization' => 'Immunization',
+                    'bp' => 'Blood Pressure', 'prenatal' => 'Prenatal',
+                    'referred' => 'Referred'
+                ];
+                renderTag('Treatment', 'treatment', $treat_labels[$treatment] ?? $treatment);
+            }
+            if ($medication) renderTag('Medicine', 'medication', $medication);
+
+            // If no filters, show "All"
+            if (
+                !$from_date && !$to_date && !$sex && !$age_group &&
+                !$purok && !$bmi && !$treatment && !$medication
+            ) {
+                echo '<span style="color:#888;">All</span>';
+            }
+            ?>
+        </div>
+    </div>
+    <style>
+        .filter-tag a:hover { color: #e15759; }
+    </style>
+
+
+  <!-- Filter Modal -->
+    <div id="filterModal" class="modal" style="display:none;">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3>Apply Filters</h3>
+            </div>
+            <form method="GET" id="filterForm">
+                <div class="modal-body">
+                    <div class="form-row">
+                        <div class="form-item">
+                            <label for="from_date">From:</label>
+                            <input type="date" name="from_date" id="from_date" class="form-control" value="<?= htmlspecialchars($from_date) ?>">
+                        </div>
+                        <div class="form-item">
+                            <label for="to_date">To:</label>
+                            <input type="date" name="to_date" id="to_date" class="form-control" value="<?= htmlspecialchars($to_date) ?>">
+                        </div>
+                        <div class="form-item">
+                            <label for="sex">Sex:</label>
+                            <select name="sex" id="sex" class="form-control">
+                                <option value="" <?= $sex == '' ? 'selected' : '' ?>>All</option>
+                                <option value="Male" <?= $sex == 'Male' ? 'selected' : '' ?>>Male</option>
+                                <option value="Female" <?= $sex == 'Female' ? 'selected' : '' ?>>Female</option>
+                            </select>
+                        </div>
+                        <div class="form-item">
+                            <label for="age_group">Age Group:</label>
+                            <select name="age_group" id="age_group" class="form-control">
+                                <option value="">All</option> 
+                                <option value="child" <?= $age_group == 'child' ? 'selected' : '' ?>>Child (0–12)</option>
+                                <option value="teen" <?= $age_group == 'teen' ? 'selected' : '' ?>>Teen (13–19)</option>
+                                <option value="adult" <?= $age_group == 'adult' ? 'selected' : '' ?>>Adult (20–59)</option>
+                                <option value="senior" <?= $age_group == 'senior' ? 'selected' : '' ?>>Senior (60+)</option>
+                            </select> </div>
+
+                        <div class="form-item">
+                            <label for="purok">Address (by purok):</label>
+                            <select name="purok" id="purok" class="form-control">
+                                <option value="">All</option>
+                                <?php
+                                // Fetch puroks that match the barangay name in the value
+                                $purok_stmt = $pdo->prepare("SELECT value FROM custom_options WHERE value LIKE ?");
+                                $purok_stmt->execute(['%' . $barangayName . '%']);
+                                $selected_purok = $_GET['purok'] ?? '';
+                                while ($row = $purok_stmt->fetch()) {
+                                    $value = $row['value'];
+                                    $selected = ($selected_purok === $value) ? 'selected' : '';
+                                    echo "<option value=\"" . htmlspecialchars($value) . "\" $selected>" . htmlspecialchars($value) . "</option>";
+                                }
+                                ?>
+                            </select>
+                        </div> 
+                           <div class="form-item">
+                            <label for="treatment">Treatment:</label>
+                            <select name="treatment" id="treatment" class="form-control">
+                                <option value="">All</option> 
+                                <option value="weighing" <?= $treatment == 'weighing' ? 'selected' : '' ?>>Weighing</option>
+                                <option value="immunization" <?= $treatment == 'immunization' ? 'selected' : '' ?>>Immunization</option>
+                                <option value="bp" <?= $treatment == 'bp' ? 'selected' : '' ?>>Blood Pressure Reading</option>
+                                <option value="prenatal" <?= $treatment == 'prenatal' ? 'selected' : '' ?>>Prenatal Check-up</option>
+                                 <option value="referred" <?= $treatment == 'referred' ? 'selected' : '' ?>>Referred</option>
+                            </select> </div>
+
+                             <div class="form-item">
+                            <label for="bmi">BMI:</label>
+                            <select name="bmi" id="bmi" class="form-control">
+                                <option value="">All</option> 
+                                <option value="underweight" <?= $bmi == 'underweight' ? 'selected' : '' ?>>Underweight (less than 18.5 )</option>
+                                <option value="normal" <?= $bmi == 'normal' ? 'selected' : '' ?>>Normal (18.5 to 24.9)</option>
+                                <option value="overweight" <?= $bmi == 'overweight' ? 'selected' : '' ?>>Overweight (25 to 29.9)</option>
+                                <option value="class1" <?= $bmi == 'class1' ? 'selected' : '' ?>>Class 1 - Moderate obesity (30 to 34.9)</option>
+                                <option value="class2" <?= $bmi == 'class2' ? 'selected' : '' ?>>Class 2 - Severe obesity (35 to 39.9)</option>
+                                <option value="class3" <?= $bmi == 'class3' ? 'selected' : '' ?>>Class 3 - Morbid obesity (40 or greater)</option>
+                            </select> </div>
+
+                            <div class="form-item">
+                            <label for="medication">Given Medicine:</label>
+                            <select name="medication" id="medication" class="form-control">
+                                <option value="">All</option> 
+                                 <?php
+                                // Fetch puroks that match the barangay name in the value
+                                $medication_stmt = $pdo->prepare("SELECT value FROM custom_options WHERE category = 'medicine' ");
+                                $medication_stmt->execute();
+                                $selected_medication = $_GET['medication'] ?? '';
+                                while ($row = $medication_stmt->fetch()) {
+                                    $value = $row['value'];
+                                    $selected = ($selected_medication === $value) ? 'selected' : '';
+                                    echo "<option value=\"" . htmlspecialchars($value) . "\" $selected>" . htmlspecialchars($value) . "</option>";
+                                }
+                                ?>
+                            </select> </div>
+                            
+                        </div>
+                    </div>
+                     <div class="modal-footer" style="text-align:right;">
+                    <button type="button" class="btn" id="closeFilterModal">Cancel</button>
+                    <button type="submit" class="btn-submit">Apply Filter</button>
+                </div>
+              
+               
+            </form>
+              </div>
+        </div>
+
 
   
-
-    <button onclick="exportTableToExcel('reportTable')" class="btn btn-success">📁 Export to Excel</button>
-<button onclick="exportTableToPDF()" class="btn btn-danger">📄 Export to PDF</button>
-
-    <button onclick="printDiv()" class="btn-print">🖨️ Print this page</button>
-</form>
-
-<?php if (!empty($search) && count($matchedPatients) > 1 && !isset($patient_id)): ?>
-    <div style="margin-bottom: 1rem;">
-        <h4>Matched Patients:</h4>
-        <ul style="list-style: none; padding-left: 0;">
-            <?php foreach ($matchedPatients as $p): ?>
-                <li style="margin: 5px 0;">
-                    <a href="?search=<?= urlencode($search) ?>&patient_id=<?= urlencode($p['patient_id']) ?>">
-                        <?= htmlspecialchars($p['full_name']) ?> - <?= htmlspecialchars($p['age']) ?> yrs / <?= htmlspecialchars($p['sex']) ?>
-                    </a>
-                </li>
-            <?php endforeach; ?>
-        </ul>
     </div>
-<?php endif; ?>
+
+    <script>
+    // Modal logic for filter
+    document.getElementById('openFilterModal').onclick = function() {
+        document.getElementById('filterModal').style.display = 'block';
+    };
+    document.getElementById('closeFilterModal').onclick = function() {
+        document.getElementById('filterModal').style.display = 'none';
+    };
+    // Submit modal form
+    document.getElementById('filterForm').onsubmit = function() {
+        document.getElementById('filterModal').style.display = 'none';
+        return true; // allow form submit
+    };
+    // Close modal when clicking outside
+    window.addEventListener('click', function(event) {
+        var modal = document.getElementById('filterModal');
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
+    });
+    </script>
 
 
-
+</form>
 
 <div class="main-content">
 
@@ -256,69 +442,467 @@ if (!empty($search)) {
   <h3>Republic of the Philippines</h3>
   <p>Province of Camarines Norte</p>
   <h3>Municipality of Daet</h3>
-  <h2>Rural Health Unit</h2>
+  <h2><?php echo htmlspecialchars($barangayName); ?></h2>
   <br> 
-  <h2>INDIVIDUAL TREATMENT HISTORY REPORT</h2>
+  <h2>DISPENSARY</h2>
 </div>
 <div class="report-content">
+
+
+
+    <!-- Pie Chart Section -->
+    <div style="max-width: 400px; margin: 30px auto 0 auto; text-align:center;">
+        <h3>Distribution of Patients by Sex</h3>
+        <canvas id="sexPieChart"></canvas>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Prepare data for the pie chart (Sex distribution)
+        <?php
+            // Count unique patients by sex for the current filtered visits
+            $sex_counts = ['Male' => 0, 'Female' => 0];
+            $unique_patients = [];
+            foreach ($visits as $visit) {
+                $pid = $visit['patient_id'];
+                if (!isset($unique_patients[$pid])) {
+                    $unique_patients[$pid] = $visit['sex'];
+                }
+            }
+            foreach ($unique_patients as $sex) {
+                if (isset($sex_counts[$sex])) $sex_counts[$sex]++;
+            }
+        ?>
+        const sexLabels = <?= json_encode(array_keys($sex_counts)) ?>;
+        const sexData = <?= json_encode(array_values($sex_counts)) ?>;
+
+        if (sexData.reduce((a, b) => a + b, 0) > 0) {
+            const ctx = document.getElementById('sexPieChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: sexLabels,
+                    datasets: [{
+                        data: sexData,
+                        backgroundColor: [
+                            '#4e79a7', '#f28e2b'
+                        ],
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'bottom' },
+                        title: { display: false }
+                    }
+                }
+            });
+        }
+    </script>
+
+
+    <!-- Age Group Distribution Bar Chart -->
+    <div style="max-width: 500px; margin: 30px auto 0 auto; text-align:center;">
+        <h3>Age Group Distribution</h3>
+        <canvas id="ageGroupBarChart"></canvas>
+    </div>
+    <script>
+        <?php
+        // Prepare age group counts based on filtered visits (unique patients)
+        $age_group_counts = [
+            '0–5' => 0,
+            '6–17' => 0,
+            '18–59' => 0,
+            '60+' => 0
+        ];
+        $unique_patients_age = [];
+        foreach ($visits as $visit) {
+            $pid = $visit['patient_id'];
+            if (!isset($unique_patients_age[$pid])) {
+                $age = (int)$visit['age'];
+                if ($age >= 0 && $age <= 5) {
+                    $age_group_counts['0–5']++;
+                } elseif ($age >= 6 && $age <= 17) {
+                    $age_group_counts['6–17']++;
+                } elseif ($age >= 18 && $age <= 59) {
+                    $age_group_counts['18–59']++;
+                } elseif ($age >= 60) {
+                    $age_group_counts['60+']++;
+                }
+                $unique_patients_age[$pid] = true;
+            }
+        }
+        ?>
+        const ageGroupLabels = <?= json_encode(array_keys($age_group_counts)) ?>;
+        const ageGroupData = <?= json_encode(array_values($age_group_counts)) ?>;
+
+        if (ageGroupData.reduce((a, b) => a + b, 0) > 0) {
+            const ctxBar = document.getElementById('ageGroupBarChart').getContext('2d');
+            new Chart(ctxBar, {
+                type: 'bar',
+                data: {
+                    labels: ageGroupLabels,
+                    datasets: [{
+                        label: 'Patient Count',
+                        data: ageGroupData,
+                        backgroundColor: [
+                            '#4e79a7', '#f28e2b', '#e15759', '#76b7b2'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: false },
+                        title: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: { display: true, text: 'Patient Count' }
+                        },
+                        x: {
+                            title: { display: true, text: 'Age Group' }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+
+
+    <!-- BMI Category Pie Chart -->
+    <div style="max-width: 400px; margin: 30px auto 0 auto; text-align:center;">
+        <h3>Distribution of Patients by BMI Category</h3>
+        <canvas id="bmiPieChart"></canvas>
+    </div>
+    <script>
+    <?php
+    // Prepare BMI category counts for unique patients (latest visit per patient)
+    $bmi_categories = [
+        'Underweight' => 0,
+        'Normal' => 0,
+        'Overweight' => 0,
+        'Class 1' => 0,
+        'Class 2' => 0,
+        'Class 3' => 0
+    ];
+    $latest_bmi_per_patient = [];
+    foreach ($visits as $visit) {
+        $pid = $visit['patient_id'];
+        // Only count the latest visit per patient for BMI
+        if (!isset($latest_bmi_per_patient[$pid]) || strtotime($visit['visit_date']) > strtotime($latest_bmi_per_patient[$pid]['visit_date'])) {
+            $latest_bmi_per_patient[$pid] = $visit;
+        }
+    }
+    foreach ($latest_bmi_per_patient as $visit) {
+        // Skip if BMI is empty, null, or not numeric
+        if (!isset($visit['bmi']) || $visit['bmi'] === '' || !is_numeric($visit['bmi'])) {
+            continue;
+        }
+        $bmi = floatval($visit['bmi']);
+        if ($bmi < 18.5) {
+            $bmi_categories['Underweight']++;
+        } elseif ($bmi >= 18.5 && $bmi <= 24.9) {
+            $bmi_categories['Normal']++;
+        } elseif ($bmi >= 25 && $bmi <= 29.9) {
+            $bmi_categories['Overweight']++;
+        } elseif ($bmi >= 30 && $bmi <= 34.9) {
+            $bmi_categories['Class 1']++;
+        } elseif ($bmi >= 35 && $bmi <= 39.9) {
+            $bmi_categories['Class 2']++;
+        } elseif ($bmi >= 40) {
+            $bmi_categories['Class 3']++;
+        }
+    }
+    ?>
+    const bmiLabels = <?= json_encode(array_keys($bmi_categories)) ?>;
+    const bmiData = <?= json_encode(array_values($bmi_categories)) ?>;
+
+    if (bmiData.reduce((a, b) => a + b, 0) > 0) {
+        const ctxBMI = document.getElementById('bmiPieChart').getContext('2d');
+        new Chart(ctxBMI, {
+            type: 'pie',
+            data: {
+                labels: bmiLabels,
+                datasets: [{
+                    data: bmiData,
+                    backgroundColor: [
+                        '#b2df8a', // Underweight
+                        '#1f77b4', // Normal
+                        '#ffbb78', // Overweight
+                        '#e15759', // Class 1
+                        '#f28e2b', // Class 2
+                        '#9467bd'  // Class 3
+                    ],
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'bottom' },
+                    title: { display: false }
+                }
+            }
+        });
+    }
+    </script>
+
+    <!-- Treatment Distribution Bar Chart -->
+    <div style="max-width: 500px; margin: 30px auto 0 auto; text-align:center;">
+        <h3>Distribution of Treatments</h3>
+        <canvas id="treatmentBarChart"></canvas>
+    </div>
+    <script>
+    <?php
+    // Prepare treatment counts (count each treatment keyword in filtered visits)
+    $treatment_types = [
+        'Weighing' => 0,
+        'Immunization' => 0,
+        'Blood Pressure Reading' => 0,
+        'Prenatal Check-up' => 0,
+        'Referred' => 0
+    ];
+    foreach ($visits as $visit) {
+        $treat = strtolower($visit['treatment'] ?? '');
+        if (strpos($treat, 'weighing') !== false) $treatment_types['Weighing']++;
+        if (strpos($treat, 'immunization') !== false) $treatment_types['Immunization']++;
+        if (strpos($treat, 'bp') !== false || strpos($treat, 'blood pressure') !== false) $treatment_types['Blood Pressure Reading']++;
+        if (strpos($treat, 'prenatal') !== false) $treatment_types['Prenatal Check-up']++;
+        if (strpos($treat, 'referred') !== false) $treatment_types['Referred']++;
+    }
+    ?>
+    const treatmentLabels = <?= json_encode(array_keys($treatment_types)) ?>;
+    const treatmentData = <?= json_encode(array_values($treatment_types)) ?>;
+
+    if (treatmentData.reduce((a, b) => a + b, 0) > 0) {
+        const ctxTreat = document.getElementById('treatmentBarChart').getContext('2d');
+        new Chart(ctxTreat, {
+            type: 'bar',
+            data: {
+                labels: treatmentLabels,
+                datasets: [{
+                    label: 'Treatment Count',
+                    data: treatmentData,
+                    backgroundColor: [
+                        '#4e79a7', '#f28e2b', '#e15759', '#76b7b2', '#59a14f'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: false },
+                    title: { display: false }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: { display: true, text: 'Count' }
+                    },
+                    x: {
+                        title: { display: true, text: 'Treatment' }
+                    }
+                }
+            }
+        });
+    }
+    </script>
+
+    <!-- Dispensed Medicines Bar Chart -->
+    <div style="max-width: 600px; margin: 30px auto 0 auto; text-align:center;">
+        <h3>Dispensed Medicines Distribution</h3>
+        <canvas id="medicineBarChart"></canvas>
+    </div>
+    <script>
+    <?php
+    // Prepare medicine counts for the bar chart
+    $med_labels = array_keys($medicine_counts);
+    $med_data = array_values($medicine_counts);
+    ?>
+    const medicineLabels = <?= json_encode($med_labels) ?>;
+    const medicineData = <?= json_encode($med_data) ?>;
+
+    if (medicineData.length > 0 && medicineData.reduce((a, b) => a + b, 0) > 0) {
+        const ctxMed = document.getElementById('medicineBarChart').getContext('2d');
+        new Chart(ctxMed, {
+            type: 'bar',
+            data: {
+                labels: medicineLabels,
+                datasets: [{
+                    label: 'Quantity Dispensed',
+                    data: medicineData,
+                    backgroundColor: '#4e79a7',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: false },
+                    title: { display: false }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: { display: true, text: 'Quantity' }
+                    },
+                    x: {
+                        title: { display: true, text: 'Medicine' }
+                    }
+                }
+            }
+        });
+    }
+    </script>
+
+
 <!-- Summary Section -->
-<br>
-
-<?php if ($patientInfo): ?>
-    <div style="margin-bottom: 1rem;">
-        <strong>Patient Name:</strong> <?= htmlspecialchars($patientInfo['full_name']) ?><br>
-        <strong>Sex/Age:</strong> <?= htmlspecialchars($patientInfo['sex']) ?> / <?= htmlspecialchars($patientInfo['age']) ?><br>
-        <strong>PhilHealth No.:</strong> <?= htmlspecialchars($patientInfo['philhealth_member_no']) ?><br>
-        <strong>Date of Last Visit:</strong> <?= date('Y-m-d', strtotime($lastVisitDate)) ?>
+<div class="summary-container">
+    <div class="summary">
+        <h3><i class="bx bx-file"></i> Summary:</h3>
+        <ul class="summary-list">
+            <li><strong>Total Patients in Report:</strong> <?= $total_patients ?></li>
+            <li>
+                <strong>By Sex:</strong>
+                Male – <?= $sex_counts['Male'] ?? 0 ?>,
+                Female – <?= $sex_counts['Female'] ?? 0 ?>
+            </li>
+            <li>
+                <strong>By Age Group:</strong>
+                Children – <?= $age_group_counts['0–5'] + $age_group_counts['6–17'] ?>,
+                Adults – <?= $age_group_counts['18–59'] ?>,
+                Seniors – <?= $age_group_counts['60+'] ?>
+            </li>
+            <li>
+                <strong>By BMI:</strong>
+                Underweight – <?= $bmi_categories['Underweight'] ?? 0 ?>,
+                Normal – <?= $bmi_categories['Normal'] ?? 0 ?>,
+                Overweight – <?= $bmi_categories['Overweight'] ?? 0 ?>,
+                Obese – <?= ($bmi_categories['Class 1'] ?? 0) + ($bmi_categories['Class 2'] ?? 0) + ($bmi_categories['Class 3'] ?? 0) ?>
+            </li>
+            <li>
+                <strong>Most Common Treatment Given:</strong>
+                <?php
+                    // Find most common treatment
+                    $max_treatment = '';
+                    $max_treatment_count = 0;
+                    foreach ($treatment_types as $treat => $count) {
+                        if ($count > $max_treatment_count) {
+                            $max_treatment = $treat;
+                            $max_treatment_count = $count;
+                        }
+                    }
+                    echo htmlspecialchars($max_treatment ?: 'N/A');
+                ?>
+            </li>
+            <li>
+                <strong>Most Dispensed Medicine:</strong>
+                <?= htmlspecialchars($most_dispensed_medicine ?: 'N/A') ?>
+            </li>
+        </ul>
     </div>
-<?php elseif (!empty($search)): ?>
-    <p>No matching patient found.</p>
-<?php endif; ?>
-
-<!-- Selected Filters Section -->
-
-<br>
-<?php if (empty($rows)): ?>
-    <div class="no-records">
-        <p>No records found for this patient</p>
-        <div class="sub-text">We couldn't find any treatment history records for the selected patient.</div>
-        <div class="suggestion">
-            <strong>Tip:</strong> Try searching with a different name or check if the patient has any recent visits.
-        </div>
     </div>
-<?php endif; ?>
-<table border="1" cellpadding="8" cellspacing="0"> 
-<thead>
+
+ 
+
+
+<!-- Table with Visit Details -->
+<?php if ($visits): ?>
+	<table id="reportTable">
+    <thead>
         <tr>
             <th>Visit Date</th>
-            <th>Complaint</th>
-            <th>Diagnosis</th>
+            <th>Patient Name</th>
+            <th>Sex</th>
+            <th>Age</th>
+            <th>BMI</th>
+            <th>Weight</th>
+            <th>Height</th>
+            <th>Blood Pressure</th>
+            <th>Temperature</th>
+            <th>Chest Rate</th>
+            <th>Respiratory Rate</th>
+            <th>Chief Complaints</th>
             <th>Treatment</th>
-            <th>Remarks</th>
+            <th>Dispensed Medicines</th>
         </tr>
     </thead>
     <tbody>
-        <?php foreach ($rows as $row): ?>
+    <?php foreach ($visits as $visit): ?>
         <tr>
-            <td><?= htmlspecialchars($row['visit_date']) ?></td>
-            <td><?= htmlspecialchars($row['complaint']) ?></td>
-            <td><?= htmlspecialchars($row['diagnosis']) ?></td>
-            <td><?= htmlspecialchars($row['treatment']) ?></td>
-            <td><?= htmlspecialchars($row['remarks']) ?></td>
+            <td><?= date('Y-m-d', strtotime($visit['visit_date'])) ?></td>
+            <td><?= htmlspecialchars($visit['first_name'] . ' ' . $visit['last_name']) ?></td>
+            <td><?= htmlspecialchars($visit['sex']) ?></td>
+            <td><?= htmlspecialchars($visit['age']) ?></td>
+            <td><?= htmlspecialchars($visit['bmi']) ?></td>
+            <td><?= htmlspecialchars($visit['weight']) ?></td>
+            <td><?= htmlspecialchars($visit['height']) ?></td>
+            <td><?= htmlspecialchars($visit['blood_pressure']) ?></td>
+            <td><?= htmlspecialchars($visit['temperature']) ?></td>
+            <td><?= htmlspecialchars($visit['chest_rate']) ?></td>
+            <td><?= htmlspecialchars($visit['respiratory_rate']) ?></td>
+            <td><?= htmlspecialchars($visit['chief_complaints']) ?></td>
+            <td><?= htmlspecialchars($visit['treatment']) ?></td>
+            <td>
+                <?php
+                // Get dispensed medicines for this visit
+                $med_stmt = $pdo->prepare("SELECT * FROM bhs_medicine_dispensed WHERE visit_id = ?");
+                $med_stmt->execute([$visit['visit_id']]);
+                $meds = $med_stmt->fetchAll();
+
+                if ($meds) {
+                    foreach ($meds as $med) {
+                        echo htmlspecialchars($med['medicine_name']) . ' (Qty: ' . $med['quantity_dispensed'] . ')<br>';
+                    }
+                } else {
+                    echo "No medicines dispensed.";
+                }
+                ?>
+            </td>
         </tr>
-        <?php endforeach; ?>
+    <?php endforeach; ?>
     </tbody>
 </table>
-<br> <br>
+           <br>
+
+    <br> <br>
+     <span id="generated_by"></span>
+</div>
+<?php else: ?>
+    <p>No visits found for the selected filters.</p>
+<?php endif; ?>
 
 
-</div> </div> </div>
+</div> </div> 
+
+
+
+
+<div id="logoutModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Confirm Logout</h3>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to logout?</p>
+            </div>
+            <div class="modal-footer">
+                <button onclick="closeModal()" class="btn yes">Cancel</button>
+                <button onclick="proceedLogout()" class="btn no">Yes, Logout</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <!-- jsPDF and html2canvas libraries -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <script>
+
+    
 function exportTableToExcel(tableID, filename = 'report') {
     const dataType = 'application/vnd.ms-excel';
     const table = document.getElementById(tableID);
@@ -349,32 +933,115 @@ async function exportTableToPDF() {
 }
 
 
-
-//PRINT
 function printDiv() {
-    const divContents = document.querySelector(".print-area").innerHTML;
+    // Get chart images from the original canvases
+    function getChartImage(id, title) {
+        const canvas = document.getElementById(id);
+        if (canvas && canvas.toDataURL) {
+            return `<div style="text-align:center;margin-bottom:20px;">
+                        <h3 style="margin-bottom:8px;">${title}</h3>
+                        <img src="${canvas.toDataURL('image/png')}" style="max-width:100%;height:auto;">
+                    </div>`;
+        }
+        return '';
+    }
 
-    const printWindow = window.open('', '', 'height=700,width=900');
+    // Collect chart images with titles
+    let chartsHTML = '';
+    chartsHTML += getChartImage('sexPieChart', 'Distribution of Patients by Sex');
+    chartsHTML += getChartImage('ageGroupBarChart', 'Age Group Distribution');
+    chartsHTML += getChartImage('bmiPieChart', 'Distribution of Patients by BMI Category');
+    chartsHTML += getChartImage('treatmentBarChart', 'Distribution of Treatments');
+    chartsHTML += getChartImage('medicineBarChart', 'Dispensed Medicines Distribution');
+
+    // Clone the print area (table and summary)
+    const originalArea = document.querySelector(".print-area").cloneNode(true);
+
+    // Add 'Signature' column to header
+    const headerRow = originalArea.querySelector("thead tr");
+    if (headerRow && !headerRow.querySelector('th:last-child').textContent.includes('Signature')) {
+        const signatureHeader = document.createElement("th");
+        signatureHeader.textContent = "Signature";
+        headerRow.appendChild(signatureHeader);
+
+        // Add 'Signature' cell to each row in tbody
+        const rows = originalArea.querySelectorAll("tbody tr");
+        rows.forEach(row => {
+            const signatureCell = document.createElement("td");
+            signatureCell.style.height = "30px";
+            signatureCell.textContent = "";
+            row.appendChild(signatureCell);
+        });
+    }
+
+    // Get the print header HTML
+    const printHeader = document.querySelector('.print-header').outerHTML;
+
+    // Remove the header from the cloned area so it doesn't appear twice
+    const headerInClone = originalArea.querySelector('.print-header');
+    if (headerInClone) headerInClone.remove();
+
+    // Create print window and write content
+    const printWindow = window.open('', '', 'height=900,width=1100');
     printWindow.document.write('<html><head><title>Print Report</title>');
-    
-    // OPTIONAL: Minimal styles for cleaner layout
     printWindow.document.write(`
         <style>
             body { font-family: Arial, sans-serif; font-size: 12px; color: black; }
             table { width: 100%; border-collapse: collapse; }
             th, td { border: 1px solid #000; padding: 4px; text-align: left; }
             thead { background-color: #f0f0f0; }
+            img { display: block; margin: 0 auto; max-width: 100%; height: auto; }
+            h3 { margin: 10px 0 5px 0; }
         </style>
     `);
-
     printWindow.document.write('</head><body>');
-    printWindow.document.write(divContents);
+    printWindow.document.write(printHeader); // Print header at the very top
+    printWindow.document.write(chartsHTML);  // Then charts
+    printWindow.document.write(originalArea.innerHTML);  // Then table and summary
     printWindow.document.write('</body></html>');
 
     printWindow.document.close();
     printWindow.focus();
-    printWindow.print();
-    printWindow.close();
+
+    setTimeout(() => {
+        printWindow.print();
+        printWindow.close();
+    }, 500);
+}
+fetch('../php/getUserName.php')
+    .then(response => response.json())
+    .then(data => {
+        if (data.full_name) {
+            document.getElementById('userGreeting').textContent = `Hello, ${data.full_name}!`;
+            document.getElementById('generated_by').textContent = `Generated by: ${data.full_name}`;
+        } else {
+            document.getElementById('userGreeting').textContent = 'Hello, BHW!';
+            document.getElementById('generated_by').textContent = 'Generated by: N/A';
+        }
+    })
+    .catch(error => {
+        console.error('Error fetching user name:', error);
+        document.getElementById('userGreeting').textContent = 'Hello, BHW!';
+    });
+    function confirmLogout() {
+    document.getElementById('logoutModal').style.display = 'block';
+    return false; // Prevent the default link behavior
+}
+
+function closeModal() {
+    document.getElementById('logoutModal').style.display = 'none';
+}
+
+function proceedLogout() {
+    window.location.href = '../../role.html';
+}
+
+// Close modal when clicking outside
+window.onclick = function(event) {
+    const modal = document.getElementById('logoutModal');
+    if (event.target == modal) {
+        closeModal();
+    }
 }
 </script>
 
