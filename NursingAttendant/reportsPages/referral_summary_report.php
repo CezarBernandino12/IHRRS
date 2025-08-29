@@ -21,6 +21,8 @@ $barangayName = $user ? $user['barangay'] : 'N/A';
 // Filters
 $from_date = $_GET['from_date'] ?? '';
 $to_date = $_GET['to_date'] ?? '';
+$status = $_GET['status'] ?? '';
+$barangay = $_GET['barangay'] ?? '';
 
 $params = [];
 
@@ -41,6 +43,14 @@ if (!empty($from_date) && !empty($to_date)) {
     $sql .= " AND DATE(r.referral_date) BETWEEN :from_date AND :to_date";
     $params['from_date'] = $from_date;
     $params['to_date'] = $to_date;
+}
+if (!empty($status)) {
+    $sql .= " AND r.referral_status = :status";
+    $params['status'] = $status;
+}
+if (!empty($barangay)) {
+    $sql .= " AND u.barangay = :barangay";
+    $params['barangay'] = $barangay;
 }
 
 // Final group and order clause (only add once!)
@@ -67,9 +77,8 @@ $total_pending = 0;
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="icon" href="../../img/logo.png">
-	<link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
-	<link rel="stylesheet" href="../../BHW/css/history.css">
-    <link rel="stylesheet" href="reportsDesign.css">
+<link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="../css/reportsDesign.css">
 
 	<title>Referral Intake Summary Report</title>
 </head>
@@ -189,27 +198,146 @@ $total_pending = 0;
 
 <!-- Filter Form -->
 <form method="GET" class="filter-form" style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px; flex-wrap: wrap;">
-  <div>
-    <label for="from_date" style="font-weight: 600; color: #1c538a;">From:</label>
-    <input type="date" id="from_date" name="from_date" value="<?= htmlspecialchars($_GET['from_date'] ?? '') ?>" style="padding: 6px 10px; border: 1px solid #ccc; border-radius: 6px;">
-  </div>
 
-  <div>
-    <label for="to_date" style="font-weight: 600; color: #1c538a;">To:</label>
-    <input type="date" id="to_date" name="to_date" value="<?= htmlspecialchars($_GET['to_date'] ?? '') ?>" style="padding: 6px 10px; border: 1px solid #ccc; border-radius: 6px;">
-  </div>
+ <h2>RHU Referral Intake Summary Report</h2> <br>
 
-  <button type="submit" class="btn-filter" style="background-color: #1c538a; color: white; padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer;">
-    Filter
-  </button>
+
+
+ <!-- Filter Modal Trigger -->
+   
+        <div class="form-submit">
+               <button type="button" class="btn-export" id="openFilterModal">Filter</button>
+        <button type="button" class="btn-export" onclick="exportTableToExcel('reportTable')">Export to Excel</button>
+        <button type="button" class="btn-export" onclick="exportTableToPDF()">Export to PDF</button>
+        <button type="button" class="btn-print" onclick="printDiv()">Print this page</button>
+    </div>
+
+    <!-- Modern Filter Tags Display -->
+    <div class="selected-filters" style="margin: 20px 0;">
+        <h3 style="margin-bottom: 10px;"><i class="bx bx-filter-alt"></i> Selected Filters:</h3>
+        <div id="filterTags" style="display: flex; flex-wrap: wrap; gap: 8px;">
+            <?php
+            // Helper for tag rendering
+            function renderTag($label, $param, $value) {
+                $display = htmlspecialchars($label . ': ' . $value);
+                $url = $_GET;
+                unset($url[$param]);
+                $query = http_build_query($url);
+                echo '<span class="filter-tag" style="background:#e3e6ea;color:#222;padding:6px 12px;border-radius:16px;display:inline-flex;align-items:center;font-size:14px;">';
+                echo $display;
+                echo ' <a href="?' . $query . '" style="margin-left:8px;color:#888;text-decoration:none;font-weight:bold;" title="Remove filter">&times;</a>';
+                echo '</span>';
+            }
+
+            // Render tags for each filter if set
+            if ($from_date) renderTag('From', 'from_date', $from_date);
+            if ($to_date) renderTag('To', 'to_date', $to_date);
+            if ($status) renderTag('Status', 'status', $status);
+            if ($barangay) renderTag('Barangay', 'barangay', $barangay);
+
+            // If no filters, show "All"
+            if (
+                !$from_date && !$to_date && !$status && !$barangay
+            ) {
+                echo '<span style="color:#888;">All</span>';
+            }
+            ?>
+        </div>
+    </div>
+    <style>
+        .filter-tag a:hover { color: #e15759; }
+    </style>
+
+
+  <!-- Filter Modal -->
+    <div id="filterModal" class="modal" style="display:none;">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3>Apply Filters</h3>
+            </div>
+            <form method="GET" id="filterForm">
+                <div class="modal-body">
+                    <div class="form-row">
+                        <div class="form-item">
+                            <label for="from_date">From:</label>
+                            <input type="date" name="from_date" id="from_date" class="form-control" value="<?= htmlspecialchars($from_date) ?>">
+                        </div>
+                        <div class="form-item">
+                            <label for="to_date">To:</label>
+                            <input type="date" name="to_date" id="to_date" class="form-control" value="<?= htmlspecialchars($to_date) ?>">
+                        </div>
+                        <div class="form-item">
+                            <label for="status">Status:</label>
+                            <select name="status" id="status" class="form-control">
+                                <option value="" <?= $status == '' ? 'selected' : '' ?>>All</option>
+                                <option value="Pending" <?= $status == 'Pending' ? 'selected' : '' ?>>Pending</option>
+                                <option value="Completed" <?= $status == 'Completed' ? 'selected' : '' ?>>Completed</option>
+                                <option value="Uncompleted" <?= $status == 'Uncompleted' ? 'selected' : '' ?>>Uncompleted</option>
+                                <option value="Cancelled" <?= $status == 'Cancelled' ? 'selected' : '' ?>>Cancelled</option>
+                            </select>
+                        </div>
+
+                        <div class="form-item">
+                            <label for="barangay">Barangay:</label>
+                            <select name="barangay" id="barangay" class="form-control">
+                                <option value="">All</option>
+                                <?php
+                                // Fetch puroks that match the barangay name in the value
+                                $barangay_stmt = $pdo->prepare("SELECT DISTINCT u.barangay AS value FROM referrals r LEFT JOIN users u ON r.referred_by = u.user_id WHERE u.barangay IS NOT NULL ORDER BY u.barangay;");
+                                $barangay_stmt->execute();     
+
+
+                                $selected_barangay = $_GET['barangay'] ?? '';
+                                while ($row = $barangay_stmt->fetch()) {
+                                    $value = $row['value'];
+                                    $selected = ($selected_barangay === $value) ? 'selected' : '';
+                                    echo "<option value=\"" . htmlspecialchars($value) . "\" $selected>" . htmlspecialchars($value) . "</option>";
+                                }
+                                ?>
+                            </select>
+                        </div> 
+                         
+                            
+                        </div>
+                    </div>
+                     <div class="modal-footer" style="text-align:right;">
+                    <button type="button" class="btn" id="closeFilterModal">Cancel</button>
+                    <button type="submit" class="btn-submit">Apply Filter</button>
+                </div>
+              
+               
+            </form>
+              </div>
+        </div>
+
 
   
+    </div>
 
-    <button onclick="exportTableToExcel('reportTable')" class="btn btn-success">📁 Export to Excel</button>
-<button onclick="exportTableToPDF()" class="btn btn-danger">📄 Export to PDF</button>
+    <script>
+    // Modal logic for filter
+    document.getElementById('openFilterModal').onclick = function() {
+        document.getElementById('filterModal').style.display = 'block';
+    };
+    document.getElementById('closeFilterModal').onclick = function() {
+        document.getElementById('filterModal').style.display = 'none';
+    };
+    // Submit modal form
+    document.getElementById('filterForm').onsubmit = function() {
+        document.getElementById('filterModal').style.display = 'none';
+        return true; // allow form submit
+    };
+    // Close modal when clicking outside
+    window.addEventListener('click', function(event) {
+        var modal = document.getElementById('filterModal');
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
+    });
+    </script>
 
-    <button onclick="printDiv()" class="btn-print">🖨️ Print this page</button>
 </form>
+
 
 <div class="main-content">
 
@@ -226,17 +354,76 @@ $total_pending = 0;
 <div class="report-content">
 <!-- Summary Section -->
 <br>
-
-
-<!-- Selected Filters Section -->
-<div class="selected-filters">
-    <h3>Selected Factors:</h3>
-    <ul>
-        <li><strong>From:</strong> <?= $from_date ? htmlspecialchars($from_date) : 'All' ?></li>
-        <li><strong>To:</strong> <?= $to_date ? htmlspecialchars($to_date) : 'All' ?></li>
-      
-    </ul>
+<!-- Pie Chart Section -->
+<div style="max-width: 400px; margin: 30px auto 0 auto; text-align:center;">
+    <h3>Distribution of Referral Status</h3>
+    <canvas id="statusPieChart"></canvas>
+    <p id="noDataMessage" style="display:none; color:#666; margin-top:10px;">No data available</p>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Prepare data for the pie chart (referral distribution)
+    <?php
+        $total_received = 0;
+        $total_completed = 0;
+        $total_uncompleted = 0;
+        $total_pending = 0;
+
+        foreach ($rows as $row) {
+            $total_received += $row['total_referrals'];
+            $total_completed += $row['completed'];
+            $total_uncompleted += $row['uncompleted'];
+            $total_pending += $row['pending'];
+        }
+
+        $referral_counts = [
+            'Pending' => $total_pending,
+            'Completed' => $total_completed,
+            'Uncompleted' => $total_uncompleted
+        ];
+    ?>
+
+    const referralLabels = <?= json_encode(array_keys($referral_counts)) ?>;
+    const referralData   = <?= json_encode(array_values($referral_counts)) ?>;
+
+    const total = referralData.reduce((a, b) => a + b, 0);
+
+    if (total > 0) {
+        // Show chart, hide message
+        document.getElementById('statusPieChart').style.display = 'block';
+        document.getElementById('noDataMessage').style.display = 'none';
+
+        const ctx = document.getElementById('statusPieChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: referralLabels,
+                datasets: [{
+                    data: referralData,
+                    backgroundColor: [
+                        '#4e79a7', '#59bd77ff', '#e15759'
+                    ],
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'bottom' },
+                    title: { display: false }
+                }
+            }
+        });
+    } else {
+        // Hide chart, show message
+        document.getElementById('statusPieChart').style.display = 'none';
+        document.getElementById('noDataMessage').style.display = 'block';
+    }
+</script>
+
+
+
+
 <br>
 <table border="1" cellpadding="8" cellspacing="0"> 
     <thead>
@@ -279,6 +466,7 @@ $total_pending = 0;
 	<p><strong>Pending Referrals:</strong> <?= $total_pending ?></p>
 </div> 
 
+
 </div> </div> </div>
 
 <!-- jsPDF and html2canvas libraries -->
@@ -319,6 +507,22 @@ async function exportTableToPDF() {
 
 //PRINT
 function printDiv() {
+
+     function getChartImage(id, title) {
+        const canvas = document.getElementById(id);
+        if (canvas && canvas.toDataURL) {
+            return `<div style="text-align:center;margin-bottom:20px;">
+                        <h3 style="margin-bottom:8px;">${title}</h3>
+                        <img src="${canvas.toDataURL('image/png')}" style="max-width:100%;height:auto;">
+                    </div>`;
+        }
+        return '';
+    }
+
+    // Collect chart images with titles
+    let chartsHTML = '';
+    chartsHTML += getChartImage('statusPieChart', 'Distribution of Patients by Sex');
+
     const divContents = document.querySelector(".print-area").innerHTML;
 
     const printWindow = window.open('', '', 'height=700,width=900');

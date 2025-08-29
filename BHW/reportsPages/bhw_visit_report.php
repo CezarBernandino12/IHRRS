@@ -58,7 +58,7 @@ if (!empty($age_group)) {
 }
 
 if (!empty($purok)) {
-    // Use 'purok' for address filtering
+    // Use 'purok' for barangay filtering - check if address contains the barangay name
     $sql .= " AND p.address LIKE :purok";
     $params['purok'] = '%' . $purok . '%';
 }
@@ -268,7 +268,7 @@ $most_dispensed_quantity = current($medicine_counts);
                 ];
                 renderTag('Age Group', 'age_group', $age_labels[$age_group] ?? ucfirst($age_group));
             }
-            if ($purok) renderTag('Purok', 'purok', $purok);
+            if ($purok) renderTag('Barangay', 'purok', $purok);
             if ($bmi) {
                 $bmi_labels = [
                     'underweight' => 'Underweight', 'normal' => 'Normal',
@@ -338,16 +338,16 @@ $most_dispensed_quantity = current($medicine_counts);
                             </select> </div>
 
                         <div class="form-item">
-                            <label for="purok">Address (by purok):</label>
+                            <label for="purok">Barangay:</label>
                             <select name="purok" id="purok" class="form-control">
                                 <option value="">All</option>
                                 <?php
-                                // Fetch puroks that match the barangay name in the value
-                                $purok_stmt = $pdo->prepare("SELECT value FROM custom_options WHERE value LIKE ?");
-                                $purok_stmt->execute(['%' . $barangayName . '%']);
+                                // Fetch distinct barangay names from custom_options
+                                $barangay_stmt = $pdo->prepare("SELECT DISTINCT category FROM custom_options WHERE category LIKE 'Barangay%' ORDER BY category");
+                                $barangay_stmt->execute();
                                 $selected_purok = $_GET['purok'] ?? '';
-                                while ($row = $purok_stmt->fetch()) {
-                                    $value = $row['value'];
+                                while ($row = $barangay_stmt->fetch()) {
+                                    $value = $row['category'];
                                     $selected = ($selected_purok === $value) ? 'selected' : '';
                                     echo "<option value=\"" . htmlspecialchars($value) . "\" $selected>" . htmlspecialchars($value) . "</option>";
                                 }
