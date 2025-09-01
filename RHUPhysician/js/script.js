@@ -162,7 +162,7 @@ noButton1.addEventListener('click', function () {
 // Open modal2 when yesButton1 is clicked
 yesButton1.addEventListener('click', function () {
     modal1.style.display = 'none';  // Hide modal1
-    modal2.style.display = 'block';  // Show modal2
+    
 });
  
 // Close modal2 when closeBtn2 is clicked

@@ -110,7 +110,7 @@ if (isset($_FILES['photo']) && $_FILES['photo']['error'] === UPLOAD_ERR_OK) {
         }
          if (!empty($_POST['followup'])) {
             $stmt_followup = $pdo->prepare("
-                INSERT INTO follow_ups (consultation_id, date, set_by, status, patient_id) 
+                INSERT INTO follow_ups (consultation_id, date, set_by, followup_status, patient_id) 
                 VALUES (:consultation_id, :followup, :set_by, :status, :patient_id)
             ");
             $stmt_followup->execute([

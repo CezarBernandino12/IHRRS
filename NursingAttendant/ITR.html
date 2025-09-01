@@ -808,9 +808,9 @@ updateRemoveButtons();
                     </div>
              <br><br>
                     <div class="modal-footer">
-                        <button id="yesButton" class="btn yes">Save, refer to RHU</button>
-                        <button id="noButton" class="btn maybe" type="button">Save, don't refer</button>
-                        <button id="cancelBtn" class="btn cancel">Cancel</button>
+                        <button id="cancelBtn" onclick="closeModal()" class="btn cancel" type="button">Cancel</button>
+                         <button id="noButton" class="btn maybe" type="button">Save</button>
+                        <button id="saveButton" class="btn yes" type="button">Forward to Physician</button>
                     </div>
 
                 </div>
@@ -827,11 +827,11 @@ updateRemoveButtons();
                         <span class="close-btn" id="closeBtn2">&times;</span>
                     </div>
                     <div class="modal-body">
-                        <p>Do you confirm on referring this patient?</p>
+                        <p>Do you confirm on forwarding this patient?</p>
                     </div>
                     <div class="modal-footer">
-                        <button id="yesButton2" class="btn yes" value="yes">Yes</button>
-                        <button id="noButton2" class="btn no">No</button>
+                        <button id="noButton2" class="btn no" type="button">No</button>
+                        <button id="yesButton2" class="btn yes" value="yes" type="button">Yes</button>
                     </div>
                 </div>
             </div>
@@ -846,12 +846,12 @@ updateRemoveButtons();
 
                     <div class="modal-footer">
                         <div class="modal-header">
-                            <h3 style="color: #033cad;">Referral Sent to RHU!</h3>
+                            <h3 style="color: #033cad;">Sent to Physician!</h3>
                         </div>
                     </div>
                     
                     <div class="modal-footer">
-                    <button id="viewDetailsButton" class="btn yes">PRINT REFERRAL SLIP</button>
+                    <button id="doneButton" class="btn yes" type="button">Done</button>
                 </div>
             </div>
             </div>
@@ -882,7 +882,7 @@ updateRemoveButtons();
                         <p>The patient record has been successfully added.</p>
                     </div>
                     <div class="modal-footer">
-                        <button id="exitButton" class="btn yes">Exit</button>
+                        <button id="exitButton" class="btn yes" type="button">Exit</button>
                     </div>
                 </div>
             </div>
@@ -895,13 +895,13 @@ updateRemoveButtons();
          </div>
 
     <div class="modal-body">
-        <p>Patient with the same Name and Date of Birth was found. Would you like to use the existing patient record or add a new one?</p>
+        <p>Patient with the same Name and Date of Birth was found. Would you like to use the existing patient record or add it as a new one?</p>
     </div>
 
     <div class="modal-footer">
-        <button id="useExistingBtn" class="btn yes">Use Existing</button>
-        <button id="addNewBtn" class="btn yes">Add New</button>
-        <button id="cancelBtn" class="btn cancel">Cancel</button>
+        <button id="useExistingBtn" class="btn yes" type="button">Use Existing</button>
+        <button id="addNewBtn" class="btn yes" type="button">Add New</button>
+        <button id="cancelButton" class="btn cancel" type="button">Cancel</button>
     </div>
 
 </div>
@@ -944,6 +944,7 @@ function confirmLogout() {
 
 function closeModal() {
     document.getElementById('logoutModal').style.display = 'none';
+     document.getElementById('myModal').style.display = 'none';
 }
 
 function proceedLogout() {

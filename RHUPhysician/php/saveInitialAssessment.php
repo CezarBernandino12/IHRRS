@@ -255,7 +255,7 @@ if (empty($patient_id)) {
             "status" => "success",
             "message" => "Patient information and visit record saved successfully!",
             "patient_id" => $patient_id,
-            "referral_id" => $referral_id  
+            "visit_id" => $visit_id  
         ]);
 
        

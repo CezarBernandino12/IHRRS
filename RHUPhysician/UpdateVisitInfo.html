@@ -391,7 +391,7 @@ document.addEventListener("click", function(event) {
                     </div>
 
                      <div class="form-group">
-                            <label for="rhu_remarks">Diagnosis:</label>
+                            <label for="rhu_remarks">Instructions/Remarks:</label>
                             <select id="rhu_remarks" name="rhu_remarks" class="select2">
                                 <option value="">Select</option>
                                 <option value="other">Other (Enter manually)</option>
@@ -436,12 +436,12 @@ document.addEventListener("click", function(event) {
                     <span class="close-btn" id="closeBtn">&times;</span>
                 </div>
                 <div class="modal-body">
-                    <p>Save patient record?
+                    <p>Save patient record?</p>
                 </div>
                 
                 <div class="modal-footer">
-                    <button id="cancelButton" class="btn no">Cancel</button>
-                    <button id="yesButton" class="btn yes">Save</button>
+                    <button id="cancelButton" class="btn no" type="button">Cancel</button>
+                    <button id="confirmBtn" class="btn yes">Save</button>
                 </div>
 
             </div>
@@ -641,7 +641,7 @@ $('#add-medicine').on('click', function () {
 
     // Add form submission handler
     $('#individualRecordForm').on('submit', function(e) {
-        e.preventDefault(); // Prevent default form submission
+         e.preventDefault();
         
         // Get form data
         const formData = new FormData(this);

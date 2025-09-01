@@ -179,33 +179,38 @@
         });
         
         // Handle "Save" button click - Send form data via AJAX
-        document.getElementById("confirmSave").addEventListener("click", function (event) {
-        
-        
-            let formData = new FormData(document.getElementById("individualRecordForm")); // Collect form data
-        
-            // Disable button to prevent duplicate submissions
-            document.getElementById("confirmSave").disabled = true; 
-        
+      // ✅ Confirm Save → AJAX
+    const confirmBtn = document.getElementById("confirmSave");
+    if (confirmBtn) {
+        confirmBtn.addEventListener("click", function () {
+            const form = document.getElementById("individualRecordForm");
+            if (!form) return;
+
+            let formData = new FormData(form);
+            confirmBtn.disabled = true;
+
             fetch("php/saveConsultation.php", {
                 method: "POST",
                 body: formData,
             })
-            .then(response => response.text())  // Get response as text first
-            .then(text => {
-                console.log("Raw Response:", text);  // Log response to debug
-                return JSON.parse(text);  // Try parsing JSON manually
-            })
-            .then(data => {
-                document.getElementById("myModal").style.display = "none"; // Hide confirmation modal
-                showMessageModal(data.message || "Unknown response"); // Show message
-            })
-            .catch(error => {
-                console.error("Error:", error);
-                showMessageModal("An error occurred while saving. ❌");
-            });
-            
+                .then(response => response.text())
+                .then(text => {
+                    console.log("Raw Response:", text);
+                    return JSON.parse(text);
+                })
+                .then(data => {
+                    document.getElementById("myModal").style.display = "none";
+                    showMessageModal(data.message || "Unknown response");
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    showMessageModal("An error occurred while saving. ❌");
+                })
+                .finally(() => {
+                    confirmBtn.disabled = false;
+                });
         });
+    }
         
         
         // Function to show message modal

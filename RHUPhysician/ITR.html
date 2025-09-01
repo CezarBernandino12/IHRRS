@@ -239,8 +239,8 @@ fetch('php/getUserId.php')
 
                 <div class="form-group">
                     <label for="mobile">Mobile Number:</label>
-                    <input type="text" name="mobile" id="mobile" placeholder="Mobile no." />
-                    <small id="mobileError" style="color: red; display: none;">Invalid mobile number</small>
+                    <input type="number" name="mobile" id="mobile" placeholder="Mobile no." />
+                    <small id="mobileError" style="color: red; display: none;">Enter valid mobile number</small>
                 </div>
                 <script>document.getElementById("mobile").addEventListener("blur", function () {
                     const mobileInput = this.value.trim();
@@ -808,9 +808,8 @@ updateRemoveButtons();
                     </div>
              <br><br>
                     <div class="modal-footer">
-                        <button id="yesButton" class="btn yes">Save, refer to RHU</button>
-                        <button id="noButton" class="btn maybe" type="button">Save, don't refer</button>
-                        <button id="cancelBtn" class="btn cancel">Cancel</button>
+                        <button id="cancelBtn" onclick="closeModal()" class="btn cancel" type="button">Cancel</button>
+                           <button id="saveButton" class="btn maybe" type="button">Save</button>
                     </div>
 
                 </div>
@@ -827,34 +826,15 @@ updateRemoveButtons();
                         <span class="close-btn" id="closeBtn2">&times;</span>
                     </div>
                     <div class="modal-body">
-                        <p>Do you confirm on referring this patient?</p>
+                        <p>Do you want to diagnose this patient?</p>
                     </div>
                     <div class="modal-footer">
-                        <button id="yesButton2" class="btn yes" value="yes">Yes</button>
-                        <button id="noButton2" class="btn no">No</button>
+                        <button id="noButton2" class="btn no" type="button">No</button>
+                         <button id="diagButton" class="btn yes" value="yes" type="button">Proceed</button>
                     </div>
                 </div>
             </div>
 
-            <div id="myModal3" class="modal">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <img src="../img/check.png" alt="Checkmark" class="checkmark-image">
-                        <h3></h3>
-                        <span class="close-btn" id="closeBtn3">&times;</span>
-                    </div>
-
-                    <div class="modal-footer">
-                        <div class="modal-header">
-                            <h3 style="color: #033cad;">Referral Sent to RHU!</h3>
-                        </div>
-                    </div>
-                    
-                    <div class="modal-footer">
-                    <button id="viewDetailsButton" class="btn yes">PRINT REFERRAL SLIP</button>
-                </div>
-            </div>
-            </div>
         
             <div id="myModal4" class="modal">
                 <div class="modal-content">
@@ -882,7 +862,7 @@ updateRemoveButtons();
                         <p>The patient record has been successfully added.</p>
                     </div>
                     <div class="modal-footer">
-                        <button id="exitButton" class="btn yes">Exit</button>
+                        <button id="exitButton" class="btn yes" type="button">Exit</button>
                     </div>
                 </div>
             </div>
@@ -891,17 +871,17 @@ updateRemoveButtons();
         <div class="modal-content">
             <div class="modal-header">
              <h2>Patient Already Exists</h2>
-             <span class="close-btn" id="closeBtn">&times;</span>
+             <span class="close-btn" id="closeBtn6">&times;</span>
          </div>
 
     <div class="modal-body">
-        <p>Patient with the same Name and Date of Birth was found. Would you like to use the existing patient record or add a new one?</p>
+        <p>Patient with the same Name and Date of Birth was found. Would you like to use the existing patient record or add it as a new one?</p>
     </div>
 
     <div class="modal-footer">
-        <button id="useExistingBtn" class="btn yes">Use Existing</button>
-        <button id="addNewBtn" class="btn yes">Add New</button>
-        <button id="cancelBtn" class="btn cancel">Cancel</button>
+        <button id="useExistingBtn" class="btn yes" type="button">Use Existing</button>
+        <button id="addNewBtn" class="btn yes" type="button">Add New</button>
+        <button id="cancelButton" class="btn cancel" type="button">Cancel</button>
     </div>
 
 </div>
@@ -915,8 +895,8 @@ updateRemoveButtons();
             </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>     
-    <script src="js/form.js"></script>
-    <script src="js/script.js"></script>
+    <script src="js/form_physician.js"></script>
+    <script src="js/script_physician.js"></script>
     <script src="js/modal.js"></script>
 
     <div id="logoutModal" class="modal">
@@ -944,6 +924,7 @@ function confirmLogout() {
 
 function closeModal() {
     document.getElementById('logoutModal').style.display = 'none';
+    document.getElementById('myModal').style.display = 'none';
 }
 
 function proceedLogout() {
