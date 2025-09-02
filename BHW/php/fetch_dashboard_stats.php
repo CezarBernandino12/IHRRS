@@ -25,7 +25,7 @@ try {
     }
 
     // Count visits today
-    $stmt = $pdo->prepare("SELECT COUNT(*) FROM bhs_visits WHERE visit_date = :date");
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM patient_assessment WHERE visit_date = :date");
     $stmt->execute([':date' => $date]);
     $visits_today = $stmt->fetchColumn();
 

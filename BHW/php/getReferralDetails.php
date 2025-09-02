@@ -20,7 +20,7 @@ v.weight, v.height, v.temperature, v.blood_pressure, v.chief_complaints,
 v.visit_id
 FROM referrals r
 JOIN patients p ON p.patient_id = r.patient_id
-JOIN bhs_visits v ON v.patient_id = p.patient_id
+JOIN patient_assessment v ON v.patient_id = p.patient_id
 WHERE r.referral_id = :referral_id
 ORDER BY v.visit_date DESC
 LIMIT 1";

@@ -20,7 +20,7 @@ try {
     // Fetch visit details and patient_id
     $sql_visit = "SELECT visit_id, patient_id, visit_date, patient_alert, chief_complaints, blood_pressure, temperature, 
                          weight, height, chest_rate, respiratory_rate, remarks 
-                  FROM bhs_visits 
+                  FROM patient_assessment 
                   WHERE visit_id = :visit_id";
     $stmt_visit = $pdo->prepare($sql_visit);
     $stmt_visit->bindParam(':visit_id', $visit_id, PDO::PARAM_INT);

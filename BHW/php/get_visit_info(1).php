@@ -23,8 +23,8 @@ try {
     bv.blood_pressure, bv.temperature, bv.weight, bv.height,  bv.bmi, 
     bv.chest_rate, bv.respiratory_rate, bv.remarks,
     u.full_name AS bhw_name, u.barangay AS bhw_barangay
-FROM bhs_visits bv
-LEFT JOIN users u ON bv.bhw_id = u.user_id
+FROM patient_assessment bv
+LEFT JOIN users u ON bv.recorded_by = u.user_id
 WHERE bv.visit_id = :visit_id";
 
     $stmt_visit = $pdo->prepare($sql_visit);

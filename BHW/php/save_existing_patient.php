@@ -105,8 +105,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $chief_complaints = clean_input($_POST['chief_complaints'] ?? '');
         $remarks = clean_input($_POST['remarks'] ?? '');
 
-        $stmt_visit = $pdo->prepare("INSERT INTO bhs_visits (
-            patient_id, bhw_id, visit_date, blood_pressure, temperature, weight, height, 
+        $stmt_visit = $pdo->prepare("INSERT INTO patient_assessment (
+            patient_id, recorded_by, visit_date, blood_pressure, temperature, weight, height, 
             chest_rate, respiratory_rate, chief_complaints, remarks
         ) VALUES (
             :patient_id, :user_id, NOW(), :bp, :temp, :weight, :height, 

@@ -13,9 +13,9 @@ $with_rhu = isset($_GET['with_rhu']) ? $_GET['with_rhu'] === 'true' : false;
 
 try {
     // Base query for BHS visits
-    $sql = "SELECT bv.visit_id, bv.visit_date, bv.bhw_id, u.full_name AS bhw_name
-            FROM bhs_visits bv
-            LEFT JOIN users u ON bv.bhw_id = u.user_id";
+    $sql = "SELECT bv.visit_id, bv.visit_date, bv.recorded_by, u.full_name AS bhw_name
+            FROM patient_assessment bv
+            LEFT JOIN users u ON bv.recorded_by = u.user_id";
 
     // Add RHU consultations filter if requested
     if ($with_rhu) {

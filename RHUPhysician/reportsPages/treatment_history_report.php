@@ -63,7 +63,7 @@ if (!empty($search)) {
             rc.diagnosis,
             GROUP_CONCAT(DISTINCT md.medicine_name SEPARATOR ', ') AS treatment,
             bv.remarks
-        FROM bhs_visits bv
+        FROM patient_assessment bv
         LEFT JOIN rhu_consultations rc ON bv.visit_id = rc.visit_id
         LEFT JOIN rhu_medicine_dispensed md ON rc.consultation_id = md.consultation_id
         WHERE bv.patient_id = :patient_id

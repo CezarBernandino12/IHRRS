@@ -150,8 +150,8 @@ if (empty($patient_id)) {
         $patient_alert = clean_input($_POST['patient_alert'] ?? '');
         $treatment = clean_input($_POST['treatment'] ?? '');
 
-        $stmt_visit = $pdo->prepare("INSERT INTO bhs_visits (
-            patient_id, bhw_id, visit_date, blood_pressure, temperature, weight, height, bmi, 
+        $stmt_visit = $pdo->prepare("INSERT INTO patient_assessment (
+            patient_id, recorded_by, visit_date, blood_pressure, temperature, weight, height, bmi, 
             chest_rate, respiratory_rate, chief_complaints, remarks, patient_alert, treatment
         ) VALUES (
             :patient_id, :user_id, DATE(CURDATE()), :bp, :temp, :weight, :height, :bmi, 

@@ -26,7 +26,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $user_id = clean_input($_POST['user_id']);
 
         // 🔹 Get the latest visit_id for this patient
-        $stmt_visit = $pdo->prepare("SELECT visit_id FROM bhs_visits WHERE patient_id = :patient_id ORDER BY visit_id DESC LIMIT 1");
+        $stmt_visit = $pdo->prepare("SELECT visit_id FROM patient_assessment WHERE patient_id = :patient_id ORDER BY visit_id DESC LIMIT 1");
         $stmt_visit->execute([':patient_id' => $patient_id]);
         $visit = $stmt_visit->fetch(PDO::FETCH_ASSOC);
 

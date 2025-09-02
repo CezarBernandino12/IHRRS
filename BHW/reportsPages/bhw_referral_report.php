@@ -34,7 +34,7 @@ $bhws = $bhw_stmt->fetchAll();
 // Build SQL
 $sql = "SELECT r.*, p.first_name, p.last_name, p.sex, p.age, v.visit_date, v.chief_complaints, u.full_name AS bhw_name
         FROM referrals r
-        JOIN bhs_visits v ON r.visit_id = v.visit_id
+        JOIN patient_assessment v ON r.visit_id = v.visit_id
         JOIN patients p ON r.patient_id = p.patient_id
         JOIN users u ON r.referred_by = u.user_id
         WHERE p.address LIKE :barangay";
@@ -349,7 +349,7 @@ $rows = $stmt->fetchAll();
 $referral_count = count($rows);
 
 // Build visits-without-referral query using same filters
-$visit_sql = "SELECT COUNT(*) FROM bhs_visits v
+$visit_sql = "SELECT COUNT(*) FROM patient_assessment v
     JOIN patients p ON v.patient_id = p.patient_id
     WHERE p.address LIKE :barangay
     AND v.visit_id NOT IN (SELECT visit_id FROM referrals)";
@@ -374,7 +374,7 @@ if (!empty($age_group)) {
     }
 }
 if (!empty($bhw_id)) {
-    $visit_sql .= " AND v.bhw_id = :bhw";
+    $visit_sql .= " AND v.recorded_by = :bhw";
     $visit_params['bhw'] = $bhw_id;
 }
 

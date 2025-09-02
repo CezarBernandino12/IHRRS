@@ -29,11 +29,11 @@ $sex = $_GET['sex'] ?? '';
 $age_group = $_GET['age_group'] ?? '';
 
 // Build SQL
-$sql = "SELECT m.*, v.visit_date, v.bhw_id, p.first_name, p.last_name, p.sex, p.age, u.full_name AS bhw_name
+$sql = "SELECT m.*, v.visit_date, v.recorded_by, p.first_name, p.last_name, p.sex, p.age, u.full_name AS bhw_name
         FROM bhs_medicine_dispensed m
-        JOIN bhs_visits v ON m.visit_id = v.visit_id
+        JOIN patient_assessment v ON m.visit_id = v.visit_id
         JOIN patients p ON v.patient_id = p.patient_id
-        LEFT JOIN users u ON v.bhw_id = u.user_id
+        LEFT JOIN users u ON v.recorded_by = u.user_id
         WHERE p.address LIKE :barangay";
 
 $params = [];
@@ -58,7 +58,7 @@ if (!empty($medicine)) {
 }
 
 if (!empty($bhw_id)) {
-    $sql .= " AND v.bhw_id = :bhw_id";
+    $sql .= " AND v.recorded_by = :bhw_id";
     $params['bhw_id'] = $bhw_id;
 }
 

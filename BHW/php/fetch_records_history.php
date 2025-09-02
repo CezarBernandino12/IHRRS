@@ -35,9 +35,9 @@ try {
             b.visit_date, b.visit_id,
             CONCAT(p.first_name, ' ', p.middle_name, ' ', p.last_name) AS patient_name,
             CONCAT(UPPER(u.role), ' - ' ,u.full_name) AS recorded_by
-        FROM bhs_visits b
+        FROM patient_assessment b
         INNER JOIN patients p ON b.patient_id = p.patient_id
-        INNER JOIN users u ON b.bhw_id = u.user_id
+        INNER JOIN users u ON b.recorded_by = u.user_id
         WHERE u.barangay = ?
         AND (
             CONCAT(p.first_name, ' ', p.middle_name, ' ', p.last_name) LIKE ?

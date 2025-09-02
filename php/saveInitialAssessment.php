@@ -41,9 +41,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Get the last inserted patient_id
         $patient_id = $pdo->lastInsertId();
 
-        // 2️⃣ Insert into `bhs_visits` table
-        $stmt_visit = $pdo->prepare("INSERT INTO bhs_visits (
-            patient_id, bhw_id, visit_date, blood_pressure, temperature, weight, height, 
+        // 2️⃣ Insert into `patient_assessment` table
+        $stmt_visit = $pdo->prepare("INSERT INTO patient_assessment (
+            patient_id, recorded_by, visit_date, blood_pressure, temperature, weight, height, 
             pulse_rate, respiratory_rate, chief_complaints, remarks
         ) VALUES (
             :patient_id, :bhw_id, NOW(), :bp, :temp, :weight, :height, 

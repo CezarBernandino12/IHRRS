@@ -23,9 +23,9 @@ $dispensed_by = isset($input['dispensed_by']) ? (int)$input['dispensed_by'] : nu
 try {
     $pdo->beginTransaction();
 
-    // 1. Update bhs_visits
+    // 1. Update patient_assessment
     $stmt = $pdo->prepare("
-        UPDATE bhs_visits SET 
+        UPDATE patient_assessment SET 
             visit_date = :visit_date,
             patient_alert = :patient_alert,
             chief_complaints = :chief_complaints,

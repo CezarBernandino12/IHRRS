@@ -38,8 +38,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $consultation_date = date("Y-m-d");
         $followup = clean_input($_POST['followup']);
 
-        // 🔹 Get patient_id from bhs_visits
-        $stmt_patient = $pdo->prepare("SELECT patient_id FROM bhs_visits WHERE visit_id = :visit_id");
+        // 🔹 Get patient_id from patient_assessment
+        $stmt_patient = $pdo->prepare("SELECT patient_id FROM patient_assessment WHERE visit_id = :visit_id");
         $stmt_patient->execute([':visit_id' => $visit_id]);
         $patient = $stmt_patient->fetch(PDO::FETCH_ASSOC);
 

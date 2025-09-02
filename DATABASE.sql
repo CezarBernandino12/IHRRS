@@ -74,13 +74,13 @@ INSERT INTO `bhs_medicine_dispensed` (`dispensed_id`, `visit_id`, `medicine_name
 -- --------------------------------------------------------
 
 --
--- Table structure for table `bhs_visits`
+-- Table structure for table `patient_assessment`
 --
 
-CREATE TABLE `bhs_visits` (
+CREATE TABLE `patient_assessment` (
   `visit_id` int(11) NOT NULL,
   `patient_id` int(11) NOT NULL,
-  `bhw_id` int(11) NOT NULL,
+  `recorded_by` int(11) NOT NULL,
   `visit_date` date NOT NULL DEFAULT current_timestamp(),
   `blood_pressure` varchar(20) DEFAULT NULL,
   `temperature` decimal(4,1) DEFAULT NULL,
@@ -97,10 +97,10 @@ CREATE TABLE `bhs_visits` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `bhs_visits`
+-- Dumping data for table `patient_assessment`
 --
 
-INSERT INTO `bhs_visits` (`visit_id`, `patient_id`, `bhw_id`, `visit_date`, `blood_pressure`, `temperature`, `chief_complaints`, `referred_to_rhu`, `bmi`, `weight`, `height`, `chest_rate`, `respiratory_rate`, `patient_alert`, `remarks`, `treatment`) VALUES
+INSERT INTO `patient_assessment` (`visit_id`, `patient_id`, `recorded_by`, `visit_date`, `blood_pressure`, `temperature`, `chief_complaints`, `referred_to_rhu`, `bmi`, `weight`, `height`, `chest_rate`, `respiratory_rate`, `patient_alert`, `remarks`, `treatment`) VALUES
 (1, 1, 8, '2025-05-20', '120/80', 35.0, 'Diarrhea for 10 days. Severe Headache', 0, 17.6, 45.00, 160.00, 0, 0, '', 'Patient has allergy to seafoods', ''),
 (2, 2, 8, '2025-05-20', '120/80', 35.0, 'severe stomach pain for 4 days', 0, 17.6, 45.00, 160.00, 0, 0, '', 'drink 3 x a day', ''),
 (3, 3, 8, '2025-05-20', '1230/80', 39.0, 'headache for 10 days', 0, 17.2, 45.00, 162.00, 0, 0, '', 'Patient has severe allergy to antibiotics', ''),
@@ -683,12 +683,12 @@ ALTER TABLE `bhs_medicine_dispensed`
   ADD KEY `dispensed_by` (`dispensed_by`);
 
 --
--- Indexes for table `bhs_visits`
+-- Indexes for table `patient_assessment`
 --
-ALTER TABLE `bhs_visits`
+ALTER TABLE `patient_assessment`
   ADD PRIMARY KEY (`visit_id`),
   ADD KEY `patient_id` (`patient_id`),
-  ADD KEY `bhw_id` (`bhw_id`);
+  ADD KEY `recorded_by` (`recorded_by`);
 
 --
 -- Indexes for table `custom_options`
@@ -796,9 +796,9 @@ ALTER TABLE `bhs_medicine_dispensed`
   MODIFY `dispensed_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
--- AUTO_INCREMENT for table `bhs_visits`
+-- AUTO_INCREMENT for table `patient_assessment`
 --
-ALTER TABLE `bhs_visits`
+ALTER TABLE `patient_assessment`
   MODIFY `visit_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
@@ -888,15 +888,15 @@ ALTER TABLE `approvals`
 -- Constraints for table `bhs_medicine_dispensed`
 --
 ALTER TABLE `bhs_medicine_dispensed`
-  ADD CONSTRAINT `bhs_medicine_dispensed_ibfk_1` FOREIGN KEY (`visit_id`) REFERENCES `bhs_visits` (`visit_id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `bhs_medicine_dispensed_ibfk_1` FOREIGN KEY (`visit_id`) REFERENCES `patient_assessment` (`visit_id`) ON DELETE CASCADE,
   ADD CONSTRAINT `bhs_medicine_dispensed_ibfk_2` FOREIGN KEY (`dispensed_by`) REFERENCES `users` (`user_id`) ON DELETE CASCADE;
 
 --
--- Constraints for table `bhs_visits`
+-- Constraints for table `patient_assessment`
 --
-ALTER TABLE `bhs_visits`
-  ADD CONSTRAINT `bhs_visits_ibfk_1` FOREIGN KEY (`patient_id`) REFERENCES `patients` (`patient_id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `bhs_visits_ibfk_2` FOREIGN KEY (`bhw_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE;
+ALTER TABLE `patient_assessment`
+  ADD CONSTRAINT `patient_assessment_ibfk_1` FOREIGN KEY (`patient_id`) REFERENCES `patients` (`patient_id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `patient_assessment_ibfk_2` FOREIGN KEY (`recorded_by`) REFERENCES `users` (`user_id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `follow_ups`
@@ -922,7 +922,7 @@ ALTER TABLE `logs`
 -- Constraints for table `patient_consents`
 --
 ALTER TABLE `patient_consents`
-  ADD CONSTRAINT `fk_visit_id` FOREIGN KEY (`visit_id`) REFERENCES `bhs_visits` (`visit_id`),
+  ADD CONSTRAINT `fk_visit_id` FOREIGN KEY (`visit_id`) REFERENCES `patient_assessment` (`visit_id`),
   ADD CONSTRAINT `patient_consents_ibfk_1` FOREIGN KEY (`patient_id`) REFERENCES `patients` (`patient_id`),
   ADD CONSTRAINT `patient_consents_ibfk_2` FOREIGN KEY (`received_by_user_id`) REFERENCES `users` (`user_id`);
 
@@ -930,14 +930,14 @@ ALTER TABLE `patient_consents`
 -- Constraints for table `referrals`
 --
 ALTER TABLE `referrals`
-  ADD CONSTRAINT `referrals_fk_visit` FOREIGN KEY (`visit_id`) REFERENCES `bhs_visits` (`visit_id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `referrals_fk_visit` FOREIGN KEY (`visit_id`) REFERENCES `patient_assessment` (`visit_id`) ON DELETE CASCADE,
   ADD CONSTRAINT `referrals_ibfk_2` FOREIGN KEY (`referred_by`) REFERENCES `users` (`user_id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `rhu_consultations`
 --
 ALTER TABLE `rhu_consultations`
-  ADD CONSTRAINT `fk_consultations_visit` FOREIGN KEY (`visit_id`) REFERENCES `bhs_visits` (`visit_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_consultations_visit` FOREIGN KEY (`visit_id`) REFERENCES `patient_assessment` (`visit_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `rhu_consultations_ibfk_1` FOREIGN KEY (`patient_id`) REFERENCES `patients` (`patient_id`) ON DELETE CASCADE,
   ADD CONSTRAINT `rhu_consultations_ibfk_2` FOREIGN KEY (`doctor_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE;
 

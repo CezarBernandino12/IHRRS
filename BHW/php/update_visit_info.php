@@ -24,7 +24,7 @@ try {
     $pdo->beginTransaction();
 
     // Check if the visit exists
-    $stmt = $pdo->prepare("SELECT patient_id FROM bhs_visits WHERE visit_id = :visit_id");
+    $stmt = $pdo->prepare("SELECT patient_id FROM patient_assessment WHERE visit_id = :visit_id");
     $stmt->execute(['visit_id' => $visit_id]);
     $visit = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -32,7 +32,7 @@ try {
 
     // Update visit info
     $stmt = $pdo->prepare("
-        UPDATE bhs_visits SET 
+        UPDATE patient_assessment SET 
             visit_date = :visit_date,
             patient_alert = :patient_alert,
             chief_complaints = :chief_complaints,

@@ -30,7 +30,7 @@ $medication = $_GET['medication'] ?? '';
 $treatment = $_GET['treatment'] ?? '';
 
 // Build query with filters
-$sql = "SELECT v.*, p.first_name, p.last_name, p.age, p.sex FROM bhs_visits v 
+$sql = "SELECT v.*, p.first_name, p.last_name, p.age, p.sex FROM patient_assessment v 
         JOIN patients p ON v.patient_id = p.patient_id 
         WHERE p.address LIKE :barangay"; // Always require barangay match
 
