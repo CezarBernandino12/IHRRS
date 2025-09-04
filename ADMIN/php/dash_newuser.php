@@ -48,7 +48,7 @@ $chartCounts = json_encode($counts);
     <link rel="stylesheet" href="../css/dashboard3.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <title>New Users This Week</title>
+    <title>New Users</title>
 
 </head>
 <body>
@@ -101,11 +101,8 @@ $chartCounts = json_encode($counts);
         <nav>
             <form action="#">
             </form>
-            <div class="greeting">
-                <span id="userGreeting">Hello Admin!</span>
-            </div>
+            
             <a href="profile.php" class="profile">
-                <img src="../../img/profile.jpg">
             </a>
         </nav>
 

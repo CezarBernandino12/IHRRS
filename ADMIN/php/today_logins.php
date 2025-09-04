@@ -86,11 +86,9 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <form action="#">
             </form>
             <div class="greeting">
-                <span id="userGreeting">Hello Admin!</span>
             </div>
 
             <a href="profile.php" class="profile">
-                <img src="../../img/profile.jpg">
             </a>
         </nav>
         <main>		

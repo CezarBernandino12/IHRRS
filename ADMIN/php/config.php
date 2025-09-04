@@ -1,6 +1,6 @@
 <?php
 $host = "localhost";
-$dbname = "ihrrs_database"; // Change this to your database name
+$dbname = "database"; // Change this to your database name
 $username = "root";
 $password = ""; // XAMPP default is empty
 

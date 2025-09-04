@@ -61,7 +61,7 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 <!DOCTYPE html>
 <html lang="en">
-<head>
+<head> 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="../../img/logo.png">
@@ -69,7 +69,7 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <link rel="stylesheet" href="../css/usermanagement.css">
      
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <title>Admin Dashboard</title>
+    <title>User Management</title>
     
 </head>
 <body>
@@ -228,11 +228,12 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 
 <tfoot>
     <tr>
-        <td colspan="5" class="pagination-container">
+        <td colspan="5" class="pagination-container" data-total="<?php echo $totalUsers; ?>">
+            <div class="pagination-info">
+                Showing <span id="startRecord">1</span> to <span id="displayedUsers"><?php echo min(count($users), $totalUsers); ?></span> of <span id="totalUsers"><?php echo $totalUsers; ?></span> users
+            </div>
             <div class="pagination-controls">
-                <button id="prevBtn" class="pagination-btn prev-btn" disabled>
-                    <i class='bx bx-chevron-left'></i> Previous
-                </button>
+            
 
                 <button id="nextBtn" class="pagination-btn next-btn" <?php echo ($totalUsers <= $limit) ? 'disabled' : ''; ?>>
                     Load More <i class='bx bx-chevron-right'></i>
@@ -240,8 +241,7 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
             </div>
         </td>
     </tr>
-</tfoot>
-            </div>
+</tfoot>            </div>
 
             
 

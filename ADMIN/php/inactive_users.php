@@ -22,7 +22,7 @@ $inactiveUsers = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <link rel="stylesheet" href="../css/dashstyle.css">
     <link rel="stylesheet" href="../css/approval.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <title>Log In Today</title>
+    <title>Terminated Accouts</title>
 </head>
 
 <body>
@@ -79,10 +79,8 @@ $inactiveUsers = $stmt->fetchAll(PDO::FETCH_ASSOC);
             </form> 
 
             <div class="greeting">
-                <span id="userGreeting">Hello Admin!</span>
             </div>
             <a href="profile.php" class="profile">
-                <img src="../../img/profile.jpg">
             </a>
         </nav>
         <main>		
