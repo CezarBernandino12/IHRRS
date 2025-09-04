@@ -413,7 +413,7 @@ document.addEventListener("click", function(event) {
 
 
                     <input type="hidden" id="visit_id" name="visit_id">
-                    <input type="hidden" name="doctor_id" id="doctor_id" value="1">
+                    <input name="doctor_id" id="doctor_id" value="">
 
                     </div> </div>
             
@@ -492,6 +492,7 @@ document.addEventListener("click", function(event) {
     <script src="js/form.js"></script>
     <script src="js/script.js"></script>
     <script>
+
 $(document).ready(function () {
     // Initialize Select2 for diagnosis
    
@@ -826,6 +827,20 @@ fetch('php/getUserName.php')
         console.error('Error fetching user name:', error);
         document.getElementById('userGreeting').textContent = 'Hello, BHW!';
     });
+    
+      fetch('php/getUserId.php')
+            .then(response => response.json())
+            .then(data => {
+                if (data.user_id) {
+                     document.getElementById('doctor_id').value = data.user_id;
+                } else {
+                    console.log('User not logged in.');
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching user id:', error);
+           
+            });
 
 
 </script>

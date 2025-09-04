@@ -55,7 +55,7 @@ $photoPath = null;
 if (isset($_FILES['photo']) && $_FILES['photo']['error'] === UPLOAD_ERR_OK) {
     $photoTmp = $_FILES['photo']['tmp_name'];
     $photoName = basename($_FILES['photo']['name']);
-    $uploadDir = 'uploads/'; // Ensure this folder exists and is writable
+    $uploadDir = '../RHUPhysician/php/uploads'; // Ensure this folder exists and is writable
     $photoPath = $uploadDir . time() . '_' . $photoName;
 
     // Save the file
@@ -66,6 +66,7 @@ if (isset($_FILES['photo']) && $_FILES['photo']['error'] === UPLOAD_ERR_OK) {
         exit;
     }
 }
+
 
         // 🔹 Insert into rhu_consultations
         $stmt_consultation = $pdo->prepare("

@@ -89,7 +89,7 @@ try {
     }
 
     // Fetch consultation details
-    $sql_consultation = "SELECT * FROM rhu_consultations WHERE visit_id = :visit_id";
+    $sql_consultation = "SELECT rc.*, u.full_name FROM rhu_consultations rc JOIN users u ON rc.doctor_id = u.user_id WHERE visit_id = :visit_id";
     $stmt_consultation = $pdo->prepare($sql_consultation);
     $stmt_consultation->bindParam(':visit_id', $visit_id, PDO::PARAM_INT);
     $stmt_consultation->execute();
