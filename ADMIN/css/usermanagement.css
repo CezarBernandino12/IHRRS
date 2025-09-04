@@ -753,15 +753,15 @@ button.reset-password-btn:hover {
 
 
 .cancel-btn {
-  background-color: #f44336;
+  background-color: #1a73e8;
   color: white;
 }
 
 .cancel-btn:hover {
-  background-color: #d32f2f;
+  background-color: #1a73e8;
 }
 
-.save-btn {
+.save-btn { 
   background-color: #1a73e8;
   color: white;
 }

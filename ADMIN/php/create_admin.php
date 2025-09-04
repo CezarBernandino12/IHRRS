@@ -3,8 +3,8 @@ require_once 'config.php';
 
 // Admin account details
 $full_name = "Lee Ivan Almadrones";
-$username = "LeeIvan1234";
-$plain_password = "LeeIvan1234";
+$username = "adminadmin";
+$plain_password = "Adminadmin123";
 $password_hash = password_hash($plain_password, PASSWORD_DEFAULT);
 $role = "admin";
 $contact_number = "09123456789";
