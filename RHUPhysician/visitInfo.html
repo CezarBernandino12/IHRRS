@@ -213,6 +213,7 @@
             </div>
         </div>
         </div>
+
             
             <!-- INITIAL ASSESSMENT / VISIT INFO -->
             <div class="additional-group box-group additional-fields" style="background-color: aliceblue;">
@@ -291,10 +292,24 @@
             <div class="additional-group box-group additional-fields" style="background-color: aliceblue;">
                 
                 <div class="additional-options">
+                  <div class="form-group">
+                         <label>Laboratory Test Result:</label>
+                    <div id="lab-file-container">
+                   
+                       <!-- File preview will load here -->
+                  </div>
+                    </div>
                     <div class="form-group">
                         <label for="diagnosis">Diagnosis:</label>
                          <p class="diagnosis">N/A</p>
                     </div>
+                        <div class="form-group">
+                        <label for="diagnosis_status">Status:</label>
+                         <p class="diagnosis_status">N/A</p>
+                    </div>
+
+
+                    
 
                     <div class="form-group">
                          <!-- MEDICATION -->
@@ -312,6 +327,7 @@
                 <label for="doctor">Recorded by:</label>
                 <p class="doctor">N/A</p>
             </div>
+            
 
                                 
         
@@ -323,11 +339,13 @@
 
                     
                     <input type="hidden" id="visit_id" name="visit_id">
-                    <input type="hidden" name="doctor_id" id="doctor_id" value="1">
+                    <input type="hidden" name="doctor_id" id="doctor_id" value="">
+                    <input name="consultation_id" id="consultation_id" value="">
 
                     <div class="referral-form-footer">
         
-                        <button id="printBtn" class="footer-btn">Print</button>
+                        <button id="printBtn" class="footer-btn" type="button">Print</button>
+                        <button id="resumeBtn" class="footer-btn" type="button">Resume Treatment</button>
                       </div>
                     <style>
                 
@@ -422,6 +440,8 @@
                 console.error('Error fetching user name:', error);
                 document.getElementById('userGreeting').textContent = 'Hello, BHW!';
             });
+      
+       
         </script>
     <script src="js/form.js"></script>
     <script src="js/script.js"></script>

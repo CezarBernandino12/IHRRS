@@ -413,7 +413,7 @@ document.addEventListener("click", function(event) {
                     </script>
 
                     <input type="hidden" id="visit_id" name="visit_id">
-                    <input type="hidden" name="doctor_id" id="doctor_id" value="1">
+                    <input type="hidden" name="doctor_id" id="doctor_id" value="">
 
                     </div> </div>
             
@@ -824,11 +824,18 @@ fetch('php/getUserName.php')
                     // User is not logged in, redirect to role selection page
                     window.location.href = '../role.html';
                 }
+                else if (data.user_id) {
+                     document.getElementById('doctor_id').value = data.user_id;
+                } else {
+                    console.error('User not logged in.');
+                }
             })
             .catch(error => {
                 console.error('Error checking session:', error);
                 window.location.href = '../role.html';
             });
+
+
 		
 			
 </script>

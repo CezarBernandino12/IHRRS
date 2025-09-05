@@ -350,6 +350,7 @@ $total_pending = 0;
   <h2>Rural Health Unit</h2>
   <br> 
   <h2>REFERRAL INTAKE SUMMARY REPORT</h2>
+  <h3></h3>
 </div>
 <div class="report-content">
 <!-- Summary Section -->

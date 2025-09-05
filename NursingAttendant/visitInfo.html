@@ -294,8 +294,18 @@
                 
                 <div class="additional-options">
                     <div class="form-group">
+                         <label>Laboratory Test Result:</label>
+                    <div id="lab-file-container">
+                       <!-- File preview will load here -->
+                  </div>
+                    </div>
+                    <div class="form-group">
                         <label for="diagnosis">Diagnosis:</label>
                          <p class="diagnosis">N/A</p>
+                    </div>
+                          <div class="form-group">
+                        <label for="diagnosis_status">Status:</label>
+                         <p class="diagnosis_status">N/A</p>
                     </div>
 
                     <div class="form-group">
@@ -326,6 +336,7 @@
                     
                     <input type="hidden" id="visit_id" name="visit_id">
                     <input type="hidden" name="doctor_id" id="doctor_id" value="1">
+                     <input type="hidden" name="consultation_id" id="consultation_id" value="">
 
                     <div class="referral-form-footer">
               

@@ -16,8 +16,33 @@ document.addEventListener("DOMContentLoaded", function () {
                     return;
                 }
 
+                   // ✅ Patient Info
+                if (data.patient) {
+                    updateElement(".patient-first-name", data.patient.first_name);
+                    updateElement(".patient-last-name", data.patient.last_name);
+                    updateElement(".patient-middle-name", data.patient.middle_name);
+                    updateElement(".patient-extension", data.patient.extension);
+                    updateElement(".patient-birth-place", data.patient.birthplace);
+                    updateElement(".date-of-birth", data.patient.date_of_birth);
+                    const age = calculateAge(data.patient.date_of_birth);
+                    updateElement(".age", age);
+                    updateElement(".address", data.patient.address);
+                    updateElement(".civil-status", data.patient.civil_status);
+                    updateElement(".contact-number", data.patient.contact_number);
+                    updateElement(".religion", data.patient.religion);
+                    updateElement(".occupation", data.patient.occupation);
+                    updateElement(".birth-weight", data.patient.birth_weight);
+                    updateElement(".educational-attainment", data.patient.educational_attainment);
+                    updateElement(".philhealth-member-no", data.patient.philhealth_member_no);
+                    updateElement(".category", data.patient.category);
+                    updateElement(".family-serial-no", data.patient.family_serial_no);
+                    updateElement(".sex", data.patient.sex);
+                    updateElement(".fourps-status", data.patient.fourps_status);
+                }
+
                 // ✅ Visit Info
                 if (data.visit) {
+                    document.getElementById("visit_id").value = data.visit.visit_id || "";
                     updateElement(".visit-date", data.visit.visit_date);
                     updateElement(".patient-alert", data.visit.patient_alert);
                     updateElement(".chief-complaints", data.visit.chief_complaints);
@@ -32,9 +57,20 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 // ✅ Consultation Info
                 if (data.consultation) {
-                    updateElement(".diagnosis", data.consultation.diagnosis);
+                    updateElement(".diagnosis", data.consultation.diagnosis || "N/A");
+                    document.getElementById("diagnosis").value = data.consultation.diagnosis || "";
+                    updateElement(".diagnosis_status", data.consultation.diagnosis_status);
                     updateElement(".instruction", data.consultation.instruction_prescription);
-                    updateElement(".doctor", data.consultation.doctor_id);
+                    updateElement(".doctor", data.consultation.full_name);
+
+                    // store consultation_id in a hidden field
+                    const consultationField = document.getElementById("consultation_id");
+                    if (consultationField) {
+                        consultationField.value = data.consultation.consultation_id;
+                    }
+
+                    // 🔹 fetch lab file dynamically
+                    loadLabFile(data.consultation.consultation_id);
                 }
 
                 // ✅ Medicines (Patient)
@@ -81,29 +117,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
                 }
 
-                // ✅ Patient Info
-                if (data.patient) {
-                    updateElement(".patient-first-name", data.patient.first_name);
-                    updateElement(".patient-last-name", data.patient.last_name);
-                    updateElement(".patient-middle-name", data.patient.middle_name);
-                    updateElement(".patient-extension", data.patient.extension);
-                    updateElement(".patient-birth-place", data.patient.birthplace);
-                    updateElement(".date-of-birth", data.patient.date_of_birth);
-                    const age = calculateAge(data.patient.date_of_birth);
-                    updateElement(".age", age);
-                    updateElement(".address", data.patient.address);
-                    updateElement(".civil-status", data.patient.civil_status);
-                    updateElement(".contact-number", data.patient.contact_number);
-                    updateElement(".religion", data.patient.religion);
-                    updateElement(".occupation", data.patient.occupation);
-                    updateElement(".birth-weight", data.patient.birth_weight);
-                    updateElement(".educational-attainment", data.patient.educational_attainment);
-                    updateElement(".philhealth-member-no", data.patient.philhealth_member_no);
-                    updateElement(".category", data.patient.category);
-                    updateElement(".family-serial-no", data.patient.family_serial_no);
-                    updateElement(".sex", data.patient.sex);
-                    updateElement(".fourps-status", data.patient.fourps_status);
-                }
+             
             })
             .catch(error => console.error("Error fetching visit info:", error));
     }
@@ -155,73 +169,90 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // ✅ Submit Button → Show Modal
-    const submitBtn = document.getElementById("submitButton");
-    if (submitBtn) {
-        submitBtn.addEventListener("click", function (event) {
-            event.preventDefault();
-            const modal = document.getElementById("myModal");
-            if (modal) modal.style.display = "block";
+    // ✅ Resume Button
+    const resumeBtn = document.getElementById("resumeBtn");
+    if (resumeBtn) {
+        resumeBtn.addEventListener("click", function () {
+            window.location.href = "resumeTreatment.html?visit_id=" + visit_id;
         });
     }
 
-    // ✅ Cancel + Close modal
-    ["cancelButton", "closeBtn"].forEach(id => {
-        const btn = document.getElementById(id);
-        if (btn) {
-            btn.addEventListener("click", () => {
-                const modal = document.getElementById("myModal");
-                if (modal) modal.style.display = "none";
-            });
-        }
-    });
+    // ✅ Load Lab File
 
-    // ✅ Confirm Save → AJAX
-    const confirmBtn = document.getElementById("confirmSave");
-    if (confirmBtn) {
-        confirmBtn.addEventListener("click", function () {
-            const form = document.getElementById("individualRecordForm");
-            if (!form) return;
 
-            let formData = new FormData(form);
-            confirmBtn.disabled = true;
+const container = document.getElementById("lab-file-container");
 
-            fetch("php/saveConsultation.php", {
-                method: "POST",
-                body: formData,
-            })
-                .then(response => response.text())
-                .then(text => {
-                    console.log("Raw Response:", text);
-                    return JSON.parse(text);
-                })
-                .then(data => {
-                    document.getElementById("myModal").style.display = "none";
-                    showMessageModal(data.message || "Unknown response");
-                })
-                .catch(error => {
-                    console.error("Error:", error);
-                    showMessageModal("An error occurred while saving. ❌");
-                })
-                .finally(() => {
-                    confirmBtn.disabled = false;
-                });
+if (visit_id) {
+    fetch(`php/get_file.php?visit_id=${visit_id}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === "success") {
+                const fileUrl = data.file;
+                const fileExt = fileUrl.split('.').pop().toLowerCase();
+                let content = "";
+
+                if (["jpg", "jpeg", "png", "gif"].includes(fileExt)) {
+                    // Show actual image
+                    content = `
+                        <a href="${fileUrl}" target="_blank">
+                            <img src="${fileUrl}" 
+                                 alt="Lab File" 
+                                 style="width:50px; height:50px; object-fit:cover; vertical-align:middle; margin-right:8px;">
+                            View File
+                        </a>
+                    `;
+                } else if (fileExt === "pdf") {
+                    // Show PDF icon
+                    content = `
+                        <a href="${fileUrl}" target="_blank">
+                            <img src="icons/pdf-icon.png" 
+                                 alt="PDF File" 
+                                 style="width:50px; height:50px; vertical-align:middle; margin-right:8px;">
+                            View PDF
+                        </a>
+                    `;
+                } else if (["doc", "docx"].includes(fileExt)) {
+                    // Word docs
+                    content = `
+                        <a href="${fileUrl}" target="_blank">
+                            <img src="icons/word-icon.png" 
+                                 alt="Word File" 
+                                 style="width:50px; height:50px; vertical-align:middle; margin-right:8px;">
+                            View Word Document
+                        </a>
+                    `;
+                } else if (["xls", "xlsx"].includes(fileExt)) {
+                    // Excel docs
+                    content = `
+                        <a href="${fileUrl}" target="_blank">
+                            <img src="icons/excel-icon.png" 
+                                 alt="Excel File" 
+                                 style="width:50px; height:50px; vertical-align:middle; margin-right:8px;">
+                            View Excel File
+                        </a>
+                    `;
+                } else {
+                    // Other file types
+                    content = `
+                        <a href="${fileUrl}" target="_blank">
+                            <img src="icons/file-icon.png" 
+                                 alt="File" 
+                                 style="width:50px; height:50px; vertical-align:middle; margin-right:8px;">
+                            Download File
+                        </a>
+                    `;
+                }
+
+                container.innerHTML = content;
+            } else {
+                container.textContent = "No file uploaded.";
+            }
+        })
+        .catch(error => {
+            console.error("Error fetching file:", error);
+            container.textContent = "Error loading file.";
         });
-    }
-
-    // ✅ Message Modal
-    function showMessageModal(message) {
-        const responseMsg = document.getElementById("responseMessage");
-        const responseModal = document.getElementById("responseModal");
-        if (responseMsg) responseMsg.textContent = message;
-        if (responseModal) responseModal.style.display = "block";
-    }
-
-    const closeResponseBtn = document.getElementById("closeResponseModal");
-    if (closeResponseBtn) {
-        closeResponseBtn.addEventListener("click", function () {
-            const responseModal = document.getElementById("responseModal");
-            if (responseModal) responseModal.style.display = "none";
-        });
-    }
+} else {
+    container.textContent = "No visit_id selected.";
+}
 });
