@@ -7,6 +7,8 @@
 	<link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
 	<link rel="stylesheet" href="css/dashstyle.css">
     <link rel="stylesheet" href="css/history.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 	<title>Referral History</title>
 </head>
 <body>
@@ -119,7 +121,9 @@
             <div class="header">
                 <div class="date-picker">
                     <label for="date">Select date:</label>
-            <input type="date" id="date" name="date" />
+            <!-- ...existing code... -->
+<input type="text" id="date" name="date" class="flatpickr" placeholder="Select date" />
+<!-- ...existing code... -->
 
             <div class="filter-container">
                 <label for="status">Select Status:</label>
@@ -176,7 +180,9 @@
 </section>
 
 
-<script>document.addEventListener("DOMContentLoaded", function () {
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
     // Set default status to show both completed and uncompleted
     document.getElementById("status").value = "All";
     
@@ -312,6 +318,14 @@ fetch('php/getUserName.php')
                 console.error('Error checking session:', error);
                 window.location.href = '../role.html';
             });
+
+             // Initialize Flatpickr
+    flatpickr(".flatpickr", {
+        dateFormat: "Y-m-d",
+        allowInput: true,
+        altInput: true,
+        altFormat: "F j, Y",
+    });
         
 </script>
 	<script src="js/script.js"></script>

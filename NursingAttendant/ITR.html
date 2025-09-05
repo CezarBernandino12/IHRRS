@@ -8,8 +8,11 @@
     <link rel="stylesheet" href="../BHW/css/form.css">
     <title>Individual Treatment Record</title>
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    
 </head>
 
 <body>
@@ -219,7 +222,7 @@ fetch('php/getUserId.php')
 
                 <div class="form-group">
                     <label for="dob" class="required">Date of Birth:</label>
-                    <input type="date" id="dob" name="dob" onchange="calculateAge()" required> 
+                    <input type="text" id="dob" name="dob" class="flatpickr-dob" onchange="calculateAge()" required placeholder="Select date of birth">
                     <label id="age-display" >Age: </label>
                 </div>
                 <input type="hidden" id="age-input" name="age">
@@ -366,11 +369,17 @@ fetch('php/getUserId.php')
                         </select>
                     </div>
 <br>
-<div class="additonal-group"> 
+<div class="date-visit-group">
     <label for="dov">Date of Visit:</label>
-    <input type="date" name="dov" id="dov" required>
+    <input 
+        type="text" 
+        name="dov" 
+        id="dov" 
+        class="flatpickr-dov" 
+        required 
+        placeholder="Select date of visit"
+    >
 </div>
-
 
 
                      <!-- Do not remove -->    <input type="hidden" name="user_id" id="user_id" hidden>
@@ -555,8 +564,7 @@ document.addEventListener("click", function(event) {
         <script>
             document.addEventListener("DOMContentLoaded", function () {
                                  
-                const today = new Date().toISOString().split('T')[0];
-                document.getElementById("dov").value = today;
+    
             
 
 
@@ -795,6 +803,28 @@ document.addEventListener("click", function (event) {
 
 // Run on page load
 updateRemoveButtons();
+
+// Date of Birth picker (disable future dates)
+    flatpickr("#dob", {
+        dateFormat: "Y-m-d",
+        allowInput: true,
+        altInput: true,
+        altFormat: "F j, Y",
+        onChange: function() {
+            calculateAge();
+        }
+    });
+
+    // Date of Visit picker (default to today, disable future dates)
+    flatpickr("#dov", {
+        dateFormat: "Y-m-d",
+        maxDate: "today",
+        allowInput: true,
+        altInput: true,
+        altFormat: "F j, Y",
+        defaultDate: "today"
+    });
+
 
             </script>            
 

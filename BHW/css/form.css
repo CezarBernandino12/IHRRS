@@ -972,6 +972,8 @@ input:focus, select:focus {
 
 
 /* Label Styling */
+
+
 .additional-group label {
     font-size: 15px;
     font-weight: bold;
@@ -2024,3 +2026,5 @@ input[type="number"] {
         width: 100%;
     }
 }
+
+
