@@ -79,7 +79,7 @@ $total_pending = 0;
 	<link rel="icon" href="../../img/logo.png">
 	<link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
 	<link rel="stylesheet" href="../css/reportsDesign.css">
-	<title>Patient Summary Report</title>
+	<title>Referral Summary Report</title>
 </head>
 <body>
     
@@ -87,7 +87,7 @@ $total_pending = 0;
 <section id="sidebar">
 		<a href="#" class="brand">
 			<img src="../../img/logo.png" alt="RHULogo" class="logo">
-			<span class="text">Hello User</span>
+			<span class="text">IHRRS</span>
 		</a>
 		<ul class="side-menu top">
 			<li>
@@ -158,18 +158,13 @@ $total_pending = 0;
 
 	<!-- Main Content Section -->
 	<section id="content">
-		<nav>
+	 <nav>
 			<form action="#">
-				<div class="form-input">
-					<input type="search" placeholder="Search...">
-					<button type="submit" class="search-btn">
-						<i class="bx bx-search"></i>
-					</button>
-				</div>
+				
 			</form>
-			<a href="notif.html" class="notification">
-				<i class="bx bxs-bell"></i>
-			</a>
+			<div class="greeting">
+                <span id="userGreeting">Hello Nurse!</span>
+            </div>
 			<a href="#" class="profile">
 				<img src="../../img/nurse.png">
 			</a>
@@ -180,7 +175,7 @@ $total_pending = 0;
             
             <div class="head-title">
                 <div class="left">
-                  <h1>Referral Intake Summary Report</h1>
+                  <h1>Referral Summary Report</h1>
                   <ul class="breadcrumb">
                     <li><a href="#">Referral Intake Summary Report</a></li>
                     <li><i class="bx bx-chevron-right"></i></li>
@@ -607,6 +602,24 @@ function printDiv() {
     printWindow.print();
     printWindow.close();
 }
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Add event listeners to all delete icons
+ 	fetch('../php/getUserName.php')
+        .then(response => response.json())
+        .then(data => {
+            if (data.full_name) {
+                document.getElementById('userGreeting').textContent = `Hello, ${data.full_name}!`;
+            } else {
+                document.getElementById('userGreeting').textContent = 'Hello, User!';
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching user name:', error);
+            document.getElementById('userGreeting').textContent = 'Hello, User!';
+        });
+});
 </script>
 
 </body>

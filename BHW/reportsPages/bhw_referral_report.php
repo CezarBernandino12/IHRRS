@@ -88,7 +88,7 @@ $rows = $stmt->fetchAll();
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
-	<title>Referral Report</title>
+	<title>Referrals Report</title>
 </head>
 <body>
 
@@ -161,7 +161,7 @@ $rows = $stmt->fetchAll();
             
             <div class="head-title">
                 <div class="left">
-                  <h1>Referral Report</h1>
+                  <h1>Referrals</h1>
                   <ul class="breadcrumb">
                     <li><a href="#">Referral Report</a></li>
                     <li><i class="bx bx-chevron-right"></i></li>

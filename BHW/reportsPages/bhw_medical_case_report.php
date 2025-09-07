@@ -94,7 +94,7 @@ $visits = $stmt->fetchAll();
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
-    <title>Dispensary</title>
+    <title>Medical Cases Report</title>
 </head>
 <body>
 
@@ -166,7 +166,7 @@ $visits = $stmt->fetchAll();
             
             <div class="head-title">
                 <div class="left">
-                  <h1>Disease Cases</h1>
+                  <h1>Medical Cases</h1>
                   <ul class="breadcrumb">
                     <li><a href="#">DCM Report</a></li>
                     <li><i class="bx bx-chevron-right"></i></li>
@@ -477,7 +477,7 @@ echo $filters ? implode("&nbsp; | &nbsp;", $filters) : "All Records";
 
   <!-- Disease Frequency Over Time Line Chart -->
 <div style="max-width: 800px; margin: 30px auto 0 auto; text-align:center;">
-    <h3>Disease Frequency Over Time</h3>
+    <h3>Medical Cases Frequency Over Time</h3>
     <canvas id="diseaseLineChart"></canvas>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -631,7 +631,7 @@ echo $filters ? implode("&nbsp; | &nbsp;", $filters) : "All Records";
 
     <!-- Age Group Distribution Bar Chart -->
     <div style="max-width: 500px; margin: 30px auto 0 auto; text-align:center;">
-        <h3>Age Group Distribution</h3>
+        <h3>Age Groups</h3>
         <canvas id="ageGroupBarChart"></canvas>
     </div>
     <script>
@@ -927,12 +927,12 @@ function printDiv() {
 
     // Collect chart images with titles
     let chartsHTML = '';
-    chartsHTML += getChartImage('sexPieChart', 'Distribution of Patients by Sex');
-    chartsHTML += getChartImage('ageGroupBarChart', 'Age Group Distribution');
-    chartsHTML += getChartImage('bmiPieChart', 'Distribution of Patients by BMI Category');
-    chartsHTML += getChartImage('treatmentBarChart', 'Distribution of Treatments');
-    chartsHTML += getChartImage('medicineBarChart', 'Dispensed Medicines Distribution');
-    chartsHTML += getChartImage('diseaseBarChart', 'Disease Frequency');
+    chartsHTML += getChartImage('sexPieChart', 'Patients by Sex');
+    chartsHTML += getChartImage('ageGroupBarChart', 'Age Group');
+    chartsHTML += getChartImage('bmiPieChart', 'Patients by BMI Category');
+    chartsHTML += getChartImage('treatmentBarChart', 'Treatments');
+    chartsHTML += getChartImage('medicineBarChart', 'Dispensed Medicines');
+    chartsHTML += getChartImage('diseaseBarChart', 'Medical Cases');
 
     // Clone the print area (table and summary)
     const originalArea = document.querySelector(".print-area").cloneNode(true);

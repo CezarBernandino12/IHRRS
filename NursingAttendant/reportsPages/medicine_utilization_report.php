@@ -200,7 +200,7 @@ if (count($patient_meds) > 0) {
 	<link rel="icon" href="../../img/logo.png">
 	<link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
 	<link rel="stylesheet" href="../css/reportsDesign.css">
-	<title>Patient Summary Report</title>
+	<title>Medicine Utilization Report</title>
 </head>
 <body>
 
@@ -208,7 +208,7 @@ if (count($patient_meds) > 0) {
 <section id="sidebar">
 		<a href="#" class="brand">
 			<img src="../../img/logo.png" alt="RHULogo" class="logo">
-			<span class="text">Hello User</span>
+			<span class="text">IHRRS</span>
 		</a>
 	<ul class="side-menu top">
 			<li>
@@ -279,29 +279,25 @@ if (count($patient_meds) > 0) {
 
 	<!-- Main Content Section -->
 	<section id="content">
-		<nav>
+		 <nav>
 			<form action="#">
-				<div class="form-input">
-					<input type="search" placeholder="Search...">
-					<button type="submit" class="search-btn">
-						<i class="bx bx-search"></i>
-					</button>
-				</div>
+				
 			</form>
-			<a href="notif.html" class="notification">
-				<i class="bx bxs-bell"></i>
-			</a>
+			<div class="greeting">
+                <span id="userGreeting">Hello Nurse!</span>
+            </div>
 			<a href="#" class="profile">
 				<img src="../../img/nurse.png">
 			</a>
 		</nav>
 
 
+
 		<main>
             
             <div class="head-title">
                 <div class="left">
-                  <h1>Referral Intake Summary Report</h1>
+                  <h1>Medicine Utilization</h1>
                   <ul class="breadcrumb">
                     <li><a href="#">Referral Intake Summary Report</a></li>
                     <li><i class="bx bx-chevron-right"></i></li>
@@ -319,7 +315,7 @@ if (count($patient_meds) > 0) {
 <!-- Filter Form -->
 
 <form method="GET" class="filter-form">
-      <h2>Medicine Dispensation Report - RHU</h2> <br>
+      <h2>Medicine Utilization Report - RHU</h2> <br>
 
     <!-- Filter Modal Trigger -->
    
@@ -382,8 +378,8 @@ if (count($patient_meds) > 0) {
     }
 }
 
-            if ($barangay) renderTag('Barangay', 'barangay', $barangay);
-            // If no filters, show "All"
+            if ($barangay) renderTag('Barangay', 'purok', $barangay);
+           
             if (
                 !$from_date && !$to_date && !$sex && !$age_group &&
                 !$medicine && !$barangay
@@ -771,18 +767,25 @@ if (count($patient_meds) > 0) {
                 Adults – <?= $age_group_counts['20–59'] ?? 0 ?>,
                 Seniors – <?= $age_group_counts['60+'] ?? 0 ?>
             </li>
-            <li>
-                <strong>Dispensed Medicines:</strong>
-                <?php if (!empty($medicine_list)): ?>
-                    <ul>
-                        <?php foreach ($medicine_list as $medicine): ?>
-                            <li><?= htmlspecialchars($medicine) ?>: <?= array_sum(array_column($medicine_series[$medicine] ?? [], null)) ?></li>
-                        <?php endforeach; ?>
-                    </ul>
-                <?php else: ?>
-                    All Medicines
-                <?php endif; ?>
-            </li>
+         <li>
+    <strong>Dispensed Medicines:</strong>
+    <?php if (!empty($medicine_list)): ?>
+        <ul>
+            <?php foreach ($medicine_list as $medicine): 
+                $total_dispensed = 0;
+                foreach ($patient_meds as $pm) {
+                    $total_dispensed += $pm['medicines'][$medicine] ?? 0;
+                }
+                if ($total_dispensed > 0): // Only show if quantity > 0
+            ?>
+                <li><?= htmlspecialchars($medicine) ?>: <?= $total_dispensed ?></li>
+            <?php endif; endforeach; ?>
+        </ul>
+    <?php else: ?>
+        All Medicines
+    <?php endif; ?>
+</li>
+
             <li>
                 <strong>Patient Counts per Barangay:</strong>
                 <ul>
@@ -904,6 +907,24 @@ function printDiv() {
     printWindow.print();
     printWindow.close();
 }
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Add event listeners to all delete icons
+ 	fetch('../php/getUserName.php')
+        .then(response => response.json())
+        .then(data => {
+            if (data.full_name) {
+                document.getElementById('userGreeting').textContent = `Hello, ${data.full_name}!`;
+            } else {
+                document.getElementById('userGreeting').textContent = 'Hello, User!';
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching user name:', error);
+            document.getElementById('userGreeting').textContent = 'Hello, User!';
+        });
+});
 </script>
 
 </body>

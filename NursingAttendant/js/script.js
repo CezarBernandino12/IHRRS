@@ -30,8 +30,10 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error('Error fetching user name:', error);
             document.getElementById('userGreeting').textContent = 'Hello, BHW!';
         });
-        
+
 });
+        
+
 
 
 // Function to handle the increase and decrease of the quantity

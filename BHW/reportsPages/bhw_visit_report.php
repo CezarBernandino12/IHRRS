@@ -140,7 +140,7 @@ $most_dispensed_quantity = current($medicine_counts);
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
-	<title>Dispensary</title>
+	<title>Patient Visits Summary Report</title>
 </head>
 <body>
 
@@ -212,7 +212,7 @@ $most_dispensed_quantity = current($medicine_counts);
             
             <div class="head-title">
                 <div class="left">
-                  <h1>Patient Summary Report</h1>
+                  <h1>Patient Visits Summary</h1>
                   <ul class="breadcrumb">
                     <li><a href="#">Patient Report</a></li>
                     <li><i class="bx bx-chevron-right"></i></li>
