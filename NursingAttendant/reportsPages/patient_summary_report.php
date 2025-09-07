@@ -317,12 +317,12 @@ $most_dispensed_quantity = current($medicine_counts);
                         <!-- From Date -->
                         <div class="form-item">
                             <label for="from_date">From:</label>
-                            <input type="text" name="from_date" id="from_date" class="form-control" value="<?= htmlspecialchars($from_date) ?>">
+                            <input type="text" name="from_date" id="from_date" class="form-control" value="<?= htmlspecialchars($from_date) ?> " placeholder="Select date">
                         </div>
                         <!-- To Date -->
                         <div class="form-item">
                             <label for="to_date">To:</label>
-                            <input type="text" name="to_date" id="to_date" class="form-control" value="<?= htmlspecialchars($to_date) ?>">
+                            <input type="text" name="to_date" id="to_date" class="form-control" value="<?= htmlspecialchars($to_date) ?> " placeholder="Select date">
                         </div>
                         <div class="form-item">
                             <label for="sex">Sex:</label>

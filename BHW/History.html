@@ -7,10 +7,13 @@
 	<link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
     <link rel="stylesheet" href="css/history.css">
     <link rel="stylesheet" href="css/modal.css">
+    <link rel="stylesheet" href="css/logout.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
 	<title>Referral History</title>
 </head>
-<body>
+<body> 
 
 <script>
 // Check if user is logged in
@@ -111,7 +114,7 @@ fetch('php/getUserId.php')
               <div class="header">
                 <div class="date-picker">
                     <label for="date">Select date:</label>
-            <input type="date" id="date" name="date" />
+            <input type="text" id="date" name="date" class="flatpickr" placeholder="Select date" />
 
             <div class="filter-container">
                 <label for="status">Select Status:</label>
@@ -377,21 +380,20 @@ row.addEventListener('click', function (event) {
 	<script src="js/script.js"></script>
     <script src="js/history.js"></script>
 
-    <div id="logoutModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Confirm Logout</h3>
-            </div>
-            <div class="modal-body">
-                <p>Are you sure you want to logout?</p>
-            </div>
-            <div class="modal-footer">
-                <button onclick="closeModal()" class="btn yes">Cancel</button>
-                <button onclick="proceedLogout()" class="btn no">Yes, Logout</button>
-            </div>
+<div id="logoutModal" class="logout-modal">
+    <div class="logout-modal-content">
+        <div class="logout-modal-header">
+            <h3>Confirm Logout</h3>
+        </div>
+        <div class="logout-modal-body">
+            <p>Are you sure you want to logout?</p>
+        </div>
+        <div class="logout-modal-footer">
+            <button onclick="closeModal()" class="logout-cancel-btn">Cancel</button>
+            <button onclick="proceedLogout()" class="logout-confirm-btn">Yes, Logout</button>
         </div>
     </div>
-    
+</div>    
 
 <script>
 function confirmLogout() {
@@ -427,6 +429,15 @@ fetch('php/getUserName.php')
         console.error('Error fetching user name:', error);
         document.getElementById('userGreeting').textContent = 'Hello, BHW!';
     });
+
+     // Initialize Flatpickr
+    flatpickr(".flatpickr", {
+        dateFormat: "Y-m-d",
+        allowInput: true,
+        altInput: true,
+        altFormat: "F j, Y",
+    });
+
 </script>
 </body>
 </html>

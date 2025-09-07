@@ -1,13 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8"> 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="../img/logo.png">
     <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="css/form.css">
+    <link rel="stylesheet" href="css/logout.css">
+
     <title>Individual Treatment Record</title>
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 </head>
@@ -188,7 +192,7 @@ fetch('php/getUserId.php')
 
                 <div class="form-group">
                     <label for="dob" class="required">Date of Birth:</label>
-                    <input type="date" id="dob" name="dob" onchange="calculateAge()" required> 
+                    <input type="text" id="dob" name="dob" class="flatpickr-dob" onchange="calculateAge()" required placeholder="Select date of birth">
                     <label id="age-display" >Age: </label>
                 </div>
                 <input type="hidden" id="age-input" name="age">
@@ -337,7 +341,7 @@ fetch('php/getUserId.php')
 <br>
 <div class="additonal-group"> 
     <label for="dov">Date of Visit:</label>
-    <input type="date" name="dov" id="dov" required>
+    <input type="text" name="dov" id="dov" class="flatpickr-dov" required placeholder="Select date of visit">
 </div>
 
 
@@ -491,6 +495,29 @@ document.addEventListener("click", function(event) {
         }
     }
 });
+
+ // Date of Birth picker (disable future dates)
+    flatpickr("#dob", {
+        dateFormat: "Y-m-d",
+        maxDate: "today",
+        allowInput: true,
+        altInput: true,
+        altFormat: "F j, Y",
+        onChange: function() {
+            calculateAge();
+        }
+    });
+
+    // Date of Visit picker (default to today, disable future dates)
+    flatpickr("#dov", {
+        dateFormat: "Y-m-d",
+        maxDate: "today",
+        allowInput: true,
+        altInput: true,
+        altFormat: "F j, Y",
+        defaultDate: "today"
+    });
+
                 </script>
                 
             
@@ -888,20 +915,20 @@ updateRemoveButtons();
     <script src="js/script.js"></script>
     <script src="js/modal.js"></script>
 
-    <div id="logoutModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Confirm Logout</h3>
-            </div>
-            <div class="modal-body">
-                <p>Are you sure you want to logout?</p>
-            </div>
-            <div class="modal-footer">
-                <button onclick="closeModal()" class="btn yes">Cancel</button>
-                <button onclick="proceedLogout()" class="btn no">Yes, Logout</button>
-            </div>
+<div id="logoutModal" class="logout-modal">
+    <div class="logout-modal-content">
+        <div class="logout-modal-header">
+            <h3>Confirm Logout</h3>
+        </div>
+        <div class="logout-modal-body">
+            <p>Are you sure you want to logout?</p>
+        </div>
+        <div class="logout-modal-footer">
+            <button onclick="closeModal()" class="logout-cancel-btn">Cancel</button>
+            <button onclick="proceedLogout()" class="logout-confirm-btn">Yes, Logout</button>
         </div>
     </div>
+</div>
     
 
 

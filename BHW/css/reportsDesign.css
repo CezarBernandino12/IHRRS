@@ -935,13 +935,12 @@ td a:hover {
 .modal {
     display: none;
     position: fixed;
-    z-index: 1;
+    z-index: 5;
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.4);
-    overflow: auto;
     transition: opacity 0.3s ease;
 }
 
@@ -991,16 +990,16 @@ td a:hover {
 }
 
 .modal-footer .btn {
-    padding: 10px 20px;
-    margin: 0;
+    min-width: 110px;
+    padding: 8px 20px;
+    margin-left: 10px;
+    font-size: 15px;
+    border-radius: 6px;
     border: none;
     cursor: pointer;
-    border-radius: 25px;
-    font-size: 16px;
-    transition: all 0.3s ease;
-    color: white;
-    white-space: nowrap;
+    transition: background 0.2s, color 0.2s;
 }
+
 
 .modal-footer .no {
     background-color: #fa4141;

@@ -1662,16 +1662,16 @@ input[type="number"] {
     font-weight: bold;
 }
 .missed {
-    color: red;
+    color: #ff3333;
     font-weight: bold;
 }
 .completed {
-    color: green;
+    color: #008000;
     font-weight: bold;
 }
 
 .missed {
-    color: red !important; 
+    color:  #ff3333!important; 
     font-weight: bold;
 }
 
@@ -1753,8 +1753,8 @@ input[type="number"] {
 
 
 .button {
-    padding: 8px 10px;
-    font-size: 12px;
+    padding: 10px 10px;
+    font-size: 14px;
     border-radius: 5px;
     border: none;
     cursor: pointer;
@@ -1857,7 +1857,7 @@ input[type="number"] {
 }
 
 .maybe {
-    background-color: green;
+    background-color: #008000;
 }
 
 .yes {
@@ -1865,12 +1865,12 @@ input[type="number"] {
 }
 
 .cancel, .no {
-    background-color: red;
+    background-color: #ff3333;;
 }
 
 /* Hover effects */
 .maybe:hover {
-    background-color: darkgreen;
+    background-color: #008000;
 }
 
 .yes:hover {
@@ -1878,7 +1878,7 @@ input[type="number"] {
 }
 
 .cancel:hover {
-    background-color: darkred;
+    background-color: #ff3333;
 }
 
 .close-btn {
@@ -1891,7 +1891,7 @@ input[type="number"] {
 }
 
 .close-btn:hover {
-    color: #fa4141;
+    color: #ff3333;
 }
 
 .custom-modal-backdrop {
@@ -1993,7 +1993,7 @@ input[type="number"] {
 }
 
 #continueBtn {
-    background-color: #0d6efd;
+    background-color: #007bff;
     color: white;
 }
 
@@ -2003,16 +2003,16 @@ input[type="number"] {
 }
 
 #continueBtn:hover:not(:disabled) {
-    background-color: #0056b3;
+    background-color: #007bff;
 }
 
 #declineBtn {
-    background-color: #dc3545;
+    background-color: #ff3333;
     color: white;
 }
 
 #declineBtn:hover {
-    background-color: #c82333;
+    background-color: #ff3333;
 }
 
 @media (max-width: 600px) {
