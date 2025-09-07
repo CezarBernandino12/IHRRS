@@ -77,13 +77,12 @@ $total_pending = 0;
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="icon" href="../../img/logo.png">
-<link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
+	<link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
 	<link rel="stylesheet" href="../css/reportsDesign.css">
-
-	<title>Referral Intake Summary Report</title>
+	<title>Patient Summary Report</title>
 </head>
 <body>
-
+    
 	<!-- Sidebar Section -->
 <section id="sidebar">
 		<a href="#" class="brand">
@@ -197,7 +196,7 @@ $total_pending = 0;
 	
 
 <!-- Filter Form -->
-<form method="GET" class="filter-form" style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px; flex-wrap: wrap;">
+<form method="GET" class="filter-form">
 
  <h2>RHU Referral Intake Summary Report</h2> <br>
 
@@ -357,7 +356,7 @@ $total_pending = 0;
 <br>
 <!-- Pie Chart Section -->
 <div style="max-width: 400px; margin: 30px auto 0 auto; text-align:center;">
-    <h3>Distribution of Referral Status</h3>
+    <h3>Referral Status</h3>
     <canvas id="statusPieChart"></canvas>
     <p id="noDataMessage" style="display:none; color:#666; margin-top:10px;">No data available</p>
 </div>
@@ -422,7 +421,74 @@ $total_pending = 0;
     }
 </script>
 
+<!-- Bar Chart Section -->
+<div style="max-width: 600px; margin: 30px auto; text-align:center;">
+    <h3>Total Referrals Received Per Barangay</h3>
+    <canvas id="barangayBarChart"></canvas>
+    <p id="noBarDataMessage" style="display:none; color:#666; margin-top:10px;">No data available</p>
+</div>
 
+<script>
+    // Prepare data for the bar chart (referrals per barangay)
+    <?php
+        $barangay_labels = [];
+        $barangay_referrals = [];
+
+        foreach ($rows as $row) {
+            $barangay_labels[] = $row['barangay'];
+            $barangay_referrals[] = $row['total_referrals'];
+        }
+    ?>
+
+    const barangayLabels = <?= json_encode($barangay_labels) ?>;
+    const barangayData = <?= json_encode($barangay_referrals) ?>;
+
+    const totalBarangayReferrals = barangayData.reduce((a, b) => a + b, 0);
+
+    if (totalBarangayReferrals > 0) {
+        // Show chart, hide message
+        document.getElementById('barangayBarChart').style.display = 'block';
+        document.getElementById('noBarDataMessage').style.display = 'none';
+
+        const ctxBar = document.getElementById('barangayBarChart').getContext('2d');
+        new Chart(ctxBar, {
+            type: 'bar',
+            data: {
+                labels: barangayLabels,
+                datasets: [{
+                    label: 'Total Referrals',
+                    data: barangayData,
+                    backgroundColor: '#4e79a7',
+                    borderColor: '#4e79a7',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: false },
+                    title: { display: false }
+                },
+                scales: {
+                    x: { title: { display: true, text: 'Barangay' } },
+                    y: { title: { display: true, text: 'Total Referrals' }, beginAtZero: true }
+                }
+            }
+        });
+    } else {
+        // Hide chart, show message
+        document.getElementById('barangayBarChart').style.display = 'none';
+        document.getElementById('noBarDataMessage').style.display = 'block';
+    }
+</script>
+
+<div class="summary">
+    <h3>Summary:</h3>
+	<p><strong>Total Referrals Received:</strong> <?= $total_received ?></p>
+	<p><strong>Completed Referrals:</strong> <?= $total_completed ?></p>
+	<p><strong>Uncompleted Referrals:</strong> <?= $total_uncompleted ?></p>
+	<p><strong>Pending Referrals:</strong> <?= $total_pending ?></p>
+</div> 
 
 
 <br>
@@ -459,13 +525,6 @@ $total_pending = 0;
     </tbody>
 </table>
 <br> <br>
-<div class="summary">
-    <h3>Summary:</h3>
-	<p><strong>Total Referrals Received:</strong> <?= $total_received ?></p>
-	<p><strong>Completed Referrals:</strong> <?= $total_completed ?></p>
-	<p><strong>Uncompleted Referrals:</strong> <?= $total_uncompleted ?></p>
-	<p><strong>Pending Referrals:</strong> <?= $total_pending ?></p>
-</div> 
 
 
 </div> </div> </div>

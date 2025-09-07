@@ -30,7 +30,7 @@ $medication = $_GET['medication'] ?? '';
 $treatment = $_GET['treatment'] ?? '';
 
 // Build query with filters
-$sql = "SELECT v.*, p.first_name, p.last_name, p.age, p.sex FROM patient_assessment v 
+$sql = "SELECT v.*, p.first_name, p.last_name, p.age, p.sex, p.address FROM patient_assessment v 
         JOIN patients p ON v.patient_id = p.patient_id 
         WHERE p.address LIKE :barangay"; // Always require barangay match
 
@@ -228,7 +228,7 @@ $most_dispensed_quantity = current($medicine_counts);
 
 <!-- Filter Form -->
 <form method="GET" class="filter-form">
-    <h2>Patient Summary Report - BHS <?php echo htmlspecialchars($barangayName); ?></h2> <br>
+    <h2>Patient Summary Report - BHS <?php echo htmlspecialchars($barangayName); ?></h2> <br> 
    
     
     <!-- Filter Modal Trigger -->
@@ -341,17 +341,26 @@ $most_dispensed_quantity = current($medicine_counts);
                             <label for="purok">Barangay:</label>
                             <select name="purok" id="purok" class="form-control">
                                 <option value="">All</option>
-                                <?php
-                                // Fetch distinct barangay names from custom_options
-                                $barangay_stmt = $pdo->prepare("SELECT DISTINCT category FROM custom_options WHERE category LIKE 'Barangay%' ORDER BY category");
-                                $barangay_stmt->execute();
-                                $selected_purok = $_GET['purok'] ?? '';
-                                while ($row = $barangay_stmt->fetch()) {
-                                    $value = $row['category'];
-                                    $selected = ($selected_purok === $value) ? 'selected' : '';
-                                    echo "<option value=\"" . htmlspecialchars($value) . "\" $selected>" . htmlspecialchars($value) . "</option>";
-                                }
-                                ?>
+                               <?php
+// Fetch distinct barangay addresses from patients
+$barangay_stmt = $pdo->prepare("
+    SELECT DISTINCT address 
+    FROM patients 
+    WHERE address LIKE :barangayName 
+    ORDER BY address
+");
+$barangay_stmt->execute([':barangayName' => "%$barangayName%"]);
+
+$selected_purok = $_GET['purok'] ?? '';
+
+while ($row = $barangay_stmt->fetch(PDO::FETCH_ASSOC)) {
+    $value = $row['address']; // ✅ use 'address' since that's what you selected
+    $selected = ($selected_purok === $value) ? 'selected' : '';
+    echo "<option value=\"" . htmlspecialchars($value) . "\" $selected>" 
+         . htmlspecialchars($value) . "</option>";
+}
+?>
+
                             </select>
                         </div> 
                            <div class="form-item">
@@ -453,7 +462,7 @@ $most_dispensed_quantity = current($medicine_counts);
 
     <!-- Pie Chart Section -->
     <div style="max-width: 400px; margin: 30px auto 0 auto; text-align:center;">
-        <h3>Distribution of Patients by Sex</h3>
+        <h3>Patients by Sex</h3>
         <canvas id="sexPieChart"></canvas>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -503,7 +512,7 @@ $most_dispensed_quantity = current($medicine_counts);
 
     <!-- Age Group Distribution Bar Chart -->
     <div style="max-width: 500px; margin: 30px auto 0 auto; text-align:center;">
-        <h3>Age Group Distribution</h3>
+        <h3>Age Group</h3>
         <canvas id="ageGroupBarChart"></canvas>
     </div>
     <script>
@@ -574,7 +583,7 @@ $most_dispensed_quantity = current($medicine_counts);
 
     <!-- BMI Category Pie Chart -->
     <div style="max-width: 400px; margin: 30px auto 0 auto; text-align:center;">
-        <h3>Distribution of Patients by BMI Category</h3>
+        <h3>Patients by BMI Category</h3>
         <canvas id="bmiPieChart"></canvas>
     </div>
     <script>
@@ -651,7 +660,7 @@ $most_dispensed_quantity = current($medicine_counts);
 
     <!-- Treatment Distribution Bar Chart -->
     <div style="max-width: 500px; margin: 30px auto 0 auto; text-align:center;">
-        <h3>Distribution of Treatments</h3>
+        <h3>Treatments</h3>
         <canvas id="treatmentBarChart"></canvas>
     </div>
     <script>
@@ -710,55 +719,83 @@ $most_dispensed_quantity = current($medicine_counts);
         });
     }
     </script>
+<!-- Patient Address Distribution Bar Chart -->
+<div style="max-width: 600px; margin: 30px auto 0 auto; text-align:center;">
+    <h3>Patient Address</h3>
+    <canvas id="addressBarChart"></canvas>
+</div>
+<script>
+<?php
+// Prepare address counts for the bar chart (unique patient IDs only)
+$unique_patient_addresses = [];
+foreach ($visits as $visit) {
+    $patient_id = $visit['patient_id'];
+    $address = $visit['address'] ?? 'Unknown';
+    $unique_patient_addresses[$patient_id] = $address;
+}
 
-    <!-- Dispensed Medicines Bar Chart -->
-    <div style="max-width: 600px; margin: 30px auto 0 auto; text-align:center;">
-        <h3>Dispensed Medicines Distribution</h3>
-        <canvas id="medicineBarChart"></canvas>
-    </div>
-    <script>
-    <?php
-    // Prepare medicine counts for the bar chart
-    $med_labels = array_keys($medicine_counts);
-    $med_data = array_values($medicine_counts);
-    ?>
-    const medicineLabels = <?= json_encode($med_labels) ?>;
-    const medicineData = <?= json_encode($med_data) ?>;
+// Count unique patients per address
+$address_counts = [];
+foreach ($unique_patient_addresses as $address) {
+    $address_counts[$address] = ($address_counts[$address] ?? 0) + 1;
+}
 
-    if (medicineData.length > 0 && medicineData.reduce((a, b) => a + b, 0) > 0) {
-        const ctxMed = document.getElementById('medicineBarChart').getContext('2d');
-        new Chart(ctxMed, {
-            type: 'bar',
-            data: {
-                labels: medicineLabels,
-                datasets: [{
-                    label: 'Quantity Dispensed',
-                    data: medicineData,
-                    backgroundColor: '#4e79a7',
-                    borderWidth: 1
-                }]
+// Collapse counts by Purok (so Purok 1 in multiple barangays will add up together)
+$purok_counts = [];
+foreach ($address_counts as $addr => $count) {
+    $parts = explode('-', $addr, 2);
+    $purok = trim($parts[0]); // "Purok X"
+    $purok_counts[$purok] = ($purok_counts[$purok] ?? 0) + $count;
+}
+
+// Sort by numeric purok order (extract number after "Purok")
+uksort($purok_counts, function($a, $b) {
+    preg_match('/\d+/', $a, $matchA);
+    preg_match('/\d+/', $b, $matchB);
+    $numA = $matchA[0] ?? 0;
+    $numB = $matchB[0] ?? 0;
+    return $numA - $numB;
+});
+
+$address_labels = array_keys($purok_counts);
+$address_data = array_values($purok_counts);
+?>
+const addressLabels = <?= json_encode($address_labels) ?>;
+const addressData = <?= json_encode($address_data) ?>;
+
+if (addressData.length > 0 && addressData.reduce((a, b) => a + b, 0) > 0) {
+    const ctxAddress = document.getElementById('addressBarChart').getContext('2d');
+    new Chart(ctxAddress, {
+        type: 'bar',
+        data: {
+            labels: addressLabels,
+            datasets: [{
+                label: 'Patient Count',
+                data: addressData,
+                backgroundColor: '#4e79a7',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false },
+                title: { display: false }
             },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: { display: false },
-                    title: { display: false }
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: { display: true, text: 'Patient Count' }
                 },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        title: { display: true, text: 'Quantity' }
-                    },
-                    x: {
-                        title: { display: true, text: 'Medicine' }
-                    }
+                x: {
+                    title: { display: true, text: 'Purok' }
                 }
             }
-        });
-    }
-    </script>
-
-
+        }
+    });
+}
+</script>
+  
 <!-- Summary Section -->
 <div class="summary-container">
     <div class="summary">
@@ -783,6 +820,7 @@ $most_dispensed_quantity = current($medicine_counts);
                 Overweight – <?= $bmi_categories['Overweight'] ?? 0 ?>,
                 Obese – <?= ($bmi_categories['Class 1'] ?? 0) + ($bmi_categories['Class 2'] ?? 0) + ($bmi_categories['Class 3'] ?? 0) ?>
             </li>
+            
             <li>
                 <strong>Most Common Treatment Given:</strong>
                 <?php
@@ -799,8 +837,38 @@ $most_dispensed_quantity = current($medicine_counts);
                 ?>
             </li>
             <li>
-                <strong>Most Dispensed Medicine:</strong>
-                <?= htmlspecialchars($most_dispensed_medicine ?: 'N/A') ?>
+                <li>
+                    <strong>Patient Counts per Purok:</strong>
+                    <ul>
+                        <?php
+                        // Calculate patient counts per barangay
+                        $barangay_patient_counts = [];
+                     foreach ($visits as $visit) {
+    $patient_id = $visit['patient_id'];
+    $address = $visit['address'] ?? 'Unknown';
+    $unique_patient_addresses[$patient_id] = $address;
+}
+                        foreach ($unique_patient_addresses as $address) {
+                            $parts = explode('-', $address, 2);
+                            $barangay = trim($parts[0]); // "Purok X"
+                            $barangay_patient_counts[$barangay] = ($barangay_patient_counts[$barangay] ?? 0) + 1;
+                        }
+                        // Sort by numeric purok order
+                        uksort($barangay_patient_counts, function($a, $b) {
+                            preg_match('/\d+/', $a, $matchA);
+                            preg_match('/\d+/', $b, $matchB);
+                            $numA = $matchA[0] ?? 0;
+                            $numB = $matchB[0] ?? 0;
+                            return $numA - $numB;
+                        });
+                        foreach ($barangay_patient_counts as $barangay => $count) {
+                            echo '<li>' . htmlspecialchars($barangay) . ' – ' . $count . '</li>';
+                        }
+
+                        
+                        ?>
+                    </ul>
+                </li>
             </li>
         </ul>
     </div>
@@ -827,7 +895,7 @@ $most_dispensed_quantity = current($medicine_counts);
             <th>Respiratory Rate</th>
             <th>Chief Complaints</th>
             <th>Treatment</th>
-            <th>Dispensed Medicines</th>
+            <th>Address</th>
         </tr>
     </thead>
     <tbody>
@@ -846,22 +914,7 @@ $most_dispensed_quantity = current($medicine_counts);
             <td><?= htmlspecialchars($visit['respiratory_rate']) ?></td>
             <td><?= htmlspecialchars($visit['chief_complaints']) ?></td>
             <td><?= htmlspecialchars($visit['treatment']) ?></td>
-            <td>
-                <?php
-                // Get dispensed medicines for this visit
-                $med_stmt = $pdo->prepare("SELECT * FROM bhs_medicine_dispensed WHERE visit_id = ?");
-                $med_stmt->execute([$visit['visit_id']]);
-                $meds = $med_stmt->fetchAll();
-
-                if ($meds) {
-                    foreach ($meds as $med) {
-                        echo htmlspecialchars($med['medicine_name']) . ' (Qty: ' . $med['quantity_dispensed'] . ')<br>';
-                    }
-                } else {
-                    echo "No medicines dispensed.";
-                }
-                ?>
-            </td>
+            <td><?= htmlspecialchars($visit['address']) ?></td>
         </tr>
     <?php endforeach; ?>
     </tbody>
@@ -949,11 +1002,11 @@ function printDiv() {
 
     // Collect chart images with titles
     let chartsHTML = '';
-    chartsHTML += getChartImage('sexPieChart', 'Distribution of Patients by Sex');
-    chartsHTML += getChartImage('ageGroupBarChart', 'Age Group Distribution');
-    chartsHTML += getChartImage('bmiPieChart', 'Distribution of Patients by BMI Category');
-    chartsHTML += getChartImage('treatmentBarChart', 'Distribution of Treatments');
-    chartsHTML += getChartImage('medicineBarChart', 'Dispensed Medicines Distribution');
+    chartsHTML += getChartImage('sexPieChart', 'Patients by Sex');
+    chartsHTML += getChartImage('ageGroupBarChart', 'Age Group');
+    chartsHTML += getChartImage('bmiPieChart', 'Patients by BMI Category');
+    chartsHTML += getChartImage('treatmentBarChart', 'Treatments');
+   
 
     // Clone the print area (table and summary)
     const originalArea = document.querySelector(".print-area").cloneNode(true);

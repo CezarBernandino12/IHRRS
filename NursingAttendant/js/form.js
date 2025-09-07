@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const urlParams = new URLSearchParams(window.location.search);
     const visit_id = urlParams.get("visit_id");
 
+    $patient_id = document.getElementById("patient_id");
     if (visit_id) {
         const visitIdField = document.getElementById("visit_id");
         if (visitIdField) visitIdField.value = visit_id;
@@ -18,6 +19,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                    // ✅ Patient Info
                 if (data.patient) {
+                    if ($patient_id) $patient_id.value = data.patient.patient_id || "";
                     updateElement(".patient-first-name", data.patient.first_name);
                     updateElement(".patient-last-name", data.patient.last_name);
                     updateElement(".patient-middle-name", data.patient.middle_name);
@@ -38,10 +40,12 @@ document.addEventListener("DOMContentLoaded", function () {
                     updateElement(".family-serial-no", data.patient.family_serial_no);
                     updateElement(".sex", data.patient.sex);
                     updateElement(".fourps-status", data.patient.fourps_status);
+                   
                 }
 
                 // ✅ Visit Info
                 if (data.visit) {
+                    document.getElementById("visit_id").value = data.visit.visit_id || "";
                     updateElement(".visit-date", data.visit.visit_date);
                     updateElement(".patient-alert", data.visit.patient_alert);
                     updateElement(".chief-complaints", data.visit.chief_complaints);
@@ -56,7 +60,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 // ✅ Consultation Info
                 if (data.consultation) {
-                    updateElement(".diagnosis", data.consultation.diagnosis);
+                    updateElement(".diagnosis", data.consultation.diagnosis || "N/A");
+                    document.getElementById("diagnosis").value = data.consultation.diagnosis || "";
                     updateElement(".diagnosis_status", data.consultation.diagnosis_status);
                     updateElement(".instruction", data.consultation.instruction_prescription);
                     updateElement(".doctor", data.consultation.full_name);

@@ -30,7 +30,7 @@ $diagnosis_status = $_GET['diagnosis_status'] ?? '';
 
 
 // Build query with filters
-$sql = "SELECT r.*, p.first_name, p.last_name, p.age, p.sex FROM rhu_consultations r 
+$sql = "SELECT r.*, p.first_name, p.last_name, p.age, p.sex, p.address FROM rhu_consultations r 
         JOIN patients p ON r.patient_id = p.patient_id 
         WHERE p.address LIKE :barangay"; // Always require barangay match
 
@@ -56,7 +56,14 @@ if (!empty($age_group)) {
         case 'senior':$sql .= " AND p.age >= 60"; break;
     }
 }
-
+if (!empty($diagnosis)) {
+    $sql .= " AND r.diagnosis LIKE :diagnosis";
+    $params['diagnosis'] = '%' . $diagnosis . '%';
+}
+if (!empty($diagnosis_status)) {
+    $sql .= " AND r.diagnosis_status = :diagnosis_status";
+    $params['diagnosis_status'] = $diagnosis_status;
+}
 if (!empty($purok)) {
     // Use 'purok' for address filtering
     $sql .= " AND p.address LIKE :purok";
@@ -175,8 +182,36 @@ $visits = $stmt->fetchAll();
 
 <!-- Filter Form -->
 <form method="GET" class="filter-form">
-    <h2>Disease Cases Monitoring Report - BHS <?php echo htmlspecialchars($barangayName); ?></h2> <br>
-   
+    <h2>Medical Cases Monitoring Report - BHS <?php echo htmlspecialchars($barangayName); ?>   </h2> <br>
+<h3>
+<?php
+$filters = [];
+if ($from_date) $filters[] = "From <strong>" . htmlspecialchars($from_date) . "</strong>";
+if ($to_date) $filters[] = "To <strong>" . htmlspecialchars($to_date) . "</strong>";
+if ($diagnosis) {
+    $diagnosis_list = is_array($diagnosis) ? $diagnosis : [$diagnosis];
+    $filters[] = "Diagnosis: <strong>" . implode(', ', array_map('htmlspecialchars', $diagnosis_list)) . "</strong>";
+    
+}
+if ($diagnosis_status) $filters[] = "Status: <strong>" . htmlspecialchars($diagnosis_status) . "</strong>";
+if ($sex) $filters[] = "Sex: <strong>" . htmlspecialchars($sex) . "</strong>";
+if ($age_group) {
+    $age_labels = [
+        'child' => 'Child (0–12)',
+        'teen' => 'Teen (13–19)',
+        'adult' => 'Adult (20–59)',
+        'senior' => 'Senior (60+)'
+    ];
+    $filters[] = "Age Group: <strong>" . ($age_labels[$age_group] ?? htmlspecialchars($age_group)) . "</strong>";
+}
+if ($purok) $filters[] = "Barangay: <strong>" . htmlspecialchars($purok) . "</strong>";
+
+
+
+echo $filters ? implode(" &nbsp; | &nbsp; ", $filters) : "All Records";
+?>
+</h3>
+
     
     <!-- Filter Modal Trigger -->
    
@@ -375,97 +410,148 @@ $visits = $stmt->fetchAll();
   <h3>Municipality of Daet</h3>
   <h2><?php echo htmlspecialchars($barangayName); ?></h2>
   <br> 
-  <h2>DISEASE CASE MONITORING REPORT</h2>
+  <h2>MEDICAL CASE MONITORING REPORT</h2>
+  <h3>(<?php
+$filters = [];
+if ($from_date) $filters[] = "From <strong>" . htmlspecialchars($from_date) . "</strong>";
+if ($to_date) $filters[] = "To <strong>" . htmlspecialchars($to_date) . "</strong>";
+if ($diagnosis) {
+    $diagnosis_list = is_array($diagnosis) ? $diagnosis : [$diagnosis];
+    $filters[] = "Diagnosis: <strong>" . implode(', ', array_map('htmlspecialchars', $diagnosis_list)) . "</strong>";
+    
+}
+if ($diagnosis_status) $filters[] = "Status: <strong>" . htmlspecialchars($diagnosis_status) . "</strong>";
+if ($sex) $filters[] = "Sex: <strong>" . htmlspecialchars($sex) . "</strong>";
+if ($age_group) {
+    $age_labels = [
+        'child' => 'Child (0–12)',
+        'teen' => 'Teen (13–19)',
+        'adult' => 'Adult (20–59)',
+        'senior' => 'Senior (60+)'
+    ];
+    $filters[] = "Age Group: <strong>" . ($age_labels[$age_group] ?? htmlspecialchars($age_group)) . "</strong>";
+}
+if ($purok) $filters[] = "Barangay: <strong>" . htmlspecialchars($purok) . "</strong>";
+
+
+
+echo $filters ? implode("&nbsp; | &nbsp;", $filters) : "All Records";
+?>)</h3>
 </div>
+<br> <br><br><br> 
 <div class="report-content">
 
-    <!-- Disease Frequency Over Time Line Chart -->
-    <div style="max-width: 800px; margin: 30px auto 0 auto; text-align:center;">
-        <h3>Disease Frequency Over Time</h3>
-        <canvas id="diseaseLineChart"></canvas>
-    </div>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        <?php
-        // Prepare disease frequency per date
-        $disease_dates = [];
-        foreach ($visits as $visit) {
-            $diag = $visit['diagnosis'] ?? '';
-            $date = isset($visit['consultation_date']) ? date('Y-m-d', strtotime($visit['consultation_date'])) : '';
-            if ($diag && $date) {
-                if (!isset($disease_dates[$diag])) $disease_dates[$diag] = [];
-                if (!isset($disease_dates[$diag][$date])) $disease_dates[$diag][$date] = 0;
-                $disease_dates[$diag][$date]++;
+  <!-- Disease Frequency Over Time Line Chart -->
+<div style="max-width: 800px; margin: 30px auto 0 auto; text-align:center;">
+    <h3>Disease Frequency Over Time</h3>
+    <canvas id="diseaseLineChart"></canvas>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    <?php
+    // Prepare disease frequency with unique patients across all dates
+    $disease_dates = [];
+    $seen = []; // Track diagnosis+patient globally
+
+    foreach ($visits as $visit) {
+        $diag = $visit['diagnosis'] ?? '';
+        $date = isset($visit['consultation_date']) ? date('Y-m-d', strtotime($visit['consultation_date'])) : '';
+        $patient = $visit['patient_id'] ?? null;
+
+        if ($diag && $date && $patient) {
+            // Create unique key for this diagnosis+patient
+            $key = $diag . '_' . $patient;
+
+            // Skip if already counted (ensures deduplication across all dates)
+            if (isset($seen[$key])) {
+                continue;
             }
+
+            $seen[$key] = true;
+
+            // Ensure structure
+            if (!isset($disease_dates[$diag])) $disease_dates[$diag] = [];
+            if (!isset($disease_dates[$diag][$date])) $disease_dates[$diag][$date] = 0;
+
+            // Count unique patient on their first appearance only
+            $disease_dates[$diag][$date]++;
+        }
+    }
+
+    // Collect all unique dates
+    $all_dates = [];
+    foreach ($disease_dates as $diag => $dates) {
+        foreach ($dates as $date => $count) {
+            $all_dates[$date] = true;
+        }
+    }
+    $all_dates = array_keys($all_dates);
+    sort($all_dates);
+
+    // Prepare datasets for Chart.js
+    $datasets = [];
+    $colors = [
+        '#4e79a7', '#f28e2b', '#e15759', '#76b7b2', '#59a14f', '#edc949',
+        '#af7aa1', '#ff9da7', '#9c755f', '#bab0ab', '#b07aa1', '#7a9cb0'
+    ];
+    $colorIndex = 0;
+    foreach ($disease_dates as $diag => $dates) {
+        $data = [];
+        $runningTotal = 0; // accumulate counts over time
+
+        foreach ($all_dates as $date) {
+            if (isset($dates[$date])) {
+                $runningTotal += $dates[$date]; // add first-time patients
+            }
+            $data[] = $runningTotal; // cumulative line
         }
 
-        // Get all unique dates in range (sorted)
-        $all_dates = [];
-        foreach ($disease_dates as $diag => $dates) {
-            foreach ($dates as $date => $count) {
-                $all_dates[$date] = true;
-            }
-        }
-        $all_dates = array_keys($all_dates);
-        sort($all_dates);
-
-        // Prepare datasets for Chart.js
-        $datasets = [];
-        $colors = [
-            '#4e79a7', '#f28e2b', '#e15759', '#76b7b2', '#59a14f', '#edc949',
-            '#af7aa1', '#ff9da7', '#9c755f', '#bab0ab', '#b07aa1', '#7a9cb0'
+        $datasets[] = [
+            'label' => $diag,
+            'data' => $data,
+            'fill' => false,
+            'borderColor' => $colors[$colorIndex % count($colors)],
+            'backgroundColor' => $colors[$colorIndex % count($colors)],
+            'tension' => 0.2
         ];
-        $colorIndex = 0;
-        foreach ($disease_dates as $diag => $dates) {
-            $data = [];
-            foreach ($all_dates as $date) {
-                $data[] = isset($dates[$date]) ? $dates[$date] : 0;
-            }
-            $datasets[] = [
-                'label' => $diag,
-                'data' => $data,
-                'fill' => false,
-                'borderColor' => $colors[$colorIndex % count($colors)],
-                'backgroundColor' => $colors[$colorIndex % count($colors)],
-                'tension' => 0.2
-            ];
-            $colorIndex++;
-        }
-        ?>
-        const diseaseLineLabels = <?= json_encode($all_dates) ?>;
-        const diseaseLineDatasets = <?= json_encode($datasets) ?>;
+        $colorIndex++;
+    }
+    ?>
+    const diseaseLineLabels = <?= json_encode($all_dates) ?>;
+    const diseaseLineDatasets = <?= json_encode($datasets) ?>;
 
-        if (diseaseLineDatasets.length > 0 && diseaseLineLabels.length > 0) {
-            const ctxDiseaseLine = document.getElementById('diseaseLineChart').getContext('2d');
-            new Chart(ctxDiseaseLine, {
-                type: 'line',
-                data: {
-                    labels: diseaseLineLabels,
-                    datasets: diseaseLineDatasets
+    if (diseaseLineDatasets.length > 0 && diseaseLineLabels.length > 0) {
+        const ctxDiseaseLine = document.getElementById('diseaseLineChart').getContext('2d');
+        new Chart(ctxDiseaseLine, {
+            type: 'line',
+            data: {
+                labels: diseaseLineLabels,
+                datasets: diseaseLineDatasets
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'top' },
+                    title: { display: false }
                 },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: { position: 'top' },
-                        title: { display: false }
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: { display: true, text: 'Unique Patients' }
                     },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            title: { display: true, text: 'Cases' }
-                        },
-                        x: {
-                            title: { display: true, text: 'Date' }
-                        }
+                    x: {
+                        title: { display: true, text: 'Date' }
                     }
                 }
-            });
-        }
-    </script>
+            }
+        });
+    }
+</script>
+
 
     <!-- Pie Chart Section: Sex Distribution -->
     <div style="max-width: 400px; margin: 30px auto 0 auto; text-align:center;">
-        <h3>Distribution of Patients by Sex</h3>
+        <h3>Patients by Sex</h3>
         <canvas id="sexPieChart"></canvas>
     </div>
     <script>
@@ -606,101 +692,123 @@ $total_patients = count($unique_patient_ids);
                 Adults (18–59): <?= isset($age_group_counts['18–59']) ? $age_group_counts['18–59'] : 0 ?>,
                 Seniors (60+): <?= isset($age_group_counts['60+']) ? $age_group_counts['60+'] : 0 ?>
             </li>
-            <li>
-                <strong>Diseases and Case Counts:</strong>
-                <ul style="margin-top:5px;">
-                    <?php
-                    // Prepare disease breakdown by sex and age group
-                    $disease_summary = [];
-                    foreach ($visits as $visit) {
-                        $d = $visit['diagnosis'] ?? 'Unknown';
-                        $s = $visit['sex'] ?? 'Unknown';
-                        $a = (int)($visit['age'] ?? 0);
-                        if (!isset($disease_summary[$d])) {
-                            $disease_summary[$d] = [
-                                'total' => 0,
-                                'sex' => ['Male' => 0, 'Female' => 0],
-                                'age' => ['0–5' => 0, '6–17' => 0, '18–59' => 0, '60+' => 0]
-                            ];
-                        }
-                        $disease_summary[$d]['total']++;
-                        if (isset($disease_summary[$d]['sex'][$s])) $disease_summary[$d]['sex'][$s]++;
-                        // Age group
-                        if ($a >= 0 && $a <= 5) $disease_summary[$d]['age']['0–5']++;
-                        elseif ($a >= 6 && $a <= 17) $disease_summary[$d]['age']['6–17']++;
-                        elseif ($a >= 18 && $a <= 59) $disease_summary[$d]['age']['18–59']++;
-                        elseif ($a >= 60) $disease_summary[$d]['age']['60+']++;
-                    }
-                    if (count($disease_summary) === 0) {
-                        echo "<li style='color:#888;'>No disease cases found for the selected filters.</li>";
-                    } else {
-                        foreach ($disease_summary as $disease => $info) {
-                            echo "<li><strong>" . htmlspecialchars($disease) . "</strong>: ";
-                            echo $info['total'] . " case(s)";
-                            // Per sex
-                            echo " <span style='color:#666;'>(Male: {$info['sex']['Male']}, Female: {$info['sex']['Female']})</span>";
-                            // Per age group
-                            echo "<br><span style='margin-left:15px;color:#666;'>By Age: ";
-                            echo "0–5: {$info['age']['0–5']}, 6–17: {$info['age']['6–17']}, 18–59: {$info['age']['18–59']}, 60+: {$info['age']['60+']}";
-                            echo "</span>";
-                            echo "</li>";
-                        }
-                    }
-                    ?>
-                </ul>
-            </li>
-            <li>
-                <strong>Filters Applied:</strong>
-                <span>
-                    <?php
-                    $filters = [];
-                    if ($from_date) $filters[] = "From: " . htmlspecialchars($from_date);
-                    if ($to_date) $filters[] = "To: " . htmlspecialchars($to_date);
-                    // Only show Sex if actually selected (not empty and not default)
-                    if (isset($_GET['sex']) && $sex !== '') $filters[] = "Sex: " . htmlspecialchars($sex);
-                    if ($age_group) {
-                        $age_labels = [
-                            'child' => 'Child (0–12)', 'teen' => 'Teen (13–19)',
-                            'adult' => 'Adult (20–59)', 'senior' => 'Senior (60+)'
-                        ];
-                        $filters[] = "Age Group: " . ($age_labels[$age_group] ?? htmlspecialchars($age_group));
-                    }
-                    if ($purok) $filters[] = "Purok: " . htmlspecialchars($purok);
-                    if ($diagnosis_status) $filters[] = "Status: " . htmlspecialchars($diagnosis_status);
-                    if ($diagnosis) {
-                        $diagnosis_list = is_array($diagnosis) ? $diagnosis : [$diagnosis];
-                        $filters[] = "Diagnosis: " . implode(', ', array_map('htmlspecialchars', $diagnosis_list));
-                    }
-                    echo $filters ? implode('; ', $filters) : "<span style='color:#888;'>None (All records shown)</span>";
-                    ?>
-                </span>
-            </li>
+           <li>
+    <strong>Diseases and Case Counts:</strong>
+    <?php
+    // Prepare disease breakdown by sex and age group (unique patients only)
+    $disease_summary = [];
+    $seen = []; // track patient+diagnosis globally
+
+    foreach ($visits as $visit) {
+        $d = $visit['diagnosis'] ?? 'Unknown';
+        $s = $visit['sex'] ?? 'Unknown';
+        $a = (int)($visit['age'] ?? 0);
+        $p = $visit['patient_id'] ?? null;
+
+        if (!$p) continue;
+
+        $key = $d . '_' . $p;
+
+        // Skip if this patient already counted for this disease
+        if (isset($seen[$key])) continue;
+        $seen[$key] = true;
+
+        if (!isset($disease_summary[$d])) {
+            $disease_summary[$d] = [
+                'total' => 0,
+                'sex' => ['Male' => 0, 'Female' => 0],
+                'age' => ['0–5' => 0, '6–17' => 0, '18–59' => 0, '60+' => 0]
+            ];
+        }
+
+        // Count this unique patient once
+        $disease_summary[$d]['total']++;
+
+        // Count sex
+        if (isset($disease_summary[$d]['sex'][$s])) {
+            $disease_summary[$d]['sex'][$s]++;
+        }
+
+        // Count age group
+        if ($a >= 0 && $a <= 5) {
+            $disease_summary[$d]['age']['0–5']++;
+        } elseif ($a >= 6 && $a <= 17) {
+            $disease_summary[$d]['age']['6–17']++;
+        } elseif ($a >= 18 && $a <= 59) {
+            $disease_summary[$d]['age']['18–59']++;
+        } elseif ($a >= 60) {
+            $disease_summary[$d]['age']['60+']++;
+        }
+    }
+
+    if (count($disease_summary) === 0) {
+        echo "<p style='color:#888;'>No disease cases found for the selected filters.</p>";
+    } else {
+        echo "<table border='1' cellpadding='6' cellspacing='0' style='border-collapse:collapse; margin-top:8px; width:100%; text-align:center;'>";
+        echo "<thead style='background:#f2f2f2;'>";
+        echo "<tr>
+                <th>Disease</th>
+                <th>Total Cases</th>
+                <th>Male</th>
+                <th>Female</th>
+                <th>0–5</th>
+                <th>6–17</th>
+                <th>18–59</th>
+                <th>60+</th>
+              </tr>";
+        echo "</thead><tbody>";
+
+        foreach ($disease_summary as $disease => $info) {
+            echo "<tr>";
+            echo "<td>" . htmlspecialchars($disease) . "</td>";
+            echo "<td>{$info['total']}</td>";
+            echo "<td>{$info['sex']['Male']}</td>";
+            echo "<td>{$info['sex']['Female']}</td>";
+            echo "<td>{$info['age']['0–5']}</td>";
+            echo "<td>{$info['age']['6–17']}</td>";
+            echo "<td>{$info['age']['18–59']}</td>";
+            echo "<td>{$info['age']['60+']}</td>";
+            echo "</tr>";
+        }
+
+        echo "</tbody></table>";
+    }
+    ?>
+</li>
+
+        
         </ul>
     </div>
 </div>
 
+<br>
+
+<h3>Detailed Report</h3>
+
 <!-- Table with Visit Details -->
 <?php if ($visits && count($visits) > 0): ?>
-    <table id="reportTable">
+      <table id="reportTable">
         <thead>
             <tr>
-                <th>Disease Name</th>
+                <th>Date Diagnosed</th>
+                <th>Diagnosis</th>
+                <th>Status</th>
                 <th>Patient Name</th>
                 <th>Sex</th>
                 <th>Age</th>
-                <th>Date Diagnosed</th>
-                <th>Status</th>
+                <th>Address</th>
             </tr>
         </thead>
         <tbody>
         <?php foreach ($visits as $visit): ?>
             <tr>
+                <td><?= date('Y-m-d', strtotime($visit['consultation_date'])) ?></td>
                 <td><?= htmlspecialchars($visit['diagnosis']) ?></td>
+                <td><?= htmlspecialchars($visit['diagnosis_status']) ?></td>
                 <td><?= htmlspecialchars($visit['first_name'] . ' ' . $visit['last_name']) ?></td>
                 <td><?= htmlspecialchars($visit['sex']) ?></td>
                 <td><?= htmlspecialchars($visit['age']) ?></td>
-                <td><?= date('Y-m-d', strtotime($visit['consultation_date'])) ?></td>
-                <td><?= htmlspecialchars($visit['diagnosis_status']) ?></td>
+                <td><?= htmlspecialchars($visit['address']) ?></td>
             </tr>
         <?php endforeach; ?>
         </tbody>

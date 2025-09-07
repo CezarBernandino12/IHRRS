@@ -402,8 +402,8 @@ document.addEventListener("click", function(event) {
                         <input type="date" id="followup" name="followup" class="tall-input" placeholder="Set follow-up consultation date" min="<?= date('Y-m-d'); ?>">
                     </div>
                     
-            
-                    <input type="hidden" name="doctor_id" id="doctor_id">
+                      <input type="hidden" name="patient_id" id="patient_id">
+                      <input type="hidden" name="doctor_id" id="doctor_id">
                       <input type="hidden" name="visit_id" id="visit_id">
 
                     </div> </div>
@@ -443,23 +443,24 @@ document.addEventListener("click", function(event) {
         </form>
 
 
-        <!-- Success/Error Modal -->
-        <div id="responseModal" class="modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <img src="../img/verify.png" alt="Checkmark" class="checkmark-image">
-                    <h3>Success</h3>
-                    <span class="close-btn" id="closeResponseModal">&times;</span>
-                </div>
-                <div class="modal-body">
-                    <p id="responseMessage">Record saved successfully!</p>
-                </div>
-                <div class="modal-footer">
-                    <button id="okButton" class="btn yes">OK</button>
-                    
-                </div>
-            </div>
+   <!-- Success/Error Modal -->
+<div id="responseModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <!-- ✅ Give the img and title elements IDs -->
+            <img id="responseIcon" alt="Status Icon" class="checkmark-image">
+            <h3 id="responseTitle"></h3>
+            <span class="close-btn" id="closeResponseModal">&times;</span>
         </div>
+        <div class="modal-body">
+            <p id="responseMessage"></p>
+        </div>
+        <div class="modal-footer">
+            <button id="okButton" class="btn yes">OK</button>
+        </div>
+    </div>
+</div>
+
 
         <div id="logoutModal" class="modal">
 			<div class="modal-content">
@@ -593,33 +594,42 @@ $('#add-medicine').on('click', function () {
         }
     });
 
+    
     // Add form submission handler
-    $('#individualRecordForm').on('submit', function(e) {
-         e.preventDefault();
-        
-        // Get form data
-        const formData = new FormData(this);
-        
-        // Submit form via AJAX
-        $.ajax({
-            url: 'php/saveResumeTreatment.php',
-            type: 'POST',
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function(response) {
-                // Show success modal
-                $('#responseModal').show();
-                $('#responseMessage').text('Record saved successfully!');
-            },
-            error: function(xhr, status, error) {
-    console.error("AJAX Error:", xhr.responseText); // Log detailed error
-    $('#responseModal').show();
-    $('#responseMessage').text('Error: ' + xhr.responseText);
-}
+$('#individualRecordForm').on('submit', function(e) {
+    e.preventDefault();
 
-        });
+    const formData = new FormData(this);
+
+    $.ajax({
+        url: 'php/saveResumeTreatment.php',
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        dataType: 'json', // ✅ expect JSON response
+        success: function(response) {
+            $('#responseModal').show();
+
+            if (response.status === 'success') {
+                $('#responseIcon').attr('src', '../img/verify.png');
+                $('#responseTitle').text('Success');
+                $('#responseMessage').text(response.message);
+            } else {
+                $('#responseIcon').attr('src', '../img/error.jpg');
+                $('#responseTitle').text('Error');
+                $('#responseMessage').text(response.message);
+            }
+        },
+        error: function(xhr, status, error) {
+            $('#responseModal').show();
+            $('#responseIcon').attr('src', '../img/error.jpg');
+            $('#responseTitle').text('Error').css;
+            $('#responseMessage').text('Unexpected error.');
+        }
     });
+});
+
 
        // Add OK button handler for response modal
     $('#submitButton').on('click', function() {
@@ -630,9 +640,11 @@ $('#add-medicine').on('click', function () {
 
     // Add OK button handler for response modal
     $('#okButton').on('click', function() {
-        $('#responseModal').hide();
-        window.location.href = 'pending.html';
-    });
+    $('#myModal').hide();
+    $('#responseModal').hide();
+     let patient_id = $('#patient_id').val(); 
+    window.location.href = `record.html?patient_id=${patient_id}`;
+});
 
     // Add close button handler for response modal
     $('#closeResponseModal').on('click', function() {

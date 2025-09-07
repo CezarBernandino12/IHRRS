@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const urlParams = new URLSearchParams(window.location.search);
     const visit_id = urlParams.get("visit_id");
 
+    $patient_id = document.getElementById("patient_id");
     if (visit_id) {
         const visitIdField = document.getElementById("visit_id");
         if (visitIdField) visitIdField.value = visit_id;
@@ -18,6 +19,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                    // ✅ Patient Info
                 if (data.patient) {
+                    if ($patient_id) $patient_id.value = data.patient.patient_id || "";
                     updateElement(".patient-first-name", data.patient.first_name);
                     updateElement(".patient-last-name", data.patient.last_name);
                     updateElement(".patient-middle-name", data.patient.middle_name);
@@ -38,6 +40,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     updateElement(".family-serial-no", data.patient.family_serial_no);
                     updateElement(".sex", data.patient.sex);
                     updateElement(".fourps-status", data.patient.fourps_status);
+                                
                 }
 
                 // ✅ Visit Info
