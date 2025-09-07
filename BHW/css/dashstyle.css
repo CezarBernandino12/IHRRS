@@ -6,7 +6,7 @@
 	padding: 0;
 	box-sizing: border-box;
 }
-
+ 
 a {
 	text-decoration: none;
 }
@@ -541,6 +541,7 @@ body {
 
 #content main .box-info li.mrr {
     background: #C6E7FF;
+    margin-top: 20px;
 }
 
 @keyframes fadeIn {
@@ -933,6 +934,7 @@ body {
     opacity: 0.9;
     transform: scale(1.05);
 }
+
 
 .close-btn {
     position: absolute;

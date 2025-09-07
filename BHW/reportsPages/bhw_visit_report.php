@@ -6,7 +6,7 @@ session_start();
 if (!isset($_SESSION['user_id'])) {
     header("Location: ../../role.html");
     exit;
-}
+} 
 
 $userId = $_SESSION['user_id'];// or however you store the logged-in user's ID
 
@@ -137,6 +137,9 @@ $most_dispensed_quantity = current($medicine_counts);
 	<link rel="icon" href="../../img/logo.png">
 	<link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
 	<link rel="stylesheet" href="../css/reportsDesign.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
 	<title>Dispensary</title>
 </head>
 <body>
@@ -311,13 +314,15 @@ $most_dispensed_quantity = current($medicine_counts);
             <form method="GET" id="filterForm">
                 <div class="modal-body">
                     <div class="form-row">
+                        <!-- From Date -->
                         <div class="form-item">
                             <label for="from_date">From:</label>
-                            <input type="date" name="from_date" id="from_date" class="form-control" value="<?= htmlspecialchars($from_date) ?>">
+                            <input type="text" name="from_date" id="from_date" class="form-control" value="<?= htmlspecialchars($from_date) ?> " placeholder="Select date">
                         </div>
+                        <!-- To Date -->
                         <div class="form-item">
                             <label for="to_date">To:</label>
-                            <input type="date" name="to_date" id="to_date" class="form-control" value="<?= htmlspecialchars($to_date) ?>">
+                            <input type="text" name="to_date" id="to_date" class="form-control" value="<?= htmlspecialchars($to_date) ?> " placeholder="Select date">
                         </div>
                         <div class="form-item">
                             <label for="sex">Sex:</label>
@@ -405,10 +410,11 @@ while ($row = $barangay_stmt->fetch(PDO::FETCH_ASSOC)) {
                             
                         </div>
                     </div>
-                     <div class="modal-footer" style="text-align:right;">
-                    <button type="button" class="btn" id="closeFilterModal">Cancel</button>
-                    <button type="submit" class="btn-submit">Apply Filter</button>
-                </div>
+                     <!-- Filter Modal Footer Buttons -->
+<div class="modal-footer" style="text-align:right;">
+    <button type="button" class="btn" id="closeFilterModal">Cancel</button>
+    <button type="submit" class="btn-submit">Apply Filter</button>
+</div>
               
                
             </form>
@@ -424,6 +430,34 @@ while ($row = $barangay_stmt->fetch(PDO::FETCH_ASSOC)) {
     document.getElementById('openFilterModal').onclick = function() {
         document.getElementById('filterModal').style.display = 'block';
     };
+
+    // Initialize Flatpickr AFTER the modal is visible
+    setTimeout(() => {
+        // Check if Flatpickr instances already exist, destroy them first
+        const fromDateInput = document.getElementById('from_date');
+        const toDateInput = document.getElementById('to_date');
+        
+        if (fromDateInput._flatpickr) {
+            fromDateInput._flatpickr.destroy();
+        }
+        if (toDateInput._flatpickr) {
+            toDateInput._flatpickr.destroy();
+        }
+        
+        // Initialize Flatpickr on visible elements
+        flatpickr("#from_date", {
+            dateFormat: "Y-m-d",
+            allowInput: true,
+            disableMobile: true
+        });
+        
+        flatpickr("#to_date", {
+            dateFormat: "Y-m-d",
+            allowInput: true,
+            disableMobile: true
+        });
+    }, 100); // Small delay to ensure modal is fully visible
+
     document.getElementById('closeFilterModal').onclick = function() {
         document.getElementById('filterModal').style.display = 'none';
     };
