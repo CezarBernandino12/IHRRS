@@ -348,10 +348,17 @@ $total_pending = 0;
 </div>
 <div class="report-content">
 <!-- Summary Section -->
+ <style>
+    @media print {
+        .chart-title { 
+           display: none;
+        }
+    }
+</style>
 <br>
 <!-- Pie Chart Section -->
 <div style="max-width: 400px; margin: 30px auto 0 auto; text-align:center;">
-    <h3>Referral Status</h3>
+    <h3 class="chart-title">Referral Status</h3>
     <canvas id="statusPieChart"></canvas>
     <p id="noDataMessage" style="display:none; color:#666; margin-top:10px;">No data available</p>
 </div>
@@ -418,7 +425,7 @@ $total_pending = 0;
 
 <!-- Bar Chart Section -->
 <div style="max-width: 600px; margin: 30px auto; text-align:center;">
-    <h3>Total Referrals Received Per Barangay</h3>
+    <h3 class="chart-title">Total Referrals Received Per Barangay</h3>
     <canvas id="barangayBarChart"></canvas>
     <p id="noBarDataMessage" style="display:none; color:#666; margin-top:10px;">No data available</p>
 </div>
@@ -562,8 +569,8 @@ async function exportTableToPDF() {
 
 //PRINT
 function printDiv() {
-
-     function getChartImage(id, title) {
+    // Get chart images from the original canvases
+    function getChartImage(id, title) {
         const canvas = document.getElementById(id);
         if (canvas && canvas.toDataURL) {
             return `<div style="text-align:center;margin-bottom:20px;">
@@ -576,32 +583,68 @@ function printDiv() {
 
     // Collect chart images with titles
     let chartsHTML = '';
-    chartsHTML += getChartImage('statusPieChart', 'Distribution of Patients by Sex');
+    chartsHTML += getChartImage('statusPieChart', 'Referral Status');
+    chartsHTML += getChartImage('barangayBarChart', 'Total Referrals Received Per Barangay');
 
-    const divContents = document.querySelector(".print-area").innerHTML;
+    // Clone the print area (table and summary)
+    const originalArea = document.querySelector(".print-area").cloneNode(true);
 
-    const printWindow = window.open('', '', 'height=700,width=900');
+    // Add 'Signature' column to header
+    const headerRow = originalArea.querySelector("thead tr");
+    if (headerRow && !headerRow.querySelector('th:last-child').textContent.includes('Signature')) {
+        const signatureHeader = document.createElement("th");
+        signatureHeader.textContent = "Signature";
+        headerRow.appendChild(signatureHeader);
+
+        // Add 'Signature' cell to each row in tbody
+        const rows = originalArea.querySelectorAll("tbody tr");
+        rows.forEach(row => {
+            const signatureCell = document.createElement("td");
+            signatureCell.style.height = "30px";
+            signatureCell.textContent = "";
+            row.appendChild(signatureCell);
+        });
+    }
+
+    // Get the print header HTML
+    const printHeader = document.querySelector('.print-header').outerHTML;
+
+    // Remove the header from the cloned area so it doesn't appear twice
+    const headerInClone = originalArea.querySelector('.print-header');
+    if (headerInClone) headerInClone.remove();
+
+    // Remove all canvases from the cloned area (since we replace them with images)
+    const canvases = originalArea.querySelectorAll('canvas');
+    canvases.forEach(c => c.parentNode.removeChild(c));
+
+    // Create print window and write content
+    const printWindow = window.open('', '', 'height=900,width=1100');
     printWindow.document.write('<html><head><title>Print Report</title>');
-    
-    // OPTIONAL: Minimal styles for cleaner layout
     printWindow.document.write(`
         <style>
             body { font-family: Arial, sans-serif; font-size: 12px; color: black; }
             table { width: 100%; border-collapse: collapse; }
             th, td { border: 1px solid #000; padding: 4px; text-align: left; }
             thead { background-color: #f0f0f0; }
+            img { display: block; margin: 0 auto; max-width: 100%; height: auto; }
+            h3 { margin: 10px 0 5px 0; }
         </style>
     `);
-
     printWindow.document.write('</head><body>');
-    printWindow.document.write(divContents);
+    printWindow.document.write(printHeader);          // Print header first
+    printWindow.document.write(chartsHTML);           // Then charts
+    printWindow.document.write(originalArea.innerHTML); // Then table and summary
     printWindow.document.write('</body></html>');
 
     printWindow.document.close();
     printWindow.focus();
-    printWindow.print();
-    printWindow.close();
+
+    setTimeout(() => {
+        printWindow.print();
+        printWindow.close();
+    }, 500);
 }
+
 
 
 document.addEventListener('DOMContentLoaded', function() {

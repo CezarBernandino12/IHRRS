@@ -898,6 +898,10 @@ td a:hover {
     tr:hover {
         background-color: transparent;
     }
+    
+        .chart-title { 
+           display: none; 
+        }
 }
 
 @media print {
@@ -929,6 +933,10 @@ td a:hover {
     .no-print {
         display: none;
     }
+    
+        .chart-title { 
+           display: none; 
+        }
 }
 
 /*MODAL*/

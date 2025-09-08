@@ -492,10 +492,16 @@ while ($row = $barangay_stmt->fetch(PDO::FETCH_ASSOC)) {
 </div>
 <div class="report-content">
 
-
+<style>
+    @media print {
+        .chart { 
+           display: none;
+        }
+    }
+</style>
 
     <!-- Pie Chart Section -->
-    <div style="max-width: 400px; margin: 30px auto 0 auto; text-align:center;">
+    <div class="chart" style="max-width: 400px; margin: 30px auto 0 auto; text-align:center;">
         <h3>Patients by Sex</h3>
         <canvas id="sexPieChart"></canvas>
     </div>
@@ -545,7 +551,7 @@ while ($row = $barangay_stmt->fetch(PDO::FETCH_ASSOC)) {
 
 
     <!-- Age Group Distribution Bar Chart -->
-    <div style="max-width: 500px; margin: 30px auto 0 auto; text-align:center;">
+    <div class="chart" style="max-width: 500px; margin: 30px auto 0 auto; text-align:center;">
         <h3>Age Group</h3>
         <canvas id="ageGroupBarChart"></canvas>
     </div>
@@ -616,7 +622,7 @@ while ($row = $barangay_stmt->fetch(PDO::FETCH_ASSOC)) {
 
 
     <!-- BMI Category Pie Chart -->
-    <div style="max-width: 400px; margin: 30px auto 0 auto; text-align:center;">
+    <div class="chart" style="max-width: 400px; margin: 30px auto 0 auto; text-align:center;">
         <h3>Patients by BMI Category</h3>
         <canvas id="bmiPieChart"></canvas>
     </div>
@@ -693,7 +699,7 @@ while ($row = $barangay_stmt->fetch(PDO::FETCH_ASSOC)) {
     </script>
 
     <!-- Treatment Distribution Bar Chart -->
-    <div style="max-width: 500px; margin: 30px auto 0 auto; text-align:center;">
+    <div class="chart" style="max-width: 500px; margin: 30px auto 0 auto; text-align:center;">
         <h3>Treatments</h3>
         <canvas id="treatmentBarChart"></canvas>
     </div>
@@ -754,7 +760,7 @@ while ($row = $barangay_stmt->fetch(PDO::FETCH_ASSOC)) {
     }
     </script>
 <!-- Patient Address Distribution Bar Chart -->
-<div style="max-width: 600px; margin: 30px auto 0 auto; text-align:center;">
+<div class="chart" style="max-width: 600px; margin: 30px auto 0 auto; text-align:center;">
     <h3>Patient Address</h3>
     <canvas id="addressBarChart"></canvas>
 </div>
@@ -1020,7 +1026,6 @@ async function exportTableToPDF() {
     });
 }
 
-
 function printDiv() {
     // Get chart images from the original canvases
     function getChartImage(id, title) {
@@ -1040,38 +1045,36 @@ function printDiv() {
     chartsHTML += getChartImage('ageGroupBarChart', 'Age Group');
     chartsHTML += getChartImage('bmiPieChart', 'Patients by BMI Category');
     chartsHTML += getChartImage('treatmentBarChart', 'Treatments');
-   
 
     // Clone the print area (table and summary)
     const originalArea = document.querySelector(".print-area").cloneNode(true);
 
-    // Add 'Signature' column to header
+    // ✅ Add 'Signature' column only if not already present
     const headerRow = originalArea.querySelector("thead tr");
-    if (headerRow && !headerRow.querySelector('th:last-child').textContent.includes('Signature')) {
+    if (headerRow && !headerRow.querySelector("th:last-child")?.textContent.includes("Signature")) {
         const signatureHeader = document.createElement("th");
         signatureHeader.textContent = "Signature";
         headerRow.appendChild(signatureHeader);
 
-        // Add 'Signature' cell to each row in tbody
+        // Add empty signature cells for each row in tbody
         const rows = originalArea.querySelectorAll("tbody tr");
         rows.forEach(row => {
             const signatureCell = document.createElement("td");
             signatureCell.style.height = "30px";
-            signatureCell.textContent = "";
             row.appendChild(signatureCell);
         });
     }
 
     // Get the print header HTML
-    const printHeader = document.querySelector('.print-header').outerHTML;
+    const printHeader = document.querySelector(".print-header").outerHTML;
 
-    // Remove the header from the cloned area so it doesn't appear twice
-    const headerInClone = originalArea.querySelector('.print-header');
+    // Remove header from cloned area (avoid duplication)
+    const headerInClone = originalArea.querySelector(".print-header");
     if (headerInClone) headerInClone.remove();
 
-    // Create print window and write content
-    const printWindow = window.open('', '', 'height=900,width=1100');
-    printWindow.document.write('<html><head><title>Print Report</title>');
+    // Create print window
+    const printWindow = window.open("", "", "height=900,width=1100");
+    printWindow.document.write("<html><head><title>Print Report</title>");
     printWindow.document.write(`
         <style>
             body { font-family: Arial, sans-serif; font-size: 12px; color: black; }
@@ -1082,11 +1085,11 @@ function printDiv() {
             h3 { margin: 10px 0 5px 0; }
         </style>
     `);
-    printWindow.document.write('</head><body>');
-    printWindow.document.write(printHeader); // Print header at the very top
-    printWindow.document.write(chartsHTML);  // Then charts
-    printWindow.document.write(originalArea.innerHTML);  // Then table and summary
-    printWindow.document.write('</body></html>');
+    printWindow.document.write("</head><body>");
+    printWindow.document.write(printHeader);     // header first
+    printWindow.document.write(chartsHTML);      // then charts
+    printWindow.document.write(originalArea.innerHTML); // then table + summary
+    printWindow.document.write("</body></html>");
 
     printWindow.document.close();
     printWindow.focus();
@@ -1096,6 +1099,7 @@ function printDiv() {
         printWindow.close();
     }, 500);
 }
+
 fetch('../php/getUserName.php')
     .then(response => response.json())
     .then(data => {
@@ -1131,6 +1135,11 @@ window.onclick = function(event) {
         closeModal();
     }
 }
+
+// Remove charts from the clone (if they exist inside .print-area)
+const chartsInClone = originalArea.querySelectorAll("canvas, .chart-container");
+chartsInClone.forEach(chart => chart.remove());
+
 </script>
 
 </body>

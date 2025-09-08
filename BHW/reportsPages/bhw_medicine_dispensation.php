@@ -417,41 +417,6 @@ $bhws = $bhw_stmt->fetchAll();
 </div>
 <div class="report-content">
 
-
-<?php if ($rows): ?>
-    <div class="summary-container">
-    <div class="summary">
-        <h4><i class="bx bx-filter-alt"></i>Summary:</h4>
-    <ul  class="summary-list">
-        <?php
-        // Summarize total quantity dispensed per medicine (after filters)
-        $medicine_totals = [];
-        foreach ($rows as $row) {
-            $med = $row['medicine_name'];
-            $qty = (int)$row['quantity_dispensed'];
-            if (!isset($medicine_totals[$med])) {
-                $medicine_totals[$med] = 0;
-            }
-            $medicine_totals[$med] += $qty;
-        }
-        if ($medicine_totals) {
-            foreach ($medicine_totals as $med => $total) {
-                echo '<li><strong>' . htmlspecialchars($med) . ':</strong> ' . $total . ' dispensed</li>';
-            }
-        } else {
-            echo '<li>No medicines dispensed for the selected filters.</li>';
-        }
-        ?>
-    </ul>
-    </div>
-
-
-    <div class="summary">
-        <strong><i class="bx bx-file"></i> Total Records:</strong> <?= count($rows) ?>
-    </div>
-</div>
-
-
 <!-- Chart.js CDN -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -519,6 +484,55 @@ const dispensationChart = new Chart(ctx, {
     }
 });
 </script>
+
+<?php if ($rows): ?>
+    <div class="summary-container">
+    <div class="summary">
+        <h4><i class="bx bx-filter-alt"></i>Summary:</h4>
+    <table class="summary-table" style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+        <thead>
+            <tr>
+                <th style="border: 1px solid #ccc; padding: 8px; text-align: left;">Medicine Name</th>
+                <th style="border: 1px solid #ccc; padding: 8px; text-align: left;">Total Quantity Dispensed</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
+            // Summarize total quantity dispensed per medicine (after filters)
+            $medicine_totals = [];
+            foreach ($rows as $row) {
+                $med = $row['medicine_name'];
+                $qty = (int)$row['quantity_dispensed'];
+                if (!isset($medicine_totals[$med])) {
+                    $medicine_totals[$med] = 0;
+                }
+                $medicine_totals[$med] += $qty;
+            }
+            if ($medicine_totals) {
+                foreach ($medicine_totals as $med => $total) {
+                    echo '<tr>';
+                    echo '<td style="border: 1px solid #ccc; padding: 8px;">' . htmlspecialchars($med) . '</td>';
+                    echo '<td style="border: 1px solid #ccc; padding: 8px;">' . $total . '</td>';
+                    echo '</tr>';
+                }
+            } else {
+                echo '<tr>';
+                echo '<td colspan="2" style="border: 1px solid #ccc; padding: 8px; text-align: center;">No medicines dispensed for the selected filters.</td>';
+                echo '</tr>';
+            }
+            ?>
+        </tbody>
+    </table>
+    </div>
+
+
+    <div class="summary">
+        <strong><i class="bx bx-file"></i> Total Records:</strong> <?= count($rows) ?>
+    </div>
+</div>
+
+<br><br>
+<h3>Detailed Report</h3>
     <table>
         <thead>
             <tr>

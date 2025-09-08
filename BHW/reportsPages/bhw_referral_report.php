@@ -376,6 +376,13 @@ $rows = $stmt->fetchAll();
   <h2>BHS REFERRAL REPORT</h2>
 </div>
 <div class="report-content">
+<style>
+    @media print {
+        .chart { 
+           display: none;
+        }
+    }
+</style>
 
 
 <?php
@@ -418,7 +425,7 @@ $visits_without_referral = (int)$visit_stmt->fetchColumn();
 ?>
 
 <!-- Pie Chart Section -->
-<div style="max-width:400px;margin:30px auto 30px auto;">
+<div class="chart" style="max-width:400px;margin:30px auto 30px auto;">
     <canvas id="referralPieChart"></canvas>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -467,7 +474,8 @@ foreach ($rows as $row) {
     }
 }
 ?>
-<div style="max-width:400px;margin:30px auto 30px auto;">
+
+<div class="chart" style="max-width:400px;margin:30px auto 30px auto;">
     <canvas id="statusPieChart"></canvas>
 </div>
 <script>
@@ -648,36 +656,57 @@ function addExportStyles(doc) {
         .status-uncompleted, .status-canceled { color: #d83933; }
     `);
 }
-
 function printDiv() {
-    const divContents = document.querySelector(".print-area").innerHTML;
-
-    // Convert both Chart.js canvases to images
-    const pie1 = document.getElementById('referralPieChart');
-    const pie2 = document.getElementById('statusPieChart');
-    let img1 = '', img2 = '';
-
-    if (pie1) {
-        const src1 = pie1.toDataURL("image/png");
-        img1 = `<img id="printPie1" src="${src1}" style="max-width:100%;height:auto;">`;
-    }
-    if (pie2) {
-        const src2 = pie2.toDataURL("image/png");
-        img2 = `<img id="printPie2" src="${src2}" style="max-width:100%;height:auto;">`;
+    // Get chart images from the original canvases
+    function getChartImage(id, title) {
+        const canvas = document.getElementById(id);
+        if (canvas && canvas.toDataURL) {
+            return `<div style="text-align:center;margin-bottom:20px;">
+                        <h3 style="margin-bottom:8px;">${title}</h3>
+                        <img src="${canvas.toDataURL('image/png')}" style="max-width:100%;height:auto;">
+                    </div>`;
+        }
+        return '';
     }
 
-    // Replace canvases with images in the print content
-    let printContent = divContents;
-    printContent = printContent.replace(
-        /<canvas[^>]*id="referralPieChart"[^>]*>[\s\S]*?<\/canvas>/,
-        img1
-    );
-    printContent = printContent.replace(
-        /<canvas[^>]*id="statusPieChart"[^>]*>[\s\S]*?<\/canvas>/,
-        img2
-    );
+    // Collect chart images with titles
+    let chartsHTML = '';
+    chartsHTML += getChartImage('referralPieChart', 'Referrals');
+    chartsHTML += getChartImage('statusPieChart', 'Status');
 
-    const printWindow = window.open('', '', 'height=700,width=900');
+    // Clone the print area (table and summary)
+    const originalArea = document.querySelector(".print-area").cloneNode(true);
+
+    // Add 'Signature' column to header
+    const headerRow = originalArea.querySelector("thead tr");
+    if (headerRow && !headerRow.querySelector('th:last-child').textContent.includes('Signature')) {
+        const signatureHeader = document.createElement("th");
+        signatureHeader.textContent = "Signature";
+        headerRow.appendChild(signatureHeader);
+
+        // Add 'Signature' cell to each row in tbody
+        const rows = originalArea.querySelectorAll("tbody tr");
+        rows.forEach(row => {
+            const signatureCell = document.createElement("td");
+            signatureCell.style.height = "30px";
+            signatureCell.textContent = "";
+            row.appendChild(signatureCell);
+        });
+    }
+
+    // Get the print header HTML
+    const printHeader = document.querySelector('.print-header').outerHTML;
+
+    // Remove the header from the cloned area so it doesn't appear twice
+    const headerInClone = originalArea.querySelector('.print-header');
+    if (headerInClone) headerInClone.remove();
+
+    // *** REMOVE ALL CANVAS ELEMENTS FROM THE CLONED AREA ***
+    const canvases = originalArea.querySelectorAll('canvas');
+    canvases.forEach(c => c.parentNode.removeChild(c));
+
+    // Create print window and write content
+    const printWindow = window.open('', '', 'height=900,width=1100');
     printWindow.document.write('<html><head><title>Print Report</title>');
     printWindow.document.write(`
         <style>
@@ -685,6 +714,8 @@ function printDiv() {
             table { width: 100%; border-collapse: collapse; }
             th, td { border: 1px solid #000; padding: 4px; text-align: left; }
             thead { background-color: #f0f0f0; }
+            img { display: block; margin: 0 auto; max-width: 100%; height: auto; }
+            h3 { margin: 10px 0 5px 0; }
             .referral-status {
                 font-weight: bold;
                 padding: 4px 8px;
@@ -706,41 +737,21 @@ function printDiv() {
         </style>
     `);
     printWindow.document.write('</head><body>');
-    printWindow.document.write(printContent);
+    printWindow.document.write(printHeader); // Print header at the very top
+    printWindow.document.write(chartsHTML);  // Then charts
+    printWindow.document.write(originalArea.innerHTML);  // Then table and summary
     printWindow.document.write('</body></html>');
-    printWindow.document.close();
 
-    // Wait for both images to load before printing
-    printWindow.onload = function() {
-        const imgA = printWindow.document.getElementById('printPie1');
-        const imgB = printWindow.document.getElementById('printPie2');
-        let loaded = 0, needed = 0;
-        if (imgA) needed++;
-        if (imgB) needed++;
-        function tryPrint() {
-            loaded++;
-            if (loaded >= needed) {
-                printWindow.focus();
-                printWindow.print();
-                printWindow.close();
-            }
-        }
-        if (needed === 0) {
-            printWindow.focus();
-            printWindow.print();
-            printWindow.close();
-        } else {
-            if (imgA) {
-                imgA.onload = tryPrint;
-                if (imgA.complete) imgA.onload();
-            }
-            if (imgB) {
-                imgB.onload = tryPrint;
-                if (imgB.complete) imgB.onload();
-            }
-        }
-    };
+    printWindow.document.close();
+    printWindow.focus();
+
+    setTimeout(() => {
+        printWindow.print();
+        printWindow.close();
+    }, 500);
 }
+
+
 fetch('../php/getUserName.php')
     .then(response => response.json())
     .then(data => {

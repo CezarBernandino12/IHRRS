@@ -474,11 +474,18 @@ echo $filters ? implode("&nbsp; | &nbsp;", $filters) : "All Records";
 </div>
 <br> <br><br><br> 
 <div class="report-content">
+<style>
+    @media print {
+        .chart-title { 
+           display: none;
+        }
+    }
+</style>
 
   <!-- Disease Frequency Over Time Line Chart -->
 <div style="max-width: 800px; margin: 30px auto 0 auto; text-align:center;">
-    <h3>Medical Cases Frequency Over Time</h3>
-    <canvas id="diseaseLineChart"></canvas>
+    <h3 class="chart-title">Medical Cases Frequency Over Time</h3>
+    <canvas id="casesLineChart"></canvas>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
@@ -494,7 +501,7 @@ echo $filters ? implode("&nbsp; | &nbsp;", $filters) : "All Records";
 
         if ($diag && $date && $patient) {
             // Create unique key for this diagnosis+patient
-            $key = $diag . '_' . $patient;
+            $key = "{$diag}_{$patient}";
 
             // Skip if already counted (ensures deduplication across all dates)
             if (isset($seen[$key])) {
@@ -555,7 +562,7 @@ echo $filters ? implode("&nbsp; | &nbsp;", $filters) : "All Records";
     const diseaseLineDatasets = <?= json_encode($datasets) ?>;
 
     if (diseaseLineDatasets.length > 0 && diseaseLineLabels.length > 0) {
-        const ctxDiseaseLine = document.getElementById('diseaseLineChart').getContext('2d');
+        const ctxDiseaseLine = document.getElementById('casesLineChart').getContext('2d');
         new Chart(ctxDiseaseLine, {
             type: 'line',
             data: {
@@ -585,7 +592,7 @@ echo $filters ? implode("&nbsp; | &nbsp;", $filters) : "All Records";
 
     <!-- Pie Chart Section: Sex Distribution -->
     <div style="max-width: 400px; margin: 30px auto 0 auto; text-align:center;">
-        <h3>Patients by Sex</h3>
+        <h3 class="chart-title">Patients by Sex</h3>
         <canvas id="sexPieChart"></canvas>
     </div>
     <script>
@@ -631,7 +638,7 @@ echo $filters ? implode("&nbsp; | &nbsp;", $filters) : "All Records";
 
     <!-- Age Group Distribution Bar Chart -->
     <div style="max-width: 500px; margin: 30px auto 0 auto; text-align:center;">
-        <h3>Age Groups</h3>
+        <h3 class="chart-title">Age Groups</h3>
         <canvas id="ageGroupBarChart"></canvas>
     </div>
     <script>
@@ -911,7 +918,6 @@ async function exportTableToPDF() {
     });
 }
 
-
 function printDiv() {
     // Get chart images from the original canvases
     function getChartImage(id, title) {
@@ -927,12 +933,10 @@ function printDiv() {
 
     // Collect chart images with titles
     let chartsHTML = '';
+        chartsHTML += getChartImage('casesLineChart', 'Medical Cases');
     chartsHTML += getChartImage('sexPieChart', 'Patients by Sex');
     chartsHTML += getChartImage('ageGroupBarChart', 'Age Group');
-    chartsHTML += getChartImage('bmiPieChart', 'Patients by BMI Category');
-    chartsHTML += getChartImage('treatmentBarChart', 'Treatments');
-    chartsHTML += getChartImage('medicineBarChart', 'Dispensed Medicines');
-    chartsHTML += getChartImage('diseaseBarChart', 'Medical Cases');
+
 
     // Clone the print area (table and summary)
     const originalArea = document.querySelector(".print-area").cloneNode(true);
@@ -963,7 +967,7 @@ function printDiv() {
 
     // *** REMOVE ALL CANVAS ELEMENTS FROM THE CLONED AREA ***
     const canvases = originalArea.querySelectorAll('canvas');
-canvases.forEach(c => c.parentNode.removeChild(c));
+    canvases.forEach(c => c.parentNode.removeChild(c));
 
     // Create print window and write content
     const printWindow = window.open('', '', 'height=900,width=1100');
@@ -992,6 +996,7 @@ canvases.forEach(c => c.parentNode.removeChild(c));
         printWindow.close();
     }, 500);
 }
+
 fetch('../php/getUserName.php')
     .then(response => response.json())
     .then(data => {

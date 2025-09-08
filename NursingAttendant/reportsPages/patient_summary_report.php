@@ -259,6 +259,7 @@ $total_patients = count(array_unique(array_column($visits, 'patient_id')));
     </div>
     <style>
         .filter-tag a:hover { color: #e15759; }
+    
     </style>
 
 
@@ -418,10 +419,16 @@ $total_patients = count(array_unique(array_column($visits, 'patient_id')));
 <div class="report-content">
 
 <br><br>
-
+<style>
+    @media print {
+        .chart-title { 
+           display: none;
+        }
+    }
+</style>
     <!-- Pie Chart Section -->
     <div style="max-width: 400px; margin: 30px auto 0 auto; text-align:center;">
-        <h3>Patients by Sex</h3> <br>
+            <h3 class="chart-title">Patients by Sex</h3>
         <canvas id="sexPieChart"></canvas>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -471,7 +478,7 @@ $total_patients = count(array_unique(array_column($visits, 'patient_id')));
 <br><br>
     <!-- Age Group Distribution Bar Chart -->
     <div style="max-width: 500px; margin: 30px auto 0 auto; text-align:center;">
-        <h3>Age Groups</h3> <br>
+          <h3 class="chart-title">Age Groups</h3>
         <canvas id="ageGroupBarChart"></canvas>
     </div>
     <script>
@@ -542,7 +549,7 @@ $total_patients = count(array_unique(array_column($visits, 'patient_id')));
 <br><br>
     <!-- BMI Category Pie Chart -->
     <div style="max-width: 400px; margin: 30px auto 0 auto; text-align:center;">
-        <h3>Patients by BMI Category</h3> <br>
+            <h3 class="chart-title">Patients by BMI Category</h3>
         <canvas id="bmiPieChart"></canvas>
     </div>
     <script>
@@ -620,8 +627,10 @@ $total_patients = count(array_unique(array_column($visits, 'patient_id')));
     <br><br>
     <!-- Address Distribution Bar Chart -->
     <div style="max-width: 500px; margin: 30px auto 0 auto; text-align:center;">
-        <h3>Patients by Barangay</h3> <br>
-        <canvas id="barangayBarChart"></canvas>
+    <h3 class="chart-title">Patients by Barangay</h3>
+        <canvas id="barangayBarChart">
+         
+        </canvas>
     </div>
     <script>
         <?php
@@ -836,7 +845,6 @@ async function exportTableToPDF() {
     });
 }
 
-
 function printDiv() {
     // Get chart images from the original canvases
     function getChartImage(id, title) {
@@ -852,13 +860,10 @@ function printDiv() {
 
     // Collect chart images with titles
     let chartsHTML = '';
-    chartsHTML += getChartImage('sexPieChart', 'Distribution of Patients by Sex');
-    chartsHTML += getChartImage('ageGroupBarChart', 'Age Group Distribution');
-    chartsHTML += getChartImage('bmiPieChart', 'Distribution of Patients by BMI Category');
-      chartsHTML += getChartImage('barangayBarChart', 'Patients by Barangay');
-      
- 
-    
+    chartsHTML += getChartImage('sexPieChart', 'Patients by Sex');
+    chartsHTML += getChartImage('ageGroupBarChart', 'Age Groups');
+    chartsHTML += getChartImage('bmiPieChart', 'Patients by BMI Category');
+    chartsHTML += getChartImage('barangayBarChart', 'Patients by Barangay');
 
     // Clone the print area (table and summary)
     const originalArea = document.querySelector(".print-area").cloneNode(true);
@@ -887,6 +892,10 @@ function printDiv() {
     const headerInClone = originalArea.querySelector('.print-header');
     if (headerInClone) headerInClone.remove();
 
+    // Remove all canvases from the cloned area (since we use chart images instead)
+    const canvases = originalArea.querySelectorAll('canvas');
+    canvases.forEach(c => c.parentNode.removeChild(c));
+
     // Create print window and write content
     const printWindow = window.open('', '', 'height=900,width=1100');
     printWindow.document.write('<html><head><title>Print Report</title>');
@@ -901,9 +910,9 @@ function printDiv() {
         </style>
     `);
     printWindow.document.write('</head><body>');
-    printWindow.document.write(printHeader); // Print header at the very top
-    printWindow.document.write(chartsHTML);  // Then charts
-    printWindow.document.write(originalArea.innerHTML);  // Then table and summary
+    printWindow.document.write(printHeader);            // Print header first
+    printWindow.document.write(chartsHTML);             // Then charts
+    printWindow.document.write(originalArea.innerHTML); // Then table and summary
     printWindow.document.write('</body></html>');
 
     printWindow.document.close();
@@ -914,6 +923,7 @@ function printDiv() {
         printWindow.close();
     }, 500);
 }
+
 
     function confirmLogout() {
     document.getElementById('logoutModal').style.display = 'block';

@@ -254,6 +254,10 @@
         td {
             border-color: #e2e8f0;
         }
+        
+        .chart-title { 
+           display: none; 
+        }
     }
 
     body {
@@ -318,6 +322,8 @@
         .no-print {
           display: none;
         }
+     
+
       }
 
     /* Enhanced Treatment History Report Styles */

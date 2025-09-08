@@ -529,11 +529,17 @@ if (count($patient_meds) > 0) {
   <h2>DOH MAINTAINANCE MEDICINE UTILIZATION REPORT</h2>
 </div>
 <div class="report-content">
-
+<style>
+    @media print {
+        .chart-title { 
+           display: none;
+        }
+    }
+</style>
 
     <!-- Pie Chart Section -->
     <div style="max-width: 400px; margin: 30px auto 0 auto; text-align:center;">
-        <h3>Patients by Sex</h3> <br>
+      <h3 class="chart-title">Patients by Sex</h3>
         <canvas id="sexPieChart"></canvas>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -575,7 +581,7 @@ if (count($patient_meds) > 0) {
     <br><br>
     <!-- Age Group Distribution Bar Chart -->
     <div style="max-width: 500px; margin: 30px auto 0 auto; text-align:center;">
-        <h3>Age Groups</h3> <br>
+        <h3 class="chart-title">Age Groups</h3>
         <canvas id="ageGroupBarChart"></canvas>
     </div>
     <script>
@@ -638,7 +644,7 @@ if (count($patient_meds) > 0) {
     <br><br>
     <!-- Address Distribution Bar Chart -->
     <div style="max-width: 500px; margin: 30px auto 0 auto; text-align:center;">
-        <h3>Patients by Barangay</h3> <br>
+      <h3 class="chart-title">Patient Counts per Barangay</h3>
         <canvas id="barangayBarChart"></canvas>
     </div>
     <script>
@@ -695,7 +701,7 @@ if (count($patient_meds) > 0) {
     </script>
     <!-- Line Graph: Quantity of Dispensed Medicines Over Time -->
 <div style="max-width: 700px; margin: 30px auto 0 auto; text-align:center;">
-    <h3>Dispensed Medicines Over Time</h3> <br>
+   <h3 class="chart-title">Quantity of Dispensed Medicines Over Time</h3>
     <canvas id="medicineLineChart"></canvas>
 </div>
 <script>
@@ -875,38 +881,84 @@ async function exportTableToPDF() {
 
 //PRINT
 function printDiv() {
-    const divContents = document.querySelector(".print-area").innerHTML;
+    // Get chart images from the original canvases
+    function getChartImage(id, title) {
+        const canvas = document.getElementById(id);
+        if (canvas && canvas.toDataURL) {
+            return `<div style="text-align:center;margin-bottom:20px;">
+                        <h3 style="margin-bottom:8px;">${title}</h3>
+                        <img src="${canvas.toDataURL('image/png')}" style="max-width:100%;height:auto;">
+                    </div>`;
+        }
+        return '';
+    }
 
-    const printWindow = window.open('', '', 'height=700,width=900');
+    // Collect chart images with titles
+    let chartsHTML = '';
+    chartsHTML += getChartImage('sexPieChart', 'Distribution of Patients by Sex');
+    chartsHTML += getChartImage('ageGroupBarChart', 'Age Group Distribution');
+    chartsHTML += getChartImage('barangayBarChart', 'Patient Counts per Barangay');
+    chartsHTML += getChartImage('medicineLineChart', 'Quantity of Dispensed Medicines Over Time');
+
+    // Clone the print area (table and summary)
+    const originalArea = document.querySelector(".print-area").cloneNode(true);
+
+    // Add 'Signature' column to header
+    const headerRow = originalArea.querySelector("thead tr");
+    if (headerRow && !headerRow.querySelector('th:last-child').textContent.includes('Signature')) {
+        const signatureHeader = document.createElement("th");
+        signatureHeader.textContent = "Signature";
+        headerRow.appendChild(signatureHeader);
+
+        // Add 'Signature' cell to each row in tbody
+        const rows = originalArea.querySelectorAll("tbody tr");
+        rows.forEach(row => {
+            const signatureCell = document.createElement("td");
+            signatureCell.style.height = "30px";
+            signatureCell.textContent = "";
+            row.appendChild(signatureCell);
+        });
+    }
+
+    // Get the print header HTML
+    const printHeader = document.querySelector('.print-header').outerHTML;
+
+    // Remove the header from the cloned area so it doesn't appear twice
+    const headerInClone = originalArea.querySelector('.print-header');
+    if (headerInClone) headerInClone.remove();
+
+    // Remove all canvases from the cloned area (since we use chart images instead)
+    const canvases = originalArea.querySelectorAll('canvas');
+    canvases.forEach(c => c.parentNode.removeChild(c));
+
+    // Create print window and write content
+    const printWindow = window.open('', '', 'height=900,width=1100');
     printWindow.document.write('<html><head><title>Print Report</title>');
-    
-    // OPTIONAL: Minimal styles for cleaner layout
     printWindow.document.write(`
         <style>
             body { font-family: Arial, sans-serif; font-size: 12px; color: black; }
             table { width: 100%; border-collapse: collapse; }
             th, td { border: 1px solid #000; padding: 4px; text-align: left; }
             thead { background-color: #f0f0f0; }
+            img { display: block; margin: 0 auto; max-width: 100%; height: auto; }
+            h3 { margin: 10px 0 5px 0; }
         </style>
     `);
-
-        // Collect chart images with titles
-    let chartsHTML = '';
-    chartsHTML += getChartImage('sexPieChart', 'Distribution of Patients by Sex');
-    chartsHTML += getChartImage('ageGroupBarChart', 'Age Group Distribution');
-    chartsHTML += getChartImage('bmiPieChart', 'Distribution of Patients by BMI Category');
- 
-    
-
     printWindow.document.write('</head><body>');
-    printWindow.document.write(divContents);
+    printWindow.document.write(printHeader);            // Print header first
+    printWindow.document.write(chartsHTML);             // Then charts
+    printWindow.document.write(originalArea.innerHTML); // Then table and summary
     printWindow.document.write('</body></html>');
 
     printWindow.document.close();
     printWindow.focus();
-    printWindow.print();
-    printWindow.close();
+
+    setTimeout(() => {
+        printWindow.print();
+        printWindow.close();
+    }, 500);
 }
+
 
 
 document.addEventListener('DOMContentLoaded', function() {
