@@ -751,7 +751,7 @@ body {
   .history-container .status .completed {
     color: #008000;
     font-weight: bold;
-  }
+  } 
 
   .history-container .status .uncompleted {
     color: #ff3333;
@@ -833,14 +833,16 @@ body {
 }
 
 .disabled {
-  color: gray;
+  color: black;
   pointer-events: none;
   background-color: #f0f0f0;
 }
 
 .disabled i {
-  color: gray;
+  color: black;
 }
+
+
   .pagination {
     display: flex;
     justify-content: right;
@@ -866,12 +868,19 @@ body {
   .pagination .active {
     color: rgb(0, 0, 0);
     font-weight: bold;
-  }
+  } 
 
   .pagination .prev,
   .pagination .next {
-    font-size: 16px;
+    font-size: 14px;
+    background-color:  #162e51;
+    color: #fff; 
   }
+
+  .pagination .next:hover {
+    background-color:  #162e51;
+    color: #fff;
+}
 
   .filter-container {
     display: flex;

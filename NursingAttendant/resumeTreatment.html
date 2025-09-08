@@ -7,6 +7,7 @@
     <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="css/exist.css">
     <link rel="stylesheet" href="css/print.css">
+    <link rel="stylesheet" href="css/logout.css">
     <title>Resume Treatment</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
@@ -462,21 +463,20 @@ document.addEventListener("click", function(event) {
 </div>
 
 
-        <div id="logoutModal" class="modal">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h3>Confirm Logout</h3>
-				</div>
-				<div class="modal-body">
-					<p>Are you sure you want to logout?</p>
-				</div>
-				<div class="modal-footer">
-					<button onclick="closeModal()" class="btn yes">Cancel</button>
-					<button onclick="proceedLogout()" class="btn no">Yes, Logout</button>
-				</div>
-			</div>
-		</div>
-
+<div id="logoutModal" class="logout-modal">
+    <div class="logout-modal-content">
+        <div class="logout-modal-header">
+            <h3>Confirm Logout</h3>
+        </div>
+        <div class="logout-modal-body">
+            <p>Are you sure you want to logout?</p>
+        </div>
+        <div class="logout-modal-footer">
+            <button onclick="closeModal()" class="logout-cancel-btn">Cancel</button>
+            <button onclick="proceedLogout()" class="logout-confirm-btn">Yes, Logout</button>
+        </div>
+    </div>
+</div>
 
     </div>
    
