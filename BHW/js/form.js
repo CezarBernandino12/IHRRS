@@ -69,6 +69,8 @@ const modal3 = document.getElementById('myModal3');
 const closeBtn3 = document.getElementById('closeBtn3');
 const viewDetailsButton = document.getElementById('viewDetailsButton');
 
+errorModal = document.getElementById('errorModal');
+const errorCloseBtn = document.getElementById('errorCloseBtn');
 
 
 
@@ -81,25 +83,29 @@ submitButton.addEventListener('click', function (event) {
 // Close first modal
 closeBtn1.addEventListener('click', function () {
     modal1.style.display = 'none';
-});
-
+}); 
 
 
 // Function to show the modal when a patient exists
 function showPatientExistsModal(patientId) {
     let modal = document.getElementById("patientExistsModal");
+
+    // Hide other modals if open
+    if (modal1.style.display === "block") modal1.style.display = "none";
+   
+
     modal.style.display = "block";
+    savedPatientId = patientId; // Store globally
 
-    savedPatientId = patientId; // Store globally for button handlers
-
-    document.getElementById("useExistingBtn").onclick = function() {
+    // Use Existing button
+    document.getElementById("useExistingBtn").onclick = function () {
         console.log("✅ Using existing patient ID:", savedPatientId);
 
-        let formData = new FormData(document.getElementById('individualRecordForm'));
+        let formData = new FormData(document.getElementById("individualRecordForm"));
         formData.append("existing_patient_id", savedPatientId);
 
-        fetch('php/saveInitialAssessment.php', {
-            method: 'POST',
+        fetch("php/saveInitialAssessment.php", {
+            method: "POST",
             body: formData
         })
         .then(response => response.text())
@@ -109,65 +115,82 @@ function showPatientExistsModal(patientId) {
             try {
                 let data = JSON.parse(text);
                 if (data.status === "success") {
-                    console.log("✅ Data successfully saved under patient ID:", savedPatientId);
-                    alert("Patient record saved successfully.");
-                    modal.style.display = "none"; // Hide modal only if successful
+                    console.log("✅ Data saved under patient ID:", savedPatientId);
+                    localStorage.setItem("patient_id", savedPatientId);
+
+                    // If we came from referral modal, also save referral
+                    if (modal2.style.display === "block") {
+                        let bhwId = document.getElementById("user_id")?.value;
+                        if (bhwId) saveReferral(savedPatientId, bhwId);
+                    }
+
+                    modal.style.display = "none";
+                    modal4.style.display = "block";
+
+                     
                 } else {
+                    errorModal.style.display = "block";
                     console.error("❌ Error saving record:", data.message);
-                    alert("Error saving record: " + (data.message || "Unknown error"));
                 }
             } catch (error) {
+                errorModal.style.display = "block";
                 console.error("❌ JSON Parsing Error:", error);
-                alert("Invalid response from server.");
             }
         })
         .catch(error => {
+            errorModal.style.display = "block";
             console.error("❌ Fetch Error:", error);
-            alert("Network error. Please try again.");
         });
     };
 
-    document.getElementById("addNewBtn").onclick = function() {
+    // Add New button
+    document.getElementById("addNewBtn").onclick = function () {
         console.log("🆕 Adding new patient...");
-        
+
         let formData = new FormData(document.getElementById("individualRecordForm"));
         formData.append("is_new_patient", "true");
-    
-        fetch('php/saveInitialAssessment.php', {
-            method: 'POST',
+
+        fetch("php/saveInitialAssessment.php", {
+            method: "POST",
             body: formData
         })
         .then(response => response.text())
         .then(text => {
             console.log("🔹 Server Response:", text);
-    
+
             try {
                 let data = JSON.parse(text);
                 if (data.status === "success") {
-                    console.log("✅ New patient successfully added with ID:", data.patient_id);
-                    
-                    savedPatientId = data.patient_id;  // ✅ Store the new patient ID
-                    
-                    alert("New patient record saved successfully.");
-                    modal.style.display = "none";  // Hide modal only if successful
-                    
+                    savedPatientId = data.patient_id;
+                    console.log("✅ New patient added with ID:", savedPatientId);
+                    localStorage.setItem("patient_id", savedPatientId);
+
+                    // If we came from referral modal, also save referral
+                    if (modal2.style.display === "block") {
+                        let bhwId = document.getElementById("user_id")?.value;
+                        if (bhwId) saveReferral(savedPatientId, bhwId);
+                    }
+
+                    modal.style.display = "none";
+                    modal4.style.display = "block";
+   // Record added
                 } else {
+                    errorModal.style.display = "block";
                     console.error("❌ Error saving new patient:", data.message);
-                    alert("Error saving record: " + (data.message || "Unknown error"));
                 }
             } catch (error) {
+                errorModal.style.display = "block";
                 console.error("❌ JSON Parsing Error:", error);
-                alert("Invalid response from server.");
             }
         })
         .catch(error => {
+            errorModal.style.display = "block";
             console.error("❌ Fetch Error:", error);
-            alert("Network error. Please try again.");
         });
     };
-    
 
-    document.getElementById("cancelBtn").onclick = function() {
+    // Cancel button
+    document.getElementById("cancelBtn").onclick = function () {
         console.log("❌ Cancelled.");
         modal.style.display = "none";
     };
@@ -195,7 +218,7 @@ function saveFormData(referralNeeded, callback) {
         formData.append("user_id", bhwId);
         formData.append("referral_status", "pending");
     }
-
+ 
     fetch('php/saveInitialAssessment.php', {
         method: 'POST',
         body: formData
@@ -206,9 +229,12 @@ function saveFormData(referralNeeded, callback) {
 
         if (data.status === 'duplicate' && data.patient_id) {
             showPatientExistsModal(data.patient_id);
+
         } else if (data.status === 'success') {
             savedPatientId = data.patient_id;  
             console.log("✅ Saved Patient ID:", savedPatientId);
+            localStorage.setItem("patient_id", savedPatientId); // Store patient ID in localStorage
+            if (modal2.style.display === "block") modal2.style.display = "none";
             
             if (referralNeeded === "yes") {
                 modal2.style.display = 'block'; // Show confirmation modal for referral
@@ -219,6 +245,7 @@ function saveFormData(referralNeeded, callback) {
             if (typeof callback === "function") callback();
         } else {
             alert('❌ Error: ' + (data.message || "Unknown error."));
+            errorModal.style.display = 'block';
         }
     })
     .catch(error => {
@@ -253,9 +280,7 @@ yesButton1.addEventListener('click', function (event) {
     event.preventDefault(); // Prevent default behavior
     modal1.style.display = 'none'; // Hide modal1
     modal2.style.display = 'block';
-    saveFormData("yes", function () {
-        // Referral step happens later in modal2
-    });
+  
 });
 
 
@@ -267,32 +292,37 @@ closeBtn2.addEventListener('click', function () {
 // No button in modal2: Proceed without referral
 noButton2.addEventListener('click', function () {
     modal2.style.display = 'none';
-    modal4.style.display = 'block';
 });
 
 // Yes button in modal2: Confirm referral
 yesButton2.addEventListener('click', function () {
-    modal2.style.display = 'none';
+    
 
-    if (!savedPatientId) {
-        console.error("❌ Error: No patient ID available.");
-        alert("Error: No patient ID available.");
-        return;
-    }
+    // Save the form FIRST, then continue in the callback
+    saveFormData("yes", function () {
+        if (!savedPatientId) {
+            errorModal.style.display = 'block';
+            console.error("❌ Error: No patient ID available for referral.");
+            alert("Error: No patient ID available for referral.");
+            return;
+        }
 
-    let bhwId = document.getElementById('user_id')?.value;
-    if (!bhwId) {
-        console.error("❌ Error: No BHW ID provided.");
-        alert("Error: No BHW ID provided.");
-        return;
-    }
+        let bhwId = document.getElementById('user_id')?.value;
+        if (!bhwId) {
+            errorModal.style.display = 'block';
+            console.error("❌ Error: No BHW ID provided.");
+            alert("Error: No BHW ID provided.");
+            return;
+        }
 
-    console.log("📤 Saving Referral for:", { savedPatientId, bhwId });
+        console.log("📤 Saving Referral for:", { savedPatientId, bhwId });
 
-    saveReferral(savedPatientId, bhwId);
-    modal3.style.display = 'block';
+        saveReferral(savedPatientId, bhwId);
+        modal2.style.display = 'none';
+        modal3.style.display = 'block'; // Show referral saved modal    
+        
+    });
 });
-
 
 
 
@@ -311,9 +341,12 @@ function saveReferral(patientId, bhwId) {
         if (data.status === "success") {
             localStorage.setItem("referral_id", data.referral_id);
             console.log("📌 Referral saved successfully:", data.referral_id);
+            if (modal4.style.display === "block") modal4.style.display = "none";
+            modal3.style.display = "block"; // Show referral saved modal
         } else {
             console.error("❌ Error saving referral:", data.message);
             alert("Error: " + (data.message || "Unknown error"));
+            errorModal.style.display = "block";
         }
     })
     .catch(error => {
@@ -328,7 +361,7 @@ function saveReferral(patientId, bhwId) {
 
 // Close modal3
 closeBtn3.addEventListener('click', function () {
-    modal3.style.display = 'none';
+ modal3.style.display = "none"; // Redirect to ITR.html
 });
 
 // View Details button functionality
@@ -351,7 +384,8 @@ if (viewDetailsButton) {
 // Close modal4
 closeBtn4.addEventListener('click', function () {
     modal4.style.display = 'none';
-    window.history.back();
+    window.location.href = `record.html?patient_id=${localStorage.getItem('patient_id')}`; // Redirect to patient records
+  
 });
 
 // Cancel button in modal4
@@ -373,6 +407,10 @@ closeBtn5.addEventListener('click', function () {
 // Exit button in modal5
 exitButton.addEventListener('click', function () {
     modal5.style.display = 'none';
+});
+
+errorCloseBtn.addEventListener('click', function () {
+    errorModal.style.display = 'none';
 });
 
 // Close modals if user clicks outside

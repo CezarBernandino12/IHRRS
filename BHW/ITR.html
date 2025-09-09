@@ -213,7 +213,7 @@ fetch('php/getUserId.php')
                 <div class="form-group">
                     <label for="mobile">Mobile Number:</label>
                     <input type="text" name="mobile" id="mobile" placeholder="Mobile no." />
-                    <small id="mobileError" style="color: red; display: none;">Invalid mobile number</small>
+                    <small id="mobileError" style="color: red; display: none;">Enter valid mobile number</small>
                 </div>
                 <script>document.getElementById("mobile").addEventListener("blur", function () {
                     const mobileInput = this.value.trim();
@@ -542,7 +542,7 @@ document.addEventListener("click", function(event) {
             </div>
         
             <div class="button-container">
-                <button type="submit" class="submit-btn" id="submitButton">Submit</button>
+                <button type="button" class="submit-btn" id="submitButton">Submit</button>
             </div>
             
         </form>
@@ -804,13 +804,13 @@ updateRemoveButtons();
                     </div>
              <br><br>
                     <div class="modal-footer">
-                        <button id="yesButton" class="btn yes">Save, refer to RHU</button>
-                        <button id="noButton" class="btn maybe" type="button">Save, don't refer</button>
-                        <button id="cancelBtn" class="btn cancel">Cancel</button>
+                        <button id="yesButton" class="btn yes">Save & Refer to RHU</button>
+                        <button id="noButton" class="btn maybe" type="button">Save only</button>
+                        <button id="cancelBtn" class="btn cancel" type="button">Cancel</button>
                     </div>
 
                 </div>
-            </div>
+            </div> 
              </div>
 
              <input type="hidden" name="referral_status" value="pending">
@@ -826,8 +826,8 @@ updateRemoveButtons();
                         <p>Do you confirm on referring this patient?</p>
                     </div>
                     <div class="modal-footer">
-                        <button id="yesButton2" class="btn yes" value="yes">Yes</button>
-                        <button id="noButton2" class="btn no">No</button>
+                        <button id="yesButton2" class="btn yes" type="submit" value="yes">Yes</button>
+                        <button id="noButton2" class="btn no" type="button">No</button>
                     </div>
                 </div>
             </div>
@@ -847,7 +847,7 @@ updateRemoveButtons();
                     </div>
                     
                     <div class="modal-footer">
-                    <button id="viewDetailsButton" class="btn yes">PRINT REFERRAL SLIP</button>
+                    <button id="viewDetailsButton" class="btn yes" type="button">PRINT REFERRAL SLIP</button>
                 </div>
             </div>
             </div>
@@ -861,7 +861,7 @@ updateRemoveButtons();
                     </div>
                     <div class="modal-footer">
                         <div class="modal-body">
-                            <p>Record successfully added.</p>
+                            <p>Recorded successfully.</p>
                         </div>
                     </div>
                 </div>
@@ -878,7 +878,7 @@ updateRemoveButtons();
                         <p>The patient record has been successfully added.</p>
                     </div>
                     <div class="modal-footer">
-                        <button id="exitButton" class="btn yes">Exit</button>
+                        <button id="exitButton" onclick="closeModal()" class="btn yes">Exit</button>
                     </div>
                 </div>
             </div>
@@ -910,6 +910,21 @@ updateRemoveButtons();
                 Error saving data.
             </div>
 
+            <div id="errorModal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <img src="../img/error.jpg" alt="Checkmark" class="checkmark-image">
+                        <h3>Error</h3>
+                        <span class="close-btn" id="errorCloseBtn">&times;</span>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="modal-body">
+                            <p>Submission unsuccessful. Make sure to fill out required fields.</p>
+                        </div>
+                    </div>
+                </div>
+            </div> 
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>     
     <script src="js/form.js"></script>
     <script src="js/script.js"></script>
@@ -940,6 +955,7 @@ function confirmLogout() {
 
 function closeModal() {
     document.getElementById('logoutModal').style.display = 'none';
+    document.getElementById('errorModal').style.display = 'none';
 }
 
 function proceedLogout() {
@@ -967,6 +983,23 @@ fetch('php/getUserName.php')
         document.getElementById('userGreeting').textContent = 'Hello, BHW!';
     });
 </script>
+
+<!-- Error Modal -->
+<div id="errorModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <img src="../img/error.png" alt="Error" class="checkmark-image">
+            <h3>Error</h3>
+            <span class="close-btn" id="closeErrorBtn">&times;</span>
+        </div>
+        <div class="modal-body">
+            <p id="errorModalMessage">An error occurred.</p>
+        </div>
+        <div class="modal-footer">
+            <button id="errorOkBtn" class="btn yes">OK</button>
+        </div>
+    </div>
+</div>
 
 </body>
 </html>
