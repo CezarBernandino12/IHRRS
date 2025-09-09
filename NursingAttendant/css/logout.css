@@ -27,11 +27,11 @@
     font-family: 'Poppins', sans-serif;
 }
 
-.logout-modal-body p {
+.logout-modal .logout-modal-body p {
+    color: black !important;
     margin: 0 0 18px 0;
     font-size: 1.1rem;
-    color: black
-    
+    background-color: transparent !important;
 }
 
 .logout-modal-footer {

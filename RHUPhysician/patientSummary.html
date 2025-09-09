@@ -6,6 +6,7 @@
     <link rel="icon" href="../img/logo.png">
     <link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
     <link rel="stylesheet" href="css/form.css">
+    <link rel="stylesheet" href="css/logout.css">
     <title>Record</title>
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -160,21 +161,20 @@
 
 
 
-	<div id="logoutModal" class="modal">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h3>Confirm Logout</h3>
-			</div>
-			<div class="modal-body">
-				<p>Are you sure you want to logout?</p>
-			</div>
-			<div class="modal-footer">
-				<button onclick="closeModal()" class="btn no">Cancel</button>
-				<button onclick="proceedLogout()" class="btn yes">Yes, Logout</button>
-			</div>
-		</div>
-	</div>
-        </main>
+<div id="logoutModal" class="logout-modal">
+    <div class="logout-modal-content">
+        <div class="logout-modal-header">
+            <h3>Confirm Logout</h3>
+        </div>
+        <div class="logout-modal-body">
+            <p>Are you sure you want to logout?</p>
+        </div>
+        <div class="logout-modal-footer">
+            <button onclick="closeModal()" class="logout-cancel-btn">Cancel</button>
+            <button onclick="proceedLogout()" class="logout-confirm-btn">Yes, Logout</button>
+        </div>
+    </div>
+</div>        </main>
     </section>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
