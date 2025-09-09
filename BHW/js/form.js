@@ -70,7 +70,7 @@ const closeBtn3 = document.getElementById('closeBtn3');
 const viewDetailsButton = document.getElementById('viewDetailsButton');
 
 errorModal = document.getElementById('errorModal');
-const errorCloseBtn = document.getElementById('errorCloseBtn');
+const closeBtnError = document.getElementById('errorCloseBtn');
 
 
 
@@ -246,6 +246,7 @@ function saveFormData(referralNeeded, callback) {
         } else {
             alert('❌ Error: ' + (data.message || "Unknown error."));
             errorModal.style.display = 'block';
+            modal2.style.display = 'none';
         }
     })
     .catch(error => {
@@ -409,7 +410,7 @@ exitButton.addEventListener('click', function () {
     modal5.style.display = 'none';
 });
 
-errorCloseBtn.addEventListener('click', function () {
+closeBtnError.addEventListener('click', function () {
     errorModal.style.display = 'none';
 });
 

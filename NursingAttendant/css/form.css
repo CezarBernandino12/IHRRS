@@ -1844,3 +1844,8 @@ input[type="number"] {
     color: #fa4141;
 }
 
+
+    #submitButton:disabled {
+        background-color: #828386; /* Gray when disabled */
+        cursor: not-allowed;   /* Show "not allowed" cursor */
+    }

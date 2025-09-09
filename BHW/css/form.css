@@ -2028,3 +2028,9 @@ input[type="number"] {
 }
 
 
+  
+
+    #submitButton:disabled {
+        background-color: #828386; /* Gray when disabled */
+        cursor: not-allowed;   /* Show "not allowed" cursor */
+    }

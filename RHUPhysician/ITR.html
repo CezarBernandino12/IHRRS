@@ -546,9 +546,26 @@ document.addEventListener("click", function(event) {
             <div class="print-section">
             </div>
         
-            <div class="button-container">
-                <button type="submit" class="submit-btn" id="submitButton">Submit</button>
-            </div>
+         
+<div class="button-container"> 
+    <button type="button" class="submit-btn" id="submitButton" disabled>Submit</button>
+</div>
+
+<script>
+    document.addEventListener("input", function () {
+        const requiredFields = document.querySelectorAll("input[required], select[required], textarea[required]");
+        const submitButton = document.getElementById("submitButton");
+
+        let allFilled = true;
+        requiredFields.forEach(field => {
+            if (!field.value || field.value.trim() === "") {
+                allFilled = false;
+            }
+        });
+
+        submitButton.disabled = !allFilled;
+    });
+</script>
             
         </form>
 

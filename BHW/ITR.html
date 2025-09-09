@@ -92,7 +92,7 @@ fetch('php/getUserId.php')
                 <span id="userGreeting">Hello BHW!</span>
             </div>
             <a href="#" class="profile">
-                <img src="../img/profile.png">
+                <img src="../img/bhw.png">
             </a>
         </nav>
 
@@ -541,9 +541,26 @@ document.addEventListener("click", function(event) {
             <div class="print-section">
             </div>
         
-            <div class="button-container">
-                <button type="button" class="submit-btn" id="submitButton">Submit</button>
-            </div>
+
+<div class="button-container"> 
+    <button type="button" class="submit-btn" id="submitButton" disabled>Submit</button>
+</div>
+
+<script>
+    document.addEventListener("input", function () {
+        const requiredFields = document.querySelectorAll("input[required], select[required], textarea[required]");
+        const submitButton = document.getElementById("submitButton");
+
+        let allFilled = true;
+        requiredFields.forEach(field => {
+            if (!field.value || field.value.trim() === "") {
+                allFilled = false;
+            }
+        });
+
+        submitButton.disabled = !allFilled;
+    });
+</script>
             
         </form>
 
@@ -915,7 +932,7 @@ updateRemoveButtons();
                     <div class="modal-header">
                         <img src="../img/error.jpg" alt="Checkmark" class="checkmark-image">
                         <h3>Error</h3>
-                        <span class="close-btn" id="errorCloseBtn">&times;</span>
+                        <span class="close-btn" id="errorCloseBtn" onclick="closeModal()">&times;</span>
                     </div>
                     <div class="modal-footer">
                         <div class="modal-body">

@@ -153,7 +153,7 @@ $rows = $stmt->fetchAll();
                 <span id="userGreeting">Hello BHW!</span>
             </div>
 			<a href="#" class="profile">
-				<img src="../../img/profile.png">
+				<img src="../../img/bhw.png">
 			</a>
 		</nav>
 
