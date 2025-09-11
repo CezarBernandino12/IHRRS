@@ -32,7 +32,8 @@ $medication = $_GET['medication'] ?? '';
 // Build query with filters
 $sql = "SELECT v.*, p.first_name, p.last_name, p.age, p.sex, p.address FROM patient_assessment v 
         JOIN patients p ON v.patient_id = p.patient_id 
-        WHERE p.address LIKE :barangay"; // Always require barangay match
+        WHERE p.address LIKE :barangay"; 
+        // Always require barangay match
 
 $params = [];
 $params['barangay'] = '%' . $barangayName . '%'; // Always set this param
