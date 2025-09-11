@@ -33,12 +33,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION['user_id'] = $user['user_id'];
             $_SESSION['role'] = $user['role'];
             $_SESSION['full_name'] = $user['full_name'];
+            $_SESSION['username'] = $user['username']; 
 
             // Log successful login
             logActivity($pdo, $user['user_id'], "Successful Login");
             logUserLogin($pdo, $user['user_id']); // ✅ Track online activity
 
-            header("Location: ../BHW/dashboard.html");
+            header("Location: ../BHW/dashboard.php");
             exit();
         } else {
             logActivity($pdo, $user['user_id'], "Failed Login Attempt");

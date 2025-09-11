@@ -119,10 +119,10 @@ var yesButton = document.getElementById("yesButton");
 
   noButton.onclick = function() {
     modal.style.display = "none";
-    window.location.href = "ITR.html"; 
+    window.location.href = "ITR.php"; 
   }
 
   yesButton.onclick = function() {
     modal.style.display = "none";
-    window.location.href = "searchPatient.html"; 
+    window.location.href = "searchPatient.php"; 
   }

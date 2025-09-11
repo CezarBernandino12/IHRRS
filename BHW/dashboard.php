@@ -1,3 +1,15 @@
+<?php
+session_start();
+
+if (!isset($_SESSION['user_id']) || !isset($_SESSION['role']) || $_SESSION['role'] !== 'bhw') {
+    session_destroy();
+    header("Location: ../BHWlogin.html");
+    exit();
+}
+
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -20,31 +32,31 @@
         </a>
 		<ul class="side-menu top">
 			<li class="active">
-				<a href="dashboard.html">
+				<a href="dashboard.php">
 					<i class="bx bxs-dashboard"></i>
 					<span class="text">Dashboard</span>
 				</a>
 			</li>
 			<li>
-				<a href= "ITR.html">
+				<a href= "ITR.php">
 					<i class="bx bxs-user"></i>
 					<span class="text">Add New ITR</span>
 				</a>
 			</li>
 			<li>
-				<a href="searchPatient.html">
+				<a href="searchPatient.php">
 					<i class="bx bxs-notepad"></i>
 					<span class="text">Patient Records</span>
 				</a>
 			</li>
 			<li>
-				<a href="history.html">
+				<a href="history.php">
 					<i class="bx bx-history"></i>
 					<span class="text">Referral History</span>
 				</a>
 			</li>
 			<li>
-				<a href="reports.html">
+				<a href="reports.php">
 					<i class="bx bx-notepad"></i>
 					<span class="text">Reports</span>
 				</a>
@@ -67,7 +79,9 @@
 				
 			</form>
 			<div class="greeting">
-                <span id="userGreeting">Hello BHW!</span>
+                 <span id="userGreeting">
+					Hello, <?php echo htmlspecialchars($_SESSION['full_name'] ?? $_SESSION['username'] ?? 'BHW'); ?>!
+				</span>
             </div>
 			<a href="#" class="profile">
 				<img src="../img/bhw.png">
@@ -139,7 +153,7 @@
 					<img src="../img/record.png" alt="Add Record" class="icon-img">
 				</div>
 				<div class="text">
-					<a href="searchPatient.html">
+					<a href="searchPatient.php ">
 						<h3>View Patient Record</h3>
 					</a>
 				</div>
@@ -150,7 +164,7 @@
 					<img src="../img/history.png" alt="Add Record" class="icon-img">
 				</div>
 				<div class="text">
-					<a href="History.html">
+					<a href="History.php">
 						<h3>View Refferal History</h3>
 					</a>
 				</div>
@@ -260,19 +274,7 @@ function updateProgress(ringId, textId, value, max = 100) {
   ring.style.strokeDashoffset = `${offset}`;
   text.textContent = value;
 }
-fetch('php/getUserName.php')
-    .then(response => response.json())
-    .then(data => {
-        if (data.full_name) {
-            document.getElementById('userGreeting').textContent = `Hello, ${data.full_name}!`;
-        } else {
-            document.getElementById('userGreeting').textContent = 'Hello, BHW!';
-        }
-    })
-    .catch(error => {
-        console.error('Error fetching user name:', error);
-        document.getElementById('userGreeting').textContent = 'Hello, BHW!';
-    });
+
 </script>
 	<script src="js/script.js"></script>
 </body>

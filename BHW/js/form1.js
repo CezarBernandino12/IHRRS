@@ -13,7 +13,7 @@ document.getElementById('consentCheckbox').addEventListener('change', function (
   
   document.getElementById('declineBtn').addEventListener('click', function () {
 
-    window.location.href = "dashboard.html"; // or use history.back()
+    window.location.href = "dashboard.php"; // or use history.back()
   });
   
 
