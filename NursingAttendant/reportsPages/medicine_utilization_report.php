@@ -11,7 +11,7 @@ $userId = $_SESSION['user_id'];
 
 $from_date = $_GET['from_date'] ?? '';
 $to_date   = $_GET['to_date'] ?? '';
-$medicine  = isset($_GET['medicine']) ? (array)$_GET['medicine'] : [];
+$medicine = isset($_GET['medicine']) ? (array)$_GET['medicine'] : [];
 $sex       = $_GET['sex'] ?? '';
 $age_group = $_GET['age_group'] ?? '';
 $barangay  = $_GET['purok'] ?? ''; // Use 'purok' for barangay filter
@@ -310,12 +310,13 @@ if (count($patient_meds) > 0) {
             </div>
 
 <div class="history-container">
-	
+
 
 <!-- Filter Form -->
 
 <form method="GET" class="filter-form">
       <h2>Medicine Utilization Report - RHU</h2> <br>
+       
 
     <!-- Filter Modal Trigger -->
    
@@ -527,6 +528,29 @@ if (count($patient_meds) > 0) {
   <h2>Rural Health Unit</h2>
   <br> 
   <h2>DOH MAINTAINANCE MEDICINE UTILIZATION REPORT</h2>
+   (<?php
+$filters = [];
+if ($from_date) $filters[] = "From <strong>" . htmlspecialchars($from_date) . "</strong>";
+if ($to_date) $filters[] = "To <strong>" . htmlspecialchars($to_date) . "</strong>";
+if (!empty($_GET['medicine'])) {
+    $medicine_list = is_array($_GET['medicine']) ? $_GET['medicine'] : [$_GET['medicine']];
+    $filters[] = "Medicine: <strong>" . implode(', ', array_map('htmlspecialchars', $medicine_list)) . "</strong>";
+}
+
+if ($sex) $filters[] = "Sex: <strong>" . htmlspecialchars($sex) . "</strong>";
+if ($age_group) {
+    $age_labels = [
+        'child' => 'Child (0–12)',
+        'teen' => 'Teen (13–19)',
+        'adult' => 'Adult (20–59)',
+        'senior' => 'Senior (60+)'
+    ];
+    $filters[] = "Age Group: <strong>" . ($age_labels[$age_group] ?? htmlspecialchars($age_group)) . "</strong>";
+}
+if ($barangay) $filters[] = "Barangay: <strong>" . htmlspecialchars($barangay) . "</strong>";
+
+echo $filters ? implode("&nbsp; | &nbsp;", $filters) : "All Records";
+?>)</h3> <br><br><br>
 </div>
 <div class="report-content">
 <style>
@@ -537,8 +561,43 @@ if (count($patient_meds) > 0) {
     }
 </style>
 
+
+<!-- Chart Visibility Controls -->
+<div style="margin: 20px;" class="chart-title">
+    <h3>Charts:</h3>
+    <label><input type="checkbox" id="toggleSexChart"> Show Patients by Sex</label> <br>
+    <label><input type="checkbox" id="toggleAgeGroupChart"> Show Age Group</label> <br>
+    <label><input type="checkbox" id="toggleBarangayChart"> Show Barangays</label> <br>
+
+
+</div>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const chartMapping = {
+        toggleSexChart: "sexChart",
+        toggleAgeGroupChart: "ageGroupChart",
+        toggleBarangayChart: "barangayChart"
+    };
+
+    Object.keys(chartMapping).forEach(toggleId => {
+        const checkbox = document.getElementById(toggleId);
+        const chartElement = document.getElementById(chartMapping[toggleId]);
+
+        if (checkbox && chartElement) {
+            checkbox.addEventListener("change", () => {
+                chartElement.style.display = checkbox.checked ? "block" : "none";
+            });
+
+            // Initialize state
+            chartElement.style.display = checkbox.checked ? "block" : "none";
+        }
+    });
+});
+</script>
+
+
     <!-- Pie Chart Section -->
-    <div style="max-width: 400px; margin: 30px auto 0 auto; text-align:center;">
+    <div id="sexChart" style="max-width: 400px; margin: 30px auto 0 auto; text-align:center; display: none;">
       <h3 class="chart-title">Patients by Sex</h3>
         <canvas id="sexPieChart"></canvas>
     </div>
@@ -580,7 +639,7 @@ if (count($patient_meds) > 0) {
 
     <br><br>
     <!-- Age Group Distribution Bar Chart -->
-    <div style="max-width: 500px; margin: 30px auto 0 auto; text-align:center;">
+    <div id="ageGroupChart" style="max-width: 500px; margin: 30px auto 0 auto; text-align:center; display: none;">
         <h3 class="chart-title">Age Groups</h3>
         <canvas id="ageGroupBarChart"></canvas>
     </div>
@@ -643,7 +702,7 @@ if (count($patient_meds) > 0) {
 
     <br><br>
     <!-- Address Distribution Bar Chart -->
-    <div style="max-width: 500px; margin: 30px auto 0 auto; text-align:center;">
+    <div id="barangayChart" style="max-width: 500px; margin: 30px auto 0 auto; text-align:center; display: none;">
       <h3 class="chart-title">Patient Counts per Barangay</h3>
         <canvas id="barangayBarChart"></canvas>
     </div>
@@ -760,6 +819,9 @@ if (count($patient_meds) > 0) {
     <div class="summary">
         <h3><i class="bx bx-file"></i> Summary:</h3>
         <ul class="summary-list">
+             <li>
+                <strong>Report Generated On:</strong> <?= date('Y-m-d H:i:s') ?>
+            </li>
             <li><strong>Total Patients in Report:</strong> <?= count($rows) ?></li>
             <li>
                 <strong>By Sex:</strong>
@@ -773,38 +835,52 @@ if (count($patient_meds) > 0) {
                 Adults – <?= $age_group_counts['20–59'] ?? 0 ?>,
                 Seniors – <?= $age_group_counts['60+'] ?? 0 ?>
             </li>
-         <li>
-    <strong>Dispensed Medicines:</strong>
-    <?php if (!empty($medicine_list)): ?>
-        <ul>
-            <?php foreach ($medicine_list as $medicine): 
-                $total_dispensed = 0;
-                foreach ($patient_meds as $pm) {
-                    $total_dispensed += $pm['medicines'][$medicine] ?? 0;
-                }
-                if ($total_dispensed > 0): // Only show if quantity > 0
-            ?>
-                <li><?= htmlspecialchars($medicine) ?>: <?= $total_dispensed ?></li>
-            <?php endif; endforeach; ?>
-        </ul>
-    <?php else: ?>
-        All Medicines
-    <?php endif; ?>
-</li>
-
+            
             <li>
-                <strong>Patient Counts per Barangay:</strong>
+                <strong>Patients Given per Barangay:</strong>
                 <ul>
                     <?php foreach ($barangay_counts as $barangay => $count): ?>
                         <li>Barangay <?= htmlspecialchars($barangay) ?>: <?= $count ?></li>
                     <?php endforeach; ?>
                 </ul>
             </li>
+         <li>
+    <strong>Dispensed Medicines:</strong>
+    <?php if (!empty($medicine_list)): ?>
+        <ul>
+            <table border="1" cellpadding="4" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Medicine</th>
+                        <th>Total Dispensed</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($medicine_list as $medicine): 
+                        $total_dispensed = 0;
+                        foreach ($patient_meds as $pm) {
+                            $total_dispensed += $pm['medicines'][$medicine] ?? 0;
+                        }
+                        if ($total_dispensed > 0): // Only show if quantity > 0
+                    ?>
+                        <tr>
+                            <td><?= htmlspecialchars($medicine) ?></td>
+                            <td><?= $total_dispensed ?></td>
+                        </tr>
+                    <?php endif; endforeach; ?>
+                </tbody>
+            </table>
+        </ul>
+    <?php else: ?>
+        All Medicines
+    <?php endif; ?>
+</li>
+
         </ul>
     </div>
 </div>
 
- 
+ <h3>Detailed Visit Report</h3>
 <!-- Patient Table -->
 <table id="reportTable" border="1" cellpadding="8" cellspacing="0"> 
 <thead>
@@ -895,9 +971,16 @@ function printDiv() {
 
     // Collect chart images with titles
     let chartsHTML = '';
-    chartsHTML += getChartImage('sexPieChart', 'Distribution of Patients by Sex');
-    chartsHTML += getChartImage('ageGroupBarChart', 'Age Group Distribution');
-    chartsHTML += getChartImage('barangayBarChart', 'Patient Counts per Barangay');
+  if (document.getElementById("toggleSexChart").checked) {
+        chartsHTML += getChartImage('sexPieChart', 'Patients by Sex');
+    }
+    if (document.getElementById("toggleAgeGroupChart").checked) {
+        chartsHTML += getChartImage('ageGroupBarChart', 'Age Group');
+    }
+        if (document.getElementById("toggleBarangayChart").checked) {
+            chartsHTML += getChartImage('barangayBarChart', 'Patient Counts per Barangay');
+        }
+
     chartsHTML += getChartImage('medicineLineChart', 'Quantity of Dispensed Medicines Over Time');
 
     // Clone the print area (table and summary)

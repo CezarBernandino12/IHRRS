@@ -197,7 +197,6 @@ $total_patients = count(array_unique(array_column($visits, 'patient_id')));
 <form method="GET" class="filter-form">
     <h2>Patient Summary Report - BHS <?php echo htmlspecialchars($barangayName); ?></h2> <br>
    
-    
     <!-- Filter Modal Trigger -->
    
         <div class="form-submit">
@@ -414,11 +413,29 @@ $total_patients = count(array_unique(array_column($visits, 'patient_id')));
   <h3>Municipality of Daet</h3>
   <h2><?php echo htmlspecialchars($barangayName); ?></h2>
   <br> 
-  <h2>DISPENSARY</h2>
+  <h2>Patients Summary Report</h2>
+       (<?php
+$filters = [];
+if ($from_date) $filters[] = "From <strong>" . htmlspecialchars($from_date) . "</strong>";
+if ($to_date) $filters[] = "To <strong>" . htmlspecialchars($to_date) . "</strong>";
+
+if ($sex) $filters[] = "Sex: <strong>" . htmlspecialchars($sex) . "</strong>";
+if ($age_group) {
+    $age_labels = [
+        'child' => 'Child (0–12)',
+        'teen' => 'Teen (13–19)',
+        'adult' => 'Adult (20–59)',
+        'senior' => 'Senior (60+)'
+    ];
+    $filters[] = "Age Group: <strong>" . ($age_labels[$age_group] ?? htmlspecialchars($age_group)) . "</strong>";
+}
+if ($purok) $filters[] = "Barangay: <strong>" . htmlspecialchars($purok) . "</strong>";
+if ($bmi) $filters[] = "BMI: <strong>" . htmlspecialchars($bmi) . "</strong>";
+echo $filters ? implode("&nbsp; | &nbsp;", $filters) : "All Records";
+?>)</h3> <br><br><br>
 </div>
 <div class="report-content">
 
-<br><br>
 <style>
     @media print {
         .chart-title { 
@@ -426,8 +443,50 @@ $total_patients = count(array_unique(array_column($visits, 'patient_id')));
         }
     }
 </style>
+
+
+
+
+
+<!-- Chart Visibility Controls -->
+<div style="margin: 20px;" class="chart-title">
+    <h3>Charts:</h3>
+    <label><input type="checkbox" id="toggleSexChart"> Show Patients by Sex</label> <br>
+    <label><input type="checkbox" id="toggleAgeGroupChart"> Show Age Group</label> <br>
+    <label><input type="checkbox" id="toggleBMIChart"> Show Patients by BMI</label> <br>
+
+
+</div>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const chartMapping = {
+        toggleSexChart: "sexChart",
+        toggleAgeGroupChart: "ageGroupChart",
+        toggleBMIChart: "bmiChart",
+
+    };
+
+    Object.keys(chartMapping).forEach(toggleId => {
+        const checkbox = document.getElementById(toggleId);
+        const chartElement = document.getElementById(chartMapping[toggleId]);
+
+        if (checkbox && chartElement) {
+            checkbox.addEventListener("change", () => {
+                chartElement.style.display = checkbox.checked ? "block" : "none";
+            });
+
+            // Initialize state
+            chartElement.style.display = checkbox.checked ? "block" : "none";
+        }
+    });
+});
+</script>
+
+
+   
+
     <!-- Pie Chart Section -->
-    <div style="max-width: 400px; margin: 30px auto 0 auto; text-align:center;">
+    <div id="sexChart" style="max-width: 400px; margin: 30px auto 0 auto; text-align:center; display: none;">
             <h3 class="chart-title">Patients by Sex</h3>
         <canvas id="sexPieChart"></canvas>
     </div>
@@ -476,8 +535,10 @@ $total_patients = count(array_unique(array_column($visits, 'patient_id')));
     </script>
 
 <br><br>
+
+
     <!-- Age Group Distribution Bar Chart -->
-    <div style="max-width: 500px; margin: 30px auto 0 auto; text-align:center;">
+    <div id="ageGroupChart" style="max-width: 500px; margin: 30px auto 0 auto; text-align:center; display: none;">
           <h3 class="chart-title">Age Groups</h3>
         <canvas id="ageGroupBarChart"></canvas>
     </div>
@@ -548,7 +609,7 @@ $total_patients = count(array_unique(array_column($visits, 'patient_id')));
 
 <br><br>
     <!-- BMI Category Pie Chart -->
-    <div style="max-width: 400px; margin: 30px auto 0 auto; text-align:center;">
+    <div id="bmiChart" style="max-width: 400px; margin: 30px auto 0 auto; text-align:center; display: none;">
             <h3 class="chart-title">Patients by BMI Category</h3>
         <canvas id="bmiPieChart"></canvas>
     </div>
@@ -625,7 +686,8 @@ $total_patients = count(array_unique(array_column($visits, 'patient_id')));
     </script>
 
     <br><br>
-    <!-- Address Distribution Bar Chart -->
+
+     <!-- Address Distribution Bar Chart -->
     <div style="max-width: 500px; margin: 30px auto 0 auto; text-align:center;">
     <h3 class="chart-title">Patients by Barangay</h3>
         <canvas id="barangayBarChart">
@@ -684,11 +746,16 @@ $total_patients = count(array_unique(array_column($visits, 'patient_id')));
         }
     </script>
 
+<br><br>
+
 <!-- Summary Section -->
 <div class="summary-container">
     <div class="summary">
         <h3><i class="bx bx-file"></i> Summary:</h3>
         <ul class="summary-list">
+             <li>
+                <strong>Report Generated On:</strong> <?= date('Y-m-d H:i:s') ?>
+            </li>
             <li><strong>Total Patients in Report:</strong> <?= $total_patients ?></li>
             <li>
                 <strong>By Sex:</strong>
@@ -733,9 +800,7 @@ $total_patients = count(array_unique(array_column($visits, 'patient_id')));
                         ?>
                     </ul>
                 </li>
-            <li>
-                <strong>Report Generated On:</strong> <?= date('Y-m-d H:i:s') ?>
-            </li>
+         
          
         </ul>
     </div>
@@ -844,9 +909,7 @@ async function exportTableToPDF() {
         doc.save("report.pdf");
     });
 }
-
 function printDiv() {
-    // Get chart images from the original canvases
     function getChartImage(id, title) {
         const canvas = document.getElementById(id);
         if (canvas && canvas.toDataURL) {
@@ -858,45 +921,54 @@ function printDiv() {
         return '';
     }
 
-    // Collect chart images with titles
+    // Collect chart images based on checkboxes
     let chartsHTML = '';
-    chartsHTML += getChartImage('sexPieChart', 'Patients by Sex');
-    chartsHTML += getChartImage('ageGroupBarChart', 'Age Groups');
-    chartsHTML += getChartImage('bmiPieChart', 'Patients by BMI Category');
-    chartsHTML += getChartImage('barangayBarChart', 'Patients by Barangay');
+    chartsHTML += getChartImage('barangayBarChart', 'Patient Address');
 
-    // Clone the print area (table and summary)
-    const originalArea = document.querySelector(".print-area").cloneNode(true);
+    if (document.getElementById("toggleSexChart")?.checked) {
+        chartsHTML += getChartImage('sexPieChart', 'Patients by Sex');
+    }
+    if (document.getElementById("toggleAgeGroupChart")?.checked) {
+        chartsHTML += getChartImage('ageGroupBarChart', 'Age Group');
+    }
+    if (document.getElementById("toggleBMIChart")?.checked) {
+        chartsHTML += getChartImage('bmiPieChart', 'Patients by BMI Category');
+    }
+   
 
-    // Add 'Signature' column to header
-    const headerRow = originalArea.querySelector("thead tr");
-    if (headerRow && !headerRow.querySelector('th:last-child').textContent.includes('Signature')) {
+    // Clone print area
+    const originalArea = document.querySelector(".print-area");
+    const printHeaderElement = document.querySelector(".print-header");
+
+    if (!originalArea || !printHeaderElement) {
+        alert("Error: Missing .print-area or .print-header on page.");
+        return;
+    }
+
+    const clone = originalArea.cloneNode(true);
+
+    // Add Signature column if not already present
+    const headerRow = clone.querySelector("thead tr");
+    if (headerRow && !headerRow.querySelector('th:last-child')?.textContent.includes('Signature')) {
         const signatureHeader = document.createElement("th");
         signatureHeader.textContent = "Signature";
         headerRow.appendChild(signatureHeader);
 
-        // Add 'Signature' cell to each row in tbody
-        const rows = originalArea.querySelectorAll("tbody tr");
-        rows.forEach(row => {
-            const signatureCell = document.createElement("td");
-            signatureCell.style.height = "30px";
-            signatureCell.textContent = "";
-            row.appendChild(signatureCell);
+        clone.querySelectorAll("tbody tr").forEach(row => {
+            const cell = document.createElement("td");
+            cell.style.height = "30px";
+            row.appendChild(cell);
         });
     }
 
-    // Get the print header HTML
-    const printHeader = document.querySelector('.print-header').outerHTML;
-
-    // Remove the header from the cloned area so it doesn't appear twice
-    const headerInClone = originalArea.querySelector('.print-header');
+    // Remove header duplication
+    const headerInClone = clone.querySelector('.print-header');
     if (headerInClone) headerInClone.remove();
 
-    // Remove all canvases from the cloned area (since we use chart images instead)
-    const canvases = originalArea.querySelectorAll('canvas');
-    canvases.forEach(c => c.parentNode.removeChild(c));
+    // Remove canvases from clone
+    clone.querySelectorAll('canvas').forEach(c => c.remove());
 
-    // Create print window and write content
+    // Build print window
     const printWindow = window.open('', '', 'height=900,width=1100');
     printWindow.document.write('<html><head><title>Print Report</title>');
     printWindow.document.write(`
@@ -910,9 +982,9 @@ function printDiv() {
         </style>
     `);
     printWindow.document.write('</head><body>');
-    printWindow.document.write(printHeader);            // Print header first
-    printWindow.document.write(chartsHTML);             // Then charts
-    printWindow.document.write(originalArea.innerHTML); // Then table and summary
+    printWindow.document.write(printHeaderElement.outerHTML);
+    printWindow.document.write(chartsHTML);
+    printWindow.document.write(clone.innerHTML);
     printWindow.document.write('</body></html>');
 
     printWindow.document.close();

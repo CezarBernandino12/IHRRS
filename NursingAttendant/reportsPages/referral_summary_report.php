@@ -196,7 +196,6 @@ $total_pending = 0;
  <h2>RHU Referral Intake Summary Report</h2> <br>
 
 
-
  <!-- Filter Modal Trigger -->
    
         <div class="form-submit">
@@ -355,9 +354,39 @@ $total_pending = 0;
         }
     }
 </style>
+
+<!-- Chart Visibility Controls -->
+<div style="margin: 20px;" class="chart-title">
+    <h3>Charts:</h3>
+    <label><input type="checkbox" id="toggleStatusChart"> Show Referral Status</label> <br>
+
+
+</div>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const chartMapping = {
+        toggleStatusChart: "statusChart"
+    };
+
+    Object.keys(chartMapping).forEach(toggleId => {
+        const checkbox = document.getElementById(toggleId);
+        const chartElement = document.getElementById(chartMapping[toggleId]);
+
+        if (checkbox && chartElement) {
+            checkbox.addEventListener("change", () => {
+                chartElement.style.display = checkbox.checked ? "block" : "none";
+            });
+
+            // Initialize state
+            chartElement.style.display = checkbox.checked ? "block" : "none";
+        }
+    });
+});
+</script>
+
 <br>
 <!-- Pie Chart Section -->
-<div style="max-width: 400px; margin: 30px auto 0 auto; text-align:center;">
+<div id="statusChart" style="max-width: 400px; margin: 30px auto 0 auto; text-align:center; display: none;">
     <h3 class="chart-title">Referral Status</h3>
     <canvas id="statusPieChart"></canvas>
     <p id="noDataMessage" style="display:none; color:#666; margin-top:10px;">No data available</p>
@@ -486,6 +515,8 @@ $total_pending = 0;
 
 <div class="summary">
     <h3>Summary:</h3>
+     
+    <p><strong>Report Generated On:</strong> <?= date('Y-m-d H:i:s') ?></p>
 	<p><strong>Total Referrals Received:</strong> <?= $total_received ?></p>
 	<p><strong>Completed Referrals:</strong> <?= $total_completed ?></p>
 	<p><strong>Uncompleted Referrals:</strong> <?= $total_uncompleted ?></p>
@@ -583,7 +614,9 @@ function printDiv() {
 
     // Collect chart images with titles
     let chartsHTML = '';
-    chartsHTML += getChartImage('statusPieChart', 'Referral Status');
+    if (document.getElementById('toggleStatusChart').checked) {
+        chartsHTML += getChartImage('statusPieChart', 'Referral Status');
+    }
     chartsHTML += getChartImage('barangayBarChart', 'Total Referrals Received Per Barangay');
 
     // Clone the print area (table and summary)
