@@ -116,32 +116,32 @@ $visits = $stmt->fetchAll();
 		</a>
 		<ul class="side-menu top">
 			<li>
-				<a href="../dashboard.html">
+				<a href="../dashboard.php">
 					<i class="bx bxs-dashboard"></i>
 					<span class="text">Dashboard</span>
 				</a>
 			</li>
 			<li>
-				<a href= "../ITR.html">
+				<a href= "../ITR.php">
 					<i class="bx bxs-user"></i>
 					<span class="text">Add ITR</span>
 				</a>
 			</li>
 			<li>
-				<a href="../searchPatient.html">
+				<a href="../searchPatient.php">
 					<i class="bx bxs-notepad"></i>
 					<span class="text">Patient Records</span>
 				</a>
 			</li>
 
 			<li>
-				<a href="../history.html">
+				<a href="../history.php">
 					<i class="bx bx-history"></i>
 					<span class="text">Referral History</span>
 				</a>
 			</li>
             <li class="active">
-				<a href="../reports.html">
+				<a href="../reports.php">
 					<i class="bx bx-notepad"></i>
 					<span class="text">Reports</span>
 				</a>
