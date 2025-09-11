@@ -102,32 +102,32 @@ $rows = $stmt->fetchAll();
 		</a>
 		<ul class="side-menu top">
 			<li>
-				<a href="../dashboard.php">
+				<a href="../dashboard.html">
 					<i class="bx bxs-dashboard"></i>
 					<span class="text">Dashboard</span>
 				</a>
 			</li>
 			<li>
-				<a href= "../ITR.php">
+				<a href= "../ITR.html">
 					<i class="bx bxs-user"></i>
 					<span class="text">Add ITR</span>
 				</a>
 			</li>
 			<li>
-				<a href="../searchPatient.php">
+				<a href="../searchPatient.html">
 					<i class="bx bxs-notepad"></i>
 					<span class="text">Patient Records</span>
 				</a>
 			</li>
 
 			<li>
-				<a href="../history.php">
+				<a href="../history.html">
 					<i class="bx bx-history"></i>
 					<span class="text">Referral History</span>
 				</a>
 			</li>
             <li class="active">
-				<a href="../reports.php">
+				<a href="../reports.html">
 					<i class="bx bx-notepad"></i>
 					<span class="text">Reports</span>
 				</a>
@@ -174,7 +174,7 @@ $rows = $stmt->fetchAll();
             </div>
 
 <div class="history-container">
-
+	
 
 <form method="GET" class="filter-form">
     <h2>Referral Report - BHS <?php echo htmlspecialchars($barangayName); ?></h2> <br>
@@ -374,37 +374,6 @@ $rows = $stmt->fetchAll();
   <h2><?php echo htmlspecialchars($barangayName); ?></h2>
   <br> 
   <h2>BHS REFERRAL REPORT</h2>
-  (<?php
-$filters = [];
-if ($from_date) $filters[] = "From <strong>" . htmlspecialchars($from_date) . "</strong>";
-if ($to_date) $filters[] = "To <strong>" . htmlspecialchars($to_date) . "</strong>";
-if ($referral_status) $filters[] = "Status: <strong>" . htmlspecialchars($status) . "</strong>";
-if ($bhw_id) {
-    $bhw_name = '';
-    foreach ($bhws as $bhw) {
-        if ($bhw['user_id'] == $bhw_id) {
-            $bhw_name = $bhw['full_name'];
-            break;
-        }
-    }
-    $filters[] = "Referred by: <strong>" . htmlspecialchars($bhw_name) . "</strong>";
-}
-
-if ($sex) $filters[] = "Sex: <strong>" . htmlspecialchars($sex) . "</strong>";
-if ($age_group) {
-    $age_labels = [
-        'child' => 'Child (0–12)',
-        'teen' => 'Teen (13–19)',
-        'adult' => 'Adult (20–59)',
-        'senior' => 'Senior (60+)'
-    ];
-    $filters[] = "Age Group: <strong>" . ($age_labels[$age_group] ?? htmlspecialchars($age_group)) . "</strong>";
-}
-
-
-
-echo $filters ? implode("&nbsp; | &nbsp;", $filters) : "All Records";
-?>)</h3> <br><br><br>
 </div>
 <div class="report-content">
 <style>
@@ -414,37 +383,6 @@ echo $filters ? implode("&nbsp; | &nbsp;", $filters) : "All Records";
         }
     }
 </style>
-
-
-
-<!-- Chart Visibility Controls -->
-<div style="margin: 20px;" class="chart">
-    <h3>Charts:</h3>
-    <label><input type="checkbox" id="toggleReferralChart"> Show Visits With and Without Referral</label> <br>
-
-
-</div>
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-    const chartMapping = {
-        toggleReferralChart: "referralChart"
-    };
-
-    Object.keys(chartMapping).forEach(toggleId => {
-        const checkbox = document.getElementById(toggleId);
-        const chartElement = document.getElementById(chartMapping[toggleId]);
-
-        if (checkbox && chartElement) {
-            checkbox.addEventListener("change", () => {
-                chartElement.style.display = checkbox.checked ? "block" : "none";
-            });
-
-            // Initialize state
-            chartElement.style.display = checkbox.checked ? "block" : "none";
-        }
-    });
-});
-</script>
 
 
 <?php
@@ -487,7 +425,7 @@ $visits_without_referral = (int)$visit_stmt->fetchColumn();
 ?>
 
 <!-- Pie Chart Section -->
-<div id="referralChart" class="chart" style="max-width:400px;margin:30px auto 30px auto; display: none;">
+<div class="chart" style="max-width:400px;margin:30px auto 30px auto;">
     <canvas id="referralPieChart"></canvas>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -589,9 +527,6 @@ const statusPieChart = new Chart(statusCtx, {
     <div class="summary">
         <h4><i class="bx bx-filter-alt"></i>Summary:</h4>
     <ul  class="summary-list">
-         <li>
-                <strong>Report Generated On:</strong> <?= date('Y-m-d H:i:s') ?>
-            </li>
         <li><strong>Total Referrals:</strong> <?= $referral_count ?></li>
         <li><strong>Visits With Referral:</strong> <?= $referral_count ?></li>
         <li><strong>Visits Without Referral:</strong> <?= $visits_without_referral ?></li>
@@ -736,9 +671,7 @@ function printDiv() {
 
     // Collect chart images with titles
     let chartsHTML = '';
-    if (document.getElementById('toggleReferralChart').checked) {
-        chartsHTML += getChartImage('referralChart', 'Visits With and Without Referral');
-    }
+    chartsHTML += getChartImage('referralPieChart', 'Referrals');
     chartsHTML += getChartImage('statusPieChart', 'Status');
 
     // Clone the print area (table and summary)

@@ -57,18 +57,8 @@ if (!empty($age_group)) {
     }
 }
 if (!empty($diagnosis)) {
-    if (is_array($diagnosis)) {
-        $orParts = [];
-        foreach ($diagnosis as $i => $diag) {
-            $key = "diagnosis_$i";
-            $orParts[] = "r.diagnosis LIKE :$key";
-            $params[$key] = '%' . $diag . '%';
-        }
-        $sql .= " AND (" . implode(' OR ', $orParts) . ")";
-    } else {
-        $sql .= " AND r.diagnosis LIKE :diagnosis";
-        $params['diagnosis'] = '%' . $diagnosis . '%';
-    }
+    $sql .= " AND r.diagnosis LIKE :diagnosis";
+    $params['diagnosis'] = '%' . $diagnosis . '%';
 }
 if (!empty($diagnosis_status)) {
     $sql .= " AND r.diagnosis_status = :diagnosis_status";
@@ -116,32 +106,32 @@ $visits = $stmt->fetchAll();
 		</a>
 		<ul class="side-menu top">
 			<li>
-				<a href="../dashboard.php">
+				<a href="../dashboard.html">
 					<i class="bx bxs-dashboard"></i>
 					<span class="text">Dashboard</span>
 				</a>
 			</li>
 			<li>
-				<a href= "../ITR.php">
+				<a href= "../ITR.html">
 					<i class="bx bxs-user"></i>
 					<span class="text">Add ITR</span>
 				</a>
 			</li>
 			<li>
-				<a href="../searchPatient.php">
+				<a href="../searchPatient.html">
 					<i class="bx bxs-notepad"></i>
 					<span class="text">Patient Records</span>
 				</a>
 			</li>
 
 			<li>
-				<a href="../history.php">
+				<a href="../history.html">
 					<i class="bx bx-history"></i>
 					<span class="text">Referral History</span>
 				</a>
 			</li>
             <li class="active">
-				<a href="../reports.php">
+				<a href="../reports.html">
 					<i class="bx bx-notepad"></i>
 					<span class="text">Reports</span>
 				</a>
@@ -196,6 +186,34 @@ $visits = $stmt->fetchAll();
 <!-- Filter Form -->
 <form method="GET" class="filter-form">
     <h2>Medical Cases Monitoring Report - BHS <?php echo htmlspecialchars($barangayName); ?>   </h2> <br>
+<h3>
+<?php
+$filters = [];
+if ($from_date) $filters[] = "From <strong>" . htmlspecialchars($from_date) . "</strong>";
+if ($to_date) $filters[] = "To <strong>" . htmlspecialchars($to_date) . "</strong>";
+if ($diagnosis) {
+    $diagnosis_list = is_array($diagnosis) ? $diagnosis : [$diagnosis];
+    $filters[] = "Diagnosis: <strong>" . implode(', ', array_map('htmlspecialchars', $diagnosis_list)) . "</strong>";
+    
+}
+if ($diagnosis_status) $filters[] = "Status: <strong>" . htmlspecialchars($diagnosis_status) . "</strong>";
+if ($sex) $filters[] = "Sex: <strong>" . htmlspecialchars($sex) . "</strong>";
+if ($age_group) {
+    $age_labels = [
+        'child' => 'Child (0–12)',
+        'teen' => 'Teen (13–19)',
+        'adult' => 'Adult (20–59)',
+        'senior' => 'Senior (60+)'
+    ];
+    $filters[] = "Age Group: <strong>" . ($age_labels[$age_group] ?? htmlspecialchars($age_group)) . "</strong>";
+}
+if ($purok) $filters[] = "Barangay: <strong>" . htmlspecialchars($purok) . "</strong>";
+
+
+
+echo $filters ? implode(" &nbsp; | &nbsp; ", $filters) : "All Records";
+?>
+</h3>
 
     
     <!-- Filter Modal Trigger -->
@@ -452,9 +470,9 @@ if ($purok) $filters[] = "Barangay: <strong>" . htmlspecialchars($purok) . "</st
 
 
 echo $filters ? implode("&nbsp; | &nbsp;", $filters) : "All Records";
-?>)</h3> <br><br><br>
+?>)</h3>
 </div>
-
+<br> <br><br><br> 
 <div class="report-content">
 <style>
     @media print {
@@ -463,37 +481,6 @@ echo $filters ? implode("&nbsp; | &nbsp;", $filters) : "All Records";
         }
     }
 </style>
-
-<!-- Chart Visibility Controls -->
-<div style="margin: 20px;" class="chart-title">
-    <h3>Charts:</h3>
-    <label><input type="checkbox" id="toggleSexChart"> Show Patients by Sex</label> <br>
-    <label><input type="checkbox" id="toggleAgeGroupChart"> Show Age Group</label> <br>
-
-</div>
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-    const chartMapping = {
-        toggleSexChart: "sexChart",
-        toggleAgeGroupChart: "ageGroupChart"
-    };
-
-    Object.keys(chartMapping).forEach(toggleId => {
-        const checkbox = document.getElementById(toggleId);
-        const chartElement = document.getElementById(chartMapping[toggleId]);
-
-        if (checkbox && chartElement) {
-            checkbox.addEventListener("change", () => {
-                chartElement.style.display = checkbox.checked ? "block" : "none";
-            });
-
-            // Initialize state
-            chartElement.style.display = checkbox.checked ? "block" : "none";
-        }
-    });
-});
-</script>
-
 
   <!-- Disease Frequency Over Time Line Chart -->
 <div style="max-width: 800px; margin: 30px auto 0 auto; text-align:center;">
@@ -604,7 +591,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     <!-- Pie Chart Section: Sex Distribution -->
-    <div id="sexChart" style="max-width: 400px; margin: 30px auto 0 auto; text-align:center; display:none;">
+    <div style="max-width: 400px; margin: 30px auto 0 auto; text-align:center;">
         <h3 class="chart-title">Patients by Sex</h3>
         <canvas id="sexPieChart"></canvas>
     </div>
@@ -650,7 +637,7 @@ document.addEventListener("DOMContentLoaded", () => {
     </script>
 
     <!-- Age Group Distribution Bar Chart -->
-    <div id="ageGroupChart" style="max-width: 500px; margin: 30px auto 0 auto; text-align:center; display: none;">
+    <div style="max-width: 500px; margin: 30px auto 0 auto; text-align:center;">
         <h3 class="chart-title">Age Groups</h3>
         <canvas id="ageGroupBarChart"></canvas>
     </div>
@@ -733,9 +720,6 @@ $total_patients = count($unique_patient_ids);
     <div class="summary">
         <h3><i class="bx bx-file"></i> Summary:</h3>
         <ul class="summary-list">
-             <li>
-                <strong>Report Generated On:</strong> <?= date('Y-m-d H:i:s') ?>
-            </li></li>
             <li><strong>Total Unique Patients in Report:</strong> <?= $total_patients ?? 0 ?></li>
             <li>
                 <strong>By Sex:</strong>
@@ -744,10 +728,10 @@ $total_patients = count($unique_patient_ids);
             </li>
             <li>
                 <strong>By Age Group:</strong>
-                Young Children: <?= isset($age_group_counts['0–5']) ? $age_group_counts['0–5'] : 0 ?>,
-                Children: <?= isset($age_group_counts['6–17']) ? $age_group_counts['6–17'] : 0 ?>,
-                Adults: <?= isset($age_group_counts['18–59']) ? $age_group_counts['18–59'] : 0 ?>,
-                Seniors: <?= isset($age_group_counts['60+']) ? $age_group_counts['60+'] : 0 ?>
+                Children (0–5): <?= isset($age_group_counts['0–5']) ? $age_group_counts['0–5'] : 0 ?>,
+                Children (6–17): <?= isset($age_group_counts['6–17']) ? $age_group_counts['6–17'] : 0 ?>,
+                Adults (18–59): <?= isset($age_group_counts['18–59']) ? $age_group_counts['18–59'] : 0 ?>,
+                Seniors (60+): <?= isset($age_group_counts['60+']) ? $age_group_counts['60+'] : 0 ?>
             </li>
            <li>
     <strong>Diseases and Case Counts:</strong>
@@ -808,10 +792,10 @@ $total_patients = count($unique_patient_ids);
                 <th>Total Cases</th>
                 <th>Male</th>
                 <th>Female</th>
-                <th>0–5 yrs. old</th>
-                <th>6–17 yrs. old</th>
-                <th>18–59 yrs. old</th>
-                <th>60+ yrs. old</th>
+                <th>0–5</th>
+                <th>6–17</th>
+                <th>18–59</th>
+                <th>60+</th>
               </tr>";
         echo "</thead><tbody>";
 
@@ -950,15 +934,8 @@ function printDiv() {
     // Collect chart images with titles
     let chartsHTML = '';
         chartsHTML += getChartImage('casesLineChart', 'Medical Cases');
-   
-    if (document.getElementById("toggleSexChart").checked) {
-        chartsHTML += getChartImage('sexPieChart', 'Patients by Sex');
-    }
-    if (document.getElementById("toggleAgeGroupChart").checked) {
-        chartsHTML += getChartImage('ageGroupBarChart', 'Age Group');
-    }
-  
-
+    chartsHTML += getChartImage('sexPieChart', 'Patients by Sex');
+    chartsHTML += getChartImage('ageGroupBarChart', 'Age Group');
 
 
     // Clone the print area (table and summary)

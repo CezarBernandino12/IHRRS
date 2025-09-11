@@ -109,32 +109,32 @@ $bhws = $bhw_stmt->fetchAll();
 		</a>
 		<ul class="side-menu top">
 			<li>
-				<a href="../dashboard.php">
+				<a href="../dashboard.html">
 					<i class="bx bxs-dashboard"></i>
 					<span class="text">Dashboard</span>
 				</a>
 			</li>
 			<li>
-				<a href= "../ITR.php">
+				<a href= "../ITR.html">
 					<i class="bx bxs-user"></i>
 					<span class="text">Add ITR</span>
 				</a>
 			</li>
 			<li>
-				<a href="../searchPatient.php">
+				<a href="../searchPatient.html">
 					<i class="bx bxs-notepad"></i>
 					<span class="text">Patient Records</span>
 				</a>
 			</li>
 
 			<li>
-				<a href="../history.php">
+				<a href="../history.html">
 					<i class="bx bx-history"></i>
 					<span class="text">Referral History</span>
 				</a>
 			</li>
             <li class="active">
-				<a href="../reports.php">
+				<a href="../reports.html">
 					<i class="bx bx-notepad"></i>
 					<span class="text">Reports</span>
 				</a>
@@ -235,16 +235,7 @@ $bhws = $bhw_stmt->fetchAll();
             if ($from_date) renderTag('From', 'from_date', $from_date);
             if ($to_date) renderTag('To', 'to_date', $to_date);
             if ($sex) renderTag('Sex', 'sex', $sex);
-            if ($bhw_id) {
-                $bhw_name = '';
-                foreach ($bhws as $bhw) {
-                    if ($bhw['user_id'] == $bhw_id) {
-                        $bhw_name = $bhw['full_name'];
-                        break;
-                    }
-                }
-                renderTag('Bhw', 'bhw', $bhw_name);
-            }
+            if ($bhw_id) renderTag('Bhw', 'bhw', $bhw_id);
             if ($age_group) {
                 $age_labels = [
                     'child' => 'Child (0–12)', 'teen' => 'Teen (13–19)',
@@ -423,45 +414,6 @@ $bhws = $bhw_stmt->fetchAll();
   <h2><?php echo htmlspecialchars($barangayName); ?></h2>
   <br> 
   <h2>MEDICINE DISPENSATION REPORT</h2>
-  (<?php
-$filters = [];
-if ($from_date) $filters[] = "From <strong>" . htmlspecialchars($from_date) . "</strong>";
-if ($to_date) $filters[] = "To <strong>" . htmlspecialchars($to_date) . "</strong>";
-if ($medicine) {
-    $medicine_list = is_array($medicine) ? $medicine : [$medicine];
-    $filters[] = "Medicine: <strong>" . implode(', ', array_map('htmlspecialchars', $medicine_list)) . "</strong>";
-    
-}
-if ($bhw_id) {
-    $bhw_name = '';
-    foreach ($bhws as $bhw) {
-        if ($bhw['user_id'] == $bhw_id) {
-            $bhw_name = $bhw['full_name'];
-            break;
-        }
-    }
-    $filters[] = "Given by: <strong>" . htmlspecialchars($bhw_name) . "</strong>";
-}
-
-if ($sex) $filters[] = "Sex: <strong>" . htmlspecialchars($sex) . "</strong>";
-if ($age_group) {
-    $age_labels = [
-        'child' => 'Child (0–12)',
-        'teen' => 'Teen (13–19)',
-        'adult' => 'Adult (20–59)',
-        'senior' => 'Senior (60+)'
-    ];
-    $filters[] = "Age Group: <strong>" . ($age_labels[$age_group] ?? htmlspecialchars($age_group)) . "</strong>";
-}
-
-
-
-
-echo $filters ? implode("&nbsp; | &nbsp;", $filters) : "All Records";
-?>)</h3> <br><br><br>
-
-
-
 </div>
 <div class="report-content">
 
@@ -537,7 +489,6 @@ const dispensationChart = new Chart(ctx, {
     <div class="summary-container">
     <div class="summary">
         <h4><i class="bx bx-filter-alt"></i>Summary:</h4>
-        <p><strong>Report Generated On:</strong> <?= date('Y-m-d H:i:s') ?></p>
     <table class="summary-table" style="width: 100%; border-collapse: collapse; margin-top: 10px;">
         <thead>
             <tr>
