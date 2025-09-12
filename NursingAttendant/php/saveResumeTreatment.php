@@ -27,8 +27,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
         // ✅ Required fields
-        if (empty($_POST['doctor_id']) || empty($_POST['diagnosis']) || empty($_POST['visit_id'])) {
-            echo json_encode(["status" => "error", "message" => "Missing required fields."]);
+        if (empty($_POST['doctor_id'])) {
+            echo json_encode(["status" => "error", "message" => "Submission unsuccessful."]);
             exit;
         }
 
@@ -93,7 +93,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
         }
 
-        // 🔹 Insert into rhu_consultations (use new visit_id)
+        if (!empty($diagnosis)) {
+               // 🔹 Insert into rhu_consultations (use new visit_id)
         $stmt_consultation = $pdo->prepare("
             INSERT INTO rhu_consultations 
             (patient_id, doctor_id, consultation_date, diagnosis, instruction_prescription, visit_id, lab_result_path, diagnosis_status, follow_up_date) 
@@ -110,6 +111,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             ':diagnosis_status' => $status,
             ':followup' => $followup
         ]);
+        }
+        
+     
         $consultation_id = $pdo->lastInsertId();
 
         // 🔹 Insert dispensed medicines

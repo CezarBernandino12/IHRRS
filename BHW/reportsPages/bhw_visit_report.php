@@ -26,7 +26,6 @@ $sex = $_GET['sex'] ?? '';
 $age_group = $_GET['age_group'] ?? '';
 $purok = $_GET['purok'] ?? ''; // Use 'purok' for address filtering
 $bmi = $_GET['bmi'] ?? '';
-$medication = $_GET['medication'] ?? '';
 $treatment = $_GET['treatment'] ?? '';
 
 // Build query with filters
@@ -82,15 +81,6 @@ if (!empty($treatment)) {
         case 'prenatal':  $sql .= " AND v.treatment LIKE '%prenatal%' "; break;
         case 'referred': $sql .= " AND v.treatment LIKE '%referred%' "; break;
     }
-}
-if (!empty($medication)) {
-    // Use 'medication' for medicine filtering
-    $sql .= " AND EXISTS (
-        SELECT 1 FROM bhs_medicine_dispensed md
-        WHERE md.visit_id = v.visit_id
-        AND md.medicine_name LIKE :medication
-    )";
-    $params['medication'] = '%' . $medication . '%';
 }
 
 
@@ -152,32 +142,32 @@ $most_dispensed_quantity = current($medicine_counts);
 		</a>
 		<ul class="side-menu top">
 			<li>
-				<a href="../dashboard.html">
+				<a href="../dashboard.php">
 					<i class="bx bxs-dashboard"></i>
 					<span class="text">Dashboard</span>
 				</a>
 			</li>
 			<li>
-				<a href= "../ITR.html">
+				<a href= "../ITR.php">
 					<i class="bx bxs-user"></i>
 					<span class="text">Add ITR</span>
 				</a>
 			</li>
 			<li>
-				<a href="../searchPatient.html">
+				<a href="../searchPatient.php">
 					<i class="bx bxs-notepad"></i>
 					<span class="text">Patient Records</span>
 				</a>
 			</li>
 
 			<li>
-				<a href="../history.html">
+				<a href="../history.php">
 					<i class="bx bx-history"></i>
 					<span class="text">Referral History</span>
 				</a>
 			</li>
             <li class="active">
-				<a href="../reports.html">
+				<a href="../reports.php">
 					<i class="bx bx-notepad"></i>
 					<span class="text">Reports</span>
 				</a>
@@ -226,14 +216,14 @@ $most_dispensed_quantity = current($medicine_counts);
 
 <div class="history-container">
 
-    
-	
+   
+
 
 <!-- Filter Form -->
 <form method="GET" class="filter-form">
     <h2>Patient Summary Report - BHS <?php echo htmlspecialchars($barangayName); ?></h2> <br> 
-   
-    
+ 
+
     <!-- Filter Modal Trigger -->
    
         <div class="form-submit">
@@ -288,12 +278,12 @@ $most_dispensed_quantity = current($medicine_counts);
                 ];
                 renderTag('Treatment', 'treatment', $treat_labels[$treatment] ?? $treatment);
             }
-            if ($medication) renderTag('Medicine', 'medication', $medication);
+           
 
             // If no filters, show "All"
             if (
                 !$from_date && !$to_date && !$sex && !$age_group &&
-                !$purok && !$bmi && !$treatment && !$medication
+                !$purok && !$bmi && !$treatment
             ) {
                 echo '<span style="color:#888;">All</span>';
             }
@@ -391,22 +381,7 @@ while ($row = $barangay_stmt->fetch(PDO::FETCH_ASSOC)) {
                                 <option value="class3" <?= $bmi == 'class3' ? 'selected' : '' ?>>Class 3 - Morbid obesity (40 or greater)</option>
                             </select> </div>
 
-                            <div class="form-item">
-                            <label for="medication">Given Medicine:</label>
-                            <select name="medication" id="medication" class="form-control">
-                                <option value="">All</option> 
-                                 <?php
-                                // Fetch puroks that match the barangay name in the value
-                                $medication_stmt = $pdo->prepare("SELECT value FROM custom_options WHERE category = 'medicine' ");
-                                $medication_stmt->execute();
-                                $selected_medication = $_GET['medication'] ?? '';
-                                while ($row = $medication_stmt->fetch()) {
-                                    $value = $row['value'];
-                                    $selected = ($selected_medication === $value) ? 'selected' : '';
-                                    echo "<option value=\"" . htmlspecialchars($value) . "\" $selected>" . htmlspecialchars($value) . "</option>";
-                                }
-                                ?>
-                            </select> </div>
+                           
                             
                         </div>
                     </div>
@@ -488,8 +463,34 @@ while ($row = $barangay_stmt->fetch(PDO::FETCH_ASSOC)) {
   <h3>Municipality of Daet</h3>
   <h2><?php echo htmlspecialchars($barangayName); ?></h2>
   <br> 
-  <h2>DISPENSARY</h2>
+  <h2>Patient Visit Summary Report</h2>
+    (<?php
+$filters = [];
+if ($from_date) $filters[] = "From <strong>" . htmlspecialchars($from_date) . "</strong>";
+if ($to_date) $filters[] = "To <strong>" . htmlspecialchars($to_date) . "</strong>";
+
+
+
+if ($sex) $filters[] = "Sex: <strong>" . htmlspecialchars($sex) . "</strong>";
+if ($age_group) {
+    $age_labels = [
+        'child' => 'Child (0–12)',
+        'teen' => 'Teen (13–19)',
+        'adult' => 'Adult (20–59)',
+        'senior' => 'Senior (60+)'
+    ];
+    $filters[] = "Age Group: <strong>" . ($age_labels[$age_group] ?? htmlspecialchars($age_group)) . "</strong>";
+}
+if ($purok) $filters[] = "Barangay: <strong>" . htmlspecialchars($purok) . "</strong>";
+if ($bmi) $filters[] = "BMI: <strong>" . htmlspecialchars($bmi) . "</strong>";
+if ($treatment) $filters[] = "Treatment: <strong>" . htmlspecialchars($treatment) . "</strong>";
+
+
+echo $filters ? implode("&nbsp; | &nbsp;", $filters) : "All Records";
+?>)</h3> <br><br><br>
 </div>
+
+
 <div class="report-content">
 
 <style>
@@ -500,8 +501,45 @@ while ($row = $barangay_stmt->fetch(PDO::FETCH_ASSOC)) {
     }
 </style>
 
+
+<!-- Chart Visibility Controls -->
+<div style="margin: 20px;" class="chart">
+    <h3>Charts:</h3>
+    <label><input type="checkbox" id="toggleSexChart"> Show Patients by Sex</label> <br>
+    <label><input type="checkbox" id="toggleAgeGroupChart"> Show Age Group</label> <br>
+    <label><input type="checkbox" id="toggleBMIChart"> Show Patients by BMI</label> <br>
+    <label><input type="checkbox" id="toggleTreatmentChart"> Show Treatments</label> <br>
+
+</div>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const chartMapping = {
+        toggleSexChart: "sexChart",
+        toggleAgeGroupChart: "ageGroupChart",
+        toggleBMIChart: "bmiChart",
+        toggleTreatmentChart: "treatmentChart"
+    };
+
+    Object.keys(chartMapping).forEach(toggleId => {
+        const checkbox = document.getElementById(toggleId);
+        const chartElement = document.getElementById(chartMapping[toggleId]);
+
+        if (checkbox && chartElement) {
+            checkbox.addEventListener("change", () => {
+                chartElement.style.display = checkbox.checked ? "block" : "none";
+            });
+
+            // Initialize state
+            chartElement.style.display = checkbox.checked ? "block" : "none";
+        }
+    });
+});
+</script>
+
+
+  
     <!-- Pie Chart Section -->
-    <div class="chart" style="max-width: 400px; margin: 30px auto 0 auto; text-align:center;">
+    <div class="chart" id="sexChart" style="max-width: 400px; margin: 30px auto 0 auto; text-align:center; display: none;">
         <h3>Patients by Sex</h3>
         <canvas id="sexPieChart"></canvas>
     </div>
@@ -551,7 +589,7 @@ while ($row = $barangay_stmt->fetch(PDO::FETCH_ASSOC)) {
 
 
     <!-- Age Group Distribution Bar Chart -->
-    <div class="chart" style="max-width: 500px; margin: 30px auto 0 auto; text-align:center;">
+    <div class="chart" id="ageGroupChart" style="max-width: 500px; margin: 30px auto 0 auto; text-align:center; display: none;">
         <h3>Age Group</h3>
         <canvas id="ageGroupBarChart"></canvas>
     </div>
@@ -622,7 +660,7 @@ while ($row = $barangay_stmt->fetch(PDO::FETCH_ASSOC)) {
 
 
     <!-- BMI Category Pie Chart -->
-    <div class="chart" style="max-width: 400px; margin: 30px auto 0 auto; text-align:center;">
+    <div class="chart" id="bmiChart" style="max-width: 400px; margin: 30px auto 0 auto; text-align:center; display: none;">
         <h3>Patients by BMI Category</h3>
         <canvas id="bmiPieChart"></canvas>
     </div>
@@ -699,7 +737,7 @@ while ($row = $barangay_stmt->fetch(PDO::FETCH_ASSOC)) {
     </script>
 
     <!-- Treatment Distribution Bar Chart -->
-    <div class="chart" style="max-width: 500px; margin: 30px auto 0 auto; text-align:center;">
+    <div class="chart" id="treatmentChart" style="max-width: 500px; margin: 30px auto 0 auto; text-align:center; display: none;">
         <h3>Treatments</h3>
         <canvas id="treatmentBarChart"></canvas>
     </div>
@@ -841,6 +879,9 @@ if (addressData.length > 0 && addressData.reduce((a, b) => a + b, 0) > 0) {
     <div class="summary">
         <h3><i class="bx bx-file"></i> Summary:</h3>
         <ul class="summary-list">
+             <li>
+                <strong>Report Generated On:</strong> <?= date('Y-m-d H:i:s') ?>
+            </li>
             <li><strong>Total Patients in Report:</strong> <?= $total_patients ?></li>
             <li>
                 <strong>By Sex:</strong>
@@ -1039,12 +1080,21 @@ function printDiv() {
         return '';
     }
 
-    // Collect chart images with titles
+    // Collect chart images with titles (only if checkbox is checked)
     let chartsHTML = '';
-    chartsHTML += getChartImage('sexPieChart', 'Patients by Sex');
-    chartsHTML += getChartImage('ageGroupBarChart', 'Age Group');
-    chartsHTML += getChartImage('bmiPieChart', 'Patients by BMI Category');
-    chartsHTML += getChartImage('treatmentBarChart', 'Treatments');
+    chartsHTML += getChartImage('addressBarChart', 'Patient Address');
+    if (document.getElementById("toggleSexChart").checked) {
+        chartsHTML += getChartImage('sexPieChart', 'Patients by Sex');
+    }
+    if (document.getElementById("toggleAgeGroupChart").checked) {
+        chartsHTML += getChartImage('ageGroupBarChart', 'Age Group');
+    }
+    if (document.getElementById("toggleBMIChart").checked) {
+        chartsHTML += getChartImage('bmiPieChart', 'Patients by BMI Category');
+    }
+    if (document.getElementById("toggleTreatmentChart").checked) {
+        chartsHTML += getChartImage('treatmentBarChart', 'Treatments');
+    }
 
     // Clone the print area (table and summary)
     const originalArea = document.querySelector(".print-area").cloneNode(true);
@@ -1087,7 +1137,7 @@ function printDiv() {
     `);
     printWindow.document.write("</head><body>");
     printWindow.document.write(printHeader);     // header first
-    printWindow.document.write(chartsHTML);      // then charts
+    printWindow.document.write(chartsHTML);      // only selected charts
     printWindow.document.write(originalArea.innerHTML); // then table + summary
     printWindow.document.write("</body></html>");
 

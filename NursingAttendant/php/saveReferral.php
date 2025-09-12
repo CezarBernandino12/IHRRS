@@ -24,6 +24,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         $patient_id = clean_input($_POST['patient_id']);
         $user_id = clean_input($_POST['user_id']);
+        
 
         // 🔹 Get the latest visit_id for this patient
         $stmt_visit = $pdo->prepare("SELECT visit_id FROM patient_assessment WHERE patient_id = :patient_id ORDER BY visit_id DESC LIMIT 1");
@@ -49,7 +50,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $referral_id = $pdo->lastInsertId();
         $pdo->commit();
 
-        echo json_encode(["status" => "success", "referral_id" => $referral_id, "visit_id" => $visit_id]);
+        echo json_encode([
+    "status" => "success",
+    "message" => "Referral saved successfully!",
+    "action" => "referral"
+]);
 
     } catch (Exception $e) {
         $pdo->rollBack();

@@ -75,7 +75,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const modal2 = $('myModal2');
     const closeBtn2 = $('closeBtn2');
-    const noButton2 = $('noButton2');
+    const noButton2 = $('noButton2'); 
     const yesButton2 = $('yesButton2');
 
     const modal3 = $('myModal3');
@@ -229,74 +229,7 @@ function noButton1ClickHandler() {
         });
     }
 
-    // Function to save form data (Initial Assessment + Referral)
-    function saveFormData(referralNeeded, callback) {
-        let formElem = $('individualRecordForm');
-        if (!formElem) {
-            alert("Form not found.");
-            return;
-        }
-        let formData = new FormData(formElem);
-        formData.append("referralNeeded", referralNeeded);
-
-        if (referralNeeded === "yes") {
-            let bhwElement = $('user_id');
-            let bhwId = bhwElement ? bhwElement.value : "";
-            if (!bhwId) {
-                console.error("❌ Error: No BHW ID provided.");
-                alert("Error: No BHW ID provided.");
-                return;
-            }
-            formData.append("user_id", bhwId);
-            formData.append("referral_status", "pending");
-        }
-
-        fetch('php/saveInitialAssessment.php', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => {
-            // try to parse JSON safely
-            return response.json().catch(() => response.text());
-        })
-        .then(parsed => {
-            // parsed might be object or string
-            let data = (typeof parsed === 'string') ? (() => {
-                try { return JSON.parse(parsed); } catch (e) { return parsed; }
-            })() : parsed;
-
-            dbg("🔹 Server Response (saveFormData):", data);
-
-            if (!data || typeof data !== 'object') {
-                alert("❌ Invalid response from server.");
-                return;
-            }
-
-            if (data.status === 'duplicate' && data.patient_id) {
-                showPatientExistsModal(data.patient_id);
-            } else if (data.status === 'success') {
-                savedPatientId = data.patient_id;
-                dbg("✅ Patient record saved successfully. patient_id:", savedPatientId);
-                 modal2.style.display = "none";
-
-                if (data.visit_id) {
-                    localStorage.setItem('visit_id', data.visit_id);
-                    dbg("💾 Saved visit_id:", data.visit_id);
-                } else {
-                    dbg("⚠️ No visit_id returned from server.");
-                    modal4.style.display = "block";
-                }
-
-                if (typeof callback === "function") callback();
-            } else {
-                alert('❌ Error: ' + (data.message || "Unknown error."));
-            }
-        })
-        .catch(error => {
-            console.error("❌ Fetch Error (saveFormData):", error);
-            alert("Network error. Please check your connection.");
-        });
-    }
+    
 
  // No button: Save Initial Assessment only
     function svButtonClickHandler(event) {
