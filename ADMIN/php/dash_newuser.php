@@ -1,5 +1,15 @@
 <?php
 require 'config.php';
+session_start();
+
+// Check if user is logged in and has BHW role
+if (!isset($_SESSION['user_id']) || !isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
+    // Destroy any existing session data
+    session_destroy();
+    // Redirect to BHW login page
+    header("Location: ../../role.html");
+    exit();
+}
 
 // Get the current week dates
 $weekStart = date('Y-m-d', strtotime('-2 weeks'));

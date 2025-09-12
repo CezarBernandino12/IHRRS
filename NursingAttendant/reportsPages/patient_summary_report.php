@@ -1036,6 +1036,21 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('userGreeting').textContent = 'Hello, User!';
         });
 });
+
+	// Check if user is logged in
+fetch('php/getUserId.php')
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            // User is not logged in, redirect to role selection page
+            window.location.href = '../role.html';
+        }
+    })
+    .catch(error => {
+        console.error('Error checking session:', error);
+        window.location.href = '../role.html';
+    });
+
 </script>
 
 </body>

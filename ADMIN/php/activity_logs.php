@@ -1,7 +1,15 @@
 <?php
+require 'config.php'; // Ensure your database connection is correctly set up
 session_start();
-require_once 'config.php';
 
+// Check if user is logged in and has BHW role
+if (!isset($_SESSION['user_id']) || !isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
+    // Destroy any existing session data
+    session_destroy();
+    // Redirect to BHW login page
+    header("Location: ../../role.html");
+    exit();
+}
 // Fetch activity logs with filtering
 $query = "SELECT logs.*, users.full_name AS performed_by_name,
           DATE_FORMAT(logs.timestamp, '%M %e, %Y %l:%i %p') AS formatted_timestamp
@@ -60,6 +68,7 @@ $logs = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <link rel="icon" href="../../img/logo.png">
     <link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../css/approval.css">
+     <link rel="stylesheet" href="../css/logout.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
@@ -233,17 +242,17 @@ $logs = $stmt->fetchAll(PDO::FETCH_ASSOC);
 </div>
 
 
-    <div id="logoutModal" class="modal" style="display:none;">
-    <div class="modal-content">
-        <div class="modal-header">
+<div id="logoutModal" class="logout-modal">
+    <div class="logout-modal-content">
+        <div class="logout-modal-header">
             <h3>Confirm Logout</h3>
         </div>
-        <div class="modal-body">
+        <div class="logout-modal-body">
             <p>Are you sure you want to logout?</p>
         </div>
-        <div class="modal-footer">
-            <button onclick="closeLogoutModal()" class="btn yes">Cancel</button>
-            <button onclick="proceedLogout()" class="btn no">Yes, Logout</button>
+        <div class="logout-modal-footer">
+            <button onclick="closeModal()" class="logout-cancel-btn">Cancel</button>
+            <button onclick="proceedLogout()" class="logout-confirm-btn">Yes, Logout</button>
         </div>
     </div>
 </div>
@@ -252,5 +261,29 @@ $logs = $stmt->fetchAll(PDO::FETCH_ASSOC);
     </section> 
 
     <script src="../js/activity_logs.js"></script>
+
+     <script>
+            function confirmLogout() {
+    document.getElementById('logoutModal').style.display = 'block';
+    return false; // Prevent the default link behavior
+}
+ 
+function closeModal() {
+    document.getElementById('logoutModal').style.display = 'none';
+}
+
+function proceedLogout() {
+    window.location.href = 'logout.php';
+}
+
+// Close modal when clicking outside
+window.onclick = function(event) {
+    const modal = document.getElementById('logoutModal');
+    if (event.target == modal) {
+        closeModal();
+    }
+};
+
+    </script>
 </body>
 </html> 

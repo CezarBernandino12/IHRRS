@@ -1,5 +1,16 @@
 <?php
 require 'config.php'; // Ensure your database connection is correctly set up
+session_start();
+
+// Check if user is logged in and has BHW role
+if (!isset($_SESSION['user_id']) || !isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
+    // Destroy any existing session data
+    session_destroy();
+    // Redirect to BHW login page
+    header("Location: ../../role.html");
+    exit();
+}
+
 
 // Query to count users by role
 $stmt = $pdo->prepare("SELECT role, COUNT(*) AS count FROM users GROUP BY role");
@@ -100,7 +111,8 @@ $unreadCount = 0;
     <link rel="icon" href="../../img/logo.png">
     <link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../css/dashstyle.css"> 
-    <link rel="stylesheet" href="../css/dashboard2.css"> 
+    <link rel="stylesheet" href="../css/dashboard2.css">
+     <link rel="stylesheet" href="../css/logout.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <title>Admin Dashboard</title>
@@ -256,17 +268,17 @@ $unreadCount = 0;
                 <canvas id="dailyLoginsChart"></canvas>
             </div>
 
-            <div id="logoutModal" class="modal" style="display:none;">
-    <div class="modal-content">
-        <div class="modal-header">
+<div id="logoutModal" class="logout-modal">
+    <div class="logout-modal-content">
+        <div class="logout-modal-header">
             <h3>Confirm Logout</h3>
         </div>
-        <div class="modal-body">
+        <div class="logout-modal-body">
             <p>Are you sure you want to logout?</p>
         </div>
-        <div class="modal-footer">
-            <button onclick="closeModal()" class="btn yes">Cancel</button>
-            <button onclick="proceedLogout()" class="btn no">Yes, Logout</button>
+        <div class="logout-modal-footer">
+            <button onclick="closeModal()" class="logout-cancel-btn">Cancel</button>
+            <button onclick="proceedLogout()" class="logout-confirm-btn">Yes, Logout</button>
         </div>
     </div>
 </div>
@@ -395,6 +407,7 @@ window.onclick = function(event) {
         closeModal();
     }
 };
+
     </script>
 </body>
 </html>

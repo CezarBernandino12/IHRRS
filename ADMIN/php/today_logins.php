@@ -1,5 +1,16 @@
 <?php
-require 'config.php';
+require 'config.php'; // Ensure your database connection is correctly set up
+session_start();
+
+// Check if user is logged in and has BHW role
+if (!isset($_SESSION['user_id']) || !isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
+    // Destroy any existing session data
+    session_destroy();
+    // Redirect to BHW login page
+    header("Location: ../../role.html");
+    exit();
+}
+
 $today = date('Y-m-d');
 
 $stmt = $pdo->prepare("

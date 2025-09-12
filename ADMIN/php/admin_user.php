@@ -1,7 +1,15 @@
 <?php
-require 'config.php';
-session_start(); // Start session to track the logged-in admin
+require 'config.php'; // Ensure your database connection is correctly set up
+session_start();
 
+// Check if user is logged in and has BHW role
+if (!isset($_SESSION['user_id']) || !isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
+    // Destroy any existing session data
+    session_destroy();
+    // Redirect to BHW login page
+    header("Location: ../../role.html");
+    exit();
+}
 
 $search = $_GET['search'] ?? '';
 $roleFilter = $_GET['role'] ?? '';
@@ -67,6 +75,7 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <link rel="icon" href="../../img/logo.png">
     <link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../css/usermanagement.css">
+    <link rel="stylesheet" href="../css/logout.css">
      
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <title>User Management</title>
@@ -333,7 +342,7 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
   </div>
 </div>
 
-<div id="logoutModal" class="logout-modal" style="display:none;">
+<div id="logoutModal" class="logout-modal">
     <div class="logout-modal-content">
         <div class="logout-modal-header">
             <h3>Confirm Logout</h3>
@@ -342,8 +351,8 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <p>Are you sure you want to logout?</p>
         </div>
         <div class="logout-modal-footer">
-            <button onclick="closeModal()" class="logout-btn yes">Cancel</button>
-            <button onclick="proceedLogout()" class="logout-btn no">Yes, Logout</button>
+            <button onclick="closeModal()" class="logout-cancel-btn">Cancel</button>
+            <button onclick="proceedLogout()" class="logout-confirm-btn">Yes, Logout</button>
         </div>
     </div>
 </div>
@@ -376,7 +385,7 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <div class="form-group">
                 <label for="password">PASSWORD</label>
                 <div class="password-container">
-                    <input type="password" id="password" name="password" required placeholder="At least 1 uppercase & 1 number">
+                    <input type="password" id="password" name="password" required placeholder="At least hae uppercase number & symbol">
                     <i class="bx bx-hide password-toggle" id="passwordToggle"></i>
                 </div>
             </div>

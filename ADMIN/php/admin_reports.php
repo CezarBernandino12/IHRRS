@@ -1,6 +1,15 @@
 <?php
-require 'config.php';
+require 'config.php'; // Ensure your database connection is correctly set up
+session_start();
 
+// Check if user is logged in and has BHW role
+if (!isset($_SESSION['user_id']) || !isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
+    // Destroy any existing session data
+    session_destroy();
+    // Redirect to BHW login page
+    header("Location: ../../role.html");
+    exit();
+}
 // Default to last 7 days if no date range is specified
 $start_date = isset($_GET['start_date']) ? $_GET['start_date'] : date('Y-m-d', strtotime('-7 days'));
 $end_date = isset($_GET['end_date']) ? $_GET['end_date'] : date('Y-m-d');
@@ -59,6 +68,7 @@ $totalActions = array_sum(array_column($commonActions, 'count'));
     <link rel="icon" href="../../img/logo.png">
     <link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../css/user.css">
+    <link rel="stylesheet" href="../css/logout.css">
     
     <!-- NEW: DatePicker CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
@@ -132,17 +142,17 @@ $totalActions = array_sum(array_column($commonActions, 'count'));
         <h2 class="management-title">User Activity Report</h2>
         </div>
 
-        <div id="logoutModal" class="modal" style="display:none;">
-    <div class="modal-content">
-        <div class="modal-header">
+<div id="logoutModal" class="logout-modal">
+    <div class="logout-modal-content">
+        <div class="logout-modal-header">
             <h3>Confirm Logout</h3>
         </div>
-        <div class="modal-body">
+        <div class="logout-modal-body">
             <p>Are you sure you want to logout?</p>
         </div>
-        <div class="modal-footer">
-            <button onclick="closeModal()" class="btn yes">Cancel</button>
-            <button onclick="proceedLogout()" class="btn no">Yes, Logout</button>
+        <div class="logout-modal-footer">
+            <button onclick="closeModal()" class="logout-cancel-btn">Cancel</button>
+            <button onclick="proceedLogout()" class="logout-confirm-btn">Yes, Logout</button>
         </div>
     </div>
 </div>
