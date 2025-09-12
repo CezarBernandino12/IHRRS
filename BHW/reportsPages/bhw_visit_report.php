@@ -1165,6 +1165,21 @@ fetch('../php/getUserName.php')
         console.error('Error fetching user name:', error);
         document.getElementById('userGreeting').textContent = 'Hello, BHW!';
     });
+
+    	// Check if user is logged in
+fetch('php/getUserId.php')
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            // User is not logged in, redirect to role selection page
+            window.location.href = '../role.html';
+        }
+    })
+    .catch(error => {
+        console.error('Error checking session:', error);
+        window.location.href = '../role.html';
+    });
+
     function confirmLogout() {
     document.getElementById('logoutModal').style.display = 'block';
     return false; // Prevent the default link behavior

@@ -59,7 +59,11 @@
 }
 
 .logout-cancel-btn:hover {
-    background: #5a6268;
+  background: #0075d6; /* darker blue */
+}
+
+.logout-confirm-btn:hover {
+  background: #d93636; /* darker red */
 }
 
 .logout-confirm-btn {
