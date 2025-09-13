@@ -946,6 +946,20 @@ body {
   #applyFilter:hover {
     background-color: #0056b3;
   }
+  
+.action-buttons {
+  display: flex;
+  align-items: center;
+  gap: 8px;          /* space between Edit and Cancel */
+  flex-wrap: nowrap; /* keep them in one line */
+}
+
+.action-buttons a {
+  white-space: nowrap; /* prevent text wrap */
+}
+
+
+  
   /* Responsive Styles */
   @media (max-width: 768px) {
     .history-container {

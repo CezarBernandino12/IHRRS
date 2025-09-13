@@ -1038,7 +1038,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 	// Check if user is logged in
-fetch('php/getUserId.php')
+fetch('../php/getUserId.php')
     .then(response => response.json())
     .then(data => {
         if (data.error) {
