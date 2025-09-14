@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en"> 
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,120 +9,6 @@
 	<link rel="stylesheet" href="css/logout.css">
 	<title>Reports</title>
 </head>
-<style>
-    #content main .box-info {
-        display: flex;
-        flex-direction: row;
-        gap: 20px;
-        width: 100%;
-        max-width: 1200px;
-        padding: 20px;
-        justify-content: flex-start;
-        overflow-x: auto;
-        scroll-behavior: smooth;
-        margin-top: 3%;
-        animation: fadeIn 1s forwards;
-    }
-
-    #content main .box-info li {
-        flex: 0 0 auto;
-        width: 250px;
-        height: 160px;
-        padding: 20px;
-        border-radius: 20px;
-        box-shadow: 0 4px 8px rgba(183, 189, 199, 0.616);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
-        position: relative;
-        color: var(--dark);
-        background: #fff;
-        overflow: hidden;
-        opacity: 0;
-        animation: fadeIn 1.8s forwards;
-    }
-
-    #content main .box-info li .icon-img {
-        width: 60px;
-        height: auto;
-        object-fit: contain;
-        margin-bottom: 15px;
-    }
-
-    #content main .box-info li:hover {
-        transform: translateY(-6px);
-        box-shadow: 0 8px 16px rgba(108, 110, 114, 0.616);
-    }
-
-    #content main .box-info li .text {
-        text-align: center;
-    }
-
-    #content main .box-info li .text h3 {
-        font-size: 18px;
-        font-weight: 600;
-        margin: 0;
-        color: #000;
-        letter-spacing: 0.5px;
-    }
-
-    #content main .box-info li.mrr {
-        background: #C6E7FF;
-    }
-
-    /* Animation delay for staggered appearance */
-    #content main .box-info li:nth-child(1) { animation-delay: 0.1s; }
-    #content main .box-info li:nth-child(2) { animation-delay: 0.2s; }
-    #content main .box-info li:nth-child(3) { animation-delay: 0.3s; }
-    #content main .box-info li:nth-child(4) { animation-delay: 0.4s; }
-
-    @keyframes fadeIn {
-        0% {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-        100% {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    /* Responsive Design */
-    @media screen and (max-width: 768px) {
-        #content main .box-info {
-            padding: 15px;
-        }
-        #content main .box-info li {
-            width: 220px;
-            height: 150px;
-        }
-        #content main .box-info li .icon-img {
-            width: 50px;
-        }
-        #content main .box-info li .text h3 {
-            font-size: 16px;
-        }
-    }
-
-    @media screen and (max-width: 480px) {
-        #content main .box-info {
-            padding: 10px;
-        }
-        #content main .box-info li {
-            width: 200px;
-            height: 140px;
-            padding: 15px;
-        }
-        #content main .box-info li .icon-img {
-            width: 45px;
-        }
-        #content main .box-info li .text h3 {
-            font-size: 14px;
-        }
-    }
-</style>
 <body>
 
 	<!-- Sidebar Section -->

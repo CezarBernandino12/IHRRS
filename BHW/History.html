@@ -258,23 +258,24 @@ fetch('php/getUserId.php')
     <td>${referral.referred_by}</td>
     <td class="${referral.referral_status.toLowerCase()}">${referral.referral_status}</td>
     <td>
-        <a 
-            href="${isPending ? `editReferral.html?visit_id=${referral.visit_id}` : '#'}"
-            class="edit-action ${!isPending ? 'disabled' : ''}" 
-            data-id="${referral.visit_id}"
-            ${!isPending ? "tabindex='-1' style='pointer-events: none; color: gray;'" : ""}
-        >
-            <i class="bx bx-pencil"></i> Edit
-        </a>
-        <a 
-            href="#" 
-            class="cancel-action ${!isPending ? 'disabled' : ''}" 
-            data-id="${referral.referral_id}"
-            ${!isPending ? "tabindex='-1' style='pointer-events: none; color: gray;'" : ""}
-        >
-            <i class="bx bx-trash"></i> Cancel
-        </a>
-    </td>
+ <div class="action-buttons">
+            <a 
+                href="${isPending ? `editReferral.html?visit_id=${referral.visit_id}` : '#'}"
+                class="edit-action ${!isPending ? 'disabled' : ''}" 
+                data-id="${referral.visit_id}"
+                ${!isPending ? "tabindex='-1' style='pointer-events: none; color: gray;'" : ""}
+            >
+                <i class="bx bx-pencil"></i> Edit
+            </a>
+            <a 
+                href="#" 
+                class="cancel-action ${!isPending ? 'disabled' : ''}" 
+                data-id="${referral.referral_id}"
+                ${!isPending ? "tabindex='-1' style='pointer-events: none; color: gray;'" : ""}
+            >
+                <i class="bx bx-trash"></i> Cancel
+            </a>
+        </div>    </td>
 `;
 
 // Make the row clickable (excluding clicks on Edit/Cancel links)

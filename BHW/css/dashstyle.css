@@ -478,19 +478,23 @@ body {
 
 
 #content main .box-info {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: 32px;
     margin-top: 3%;
-    max-width: 790px;
-    justify-content: start;
+    max-width: none;
+    justify-content: flex-start;
     text-align: left;
-	margin-left: 30px;
+    margin-left: 30px;
     animation: fadeIn 1s forwards;
+    overflow-x: auto;
 }
+
 #content main .box-info li {
-    width: 85%;
+    width: 100%;
     height: 160px;
-    padding: 15px;
+    padding: 20px;
     border-radius: 20px;
     box-shadow: 0 4px 8px rgba(183, 189, 199, 0.616);
     display: flex;
