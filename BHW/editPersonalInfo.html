@@ -89,10 +89,10 @@ fetch('php/getUserId.php')
     </section>
 
     <div class="container-header">
-        <h2>VISIT DETAILS</h2>
+        <h2>PATIENT DETAILS</h2>
     </div>
 
-    <form id="updateReferralForm" action="php/update_visit_info.php" method="POST">
+    <form id="updateReferralForm" action="php/update_personal_info .php" method="POST">
         <div class="container">
             <p style="display: flex; justify-content: space-between; align-items: center;">
                 <b>PERSONAL INFORMATION:</b>
@@ -102,13 +102,13 @@ fetch('php/getUserId.php')
                 <div class="form-row">
                     <div class="form-group">
                         <label>First Name:</label>
-                        <input type="text" class="patient-first-name form-control" name="first_name" value="N/A">
+                        <input type="text" class="patient-first-name form-control" name="first_name" value="N/A" required>
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label>Last Name:</label>
-                    <input type="text" class="patient-last-name form-control" name="last_name" value="N/A">
+                    <input type="text" class="patient-last-name form-control" name="last_name" value="N/A" required>
                 </div>
                 <div class="form-group">
                     <label>Middle Name:</label>
@@ -126,7 +126,7 @@ fetch('php/getUserId.php')
                 </div>
                 <div class="form-group">
                     <label>Date of Birth:</label>
-                    <input type="date" class="date-of-birth form-control" name="date_of_birth">
+                    <input type="date" class="date-of-birth form-control" name="date_of_birth" required>
                 </div>
                 <div class="form-group">
                     <label>Age:</label>
@@ -135,7 +135,7 @@ fetch('php/getUserId.php')
 
                 <div class="form-group">
                     <label>Permanent Address:</label>
-                    <input type="text" class="address form-control" name="address" value="N/A">
+                    <input type="text" class="address form-control" name="address" value="N/A" required>
                 </div>
 
                 <div class="form-group">
@@ -209,8 +209,9 @@ fetch('php/getUserId.php')
                 <p>Save changes?</p>
             </div>
             <div class="modal-footer">
-                <button id="yesButton" class="btn yes" type="button">Save</button>
                 <button id="cancelBtn" class="btn cancel">Cancel</button>
+                <button id="yesButton" class="btn yes" type="button">Save</button>
+            
             </div>
         </div>
     </div>
@@ -219,15 +220,25 @@ fetch('php/getUserId.php')
         <div class="modal-content">
             <div class="modal-header">
                 <img src="../img/check.png" alt="Checkmark" class="checkmark-image">
-                <span class="close-btn" id="closeBtn4">&times;</span>
+                <span class="close-btn" id="closeBtn2">&times;</span>
             </div>
             <div class="modal-footer">
-                <div class="modal-body">
                     <div class="modal-header">
-                        <h3 style="color: #033cad;">Record successfully updated.</h3>
+                        <h4 style="color: #033cad; font-size: large;">Record successfully updated.</h4>
                     </div>
-                    <p></p>
-                </div>
+            </div>
+        </div>
+    </div>
+        <div id="myModal3" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <img src="../img/error.jpg" alt="Checkmark" class="checkmark-image">
+                <span class="close-btn" id="closeBtn3">&times;</span>
+            </div>
+            <div class="modal-footer">
+                    <div class="modal-header">
+                        <h3 style="color: #960f0f; font-size: large;">Saving failed.</h3>
+                    </div>
             </div>
         </div>
     </div>
@@ -247,7 +258,7 @@ fetch('php/getUserId.php')
     </div>
 </div>    
 
-  
+   
     <script src="js/editPersonalInfo.js"></script>
     <script src="js/script.js"></script>
 
