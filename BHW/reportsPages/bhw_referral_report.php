@@ -102,32 +102,32 @@ $rows = $stmt->fetchAll();
 		</a>
 		<ul class="side-menu top">
 			<li>
-				<a href="../dashboard.php">
+				<a href="../dashboard.html">
 					<i class="bx bxs-dashboard"></i>
 					<span class="text">Dashboard</span>
 				</a>
 			</li>
 			<li>
-				<a href= "../ITR.php">
+				<a href= "../ITR.html">
 					<i class="bx bxs-user"></i>
 					<span class="text">Add ITR</span>
 				</a>
 			</li>
 			<li>
-				<a href="../searchPatient.php">
+				<a href="../searchPatient.html">
 					<i class="bx bxs-notepad"></i>
 					<span class="text">Patient Records</span>
 				</a>
 			</li>
 
 			<li>
-				<a href="../history.php">
+				<a href="../history.html">
 					<i class="bx bx-history"></i>
 					<span class="text">Referral History</span>
 				</a>
 			</li>
             <li class="active">
-				<a href="../reports.php">
+				<a href="../reports.html">
 					<i class="bx bx-notepad"></i>
 					<span class="text">Reports</span>
 				</a>
@@ -247,12 +247,12 @@ $rows = $stmt->fetchAll();
                         <!-- From Date -->
                         <div class="form-item">
                             <label for="from_date">From:</label>
-                            <input type="text" name="from_date" id="from_date" class="form-control" value="<?= htmlspecialchars($from_date) ?> " placeholder="Select date">
+                            <input type="date" name="from_date" id="from_date" class="form-control" value="<?= $from_date ? htmlspecialchars($from_date) : '' ?>" placeholder="Select date">
                         </div>
                         <!-- To Date -->
                         <div class="form-item">
                             <label for="to_date">To:</label>
-                            <input type="text" name="to_date" id="to_date" class="form-control" value="<?= htmlspecialchars($to_date) ?> " placeholder="Select date">
+                            <input type="date" name="to_date" id="to_date" class="form-control" value="<?= $to_date ? htmlspecialchars($to_date) : '' ?>" placeholder="Select date">
                         </div>
                         <div class="form-item">
                             <label for="sex">Sex:</label>

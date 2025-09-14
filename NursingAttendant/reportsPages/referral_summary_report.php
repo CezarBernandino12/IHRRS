@@ -79,25 +79,34 @@ $total_pending = 0;
 	<link rel="icon" href="../../img/logo.png">
 	<link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
 	<link rel="stylesheet" href="../css/reportsDesign.css">
+    	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
 	<title>Referral Summary Report</title>
 </head>
 <body>
     
-	<!-- Sidebar Section -->
-<section id="sidebar">
+<!-- Sidebar Section -->
+	<section id="sidebar">
 		<a href="#" class="brand">
 			<img src="../../img/logo.png" alt="RHULogo" class="logo">
 			<span class="text">IHRRS</span>
 		</a>
 		<ul class="side-menu top">
 			<li>
-				<a href="../dashboard.html">
+				<a href="dashboard.html">
 					<i class="bx bxs-dashboard"></i>
 					<span class="text">Dashboard</span>
 				</a>
 			</li>
 			<li>
-				<a href="#" id="updateReferrals">
+				<a href= "../ITR.html">
+					<i class="bx bxs-user"></i>
+					<span class="text">Add New ITR</span>
+				</a>
+			</li>
+			<li>
+				<a href="../pending.html" id="updateReferrals">
 					<i class="bx bxs-user"></i>
 					<span class="text">Pending Referrals</span>
 				</a>
@@ -107,7 +116,7 @@ $total_pending = 0;
 			document.getElementById("updateReferrals").addEventListener("click", function (event) {
 				event.preventDefault(); // Prevent default navigation
 			
-				fetch("php/update_referrals.php") // Call PHP file
+				fetch("../php/update_referrals.php") // Call PHP file
 				.then(response => response.json())
 				.then(data => {
 					console.log(data.message); // Log success message (optional)
@@ -119,13 +128,14 @@ $total_pending = 0;
 				});
 			});
 			</script>
-			
+
 				<li>
 				<a href="../followUpConsultations.html">
 					<i class="bx bxs-user"></i>
 					<span class="text">Follow-Up Visits</span>
 				</a>
 			</li>
+			
 			<li>
 				<a href="../searchPatient.html">
 					<i class="bx bxs-notepad"></i>
@@ -142,16 +152,15 @@ $total_pending = 0;
 				<a href="../reports.html">
 					<i class="bx bx-notepad"></i>
 					<span class="text">Reports</span>
-				</a>
+				</a>	
 			</li>
-		
 		</ul>
 		<ul class="side-menu">
 			<li>
-				<a href="../../role.html" class="logout" onclick="return confirmLogout()">
-					<i class="bx bxs-log-out-circle"></i>
-					<span class="text">Logout</span>
-				</a>
+				<a href="#" class="logout" onclick="return confirmLogout()">
+               <i class="bx bxs-log-out-circle"></i>
+                <span class="text">Logout</span>
+                </a>			
 			</li>
 		</ul>
 	</section>
@@ -251,13 +260,15 @@ $total_pending = 0;
             <form method="GET" id="filterForm">
                 <div class="modal-body">
                     <div class="form-row">
+                           <!-- From Date -->
                         <div class="form-item">
                             <label for="from_date">From:</label>
-                            <input type="date" name="from_date" id="from_date" class="form-control" value="<?= htmlspecialchars($from_date) ?>">
+                            <input type="text" name="from_date" id="from_date" class="form-control" value="<?= $from_date ? htmlspecialchars($from_date) : '' ?>"  placeholder="Select date">
                         </div>
+                        <!-- To Date -->
                         <div class="form-item">
                             <label for="to_date">To:</label>
-                            <input type="date" name="to_date" id="to_date" class="form-control" value="<?= htmlspecialchars($to_date) ?>">
+                            <input type="text" name="to_date" id="to_date" class="form-control" value="<?= $to_date ? htmlspecialchars($to_date) : '' ?>"  placeholder="Select date">
                         </div>
                         <div class="form-item">
                             <label for="status">Status:</label>
@@ -312,6 +323,34 @@ $total_pending = 0;
     document.getElementById('openFilterModal').onclick = function() {
         document.getElementById('filterModal').style.display = 'block';
     };
+
+       // Initialize Flatpickr AFTER the modal is visible
+    setTimeout(() => {
+        // Check if Flatpickr instances already exist, destroy them first
+        const fromDateInput = document.getElementById('from_date');
+        const toDateInput = document.getElementById('to_date');
+        
+        if (fromDateInput._flatpickr) {
+            fromDateInput._flatpickr.destroy();
+        }
+        if (toDateInput._flatpickr) {
+            toDateInput._flatpickr.destroy();
+        }
+        
+        // Initialize Flatpickr on visible elements
+        flatpickr("#from_date", {
+            dateFormat: "Y-m-d",
+            allowInput: true,
+            disableMobile: true
+        });
+        
+        flatpickr("#to_date", {
+            dateFormat: "Y-m-d",
+            allowInput: true,
+            disableMobile: true
+        });
+    }, 100); // Small delay to ensure modal is fully visible
+
     document.getElementById('closeFilterModal').onclick = function() {
         document.getElementById('filterModal').style.display = 'none';
     };
