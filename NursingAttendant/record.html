@@ -228,6 +228,7 @@
 </div>            
         </main>
 
+        <button class="button button-secondary" id="summaryBtn">Visit Summary</button>  
         <button  class="button button-secondary"id="editBtn">Edit Personal Information</button>
         <button class="button button-primary" id="addITRBtn">Add ITR</button>
 
@@ -310,16 +311,29 @@ details[14].textContent = displayOrNA(data.patient.fourps_status);
                         data.visit_history.forEach(visit => {
                             let recordDiv = document.createElement("div");
                             recordDiv.classList.add("record");
+       recordDiv.innerHTML = `
+                                <div class="record-header">
+                                    <div class="record-date">
+                                        <i class='bx bx-calendar'></i>
+                                        <span>${formatDate(visit.visit_date)}</span>
+                                    </div>
+                                   
+                                    <div class="record-actions">
+                                        <a href="visitInfo.html?visit_id=${visit.visit_id}" class="view-link">
+                                            <i class='bx bx-show'></i>
+                                            View
+                                        </a>
+                                    </div>
+                                </div>
+                                
+                                <div class="record-details">
+                                    <p class="last-updated" style="background-color: transparent;">
+                                        <i class='bx bx-user'></i>
+                                        Recorded by: <span>${visit.bhw_name || "Unknown"}</span>
+                                    </p>
+                                </div>
+                            `;
 
-                            recordDiv.innerHTML = `
-    <div class="record-header">
-        <p><strong>${formatDate(visit.visit_date)}</strong></p>
-        <a href="visitInfo.html?visit_id=${visit.visit_id}" class="view-link">View</a>
-    </div>
-    <p class="last-updated">
-        <small>Recorded by: <span>${visit.bhw_name || "Unknown"}</span></small>
-    </p>
-`;
 
 
 

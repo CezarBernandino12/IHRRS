@@ -1415,6 +1415,8 @@ input[type="number"] {
     background-color: transparent;
 }
 .view-link {
+        position: relative;
+    z-index: 10;
     font-size: 14px;
     color: #007bff;
     text-decoration: none;
@@ -1849,3 +1851,34 @@ input[type="number"] {
         background-color: #828386; /* Gray when disabled */
         cursor: not-allowed;   /* Show "not allowed" cursor */
     }
+
+
+.button {
+    padding: 10px 10px;
+    font-size: 14px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    text-align: center;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    margin-right: 12px;
+}
+
+.button-primary {
+    background-color: #162e51;
+    color: white;
+}
+
+.button-primary:hover {
+    background-color:  #000000;
+}
+
+.button-secondary {
+    background-color: #9ACBD0; 
+    color: rgb(0, 0, 0);
+}
+
+.button-secondary:hover {
+    background-color:#68b9c0; 
+}
