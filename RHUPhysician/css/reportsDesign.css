@@ -667,8 +667,6 @@ body {
     background-color: #112f4d;
 }
 
-
-
 /* Summary Container Styling */
 .summary-container {
     border-radius: 10px;
@@ -871,6 +869,7 @@ td a:hover {
 .status-uncompleted, .status-canceled {
     color: #d83933; /* Red */
 }
+
 
 /* Responsive Adjustments */
 @media screen and (max-width: 768px) {
