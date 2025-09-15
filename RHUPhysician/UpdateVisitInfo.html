@@ -414,7 +414,7 @@ document.addEventListener("click", function(event) {
 
 
                     <input type="hidden" id="visit_id" name="visit_id">
-                    <input name="doctor_id" id="doctor_id" value="">
+                    <input type="hidden" name="doctor_id" id="doctor_id" value="">
 
                     </div> </div>
             
@@ -426,7 +426,7 @@ document.addEventListener("click", function(event) {
                     <button class="print-btn" id="printButton">Print</button>
                 </div>
             </div>
-                <button type="submit" class="submit-btn" id="submitButton">Submit</button>
+                <button type="button" class="submit-btn" id="submitButton">Submit</button>
             </div>
             
         <div id="myModal" class="modal">
@@ -442,7 +442,7 @@ document.addEventListener("click", function(event) {
                 
                 <div class="modal-footer">
                     <button id="cancelButton" class="btn no" type="button">Cancel</button>
-                    <button id="confirmBtn" class="btn yes">Save</button>
+                    <button id="confirmBtn" class="btn yes" type="submit">Save</button>
                 </div>
 
             </div>
@@ -640,9 +640,18 @@ $('#add-medicine').on('click', function () {
         }
     });
 
+
+    const submitButton = document.getElementById('submitButton');
+
+    submitButton.addEventListener('click', function() {
+        // Show the confirmation modal
+        document.getElementById('myModal').style.display = 'block';
+    });
+
     // Add form submission handler
     $('#individualRecordForm').on('submit', function(e) {
          e.preventDefault();
+         document.getElementById('myModal').style.display = 'none'; // Hide confirmation modal
         
         // Get form data
         const formData = new FormData(this);

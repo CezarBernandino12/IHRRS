@@ -330,7 +330,7 @@ if (count($patient_meds) > 0) {
     <!-- Filter Modal Trigger -->
    
         <div class="form-submit">
-               <button type="button" class="btn-export" id="openFilterModal">Filter</button>
+        <button type="button" class="btn-export" id="openFilterModal">Filter</button>
         <button type="button" class="btn-export" onclick="exportTableToExcel('reportTable')">Export to Excel</button>
         <button type="button" class="btn-export" onclick="exportTableToPDF()">Export to PDF</button>
         <button type="button" class="btn-print" onclick="printDiv()">Print this page</button>
@@ -423,6 +423,7 @@ if (count($patient_meds) > 0) {
                             <label for="to_date">To:</label>
                             <input type="date" name="to_date" id="to_date" class="form-control" value="<?= $to_date ? htmlspecialchars($to_date) : '' ?>"  placeholder="Select date">
                         </div>
+                        <!--
                         <div class="form-item">
                             <label for="sex">Sex:</label>
                             <select name="sex" id="sex" class="form-control">
@@ -457,7 +458,7 @@ if (count($patient_meds) > 0) {
                                 }
                                 ?>
                             </select>
-                        </div> 
+                        </div>  -->
 
                     <div class="form-item">
                         <label for="medicine">Given Medicine:</label>
@@ -598,12 +599,12 @@ echo $filters ? implode("&nbsp; | &nbsp;", $filters) : "All Records";
 </style>
 
 
-<!-- Chart Visibility Controls -->
+<!-- Chart Visibility Controls 
 <div style="margin: 20px;" class="chart-title">
     <h3>Charts:</h3>
     <label><input type="checkbox" id="toggleSexChart"> Show Patients by Sex</label> <br>
     <label><input type="checkbox" id="toggleAgeGroupChart"> Show Age Group</label> <br>
-    <label><input type="checkbox" id="toggleBarangayChart"> Show Barangays</label> <br>
+    <label><input type="checkbox" id="toggleBarangayChart"> Show Barangays</label> <br> -->
 
 
 </div>
@@ -858,6 +859,7 @@ document.addEventListener("DOMContentLoaded", () => {
              <li>
                 <strong>Report Generated On:</strong> <?= date('Y-m-d H:i:s') ?>
             </li>
+            <!--
             <li><strong>Total Patients in Report:</strong> <?= count($rows) ?></li>
             <li>
                 <strong>By Sex:</strong>
@@ -879,7 +881,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         <li>Barangay <?= htmlspecialchars($barangay) ?>: <?= $count ?></li>
                     <?php endforeach; ?>
                 </ul>
-            </li>
+            </li> -->
          <li>
     <strong>Dispensed Medicines:</strong>
     <?php if (!empty($medicine_list)): ?>
