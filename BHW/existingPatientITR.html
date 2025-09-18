@@ -284,7 +284,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     <div class="additonal-group">
                         <label for="chief_complaints" class="required">Chief Complaints:</label>
-                        <textarea type="text" name="chief_complaints" class="tall-input" placeholder="Enter complaints" value="test"></textarea>
+                        <textarea type="text" name="chief_complaints" class="tall-input" placeholder="Enter complaints" value="test" required></textarea>
                     </div>
 
                     <label for="vitals"><b>Vital Signs:</b></label>
@@ -440,7 +440,7 @@ document.addEventListener("click", function(event) {
             <input type="hidden" id="referral_needed" name="referral_needed">
         
             <div class="button-container">
-                <button type="submit" class="submit-btn" id="submitButton">Submit</button>
+                <button type="submit" class="submit-btn" id="submitButton" disabled>Submit</button>
             </div>
             
         </form>
@@ -665,6 +665,23 @@ document.addEventListener("click", function(event) {
 
 
 
+    document.addEventListener("input", function () {
+        const requiredFields = document.querySelectorAll("input[required], select[required], textarea[required]");
+        const submitButton = document.getElementById("submitButton");
+
+        let allFilled = true;
+        requiredFields.forEach(field => {
+            if (!field.value || field.value.trim() === "") {
+                allFilled = false;
+                submitButton.style.opacity = "0.6";
+            }
+            else {
+                  submitButton.style.opacity = "1";
+            }
+        });
+      
+        submitButton.disabled = !allFilled;
+    });
 
 
       function calculateBMI() {

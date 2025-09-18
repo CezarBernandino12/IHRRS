@@ -333,7 +333,7 @@ $most_dispensed_quantity = current($medicine_counts);
                             </select> </div>
 
                         <div class="form-item">
-                            <label for="purok">Barangay:</label>
+                            <label for="purok">Address:</label>
                             <select name="purok" id="purok" class="form-control">
                                 <option value="">All</option>
                                <?php

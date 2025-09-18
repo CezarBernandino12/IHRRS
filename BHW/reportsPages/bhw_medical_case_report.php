@@ -294,27 +294,32 @@ $visits = $stmt->fetchAll();
                                 <option value="adult" <?= $age_group == 'adult' ? 'selected' : '' ?>>Adult (20–59)</option>
                                 <option value="senior" <?= $age_group == 'senior' ? 'selected' : '' ?>>Senior (60+)</option>
                             </select> </div>
-
                         <div class="form-item">
-                            <label for="purok">Barangay:</label>
+                            <label for="purok">Address:</label>
                             <select name="purok" id="purok" class="form-control">
                                 <option value="">All</option>
-                                <?php
-                                // Fetch distinct barangay names from custom_options
-                                $barangay_stmt = $pdo->prepare("SELECT DISTINCT category FROM custom_options WHERE category LIKE 'Barangay%' ORDER BY category");
-                                $barangay_stmt->execute();
-                                $selected_purok = $_GET['purok'] ?? '';
-                                while ($row = $barangay_stmt->fetch()) {
-                                    $value = $row['category'];
-                                    $selected = ($selected_purok === $value) ? 'selected' : '';
-                                    echo "<option value=\"" . htmlspecialchars($value) . "\" $selected>" . htmlspecialchars($value) . "</option>";
-                                }
-                                ?>
+                               <?php
+// Fetch distinct barangay addresses from patients
+$barangay_stmt = $pdo->prepare("
+    SELECT DISTINCT address 
+    FROM patients 
+    WHERE address LIKE :barangayName 
+    ORDER BY address
+");
+$barangay_stmt->execute([':barangayName' => "%$barangayName%"]);
+
+$selected_purok = $_GET['purok'] ?? '';
+
+while ($row = $barangay_stmt->fetch(PDO::FETCH_ASSOC)) {
+    $value = $row['address']; // ✅ use 'address' since that's what you selected
+    $selected = ($selected_purok === $value) ? 'selected' : '';
+    echo "<option value=\"" . htmlspecialchars($value) . "\" $selected>" 
+         . htmlspecialchars($value) . "</option>";
+}
+?>
+
                             </select>
                         </div> 
-
-                        
-
                            <div class="form-item">
                             <label for="diagnosis_status">Status:</label>
                             <select name="diagnosis_status" id="diagnosis_status" class="form-control">
@@ -806,7 +811,7 @@ $total_patients = count($unique_patient_ids);
         echo "<table border='1' cellpadding='6' cellspacing='0' style='border-collapse:collapse; margin-top:8px; width:100%; text-align:center;'>";
         echo "<thead style='background:#f2f2f2;'>";
         echo "<tr>
-                <th>Disease</th>
+                <th>Medical Cases</th>
                 <th>Total Cases</th>
                 <th>Male</th>
                 <th>Female</th>
