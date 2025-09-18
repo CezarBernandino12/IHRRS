@@ -399,11 +399,11 @@ fetch('php/getUserId.php')
 
                     <label for="vitals"><b>Vital Signs:</b></label>
                     <div class="vitals-section box-group">
-                        <div class="additional-group vitals-item">
+                        <div class="additional-group vitals-item" style="display: none;" id="bmiContainer">
                             <label for="bmi">BMI:</label>
                             <input type="number" step="any" name="bmi" id="bmi" placeholder="BMI will appear here" readonly>
                         </div>
-                        <div class="additional-group" hidden>
+                        <div class="additional-group" id="bmiSpace" hidden>
                             <label for="space"></label>
                           
                         </div>
@@ -606,6 +606,9 @@ document.addEventListener("click", function(event) {
             
                 const height = parseFloat(heightInput);
                 const weight = parseFloat(weightInput);
+
+                document.getElementById('bmiContainer').style.display = (heightInput && weightInput) ? 'block' : 'none';
+                document.getElementById('bmiSpace').style.display = (heightInput && weightInput) ? 'block' : 'none';
             
                 if (height > 0 && weight > 0) {
                     // Convert height from cm to meters

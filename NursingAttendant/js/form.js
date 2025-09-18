@@ -59,8 +59,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
 
                 // ✅ Consultation Info
-                if (data.consultation) {
-                    updateElement(".diagnosis", data.consultation.diagnosis || "N/A");
+                if (data.consultation) { 
                     document.getElementById("diagnosis").value = data.consultation.diagnosis || "";
                     updateElement(".diagnosis_status", data.consultation.diagnosis_status);
                     updateElement(".instruction", data.consultation.instruction_prescription);
@@ -72,57 +71,72 @@ document.addEventListener("DOMContentLoaded", function () {
                         consultationField.value = data.consultation.consultation_id;
                     }
 
-                    // 🔹 fetch lab file dynamically
-                    loadLabFile(data.consultation.consultation_id);
+
+                      // ✅ Resume Button
+const resumeBtn = document.getElementById("resumeBtn");
+
+if (data.consultation.diagnosis_status !== "Ongoing") {
+        resumeBtn.disabled = true;
+        resumeBtn.style.opacity = "0.6";   // make it look disabled
+        resumeBtn.style.cursor = "not-allowed";
+
+}
+             
                 }
 
-                // ✅ Medicines (Patient)
-                const medicineContainer = document.querySelector(".medicine-list");
-                if (medicineContainer) {
-                    medicineContainer.innerHTML = "";
-                    if (data.medicine && data.medicine.length > 0) {
-                        data.medicine.forEach(med => {
-                            medicineContainer.innerHTML += `
-                                <div class="form-group">
-                                    <label>Medicine:</label>
-                                    <p>${med.medicine_name || "None"}</p>
-                                </div>
-                                <div class="form-group">
-                                    <label>Quantity:</label>
-                                    <p>${med.quantity_dispensed || "0"}</p>
-                                </div>
-                            `;
-                        });
-                    } else {
-                        medicineContainer.innerHTML = "<p>No medication recorded.</p>";
-                    }
+
+                if (data.medicine || data.rhumedicine) {
+               
+// ✅ Medicines (BHS)
+const medicineContainer = document.querySelector(".medicine-lists");
+if (medicineContainer) {
+    medicineContainer.innerHTML = "";
+    if (data.medicine && data.medicine.length > 0) {
+        data.medicine.forEach(med => {
+          medicineContainer.innerHTML += `
+    <div class="medicine-item" style="margin-bottom:8px; padding:6px; border-bottom:1px solid #ddd;">
+        <p><strong>Medicine:</strong> ${med.medicine_name || "None"} &nbsp;&nbsp;&nbsp; 
+           <strong>Quantity:</strong> ${med.quantity_dispensed || "0"}</p>
+    </div>
+`;
+
+        });
+    } else {
+        medicineContainer.innerHTML = "<p>No medication recorded.</p>";
+    }
+}
+
+// ✅ Medicines (RHU)
+const medicineContainer2 = document.querySelector(".rhu-medicine-lists");
+if (medicineContainer2) {
+    medicineContainer2.innerHTML = "";
+    if (data.rhumedicine && data.rhumedicine.length > 0) {
+        data.rhumedicine.forEach(med => {
+          medicineContainer2.innerHTML += `
+    <div class="medicine-item" style="margin-bottom:8px; padding:6px; border-bottom:1px solid #ddd;">
+        <p><strong>Medicine:</strong> ${med.medicine_name || "None"} &nbsp;&nbsp;&nbsp; 
+           <strong>Quantity:</strong> ${med.quantity_dispensed || "0"}</p>
+    </div>
+`;
+        });
+    } else {
+        medicineContainer2.innerHTML = "<p>No medication recorded.</p>";
+    }
+}
+
+
                 }
 
-                // ✅ Medicines (RHU)
-                const medicineContainer2 = document.querySelector(".rhu-medicine-list");
-                if (medicineContainer2) {
-                    medicineContainer2.innerHTML = "";
-                    if (data.rhumedicine && data.rhumedicine.length > 0) {
-                        data.rhumedicine.forEach(med => {
-                            medicineContainer2.innerHTML += `
-                                <div class="form-group">
-                                    <label>Medicine:</label>
-                                    <p>${med.medicine_name || "None"}</p>
-                                </div>
-                                <div class="form-group">
-                                    <label>Quantity:</label>
-                                    <p>${med.quantity_dispensed || "0"}</p>
-                                </div>
-                            `;
-                        });
-                    } else {
-                        medicineContainer2.innerHTML = "<p>No medication recorded.</p>";
-                    }
-                }
 
              
             })
             .catch(error => console.error("Error fetching visit info:", error));
+
+
+            
+
+
+
     }
 
     // ✅ Utility: Update element text
@@ -172,8 +186,9 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // ✅ Resume Button
-    const resumeBtn = document.getElementById("resumeBtn");
+
+
+
     if (resumeBtn) {
         resumeBtn.addEventListener("click", function () {
             window.location.href = "resumeTreatment.html?visit_id=" + visit_id;
@@ -181,7 +196,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // ✅ Load Lab File
-
 
 const container = document.getElementById("lab-file-container");
 
@@ -194,54 +208,25 @@ if (visit_id) {
                 const fileExt = fileUrl.split('.').pop().toLowerCase();
                 let content = "";
 
-                if (["jpg", "jpeg", "png", "gif"].includes(fileExt)) {
+           
+                   if (["jpg", "jpeg", "png", "gif"].includes(fileExt)) {
                     // Show actual image
                     content = `
                         <a href="${fileUrl}" target="_blank">
                             <img src="${fileUrl}" 
-                                 alt="Lab File" 
-                                 style="width:50px; height:50px; object-fit:cover; vertical-align:middle; margin-right:8px;">
-                            View File
-                        </a>
-                    `;
-                } else if (fileExt === "pdf") {
-                    // Show PDF icon
-                    content = `
-                        <a href="${fileUrl}" target="_blank">
-                            <img src="icons/pdf-icon.png" 
-                                 alt="PDF File" 
-                                 style="width:50px; height:50px; vertical-align:middle; margin-right:8px;">
-                            View PDF
-                        </a>
-                    `;
-                } else if (["doc", "docx"].includes(fileExt)) {
-                    // Word docs
-                    content = `
-                        <a href="${fileUrl}" target="_blank">
-                            <img src="icons/word-icon.png" 
-                                 alt="Word File" 
-                                 style="width:50px; height:50px; vertical-align:middle; margin-right:8px;">
-                            View Word Document
-                        </a>
-                    `;
-                } else if (["xls", "xlsx"].includes(fileExt)) {
-                    // Excel docs
-                    content = `
-                        <a href="${fileUrl}" target="_blank">
-                            <img src="icons/excel-icon.png" 
-                                 alt="Excel File" 
-                                 style="width:50px; height:50px; vertical-align:middle; margin-right:8px;">
-                            View Excel File
+                                 alt="Lab Image" 
+                                 style="width:40px; height:40px; object-fit:cover; vertical-align:middle; margin-right:8px; margin-left:8px;">
+                            View Image
                         </a>
                     `;
                 } else {
-                    // Other file types
+                    // Generic file preview for all non-image types
                     content = `
                         <a href="${fileUrl}" target="_blank">
-                            <img src="icons/file-icon.png" 
+                            <img src="css/img/file.png"
                                  alt="File" 
-                                 style="width:50px; height:50px; vertical-align:middle; margin-right:8px;">
-                            Download File
+                                 style="width:40px; height:40px; vertical-align:middle; margin-right:8px; margin-left:8px;">
+                            View File
                         </a>
                     `;
                 }
@@ -258,4 +243,8 @@ if (visit_id) {
 } else {
     container.textContent = "No visit_id selected.";
 }
+
+
+
+
 });

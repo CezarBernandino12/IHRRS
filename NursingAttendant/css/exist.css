@@ -721,6 +721,18 @@ p {
     padding: 5px 10px;
     display: block;  
 }
+.form-group label.required::after {
+    content: " *";
+    color: red;
+    font-weight: bold;
+    margin-left: 2px;
+}
+.additional-group.vitals-item label.required::after {
+    content: " *";
+    color: red;
+    font-weight: bold;
+    margin-left: 2px;
+}
 
 .form-group p {
     background-color: #b0d2ff33;
@@ -736,6 +748,21 @@ p {
 	white-space: normal; 
 	overflow: hidden; 
 }
+.form-group2 p {
+    background-color: #fff;
+    border: 1px solid #ccc;   /* ✅ Added border */
+    border-radius: 2px;
+    font-size: 16px;
+    font-weight: bold;
+    min-height: 35px;
+    padding: 12px;
+    display: block; 
+    height: auto;
+    word-wrap: break-word; 
+    white-space: normal; 
+    overflow: hidden; 
+}
+
 
 .additional-group {
     border: 2px solid #333;
@@ -774,7 +801,7 @@ p {
     font-weight: bold;
     white-space: nowrap;
 }
-
+ 
 .vitals-section .form-group label {
     font-weight: bold;
     white-space:n;
@@ -1420,3 +1447,10 @@ input[type="number"] {
     color: white;
     transform: translateY(1px);
 }
+
+  
+
+    #submitButton:disabled {
+        background-color: #828386; /* Gray when disabled */
+        cursor: not-allowed;   /* Show "not allowed" cursor */
+    } 

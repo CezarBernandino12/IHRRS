@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="../img/logo.png">
-    <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
+    <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min' rel='stylesheet'>
     <link rel="stylesheet" href="../BHW/css/form.css">
     <link rel="stylesheet" href="css/logout.css">
     <title>Individual Treatment Record</title>
@@ -408,11 +408,11 @@ fetch('php/getUserId.php')
 
                     <label for="vitals"><b>Vital Signs:</b></label>
                     <div class="vitals-section box-group">
-                        <div class="additional-group vitals-item">
+                        <div class="additional-group vitals-item" style="display: none;" id="bmiContainer">
                             <label for="bmi">BMI:</label>
                             <input type="number" step="any" name="bmi" id="bmi" placeholder="BMI will appear here" readonly>
                         </div>
-                        <div class="additional-group" hidden>
+                        <div class="additional-group" id="bmiSpace" hidden>
                             <label for="space"></label>
                           
                         </div>
@@ -613,6 +613,9 @@ document.addEventListener("click", function(event) {
             
                 const height = parseFloat(heightInput);
                 const weight = parseFloat(weightInput);
+
+                document.getElementById('bmiContainer').style.display = (heightInput && weightInput) ? 'block' : 'none';
+                document.getElementById('bmiSpace').style.display = (heightInput && weightInput) ? 'block' : 'none';
             
                 if (height > 0 && weight > 0) {
                     // Convert height from cm to meters
@@ -746,7 +749,7 @@ fetch('php/get_addresses.php')
 // For medicine-selects, you can loop each one
 medicineSelects.forEach(select => loadCustomOptions(select, 'medicine'));
                                  
-                                    document.querySelectorAll('label.required').forEach(function (label) {
+                    document.querySelectorAll('label.required').forEach(function (label) {
                     const inputId = label.getAttribute('for');
                     const input = document.getElementById(inputId);
             
@@ -775,7 +778,7 @@ medicineSelects.forEach(select => loadCustomOptions(select, 'medicine'));
                 document.getElementById("dov").setAttribute("max", today);
             
                 
-                function updateRemoveButtons() {
+    function updateRemoveButtons() {
     const entries = document.querySelectorAll("#medicine-container .medicine-entry");
     const showRemove = entries.length > 1;
 

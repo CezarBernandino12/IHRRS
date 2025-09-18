@@ -2,12 +2,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Poppins:wght@400;500;600;700&display=swap');
 
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Inter', sans-serif;
-  }
-  
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
 a {
 	text-decoration: none;
 }
@@ -722,6 +721,18 @@ p {
     padding: 5px 10px;
     display: block;  
 }
+.form-group label.required::after {
+    content: " *";
+    color: red;
+    font-weight: bold;
+    margin-left: 2px;
+}
+.additional-group.vitals-item label.required::after {
+    content: " *";
+    color: red;
+    font-weight: bold;
+    margin-left: 2px;
+}
 
 .form-group p {
     background-color: #b0d2ff33;
@@ -737,6 +748,21 @@ p {
 	white-space: normal; 
 	overflow: hidden; 
 }
+.form-group2 p {
+    background-color: #fff;
+    border: 1px solid #ccc;   /* ✅ Added border */
+    border-radius: 2px;
+    font-size: 16px;
+    font-weight: bold;
+    min-height: 35px;
+    padding: 12px;
+    display: block; 
+    height: auto;
+    word-wrap: break-word; 
+    white-space: normal; 
+    overflow: hidden; 
+}
+
 
 .additional-group {
     border: 2px solid #333;
@@ -775,7 +801,7 @@ p {
     font-weight: bold;
     white-space: nowrap;
 }
-
+ 
 .vitals-section .form-group label {
     font-weight: bold;
     white-space:n;
@@ -790,8 +816,8 @@ p {
     min-height: 35px;
 }
 
-.medicine-list p {
-    background-color: transparent;
+.no-background {
+    background-color: transparent !important;
 }
 
 
@@ -1247,6 +1273,8 @@ button.print-btn{
 
 /*MEDICATION*/
 
+
+/*MEDICATION*/
 .medication {
     display: flex;
     flex-direction: column;
@@ -1274,17 +1302,14 @@ select {
 
 #medicine-container {
     display: flex;
-    flex-wrap: wrap; 
-    gap: 10px; 
+    flex-wrap: wrap;
+    gap: 30px;  
 }
 
+
 .medicine-entry {
-    flex: 0 0 40%; 
-    min-width: 250px; /* Ensure a minimum width for each entry */
+    flex: 0 0 38%; 
     box-sizing: border-box;
-    display: flex;
-    justify-content: space-between; /* Align items horizontally */
-    gap: 10px; /* Space between fields */
 }
 
 .add-medicine-container {
@@ -1296,7 +1321,7 @@ select {
 .add-medicine {
     width: 100px;
     margin-top: 10px;
-    margin-left: 30px;
+    margin-left: 30%;
     height: 30px;
     background-color: rgb(30, 30, 63);
     color: white;
@@ -1308,8 +1333,9 @@ select {
 }
 
 .add-medicine:hover {
-    background-color: rgb(124, 124, 231); 
+    background-color: #02131a;
 }
+
 
 .quantity-container {
     display: flex;
@@ -1347,7 +1373,12 @@ select {
 
 .btn-minus:hover,
 .btn-plus:hover {
-    background-color: rgb(124, 124, 231); 
+    background-color: #02131a;
+}
+
+
+input:focus, select:focus {
+    outline: 1px solid #007BFF;
 }
 
 
@@ -1417,110 +1448,9 @@ input[type="number"] {
     transform: translateY(1px);
 }
 
+  
 
-
-/*MODAL*/
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.4);
-    overflow: auto;
-    transition: opacity 0.3s ease;
-}
-
-.modal-content {
-    background-color: #fff;
-    margin: 10% auto;
-    padding: 30px;
-    border-radius: 12px;
-    width: 80%;
-    max-width: 450px;
-    text-align: center;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-}
-
-.modal-header {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    position: relative;
-}
-
-.modal-header .checkmark-image {
-    width: 100px; 
-    height: auto;
-    border-radius: 50%;  
-}
-
-
-.modal-header h3 {
-    font-size: 22px;
-    color: #333;
-    margin-top: 5px;
-	font-family: Arial, Helvetica, sans-serif;
-}
-
-.modal-body {
-    font-size: 18px;
-    color: #555;
-    margin-top: 15px;
-}
-
-.modal-footer {
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
-    gap: 10px;
-}
-
-.modal-footer .btn {
-    padding: 10px 20px;
-    margin: 0;
-    border: none;
-    cursor: pointer;
-    border-radius: 25px;
-    font-size: 16px;
-    transition: all 0.3s ease;
-    color: white;
-    white-space: nowrap;
-}
-
-.modal-footer .no {
-    background-color: #fa4141;
-}
-
-.modal-footer .no:hover {
-    background-color: #f51818;
-}
-
-.modal-footer .yes {
-    background-color: #018dff;
-}
-
-.modal-footer .yes:hover {
-    background-color: #0562ad;
-}
-
-.modal-footer .btn:hover {
-    opacity: 0.9;
-    transform: scale(1.05);
-}
-
-.close-btn {
-    position: absolute;
-	top: -10px;
-	right: -5px;
-    font-size: 30px;
-    color: #333;
-    cursor: pointer;
-}
-
-.close-btn:hover {
-    color: #fa4141;
-}
-
+    #submitButton:disabled {
+        background-color: #828386; /* Gray when disabled */
+        cursor: not-allowed;   /* Show "not allowed" cursor */
+    }

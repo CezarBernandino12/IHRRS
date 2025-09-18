@@ -16,7 +16,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         function clean_input($data) {
             return htmlspecialchars(trim($data), ENT_QUOTES, 'UTF-8');
         }
-
+ 
         function clean_input_recursive($data) {
             if (is_array($data)) {
                 return array_map('clean_input_recursive', $data);

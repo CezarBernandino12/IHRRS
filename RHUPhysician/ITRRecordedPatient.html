@@ -246,21 +246,23 @@
                           <div class="form-row">
                         <label for="vitals"><b>Vital Signs:</b></label>
                         <div class="vitals-section">
-                              <div class="form-group" style="font-weight: bold; display: none;">
+                              <div class="form-group" style="font-weight: bold; display: none;" id="bmiContainer" >
                                 <label for="bmi">BMI:</label>
                                  <input type="number" step="any" name="bmi" id="bmi" placeholder="BMI will appear here" readonly>
                             </div>
-                             <div class="additional-group" id="bmiSpace" hidden>
+                             <div class="form-group" id="bmiSpace" hidden>
                             <label for="space"></label>
+                            
                              </div>
+                             
                           
                             <div class="form-group" style="font-weight: bold;">
                                 <label>Weight (kg):</label>
-                                 <input type="number" step="any" name="weight" id="weight" placeholder="e.g., 55.5">
+                                 <input type="number" step="any" name="weight" id="weight" placeholder="e.g., 55.5" oninput="calculateBMI()">
                             </div>
                             <div class="form-group" style="font-weight: bold;">
                                 <label>Height (cm):</label>
-                                 <input type="number" step="any" name="height" id="height" placeholder="e.g., 155.5">
+                                 <input type="number" step="any" name="height" id="height" placeholder="e.g., 155.5" oninput="calculateBMI()">
                             </div>
                             
                             <div class="form-group" style="font-weight: bold;">
@@ -285,47 +287,91 @@
     
                     </div>
                
+                         <label for="photo">Upload Laboratory Result:</label>
+                        <input type="file" id="photo" name="photo" accept="image/*,.pdf" capture="environment">
+
+
+                        <div class="form-group">
+                            <label for="diagnosis">Diagnosis:</label>
+                            <select id="diagnosis" name="diagnosis" class="select2">
+                                <option value="">Select diagnosis</option>
+                                <option value="other">Other (Enter manually)</option>
+                            
+                            </select>
+                        </div>
+                        <div id="diagnosis-status-wrapper" style="display: none;">
+                            <label for="status">Diagnosis Status:</label>
+                            <select id="status" name="status" class="select2">
+                                <option value="Ongoing">Ongoing</option>
+                                <option value="Treated">Treated</option>
+                                <option value="Referred">Referred</option>
+                                <option value="Deceased">Deceased</option>
+                            </select>
+                        </div>
+                        <script>
+                        $(document).ready(function () {
+                            // Show/hide diagnosis status based on diagnosis selection
+                            $('#diagnosis').on('change', function () {
+                                if ($(this).val() && $(this).val() !== '') {
+                                    $('#diagnosis-status-wrapper').show();
+                                } else {
+                                    $('#diagnosis-status-wrapper').hide();
+                                    $('#status').val('').trigger('change');
+                                }
+                            });
+                        });
+                        </script>
+
+                        <br>
+
+                        <div id="medicine-container" style="display: flex; flex-direction: column; gap: 15px;">
+                            <div class="medicine-entry" style="display: flex; gap: 10px; align-items: center; padding: 10px; border: 1px solid #ddd; border-radius: 4px; background-color: #f9f9f9;">
+                                <div class="form-group" style="flex: 1;"> 
+                                    <label for="medicine_given[]">Medication Given:</label>
+                                    <select name="medicine_given[]" class="medicine-select select2" style="width: 100%;">
+                                        <option value="">Select</option>
+                                        <option value="other">Other (Enter manually)</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group" style="display: flex; align-items: flex-end; gap: 10px;">
+                                    <div>
+                                        <label for="quantity_given[]">Quantity:</label>
+                                        <div class="quantity-container" style="display: flex; gap: 5px;">
+                                            <button type="button" class="btn-minus">−</button>
+                                            <input type="number" name="quantity_given[]" value="0" min="0" style="height: 17px;">
+                                            <button type="button" class="btn-plus">+</button>
+                                        </div>
+                                    </div>
+                                    <button type="button" class="btn-remove" style="background-color: #e6e6e6; color: rgb(0, 0, 0); border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; height: 35px;">
+                                        Remove
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="add-medicine-container">
+                            <button type="button" id="add-medicine" class="add-medicine">+ Add</button>
+                        </div>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
+    // Event delegation for dynamically added "Remove" buttons
+    document.getElementById("medicine-container").addEventListener("click", function (event) {
+        if (event.target.classList.contains("btn-remove")) {
+            const medicineEntries = document.querySelectorAll(".medicine-entry");
+            if (medicineEntries.length > 1) {
+                event.target.closest(".medicine-entry").remove();
+            } else {
+                alert("Cannot remove the last medicine entry.");
+            }
+        }
+    });
      var today = new Date().toISOString().split('T')[0];
     document.getElementById('folowup').setAttribute('min', today);
 
-  
-
-
 });
 
-  const weightInput = document.querySelector('#weight, input[name="weight"]');
-  const heightInput = document.querySelector('#height, input[name="height"]');
-  const bmiInput    = document.querySelector('#bmi, input[name="bmi"]');
-
-  function computeBMI() {
-    if (!bmiInput) return;
-    const w = parseFloat(weightInput?.value);
-    const hCm = parseFloat(heightInput?.value);
-
-     document.getElementById('bmiContainer').style.display = (heightInput && weightInput) ? 'block' : 'none';
-     document.getElementById('bmiSpace').style.display = (heightInput && weightInput) ? 'block' : 'none';
-
-    if (Number.isFinite(w) && Number.isFinite(hCm) && hCm > 0) {
-      const hM = hCm / 100;
-      const bmi = w / (hM * hM);
-      bmiInput.value = bmi.toFixed(2);
-    } else {
-      bmiInput.value = "";
-    }
-  }
-
-  // Auto-update when fields change (no inline attributes needed)
-  weightInput?.addEventListener("input", computeBMI);
-  heightInput?.addEventListener("input", computeBMI);
-
-  // Make it available to inline handlers like oninput="calculateBMI()"
-  window.calculateBMI = computeBMI;
-
-  // If values are prefilled, compute once on load
-  computeBMI();
-                   
+                     
 // Add remove button handler
 document.addEventListener("click", function(event) {
     if (event.target.classList.contains("btn-remove")) {
@@ -345,6 +391,31 @@ document.addEventListener("click", function(event) {
         }
     }
 });
+
+        
+    function calculateBMI() {
+                const heightInput = document.getElementById('height').value;
+                const weightInput = document.getElementById('weight').value;
+                const bmiField = document.getElementById('bmi');
+
+                document.getElementById('bmiContainer').style.display = (heightInput && weightInput) ? 'block' : 'none';
+                document.getElementById('bmiSpace').style.display = (heightInput && weightInput) ? 'block' : 'none';
+            
+                const height = parseFloat(heightInput);
+                const weight = parseFloat(weightInput);
+            
+                if (height > 0 && weight > 0) {
+                    // Convert height from cm to meters
+                    const heightInMeters = height / 100;
+                    const bmi = weight / (heightInMeters * heightInMeters);
+                    bmiField.value = bmi.toFixed(2);
+                } else {
+                    bmiField.value = '';
+                }
+            }
+            
+
+
                         </script>
                     </div>
 
@@ -394,7 +465,7 @@ document.addEventListener("click", function(event) {
                 <div class="modal-footer">
                     <button id="cancelButton" class="btn no" type="button">Cancel</button>
                     <button id="confirmBtn" class="btn yes" type="submit">Save</button>
-                    <button id="saveButton" class="btn yes" type="button">Forward to Physician</button>
+                
                 </div>
 
             </div>
@@ -547,6 +618,13 @@ document.addEventListener("click", function(event) {
 
 $(document).ready(function () {
     // Initialize Select2 for diagnosis
+    // Initialize Select2 for treatment
+    $('#diagnosis').select2({
+        placeholder: "Select or type diagnosis",
+        allowClear: true,
+        minimumResultsForSearch: 0
+    });
+
 
      $('#rhu_remarks').select2({
         placeholder: "Select or type remarks",
@@ -560,6 +638,37 @@ $(document).ready(function () {
         allowClear: true,
         minimumResultsForSearch: 0
     });
+
+
+      
+    loadCustomOptions('diagnosis', 'diagnosis');
+    loadCustomOptions('rhu_remarks', 'rhu_remarks');
+
+        // Handle custom treatment entry
+    $('#diagnosis').on('change', function () {
+        if (this.value === 'other') {
+            const userInput = prompt("Enter diagnosis:");
+            if (userInput) {
+                saveCustomOption('diagnosis', userInput)
+                    .then(data => {
+                        if (data.success) {
+                            const newOption = new Option(userInput, userInput, true, true);
+                            $('#diagnosis').append(newOption).trigger('change');
+                        } else {
+                            alert('Failed to save custom diagnosis.');
+                            $(this).val('').trigger('change');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        $(this).val('').trigger('change');
+                    });
+            } else {
+                $(this).val('').trigger('change');
+            }
+        }
+    });
+
 
         // Handle custom treatment entry
     $('#rhu_remarks').on('change', function () {
@@ -832,7 +941,7 @@ function saveCustomOption(category, value) {
     }).then(response => response.json());
 }
 
-
+const diagnosisSelect = document.getElementById('diagnosis');
 const remarksSelect = document.getElementById('rhu_remarks');
 const medicineSelects = document.querySelectorAll('.medicine-select');
 
@@ -895,14 +1004,16 @@ function handleOtherSelection(selectElement, category, promptLabel) {
     });
 }
 
-
+// Apply handlers for each dropdown
+handleOtherSelection(diagnosisSelect, 'diagnosis', 'diagnosis');
 handleOtherSelection(remarksSelect, 'rhu_remarks', 'rhu_remarks');
 
 medicineSelects.forEach(select => {
     handleOtherSelection(select, 'medicine', 'medicine name (dosage)');
 });
 
-
+// Load options on page load
+loadCustomOptions(diagnosisSelect, 'diagnosis');
 loadCustomOptions(remarksSelect, 'rhu_remarks');
 medicineSelects.forEach(select => {
     loadCustomOptions(select, 'medicine');
@@ -961,8 +1072,6 @@ fetch('php/getUserName.php')
             });
 
 
-
-        
 
 
 </script>
