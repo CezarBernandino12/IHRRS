@@ -250,7 +250,7 @@ fetch('php/getUserId.php')
                         </select>
                     </div>
 <br>
-                      <div class="additonal-group"> 
+                      <div class="additonal-group" hidden> 
                         <label for="dov" class="required">Date of Visit:</label>
                         <input type="date" name="dov" id="dov" required>
                     </div>
@@ -505,7 +505,7 @@ document.addEventListener("click", function(event) {
             <div id="myModal4" class="modal">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <img src="../img/success.png" alt="Checkmark" class="checkmark-image">
+                        <img src="../img/check.png" alt="Checkmark" class="checkmark-image">
                         <h3></h3>
                         <span class="close-btn" id="closeBtn4">&times;</span>
                     </div>
@@ -520,12 +520,12 @@ document.addEventListener("click", function(event) {
             <div id="myModal5" class="modal">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <img src="../img/verify.png" alt="Checkmark" class="checkmark-image">
-                        <h3>Record Added</h3>
+                        <img src="../img/error.jpg" alt="Checkmark" class="checkmark-image">
+                        <h3>Unsuccessful</h3>
                         <span class="close-btn" id="closeBtn5">&times;</span>
                     </div>
                     <div class="modal-body">
-                        <p>The patient record has been successfully added.</p>
+                        <p>Something went wrong. Try again.</p>
                     </div>
                     <div class="modal-footer">
                         <button id="exitButton" class="btn yes">Exit</button>

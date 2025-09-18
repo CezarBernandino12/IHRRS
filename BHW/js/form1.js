@@ -192,8 +192,10 @@ document.getElementById("patient_id").value = patientId;
         try {
             const data = JSON.parse(text); // attempt to parse JSON
             if (data.status === "success") {
+                modal4.style.display = 'block';
                 alert("✔ Visit summary saved successfully!");
             } else {
+                modal5.style.display = 'block';
                 alert("❌ Error saving visit: " + (data.message || "Unknown error."));
             }
         } catch (err) {
@@ -339,9 +341,15 @@ if (viewDetailsButton) {
 }
 
 // Close modal4
-closeBtn4.addEventListener('click', function () {
-    modal4.style.display = 'none';
+closeBtn4.addEventListener("click", () => {
+const urlParams = new URLSearchParams(window.location.search);
+const patientId = urlParams.get('patient_id');
+
+        // redirect with patient_id in URL
+        window.location.href = `record.html?patient_id=${encodeURIComponent(patientId)}`;
+  
 });
+
 
 // Cancel button in modal4
 cancelButton.addEventListener('click', function () {
@@ -357,6 +365,7 @@ proceedButton.addEventListener('click', function () {
 // Close modal5
 closeBtn5.addEventListener('click', function () {
     modal5.style.display = 'none';
+
 });
 
 // Exit button in modal5

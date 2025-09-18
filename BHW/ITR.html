@@ -123,7 +123,7 @@ fetch('php/getUserId.php')
              <br>
              <div class="custom-consent-checkbox">
                 <input type="checkbox" id="consentCheckbox">
-                <label for="consentCheckbox">Nagbigay ng pahintulot ang pasyente (pasalita)</label>
+                <label for="consentCheckbox">Nagbigay ng pahintulot ang pasyente</label>
             </div>
              <br>
                     <button id="declineBtn">Declined</button>
@@ -154,8 +154,8 @@ fetch('php/getUserId.php')
                 </div>
                 
                 <div class="form-group">
-                    <label for="middleName" class="required">Middle Name:</label>
-                    <input type="text" name="middleName" id="middleName" placeholder="Enter Middle Name" required>
+                    <label for="middleName">Middle Name:</label>
+                    <input type="text" name="middleName" id="middleName" placeholder="Enter Middle Name">
                 </div>
                 <div class="form-group">
                     <label for="extension">Ext:</label>
@@ -321,7 +321,7 @@ fetch('php/getUserId.php')
             </div>
             <br> <br> <br>
 
-            <p><b>PATIENT VISIT SUMMARY:</b></p>
+            <p><b>PATIENT ASSESSMENT:</b></p>
             <div class="additional-group box-group additional-fields">
 
                 <div class="additional-options">
@@ -339,7 +339,7 @@ fetch('php/getUserId.php')
                         </select>
                     </div>
 <br>
-<div class="additonal-group"> 
+<div class="additonal-group" hidden> 
     <label for="dov">Date of Visit:</label>
     <input type="text" name="dov" id="dov" class="flatpickr-dov" required placeholder="Select date of visit">
 </div>

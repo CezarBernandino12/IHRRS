@@ -120,10 +120,10 @@ fetch('php/getUserId.php')
                 </div>
             </form>
             <div class="greeting">
-                <span id="userGreeting">Hello BHW!</span>
+                <span id="userGreeting">Hello Physician!</span>
             </div>
             <a href="#" class="profile">
-                <img src="../img/profile.png">
+                <img src="../img/nurse.png">
             </a>
         </nav>
 
@@ -154,7 +154,7 @@ fetch('php/getUserId.php')
              <br>
              <div class="custom-consent-checkbox">
                 <input type="checkbox" id="consentCheckbox">
-                <label for="consentCheckbox">Nagbigay ng pahintulot ang pasyente (pasalita)</label>
+                <label for="consentCheckbox">Nagbigay ng pahintulot ang pasyente</label>
             </div>
              <br>
                     <button id="declineBtn">Declined</button>
@@ -185,8 +185,8 @@ fetch('php/getUserId.php')
                 </div>
                 
                 <div class="form-group">
-                    <label for="middleName" class="required">Middle Name:</label>
-                    <input type="text" name="middleName" id="middleName" placeholder="Enter Middle Name" required>
+                    <label for="middleName">Middle Name:</label>
+                    <input type="text" name="middleName" id="middleName" placeholder="Enter Middle Name">
                 </div>
                 <div class="form-group">
                     <label for="extension">Ext:</label>
@@ -352,7 +352,7 @@ fetch('php/getUserId.php')
             </div>
             <br> <br> <br>
 
-            <p><b>PATIENT VISIT SUMMARY:</b></p>
+            <p><b>PATIENT ASSESSMENT:</b></p>
             <div class="additional-group box-group additional-fields">
 
                 <div class="additional-options">
@@ -370,7 +370,7 @@ fetch('php/getUserId.php')
                         </select>
                     </div>
 <br>
-<div class="date-visit-group">
+<div class="date-visit-group" hidden>
     <label for="dov">Date of Visit:</label>
     <input 
         type="text" 
@@ -412,7 +412,7 @@ fetch('php/getUserId.php')
                             <label for="bmi">BMI:</label>
                             <input type="number" step="any" name="bmi" id="bmi" placeholder="BMI will appear here" readonly>
                         </div>
-                        <div class="additional-group" id="bmiSpace" hidden>
+                        <div class="additional-group" id="bmiSpace" style="display: none;" hidden>
                             <label for="space"></label>
                           
                         </div>
@@ -881,7 +881,7 @@ updateRemoveButtons();
                     </div>
                     <div class="modal-footer">
                         <button id="noButton2" class="btn no" type="button">No</button>
-                        <button id="yesButton2" class="btn yes" value="yes" type="button">Yes</button>
+                        <button id="yesButton2" class="btn yes" value="yes" type="submit">Yes</button>
                     </div>
                 </div>
             </div>
