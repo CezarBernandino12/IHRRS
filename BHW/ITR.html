@@ -6,8 +6,8 @@
     <link rel="icon" href="../img/logo.png">
     <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="css/form.css">
+    <link rel="stylesheet" href="css/dashstyle.css">
     <link rel="stylesheet" href="css/logout.css">
-
     <title>Individual Treatment Record</title>
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
@@ -35,10 +35,15 @@ fetch('php/getUserId.php')
 </script>
 
 	<section id="sidebar">
-		<a href="#" class="brand">
+		<a href="#" class="brand" style="display: flex; align-items: center;">
+			<span class="menu-icon" style="margin-right: 10px;" onclick="toggleSidebar()"> 
+				<i class="bx bx-menu" style="font-size: 1.5rem; cursor: pointer;"></i> 
+			</span>
+
 			<img src="../img/logo.png" alt="RHULogo" class="logo">
 			<span class="text">IHRRS</span>
 		</a>
+
 		<ul class="side-menu top">
 			<li>
 				<a href="dashboard.html">
@@ -111,25 +116,6 @@ fetch('php/getUserId.php')
         </main>
     </section>
 
-
-<!-- CONSENT Modal -->
-<div class="custom-modal-backdrop" id="consentModal">
-    <div class="custom-consent-box">
-        <h3><b>PATIENT CONSENT FOR COLLECTION AND USE OF PERSONAL HEALTH INFORMATION</b></h3> <br>
-         <h3><b>Basahin sa pasyente:</b></h3>
-            <h4>
-                 "Pumapayag ako, alinsunod sa Data Privacy Act of 2012, na itala ng health worker ang aking personal at medikal na impormasyon sa computer system upang ako ay mabigyan ng tamang gamutan at ma-refer kung kinakailangan. Naiintindihan ko na ang aking impormasyon ay gagamitin lamang para sa aking kalusugan at mananatiling pribado."
-            </h4>
-             <br>
-             <div class="custom-consent-checkbox">
-                <input type="checkbox" id="consentCheckbox">
-                <label for="consentCheckbox">Nagbigay ng pahintulot ang pasyente</label>
-            </div>
-             <br>
-                    <button id="declineBtn">Declined</button>
-                    <button id="continueBtn" disabled>Agree and Continue</button>
-    </div>
-</div>
 
     <div class="container-header">
         <h2>INDIVIDUAL TREATMENT RECORD (ITR)</h2>
@@ -966,6 +952,67 @@ updateRemoveButtons();
 </div>
     
 
+<script>
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    sidebar.classList.toggle('hide');
+
+    // Save state to localStorage
+    if (sidebar.classList.contains('hide')) {
+        localStorage.setItem('sidebar-collapsed', 'true');
+    } else {
+        localStorage.setItem('sidebar-collapsed', 'false');
+    }
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+    const sidebar = document.getElementById('sidebar');
+    const isCollapsed = localStorage.getItem('sidebar-collapsed');
+
+    if (isCollapsed === 'true') {
+        sidebar.classList.add('hide');
+    } else {
+        sidebar.classList.remove('hide');
+    }
+});
+
+    // Existing code for other functions
+    document.addEventListener("DOMContentLoaded", () => {
+        const today = new Date().toISOString().split("T")[0];
+        const url = `php/fetch_dashboard_stats.php?date=${today}`;
+        // Show today's date in both containers
+        const formattedDate = new Date(today).toLocaleDateString('en-US', { 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+        });
+        
+        document.querySelectorAll(".date").forEach(el => el.textContent = formattedDate);
+        
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                console.log("Dashboard Data:", data);
+                updateProgress("progress-ring-1", "progress-text-1", data.visits_today, 100);
+                updateProgress("progress-ring-2", "progress-text-2", data.pending_referrals, 100);
+            })
+            .catch(error => console.error("Error loading dashboard data:", error));
+    });
+
+    function updateProgress(ringId, textId, value, max = 100) {
+        const radius = 67;
+        const circumference = 2 * Math.PI * radius;
+        const percent = Math.min(value / max, 1);
+        const offset = circumference * (1 - percent);
+
+        const ring = document.getElementById(ringId);
+        const text = document.getElementById(textId);
+
+        ring.style.strokeDasharray = `${circumference}`;
+        ring.style.strokeDashoffset = `${offset}`;
+        text.textContent = value;
+    }
+</script>
 
 <script>
 function confirmLogout() {
@@ -1020,6 +1067,23 @@ fetch('php/getUserName.php')
         </div>
     </div>
 </div>
-
+<!-- CONSENT Modal -->
+<div class="custom-modal-backdrop" id="consentModal">
+    <div class="custom-consent-box">
+        <h3><b>PATIENT CONSENT FOR COLLECTION AND USE OF PERSONAL HEALTH INFORMATION</b></h3> <br>
+         <h3><b>Basahin sa pasyente:</b></h3>
+            <h4>
+                 "Pumapayag ako, alinsunod sa Data Privacy Act of 2012, na itala ng health worker ang aking personal at medikal na impormasyon sa computer system upang ako ay mabigyan ng tamang gamutan at ma-refer kung kinakailangan. Naiintindihan ko na ang aking impormasyon ay gagamitin lamang para sa aking kalusugan at mananatiling pribado."
+            </h4>
+             <br>
+             <div class="custom-consent-checkbox">
+                <input type="checkbox" id="consentCheckbox">
+                <label for="consentCheckbox">Nagbigay ng pahintulot ang pasyente</label>
+            </div>
+             <br>
+                    <button id="declineBtn">Declined</button>
+                    <button id="continueBtn" disabled>Agree and Continue</button>
+    </div>
+</div>
 </body>
 </html>
