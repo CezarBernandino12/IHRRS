@@ -749,11 +749,11 @@ button.reset-password-btn:hover {
   border: none;
   cursor: pointer;
   transition: background-color 0.3s ease;
-}
+} 
 
 
 .cancel-btn {
-  background-color: #1a73e8;
+  background-color: red;
   color: white;
 }
 
