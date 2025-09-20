@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BHW Login</title> 
+  <link rel="stylesheet" href="css/login.css">
+</head>
+<body>
+  <div class="container">
+    <!-- LOGIN FORM -->
+
+    
+    <div id="login-form">
+      <a href="role.html" class="back-btn">
+        <i class="bx bx-arrow-back"></i> <!-- Back arrow icon -->
+      </a>
+      <img src="img/logo.png" class="Img" alt="Logo">
+      <h2>BHW</h2>
+
+      <form action="LOGIN/BHWlogin.php" method="POST">
+        <input type="hidden" name="role" value="bhw"> <!-- Ensures only BHW role logs in -->
+
+        <label>Username</label>
+        <div class="input-box">
+          <span class="icon"><i class="bx bx-user"></i></span>
+          <input type="text" name="username" placeholder="Enter your username" required>
+        </div>
+
+        <label for="password">Password</label>
+        <div class="input-box" style="position: relative;">
+          <span class="icon"><i class="bx bx-lock"></i></span>
+          <input type="password" name="password" id="register-password" placeholder="Enter Password" required />
+          <span class="toggle-password" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer;">
+    <i class="bx bx-show" id="togglePasswordIcon"></i>
+  </span>
+        </div>
+
+        <div id="error-message" style="color: red; display: none;"></div>
+
+        <div class="remember-forgot">
+          <a href="LOGIN/forgot_password.html">Forgot password?</a>
+        </div>
+
+        <button type="submit" class="login-btn">LOGIN</button>
+      </form>
+
+    </div>
+  </div>
+
+   <!-- Success Modal -->
+<div id="successModal" class="modal">
+  <div class="modal-content">
+    <span class="close-btn">&times;</span>
+    <p id="success-message"></p>
+  </div>
+</div>
+
+<script>
+
+  // Password show/hide toggle
+document.addEventListener('DOMContentLoaded', function () {
+  const toggleIcon = document.getElementById('togglePasswordIcon');
+  const passwordInput = document.getElementById('register-password');
+
+  toggleIcon.addEventListener('click', function () {
+    const isVisible = passwordInput.type === 'text';
+    passwordInput.type = isVisible ? 'password' : 'text';
+    toggleIcon.classList.toggle('bx-show');
+    toggleIcon.classList.toggle('bx-hide');
+  });
+});
+
+  // Get URL parameters
+  const urlParams = new URLSearchParams(window.location.search);
+
+  // Show success modal if success message is present
+  const successMessage = urlParams.get('success');
+  if (successMessage) {
+    const successModal = document.getElementById("successModal");
+    const successText = document.getElementById("success-message");
+    
+    if (successModal && successText) { // Check if elements exist
+      successText.textContent = successMessage;
+      successModal.style.display = "block";
+    }
+  }
+
+  // Close the modal when clicking on the close button
+  const closeButton = document.querySelector(".close-btn");
+  if (closeButton) {
+    closeButton.addEventListener("click", function () {
+      document.getElementById("successModal").style.display = "none";
+    });
+  }
+
+  // Close modal when clicking outside of it
+  window.onclick = function (event) {
+    let modal = document.getElementById("successModal");
+    if (modal && event.target == modal) {
+      modal.style.display = "none";
+    }
+  };
+
+  // Show error message if present
+  const errorMessage = urlParams.get('error');
+  const errorText = document.getElementById('error-message');
+  if (errorMessage && errorText) {
+    errorText.textContent = errorMessage;
+    errorText.style.display = 'block';
+  }
+
+  // Toggle login and register forms
+  function toggleForms() {
+    const login = document.getElementById('login-form');
+    const register = document.getElementById('register-form');
+    if (login && register) {
+      login.style.display = login.style.display === 'none' ? 'block' : 'none';
+      register.style.display = register.style.display === 'none' ? 'block' : 'none';
+    }
+  }
+
+</script>
+</body>
+</html>

@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="icon" href="../img/logo.png">
+	<link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="css/form.css">
+    <link rel="stylesheet" href="css/logout.css">
+	<title>Pending Referrals</title> 
+</head>
+<body>
+
+	<!-- Sidebar Section -->
+	<section id="sidebar">
+		<a href="#" class="brand">
+			<img src="../img/logo.png" alt="RHULogo" class="logo">
+			<span class="text">IHRRS</span>
+		</a>
+		<ul class="side-menu top">
+			<li>
+				<a href="dashboard.html">
+					<i class="bx bxs-dashboard"></i>
+					<span class="text">Dashboard</span>
+				</a>
+			</li>
+            <li>
+				<a href= "ITR.html">
+					<i class="bx bxs-user"></i>
+					<span class="text">Add New ITR</span>
+				</a>
+			</li>
+			<li class="active">
+                <a href="#" id="updateReferrals">
+                    <i class="bx bxs-user"></i>
+                    <span class="text">Pending Referrals</span>
+                </a>
+            </li>
+            
+            <script>
+            document.getElementById("updateReferrals").addEventListener("click", function (event) {
+                event.preventDefault(); // Prevent default navigation
+            
+                fetch("php/update_referrals.php") // Call PHP file
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data.message); // Log success message (optional)
+                    window.location.href = "pending.html"; // Redirect after updating
+                })
+                .catch(error => {
+                    console.error("Error updating referrals:", error);
+                    window.location.href = "pending.html"; // Still redirect even if an error occurs
+                });
+            });
+            </script>
+
+            	<li>
+				<a href="followUpConsultations.html">
+					<i class="bx bxs-user"></i>
+					<span class="text">Follow-Up Visits</span>
+				</a>
+			</li>
+            
+			<li>
+				<a href="searchPatient.html">
+					<i class="bx bxs-notepad"></i>
+					<span class="text">Patient Records</span>
+				</a>
+			</li>
+            <li>
+                <a href="history.html">
+                    <i class="bx bx-history"></i>
+                    <span class="text">Referral History</span>
+                </a>
+            </li>
+            <li>
+				<a href="reports.html">
+					<i class="bx bx-notepad"></i>
+					<span class="text">Reports</span>
+				</a>
+			</li>
+		</ul>
+		<ul class="side-menu">
+			<li>
+				<a href="#" class="logout" onclick="return confirmLogout()">
+               <i class="bx bxs-log-out-circle"></i>
+                <span class="text">Logout</span>
+                </a>
+
+			</li>
+		</ul>
+	</section>
+
+	<!-- Main Content Section -->
+	<section id="content">
+		<nav>
+			<form action="#" id="searchForm">
+				<div class="form-input">
+					<input type="search" id="searchInput" placeholder="Search by Referral ID or Patient Name...">
+					<button type="submit" class="search-btn">
+						<i class="bx bx-search"></i>
+					</button>
+				</div>
+			</form>
+            <div class="greeting">
+                <span id="userGreeting">Hello RHU Physician!</span>
+            </div>
+			<a href="#" class="profile">
+				<img src="../img/doctor.png">
+			</a>
+		</nav>
+
+
+		<main>
+            
+            <div class="head-title">
+                <div class="left">
+                  <h1>Pending Referrals</h1>
+                  <ul class="breadcrumb">
+                    <li><a href="#">Pending Referrals</a></li>
+                    <li><i class="bx bx-chevron-right"></i></li>
+                    <li><a class="active" href="#">Home</a></li>
+                  </ul>
+                </div>
+              </div>
+
+<br>
+
+            <div class="history-container">
+                <div class="referral-summary-card">
+                    <div class="content">
+                      <h3>Referrals Today</h3>
+                      <span id="currentDate"></span>
+                    </div>
+                  </div>
+                  
+<script>
+    // Get the current date
+    const today = new Date();
+  
+  // Format the date as "Month Day, Year"
+  const options = { year: 'numeric', month: 'long', day: 'numeric' };
+  const formattedDate = today.toLocaleDateString('en-US', options);
+
+  // Display the date in the element
+  document.getElementById("currentDate").textContent = formattedDate;
+</script>
+                <table id="history-table" class="status">
+                    <thead>
+                        <tr>
+                            <th>REFERRAL ID</th>
+                            <th>Date</th>
+                            <th>Patient Name</th>
+                            <th>Referral from</th>
+                            <th>Status</th>
+                            
+                        </tr>
+                    </thead>
+                    <tbody>
+                       
+                        <!-- Dynamic referral data will be inserted here by JavaScript -->
+                    </tbody>
+                    
+                </table>
+                
+                <div class="pagination" id="pagination">
+                    <a href="#" class="prev">Previous</a>
+                    <a href="#" class="page-number">1</a>
+                    <a href="#" class="page-number">2</a>
+                    <a href="#" class="page-number">3</a>
+                    <a href="#" class="next">Next</a>
+                </div>
+            </div>
+
+
+<div id="logoutModal" class="logout-modal">
+    <div class="logout-modal-content">
+        <div class="logout-modal-header">
+            <h3>Confirm Logout</h3>
+        </div>
+        <div class="logout-modal-body">
+            <p>Are you sure you want to logout?</p>
+        </div>
+        <div class="logout-modal-footer">
+            <button onclick="closeModal()" class="logout-cancel-btn">Cancel</button>
+            <button onclick="proceedLogout()" class="logout-confirm-btn">Yes, Logout</button>
+        </div>
+    </div>
+</div>	   </main>	
+</section>
+
+
+<script>
+	document.addEventListener("DOMContentLoaded", function () {
+    fetchReferrals();
+
+    function fetchReferrals() {
+        fetch("php/fetch_referrals.php")
+            .then(response => response.json())
+            .then(data => {
+                const tableBody = document.querySelector("#history-table tbody");
+                tableBody.innerHTML = ""; // Clear existing content
+
+                if (data.error) {
+                    console.error(data.error);
+                    tableBody.innerHTML = `<tr><td colspan="5">Error fetching data</td></tr>`;
+                    return;
+                }
+
+                data.forEach(referral => {
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td>${referral.referral_id}</td>
+                        <td>${formatDate(referral.referral_date)}</td>
+                        <td>${referral.patient_name}</td>
+                        <td>${referral.referral_from}</td>
+                        <td class="${referral.referral_status.toLowerCase()}">${referral.referral_status}</td>
+           
+                    `;
+
+                    // Make row clickable (excluding action buttons)
+                    row.style.cursor = "pointer";
+                    row.addEventListener("click", function () {
+                        window.location.href = `UpdateVisitInfo.html?visit_id=${referral.visit_id}`;
+                    }); 8
+
+                    tableBody.appendChild(row);
+                });
+            })
+            .catch(error => {
+                console.error("Error fetching referrals:", error);
+            });
+    }
+
+    function formatDate(dateString) {
+        if (!dateString) return "N/A";
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) return "Invalid Date";
+        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+        return `${date.toLocaleDateString('en-US', options)} <br><span class="time">${date.toLocaleTimeString()}</span>`;
+    }
+});
+
+document.getElementById('searchForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    const table = document.getElementById('history-table');
+    const rows = table.getElementsByTagName('tr');
+
+    for (let i = 1; i < rows.length; i++) { // Start from 1 to skip header row
+        const row = rows[i];
+        const referralId = row.cells[0].textContent.toLowerCase();
+        const patientName = row.cells[2].textContent.toLowerCase();
+        
+        if (referralId.includes(searchTerm) || patientName.includes(searchTerm)) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    }
+});
+
+// Add event listener for real-time search
+document.getElementById('searchInput').addEventListener('keyup', function() {
+    const searchTerm = this.value.toLowerCase();
+    const table = document.getElementById('history-table');
+    const rows = table.getElementsByTagName('tr');
+
+    for (let i = 1; i < rows.length; i++) {
+        const row = rows[i];
+        const referralId = row.cells[0].textContent.toLowerCase();
+        const patientName = row.cells[2].textContent.toLowerCase();
+        
+        if (referralId.includes(searchTerm) || patientName.includes(searchTerm)) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    }
+});
+
+
+function confirmLogout() {
+    document.getElementById('logoutModal').style.display = 'block';
+    return false; // Prevent the default link behavior
+}
+
+function closeModal() {
+    document.getElementById('logoutModal').style.display = 'none';
+}
+
+function proceedLogout() {
+    window.location.href = '../role.html';
+}
+
+// Close modal when clicking outside
+window.onclick = function(event) {
+    const modal = document.getElementById('logoutModal');
+    if (event.target == modal) {
+        closeModal();
+    }
+}
+fetch('php/getUserName.php')
+    .then(response => response.json())
+    .then(data => {
+        if (data.full_name) {
+            document.getElementById('userGreeting').textContent = `Hello, ${data.full_name}!`;
+        } else {
+            document.getElementById('userGreeting').textContent = 'Hello, BHW!';
+        }
+    })
+    .catch(error => {
+        console.error('Error fetching user name:', error);
+        document.getElementById('userGreeting').textContent = 'Hello, BHW!';
+    });
+
+    	// Check if user is logged in
+fetch('php/getUserId.php')
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            // User is not logged in, redirect to role selection page
+            window.location.href = '../role.html';
+        }
+    })
+    .catch(error => {
+        console.error('Error checking session:', error);
+        window.location.href = '../role.html';
+    });
+
+
+</script>
+	<script src="js/script.js"></script>
+    <script src="js/history.js"></script>
+    <script src="js/logout.js"></script>
+</body>
+</html>
+
+
+

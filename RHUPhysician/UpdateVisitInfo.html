@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="../img/logo.png">
+    <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="css/exist.css">
+    <link rel="stylesheet" href="css/print.css">
+    <link rel="stylesheet" href="css/logout.css">
+    <title>Individual Treatment Record</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+</head>
+
+<body>
+
+    <section id="sidebar">
+        <a href="#" class="brand">
+            <img src="../img/logo.png" alt="RHULogo" class="logo">
+            <span class="text">IHRRS</span>
+        </a>
+        <ul class="side-menu top">
+            <li>
+				<a href="dashboard.html">
+					<i class="bx bxs-dashboard"></i>
+					<span class="text">Dashboard</span>
+				</a>
+			</li>
+            <li>
+				<a href= "ITR.html">
+					<i class="bx bxs-user"></i>
+					<span class="text">Add New ITR</span>
+				</a>
+			</li>
+			<li  class="active">
+				<a href="#" id="updateReferrals">
+					<i class="bx bxs-user"></i>
+					<span class="text">Pending Referrals</span>
+				</a>
+			</li>
+			
+			<script>
+			document.getElementById("updateReferrals").addEventListener("click", function (event) {
+				event.preventDefault(); // Prevent default navigation
+			
+				fetch("php/update_referrals.php") // Call PHP file
+				.then(response => response.json())
+				.then(data => {
+					console.log(data.message); // Log success message (optional)
+					window.location.href = "pending.html"; // Redirect after updating
+				})
+				.catch(error => {
+					console.error("Error updating referrals:", error);
+					window.location.href = "pending.html"; // Still redirect even if an error occurs
+				});
+			});
+			</script>
+
+            	<li>
+				<a href="followUpConsultations.html">
+					<i class="bx bxs-user"></i>
+					<span class="text">Follow-Up Visits</span>
+				</a>
+			</li>
+			
+			<li>
+				<a href="searchPatient.html">
+					<i class="bx bxs-notepad"></i>
+					<span class="text">Patient Records</span>
+				</a>
+			</li>
+			<li>
+                <a href="history.html">
+                    <i class="bx bx-history"></i>
+                    <span class="text">Referral History</span>
+                </a>
+            </li>
+            <li>
+				<a href="reports.html">
+					<i class="bx bx-notepad"></i>
+					<span class="text">Reports</span>
+				</a>
+			</li>
+        </ul>
+        <ul class="side-menu">
+            <li>
+               <a href="#" class="logout" onclick="return confirmLogout()">
+               <i class="bx bxs-log-out-circle"></i>
+                <span class="text">Logout</span>
+                </a>
+
+            </li>
+        </ul>
+    </section> 
+
+    <section id="content">
+        <nav>
+			<form action="#">
+				
+			</form>
+			<div class="greeting">
+                <span id="userGreeting">Hello RHU Physician!</span>
+            </div>
+			<a href="#" class="profile">
+				<img src="../img/doctor.png">
+			</a>
+		</nav>
+
+        <main>
+            <div class="head-title">
+            </div>
+        </main>
+    </section>
+
+    <div class="container-header">
+        <h2>VISIT DETAILS</h2>
+    </div>
+    
+    <div class="container">
+
+        <p style="display: flex; justify-content: space-between; align-items: center;">
+            <b>PERSONAL INFORMATION:</b>
+            <span id="togglePersonalInfo" class="view-all-btn">View All</span>
+        </p>        
+
+        <div id="hiddenPersonalInfo" style="display: none;">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>First Name:</label>
+                    <p class="patient-first-name">N/A</p>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Last Name:</label>
+                    <p class="patient-last-name">N/A</p>
+                </div>
+                <div class="form-group">
+                    <label>Middle Name:</label>
+                    <p class="patient-middle-name">N/A</p>
+                </div>
+                <div class="form-group">
+                    <label>Ext:</label>
+                    <p class="patient-extension">N/A</p>
+                </div>
+            </div>
+    
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Birth Place:</label>
+                    <p class="patient-birth-place">N/A</p>
+                </div>
+                <div class="form-group">
+                    <label>Date of Birth:</label>
+                    <p class="date-of-birth">N/A</p>
+                </div>
+                <div class="form-group">
+                    <label>Age:</label>
+                    <p class="age">N/A</p>
+                </div>
+            </div>
+    
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Permanent Address:</label>
+                    <p class="address">N/A</p>
+                </div>
+            </div>
+    
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Civil Status:</label>
+                    <p class="civil-status">N/A</p>
+                </div>
+                <div class="form-group">
+                    <label>Mobile Number:</label>
+                    <p class="contact-number">N/A</p>
+                </div>
+            </div>
+    
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Religion:</label>
+                    <p class="religion">N/A</p>
+                </div>
+                <div class="form-group">
+                    <label>Occupation:</label>
+                    <p class="occupation">N/A</p>
+                </div>
+                <div class="form-group">
+                    <label>Birth Weight:</label>
+                    <p class="birth-weight">N/A</p>
+                </div>
+            </div>
+    
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Educational Attainment:</label>
+                    <p class="educational-attainment">N/A
+                <div class="form-group">
+                    <label>Philhealth Member Number:</label>
+                    <p class="philhealth-member-no">N/A</p>
+                </div>
+                <div class="form-group">
+                    <label>Family Serial Number:</label>
+                    <p class="family-serial-no">N/A</p>
+                </div>
+                <div class="form-group">
+                    <label>Category:</label>
+                    <p class="category">N/A</p>
+                </div>
+            </div>
+    
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Gender:</label>
+                    <p class="sex">N/A</p>
+                </div>
+                <div class="form-group">
+                    <label>4Ps Status:</label>
+                    <p class="fourps-status">N/A</p>
+                </div>
+            </div>
+        </div>
+        </div>
+            
+            <!-- INITIAL ASSESSMENT / VISIT INFO -->
+            <div class="additional-group box-group additional-fields" style="background-color: aliceblue;">
+                <div class="additional-options">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Patient Alert:</label>
+                            <p class="patient-alert">N/A</p>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group" style="font-weight: bold;">
+                            <label>Date of Visit:</label>
+                            <p class="visit-date">N/A</p>
+                        </div>
+                    </div>
+    
+                    <div class="form-row">
+                        <div class="form-group" style="font-weight: bold;">
+                            <label>Chief Complaints:</label>
+                            <p class="chief-complaints">N/A</p>
+                        </div>
+                    </div>
+    
+                    <div class="form-row">
+                        <label for="vitals"><b>Vital Signs:</b></label>
+                        <div class="vitals-section">
+                            <div class="form-group" style="font-weight: bold;">
+                                <label>Blood Pressure (mm Hg):</label>
+                                <p class="blood-pressure">N/A</p>
+                            </div>
+                            <div class="form-group" style="font-weight: bold;">
+                                <label>Temperature (°C):</label>
+                                <p class="temperature">N/A</p>
+                            </div>
+                            <div class="form-group" style="font-weight: bold;">
+                                <label>Weight (kg):</label>
+                                <p class="weight">N/A</p>
+                            </div>
+                            <div class="form-group" style="font-weight: bold;">
+                                <label>Height (cm):</label>
+                                <p class="height">N/A</p>
+                            </div>
+                            <div class="form-group" style="font-weight: bold;">
+                                <label>Pulse Rate (per minute):</label>
+                                <p class="pulse-rate">N/A</p>
+                            </div>
+                            <div class="form-group" style="font-weight: bold;">
+                                <label>Respiratory Rate (per minute):</label>
+                                <p class="respiratory-rate">N/A</p>
+                            </div>
+                        </div>
+    
+                    </div>
+                                    
+            <div class="form-row">
+                <div class="form-group" style="font-weight: bold;">
+                    <label>BHW Remarks:</label>
+                    <p class="remarks">N/A</p>
+                </div>
+            </div>
+                </div>
+            </div> <br>
+
+            <p style="display: flex; justify-content: space-between; align-items: center;">
+                <b>PATIENT'S TREATMENT :</b>  
+            </p>
+
+        <form class="personal-info-form" id="individualRecordForm" action="php/saveConsultation.php" method="POST" enctype="multipart/form-data">
+            <div class="additional-group box-group additional-fields" style="background-color: aliceblue;">
+                
+                <div class="additional-options">
+                    <div class="form-group">
+
+                         <label for="photo">Upload Laboratory Result:</label>
+                        <input type="file" id="photo" name="photo" accept="image/*,.pdf" capture="environment">
+
+
+                        <div class="form-group">
+                            <label for="diagnosis">Diagnosis:</label>
+                            <select id="diagnosis" name="diagnosis" class="select2">
+                                <option value="">Select diagnosis</option>
+                                <option value="other">Other (Enter manually)</option>
+                            
+                            </select>
+                        </div>
+                        <div id="diagnosis-status-wrapper" style="display: none;">
+                            <label for="status">Diagnosis Status:</label>
+                            <select id="status" name="status" class="select2">
+                                <option value="Ongoing">Ongoing</option>
+                                <option value="Treated">Treated</option>
+                                <option value="Referred">Referred</option>
+                                <option value="Deceased">Deceased</option>
+                            </select>
+                        </div>
+                        <script>
+                        $(document).ready(function () {
+                            // Show/hide diagnosis status based on diagnosis selection
+                            $('#diagnosis').on('change', function () {
+                                if ($(this).val() && $(this).val() !== '') {
+                                    $('#diagnosis-status-wrapper').show();
+                                } else {
+                                    $('#diagnosis-status-wrapper').hide();
+                                    $('#status').val('').trigger('change');
+                                }
+                            });
+                        });
+                        </script>
+
+                        <br>
+
+                        <div id="medicine-container" style="display: flex; flex-direction: column; gap: 15px;">
+                            <div class="medicine-entry" style="display: flex; gap: 10px; align-items: center; padding: 10px; border: 1px solid #ddd; border-radius: 4px; background-color: #f9f9f9;">
+                                <div class="form-group" style="flex: 1;"> 
+                                    <label for="medicine_given[]">Medication Given:</label>
+                                    <select name="medicine_given[]" class="medicine-select select2" style="width: 100%;">
+                                        <option value="">Select</option>
+                                        <option value="other">Other (Enter manually)</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group" style="display: flex; align-items: flex-end; gap: 10px;">
+                                    <div>
+                                        <label for="quantity_given[]">Quantity:</label>
+                                        <div class="quantity-container" style="display: flex; gap: 5px;">
+                                            <button type="button" class="btn-minus">−</button>
+                                            <input type="number" name="quantity_given[]" value="0" min="0" style="height: 17px;">
+                                            <button type="button" class="btn-plus">+</button>
+                                        </div>
+                                    </div>
+                                    <button type="button" class="btn-remove" style="background-color: #e6e6e6; color: rgb(0, 0, 0); border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; height: 35px;">
+                                        Remove
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="add-medicine-container">
+                            <button type="button" id="add-medicine" class="add-medicine">+ Add</button>
+                        </div>
+                        
+                        <script>
+// Add remove button handler
+document.addEventListener("click", function(event) {
+    if (event.target.classList.contains("btn-remove")) {
+        // Don't remove if it's the last entry
+        if (document.querySelectorAll(".medicine-entry").length > 1) {
+            event.target.closest(".medicine-entry").remove();
+        } else {
+            alert("Cannot remove the last medicine entry.");
+        }
+    } else if (event.target.classList.contains("btn-plus")) {
+        let input = event.target.previousElementSibling;
+        input.value = parseInt(input.value) + 1;
+    } else if (event.target.classList.contains("btn-minus")) {
+        let input = event.target.nextElementSibling;
+        if (parseInt(input.value) > 0) {
+            input.value = parseInt(input.value) - 1;
+        }
+    }
+});
+                        </script>
+                    </div>
+
+                     <div class="form-group">
+                            <label for="rhu_remarks">Instructions/Remarks:</label>
+                            <select id="rhu_remarks" name="rhu_remarks" class="select2">
+                                <option value="">Select</option>
+                                <option value="other">Other (Enter manually)</option>
+                            
+                            </select>
+                        </div>
+
+                    <div>
+                        <label for="followup">Schedule Follow-up Consultation:</label>
+                        <input type="date" id="followup" name="followup" class="tall-input" placeholder="Set follow-up consultation date" min="<?= date('Y-m-d'); ?>">
+                    </div>
+                    <script>
+                        // Set min attribute to today for browsers that don't process PHP
+                        document.addEventListener('DOMContentLoaded', function() {
+                            var today = new Date().toISOString().split('T')[0];
+                            document.getElementById('folowup').setAttribute('min', today);
+                        });
+                    </script>
+
+
+                    <input type="hidden" id="visit_id" name="visit_id">
+                    <input type="hidden" name="doctor_id" id="doctor_id" value="">
+
+                    </div> </div>
+            
+
+            <div class="button-container">
+                
+            <div class="form-container">
+                <div class="print-section">
+                    <button class="print-btn" id="printButton">Print</button>
+                </div>
+            </div>
+                <button type="button" class="submit-btn" id="submitButton">Submit</button>
+            </div>
+            
+        <div id="myModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <img src="../img/verify.png" alt="Checkmark" class="checkmark-image">
+                    <h3>Confirmation</h3>
+                    <span class="close-btn" id="closeBtn">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <p>Save patient record?</p>
+                </div>
+                
+                <div class="modal-footer">
+                    <button id="cancelButton" class="btn no" type="button">Cancel</button>
+                    <button id="confirmBtn" class="btn yes" type="submit">Save</button>
+                </div>
+
+            </div>
+        </div>
+
+
+
+        </form>
+
+
+        <!-- Success/Error Modal -->
+        <div id="responseModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <img src="../img/verify.png" alt="Checkmark" class="checkmark-image">
+                    <h3>Success</h3>
+                    <span class="close-btn" id="closeResponseModal">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <p id="responseMessage">Record saved successfully!</p>
+                </div>
+                <div class="modal-footer">
+                    <button id="okButton" class="btn yes">OK</button>
+                    
+                </div>
+            </div>
+        </div>
+
+<div id="logoutModal" class="logout-modal">
+    <div class="logout-modal-content">
+        <div class="logout-modal-header">
+            <h3>Confirm Logout</h3>
+        </div>
+        <div class="logout-modal-body">
+            <p>Are you sure you want to logout?</p>
+        </div>
+        <div class="logout-modal-footer">
+            <button onclick="closeModal()" class="logout-cancel-btn">Cancel</button>
+            <button onclick="proceedLogout()" class="logout-confirm-btn">Yes, Logout</button>
+        </div>
+    </div>
+</div>
+
+</div>
+   
+    
+    <script src="js/form.js"></script>
+    <script src="js/script.js"></script>
+    <script>
+
+$(document).ready(function () {
+    // Initialize Select2 for diagnosis
+   
+
+    // Initialize Select2 for treatment
+    $('#diagnosis').select2({
+        placeholder: "Select or type diagnosis",
+        allowClear: true,
+        minimumResultsForSearch: 0
+    });
+
+     $('#rhu_remarks').select2({
+        placeholder: "Select or type remarks",
+        allowClear: true,
+        minimumResultsForSearch: 0
+    });
+
+    // Initialize Select2 for all medicine selects
+    $('.medicine-select').select2({
+        placeholder: "Select or type medication",
+        allowClear: true,
+        minimumResultsForSearch: 0
+    });
+
+    // Load custom diagnosis options
+   
+    loadCustomOptions('diagnosis', 'diagnosis');
+    loadCustomOptions('rhu_remarks', 'rhu_remarks');
+
+    // Handle custom diagnosis entry
+   
+
+    // Handle custom treatment entry
+    $('#diagnosis').on('change', function () {
+        if (this.value === 'other') {
+            const userInput = prompt("Enter diagnosis:");
+            if (userInput) {
+                saveCustomOption('diagnosis', userInput)
+                    .then(data => {
+                        if (data.success) {
+                            const newOption = new Option(userInput, userInput, true, true);
+                            $('#diagnosis').append(newOption).trigger('change');
+                        } else {
+                            alert('Failed to save custom diagnosis.');
+                            $(this).val('').trigger('change');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        $(this).val('').trigger('change');
+                    });
+            } else {
+                $(this).val('').trigger('change');
+            }
+        }
+    });
+        // Handle custom treatment entry
+    $('#rhu_remarks').on('change', function () {
+        if (this.value === 'other') {
+            const userInput = prompt("Enter remarks:");
+            if (userInput) {
+                saveCustomOption('rhu_remarks', userInput)
+                    .then(data => {
+                        if (data.success) {
+                            const newOption = new Option(userInput, userInput, true, true);
+                            $('#rhu_remarks').append(newOption).trigger('change');
+                        } else {
+                            alert('Failed to save custom remarks.');
+                            $(this).val('').trigger('change');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        $(this).val('').trigger('change');
+                    });
+            } else {
+                $(this).val('').trigger('change');
+            }
+        }
+    });
+
+    // Initialize medicine selects
+    const medicineSelects = document.querySelectorAll('.medicine-select');
+    medicineSelects.forEach(select => loadCustomOptions(select, 'medicine'));
+
+    // Add medicine button handler
+// Add medicine button handler
+$('#add-medicine').on('click', function () {
+    let container = $('#medicine-container');
+    let newEntry = container.children().first().clone();
+
+    // Reset values in the cloned elements
+    newEntry.find('select').val('').trigger('change');
+    newEntry.find('input[type="number"]').val('0');
+
+    // Replace the existing Select2 container to avoid duplication
+    newEntry.find('.select2-container').remove(); // Remove old Select2 container
+    let newSelect = newEntry.find('.medicine-select');
+    newSelect.removeAttr('data-select2-id').off().empty().append('<option></option>');
+    // Clean select options & events
+
+    // Re-initialize Select2
+    newSelect.select2({
+        placeholder: "Select or type medication",
+        allowClear: true,
+        minimumResultsForSearch: 0
+    });
+
+    // Load custom options for this new select
+    loadCustomOptions(newSelect[0], 'medicine');
+
+    // Re-attach custom "other" entry handler
+    handleOtherSelection(newSelect[0], 'medicine', 'medicine name (dosage)');
+
+    // Append the new entry to the container
+    container.append(newEntry);
+
+    // Scroll the form container to the bottom to prevent overlap
+    container[0].scrollIntoView({ behavior: 'smooth', block: 'end' });
+});
+
+
+    // Handle custom medicine entry for all medicine selects
+    $(document).on('change', '.medicine-select', function() {
+        if (this.value === 'other') {
+            const userInput = prompt("Enter Medication:");
+            if (userInput) {
+                saveCustomOption('medicine', userInput)
+                    .then(data => {
+                        if (data.success) {
+                            const newOption = new Option(userInput, userInput, true, true);
+                            $(this).append(newOption).trigger('change');
+                        } else {
+                            alert('Failed to save custom medication.');
+                            $(this).val('').trigger('change');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        $(this).val('').trigger('change');
+                    });
+            } else {
+                $(this).val('').trigger('change');
+            }
+        }
+    });
+
+
+    const submitButton = document.getElementById('submitButton');
+
+    submitButton.addEventListener('click', function() {
+        // Show the confirmation modal
+        document.getElementById('myModal').style.display = 'block';
+    });
+
+    // Add form submission handler
+    $('#individualRecordForm').on('submit', function(e) {
+         e.preventDefault();
+         document.getElementById('myModal').style.display = 'none'; // Hide confirmation modal
+        
+        // Get form data
+        const formData = new FormData(this);
+        
+        // Submit form via AJAX
+        $.ajax({
+            url: 'php/saveConsultation.php',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                // Show success modal
+                $('#responseModal').show();
+                $('#responseMessage').text('Record saved successfully!');
+            },
+            error: function(xhr, status, error) {
+    console.error("AJAX Error:", xhr.responseText); // Log detailed error
+    $('#responseModal').show();
+    $('#responseMessage').text('Error: ' + xhr.responseText);
+}
+
+        });
+    });
+
+    // Add OK button handler for response modal
+    $('#okButton').on('click', function() {
+        $('#responseModal').hide();
+        window.location.href = 'pending.html';
+    });
+
+    // Add close button handler for response modal
+    $('#closeResponseModal').on('click', function() {
+        $('#responseModal').hide();
+        window.location.href = 'pending.html';
+    });
+});
+
+// Function to load custom options
+function loadCustomOptions(selectElement, category) {
+    fetch(`php/get_custom_options.php?category=${category}`)
+        .then(response => response.json())
+        .then(options => {
+            const existingValues = Array.from(selectElement.options).map(opt => opt.value);
+
+            // Add options from DB only if not already in the select
+            options.forEach(optionValue => {
+                if (!existingValues.includes(optionValue)) {
+                    const option = new Option(optionValue, optionValue);
+                    selectElement.appendChild(option);
+                }
+            });
+
+            // If "other" isn't already there, add it
+            if (!existingValues.includes("other")) {
+                selectElement.appendChild(new Option("Other (Enter manually)", "other"));
+            }
+        })
+        .catch(error => console.error('Error fetching options:', error));
+}
+
+// Function to save custom option
+function saveCustomOption(category, value) {
+    return fetch('php/save_custom_option.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `category=${encodeURIComponent(category)}&value=${encodeURIComponent(value)}`
+    }).then(response => response.json());
+}
+
+const diagnosisSelect = document.getElementById('diagnosis');
+const remarksSelect = document.getElementById('rhu_remarks');
+const medicineSelects = document.querySelectorAll('.medicine-select');
+
+// Helper to load options from DB
+function loadCustomOptions(selectElement, category) {
+    fetch(`php/get_custom_options.php?category=${category}`)
+        .then(response => response.json())
+        .then(options => {
+            const existingValues = Array.from(selectElement.options).map(opt => opt.value);
+
+            // Add options from DB only if not already in the select
+            options.forEach(optionValue => {
+                if (!existingValues.includes(optionValue)) {
+                    const option = new Option(optionValue, optionValue);
+                    selectElement.appendChild(option);
+                }
+            });
+
+            // If "other" isn't already there, add it
+            if (!existingValues.includes("other")) {
+                selectElement.appendChild(new Option("Other (Enter manually)", "other"));
+            }
+        })
+        .catch(error => console.error('Error fetching options:', error));
+}
+
+// Save custom value to DB
+function saveCustomOption(category, value) {
+    return fetch('php/save_custom_option.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `category=${encodeURIComponent(category)}&value=${encodeURIComponent(value)}`
+    }).then(response => response.json());
+}
+
+// Handler for "Other" input logic
+function handleOtherSelection(selectElement, category, promptLabel) {
+    selectElement.addEventListener("change", function () {
+        if (this.value === "other") {
+            const userInput = prompt(`Enter ${promptLabel}:`);
+            if (userInput) {
+                const exists = Array.from(this.options).some(opt => opt.value === userInput);
+                if (!exists) {
+                    const newOption = new Option(userInput, userInput, true, true);
+                    this.appendChild(newOption);
+                }
+                this.value = userInput;
+
+                saveCustomOption(category, userInput)
+                    .then(data => {
+                        if (!data.success) {
+                            console.error(`Failed to save ${promptLabel}.`);
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+            } else {
+                this.value = "";
+            }
+        }
+    });
+}
+
+// Apply handlers for each dropdown
+handleOtherSelection(diagnosisSelect, 'diagnosis', 'diagnosis');
+handleOtherSelection(remarksSelect, 'rhu_remarks', 'rhu_remarks');
+
+medicineSelects.forEach(select => {
+    handleOtherSelection(select, 'medicine', 'medicine name (dosage)');
+});
+
+// Load options on page load
+loadCustomOptions(diagnosisSelect, 'diagnosis');
+loadCustomOptions(remarksSelect, 'rhu_remarks');
+medicineSelects.forEach(select => {
+    loadCustomOptions(select, 'medicine');
+});
+
+
+
+
+function confirmLogout() {
+    document.getElementById('logoutModal').style.display = 'block';
+    return false; // Prevent the default link behavior
+}
+
+function closeModal() {
+    document.getElementById('logoutModal').style.display = 'none';
+}
+
+function proceedLogout() {
+    window.location.href = '../role.html';
+}
+
+// Close modal when clicking outside
+window.onclick = function(event) {
+    const modal = document.getElementById('logoutModal');
+    if (event.target == modal) {
+        closeModal();
+    }
+}
+fetch('php/getUserName.php')
+    .then(response => response.json())
+    .then(data => {
+        if (data.full_name) {
+            document.getElementById('userGreeting').textContent = `Hello, ${data.full_name}!`;
+        } else {
+            document.getElementById('userGreeting').textContent = 'Hello, BHW!';
+        }
+    })
+    .catch(error => {
+        console.error('Error fetching user name:', error);
+        document.getElementById('userGreeting').textContent = 'Hello, BHW!';
+    });
+    
+      fetch('php/getUserId.php')
+            .then(response => response.json())
+            .then(data => {
+                if (data.user_id) {
+                     document.getElementById('doctor_id').value = data.user_id;
+                } else {
+                    console.log('User not logged in.');
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching user id:', error);
+           
+            });
+
+            
+
+
+</script>
+<script src="js/logout.js"></script>
+
+
+
+</body>
+</html>

@@ -1,0 +1,46 @@
+/* Page container */
+#reports-container {
+    padding: 30px;
+}
+
+/* Report Cards Layout */
+.report-links {
+    display: flex;
+    gap: 30px;
+    justify-content: flex-start; /* Aligns the cards to the left */
+    margin-top: 20px;
+}
+
+/* Styling for each report item */
+.report-item {
+    background-color: #b4e1fa;
+    padding: 30px;
+    border-radius: 15px;
+    text-align: center;
+    width: 220px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
+    transition: background-color 0.3s, transform 0.3s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Hover effect */
+.report-item:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 8px 16px rgba(108, 110, 114, 0.616);
+}
+
+/* Icons inside the report cards */
+.report-item img {
+    width: 60px;
+    height: auto;
+    margin-bottom: 15px;
+}
+
+/* Text Styling for Report Items */
+.report-item span {
+    font-size: 18px;
+    color: #333;
+    font-weight: bold;
+}

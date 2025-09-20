@@ -1,0 +1,77 @@
+
+.logout-modal {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.5);
+}
+
+.logout-modal-content {
+    background: #fff;
+    margin: 12% auto;
+    padding: 30px 30px;
+    border-radius: 10px;
+    width: 420px;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.18);
+    text-align: center;
+    font-family: 'Poppins', sans-serif;
+}
+
+.logout-modal-header h3 {
+    margin: 0 0 12px 0;
+    font-size: 1.4rem;
+    font-family: 'Poppins', sans-serif;
+}
+
+.logout-modal .logout-modal-body p {
+    color: black !important;
+    margin: 0 0 18px 0;
+    font-size: 1.1rem;
+    background-color: transparent !important;
+}
+
+.logout-modal-footer {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+}
+
+.logout-cancel-btn,
+.logout-confirm-btn {
+    padding: 8px 22px;
+    border: none;
+    border-radius: 5px;
+    font-weight: 500;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background 0.2s;
+    
+}
+
+.logout-cancel-btn {
+    background: #018dff;
+    color: #fff;
+    font-family: 'Poppins', sans-serif;
+}
+
+.logout-cancel-btn:hover {
+  background: #0075d6; /* darker blue */
+}
+
+.logout-confirm-btn:hover {
+  background: #d93636; /* darker red */
+}
+
+.logout-confirm-btn {
+    background: #fa4141;
+    color: #fff;
+    font-family: 'Poppins', sans-serif;
+}
+
+.logout-confirm-btn:hover {
+    background: #fa4141;
+}

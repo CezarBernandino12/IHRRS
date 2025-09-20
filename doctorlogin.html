@@ -1,0 +1,88 @@
+ <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8" />
+      <link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+      <title>Rural Health Physician Login</title>
+      <link rel="stylesheet" href="css/login.css">
+    </head>
+    <body>
+      <div class="container">
+        <div class="form-content"> 
+          <!-- LOGIN FORM -->
+          <div id="login-form">
+            <a href="role.html" class="back-btn">
+              <i class="bx bx-arrow-back"></i> <!-- Back arrow icon -->
+            </a>
+            <img src="img/logo.png" class="Img" alt="Logo">
+            <h2>RHU Physician</h2>
+            <form action="LOGIN/DOCTORlogin.php" method="POST">
+              <label>Username</label>
+              <div class="input-box">
+                <span class="icon"><i class="bx bx-user"></i></span>
+                <input type="text" name="username" placeholder="Enter your username" required />
+              </div>
+            
+              <label>Password</label> 
+              <div class="input-box">
+                <span class="icon"><i class="bx bx-lock"></i></span>
+                <input type="password" name="password" id="doctor-password" placeholder="Enter your password" required />
+                  <span class="toggle-password" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer;">
+    <i class="bx bx-show" id="toggleDoctorPasswordIcon"></i>
+  </span> 
+                <div id="error-message" style="color: red; display: none;"></div>
+              </div>              <div class="remember-forgot">
+                <a href="LOGIN/forgot_password.html">Forgot password?</a>
+              </div>            
+              <button type="submit" class="login-btn">LOGIN</button>
+            </form>
+      
+          </div>
+    
+    <script>
+
+      // Password show/hide toggle
+document.addEventListener('DOMContentLoaded', function () {
+  const toggleIcon = document.getElementById('toggleDoctorPasswordIcon');
+  const passwordInput = document.getElementById('doctor-password');
+
+  toggleIcon.addEventListener('click', function () {
+    const isVisible = passwordInput.type === 'text';
+    passwordInput.type = isVisible ? 'password' : 'text';
+    toggleIcon.classList.toggle('bx-show');
+    toggleIcon.classList.toggle('bx-hide');
+  });
+});
+
+
+      
+  // Get URL parameters
+  const urlParams = new URLSearchParams(window.location.search);
+
+   // Show error message if present
+  const errorMessage = urlParams.get('error');
+  const errorText = document.getElementById('error-message');
+  if (errorMessage && errorText) {
+    errorText.textContent = errorMessage;
+    errorText.style.display = 'block';
+  }
+
+
+
+   // Show success modal if success message is present
+  const successMessage = urlParams.get('success');
+  if (successMessage) {
+    const successModal = document.getElementById("successModal");
+    const successText = document.getElementById("success-message");
+    
+    if (successModal && successText) { // Check if elements exist
+      successText.textContent = successMessage;
+      successModal.style.display = "block";
+    }
+  }
+
+    </script>
+    </body>
+    </html>
+    

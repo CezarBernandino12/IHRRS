@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="icon" href="../img/logo.png">
+	<link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/history.css">
+    <link rel="stylesheet" href="css/modal.css">
+    <link rel="stylesheet" href="css/logout.css">
+
+	<title>Referral History</title>
+</head>
+<body>
+
+<script>
+// Check if user is logged in
+fetch('php/getUserId.php')
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            // User is not logged in, redirect to role selection page
+            window.location.href = '../role.html';
+        }
+    })
+    .catch(error => {
+        console.error('Error checking session:', error);
+        window.location.href = '../role.html';
+    });
+</script>
+
+	<!-- Sidebar Section -->
+<section id="sidebar">
+		<a href="#" class="brand">
+			<img src="../img/logo.png" alt="RHULogo" class="logo">
+			<span class="text">IHRRS</span>
+		</a>
+		<ul class="side-menu top">
+			<li>
+				<a href="dashboard.html">
+					<i class="bx bxs-dashboard"></i>
+					<span class="text">Dashboard</span>
+				</a>
+			</li>
+			<li>
+				<a href= "ITR.html">
+					<i class="bx bxs-user"></i>
+					<span class="text">Add New ITR</span>
+				</a>
+			</li>
+			<li class="active">
+				<a href="searchPatient.html">
+					<i class="bx bxs-notepad"></i>
+					<span class="text">Patient Records</span>
+				</a>
+			</li>
+
+			<li>
+				<a href="history.html">
+					<i class="bx bx-history"></i>
+					<span class="text">Referral History</span>
+				</a>
+			</li>
+			<li>
+				<a href="reports.html">
+					<i class="bx bx-notepad"></i>
+					<span class="text">Reports</span>
+				</a>
+			</li>
+		</ul>
+		<ul class="side-menu">
+			<li>
+<a href="#" class="logout" onclick="return confirmLogout()">
+               <i class="bx bxs-log-out-circle"></i>
+                <span class="text">Logout</span>
+                </a>			</li>
+		</ul>
+	</section>
+
+	<!-- Main Content Section -->
+	<section id="content">
+		<nav>
+			<form id="searchForm" onsubmit="return false;">
+				<div class="form-input">
+					<input type="search" id="searchInput" placeholder="Search...">
+					<button type="submit" class="search-btn">
+						<i class="bx bx-search"></i>
+					</button>
+				</div>
+			</form>
+            <div class="greeting">
+                <span id="userGreeting">Hello BHW!</span>
+            </div>
+			<a href="#" class="profile">
+				<img src="../img/bhw.png">
+			</a>
+		</nav>
+
+		<main>
+            
+            <div class="head-title">
+                <div class="left">
+                  <h1>Record History</h1>
+                  <ul class="breadcrumb">
+                    <li><a href="#">Record History</a></li>
+                    <li><i class="bx bx-chevron-right"></i></li>
+                    <li><a class="active" href="#" onclick="history.back(); return false;">Go back</a></li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="header">
+                <div class="date-picker">
+                    <label for="date">Select date:</label>
+            <input type="date" id="date" name="date" />
+                <button id="applyFilter">Apply Filter</button>
+				<style>
+
+				</style>
+             
+				
+            </div>
+            </div>
+            <div class="history-container">
+				<table id="visitTable" class="status">
+					<thead>
+						<tr>
+							<th>Date</th>
+							<th>Patient Name</th>
+							<th>Recorded by</th>
+							
+						</tr>
+					</thead>
+					<tbody>
+						<!-- Filled by JavaScript -->
+					</tbody>
+				</table>
+				
+                
+				<div class="pagination" id="pagination">
+					<a href="#" class="prev">Previous</a>
+					<a href="#" class="page-number active">1</a>
+					<a href="#" class="page-number">2</a>
+					<a href="#" class="page-number">3</a>
+					<a href="#" class="next">Next</a>
+				</div>
+				
+            </div>
+         
+			<div id="confirmationModal" class="modal">
+                <div class="modal-content">
+                 
+                  
+                  <div class="modal-header">
+                    <!-- Optional: checkmark image -->
+                    <!-- <img src="checkmark.png" alt="Check" class="checkmark-image"> -->
+                    <h3 id="modalTitle">Confirm Action</h3>
+                  </div>
+              
+                  <div class="modal-body">
+                    <p id="modalMessage">Are you sure you want to proceed with this action?</p>
+                  </div>
+              
+                  <div class="modal-footer">
+                    <button id="confirmAction" class="btn yes">Yes</button>
+                    <button id="cancelAction" class="btn no">No</button>
+                  </div>
+                </div>
+              </div>
+              
+			
+			<style>
+                
+            </style>
+	   </main>	
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const tableBody = document.querySelector('#visitTable tbody');
+    let allData = [];
+
+    // Fetch all records and store in memory
+    fetch('php/fetch_records_history.php')
+        .then(response => response.json())
+        .then(data => {
+            allData = data;
+            displayTable(data); // Initial display
+        })
+        .catch(error => {
+            console.error('Error fetching visit data:', error);
+        });
+
+    // Display records in table
+    function displayTable(data) {
+        tableBody.innerHTML = ''; // Clear old data
+        
+        if (data.length === 0) {
+            // Show "No record found." message
+            const tr = document.createElement('tr');
+            const td = document.createElement('td');
+            td.colSpan = 3;  // Span across all columns
+            td.textContent = 'No record found.';
+            td.style.textAlign = 'center';  // Center the message
+            tableBody.appendChild(tr);
+            tr.appendChild(td);
+        } else {
+            data.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${row.visit_date}</td>
+                    <td>${row.patient_name}</td>
+                    <td>${row.recorded_by}</td>
+                `;
+                tr.style.cursor = 'pointer';
+                tr.addEventListener('click', () => {
+                    window.location.href = `visitInfo.html?visit_id=${row.visit_id}`;
+                });
+                tableBody.appendChild(tr);
+            });
+        }
+    }
+
+    // Filter button logic
+    document.getElementById('applyFilter').addEventListener('click', () => {
+        const selectedDate = document.getElementById('date').value;
+        if (!selectedDate) return;
+
+        // Remove the time part from the stored visit_date (e.g., '2025-04-19 14:25:31' -> '2025-04-19')
+        const filtered = allData.filter(row => row.visit_date.split(' ')[0] === selectedDate);
+        
+        displayTable(filtered);
+    });
+});
+
+// Add this to your existing JavaScript
+document.getElementById('searchForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    loadRecords();
+});
+
+document.getElementById('searchInput').addEventListener('input', function(e) {
+    // Add a small delay to prevent too many requests
+    clearTimeout(this.searchTimeout);
+    this.searchTimeout = setTimeout(() => {
+        loadRecords();
+    }, 300);
+});
+
+function loadRecords() {
+    const searchTerm = document.getElementById('searchInput').value;
+    fetch(`php/fetch_records_history.php?search=${encodeURIComponent(searchTerm)}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                console.error('Error:', data.error);
+                return;
+            }
+            // Update your table with the filtered results
+            updateTable(data);
+        })
+        .catch(error => console.error('Error:', error));
+}
+
+function updateTable(data) {
+    const tbody = document.querySelector('table tbody');
+    tbody.innerHTML = '';
+    
+    if (data.length === 0) {
+        const tr = document.createElement('tr');
+        const td = document.createElement('td');
+        td.colSpan = 3;  // Span across all columns
+        td.textContent = 'No record found.';
+        td.style.textAlign = 'center';  // Center the message
+        tr.appendChild(td);
+        tbody.appendChild(tr);
+    } else {
+        data.forEach(record => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${formatDate(record.visit_date)}</td>
+                <td>${record.patient_name}</td>
+                <td>${record.recorded_by}</td>
+            `;
+            row.style.cursor = 'pointer';
+            row.addEventListener('click', () => {
+                window.location.href = `visitInfo.html?visit_id=${record.visit_id}`;
+            });
+            tbody.appendChild(row);
+        });
+    }
+}
+
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+}
+
+// Call loadRecords when the page loads
+document.addEventListener('DOMContentLoaded', loadRecords);
+
+	</script>
+	
+	<script src="js/recordhistory.js"></script>
+	<script src="js/script.js"></script>
+
+<div id="logoutModal" class="logout-modal">
+    <div class="logout-modal-content">
+        <div class="logout-modal-header">
+            <h3>Confirm Logout</h3>
+        </div>
+        <div class="logout-modal-body">
+            <p>Are you sure you want to logout?</p>
+        </div>
+        <div class="logout-modal-footer">
+            <button onclick="closeModal()" class="logout-cancel-btn">Cancel</button>
+            <button onclick="proceedLogout()" class="logout-confirm-btn">Yes, Logout</button>
+        </div>
+    </div>
+</div>    
+
+
+<script>
+function confirmLogout() {
+    document.getElementById('logoutModal').style.display = 'block';
+    return false; // Prevent the default link behavior
+}
+
+function closeModal() {
+    document.getElementById('logoutModal').style.display = 'none';
+}
+
+function proceedLogout() {
+		 window.location.href = '../ADMIN/php/logout.php';
+}
+
+// Close modal when clicking outside
+window.onclick = function(event) {
+    const modal = document.getElementById('logoutModal');
+    if (event.target == modal) {
+        closeModal();
+    }
+}
+fetch('php/getUserName.php')
+    .then(response => response.json())
+    .then(data => {
+        if (data.full_name) {
+            document.getElementById('userGreeting').textContent = `Hello, ${data.full_name}!`;
+        } else {
+            document.getElementById('userGreeting').textContent = 'Hello, BHW!';
+        }
+    })
+    .catch(error => {
+        console.error('Error fetching user name:', error);
+        document.getElementById('userGreeting').textContent = 'Hello, BHW!';
+    });
+</script>
+</body>
+</html>

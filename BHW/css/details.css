@@ -1,0 +1,340 @@
+.referral-container {
+    max-width: 60%;
+    margin-left: 25%;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Field groups */
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-group-title {
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 8px;
+    font-size: 16px;
+}
+
+/* Two-column layout for name fields */
+.name-fields {
+    display: flex;
+    gap: 20px;
+}
+
+.name-field {
+    flex: 1;
+}
+
+/* Form field styling */
+.field-container {
+    margin-bottom: 20px;
+}
+
+.field-label {
+    display: block;
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+input[type="text"], 
+select,
+textarea {
+    width: 100%;
+    padding: 8px 0;
+    border: none;
+    border-bottom: 1px solid #ddd;
+    font-size: 16px;
+    transition: border-color 0.3s;
+    background-color: transparent;
+}
+
+input[type="text"]:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    border-bottom: 2px solid #4a90e2;
+}
+
+/* Address fields */
+.address-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.address-row {
+    display: flex;
+    gap: 20px;
+}
+
+.address-field {
+    flex: 1;
+}
+
+/* Select dropdown styling */
+select {
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0 center;
+    background-size: 16px;
+    padding-right: 20px;
+}
+
+/* Patient information section */
+.patient-info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.patient-field {
+    flex: 1;
+    min-width: 200px;
+}
+
+/* Vital signs section */
+.vitals {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.vital-field {
+    flex: 1;
+    min-width: 120px;
+}
+
+/* Chief complaints textarea */
+.complaints-container textarea {
+    min-height: 100px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 10px;
+}
+
+/* Diagnosis and treatment sections */
+.diagnosis-container,
+.treatment-container {
+    margin-top: 25px;
+}
+
+.diagnosis-container textarea,
+.treatment-container textarea {
+    min-height: 120px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 10px;
+}
+
+/* Header styling */
+.header-info {
+    text-align: center;
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.header-info h3 {
+    margin: 5px 0;
+    font-size: 1.1em;
+    font-weight: 500;
+}
+
+/* Action buttons */
+.referral-form-footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+/* Add this to your existing CSS file */
+
+.back-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    color: #2ecc71; /* Bright green color */
+    border: 2px solid #2ecc71;
+    border-radius: 50px;
+    padding: 12px 40px;
+    font-size: 18px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    width: 200px;
+    margin: 20px 0;
+}
+
+.back-button:hover {
+    background-color: rgba(46, 204, 113, 0.1);
+}
+
+.back-button i {
+    margin-right: 10px;
+    font-size: 20px;
+}
+
+/* Update the styles for the existing buttons in the footer */
+.referral-form-footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+.footer-btn {
+    padding: 5px 20px;
+    background-color: white;
+    color: #27548A;
+    border: 2px solid #27548A;
+    border-radius: 50px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+}
+
+.footer-btn:hover {
+    background-color: rgba(46, 204, 113, 0.1);
+}
+
+#goBackBtn::before {
+    content: "< ";
+    margin-right: 5px;
+    font-size: 18px;
+}
+.footer-btns {
+    padding: 10px 18px;
+    margin-left: 10px;
+    background-color: #162e51;
+    color: white;
+    font-size: 15px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.footer-btns:hover {
+    background-color: #15253d;
+}
+
+/* View record link */
+.view-record-link {
+    color: #4a90e2;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: color 0.3s;
+}
+
+.view-record-link:hover {
+    color: #3a7bc8;
+    text-decoration: underline;
+}
+
+/* Improved print styles for the referral form */
+@media print {
+    @page {
+        size: A4;
+        margin: 10mm; /* Reduced margins */
+    }
+    
+    body * {
+        visibility: hidden;
+    }
+    
+    .referral-container, .referral-container * {
+        visibility: visible;
+    }
+    
+    .referral-container {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+        padding: 10px;
+        box-shadow: none;
+        border: none;
+        font-size: 11pt; /* Slightly smaller font size */
+    }
+
+    /* Header adjustments */
+    .header-info {
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+    }
+    
+    .header-info h3 {
+        margin: 3px 0;
+        font-size: 14pt;
+    }
+    
+    /* Compress spacing */
+    .form-group {
+        margin-bottom: 15px;
+    }
+    
+    .field-container {
+        margin-bottom: 10px;
+    }
+    
+    /* Make fields more compact */
+    .name-fields, .patient-info, .vitals {
+        gap: 10px;
+    }
+    
+    /* Reduce space in text areas */
+    .diagnosis-container, .treatment-container {
+        margin-top: 15px;
+    }
+    
+    /* Make chief complaints area shorter */
+    .complaints-container textarea {
+        min-height: 60px;
+    }
+    
+    /* Make diagnosis and treatment areas shorter */
+    .diagnosis-container textarea, 
+    .treatment-container textarea {
+        min-height: 80px;
+    }
+    
+    /* Hide navigation elements */
+    .view-record-link, .footer-btn, .referral-form-footer {
+        display: none;
+    }
+    
+    /* Adjust form spacing */
+    .form-group-title {
+        margin-bottom: 5px;
+        font-size: 12pt;
+    }
+    
+    /* Adjust field label spacing */
+    .field-label {
+        margin-bottom: 2px;
+        font-size: 9pt;
+    }
+    
+    /* Adjust field value spacing */
+    .field-value {
+        font-size: 11pt;
+        line-height: 1.3;
+    }
+}

@@ -1,0 +1,876 @@
+<?php
+require '../../php/db_connect.php';
+
+session_start();
+if (!isset($_SESSION['user_id'])) {
+    header("Location: ../../role.html");
+    exit;
+}
+
+$userId = $_SESSION['user_id'];// or however you store the logged-in user's ID
+
+// Fetch user info
+$stmt = $pdo->prepare("SELECT barangay FROM users WHERE user_id = ?");
+$stmt->execute([$userId]);
+$user = $stmt->fetch();
+ 
+$barangayName = $user ? $user['barangay'] : 'N/A';
+
+
+// Get filter values
+$from_date = $_GET['from_date'] ?? '';
+$to_date = $_GET['to_date'] ?? '';
+$referral_status = $_GET['status'] ?? '';
+$bhw_id = $_GET['bhw'] ?? '';
+$sex = $_GET['sex'] ?? '';
+$age_group = $_GET['age_group'] ?? '';
+$status = $_GET['status'] ?? '';
+
+
+// Fetch BHWs for dropdown
+$bhw_stmt = $pdo->query("SELECT user_id, full_name FROM users WHERE role = 'BHW'");
+$bhws = $bhw_stmt->fetchAll();
+
+// Build SQL
+$sql = "SELECT r.*, p.first_name, p.last_name, p.sex, p.age, v.visit_date, v.chief_complaints, u.full_name AS bhw_name
+        FROM referrals r
+        JOIN patient_assessment v ON r.visit_id = v.visit_id
+        JOIN patients p ON r.patient_id = p.patient_id
+        JOIN users u ON r.referred_by = u.user_id
+        WHERE p.address LIKE :barangay";
+
+$params = [];
+$params['barangay'] = '%' . $barangayName . '%';
+
+if (!empty($from_date) && !empty($to_date)) {
+    $sql .= " AND DATE(r.referral_date) BETWEEN :from AND :to";
+    $params['from'] = $from_date;
+    $params['to'] = $to_date;
+}
+
+if (!empty($referral_status)) {
+    $sql .= " AND r.referral_status = :status";
+    $params['status'] = $referral_status;
+}
+
+if (!empty($bhw_id)) {
+    $sql .= " AND r.referred_by = :bhw";
+    $params['bhw'] = $bhw_id;
+}
+if (!empty($sex)) {
+    $sql .= " AND p.sex = :sex";
+    $params['sex'] = $sex;
+}
+if (!empty($age_group)) {
+    switch ($age_group) {
+        case 'child': $sql .= " AND p.age < 13"; break;
+        case 'teen':  $sql .= " AND p.age BETWEEN 13 AND 19"; break;
+        case 'adult': $sql .= " AND p.age BETWEEN 20 AND 59"; break;
+        case 'senior':$sql .= " AND p.age >= 60"; break;
+    }
+}
+
+$sql .= " ORDER BY r.referral_date DESC";
+
+$stmt = $pdo->prepare($sql);
+$stmt->execute($params);
+$rows = $stmt->fetchAll();
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="icon" href="../../img/logo.png">
+	<link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/reportsDesign.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+	<title>Referrals Report</title>
+</head>
+<body>
+
+
+ 
+	<!-- Sidebar Section -->
+<section id="sidebar">
+		<a href="#" class="brand">
+			<img src="../../img/logo.png" alt="RHULogo" class="logo">
+			<span class="text">IHRRS</span>
+		</a>
+		<ul class="side-menu top">
+			<li>
+				<a href="../dashboard.html">
+					<i class="bx bxs-dashboard"></i>
+					<span class="text">Dashboard</span>
+				</a>
+			</li>
+			<li>
+				<a href= "../ITR.html">
+					<i class="bx bxs-user"></i>
+					<span class="text">Add ITR</span>
+				</a>
+			</li>
+			<li>
+				<a href="../searchPatient.html">
+					<i class="bx bxs-notepad"></i>
+					<span class="text">Patient Records</span>
+				</a>
+			</li>
+
+			<li>
+				<a href="../history.html">
+					<i class="bx bx-history"></i>
+					<span class="text">Referral History</span>
+				</a>
+			</li>
+            <li class="active">
+				<a href="../reports.html">
+					<i class="bx bx-notepad"></i>
+					<span class="text">Reports</span>
+				</a>
+			</li>
+		</ul>
+		<ul class="side-menu">
+			<li>
+				<a href="../../role.html" class="logout" onclick="return confirmLogout()">
+					<i class="bx bxs-log-out-circle"></i>
+					<span class="text">Logout</span>
+				</a>
+			</li>
+		</ul>
+	</section>
+
+	<!-- Main Content Section -->
+	<section id="content">
+    <nav>
+			<form action="#">
+				
+			</form>
+			<div class="greeting">
+                <span id="userGreeting">Hello BHW!</span>
+            </div>
+			<a href="#" class="profile">
+				<img src="../../img/bhw.png">
+			</a>
+		</nav>
+
+		<main>
+            
+            <div class="head-title">
+                <div class="left">
+                  <h1>Referrals</h1>
+                  <ul class="breadcrumb">
+                    <li><a href="#">Referral Report</a></li>
+                    <li><i class="bx bx-chevron-right"></i></li>
+                    <li><a class="active" href="#" onclick="history.back(); return false;">Go back</a></li>
+                  </ul>
+                </div>
+              </div>
+
+      <br> <br>
+            </div>
+
+<div class="history-container">
+
+
+<form method="GET" class="filter-form">
+    <h2>Referral Report - BHS <?php echo htmlspecialchars($barangayName); ?></h2> <br>
+
+   
+    <!-- Filter Modal Trigger -->
+   
+        <div class="form-submit">
+               <button type="button" class="btn-export" id="openFilterModal">Filter</button>
+        <button type="button" class="btn-export" onclick="exportTableToExcel('reportTable')">Export to Excel</button>
+        <button type="button" class="btn-export" onclick="exportTableToPDF()">Export to PDF</button>
+        <button type="button" class="btn-print" onclick="printDiv()">Print this page</button>
+    </div>
+
+    <!-- Modern Filter Tags Display -->
+    <div class="selected-filters" style="margin: 20px 0;">
+        <h3 style="margin-bottom: 10px;"><i class="bx bx-filter-alt"></i> Selected Filters:</h3>
+        <div id="filterTags" style="display: flex; flex-wrap: wrap; gap: 8px;">
+            <?php
+            // Helper for tag rendering
+            function renderTag($label, $param, $value) {
+                $display = htmlspecialchars($label . ': ' . $value);
+                $url = $_GET;
+                unset($url[$param]);
+                $query = http_build_query($url);
+                echo '<span class="filter-tag" style="background:#e3e6ea;color:#222;padding:6px 12px;border-radius:16px;display:inline-flex;align-items:center;font-size:14px;">';
+                echo $display;
+                echo ' <a href="?' . $query . '" style="margin-left:8px;color:#888;text-decoration:none;font-weight:bold;" title="Remove filter">&times;</a>';
+                echo '</span>';
+            }
+
+            // Render tags for each filter if set
+            if ($from_date) renderTag('From', 'from_date', $from_date);
+            if ($to_date) renderTag('To', 'to_date', $to_date);
+            if ($sex) renderTag('Sex', 'sex', $sex);
+            if ($status) renderTag('Status', 'status', $status);
+            if ($bhw_id) renderTag('Bhw', 'bhw', $bhw_id);
+            if ($age_group) {
+                $age_labels = [
+                    'child' => 'Child (0–12)', 'teen' => 'Teen (13–19)',
+                    'adult' => 'Adult (20–59)', 'senior' => 'Senior (60+)'
+                ];
+                renderTag('Age Group', 'age_group', $age_labels[$age_group] ?? ucfirst($age_group));
+            }
+        
+            // If no filters, show "All"
+            if (
+                !$from_date && !$to_date && !$sex && !$age_group &&
+                !$status && !$bhw_id 
+            ) {
+                echo '<span style="color:#888;">All</span>';
+            }
+            ?>
+        </div>
+    </div>
+    <style>
+        .filter-tag a:hover { color: #e15759; }
+    </style>
+
+
+  <!-- Filter Modal -->
+    <div id="filterModal" class="modal" style="display:none;">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3>Apply Filters</h3>
+            </div>
+            <form method="GET" id="filterForm">
+                <div class="modal-body">
+                    <div class="form-row">
+                        <!-- From Date -->
+                        <div class="form-item">
+                            <label for="from_date">From:</label>
+                            <input type="date" name="from_date" id="from_date" class="form-control" value="<?= $from_date ? htmlspecialchars($from_date) : '' ?>" placeholder="Select date">
+                        </div>
+                        <!-- To Date -->
+                        <div class="form-item">
+                            <label for="to_date">To:</label>
+                            <input type="date" name="to_date" id="to_date" class="form-control" value="<?= $to_date ? htmlspecialchars($to_date) : '' ?>" placeholder="Select date">
+                        </div>
+                        <div class="form-item">
+                            <label for="sex">Sex:</label>
+                            <select name="sex" id="sex" class="form-control">
+                                <option value="" <?= $sex == '' ? 'selected' : '' ?>>All</option>
+                                <option value="Male" <?= $sex == 'Male' ? 'selected' : '' ?>>Male</option>
+                                <option value="Female" <?= $sex == 'Female' ? 'selected' : '' ?>>Female</option>
+                            </select>
+                        </div>
+                        <div class="form-item">
+                            <label for="age_group">Age Group:</label>
+                            <select name="age_group" id="age_group" class="form-control">
+                                <option value="">All</option> 
+                                <option value="child" <?= $age_group == 'child' ? 'selected' : '' ?>>Child (0–12)</option>
+                                <option value="teen" <?= $age_group == 'teen' ? 'selected' : '' ?>>Teen (13–19)</option>
+                                <option value="adult" <?= $age_group == 'adult' ? 'selected' : '' ?>>Adult (20–59)</option>
+                                <option value="senior" <?= $age_group == 'senior' ? 'selected' : '' ?>>Senior (60+)</option>
+                            </select> </div>
+                            
+        <div class="form-item">
+            <label for="status">Status:</label>
+            <select name="status" id="status">
+                <option value="">-- All --</option>
+                <option value="Pending" <?= $referral_status === 'Pending' ? 'selected' : '' ?>>Pending</option>
+                <option value="Completed" <?= $referral_status === 'Completed' ? 'selected' : '' ?>>Completed</option>
+                <option value="Uncompleted" <?= $referral_status === 'Uncompleted' ? 'selected' : '' ?>>Uncompleted</option>
+                <option value="Canceled" <?= $referral_status === 'Canceled' ? 'selected' : '' ?>>Canceled</option>
+            </select>
+        </div>
+
+        <div class="form-item">
+            <label for="bhw">Referred by:</label>
+            <select name="bhw" id="bhw">
+                <option value="">-- All --</option>
+                <?php foreach ($bhws as $bhw): ?>
+                    <option value="<?= $bhw['user_id'] ?>" <?= $bhw['user_id'] == $bhw_id ? 'selected' : '' ?>>
+                        <?= htmlspecialchars($bhw['full_name']) ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </div>       
+                            
+                        </div>
+                    </div>
+                     <div class="modal-footer" style="text-align:right;">
+                    <button type="button" class="btn" id="closeFilterModal">Cancel</button>
+                    <button type="submit" class="btn-submit">Apply Filter</button>
+                </div>
+              
+               
+            </form>
+              </div>
+        </div>
+
+
+
+    <script>
+    // Modal logic for filter
+    document.getElementById('openFilterModal').onclick = function() {
+        document.getElementById('filterModal').style.display = 'block';
+    };
+
+          // Initialize Flatpickr AFTER the modal is visible
+    setTimeout(() => {
+        // Check if Flatpickr instances already exist, destroy them first
+        const fromDateInput = document.getElementById('from_date');
+        const toDateInput = document.getElementById('to_date');
+        
+        if (fromDateInput._flatpickr) {
+            fromDateInput._flatpickr.destroy();
+        }
+        if (toDateInput._flatpickr) {
+            toDateInput._flatpickr.destroy();
+        }
+        
+        // Initialize Flatpickr on visible elements
+        flatpickr("#from_date", {
+            dateFormat: "Y-m-d",
+            allowInput: true,
+            disableMobile: true
+        });
+        
+        flatpickr("#to_date", {
+            dateFormat: "Y-m-d",
+            allowInput: true,
+            disableMobile: true
+        });
+    }, 100); // Small delay to ensure modal is fully visible
+
+
+    document.getElementById('closeFilterModal').onclick = function() {
+        document.getElementById('filterModal').style.display = 'none';
+    };
+    // Submit modal form
+    document.getElementById('filterForm').onsubmit = function() {
+        document.getElementById('filterModal').style.display = 'none';
+        return true; // allow form submit
+    };
+    // Close modal when clicking outside
+    window.addEventListener('click', function(event) {
+        var modal = document.getElementById('filterModal');
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
+    });
+    </script>
+
+</form>
+
+
+
+<div class="main-content">
+
+<div class="print-area">
+<div class="print-header" style="text-align: center;">
+  <h3>Republic of the Philippines</h3>
+  <p>Province of Camarines Norte</p>
+  <h3>Municipality of Daet</h3>
+  <h2><?php echo htmlspecialchars($barangayName); ?></h2>
+  <br> 
+  <h2>BHS REFERRAL REPORT</h2>
+  (<?php
+$filters = [];
+if ($from_date) $filters[] = "From <strong>" . htmlspecialchars($from_date) . "</strong>";
+if ($to_date) $filters[] = "To <strong>" . htmlspecialchars($to_date) . "</strong>";
+if ($referral_status) $filters[] = "Status: <strong>" . htmlspecialchars($status) . "</strong>";
+if ($bhw_id) {
+    $bhw_name = '';
+    foreach ($bhws as $bhw) {
+        if ($bhw['user_id'] == $bhw_id) {
+            $bhw_name = $bhw['full_name'];
+            break;
+        }
+    }
+    $filters[] = "Referred by: <strong>" . htmlspecialchars($bhw_name) . "</strong>";
+}
+
+if ($sex) $filters[] = "Sex: <strong>" . htmlspecialchars($sex) . "</strong>";
+if ($age_group) {
+    $age_labels = [
+        'child' => 'Child (0–12)',
+        'teen' => 'Teen (13–19)',
+        'adult' => 'Adult (20–59)',
+        'senior' => 'Senior (60+)'
+    ];
+    $filters[] = "Age Group: <strong>" . ($age_labels[$age_group] ?? htmlspecialchars($age_group)) . "</strong>";
+}
+
+
+
+echo $filters ? implode("&nbsp; | &nbsp;", $filters) : "All Records";
+?>)</h3> <br><br><br>
+</div>
+<div class="report-content">
+<style>
+    @media print {
+        .chart { 
+           display: none;
+        }
+    }
+</style>
+
+
+
+<!-- Chart Visibility Controls -->
+<div style="margin: 20px;" class="chart">
+    <h3>Charts:</h3>
+    <label><input type="checkbox" id="toggleReferralChart"> Show Visits With and Without Referral</label> <br>
+
+
+</div>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const chartMapping = {
+        toggleReferralChart: "referralChart"
+    };
+
+    Object.keys(chartMapping).forEach(toggleId => {
+        const checkbox = document.getElementById(toggleId);
+        const chartElement = document.getElementById(chartMapping[toggleId]);
+
+        if (checkbox && chartElement) {
+            checkbox.addEventListener("change", () => {
+                chartElement.style.display = checkbox.checked ? "block" : "none";
+            });
+
+            // Initialize state
+            chartElement.style.display = checkbox.checked ? "block" : "none";
+        }
+    });
+});
+</script>
+
+
+<?php
+// Count sent referrals (matches current filters)
+$referral_count = count($rows);
+
+// Build visits-without-referral query using same filters
+$visit_sql = "SELECT COUNT(*) FROM patient_assessment v
+    JOIN patients p ON v.patient_id = p.patient_id
+    WHERE p.address LIKE :barangay
+    AND v.visit_id NOT IN (SELECT visit_id FROM referrals)";
+$visit_params = ['barangay' => '%' . $barangayName . '%'];
+
+// Apply filters to visits (reuse logic)
+if (!empty($from_date) && !empty($to_date)) {
+    $visit_sql .= " AND DATE(v.visit_date) BETWEEN :from AND :to";
+    $visit_params['from'] = $from_date;
+    $visit_params['to'] = $to_date;
+}
+if (!empty($sex)) {
+    $visit_sql .= " AND p.sex = :sex";
+    $visit_params['sex'] = $sex;
+}
+if (!empty($age_group)) {
+    switch ($age_group) {
+        case 'child': $visit_sql .= " AND p.age < 13"; break;
+        case 'teen':  $visit_sql .= " AND p.age BETWEEN 13 AND 19"; break;
+        case 'adult': $visit_sql .= " AND p.age BETWEEN 20 AND 59"; break;
+        case 'senior':$visit_sql .= " AND p.age >= 60"; break;
+    }
+}
+if (!empty($bhw_id)) {
+    $visit_sql .= " AND v.recorded_by = :bhw";
+    $visit_params['bhw'] = $bhw_id;
+}
+
+$visit_stmt = $pdo->prepare($visit_sql);
+$visit_stmt->execute($visit_params);
+$visits_without_referral = (int)$visit_stmt->fetchColumn();
+?>
+
+<!-- Pie Chart Section -->
+<div id="referralChart" class="chart" style="max-width:400px;margin:30px auto 30px auto; display: none;">
+    <canvas id="referralPieChart"></canvas>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const ctx = document.getElementById('referralPieChart').getContext('2d');
+const referralCount = <?= $referral_count ?>;
+const visitsWithoutReferral = <?= $visits_without_referral ?>;
+const pieChart = new Chart(ctx, {
+    type: 'pie',
+    data: {
+        labels: ['Sent Referrals', 'Visits Without Referral'],
+        datasets: [{
+            data: [referralCount, visitsWithoutReferral],
+            backgroundColor: ['#1c538a', '#e3e6ea'],
+            borderColor: ['#1c538a', '#e3e6ea'],
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: { position: 'bottom' },
+            title: {
+                display: true,
+                text: 'Referrals vs. Visits Without Referral'
+            }
+        }
+    }
+});
+</script>
+
+
+<!-- Referral Status Distribution Pie Chart -->
+<?php
+// Count referral statuses based on current filters
+$status_counts = [
+    'Completed' => 0,
+    'Uncompleted' => 0,
+    'Pending' => 0,
+    'Canceled' => 0
+];
+foreach ($rows as $row) {
+    $status = ucfirst(strtolower($row['referral_status']));
+    if (isset($status_counts[$status])) {
+        $status_counts[$status]++;
+    }
+}
+?>
+
+<div class="chart" style="max-width:400px;margin:30px auto 30px auto;">
+    <canvas id="statusPieChart"></canvas>
+</div>
+<script>
+const statusCtx = document.getElementById('statusPieChart').getContext('2d');
+const statusData = {
+    labels: ['Completed', 'Uncompleted', 'Pending', 'Canceled'],
+    datasets: [{
+        data: [
+            <?= $status_counts['Completed'] ?>,
+            <?= $status_counts['Uncompleted'] ?>,
+            <?= $status_counts['Pending'] ?>,
+            <?= $status_counts['Canceled'] ?>
+        ],
+        backgroundColor: [
+            '#2e8540',    // Completed - green
+            '#d83933',    // Uncompleted - red
+            '#1c538a',    // Pending - blue
+            '#888888'     // Canceled - gray
+        ],
+        borderColor: [
+            '#2e8540',
+            '#d83933',
+            '#1c538a',
+            '#888888'
+        ],
+        borderWidth: 1
+    }]
+};
+const statusPieChart = new Chart(statusCtx, {
+    type: 'pie',
+    data: statusData,
+    options: {
+        responsive: true,
+        plugins: {
+            legend: { position: 'bottom' },
+            title: {
+                display: true,
+                text: 'Referral Status Distribution'
+            }
+        }
+    }
+});
+</script>
+
+
+
+<!-- Summary -->
+<div class="summary-container">
+    <div class="summary">
+        <h4><i class="bx bx-filter-alt"></i>Summary:</h4>
+    <ul  class="summary-list">
+         <li>
+                <strong>Report Generated On:</strong> <?= date('Y-m-d H:i:s') ?>
+            </li>
+        <li><strong>Total Referrals:</strong> <?= $referral_count ?></li>
+        <li><strong>Visits With Referral:</strong> <?= $referral_count ?></li>
+        <li><strong>Visits Without Referral:</strong> <?= $visits_without_referral ?></li>
+        <li><strong>Pending Referrals:</strong> <?= $status_counts['Pending'] ?></li>
+        <li><strong>Completed Referrals:</strong> <?= $status_counts['Completed'] ?></li>
+        <li><strong>Uncompleted Referrals:</strong> <?= $status_counts['Uncompleted'] ?></li>
+        <li><strong>Canceled Referrals:</strong> <?= $status_counts['Canceled'] ?></li>
+    </ul>
+    </div>
+
+</div>
+
+
+
+<?php if ($rows): ?>
+<table id="reportTable">
+    <thead>
+        <tr>
+            <th>Referral Date</th>
+            <th>Patient</th>
+            <th>Sex</th>
+            <th>Age</th>
+            <th>Visit Date</th>
+            <th>Chief Complaints</th>
+            <th>Referral Status</th>
+            <th>Referred By</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php foreach ($rows as $row): ?>
+        <tr>
+            <td><?= htmlspecialchars($row['referral_date']) ?></td>
+            <td><?= htmlspecialchars($row['first_name'] . ' ' . $row['last_name']) ?></td>
+            <td><?= htmlspecialchars($row['sex']) ?></td>
+            <td><?= htmlspecialchars($row['age']) ?></td>
+            <td><?= htmlspecialchars($row['visit_date']) ?></td>
+            <td><?= htmlspecialchars($row['chief_complaints']) ?></td>
+            <td>
+                <?php 
+                $statusClass = '';
+                switch(strtolower($row['referral_status'])) {
+                    case 'pending':
+                        $statusClass = 'status-pending';
+                        break;
+                    case 'completed':
+                        $statusClass = 'status-completed';
+                        break;
+                    case 'uncompleted':
+                    case 'canceled':
+                        $statusClass = 'status-uncompleted';
+                        break;
+                }
+                ?>
+                <span class="referral-status <?php echo $statusClass; ?>">
+                    <?php echo htmlspecialchars($row['referral_status']); ?>
+                </span>
+            </td>
+            <td><?= htmlspecialchars($row['bhw_name']) ?></td>
+        </tr>
+        <?php endforeach; ?>
+    </tbody>
+</table>
+     <br>
+
+    <br> <br>
+     <span id="generated_by"></span>
+
+<?php else: ?>
+    <p>No referrals found for the selected filters.</p>
+<?php endif; ?>
+</div> </div>
+<div id="logoutModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Confirm Logout</h3>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to logout?</p>
+            </div>
+            <div class="modal-footer">
+                <button onclick="closeModal()" class="btn yes">Cancel</button>
+                <button onclick="proceedLogout()" class="btn no">Yes, Logout</button>
+            </div>
+        </div>
+    </div> </div>
+
+<!-- jsPDF and html2canvas libraries -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<script>
+function exportTableToExcel(tableID, filename = 'report') {
+    const dataType = 'application/vnd.ms-excel';
+    const table = document.getElementById(tableID);
+    const tableHTML = table.outerHTML.replace(/ /g, '%20');
+    const downloadLink = document.createElement('a');
+
+    document.body.appendChild(downloadLink);
+    downloadLink.href = 'data:' + dataType + ', ' + tableHTML;
+    downloadLink.download = filename + '.xls';
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
+}
+
+async function exportTableToPDF() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    const table = document.getElementById('reportTable');
+
+    await html2canvas(table).then(canvas => {
+        const imgData = canvas.toDataURL('image/png');
+        const imgProps = doc.getImageProperties(imgData);
+        const pdfWidth = doc.internal.pageSize.getWidth();
+        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+        doc.addImage(imgData, 'PNG', 10, 10, pdfWidth - 20, pdfHeight);
+        doc.save("report.pdf");
+    });
+}
+
+// Make sure the status styling is preserved in exports
+function addExportStyles(doc) {
+    doc.addStyle(`
+        .referral-status { font-weight: bold; }
+        .status-pending { color: #1c538a; }
+        .status-completed { color: #2e8540; }
+        .status-uncompleted, .status-canceled { color: #d83933; }
+    `);
+}
+function printDiv() {
+    // Get chart images from the original canvases
+    function getChartImage(id, title) {
+        const canvas = document.getElementById(id);
+        if (canvas && canvas.toDataURL) {
+            return `<div style="text-align:center;margin-bottom:20px;">
+                        <h3 style="margin-bottom:8px;">${title}</h3>
+                        <img src="${canvas.toDataURL('image/png')}" style="max-width:100%;height:auto;">
+                    </div>`;
+        }
+        return '';
+    }
+
+    // Collect chart images with titles
+    let chartsHTML = '';
+    if (document.getElementById('toggleReferralChart').checked) {
+        chartsHTML += getChartImage('referralChart', 'Visits With and Without Referral');
+    }
+    chartsHTML += getChartImage('statusPieChart', 'Status');
+
+    // Clone the print area (table and summary)
+    const originalArea = document.querySelector(".print-area").cloneNode(true);
+
+    // Add 'Signature' column to header
+    const headerRow = originalArea.querySelector("thead tr");
+    if (headerRow && !headerRow.querySelector('th:last-child').textContent.includes('Signature')) {
+        const signatureHeader = document.createElement("th");
+        signatureHeader.textContent = "Signature";
+        headerRow.appendChild(signatureHeader);
+
+        // Add 'Signature' cell to each row in tbody
+        const rows = originalArea.querySelectorAll("tbody tr");
+        rows.forEach(row => {
+            const signatureCell = document.createElement("td");
+            signatureCell.style.height = "30px";
+            signatureCell.textContent = "";
+            row.appendChild(signatureCell);
+        });
+    }
+
+    // Get the print header HTML
+    const printHeader = document.querySelector('.print-header').outerHTML;
+
+    // Remove the header from the cloned area so it doesn't appear twice
+    const headerInClone = originalArea.querySelector('.print-header');
+    if (headerInClone) headerInClone.remove();
+
+    // *** REMOVE ALL CANVAS ELEMENTS FROM THE CLONED AREA ***
+    const canvases = originalArea.querySelectorAll('canvas');
+    canvases.forEach(c => c.parentNode.removeChild(c));
+
+    // Create print window and write content
+    const printWindow = window.open('', '', 'height=900,width=1100');
+    printWindow.document.write('<html><head><title>Print Report</title>');
+    printWindow.document.write(`
+        <style>
+            body { font-family: Arial, sans-serif; font-size: 12px; color: black; }
+            table { width: 100%; border-collapse: collapse; }
+            th, td { border: 1px solid #000; padding: 4px; text-align: left; }
+            thead { background-color: #f0f0f0; }
+            img { display: block; margin: 0 auto; max-width: 100%; height: auto; }
+            h3 { margin: 10px 0 5px 0; }
+            .referral-status {
+                font-weight: bold;
+                padding: 4px 8px;
+                border-radius: 3px;
+                display: inline-block;
+            }
+            .status-pending {
+                color: #1c538a;
+                border-left: 2px solid #1c538a;
+            }
+            .status-completed {
+                color: #2e8540;
+                border-left: 2px solid #2e8540;
+            }
+            .status-uncompleted, .status-canceled {
+                color: #d83933;
+                border-left: 2px solid #d83933;
+            }
+        </style>
+    `);
+    printWindow.document.write('</head><body>');
+    printWindow.document.write(printHeader); // Print header at the very top
+    printWindow.document.write(chartsHTML);  // Then charts
+    printWindow.document.write(originalArea.innerHTML);  // Then table and summary
+    printWindow.document.write('</body></html>');
+
+    printWindow.document.close();
+    printWindow.focus();
+
+    setTimeout(() => {
+        printWindow.print();
+        printWindow.close();
+    }, 500);
+}
+
+
+fetch('../php/getUserName.php')
+    .then(response => response.json())
+    .then(data => {
+        if (data.full_name) {
+            document.getElementById('userGreeting').textContent = `Hello, ${data.full_name}!`;
+                   document.getElementById('generated_by').textContent = `Generated by: ${data.full_name}`;
+        } else {
+            document.getElementById('userGreeting').textContent = 'Hello, BHW!';
+              document.getElementById('generated_by').textContent = 'Generated by: N/A';
+        }
+    })
+    .catch(error => {
+        console.error('Error fetching user name:', error);
+        document.getElementById('userGreeting').textContent = 'Hello, BHW!';
+    });
+    function confirmLogout() {
+    document.getElementById('logoutModal').style.display = 'block';
+    return false; // Prevent the default link behavior
+}
+
+function closeModal() {
+    document.getElementById('logoutModal').style.display = 'none';
+}
+
+function proceedLogout() {
+    window.location.href = '../../role.html';
+}
+
+// Close modal when clicking outside
+window.onclick = function(event) {
+    const modal = document.getElementById('logoutModal');
+    if (event.target == modal) {
+        closeModal();
+    }
+}
+
+	// Check if user is logged in
+fetch('../php/getUserId.php')
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            // User is not logged in, redirect to role selection page
+            window.location.href = '../role.html';
+        }
+    })
+    .catch(error => {
+        console.error('Error checking session:', error);
+        window.location.href = '../role.html';
+    });
+
+</script>
+
+
+</body>
+</html>
