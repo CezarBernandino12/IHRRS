@@ -292,7 +292,7 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
           <i class="bx bx-hide password-toggle" id="toggleNewPassword" style="cursor:pointer; position:absolute; right:10px; top:50%; transform:translateY(-50%);"></i>
         </div>
         <small id="passwordHelp" style="display:block; color:#888; margin-top:5px;">
-          Password must be at least 8 characters, contain a number and a capital letter.
+          Password must be at least characters, numbers and symbols.
         </small>
       </div>
       <div class="form-group">
