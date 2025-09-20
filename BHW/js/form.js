@@ -74,6 +74,58 @@ const closeBtnError = document.getElementById('errorCloseBtn');
 
 
 
+
+
+
+const checkToday = document.getElementById("setToday");
+const checkTomorrow = document.getElementById("setTomorrow");
+const referralDateInput = document.getElementById("referral_date");
+
+// Disable Yes button initially
+yesButton2.disabled = true;
+yesButton2.style.opacity = "0.5";
+
+// Function to handle checkbox selection
+function handleCheckboxChange(selectedCheckbox) {
+    // Only allow one checkbox to be checked
+    if (selectedCheckbox === checkToday && checkToday.checked) {
+        checkTomorrow.checked = false;
+    } else if (selectedCheckbox === checkTomorrow && checkTomorrow.checked) {
+        checkToday.checked = false;
+    }
+
+    // Enable Yes button only if a checkbox is checked
+    if (checkToday.checked || checkTomorrow.checked) {
+        yesButton2.disabled = false;
+        yesButton2.style.opacity = "1";
+    } else {
+        yesButton2.disabled = true;
+        yesButton2.style.opacity = "0.5";
+    }
+
+    // Set referral_date input
+    let date = new Date();
+    if (checkTomorrow.checked) {
+        date.setDate(date.getDate() + 1); // tomorrow
+    }
+    // Format date as yyyy-mm-dd
+    const yyyy = date.getFullYear();
+    const mm = String(date.getMonth() + 1).padStart(2, "0");
+    const dd = String(date.getDate()).padStart(2, "0");
+    referralDateInput.value = `${yyyy}-${mm}-${dd}`;
+}
+
+// Event listeners
+checkToday.addEventListener("change", () => handleCheckboxChange(checkToday));
+checkTomorrow.addEventListener("change", () => handleCheckboxChange(checkTomorrow));
+
+
+
+
+
+
+
+
 // Show first modal when submit button is clicked
 submitButton.addEventListener('click', function (event) {
     event.preventDefault();
@@ -324,14 +376,17 @@ yesButton2.addEventListener('click', function () {
         
     });
 });
-
-
-
 // Function to save referral
 function saveReferral(patientId, bhwId) {
     let formData = new FormData();
     formData.append("patient_id", patientId);
     formData.append("user_id", bhwId);
+
+    // Always include referral_date if available in the form
+    let referralDateField = document.getElementById("referral_date");
+    if (referralDateField) {
+        formData.append("referral_date", referralDateField.value);
+    }
 
     fetch('php/saveReferral.php', {
         method: 'POST',
@@ -342,22 +397,25 @@ function saveReferral(patientId, bhwId) {
         if (data.status === "success") {
             localStorage.setItem("referral_id", data.referral_id);
             console.log("📌 Referral saved successfully:", data.referral_id);
-            if (modal4.style.display === "block") modal4.style.display = "none";
-            modal3.style.display = "block"; // Show referral saved modal
+
+            if (typeof modal4 !== "undefined" && modal4.style.display === "block") {
+                modal4.style.display = "none";
+            }
+            if (typeof modal3 !== "undefined") {
+                modal3.style.display = "block"; // Show referral saved modal
+            }
         } else {
             console.error("❌ Error saving referral:", data.message);
             alert("Error: " + (data.message || "Unknown error"));
-            errorModal.style.display = "block";
+            if (typeof errorModal !== "undefined") errorModal.style.display = "block";
         }
     })
     .catch(error => {
         console.error("❌ Fetch Error:", error);
         alert("Network error. Please try again.");
+        if (typeof errorModal !== "undefined") errorModal.style.display = "block";
     });
 }
-
-
-
 
 
 // Close modal3
@@ -422,3 +480,4 @@ window.addEventListener('click', function (event) {
         }
     });
 });
+

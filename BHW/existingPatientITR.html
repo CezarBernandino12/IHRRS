@@ -438,6 +438,7 @@ document.addEventListener("click", function(event) {
 
             <input type="hidden" id="patient_id" name="patient_id">
             <input type="hidden" id="referral_needed" name="referral_needed">
+            <input type="date" name="referral_date" id="referral_date" hidden>
         
             <div class="button-container">
                 <button type="submit" class="submit-btn" id="submitButton" disabled>Submit</button>
@@ -468,7 +469,7 @@ document.addEventListener("click", function(event) {
 
              <input type="hidden" name="referral_status" value="pending">
 
-             <div id="myModal2" class="modal">
+       <div id="myModal2" class="modal">
                 <div class="modal-content">
                     <div class="modal-header">
                          <img src="../img/verify.png" alt="Checkmark" class="checkmark-image">
@@ -476,14 +477,27 @@ document.addEventListener("click", function(event) {
                         <span class="close-btn" id="closeBtn2">&times;</span>
                     </div>
                     <div class="modal-body">
-                        <p>Do you confirm on referring this patient?</p>
+                        <p>Select referral date: </p> <br> <br>
+                  
+                <div class="custom-consent-checkbox" style="margin-top: -30px; margin-left: -300px;">
+      <input type="checkbox" id="setToday">
+                <label for="setToday">Set for Today</label>
+                </div> 
+                  <div class="custom-consent-checkbox" style="margin-top: -10px;">
+      <input type="checkbox" id="setTomorrow">
+                <label for="setTomorrow">Set for Tomorrow (Select if physician is not available)</label>
+                </div> 
+                <br>
+
+            
                     </div>
                     <div class="modal-footer">
-                        <button id="noButton2" class="btn no">No</button>
-                        <button id="yesButton2" class="btn yes" value="yes">Yes</button>
+                        <button id="yesButton2" class="btn yes" type="submit" value="yes">Yes</button>
+                        <button id="noButton2" class="btn no" type="button">No</button>
                     </div>
                 </div>
             </div>
+
 
             <div id="myModal3" class="modal">
                 <div class="modal-content">

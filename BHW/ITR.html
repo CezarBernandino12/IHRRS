@@ -534,7 +534,7 @@ document.addEventListener("click", function(event) {
             
 <input type="hidden" name="consent_given" id="consent_given" value="COLLECTION AND USE OF PERSONAL HEALTH INFORMATION">
 <input type="hidden" name="consent_method" id="consent_method" value="verbal">
-
+<input type="date" name="referral_date" id="referral_date" hidden>
 
 
         <div class="form-container">
@@ -843,7 +843,19 @@ updateRemoveButtons();
                         <span class="close-btn" id="closeBtn2">&times;</span>
                     </div>
                     <div class="modal-body">
-                        <p>Do you confirm on referring this patient?</p>
+                        <p>Select referral date: </p> <br> <br>
+                  
+                <div class="custom-consent-checkbox" style="margin-top: -30px; margin-left: -300px;">
+      <input type="checkbox" id="setToday">
+                <label for="setToday">Set for Today</label>
+                </div> 
+                  <div class="custom-consent-checkbox" style="margin-top: -10px;">
+      <input type="checkbox" id="setTomorrow">
+                <label for="setTomorrow">Set for Tomorrow (Select if physician is not available)</label>
+                </div> 
+                <br>
+
+            
                     </div>
                     <div class="modal-footer">
                         <button id="yesButton2" class="btn yes" type="submit" value="yes">Yes</button>

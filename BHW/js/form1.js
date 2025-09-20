@@ -294,6 +294,12 @@ function saveReferral(patientId, bhwId) {
     formData.append("patient_id", patientId);
     formData.append("user_id", bhwId);
 
+    // Always include referral_date if available in the form
+    let referralDateField = document.getElementById("referral_date");
+    if (referralDateField) {
+        formData.append("referral_date", referralDateField.value);
+    }
+
     fetch('php/saveReferral.php', {
         method: 'POST',
         body: formData
@@ -303,14 +309,23 @@ function saveReferral(patientId, bhwId) {
         if (data.status === "success") {
             localStorage.setItem("referral_id", data.referral_id);
             console.log("📌 Referral saved successfully:", data.referral_id);
+
+            if (typeof modal4 !== "undefined" && modal4.style.display === "block") {
+                modal4.style.display = "none";
+            }
+            if (typeof modal3 !== "undefined") {
+                modal3.style.display = "block"; // Show referral saved modal
+            }
         } else {
             console.error("❌ Error saving referral:", data.message);
             alert("Error: " + (data.message || "Unknown error"));
+            if (typeof errorModal !== "undefined") errorModal.style.display = "block";
         }
     })
     .catch(error => {
         console.error("❌ Fetch Error:", error);
         alert("Network error. Please try again.");
+        if (typeof errorModal !== "undefined") errorModal.style.display = "block";
     });
 }
 
