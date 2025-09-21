@@ -137,9 +137,6 @@ $most_dispensed_quantity = current($medicine_counts);
 	<!-- Sidebar Section -->
 <section id="sidebar">
 		<a href="#" class="brand" style="display: flex; align-items: center;">
-			<span class="menu-icon" style="margin-right: 10px;" onclick="toggleSidebar()"> 
-				<i class="bx bx-menu" style="font-size: 1.5rem; cursor: pointer;"></i> 
-			</span>
 
 			<img src="../../img/logo.png" alt="RHULogo" class="logo">
 			<span class="text">IHRRS</span>
@@ -985,22 +982,23 @@ if (addressData.length > 0 && addressData.reduce((a, b) => a + b, 0) > 0) {
     </thead>
     <tbody>
     <?php foreach ($visits as $visit): ?>
-        <tr>
-            <td><?= date('Y-m-d', strtotime($visit['visit_date'])) ?></td>
-            <td><?= htmlspecialchars($visit['first_name'] . ' ' . $visit['last_name']) ?></td>
-            <td><?= htmlspecialchars($visit['sex']) ?></td>
-            <td><?= htmlspecialchars($visit['age']) ?></td>
-            <td><?= htmlspecialchars($visit['bmi']) ?></td>
-            <td><?= htmlspecialchars($visit['weight']) ?></td>
-            <td><?= htmlspecialchars($visit['height']) ?></td>
-            <td><?= htmlspecialchars($visit['blood_pressure']) ?></td>
-            <td><?= htmlspecialchars($visit['temperature']) ?></td>
-            <td><?= htmlspecialchars($visit['chest_rate']) ?></td>
-            <td><?= htmlspecialchars($visit['respiratory_rate']) ?></td>
-            <td><?= htmlspecialchars($visit['chief_complaints']) ?></td>
-            <td><?= htmlspecialchars($visit['treatment']) ?></td>
-            <td><?= htmlspecialchars($visit['address']) ?></td>
-        </tr>
+       <tr>
+  <td data-label="Visit Date"><?= date('Y-m-d', strtotime($visit['visit_date'])) ?></td>
+  <td data-label="Patient Name"><?= htmlspecialchars($visit['first_name'] . ' ' . $visit['last_name']) ?></td>
+  <td data-label="Sex"><?= htmlspecialchars($visit['sex']) ?></td>
+  <td data-label="Age"><?= htmlspecialchars($visit['age']) ?></td>
+  <td data-label="BMI"><?= htmlspecialchars($visit['bmi']) ?></td>
+  <td data-label="Weight"><?= htmlspecialchars($visit['weight']) ?></td>
+  <td data-label="Height"><?= htmlspecialchars($visit['height']) ?></td>
+  <td data-label="Blood Pressure"><?= htmlspecialchars($visit['blood_pressure']) ?></td>
+  <td data-label="Temperature"><?= htmlspecialchars($visit['temperature']) ?></td>
+  <td data-label="Chest Rate"><?= htmlspecialchars($visit['chest_rate']) ?></td>
+  <td data-label="Respiratory Rate"><?= htmlspecialchars($visit['respiratory_rate']) ?></td>
+  <td data-label="Chief Complaints"><?= htmlspecialchars($visit['chief_complaints']) ?></td>
+  <td data-label="Treatment"><?= htmlspecialchars($visit['treatment']) ?></td>
+  <td data-label="Address"><?= htmlspecialchars($visit['address']) ?></td>
+</tr>
+
     <?php endforeach; ?>
     </tbody>
 </table>
@@ -1212,65 +1210,23 @@ chartsInClone.forEach(chart => chart.remove());
 </script>
 
 <script>
-function toggleSidebar() {
-    const sidebar = document.getElementById('sidebar');
-    sidebar.classList.toggle('hide');
+document.addEventListener("DOMContentLoaded", () => {
+  const sidebar = document.getElementById("sidebar");
 
-    // Save state to localStorage
-    if (sidebar.classList.contains('hide')) {
-        localStorage.setItem('sidebar-collapsed', 'true');
+  function applyResponsiveSidebar() {
+    if (window.innerWidth <= 1024) {
+      sidebar.classList.add("hide");   // collapsed on small screens
     } else {
-        localStorage.setItem('sidebar-collapsed', 'false');
+      sidebar.classList.remove("hide"); // expanded on larger screens
     }
-}
+  }
 
-document.addEventListener("DOMContentLoaded", function () {
-    const sidebar = document.getElementById('sidebar');
-    const isCollapsed = localStorage.getItem('sidebar-collapsed');
+  applyResponsiveSidebar();
+  window.addEventListener("resize", applyResponsiveSidebar);
 
-    if (isCollapsed === 'true') {
-        sidebar.classList.add('hide');
-    } else {
-        sidebar.classList.remove('hide');
-    }
+  // keep the rest of your existing code (auth, stats, modals, etc.)
 });
-
-    // Existing code for other functions
-    document.addEventListener("DOMContentLoaded", () => {
-        const today = new Date().toISOString().split("T")[0];
-        const url = `php/fetch_dashboard_stats.php?date=${today}`;
-        // Show today's date in both containers
-        const formattedDate = new Date(today).toLocaleDateString('en-US', { 
-            year: 'numeric', 
-            month: 'long', 
-            day: 'numeric' 
-        });
-        
-        document.querySelectorAll(".date").forEach(el => el.textContent = formattedDate);
-        
-        fetch(url)
-            .then(response => response.json())
-            .then(data => {
-                console.log("Dashboard Data:", data);
-                updateProgress("progress-ring-1", "progress-text-1", data.visits_today, 100);
-                updateProgress("progress-ring-2", "progress-text-2", data.pending_referrals, 100);
-            })
-            .catch(error => console.error("Error loading dashboard data:", error));
-    });
-
-    function updateProgress(ringId, textId, value, max = 100) {
-        const radius = 67;
-        const circumference = 2 * Math.PI * radius;
-        const percent = Math.min(value / max, 1);
-        const offset = circumference * (1 - percent);
-
-        const ring = document.getElementById(ringId);
-        const text = document.getElementById(textId);
-
-        ring.style.strokeDasharray = `${circumference}`;
-        ring.style.strokeDashoffset = `${offset}`;
-        text.textContent = value;
-    }
 </script>
+
 </body>
 </html>

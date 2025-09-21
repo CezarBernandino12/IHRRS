@@ -104,10 +104,6 @@ $bhws = $bhw_stmt->fetchAll();
 	<!-- Sidebar Section -->
 <section id="sidebar">
 		<a href="#" class="brand" style="display: flex; align-items: center;">
-			<span class="menu-icon" style="margin-right: 10px;" onclick="toggleSidebar()"> 
-				<i class="bx bx-menu" style="font-size: 1.5rem; cursor: pointer;"></i> 
-			</span>
-
 			<img src="../../img/logo.png" alt="RHULogo" class="logo">
 			<span class="text">IHRRS</span>
 		</a>
@@ -586,34 +582,35 @@ const dispensationChart = new Chart(ctx, {
 
 <br><br>
 <h3>Detailed Report</h3>
-    <table>
-        <thead>
-            <tr>
-                <th>Dispensed Date</th>
-                <th>Patient Name</th>
-                <th>Sex</th>
-                <th>Age</th>
-                <th>Medicine Name</th>
-                <th>Quantity</th>
-                <th>Visit Date</th>
-                <th>BHW</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach ($rows as $row): ?>
-            <tr>
-                <td><?= htmlspecialchars($row['dispensed_date']) ?></td>
-                <td><?= htmlspecialchars($row['first_name'] . ' ' . $row['last_name']) ?></td>
-                <td><?= htmlspecialchars($row['sex']) ?></td>
-                <td><?= htmlspecialchars($row['age']) ?></td>
-                <td><?= htmlspecialchars($row['medicine_name']) ?></td>
-                <td><?= htmlspecialchars($row['quantity_dispensed']) ?></td>
-                <td><?= htmlspecialchars($row['visit_date']) ?></td>
-                <td><?= htmlspecialchars($row['bhw_name']) ?></td>
-            </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
+    <table id="dispensationTable">
+  <thead>
+    <tr>
+      <th data-abbr="Dispensed">Dispensed Date</th>
+      <th data-abbr="Name">Patient Name</th>
+      <th data-abbr="Sex">Sex</th>
+      <th data-abbr="Age">Age</th>
+      <th data-abbr="Medicine">Medicine Name</th>
+      <th data-abbr="Qty">Quantity</th>
+      <th data-abbr="Visit">Visit Date</th>
+      <th data-abbr="BHW">BHW</th>
+    </tr>
+  </thead>
+  <tbody>
+    <?php foreach ($rows as $row): ?>
+      <tr>
+        <td data-label="Dispensed Date"><?= htmlspecialchars($row['dispensed_date']) ?></td>
+        <td data-label="Patient Name"><?= htmlspecialchars($row['first_name'] . ' ' . $row['last_name']) ?></td>
+        <td data-label="Sex"><?= htmlspecialchars($row['sex']) ?></td>
+        <td data-label="Age"><?= htmlspecialchars($row['age']) ?></td>
+        <td data-label="Medicine Name"><?= htmlspecialchars($row['medicine_name']) ?></td>
+        <td data-label="Quantity"><?= htmlspecialchars($row['quantity_dispensed']) ?></td>
+        <td data-label="Visit Date"><?= htmlspecialchars($row['visit_date']) ?></td>
+        <td data-label="BHW"><?= htmlspecialchars($row['bhw_name']) ?></td>
+      </tr>
+    <?php endforeach; ?>
+  </tbody>
+</table>
+
 
      <br>
 
@@ -784,65 +781,23 @@ fetch('../php/getUserId.php')
 </script>
 
 <script>
-function toggleSidebar() {
-    const sidebar = document.getElementById('sidebar');
-    sidebar.classList.toggle('hide');
+document.addEventListener("DOMContentLoaded", () => {
+  const sidebar = document.getElementById("sidebar");
 
-    // Save state to localStorage
-    if (sidebar.classList.contains('hide')) {
-        localStorage.setItem('sidebar-collapsed', 'true');
+  function applyResponsiveSidebar() {
+    if (window.innerWidth <= 1024) {
+      sidebar.classList.add("hide");   // collapsed on small screens
     } else {
-        localStorage.setItem('sidebar-collapsed', 'false');
+      sidebar.classList.remove("hide"); // expanded on larger screens
     }
-}
+  }
 
-document.addEventListener("DOMContentLoaded", function () {
-    const sidebar = document.getElementById('sidebar');
-    const isCollapsed = localStorage.getItem('sidebar-collapsed');
+  applyResponsiveSidebar();
+  window.addEventListener("resize", applyResponsiveSidebar);
 
-    if (isCollapsed === 'true') {
-        sidebar.classList.add('hide');
-    } else {
-        sidebar.classList.remove('hide');
-    }
+  // keep the rest of your existing code (auth, stats, modals, etc.)
 });
-
-    // Existing code for other functions
-    document.addEventListener("DOMContentLoaded", () => {
-        const today = new Date().toISOString().split("T")[0];
-        const url = `php/fetch_dashboard_stats.php?date=${today}`;
-        // Show today's date in both containers
-        const formattedDate = new Date(today).toLocaleDateString('en-US', { 
-            year: 'numeric', 
-            month: 'long', 
-            day: 'numeric' 
-        });
-        
-        document.querySelectorAll(".date").forEach(el => el.textContent = formattedDate);
-        
-        fetch(url)
-            .then(response => response.json())
-            .then(data => {
-                console.log("Dashboard Data:", data);
-                updateProgress("progress-ring-1", "progress-text-1", data.visits_today, 100);
-                updateProgress("progress-ring-2", "progress-text-2", data.pending_referrals, 100);
-            })
-            .catch(error => console.error("Error loading dashboard data:", error));
-    });
-
-    function updateProgress(ringId, textId, value, max = 100) {
-        const radius = 67;
-        const circumference = 2 * Math.PI * radius;
-        const percent = Math.min(value / max, 1);
-        const offset = circumference * (1 - percent);
-
-        const ring = document.getElementById(ringId);
-        const text = document.getElementById(textId);
-
-        ring.style.strokeDasharray = `${circumference}`;
-        ring.style.strokeDashoffset = `${offset}`;
-        text.textContent = value;
-    }
 </script>
+
 </body>
 </html>
