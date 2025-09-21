@@ -162,7 +162,7 @@ $most_dispensed_quantity = current($medicine_counts);
 			</li>
 
 			<li>
-				<a href="../history.html">
+				<a href="../History.html">
 					<i class="bx bx-history"></i>
 					<span class="text">Referral History</span>
 				</a>

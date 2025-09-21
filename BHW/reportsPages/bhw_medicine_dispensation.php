@@ -128,7 +128,7 @@ $bhws = $bhw_stmt->fetchAll();
 			</li>
 
 			<li>
-				<a href="../history.html">
+				<a href="../History.html">
 					<i class="bx bx-history"></i>
 					<span class="text">Referral History</span>
 				</a>
