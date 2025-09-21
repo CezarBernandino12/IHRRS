@@ -266,7 +266,17 @@ fetch('php/getUserId.php')
                     <input type="number" name="familySerialNo" id="familySerialNo" placeholder="Family Serial no.">
                 </div>
                 <br>
-
+                <div class="form-group">
+                    <label for="4ps">4Ps Status:</label>
+                    <div id="4ps" class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="4ps" value="Yes"> Yes
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="4ps" value="No"> No
+                        </label>
+                    </div>
+                </div>
                 <div class="form-group">
                     <label for="sex" class="required">Sex:</label>
                     <div id="sex" class="radio-group">
@@ -281,17 +291,7 @@ fetch('php/getUserId.php')
                     </div>
                 </div> 
 
-                <div class="form-group">
-                    <label for="4ps">4Ps Status:</label>
-                    <div id="4ps" class="radio-group">
-                        <label class="radio-option">
-                            <input type="radio" name="4ps" value="Yes"> Yes
-                        </label>
-                        <label class="radio-option">
-                            <input type="radio" name="4ps" value="No"> No
-                        </label>
-                    </div>
-                </div>
+
                
 
                 <!-- Warning Section -->
@@ -817,34 +817,36 @@ updateRemoveButtons();
 
              <input type="hidden" name="referral_status" value="pending">
 
-             <div id="myModal2" class="modal">
-                <div class="modal-content">
-                    <div class="modal-header">
-                         <img src="../img/verify.png" alt="Checkmark" class="checkmark-image">
-                        <h3>Confirm</h3>
-                        <span class="close-btn" id="closeBtn2">&times;</span>
-                    </div>
-                    <div class="modal-body">
-                        <p>Select referral date: </p> <br> <br>
-                  
-                <div class="custom-consent-checkbox" style="margin-top: -30px; margin-left: -300px;">
-      <input type="checkbox" id="setToday">
-                <label for="setToday">Set for Today</label>
-                </div> 
-                  <div class="custom-consent-checkbox" style="margin-top: -10px;">
-      <input type="checkbox" id="setTomorrow">
-                <label for="setTomorrow">Set for Tomorrow (Select if physician is not available)</label>
-                </div> 
-                <br>
+<div id="myModal2" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <img src="../img/verify.png" alt="Checkmark" class="checkmark-image">
+      <h3>Confirm</h3>
+      <span class="close-btn" id="closeBtn2">&times;</span>
+    </div>
 
-            
-                    </div>
-                    <div class="modal-footer">
-                        <button id="yesButton2" class="btn yes" type="submit" value="yes">Yes</button>
-                        <button id="noButton2" class="btn no" type="button">No</button>
-                    </div>
-                </div>
-            </div>
+    <div class="modal-body">
+      <p>Select referral date: </p>
+
+      <div class="custom-consent-checkbox">
+        <input type="checkbox" id="setToday">
+        <label for="setToday">Set for Today</label>
+      </div>
+
+      <div class="custom-consent-checkbox">
+        <input type="checkbox" id="setTomorrow">
+        <label for="setTomorrow">
+          Set for Tomorrow <small>(Select if physician is not available)</small>
+        </label>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button id="yesButton2" class="btn yes" type="submit" value="yes">Yes</button>
+      <button id="noButton2" class="btn no" type="button">No</button>
+    </div>
+  </div>
+</div>
 
             <div id="myModal3" class="modal">
                 <div class="modal-content">

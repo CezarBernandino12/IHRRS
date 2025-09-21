@@ -170,6 +170,7 @@ body {
 }
 
 #content {
+    width: calc(100% - 280px);
 	position: relative;
 	width: calc(100% - 280px);
 	left: 280px;
@@ -632,33 +633,57 @@ body {
 
 /*FORM*/
 
-.container {
-    width: 50%;
-    align-items: center;
-    margin-left: 35%;
-    margin-top: 0px;
-    margin-bottom: 100px;
-    background-color: #fff;
+.container,
+.container-header {
+    width: 100%;
+    max-width: 900px;
+    margin: 20px 25%;       
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: "system-ui", sans-serif;
+    box-sizing: border-box;   
+}
+@media screen and (max-width: 1024px) {
+    #content {
+        width: calc(100% - 200px);
+        left: 200px;
+    }
+    .container,
+    .container-header {
+        max-width: 95%;
+        margin: 15px auto;
+        padding: 15px;
+    }
 }
 
+@media screen and (max-width: 768px) {
+    #content {
+        width: 100%;
+        left: 0;
+    }
+    .container,
+    .container-header {
+        max-width: 100%;
+        margin: 10px auto;
+        padding: 10px;
+    }
+}
+
+
 .container-header {
-    max-width: 50%;
     margin-bottom: 5px;
     background-color: #C4E1F6;
     padding: 20px;
     border-radius: 5px;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
     position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    font-family: "system-ui" , sans-serif;
-    margin-left: 35%;
-}
 
+}
 .container-header h2 {
     color: rgb(0, 0, 0);
     font-weight: bold;
@@ -701,10 +726,12 @@ p {
   }
 
   .form-container {
-    display: flex;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    display: grid;
     flex-wrap: wrap;
-    gap: 50px; 
-    width: auto;
+    gap: 20px;
+    width: 100%;
+    box-sizing: border-box;
     margin-top: 30px;
     white-space: nowrap;
     font-family: 'Trebuchet MS', sans-serif;
@@ -714,7 +741,23 @@ p {
 .form-group {
     display: flex;
     flex-direction: column;
+    width: 100%; 
 }
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    min-width: 0; /* prevents overflow in grid */
+}
+
+@media screen and (max-width: 768px) {
+    .form-container {
+        grid-template-columns: 1fr;
+    }
+}
+
 
 .form-group.full-width {
     grid-column: span 2;
@@ -753,15 +796,6 @@ p {
     box-sizing: border-box; 
 }
 
-
-.form-group input,
-.form-group select {
-    padding: 8px;
-    font-size: 14px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    margin: 5px;
-}
 
 .form-group select {
     padding: 10px;
@@ -1085,10 +1119,11 @@ input[type="radio"], input[type="checkbox"] {
 
 .radio-group {
     display: flex;
-    gap: 2px;
+    flex-wrap: wrap; 
+    gap: 15px; 
     align-items: center;
+    width: 100%;
 }
-
 .radio-option {
     margin-left: 2px;
     display: flex;
@@ -1830,6 +1865,8 @@ input[type="number"] {
 }
 
 .modal-body {
+    text-align: center;
+    padding: 20px;
     font-size: 18px;
     color: #555;
     margin-top: 15px;
@@ -1913,12 +1950,38 @@ input[type="number"] {
     background-color: #fff;
     padding: 30px;
     border-radius: 12px;
-    max-width: 700px;
-    width: 100%;
+    width: 90%;              /* responsive width */
+    max-width: 600px;        /* limit on large screens */
+    min-width: 280px;        /* ensures it doesn’t collapse too small */
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
     text-align: center;
+    overflow-wrap: break-word; /* prevents text overflow */
 }
 
+@media (max-width: 480px) {
+    .custom-consent-box {
+        padding: 15px;
+        font-size: 14px;
+    }
+
+    .custom-consent-box h3 {
+        font-size: 18px;
+    }
+
+    .custom-consent-box h4 {
+        font-size: 14px;
+    }
+
+    #continueBtn,
+    #declineBtn {
+        width: 100%;  /* full width buttons on mobile */
+        margin-top: 10px;
+    }
+
+    .custom-consent-checkbox label {
+        font-size: 14px;
+    }
+}
 .custom-consent-checkbox input[type="checkbox"] {
     -webkit-appearance: none; 
     -moz-appearance: none;
@@ -1949,8 +2012,9 @@ input[type="number"] {
 }
 
 .custom-consent-checkbox label {
-    font-size: 17px; 
-    font-family: Arial, Helvetica, sans-serif;
+    font-size: 16px;
+    color: #333;
+    cursor: pointer;
 }
 
 .custom-consent-box h3 {
@@ -1972,8 +2036,9 @@ input[type="number"] {
 .custom-consent-checkbox {
     display: flex;
     align-items: center;
-    justify-content: center;
-    margin-bottom: 20px;
+    justify-content: center;  /* centers horizontally */
+    gap: 10px;
+    margin: 10px 0;
 }
 
 .modal-actions {
