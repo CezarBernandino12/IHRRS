@@ -261,13 +261,14 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Helper function to format date in a readable way
-    function formatDate(dateString) {
-        if (!dateString) return "N/A"; // If no date provided, return "N/A"
-        const date = new Date(dateString); // Convert string to Date object
-        if (isNaN(date.getTime())) return "Invalid Date"; // If the date is invalid, return "Invalid Date"
-        const options = { year: 'numeric', month: 'long', day: 'numeric' };
-        return `${date.toLocaleDateString('en-US', options)} <br><span class="time">${date.toLocaleTimeString()}</span>`;
-    }
+function formatDate(dateString) {
+    if (!dateString) return "N/A";
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return "Invalid Date";
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return date.toLocaleDateString('en-US', options);
+}
+
 });
 
 
