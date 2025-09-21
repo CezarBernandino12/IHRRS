@@ -39,7 +39,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         // 🔹 Insert into referrals with visit_id
         $stmt_referral = $pdo->prepare("INSERT INTO referrals (patient_id, visit_id, referred_by, referral_status) 
-                                        VALUES (:patient_id, :visit_id, :user_id, 'Forwarded to Physician')");
+                                        VALUES (:patient_id, :visit_id, :user_id, 'Forwarded to Physician', )");
 
         $stmt_referral->execute([
             ':patient_id' => $patient_id,

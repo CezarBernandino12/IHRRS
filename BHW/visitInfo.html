@@ -315,6 +315,59 @@ fetch('php/getUserId.php')
             </div>
 
 
+   <div id="modal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                         <img src="../img/verify.png" alt="Checkmark" class="checkmark-image">
+                        <h3>Confirm</h3>
+                        <span class="close-btn" id="close">&times;</span>
+                    </div>
+                    <div class="modal-body">
+                        <p>Are you sure you sure you want to refer the patient with this assessment record? </p> <br> <br>
+                  
+                    </div>
+                    <div class="modal-footer">
+                        <button id="yesbtn" class="btn yes" type="button">Yes</button>
+                        <button id="nobtn" class="btn no" type="button">No</button>
+                    </div>
+                </div>
+            </div>
+
+
+              <div id="modal2" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <img src="../img/check.png" alt="Checkmark" class="checkmark-image">
+                        <h3></h3>
+                        <span class="close-btn" id="close2">&times;</span>
+                    </div>
+
+                    <div class="modal-footer">
+                        <div class="modal-header">
+                            <h3 style="color: #033cad;">Referral Sent to RHU!</h3>
+                        </div>
+                    </div>
+                    
+                    <div class="modal-footer">
+                    <button id="viewButton" class="btn yes" type="button">PRINT REFERRAL SLIP</button>
+                </div>
+            </div>
+            </div>
+
+                    <div id="modal3" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <img src="../img/error.jpg" alt="Checkmark" class="checkmark-image">
+                        <h3>Error</h3>
+                        <span class="close-btn" id="close3" onclick="closeModal()">&times;</span>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="modal-body">
+                            <p>Submission unsuccessful. Make sure to fill out required fields.</p>
+                        </div>
+                    </div>
+                </div>
+            </div> 
 
 
             <div id="printContent" style="display: none;">
@@ -391,10 +444,16 @@ fetch('php/getUserId.php')
             </div>
             
             <div class="referral-form-footer">
-              
-                <button class="footer-btn" id="editRecord" hidden>Edit Record</button>
 
+               
+                 <input type="number" id="visit_id" hidden>
+                 <input type="hidden" id="visit_date">
+                 <input type="number" id="patient_id" hidden>
+                 <input type="number" id="user_id" hidden>
+       
+             
                 <button id="printBtn" class="footer-btn">Print</button>
+                <button class="footer-btn" id="referButton">Refer to RHU</button>
               </div>
               <style>
                 
@@ -528,12 +587,67 @@ fetch('php/getUserId.php')
 
 
     document.addEventListener("DOMContentLoaded", function () {
+         const visitDateInput = document.getElementById("visit_date");
+    const referButton = document.getElementById("referButton");
+
+    function updateButtonState(isEnabled) {
+        referButton.disabled = !isEnabled;
+        referButton.style.opacity = isEnabled ? "1" : "0.5";
+        referButton.style.cursor = isEnabled ? "pointer" : "not-allowed";
+        console.log("🔘 Button enabled?", isEnabled);
+    }
+
+    function parseLocalDate(dateStr) {
+        const [year, month, day] = dateStr.split("-").map(Number);
+        return new Date(year, month - 1, day);
+    }
+
+    function checkVisitDate() {
+        const visitDateValue = visitDateInput.value;
+        console.log("📌 visit_date value:", visitDateValue);
+
+        if (!visitDateValue) {
+            updateButtonState(false);
+            return;
+        }
+
+        const visitDate = parseLocalDate(visitDateValue);
+        const today = new Date();
+
+        // Normalize
+        visitDate.setHours(0, 0, 0, 0);
+        today.setHours(0, 0, 0, 0);
+
+        const yesterday = new Date(today);
+        yesterday.setDate(today.getDate() - 1);
+
+        if (
+            visitDate.getTime() === today.getTime() ||
+            visitDate.getTime() === yesterday.getTime()
+        ) {
+            updateButtonState(true);
+        } else {
+            updateButtonState(false);
+        }
+    }
+
+    // --- Initial check in case the hidden field already has a value ---
+    checkVisitDate();
+
+    // --- Watch for changes if the value is updated dynamically ---
+    const observer = new MutationObserver(() => {
+        checkVisitDate();
+    });
+
+    observer.observe(visitDateInput, { attributes: true, attributeFilter: ['value'] });
+
+    // Optional: if the user changes it manually (if ever visible)
+    visitDateInput.addEventListener("change", checkVisitDate);
+
     const urlParams = new URLSearchParams(window.location.search);
     const visit_id = urlParams.get("visit_id");
 
-    document.getElementById('editRecord').onclick = () => {
-      window.location.href = `editRecord.html?visit_id=${visit_id}`;
-    };
+  
 
     if (visit_id) {
         fetch(`php/get_visit_info.php?visit_id=${visit_id}`)
@@ -560,6 +674,8 @@ fetch('php/getUserId.php')
                     updateElement(".remarks", data.visit.remarks);
                     updateElement(".bhw_name", data.visit.bhw_name);
                     updateElement(".bhs", data.visit.bhw_barangay);
+                    document.getElementById("visit_id").value = data.visit.visit_id;
+                    document.getElementById("visit_date").value = data.visit.visit_date;
                 }
 
                 // ✅ Populate Medicine Information
@@ -609,6 +725,7 @@ fetch('php/getUserId.php')
                     updateElement(".sex", data.patient.sex);
                     updateElement(".fourps-status", data.patient.fourps_status);
                     updateElement(".category", data.patient.category);
+                    document.getElementById("patient_id").value = data.patient.patient_id;
                 }
             })
             .catch(error => console.error("Error fetching visit info:", error));
@@ -637,7 +754,28 @@ fetch('php/getUserId.php')
 
     return age >= 0 ? age : "N/A"; // Ensure age is not negative
 }
+
+                     fetch('php/getUserId.php')
+                          .then(response => response.json())
+                          .then(data => {
+                            if (data.user_id) {
+                              document.getElementById("user_id").value = data.user_id;
+                            } else {
+                              console.error("User not logged in.");
+                              // Optionally redirect to login
+                              // window.location.href = "BHWlogin.html";
+                            }
+                          })
+                          .catch(error => console.error("Error fetching user ID:", error));
+                          
+
+
+
+ 
 });
+
+
+
 
 document.getElementById("togglePersonalInfo").addEventListener("click", function () {
         const hiddenSection = document.getElementById("hiddenPersonalInfo");
@@ -651,6 +789,88 @@ document.getElementById("togglePersonalInfo").addEventListener("click", function
             toggleText.textContent = "View All";
         }
     });
+
+// Open confirmation modal
+document.getElementById("referButton").onclick = function () {
+    document.getElementById("modal").style.display = "block";
+};
+
+// Close modal (X button)
+document.getElementById("close").onclick = function () {
+    document.getElementById("modal").style.display = "none";
+};
+
+// Close modal (No button)
+document.getElementById("nobtn").onclick = function () {
+    document.getElementById("modal").style.display = "none";
+};
+
+// Yes button = submit referral
+document.getElementById("yesbtn").onclick = function (e) {
+    document.getElementById("modal").style.display = "none";
+    e.preventDefault();
+
+    
+    const visitId = document.getElementById("visit_id");
+    const patientId = document.getElementById("patient_id");
+    const userId = document.getElementById("user_id");
+    const formattedDate = new Date().toLocaleDateString('en-CA'); 
+
+   
+
+    const formData = new FormData();
+    formData.append("visit_id", visitId.value);
+    formData.append("patient_id", patientId.value);
+    formData.append("user_id", userId.value);
+    formData.append("referral_date", new Date().toISOString().slice(0, 10));
+
+ fetch("php/saveReferral.php", { method: "POST", body: formData })
+    .then(response => response.text()) // get raw response first
+    .then(data => {
+        console.log("Raw response:", data);
+        try {
+            const result = JSON.parse(data); // parse JSON
+            console.log("Parsed JSON:", result);
+
+            // ✅ Use result, not data
+            localStorage.setItem("referral_id", result.referral_id);
+            console.log("📌 Referral saved successfully:", result.referral_id);
+
+            document.getElementById("modal2").style.display = "block"; // success modal
+        } catch (err) {
+            console.error("Failed to parse JSON:", err);
+            document.getElementById("modal3").style.display = "block"; // error modal
+        }
+    })
+    .catch(error => console.error("Fetch error:", error));
+
+  
+};
+
+
+document.getElementById("close2").onclick = function () {
+    document.getElementById("modal2").style.display = "none";
+};
+document.getElementById("close3").onclick = function () {
+    document.getElementById("modal3").style.display = "none";
+};
+const viewButton = document.getElementById('viewButton');
+if (viewButton) {
+    viewButton.addEventListener('click', function () {
+        let referralId = localStorage.getItem('referral_id') || new URLSearchParams(window.location.search).get('referral_id'); 
+
+        if (!referralId) {
+            alert("❌ Error: No referral ID found. Please submit a referral first.");
+            return;
+        }
+
+        console.log("🔹 Redirecting to: details.html?referral_id=" + encodeURIComponent(referralId));
+        window.location.href = `details.html?referral_id=${encodeURIComponent(referralId)}`;
+    });
+} else {
+    console.warn("⚠️ Warning: viewButton not found in the DOM.");
+}
+
 
     </script>
     
@@ -671,63 +891,6 @@ document.getElementById("togglePersonalInfo").addEventListener("click", function
         </div>
     </div>
 </div>    
-
-<style>
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-}
-
-.modal-content {
-    background-color: #fff;
-    margin: 15% auto;
-    padding: 20px;
-    border-radius: 8px;
-    width: 300px;
-    text-align: center;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.modal-buttons {
-    margin-top: 20px;
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-}
-
-.confirm-btn, .cancel-btn {
-    padding: 8px 20px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: 500;
-    transition: background-color 0.3s;
-}
-
-.confirm-btn {
-    background-color: #dc3545;
-    color: white;
-}
-
-.confirm-btn:hover {
-    background-color: #c82333;
-}
-
-.cancel-btn {
-    background-color: #6c757d;
-    color: white;
-}
-
-.cancel-btn:hover {
-    background-color: #5a6268;
-}
-</style>
 
 <script>
 function confirmLogout() {
