@@ -232,13 +232,14 @@
             });
     }
 
-    function formatDate(dateString) {
-        if (!dateString) return "N/A";
-        const date = new Date(dateString);
-        if (isNaN(date.getTime())) return "Invalid Date";
-        const options = { year: 'numeric', month: 'long', day: 'numeric' };
-        return `${date.toLocaleDateString('en-US', options)} <br><span class="time">${date.toLocaleTimeString()}</span>`;
-    }
+  function formatDate(dateString) {
+    if (!dateString) return "N/A";
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return "Invalid Date";
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return date.toLocaleDateString('en-US', options);
+}
+
 });
 
 document.getElementById('searchForm').addEventListener('submit', function(e) {
