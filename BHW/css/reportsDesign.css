@@ -742,6 +742,117 @@ body {
     }
 }
 
+/* Make the report table wrap nicely */
+#reportTable {
+  table-layout: fixed;           /* consistent column widths + wrapping */
+  width: 100%;
+}
+#reportTable th,
+#reportTable td {
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: anywhere;   /* <- lets the browser split words letter-by-letter */
+}
+
+
+/* Optional: suggest some desktop widths so text doesn’t look cramped */
+#reportTable th:nth-child(1),  /* Visit Date */      #reportTable td:nth-child(1)  { width: 110px; }
+#reportTable th:nth-child(2),  /* Patient Name */    #reportTable td:nth-child(2)  { width: 180px; }
+#reportTable th:nth-child(13), /* Treatment */       #reportTable td:nth-child(13) { width: 150px; }
+#reportTable th:nth-child(14), /* Address */         #reportTable td:nth-child(14) { width: 220px; }
+
+/* Keep the whole printable area from overflowing while still centering */
+.print-area { overflow: visible; }
+
+/* Collapse rows into “cards” on phones */
+@media (max-width: 768px) {
+  #reportTable thead { display: none; }
+
+  #reportTable,
+  #reportTable tbody,
+  #reportTable tr,
+  #reportTable td {
+    display: block;
+    width: 100%;
+  }
+
+  #reportTable tr {
+    margin: 0 0 14px;
+    padding: 12px 12px 6px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,.04);
+  }
+
+  #reportTable td {
+    border: 0;
+    padding: 8px 0;
+  }
+
+  /* show the column label before each cell’s value */
+  #reportTable td::before {
+    content: attr(data-label);
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    color: #666;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+    letter-spacing: .02em;
+  }
+
+  .time { margin-top: 2px; }
+}
+
+/* Default desktop */
+#reportTable th {
+  font-size: 14px;
+  white-space: nowrap;        /* keep titles on one line */
+  text-overflow: ellipsis;    /* truncate if it's REALLY tight */
+  overflow: hidden;
+  padding: 10px 12px;
+}
+
+/* Large tablets / narrow laptops */
+@media (max-width: 1200px) {
+  #reportTable th { font-size: 13px; padding: 8px 10px; }
+}
+
+/* Tablets */
+@media (max-width: 1024px) {
+  #reportTable th { font-size: 12px; padding: 8px 8px; letter-spacing: 0; }
+}
+
+/* Small tablets / big phones (landscape) */
+@media (max-width: 900px) {
+  #reportTable th { font-size: 11px; padding: 6px 6px; }
+}
+
+/* Phones – note: if you’re using the “card” layout below 768px,
+   the THEAD is hidden; this is just in case you keep a table view */
+@media (max-width: 768px) {
+  #reportTable th { font-size: 10px; padding: 6px 4px; }
+}
+
+
+/* shrink headers progressively */
+#reportTable th { font-size:14px; padding:10px 12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+@media (max-width:1200px){ #reportTable th{ font-size:13px; padding:8px 10px; } }
+@media (max-width:1024px){ #reportTable th{ font-size:12px; padding:8px 8px; } }
+@media (max-width:900px) { #reportTable th{ font-size:11px; padding:6px 6px; } }
+
+/* swap to short labels on tight screens */
+@media (max-width:1000px){
+  #reportTable thead th[data-abbr]{ font-size:0; position:relative; }
+  #reportTable thead th[data-abbr]::after{
+    content: attr(data-abbr);
+    font-size:12px; font-weight:700;
+  }
+}
+@media (max-width:900px){
+  #reportTable thead th[data-abbr]::after{ font-size:11px; }
+}
 
 table {
     width: 100%;
@@ -1083,4 +1194,83 @@ td a:hover {
 
 .close-btn:hover {
     color: #fa4141;
+}
+/* -------- Medicine Dispensation: responsive table -------- */
+#dispensationTable {
+  table-layout: fixed;      /* wrapping + consistent cols */
+  width: 100%;
+}
+#dispensationTable th,
+#dispensationTable td {
+  white-space: normal;      /* allow multi-line text */
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+/* Slightly guide desktop widths so long text doesn't crowd */
+#dispensationTable th:nth-child(1), #dispensationTable td:nth-child(1) { width: 140px; } /* Dispensed Date */
+#dispensationTable th:nth-child(2), #dispensationTable td:nth-child(2) { width: 180px; } /* Patient Name */
+#dispensationTable th:nth-child(5), #dispensationTable td:nth-child(5) { width: 200px; } /* Medicine Name */
+
+/* Header scales down as screen narrows */
+#dispensationTable th {
+  font-size: 14px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  padding: 10px 12px;
+}
+@media (max-width: 1200px) { #dispensationTable th { font-size: 13px; padding: 8px 10px; } }
+@media (max-width: 1024px) { #dispensationTable th { font-size: 12px; padding: 8px 8px; } }
+@media (max-width: 900px)  { #dispensationTable th { font-size: 11px; padding: 6px 6px; } }
+
+/* Swap to short header labels when tight */
+@media (max-width: 1000px) {
+  #dispensationTable thead th[data-abbr] { font-size: 0; position: relative; }
+  #dispensationTable thead th[data-abbr]::after {
+    content: attr(data-abbr);
+    font-size: 12px; font-weight: 700;
+  }
+}
+@media (max-width: 900px) {
+  #dispensationTable thead th[data-abbr]::after { font-size: 11px; }
+}
+
+/* Card layout on phones */
+@media (max-width: 768px) {
+  #dispensationTable thead { display: none; }
+
+  #dispensationTable,
+  #dispensationTable tbody,
+  #dispensationTable tr,
+  #dispensationTable td {
+    display: block;
+    width: 100%;
+  }
+
+  #dispensationTable tr {
+    margin: 0 0 14px;
+    padding: 12px 12px 6px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,.04);
+  }
+
+  #dispensationTable td {
+    border: 0;
+    padding: 8px 0;
+  }
+
+  /* show column label before each value */
+  #dispensationTable td::before {
+    content: attr(data-label);
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    color: #666;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+    letter-spacing: .02em;
+  }
 }

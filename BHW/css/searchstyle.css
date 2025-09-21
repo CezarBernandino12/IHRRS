@@ -1,13 +1,12 @@
 .patient-record-container {
-    width: 45%;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 2px 4px 8px rgba(0, 0, 0, 0.1);
-    margin-bottom: 10%;
-    box-sizing: border-box;
-    margin-left: 30%;
+  /* centered by default */
+  width: min(100% - 2rem, 960px);
+  margin: 24px auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 2px 4px 8px rgba(0,0,0,.08);
+  box-sizing: border-box;
 }
 
 .results-header {

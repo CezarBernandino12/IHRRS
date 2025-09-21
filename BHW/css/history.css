@@ -702,6 +702,7 @@ body {
   }
 
   .status {
+    table-layout: fixed;     /* allows wrapping + consistent widths */
     width: 100%;
     border-collapse: collapse; 
     margin-top: 20px;
@@ -711,6 +712,9 @@ body {
 
   .status th,
   .status td {
+     white-space: normal;     /* allow multi-line */
+  word-break: break-word;  /* break long words if needed */
+  overflow-wrap: anywhere;
     padding: 10px 20px;
     text-align: left;
     border-bottom: 1px solid #ddd;
@@ -950,14 +954,60 @@ body {
 .action-buttons {
   display: flex;
   align-items: center;
-  gap: 8px;          /* space between Edit and Cancel */
-  flex-wrap: nowrap; /* keep them in one line */
+  gap: 8px;
+  flex-wrap: wrap;  /* keep them in one line */
 }
 
 .action-buttons a {
   white-space: nowrap; /* prevent text wrap */
 }
+@media (max-width: 768px) {
+  .status thead {
+    /* hide header; we’ll show labels in each cell via ::before */
+    display: none;
+  }
 
+  .status,
+  .status tbody,
+  .status tr,
+  .status td {
+    display: block;
+    width: 100%;
+  }
+
+  .status tr {
+    margin: 0 0 14px 0;
+    padding: 12px 12px 6px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background: #fff;
+  }
+
+  .status td {
+    border: 0;             /* remove inner row borders */
+    padding: 8px 0;
+  }
+
+  /* show the column label before each cell’s value */
+  .status td::before {
+    content: attr(data-label);
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    color: #666;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+    letter-spacing: .02em;
+  }
+
+  /* tighten time text */
+  .time { margin-top: 2px; }
+
+  /* keep action buttons on their own line */
+  .status td[data-label="Action"] .action-buttons {
+    width: 100%;
+  }
+}
 
   
   /* Responsive Styles */
