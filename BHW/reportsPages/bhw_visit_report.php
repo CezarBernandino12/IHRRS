@@ -1042,7 +1042,7 @@ if (addressData.length > 0 && addressData.reduce((a, b) => a + b, 0) > 0) {
 <script>
 
     
-function exportTableToExcel(tableID, filename = 'report') {
+function exportTableToExcel(tableID, filename = 'Patient Summary Report') {
     try {
         // Create a temporary div with the same content as print
         const tempDiv = document.createElement('div');

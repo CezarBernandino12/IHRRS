@@ -917,7 +917,7 @@ $total_patients = count($unique_patient_ids);
 <script>
 
     
-function exportTableToExcel(tableID, filename = 'report') {
+function exportTableToExcel(tableID, filename = 'Medical Cases Report') {
     try {
         // Create a temporary div with the same content as print
         const tempDiv = document.createElement('div');

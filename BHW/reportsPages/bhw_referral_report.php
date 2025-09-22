@@ -690,7 +690,7 @@ const statusPieChart = new Chart(statusCtx, {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <script>
-function exportTableToExcel(tableID, filename = 'report') {
+function exportTableToExcel(tableID, filename = 'Referral Summary Report') {
     try {
         // Create a temporary div with the same content as print
         const tempDiv = document.createElement('div');
