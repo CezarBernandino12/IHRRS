@@ -852,6 +852,7 @@ $total_patients = count($unique_patient_ids);
 
 <!-- Table with Visit Details -->
 <?php if ($visits && count($visits) > 0): ?>
+    <div class="report-table-container">
       <table id="reportTable">
         <thead>
             <tr>
@@ -878,6 +879,7 @@ $total_patients = count($unique_patient_ids);
         <?php endforeach; ?>
         </tbody>
     </table>
+    </div>
     <br>
     <span id="generated_by"></span>
 <?php else: ?>

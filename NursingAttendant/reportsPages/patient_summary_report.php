@@ -843,6 +843,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 <!-- Table with Visit Details -->
 <?php if ($visits): ?>
+      <div class="report-table-container">
 	<table id="reportTable">
     <thead>
         <tr>
@@ -880,6 +881,7 @@ document.addEventListener("DOMContentLoaded", () => {
     <br> <br>
      <span id="generated_by"></span>
 </div>
+  </div>
 <?php else: ?>
     <p>No visits found for the selected filters.</p>
 <?php endif; ?>

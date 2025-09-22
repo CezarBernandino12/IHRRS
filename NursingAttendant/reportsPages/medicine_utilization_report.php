@@ -912,7 +912,7 @@ document.addEventListener("DOMContentLoaded", () => {
     <?php else: ?>
         All Medicines
     <?php endif; ?>
-</li>
+ </li>
 
         </ul>
     </div>
@@ -920,6 +920,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
  <h3>Detailed Visit Report</h3>
 <!-- Patient Table -->
+ <div class="report-table-container">
 <table id="reportTable" border="1" cellpadding="8" cellspacing="0"> 
 <thead>
         <tr>
@@ -953,9 +954,11 @@ document.addEventListener("DOMContentLoaded", () => {
     </tbody>
 </table>
 <br> <br>
+</div>
 
-
-</div> </div> </div>
+</div> 
+</div> 
+</div>
 
 <!-- jsPDF and html2canvas libraries -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>

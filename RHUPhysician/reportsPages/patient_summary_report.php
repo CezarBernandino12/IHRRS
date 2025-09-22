@@ -843,6 +843,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 <!-- Table with Visit Details -->
 <?php if ($visits): ?>
+    <div class="report-table-container">
 	<table id="reportTable">
     <thead>
         <tr>
@@ -885,8 +886,9 @@ document.addEventListener("DOMContentLoaded", () => {
 <?php endif; ?>
 
 
-</div> </div> 
-
+</div> 
+</div> 
+</div>
 
 
 

@@ -608,6 +608,7 @@ const statusPieChart = new Chart(statusCtx, {
 
 
 <?php if ($rows): ?>
+     <div class="report-table-container">
 <table id="reportTable">
     <thead>
         <tr>
@@ -655,6 +656,7 @@ const statusPieChart = new Chart(statusCtx, {
         <?php endforeach; ?>
     </tbody>
 </table>
+</div>
      <br>
 
     <br> <br>

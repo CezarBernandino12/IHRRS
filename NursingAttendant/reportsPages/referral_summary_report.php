@@ -564,6 +564,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 <br>
+<div class="report-table-container">
 <table border="1" cellpadding="8" cellspacing="0"> 
     <thead>
         <tr>
@@ -596,6 +597,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <?php endforeach; ?>
     </tbody>
 </table>
+ </div>
 <br> <br>
 
 

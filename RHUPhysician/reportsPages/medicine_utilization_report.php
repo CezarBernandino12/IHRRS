@@ -919,6 +919,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
  <h3>Detailed Visit Report</h3>
 <!-- Patient Table -->
+<div class="report-table-container">
 <table id="reportTable" border="1" cellpadding="8" cellspacing="0"> 
 <thead>
         <tr>
@@ -954,8 +955,10 @@ document.addEventListener("DOMContentLoaded", () => {
 <br> <br>
 
 
-</div> </div> </div>
-
+</div> 
+</div> 
+</div>
+</div>
 <!-- jsPDF and html2canvas libraries -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>

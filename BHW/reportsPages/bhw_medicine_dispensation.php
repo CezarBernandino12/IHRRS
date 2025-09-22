@@ -582,6 +582,7 @@ const dispensationChart = new Chart(ctx, {
 
 <br><br>
 <h3>Detailed Report</h3>
+ <div class="report-table-container">
     <table id="dispensationTable">
   <thead>
     <tr>
@@ -610,7 +611,7 @@ const dispensationChart = new Chart(ctx, {
     <?php endforeach; ?>
   </tbody>
 </table>
-
+</div>
 
      <br>
 

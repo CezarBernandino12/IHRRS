@@ -1274,3 +1274,61 @@ td a:hover {
     letter-spacing: .02em;
   }
 }
+/* scroll the table inside the page instead of overflowing */
+.report-table-container {
+  max-width: 100%;
+  overflow-x: auto;                 /* ← key */
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 8px;              /* room for scrollbar on some OSes */
+  border-radius: 10px;
+}
+
+/* Let the table be as wide as it needs, but never exceed its wrapper */
+#reportTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+/* When columns get tight (e.g., tablets), allow the table to exceed wrapper width and scroll */
+@media (max-width: 1200px) {
+  #reportTable {
+    table-layout: auto;             /* more natural column sizing */
+    width: max-content;             /* grow beyond wrapper if needed */
+    min-width: 700px;               /* avoid silly narrow layouts */
+  }
+}
+
+/* Phones: keep your existing card layout. Just make sure the wrapper doesn’t crop it */
+@media (max-width: 768px) {
+  .report-table-container {
+    overflow-x: visible;            /* cards are vertical; no horizontal scroll needed */
+  }
+
+  #reportTable thead { display: none; }
+  #reportTable, #reportTable tbody, #reportTable tr, #reportTable td {
+    display: block;
+    width: 100%;
+  }
+  #reportTable tr {
+    margin: 0 0 14px;
+    padding: 12px 12px 6px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,.04);
+  }
+  #reportTable td {
+    border: 0;
+    padding: 8px 0;
+  }
+  #reportTable td::before {
+    content: attr(data-label);
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    color: #666;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+    letter-spacing: .02em;
+  }
+}

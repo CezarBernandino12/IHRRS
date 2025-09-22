@@ -872,6 +872,7 @@ $total_patients = count($unique_patient_ids);
 <h3>Detailed Report</h3>
 <!-- Table with Visit Details -->
 <?php if ($visits && count($visits) > 0): ?>
+         <div class="report-table-container">
     <table id="reportTable">
         <thead>
             <tr>
@@ -898,6 +899,7 @@ $total_patients = count($unique_patient_ids);
         <?php endforeach; ?>
         </tbody>
     </table>
+</div>
 <?php else: ?>
     <p>No visits found for the selected filters.</p>
 <?php endif; ?>

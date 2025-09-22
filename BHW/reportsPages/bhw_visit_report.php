@@ -961,6 +961,7 @@ if (addressData.length > 0 && addressData.reduce((a, b) => a + b, 0) > 0) {
 
 <!-- Table with Visit Details -->
 <?php if ($visits): ?>
+    <div class="report-table-container">
 	<table id="reportTable">
     <thead>
         <tr>
@@ -981,6 +982,7 @@ if (addressData.length > 0 && addressData.reduce((a, b) => a + b, 0) > 0) {
         </tr>
     </thead>
     <tbody>
+</div>
     <?php foreach ($visits as $visit): ?>
        <tr>
   <td data-label="Visit Date"><?= date('Y-m-d', strtotime($visit['visit_date'])) ?></td>
