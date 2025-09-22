@@ -424,5 +424,23 @@ $chartCounts = json_encode($counts);
             window.location.href = `edit_user.php?id=${userId}`;
         }
     </script>
+    <script>
+document.addEventListener("DOMContentLoaded", () => {
+  const sidebar = document.getElementById("sidebar");
+
+  function applyResponsiveSidebar() {
+    if (window.innerWidth <= 1024) {
+      sidebar.classList.add("hide");   // collapsed on small screens
+    } else {
+      sidebar.classList.remove("hide"); // expanded on larger screens
+    }
+  }
+
+  applyResponsiveSidebar();
+  window.addEventListener("resize", applyResponsiveSidebar);
+
+  // keep the rest of your existing code (auth, stats, modals, etc.)
+});
+</script>
 </body>
 </html>
