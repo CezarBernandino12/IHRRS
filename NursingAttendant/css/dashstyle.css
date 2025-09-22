@@ -475,28 +475,35 @@ body {
 }
 
 
+@media (max-width: 480px) {
+  #content main .box-info { gap: 16px; padding: 0 16px 24px; }
+  #content main .box-info li { min-height: 140px; padding: 16px; }
+  #content main .box-info li .icon-img { width: 48px; }
+  #content main .box-info li .text h3 { font-size: 16px; }
+}
 #content main .box-info {
     display: flex;
     flex-direction: row;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;    
     gap: 32px;
     margin-top: 3%;
-    max-width: none;
     justify-content: flex-start;
     text-align: left;
     margin-left: 30px;
     animation: fadeIn 1s forwards;
     overflow-x: auto;
-
+      overflow: visible;  
 }
+
 #content main .box-info li {
-    width: 100%;
+    width: 250px;
     height: 160px;
-    padding: 15px;
+    padding: 20px;
     border-radius: 20px;
     box-shadow: 0 4px 8px rgba(183, 189, 199, 0.616);
     display: flex;
     flex-direction: column; 
+      flex: 1 1 220px;   
     align-items: center; 
     justify-content: flex-start; 
     transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
