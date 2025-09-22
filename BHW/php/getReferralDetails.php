@@ -15,7 +15,7 @@ $sql = "SELECT
 r.referral_id,
 r.referral_date,
 CONCAT_WS(' ', p.first_name, p.middle_name, p.last_name, p.extension) AS name,
-p.age, p.sex, p.address,
+p.age, p.date_of_birth, p.sex, p.address,
 v.weight, v.height, v.temperature, v.blood_pressure, v.chief_complaints,
 v.visit_id
 FROM referrals r

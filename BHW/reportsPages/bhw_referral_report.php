@@ -687,16 +687,108 @@ const statusPieChart = new Chart(statusCtx, {
 
 <script>
 function exportTableToExcel(tableID, filename = 'report') {
-    const dataType = 'application/vnd.ms-excel';
-    const table = document.getElementById(tableID);
-    const tableHTML = table.outerHTML.replace(/ /g, '%20');
-    const downloadLink = document.createElement('a');
-
-    document.body.appendChild(downloadLink);
-    downloadLink.href = 'data:' + dataType + ', ' + tableHTML;
-    downloadLink.download = filename + '.xls';
-    downloadLink.click();
-    document.body.removeChild(downloadLink);
+    try {
+        // Create a temporary div with the same content as print
+        const tempDiv = document.createElement('div');
+        tempDiv.style.position = 'absolute';
+        tempDiv.style.left = '-9999px';
+        tempDiv.style.top = '-9999px';
+        
+        // Clone the print header
+        const printHeader = document.querySelector('.print-header');
+        if (printHeader) {
+            const headerClone = printHeader.cloneNode(true);
+            // Remove any scripts or interactive elements
+            const scripts = headerClone.querySelectorAll('script');
+            scripts.forEach(script => script.remove());
+            tempDiv.appendChild(headerClone);
+        }
+        
+        // Clone the summary section
+        const summary = document.querySelector('.summary-container');
+        if (summary) {
+            const summaryClone = summary.cloneNode(true);
+            const summaryScripts = summaryClone.querySelectorAll('script');
+            summaryScripts.forEach(script => script.remove());
+            tempDiv.appendChild(summaryClone);
+        }
+        
+        // Clone and modify the table to include signature column
+        const originalTable = document.getElementById(tableID);
+        if (!originalTable) {
+            alert('Table not found!');
+            return;
+        }
+        
+        const tableClone = originalTable.cloneNode(true);
+        
+        // Add signature header if not present
+        const headerRow = tableClone.querySelector('thead tr');
+        if (headerRow && !headerRow.querySelector('th:last-child')?.textContent.includes('Signature')) {
+            const signatureHeader = document.createElement('th');
+            signatureHeader.textContent = 'Signature';
+            headerRow.appendChild(signatureHeader);
+            
+            // Add empty signature cells for each row
+            const rows = tableClone.querySelectorAll('tbody tr');
+            rows.forEach(row => {
+                const signatureCell = document.createElement('td');
+                signatureCell.textContent = ''; // Empty for Excel
+                row.appendChild(signatureCell);
+            });
+        }
+        
+        tempDiv.appendChild(tableClone);
+        document.body.appendChild(tempDiv);
+        
+        // Create HTML content for Excel
+        const htmlContent = `
+            <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+            <head>
+                <meta charset="UTF-8">
+                <!--[if gte mso 9]>
+                <xml>
+                    <x:ExcelWorkbook>
+                        <x:ExcelWorksheets>
+                            <x:ExcelWorksheet>
+                                <x:Name>Report</x:Name>
+                                <x:WorksheetOptions>
+                                    <x:DisplayGridlines/>
+                                </x:WorksheetOptions>
+                            </x:ExcelWorksheet>
+                        </x:ExcelWorksheets>
+                    </x:ExcelWorkbook>
+                </xml>
+                <![endif]-->
+            </head>
+            <body>
+                ${tempDiv.innerHTML}
+            </body>
+            </html>
+        `;
+        
+        // Create blob and download
+        const blob = new Blob([htmlContent], {
+            type: 'application/vnd.ms-excel'
+        });
+        
+        const downloadLink = document.createElement('a');
+        downloadLink.href = URL.createObjectURL(blob);
+        downloadLink.download = filename + '.xls';
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        
+        // Clean up
+        setTimeout(() => {
+            document.body.removeChild(downloadLink);
+            document.body.removeChild(tempDiv);
+            URL.revokeObjectURL(downloadLink.href);
+        }, 100);
+        
+    } catch (error) {
+        console.error('Excel export error:', error);
+        alert('Error exporting to Excel: ' + error.message);
+    }
 }
 
 async function exportTableToPDF() {
