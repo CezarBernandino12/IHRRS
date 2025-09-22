@@ -24,10 +24,10 @@ if (isset($_SESSION['user_id'])) {
     if (isset($role)) {  // Check saved $role
         switch ($role) {
             case 'admin':
-                $redirect = "../../ADMINlogin.php";
+                $redirect = "../../adminlogin.php";
                 break;
             case 'doctor':
-                $redirect = "../../DOCTORlogin.html";
+                $redirect = "../../doctorlogin.html";
                 break;
             case 'bhw':
                 $redirect = "../../BHWlogin.html";
