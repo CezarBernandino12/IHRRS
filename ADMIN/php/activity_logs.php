@@ -250,11 +250,10 @@ $logs = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <div class="logout-modal-body">
             <p>Are you sure you want to logout?</p>
         </div>
-        <div class="logout-modal-footer">
-            <button onclick="closeModal()" class="logout-cancel-btn">Cancel</button>
-            <button onclick="proceedLogout()" class="logout-confirm-btn">Yes, Logout</button>
-        </div>
-    </div>
+<div class="logout-modal-footer">
+    <button onclick="closeLogoutModal()" class="logout-cancel-btn">Cancel</button>
+    <button onclick="proceedLogout()" class="logout-confirm-btn">Yes, Logout</button>
+</div>    </div>
 </div>
 
         </main>
@@ -269,7 +268,8 @@ $logs = $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
  
 function closeModal() {
-    document.getElementById('logoutModal').style.display = 'none';
+    document.getElementById('userModal').style.display = 'none';
+    document.getElementById('modalOverlay').style.display = 'none';
 }
 
 function proceedLogout() {

@@ -118,7 +118,7 @@ $inactiveUsers = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 </tr>
             <?php endforeach; ?>
             <?php if (empty($inactiveUsers)): ?>
-                <tr><td colspan="5">No inactive users found.</td></tr>
+                <tr><td colspan="5">No terminated users found.</td></tr>
             <?php endif; ?>
         </tbody>
     </table>
