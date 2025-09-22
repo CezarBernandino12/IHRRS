@@ -98,6 +98,7 @@ $visits = $stmt->fetchAll();
 	<link rel="icon" href="../../img/logo.png">
 	<link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
 	<link rel="stylesheet" href="../css/reportsDesign.css">
+    <link rel="stylesheet" href="../css/logout.css">
     	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
@@ -910,20 +911,21 @@ $total_patients = count($unique_patient_ids);
 
 
 
-<div id="logoutModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Confirm Logout</h3>
-            </div>
-            <div class="modal-body">
-                <p>Are you sure you want to logout?</p>
-            </div>
-            <div class="modal-footer">
-                <button onclick="closeModal()" class="btn yes">Cancel</button>
-                <button onclick="proceedLogout()" class="btn no">Yes, Logout</button>
-            </div>
+<div id="logoutModal" class="logout-modal">
+    <div class="logout-modal-content">
+        <div class="logout-modal-header">
+            <h3>Confirm Logout</h3>
+        </div>
+        <div class="logout-modal-body">
+            <p>Are you sure you want to logout?</p>
+        </div>
+        <div class="logout-modal-footer">
+            <button onclick="closeModal()" class="logout-cancel-btn">Cancel</button>
+            <button onclick="proceedLogout()" class="logout-confirm-btn">Yes, Logout</button>
         </div>
     </div>
+</div>
+
 </div>
 
 <!-- jsPDF and html2canvas libraries -->
@@ -1087,6 +1089,28 @@ window.onclick = function(event) {
     }
 }
 
+    function confirmLogout() {
+    document.getElementById('logoutModal').style.display = 'block';
+    return false; // Prevent the default link behavior
+}
+
+function closeModal() {
+    document.getElementById('logoutModal').style.display = 'none';
+}
+
+function proceedLogout() {
+    window.location.href = '../../role.html';
+}
+
+// Close modal when clicking outside
+window.onclick = function(event) {
+    const modal = document.getElementById('logoutModal');
+    if (event.target == modal) {
+        closeModal();
+    }
+}
+
+
 	// Check if user is logged in
 fetch('../php/getUserId.php')
     .then(response => response.json())
@@ -1098,7 +1122,7 @@ fetch('../php/getUserId.php')
     })
     .catch(error => {
         console.error('Error checking session:', error);
-        window.location.href = '../role.html';
+        window.location.href = '../../ADMIN/php/logout.php'; 
     });
 
 </script>

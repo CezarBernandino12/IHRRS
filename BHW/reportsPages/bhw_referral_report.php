@@ -85,6 +85,7 @@ $rows = $stmt->fetchAll();
 	<link rel="icon" href="../../img/logo.png">
 	<link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../css/reportsDesign.css">
+    <link rel="stylesheet" href="../css/logout.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
@@ -666,20 +667,23 @@ const statusPieChart = new Chart(statusCtx, {
     <p>No referrals found for the selected filters.</p>
 <?php endif; ?>
 </div> </div>
-<div id="logoutModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Confirm Logout</h3>
-            </div>
-            <div class="modal-body">
-                <p>Are you sure you want to logout?</p>
-            </div>
-            <div class="modal-footer">
-                <button onclick="closeModal()" class="btn yes">Cancel</button>
-                <button onclick="proceedLogout()" class="btn no">Yes, Logout</button>
-            </div>
+
+
+<div id="logoutModal" class="logout-modal">
+    <div class="logout-modal-content">
+        <div class="logout-modal-header">
+            <h3>Confirm Logout</h3>
         </div>
-    </div> </div>
+        <div class="logout-modal-body">
+            <p>Are you sure you want to logout?</p>
+        </div>
+        <div class="logout-modal-footer">
+            <button onclick="closeModal()" class="logout-cancel-btn">Cancel</button>
+            <button onclick="proceedLogout()" class="logout-confirm-btn">Yes, Logout</button>
+        </div>
+    </div>
+</div>
+
 
 <!-- jsPDF and html2canvas libraries -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -939,7 +943,7 @@ function closeModal() {
 }
 
 function proceedLogout() {
-    window.location.href = '../../role.html';
+    window.location.href = '../../ADMIN/php/logout.php'; 
 }
 
 // Close modal when clicking outside
