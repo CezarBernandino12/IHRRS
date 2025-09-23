@@ -234,25 +234,33 @@
 
     </div>
     
-    <script>
+    <script> 
 
         
          // Get the patient_id from the URL
   const params = new URLSearchParams(window.location.search);
   const patientId = params.get('patient_id');
 
+
+
   // Build URLs with the patient_id
   if (patientId) {
-    document.getElementById('editBtn').onclick = () => {
+
+    document.getElementById('summaryBtn').onclick = () => {
+      window.location.href = `patientSummary.html?patient_id=${patientId}`;
+    };
+      document.getElementById('editBtn').onclick = () => {
       window.location.href = `editPersonalInfo.html?patient_id=${patientId}`;
     };
-
-    document.getElementById('addITRBtn').onclick = () => {
+      document.getElementById('addITRBtn').onclick = () => {
       window.location.href = `ITRRecordedPatient.html?patient_id=${patientId}`;
     };
+ 
   } else {
     // Optionally disable buttons if patient_id is not found
-    document.getElementById('editBtn').disabled = true;
+   
+    document.getElementById('summaryBtn').disabled = true;
+     document.getElementById('editBtn').disabled = true;
     document.getElementById('addITRBtn').disabled = true;
     console.warn('No patient_id in URL');
   }

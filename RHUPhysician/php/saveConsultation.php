@@ -87,6 +87,24 @@ if (isset($_FILES['photo']) && $_FILES['photo']['error'] === UPLOAD_ERR_OK) {
 
         $consultation_id = $pdo->lastInsertId();
 
+
+
+        // ✅ Update all related consultations for same patient & diagnosis if status is not "Ongoing"
+if ($status !== 'Ongoing') {
+    $stmt_update_status = $pdo->prepare("
+        UPDATE rhu_consultations
+        SET diagnosis_status = :new_status
+        WHERE patient_id = :patient_id
+          AND diagnosis = :diagnosis
+          AND diagnosis_status != 'Ongoing'
+    ");
+    $stmt_update_status->execute([
+        ':new_status' => $status,
+        ':patient_id' => $patient_id,
+        ':diagnosis' => $diagnosis
+    ]);
+}
+
         // 🔹 Insert dispensed medicines
         if (!empty($_POST['medicine_given']) && is_array($_POST['medicine_given'])) {
             $_POST['medicine_given'] = clean_input_recursive($_POST['medicine_given']);

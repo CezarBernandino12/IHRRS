@@ -100,7 +100,7 @@
                
             </form>
             <div class="greeting">
-                <span id="userGreeting">Hello RHU Physician!</span>
+                <span id="userGreeting">Hello Attendant!</span>
             </div>
 			<a href="#" class="profile">
 				<img src="../img/doctor.png">
@@ -184,7 +184,7 @@
             const patientId = urlParams.get("patient_id");
 
             // If patient_id exists, fetch and display the patient's summary
-           if (patientId) {
+         if (patientId) {
     fetch(`php/patient_summary.php?patient_id=${patientId}`)
         .then(response => response.json())
         .then(data => {

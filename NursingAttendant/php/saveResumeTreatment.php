@@ -6,7 +6,6 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 
-
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     try {
         if (!$pdo) {
@@ -27,8 +26,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
         // ✅ Required fields
-        if (empty($_POST['doctor_id'])) {
-            echo json_encode(["status" => "error", "message" => "Submission unsuccessful."]);
+        if (empty($_POST['doctor_id']) || empty($_POST['diagnosis']) || empty($_POST['visit_id'])) {
+            echo json_encode(["status" => "error", "message" => "Missing required fields."]);
             exit;
         }
 
@@ -93,28 +92,44 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
         }
 
-        if (!empty($diagnosis)) {
-               // 🔹 Insert into rhu_consultations (use new visit_id)
-        $stmt_consultation = $pdo->prepare("
-            INSERT INTO rhu_consultations 
-            (patient_id, doctor_id, consultation_date, diagnosis, instruction_prescription, visit_id, lab_result_path, diagnosis_status, follow_up_date) 
-            VALUES (:patient_id, :doctor_id, :consultation_date, :diagnosis, :instructions, :visit_id, :lab_result_path, :diagnosis_status, :followup)
+
+  
+    $stmt_consultation = $pdo->prepare("
+        INSERT INTO rhu_consultations 
+        (patient_id, doctor_id, consultation_date, diagnosis, instruction_prescription, visit_id, lab_result_path, diagnosis_status, follow_up_date) 
+        VALUES (:patient_id, :doctor_id, :consultation_date, :diagnosis, :instructions, :visit_id, :lab_result_path, :diagnosis_status, :followup)
+    ");
+    $stmt_consultation->execute([
+        ':patient_id' => $patient_id,
+        ':doctor_id' => $doctor_id,
+        ':consultation_date' => $consultation_date,
+        ':diagnosis' => $diagnosis,
+        ':instructions' => $instructions,
+        ':visit_id' => $new_visit_id,
+        ':lab_result_path' => $photoPath,
+        ':diagnosis_status' => $status,
+        ':followup' => $followup
+    ]);
+
+    $consultation_id = $pdo->lastInsertId();
+
+
+    //Update all related consultations for same patient & diagnosis
+
+        $stmt_update_status = $pdo->prepare("
+            UPDATE rhu_consultations
+            SET diagnosis_status = :new_status
+            WHERE patient_id = :patient_id
+              AND diagnosis = :diagnosis
         ");
-        $stmt_consultation->execute([
+        $stmt_update_status->execute([
+            ':new_status' => $status,
             ':patient_id' => $patient_id,
-            ':doctor_id' => $doctor_id,
-            ':consultation_date' => $consultation_date,
-            ':diagnosis' => $diagnosis,
-            ':instructions' => $instructions,
-            ':visit_id' => $new_visit_id,
-            ':lab_result_path' => $photoPath,
-            ':diagnosis_status' => $status,
-            ':followup' => $followup
+            ':diagnosis' => $diagnosis
         ]);
-        }
-        
-     
-        $consultation_id = $pdo->lastInsertId();
+
+
+
 
         // 🔹 Insert dispensed medicines
         if (!empty($_POST['medicine_given']) && is_array($_POST['medicine_given'])) {

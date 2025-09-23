@@ -33,7 +33,8 @@ try {
     $sql2 = "SELECT 
                 consultation_date AS date_of_visit, 
                 diagnosis, 
-                diagnosis_status 
+                diagnosis_status,
+                visit_id 
             FROM rhu_consultations 
             WHERE patient_id = :patient_id 
             ORDER BY consultation_date DESC";
