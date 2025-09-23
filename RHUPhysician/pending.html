@@ -210,7 +210,7 @@
                 data.forEach(referral => {
                     const row = document.createElement("tr");
                     row.innerHTML = `
-                        <td>${referral.referral_id}</td>
+                        <td style="padding: 18px 10px;">${referral.referral_id}</td>
                         <td>${formatDate(referral.referral_date)}</td>
                         <td>${referral.patient_name}</td>
                         <td>${referral.referral_from}</td>

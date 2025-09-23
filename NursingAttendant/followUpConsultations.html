@@ -283,7 +283,7 @@
                     const isCompleted = followup.followup_status === "Completed";
                     row.innerHTML = `
                         
-                        <td>${formatDate(followup.date)}</td>
+                        <td style="padding: 18px 10px;">${formatDate(followup.date)}</td>
                         <td>${followup.patient_name}</td>
                         <td>${followup.full_name}</td>
                         <td class="${followup.followup_status.toLowerCase()}">${followup.followup_status}</td>
@@ -348,7 +348,7 @@
                     const isCompleted = followup.followup_status === "Completed";
                     row.innerHTML = `
                         
-                        <td>${formatDate(followup.date)}</td>
+                        <td style="padding: 18px 10px;">${formatDate(followup.date)}</td>
                         <td>${followup.patient_name}</td>
                         <td>${followup.full_name}</td>
                         <td class="${followup.followup_status.toLowerCase()}">${followup.followup_status}</td>
@@ -449,13 +449,14 @@
 
 
 
-    function formatDate(dateString) {
-        if (!dateString) return "N/A";
-        const date = new Date(dateString);
-        if (isNaN(date.getTime())) return "Invalid Date";
-        const options = { year: 'numeric', month: 'long', day: 'numeric' };
-        return `${date.toLocaleDateString('en-US', options)} <br><span class="time">${date.toLocaleTimeString()}</span>`;
-    }
+function formatDate(dateString) {
+    if (!dateString) return "N/A";
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return "Invalid Date";
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return `${date.toLocaleDateString('en-US', options)} <br><span class="time">&nbsp;</span>`;
+}
+
 });
 
 document.getElementById('searchForm').addEventListener('submit', function(e) {

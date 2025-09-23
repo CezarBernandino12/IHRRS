@@ -566,8 +566,9 @@ body {
 	text-align: left;
 	border-bottom: 1px solid var(--grey);
 }
-#content main .table-data .order table td {
-	padding: 16px 0;
+
+#content main .table-data .order table tr {
+    height: 60px; /* fixes a minimum height for rows */
 }
 #content main .table-data .order table tr td:first-child {
 	display: flex;
@@ -629,6 +630,8 @@ body {
 #content main .table-data .todo .todo-list li:last-child {
 	margin-bottom: 0;
 }
+
+
 
 
 /*FORM*/
@@ -2027,4 +2030,101 @@ input[type="number"] {
 
 .button-secondary:hover {
     background-color:#68b9c0; 
+}
+
+
+/* ===== Today Followups Table ===== */
+#todayFollowups-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    font-size: 14px;
+    background-color: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+/* Table header */
+#todayFollowups-table thead {
+    background-color: #f0f4f8;
+}
+
+#todayFollowups-table thead th {
+    text-align: left;
+    padding: 12px 16px;
+    font-weight: 600;
+    color: #333;
+    border-bottom: 2px solid #ddd;
+}
+
+
+
+/* Table body */
+#todayFollowups-table tbody td {
+     padding: 20px 16px; 
+    border-bottom: 1px solid #eee;
+    vertical-align: middle;
+}
+
+#todayFollowups-table tbody tr {
+    height: 60px; /* adjust to your liking */
+}
+
+/* Row hover effect */
+#todayFollowups-table tbody tr:hover {
+    background-color: #f9fcff;
+}
+
+/* Status column styling */
+#todayFollowups-table .status {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 12px;
+    display: inline-block;
+    text-align: center;
+    min-width: 80px;
+}
+
+/* Example status colors */
+#todayFollowups-table .status.completed {
+    background-color: #4caf50;
+    color: #fff;
+}
+#todayFollowups-table .status.pending {
+    background-color: #ff9800;
+    color: #fff;
+}
+#todayFollowups-table .status.cancelled {
+    background-color: #f44336;
+    color: #fff;
+}
+
+/* Action buttons */
+#todayFollowups-table td .action-btn {
+    padding: 6px 12px;
+    font-size: 13px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-right: 4px;
+    transition: 0.2s;
+}
+
+#todayFollowups-table td .action-btn.view {
+    background-color: #2196f3;
+    color: #fff;
+}
+#todayFollowups-table td .action-btn.edit {
+    background-color: #ffc107;
+    color: #fff;
+}
+#todayFollowups-table td .action-btn.delete {
+    background-color: #f44336;
+    color: #fff;
+}
+
+#todayFollowups-table td .action-btn:hover {
+    opacity: 0.85;
 }
