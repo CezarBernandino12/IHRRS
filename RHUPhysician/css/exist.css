@@ -62,7 +62,7 @@ body {
 #content main{
   display: flex;
   flex-direction: column;
-  align-items: center;        
+  align-items: center;         /* <-- centers children horizontally */
 }
 
 /* Wide sidebar */
