@@ -114,8 +114,7 @@
         <main>
             <div class="head-title">
             </div>
-        </main>
-    </section>
+
 
     <div class="container-header">
         <h2>VISIT DETAILS</h2>
@@ -340,6 +339,9 @@
                         <button id="printBtn" class="footer-btn">Print</button>
                          <button id="resumeBtn" class="footer-btn" type="button">Resume Treatment</button>
                     </div>
+
+        </main>
+    </section>
 
                         <div id="printContent" style="display: none;">
                 <div class="header">
@@ -665,7 +667,24 @@ document.getElementById("printBtn").addEventListener("click", function () {
 
             
 			</script>
-    
+    <script>
+document.addEventListener("DOMContentLoaded", () => {
+  const sidebar = document.getElementById("sidebar");
+
+  function applyResponsiveSidebar() {
+    if (window.innerWidth <= 1024) {
+      sidebar.classList.add("hide");   // collapsed on small screens
+    } else {
+      sidebar.classList.remove("hide"); // expanded on larger screens
+    }
+  }
+
+  applyResponsiveSidebar();
+  window.addEventListener("resize", applyResponsiveSidebar);
+
+  // keep the rest of your existing code (auth, stats, modals, etc.)
+});
+</script>
     <script src="js/form.js"></script>
     <script src="js/script.js"></script>
 </body>

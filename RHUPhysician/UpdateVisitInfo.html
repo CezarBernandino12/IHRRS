@@ -112,8 +112,7 @@
         <main>
             <div class="head-title">
             </div>
-        </main>
-    </section>
+
 
     <div class="container-header">
         <h2>VISIT DETAILS</h2>
@@ -121,10 +120,7 @@
     
     <div class="container">
 
-        <p style="display: flex; justify-content: space-between; align-items: center;">
-            <b>PERSONAL INFORMATION:</b>
-            <span id="togglePersonalInfo" class="view-all-btn">View All</span>
-        </p>        
+<p class="section-bar">PERSONAL INFORMATION:</p>       
 
         <div id="hiddenPersonalInfo" style="display: none;">
             <div class="form-row">
@@ -291,9 +287,7 @@
                 </div>
             </div> <br>
 
-            <p style="display: flex; justify-content: space-between; align-items: center;">
-                <b>PATIENT'S TREATMENT :</b>  
-            </p>
+<p class="section-bar">PATIENT'S TREATMENT :</p>
 
         <form class="personal-info-form" id="individualRecordForm" action="php/saveConsultation.php" method="POST" enctype="multipart/form-data">
             <div class="additional-group box-group additional-fields" style="background-color: aliceblue;">
@@ -482,7 +476,8 @@ document.addEventListener("click", function(event) {
 </div>
 
 </div>
-   
+           </main>
+    </section>
     
     <script src="js/form.js"></script>
     <script src="js/script.js"></script>
@@ -849,6 +844,26 @@ fetch('php/getUserName.php')
             
 
 
+</script>
+<script>function initSelect2($el, placeholder){
+  $el.select2({
+    placeholder,
+    allowClear: true,
+    minimumResultsForSearch: 0,
+    width: '100%',                 // control width
+    dropdownAutoWidth: true,
+    dropdownParent: $('#individualRecordForm') // keep dropdown inside the form rail
+  });
+}
+
+// initial
+initSelect2($('#diagnosis'), 'Select or type diagnosis');
+initSelect2($('#rhu_remarks'), 'Select or type remarks');
+$('.medicine-select').each(function(){ initSelect2($(this), 'Select or type medication'); });
+
+// when you clone/add a new medicine row
+// ...
+initSelect2(newSelect, 'Select or type medication');
 </script>
 <script src="js/logout.js"></script>
 
