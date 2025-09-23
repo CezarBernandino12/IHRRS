@@ -51,6 +51,41 @@ body {
 }
 
 /*SIDEBAR*/
+/* Center the main content rail relative to the remaining viewport (after sidebar) */
+:root{
+  --rail-max: 960px;          /* max width of the form rail */
+  --page-gutter: 16px;        /* horizontal gutter */
+  --sidebar-w: 280px;
+  --sidebar-w-collapsed: 60px;
+}
+
+#content main{
+  display: flex;
+  flex-direction: column;
+  align-items: center;         /* <-- centers children horizontally */
+}
+
+/* Wide sidebar */
+#content main .container-header,
+#content main .container{
+  /* Take the minimum of: rail max OR the remaining viewport minus sidebar and gutters */
+  width: min(
+    var(--rail-max),
+    calc(100vw - var(--sidebar-w) - (var(--page-gutter) * 2))
+  );
+  margin-inline: auto;         /* center horizontally */
+}
+
+/* Collapsed sidebar */
+#sidebar.hide ~ #content main .container-header,
+#sidebar.hide ~ #content main .container{
+  width: min(
+    var(--rail-max),
+    calc(100vw - var(--sidebar-w-collapsed) - (var(--page-gutter) * 2))
+  );
+  margin-inline: auto;
+}
+
 #sidebar {
 	position: fixed;
 	top: 0;
@@ -785,22 +820,27 @@ p {
     display: inline-block; 
 }
 
-.vitals-section {
-    display: flex;
-    flex-wrap: wrap; 
-    gap: 15px; 
-    margin-top: 10px;
+.vitals-section{
+  display: flex;         
+  flex-wrap: wrap;
+  gap: 12px;
+  min-width: 0;
 }
 
-.vitals-section .form-group {
-    max-width: max-content;
-    margin-bottom: 10px;
+.vitals-section .form-group{
+  flex: 1 1 220px;         
+  max-width: 100%;        
+  min-width: 0;            
 }
 
-.vitals-section .form-group label {
-    font-weight: bold;
-    white-space: nowrap;
+
+.vitals-section .form-group label{
+  white-space: normal;     /* allow label wrapping */
+  overflow-wrap: anywhere; /* break long words if needed */
+  word-break: break-word;  /* extra safety for long tokens */
+  margin-bottom: 6px;
 }
+
  
 .vitals-section .form-group label {
     font-weight: bold;
@@ -816,6 +856,18 @@ p {
     min-height: 35px;
 }
 
+/* Optionally switch to grid for even cleaner wrapping */
+@media (max-width: 900px){
+  .vitals-section{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+}
+@media (max-width: 480px){
+  .vitals-section{
+    grid-template-columns: 1fr; /* single column on very small screens */
+  }
+}
 .no-background {
     background-color: transparent !important;
 }
@@ -1307,11 +1359,12 @@ select {
 }
 
 
-.medicine-entry {
-    flex: 0 0 38%; 
-    box-sizing: border-box;
+.medicine-entry{
+  display: flex;
+  flex-wrap: wrap;          /* rows can break instead of overlap */
+  align-items: flex-start;  /* don't vertically center; labels stay above */
+  gap: 12px;
 }
-
 .add-medicine-container {
     display: flex;
     justify-content: flex-end;
@@ -1453,7 +1506,8 @@ input[type="number"] {
     #submitButton:disabled {
         background-color: #828386; /* Gray when disabled */
         cursor: not-allowed;   /* Show "not allowed" cursor */
-    } 
+    }
+
 
 
 
@@ -1542,4 +1596,146 @@ input[type="number"] {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
     gap: 10px;
+}
+/* Let grid/flex children actually shrink instead of overflowing */
+.form-row,
+.vitals-section { min-width: 0; }
+
+.form-group,
+.medicine-entry,
+.additional-group { min-width: 0; }
+
+/* Inputs/selects stay inside their parent */
+select,
+textarea,
+input[type="text"],
+input[type="number"],
+input[type="date"]{
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Select2 — keep the control itself inside the form width */
+.select2-container{ width: 100% !important; max-width: 100%; }
+.select2-selection{ overflow: hidden; text-overflow: ellipsis; }
+
+/* Optional: avoid layout push from the + Add button */
+.add-medicine { margin-left: 0; }           /* was 30% */
+.add-medicine-container{ justify-content: flex-end; }
+
+/* Safety: quantity blocks don’t exceed parent */
+.quantity-container{ max-width: 100%; }
+@media (max-width: 640px){
+  .form-row{
+    grid-template-columns: 1fr;  /* single column on narrow screens */
+    gap: 10px;
+  }
+  .vitals-section{
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  }
+}
+/* --- 1) Section titles look clean, not every <p> is a blue bar --- */
+
+/* Reset normal paragraphs inside your forms/boxes */
+.container p,
+.additional-group p,
+.form-group p {
+  background: transparent;
+  color: #333;
+  height: auto;
+  padding: 0;
+  margin-bottom: 8px;
+}
+
+/* Make the big section bars explicit via a class instead of global p */
+.section-bar {
+  background-color: #C4E1F6;
+  color: #1a1a1a;
+  padding: 10px 16px;
+  border-radius: 4px;
+  font-family: var(--poppins);
+  font-weight: 700;
+  letter-spacing: .2px;
+  margin: 16px 0;
+  line-height: 1.25;
+}
+
+/* If you cannot change HTML to add .section-bar,
+   at least constrain the existing blue title <p>s: */
+.container > p,
+.additional-group > p {
+  background-color: #C4E1F6;
+  color: #1a1a1a;
+  padding: 10px 16px;
+  border-radius: 4px;
+  font-weight: 700;
+  height: auto;            /* <-- remove the fixed 45px */
+  line-height: 1.25;       /* cleaner vertical rhythm */
+}
+
+/* --- 2) Labels are readable, wrap nicely, align consistently --- */
+
+.form-group label,
+.additional-group label {
+  display: block;
+  margin: 0 0 6px;
+  font-family: var(--poppins);
+  font-weight: 600;
+  font-size: 14px;
+  color: #2a2a2a;
+  line-height: 1.25;
+  white-space: normal;      /* <-- allow wrapping (prevents collisions) */
+  text-overflow: ellipsis;
+}
+
+/* Vitals labels often long; keep them tidy */
+.vitals-section .form-group label {
+  font-weight: 600;
+  white-space: normal;      /* override any previous nowrap */
+  margin-bottom: 6px;
+}
+
+/* Inputs/values in boxes remain distinct from titles */
+.form-group p,
+.vitals-section .form-group p {
+  background-color: #b0d2ff33;
+  border-radius: 4px;
+  padding: 10px 12px;
+  font-weight: 600;
+}
+
+/* Medication block heading alignment */
+.medicine-entry .form-group label {
+  margin-top: 2px;
+}
+
+/* The small “+ Add” button area stays aligned and doesn’t crowd headings */
+.add-medicine-container {
+  margin-top: 8px;
+  justify-content: flex-end;
+}
+
+/* --- 3) Consistent main headings --- */
+
+.container-header h2 {
+  font-family: var(--poppins);
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: .3px;
+  margin: 0;
+  color: #0f172a;
+}
+
+#content main .head-title .left h1 {
+  font-family: var(--poppins);
+  font-weight: 700;
+  letter-spacing: .2px;
+}
+
+/* Optional: small, muted section captions (if you use any) */
+.section-caption {
+  font: 500 12px/1.4 var(--lato);
+  color: #6b7280;
+  margin-top: 4px;
 }
