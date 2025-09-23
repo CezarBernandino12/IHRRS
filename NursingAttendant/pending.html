@@ -251,7 +251,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     const row = document.createElement("tr");
                     const isForwarded = referral.referral_status === "Forwarded to Physician";
                     row.innerHTML = `
-                        <td>${referral.referral_id}</td>
+                        <td style="padding: 18px 10px;">${referral.referral_id}</td>
                         <td>${formatDate(referral.referral_date)}</td>
                         <td>${referral.patient_name}</td>
                         <td>${referral.referral_from}</td>

@@ -283,7 +283,7 @@
                     const isCompleted = followup.followup_status === "Completed";
                     row.innerHTML = `
                         
-                        <td>${formatDate(followup.date)}</td>
+                        <td style="padding: 18px 10px;">${formatDate(followup.date)}</td>
                         <td>${followup.patient_name}</td>
                         <td>${followup.full_name}</td>
                         <td class="${followup.followup_status.toLowerCase()}">${followup.followup_status}</td>
@@ -348,7 +348,7 @@
                     const isCompleted = followup.followup_status === "Completed";
                     row.innerHTML = `
                         
-                        <td>${formatDate(followup.date)}</td>
+                        <td style="padding: 18px 10px;">${formatDate(followup.date)}</td>
                         <td>${followup.patient_name}</td>
                         <td>${followup.full_name}</td>
                         <td class="${followup.followup_status.toLowerCase()}">${followup.followup_status}</td>

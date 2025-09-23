@@ -245,7 +245,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     // Add row content (referral data) to the table
                     row.innerHTML = `
-                        <td>${formatDate(referral.referral_date)}</td>
+                        <td style="padding: 18px 10px;">${formatDate(referral.referral_date)}</td>
                         <td>${referral.patient_name}</td>
                         <td>${referral.referred_by}</td>
                         <td class="${referral.referral_status.toLowerCase()}">${referral.referral_status}</td>
