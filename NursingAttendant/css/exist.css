@@ -712,7 +712,7 @@ p {
 
 .form-group label {
     font-size: 15px;
-    font-weight: bold;
+    font-weight: bolder;
     color: #333;
     margin-top: 5px;
     margin-right: 5px;
@@ -747,6 +747,7 @@ p {
     word-wrap: break-word; 
 	white-space: normal; 
 	overflow: hidden; 
+	   border: 1px solid #d0d0d0; /* light gray border */
 }
 .form-group2 p {
     background-color: #fff;
