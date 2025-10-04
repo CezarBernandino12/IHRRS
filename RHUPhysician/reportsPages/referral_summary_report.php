@@ -100,12 +100,7 @@ $total_pending = 0;
 					<span class="text">Dashboard</span>
 				</a>
 			</li>
-			<li>
-				<a href= "../ITR.html">
-					<i class="bx bxs-user"></i>
-					<span class="text">Add New ITR</span>
-				</a>
-			</li>
+			
 			<li>
 				<a href="../pending.html" id="updateReferrals">
 					<i class="bx bxs-user"></i>
