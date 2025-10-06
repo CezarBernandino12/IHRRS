@@ -385,7 +385,7 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <div class="form-group">
                 <label for="password">PASSWORD</label>
                 <div class="password-container">
-                    <input type="password" id="password" name="password" required placeholder="At least hae uppercase number & symbol">
+                    <input type="password" id="password" name="password" required placeholder="At least have uppercase number & symbol">
                     <i class="bx bx-hide password-toggle" id="passwordToggle"></i>
                 </div>
             </div>
@@ -419,6 +419,12 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <option value="RHU III">RHU III</option>
   </select>
 </div>
+ 
+                        <!-- License number field for physicians (initially hidden) -->
+                        <div id="licenseGroup" style="display: none; margin-top: 10px;">
+                            <label for="licenseNumber">Physician License Number</label>
+                            <input type="text" id="licenseNumber" name="license_number" placeholder="Enter license number" />
+                        </div>
             
             <div class="form-group" id="barangayGroup">
     <label for="barangay">DESIGNATED BARANGAY</label>
@@ -433,6 +439,22 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <option value="Barangay Cobangbang">Barangay Cobangbang</option>
                     <option value="Barangay Bagasbas">Barangay Bagasbas</option>
                     <option value="Barangay Manbalite">Barangay Manbalite</option>
+                    <option value="Barangay Alawihao">Barangay Alawihao</option>
+                    <option value="Barangay Awitan">Barangay Awitan</option>
+                    <option value="Barangay II (Pasig)">Barangay 2</option>
+                    <option value="Barangay III (Iraya)">Barangay 3</option>
+                    <option value="Barangay IV (Mantagbac)">Barangay 4</option>
+                    <option value="Barangay V (Pandan)">Barangay 5</option>
+                    <option value="Barangay Bibirao">Barangay Bibirao</option>
+                    <option value="Barangay Borabod">Barangay Borabod</option>
+                    <option value="Barangay Calasgasan">Barangay Calasgasan</option>
+                    <option value="Barangay Camambugan">Barangay Camambugan</option>
+                    <option value="Barangay Dogongan">Barangay Dogongan</option>
+                    <option value="Barangay Gahonon">Barangay Gahonon</option>
+                    <option value="Barangay Lag-on">Barangay Lag-on</option>
+                    <option value="Barangay Magang">Barangay Magang</option>
+                    <option value="Barangay Pamorangon">Barangay Pamorangon</option>
+                    <option value="Barangay Mancruz">Barangay Mancruz</option>
                     </select>
                     </div>
             
