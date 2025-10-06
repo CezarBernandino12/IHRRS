@@ -269,6 +269,7 @@ function saveNewUser() {
     const password = document.getElementById('password').value;
     const confirmPassword = document.getElementById('confirmPassword').value;
     const role = document.getElementById('role').value;
+    const licenseNumber = document.getElementById('licenseNumber') ? document.getElementById('licenseNumber').value.trim() : '';
 
     // Basic validation
     if (!fullName || !username || !password || !role) {
@@ -286,6 +287,11 @@ function saveNewUser() {
     // Confirm password match
     if (password !== confirmPassword) {
         alert('Passwords do not match.');
+        return;
+    }
+    // If doctor role, ensure license number is provided
+    if (role === 'doctor' && !licenseNumber) {
+        alert('Please enter the physician license number.');
         return;
     }
  
@@ -315,29 +321,29 @@ function toggleBarangayField() {
     const barangayGroup = document.getElementById('barangayGroup');
     const barangaySelect = document.getElementById('barangay');
     const rhuGroup = document.getElementById('rhu-group');
-  
+    const licenseGroup = document.getElementById('licenseGroup');
+    const licenseInput = document.getElementById('licenseNumber');
+
+    // Always show RHU dropdown
+    rhuGroup.style.display = 'block';
+
     if (role === 'doctor') {
         // Hide Barangay
         barangayGroup.style.display = 'none';
         barangaySelect.removeAttribute('required');
         barangaySelect.value = ''; // Clear barangay
-    
-        // Show RHU
-        rhuGroup.style.display = 'block';
-    } else if (role === 'bhw') {
-        // Show Barangay only for BHW/Midwife
+
+        // Show license field and make required
+        if (licenseGroup) licenseGroup.style.display = 'block';
+        if (licenseInput) licenseInput.setAttribute('required', '');
+    } else {
+        // Show Barangay for other roles
         barangayGroup.style.display = 'block';
         barangaySelect.setAttribute('required', '');
-    
-        // Hide RHU
-        rhuGroup.style.display = 'none';
-    } else {
-        // For admin or any other role
-        barangayGroup.style.display = 'none';
-        barangaySelect.removeAttribute('required');
-        barangaySelect.value = ''; // Clear barangay
-    
-        rhuGroup.style.display = 'none';
+
+        // Hide license field
+        if (licenseGroup) licenseGroup.style.display = 'none';
+        if (licenseInput) licenseInput.removeAttribute('required');
     }
 }
 
@@ -692,5 +698,5 @@ function closeModal() {
 
 function proceedLogout() {
     window.location.href = 'logout.php'; // Adjust path if needed
-} 
+}
 

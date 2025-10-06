@@ -14,6 +14,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $address = isset($_POST['address']) ? trim($_POST['address']) : '';
     $age = isset($_POST['age']) ? (int)$_POST['age'] : null;
     $contactNumber = isset($_POST['contact_number']) ? trim($_POST['contact_number']) : '';
+    $licenseNumber = ($role === 'doctor') ? trim($_POST['license_number'] ?? '') : null;
+
+// Validate license number for doctors
+if ($role === 'doctor' && empty($licenseNumber)) {
+    echo "Error: License number is required for doctors.";
+    exit;
+}
 
     // Validate required fields
     if (empty($fullName) || empty($username) || empty($password) || empty($role)) {
@@ -42,8 +49,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
         // Insert new user
-        $sql = "INSERT INTO users (full_name, username, password_hash, role, barangay, rhu, address, age, contact_number, status, registration_date) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'approved', NOW())";
+            $sql = "INSERT INTO users (full_name, username, password_hash, role, barangay, rhu, address, age, contact_number, license_number, status, registration_date) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'approved', NOW())";
 
         $stmt = $pdo->prepare($sql);
         $stmt->execute([
@@ -55,9 +62,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $rhu,
             $address,
             $age,
-            $contactNumber
+            $contactNumber,
+            $licenseNumber
         ]);
-
         // Get the inserted user's ID
         $newUserId = $pdo->lastInsertId();
 
