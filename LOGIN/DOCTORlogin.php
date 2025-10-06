@@ -14,21 +14,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (!$user) {
         // Log failed login (user not found)
         logActivity($pdo, null, "Failed Login (Username Not Found): $username");
-        header("Location: ../DOCTORlogin.html?error=Invalid credentials");
+        header("Location: ../doctorlogin.html?error=Invalid credentials");
         exit();
     }
 
     // ✅ Check if the account is inactive
     if ($user['account_status'] === 'inactive') {
         logActivity($pdo, $user['user_id'], "Failed Login (Inactive Account)");
-        header("Location: ../DOCTORlogin.html?error=Your account is deactivated.");
+        header("Location: ../doctorlogin.html?error=Your account is deactivated.");
         exit();
     }
 
     // ✅ Ensure only doctors can log in
     if ($user['role'] !== 'doctor') {
         logActivity($pdo, $user['user_id'], "Failed Login (Unauthorized Role)");
-        header("Location: ../DOCTORlogin.html?error=You are not authorized to access this page.");
+        header("Location: ../doctorlogin.html?error=You are not authorized to access this page.");
         exit();
     }
 
@@ -47,7 +47,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit();
     } else {
         logActivity($pdo, $user['user_id'], "Failed Login (Incorrect Password)");
-        header("Location: ../DOCTORlogin.html?error=Invalid password.");
+        header("Location: ../doctorlogin.html?error=Invalid password.");
         exit();
     }
 } 

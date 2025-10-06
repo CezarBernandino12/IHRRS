@@ -13,19 +13,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if (!$admin) {
         logActivity($pdo, null, "Failed Login (Username Not Found): $username");
-        header("Location: ../ADMINlogin.php?error=Invalid credentials.");
+        header("Location: ../adminlogin.php?error=Invalid credentials.");
         exit();
     }
 
     if ($admin['role'] !== 'admin') {
         logActivity($pdo, $admin['user_id'], "Failed Login (Unauthorized Role)");
-        header("Location: ../ADMINlogin.php?error=Unauthorized access.");
+        header("Location: ../adminlogin.php?error=Unauthorized access.");
         exit();
     }
 
     if ($admin['account_status'] !== 'active') {
         logActivity($pdo, $admin['user_id'], "Failed Login (Inactive Account)");
-        header("Location: ../ADMINlogin.php?error=Your account is not approved.");
+        header("Location: ../adminlogin.php?error=Your account is not approved.");
         exit();
     }
 
@@ -41,7 +41,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit();
     } else {
         logActivity($pdo, $admin['user_id'], "Failed Login (Incorrect Password)");
-        header("Location: ../ADMINlogin.php?error=Invalid password.");
+        header("Location: ../adminlogin.php?error=Invalid password.");
         exit();
     }
 }
