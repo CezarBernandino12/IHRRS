@@ -743,6 +743,7 @@ p {
     flex: 1 1 48%;
     flex: 1;
     margin-right: 15px;
+    
 }
 
 .form-group label {
@@ -771,8 +772,9 @@ p {
 
 .form-group p {
     background-color: #b0d2ff33;
+     font-family: 'Trebuchet MS', sans-serif;
     border-radius: 2px;
-    font-size: 16px;
+    font-size: 15px;
     font-weight: bold;
     min-height: 35px;
     padding: 12px;
@@ -849,6 +851,7 @@ p {
 }
 
 .vitals-section .form-group p {
+     font-family: 'Trebuchet MS', sans-serif;
     background-color: #b0d2ff33; 
     padding: 10px;
     border-radius: 5px;
@@ -1621,6 +1624,10 @@ input[type="date"]{
 .select2-container{ width: 100% !important; max-width: 100%; }
 .select2-selection{ overflow: hidden; text-overflow: ellipsis; }
 
+.select2{
+     font-family: 'Trebuchet MS', sans-serif;
+     font-size: 15px;
+}
 /* Optional: avoid layout push from the + Add button */
 .add-medicine { margin-left: 0; }           /* was 30% */
 .add-medicine-container{ justify-content: flex-end; }
@@ -1739,4 +1746,87 @@ input[type="date"]{
   font: 500 12px/1.4 var(--lato);
   color: #6b7280;
   margin-top: 4px;
+}
+
+
+/* CSS */
+.prescription-option {
+  display: flex;
+  align-items: center;
+  background: #bcffcd8c;
+  border: 1px solid #bcf6cf;
+  border-radius: 8px;
+  padding: 10px 15px;
+  margin-top: 12px;
+  transition: all 0.3s ease;
+}
+
+.prescription-option:hover {
+  background: #e3ffe9;
+  border-color: #5bd579;
+}
+
+.prescription-option input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #ffffff81; /* Modern browsers */
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+.prescription-option label {
+  font-size: 15px;
+  color: #218b3c;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 3px;
+}
+
+
+/* Container Styling */
+.prescription-container {
+  width: 700px;
+  min-height: 300px;  /* taller than wide */
+  margin: 20px auto;
+  background: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+
+.print-option {
+  display: flex;
+  align-items: center;
+  background: #f0f7ff;
+  border: 1px solid #bcd4f6;
+  border-radius: 8px;
+  padding: 10px 15px;
+  margin-top: 12px;
+  transition: all 0.3s ease;
+}
+
+.print-option:hover {
+  background: #e3f0ff;
+  border-color: #5b9bd5;
+}
+
+.print-option input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #1e90ff; /* Modern browsers */
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+.print-option label {
+  font-size: 15px;
+  color: #2a3f5f;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 3px;
 }
