@@ -227,7 +227,6 @@ $visits = $stmt->fetchAll();
                <button type="button" class="btn-export" id="openFilterModal">Filter</button>
         <button type="button" class="btn-export" onclick="exportTableToExcel('reportTable')">Export to Excel</button>
         <button type="button" class="btn-export" onclick="exportTableToPDF()">Export to PDF</button>
-        <button type="button" class="btn-print" onclick="printDiv()">Print this page</button>
     </div>
 
     <!-- Modern Filter Tags Display -->
@@ -1220,6 +1219,14 @@ fetch('../php/getUserId.php')
     });
 
 </script>
+
+<!-- Print Button at Bottom -->
+<div class="print-button-container">
+    <button type="button" class="btn-print" onclick="printDiv()">
+        <i class='bx bx-printer'></i>
+        Print Report
+    </button>
+</div>
 
 </body>
 </html>

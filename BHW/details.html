@@ -12,127 +12,6 @@
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    <style>
-        /* Improved print styles for the referral form */
-        @media print {
-            @page {
-                size: A4;
-                margin: 10mm; /* Reduced margins */
-            }
-            
-            body * {
-                visibility: hidden;
-            }
-            
-            .referral-container, .referral-container * {
-                visibility: visible;
-            }
-            
-            .referral-container {
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100%;
-                max-width: 100%;
-                margin: 0;
-                padding: 10px;
-                box-shadow: none;
-                border: none;
-                font-size: 11pt; /* Slightly smaller font size */
-            }
-
-            /* Header adjustments */
-            .header-info {
-                margin-bottom: 15px;
-                padding-bottom: 10px;
-            }
-            
-            .header-info h3 {
-                margin: 3px 0;
-                font-size: 14pt;
-            }
-            
-            /* Compress spacing */
-            .form-group {
-                margin-bottom: 15px;
-            }
-            
-            .field-container {
-                margin-bottom: 10px;
-            }
-            
-            /* Make fields more compact */
-            .name-fields, .patient-info, .vitals {
-                gap: 10px;
-            }
-            
-            /* Reduce space in text areas */
-            .diagnosis-container, .treatment-container {
-                margin-top: 10px;
-            }
-            
-            /* Make chief complaints area shorter */
-            .complaints-container {
-                min-height: 40px;
-            }
-            
-            /* Make diagnosis and treatment areas shorter */
-            .diagnosis-container, 
-            .treatment-container {
-                min-height: 40px;
-            }
-            
-            /* Hide navigation elements */
-            .view-record-link, .footer-btn, .referral-form-footer {
-                display: none;
-            }
-            
-            /* Adjust form spacing */
-            .form-group-title {
-                margin-bottom: 5px;
-                font-size: 12pt;
-            }
-            
-            /* Adjust field label spacing */
-            .field-label {
-                margin-bottom: 2px;
-                font-size: 9pt;
-            }
-            
-            /* Adjust field value spacing */
-            .field-value {
-                font-size: 11pt;
-                line-height: 1.3;
-            }
-
-            /* Optimize page break and spacing */
-            .complaints-container,
-            .diagnosis-container,
-            .treatment-container {
-                page-break-inside: avoid;
-            }
-
-            /* Reduce the height for text containers */
-            .treatment-container textarea {
-                height: 60px !important;
-                min-height: 60px !important;
-            }
-
-            /* Make the page fit better */
-            textarea {
-                height: auto !important;
-                min-height: 40px !important;
-            }
-        }
-
-
-        /* Reduce default size of treatment text area */
-        .treatment-container textarea {
-            min-height: 80px;
-        }
-
-      
-    </style>
 </head>
 
 <body>
@@ -224,115 +103,121 @@
     <a id="viewRecordLink" href="#" class="view-record-link" style="float: right;">View Record</a>
     <br>
     
-    <div class="header-info">
-        <h3>Republic of the Philippines</h3>
-        <h3>Daet, Camarines Norte</h3>
-        <h3 id="barangay-info">Barangay 1</h3> <br>
-        <h2>Referral Slip</h2>
-    </div>
-
-    <div class="form-group">
-        <div class="name-fields">
-            <div class="field-container name-field">
-                <span class="field-label">Referral ID</span>
-                <div id="referral_id" class="field-value"></div>
-            </div>
-            <div class="field-container name-field">
-                <span class="field-label">Date</span>
-                <div id="date" class="field-value"></div>
-            </div>
-        </div>
-    </div>
-
-    <div class="form-group">
-        <div class="form-group-title">Patient Information</div>
-        <div class="patient-info">
-            <div class="field-container patient-field">
-                <span class="field-label">Full Name</span>
-                <div id="name" class="field-value"></div>
-            </div>
-            <div class="field-container patient-field">
-                <span class="field-label">Age</span>
-                <div id="age" class="field-value"></div>
-            </div>
-        </div>
-        
-        <div class="patient-info">
-            <div class="field-container patient-field">
-                <span class="field-label">Address</span>
-                <div id="address" class="field-value"></div>
-            </div>
-            <div class="field-container patient-field">
-                <span class="field-label">Sex</span>
-                <div id="sex" class="field-value"></div>
-            </div>
-             <div class="field-container patient-field" hidden>
-                <span class="field-label">Date of Birth</span>
-                <div id="date_of_birth" class="field-value"></div>
-            </div>
-        </div>
-    </div>
-
-    <div class="form-group">
-        <div class="form-group-title">Vital Signs</div>
-        <div class="vitals">
-            <div class="field-container vital-field">
-                <span class="field-label">Weight</span>
-                <div id="weight" class="field-value"></div>
-            </div>
-            <div class="field-container vital-field">
-                <span class="field-label">Height</span>
-                <div id="height" class="field-value"></div>
-            </div>
-        </div>
-        
-        <div class="vitals">
-            <div class="field-container vital-field">
-                <span class="field-label">Blood Pressure</span>
-                <div id="bp" class="field-value"></div>
-            </div>
-            <div class="field-container vital-field">
-                <span class="field-label">Temperature</span>
-                <div id="temp" class="field-value"></div>
-            </div>
-        </div>
-    </div>
-
-    <div class="form-group">
-        <div class="form-group-title">Chief Complaints</div>
-        <div class="complaints-container">
-            <div id="complaints" class="field-value"></div>
-        </div>
-    </div>
-
-    <div class="form-group">
-        <div class="form-group-title">Diagnosis <i>(To be filled out by the doctor only. Do not write anything.)</i></div>
-        <div class="diagnosis-container">
-            <div class="field-value diagnosis-field"></div>
-        </div>
-    </div>
-
-    <div class="form-group">
-        <div class="form-group-title">Medications/Treatment <i>(To be filled out by the doctor only. Do not write anything.)</i></div>
-        <div class="treatment-container">
-            <textarea readonly style="height: 80px;"></textarea>
-        </div>
-    </div>
+<div class="referral-header">
+  <div class="referral-heading">
+    <div class="line-1">Republic of the Philippines</div>
+    <div class="line-2">Daet, Camarines Norte</div>
+    <div class="line-3" id="barangay-info">Barangay 1 Health Station</div>
     
-    <div class="form-group">
-        <div class="form-group-title">Barangay Health Worker Signature</i></div>
-        <div>
-            <textarea readonly style="height: 50px;"></textarea>
-            <span id="bhwName">BHW</span>
-        </div>
-    </div>
-    <input type="hidden" id="visit-id" name="visit_id">
-        
-    <div class="referral-form-footer">
-        <button id="goBackBtn" class="footer-btn">Back to dashboard</button>
-        <button id="printBtn" class="footer-btns">Print</button>
-    </div>
+<hr class="referral-rule">
+    <h1 class="title">Referral Slip</h1>
+  </div>
+  <img src="../img/RHUlogo.png" alt="RHU Logo" class="referral-logo right">
 </div>
+
+
+   
+<!-- Meta strip -->
+<div class="referral-meta">
+  <span class="badge"><i class='bx bx-hash'></i> Referral ID: <span id="referral_id"></span></span>
+  <span class="badge"><i class='bx bx-calendar'></i> Date: <span id="date"></span></span>
+</div>
+
+<!-- Patient Information -->
+<div class="section-card">
+  <div class="section-title">Patient Information</div>
+
+  <div class="info-grid">
+    <div class="kv">
+      <span class="label">Full Name</span>
+      <div id="name" class="value"></div>
+    </div>
+    <div class="kv">
+      <span class="label">Age</span>
+      <div id="age" class="value"></div>
+    </div>
+  </div>
+
+  <div class="info-grid">
+    <div class="kv">
+      <span class="label">Address</span>
+      <div id="address" class="value"></div>
+    </div>
+    <div class="kv">
+      <span class="label">Sex</span>
+      <div id="sex" class="value"></div>
+    </div>
+    <div class="kv" hidden>
+      <span class="label">Date of Birth</span>
+      <div id="date_of_birth" class="value"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Vital Signs -->
+<div class="section-card">
+  <div class="section-title">Vital Signs</div>
+
+  <div class="info-grid vitals-grid">
+    <div class="kv">
+      <span class="label">Weight</span>
+      <div id="weight" class="value"></div>
+    </div>
+    <div class="kv">
+      <span class="label">Height</span>
+      <div id="height" class="value"></div>
+    </div>
+    <div class="kv">
+      <span class="label">Blood Pressure</span>
+      <div id="bp" class="value"></div>
+    </div>
+    <div class="kv">
+      <span class="label">Temperature</span>
+      <div id="temp" class="value"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Chief Complaints -->
+<div class="section-card">
+  <div class="section-title">Chief Complaints</div>
+  <div id="complaints" class="textbox"></div>
+</div>
+
+<!-- Diagnosis -->
+<div class="section-card">
+  <div class="section-title">Diagnosis <span class="lock-note">(To be filled out by the doctor only. Do not write anything.)</span></div>
+  <div class="textbox" id="diagnosisBox">
+    <!-- keep an empty box for print; your JS can fill .diagnosis-field if needed -->
+    <div class="field-value diagnosis-field"></div>
+  </div>
+</div>
+
+<!-- Medications / Treatment -->
+<div class="section-card">
+  <div class="section-title">Medications / Treatment <span class="lock-note">(To be filled out by the doctor only. Do not write anything.)</span></div>
+  <div class="treatment-container">
+    <textarea readonly rows="4" aria-label="Medications and treatment (read only)"></textarea>
+  </div>
+</div>
+
+<!-- Signature -->
+<div class="section-card">
+  <div class="section-title">Barangay Health Worker Signature</div>
+  <div class="signature">
+    <div class="line" aria-hidden="true"></div>
+    <span class="name" id="bhwName">Barangay Health Worker</span>
+  </div>
+</div>
+
+<input type="hidden" id="visit-id" name="visit_id">
+
+<!-- Footer buttons (unchanged) -->
+<div class="referral-form-footer">
+  <button id="goBackBtn" class="footer-btn">Back to dashboard</button>
+  <button id="printBtn" class="footer-btns">Print</button>
+</div>
+
 
 <!-- Keep the existing JavaScript unchanged -->
         <script>
@@ -502,6 +387,38 @@ fetch('php/getUserName.php')
     });
 </script>
 
+<script>
+(function(){
+  const mmToPx = mm => (mm / 25.4) * 96; // approx at 96dpi
+
+  function fitToA4Once(){
+    const card = document.querySelector(".referral-container");
+    if (!card) return;
+
+    const printable = mmToPx(297 - 12); // 6mm top + 6mm bottom
+
+    // reset transform then measure
+    card.style.transform = "";
+    card.style.width = "";
+
+    const h = card.getBoundingClientRect().height;
+    if (h <= printable) return;
+
+    // compute scale (floor 0.86 to keep readable), then apply
+    const scale = Math.max(0.86, Math.min(1, printable / h));
+    card.style.transformOrigin = "top left";
+    card.style.transform = `scale(${scale})`;
+    card.style.width = `calc(100% / ${scale})`;
+  }
+
+  // Run right before printing / when print preview opens
+  const mq = window.matchMedia && window.matchMedia("print");
+  if (mq) {
+    (mq.addEventListener || mq.addListener).call(mq, "change", e => { if (e.matches) fitToA4Once(); });
+  }
+  window.addEventListener("beforeprint", fitToA4Once);
+})();
+</script>
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {

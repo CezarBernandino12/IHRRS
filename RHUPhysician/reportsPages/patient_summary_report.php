@@ -83,6 +83,9 @@ if (!empty($barangayName) && $barangayName !== 'N/A') {
     $params['barangay'] = '%' . $barangayName . '%';
 }
 
+// Add sorting by visit_date (most recent first)
+$sql .= " ORDER BY v.visit_date DESC";
+
 $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $visits = $stmt->fetchAll();
@@ -230,7 +233,6 @@ $total_patients = count(array_unique(array_column($visits, 'patient_id')));
                <button type="button" class="btn-export" id="openFilterModal">Filter</button>
         <button type="button" class="btn-export" onclick="exportTableToExcel('reportTable')">Export to Excel</button>
         <button type="button" class="btn-export" onclick="exportTableToPDF()">Export to PDF</button>
-        <button type="button" class="btn-print" onclick="printDiv()">Print this page</button>
     </div>
 
     <!-- Modern Filter Tags Display -->
@@ -462,15 +464,6 @@ echo $filters ? implode("&nbsp; | &nbsp;", $filters) : "All Records";
 ?>)</h3> <br><br><br>
 </div>
 <div class="report-content">
-
-<style>
-    @media print {
-        .chart-title { 
-           display: none;
-        }
-    }
-</style>
-
 
 
 
@@ -880,6 +873,13 @@ document.addEventListener("DOMContentLoaded", () => {
     <p>No visits found for the selected filters.</p>
 <?php endif; ?>
 
+<!-- Print Button at Bottom -->
+<div class="print-button-container">
+    <button type="button" class="btn-print" onclick="printDiv()">
+        <i class='bx bx-printer'></i>
+        Print Report
+    </button>
+</div>
 
 </div> 
 </div> 
@@ -1030,33 +1030,8 @@ async function exportTableToPDF() {
         doc.save("report.pdf");
     });
 }
+
 function printDiv() {
-    function getChartImage(id, title) {
-        const canvas = document.getElementById(id);
-        if (canvas && canvas.toDataURL) {
-            return `<div style="text-align:center;margin-bottom:20px;">
-                        <h3 style="margin-bottom:8px;">${title}</h3>
-                        <img src="${canvas.toDataURL('image/png')}" style="max-width:100%;height:auto;">
-                    </div>`;
-        }
-        return '';
-    }
-
-    // Collect chart images based on checkboxes
-    let chartsHTML = '';
-    chartsHTML += getChartImage('barangayBarChart', 'Patient Address');
-
-    if (document.getElementById("toggleSexChart")?.checked) {
-        chartsHTML += getChartImage('sexPieChart', 'Patients by Sex');
-    }
-    if (document.getElementById("toggleAgeGroupChart")?.checked) {
-        chartsHTML += getChartImage('ageGroupBarChart', 'Age Group');
-    }
-    if (document.getElementById("toggleBMIChart")?.checked) {
-        chartsHTML += getChartImage('bmiPieChart', 'Patients by BMI Category');
-    }
-   
-
     // Clone print area
     const originalArea = document.querySelector(".print-area");
     const printHeaderElement = document.querySelector(".print-header");
@@ -1086,8 +1061,14 @@ function printDiv() {
     const headerInClone = clone.querySelector('.print-header');
     if (headerInClone) headerInClone.remove();
 
-    // Remove canvases from clone
+    // Remove ALL chart elements completely
     clone.querySelectorAll('canvas').forEach(c => c.remove());
+    clone.querySelectorAll('#sexChart, #ageGroupChart, #bmiChart, #barangayBarChart').forEach(el => el.remove());
+    clone.querySelectorAll('.chart-title').forEach(el => el.remove());
+    
+    // Remove chart visibility controls
+    const chartControls = clone.querySelector('div[style*="margin: 20px"]');
+    if (chartControls) chartControls.remove();
 
     // Build print window
     const printWindow = window.open('', '', 'height=900,width=1100');
@@ -1098,13 +1079,13 @@ function printDiv() {
             table { width: 100%; border-collapse: collapse; }
             th, td { border: 1px solid #000; padding: 4px; text-align: left; }
             thead { background-color: #f0f0f0; }
-            img { display: block; margin: 0 auto; max-width: 100%; height: auto; }
             h3 { margin: 10px 0 5px 0; }
+            /* Ensure no charts appear */
+            canvas, .chart-title { display: none !important; }
         </style>
     `);
     printWindow.document.write('</head><body>');
     printWindow.document.write(printHeaderElement.outerHTML);
-    printWindow.document.write(chartsHTML);
     printWindow.document.write(clone.innerHTML);
     printWindow.document.write('</body></html>');
 
