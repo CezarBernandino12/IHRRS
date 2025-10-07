@@ -366,78 +366,83 @@ fetch('php/getUserId.php')
             </div> 
 
 
-            <div id="printContent" style="display: none;">
-                <div class="header">
-                    <strong>Republic of the Philippines<br>Daet, Camarines Norte</strong>
-                    <h2><span id="printBarangay"></span></h2>
-                    <h3>INDIVIDUAL TREATMENT RECORD</h3> <br> <br>
-                </div>
-            
-                <p><strong>Family Serial No.:</strong> <span id="printFamilySerial"></span></p>
-            
-                <table class="info-table">
-                    <tr>
-                        <td><strong>Last Name:</strong> <span id="printLastName"></span></td>
-                        <td><strong>First Name:</strong> <span id="printFirstName"></span></td>
-                        <td><strong>Middle Name:</strong> <span id="printMiddleName"></span></td>
-                        <td><strong>Ext:</strong> <span id="printExt"></span></td>
-                    </tr>
-                    <tr>
-                        <td><strong>Age:</strong> <span id="printAge"></span></td>
-                        <td><strong>Birthday:</strong> <span id="printBirthday"></span></td>
-                        <td><strong>Sex:</strong> <span id="printSex"></span></td>
-                        <td><strong>Civil Status:</strong> <span id="printCivilStatus"></span></td>
-                    </tr>
-                    <tr>
-                        <td colspan="2"><strong>Address:</strong> <span id="printAddress"></span></td>
-                        <td colspan="2"><strong>Mobile No.:</strong> <span id="printMobileNo"></span></td>
-                    </tr>
-                    <tr>
-                        <td colspan="2"><strong>Educational Attainment:</strong> <span id="printEducationalAttainment"></span></td>
-                        <td colspan="2"><strong>PHILHEALTH Member#:</strong> <span id="printPhilhealthNum"></span></td>
-                        <td colspan="2"><strong>Category:</strong> <span id="printCategory"></span></td>
-                    </tr>
-                    <tr>
-                        <td><strong>Birth Weight:</strong> <span id="printBirthWeight"></span></td>
-                        <td><strong>4Ps:</strong> <span id="print4ps"></span></td>
-                        
-                    </tr>
-                </table> <br> <br>
-            
-                <table class="info-table">
-                    <tr>
-                        <td><strong>Patient Alert:</strong> <span id="printPatientAlert"></span></td>
-                    </tr>
-                </table>
-            
-                <table class="treatment-table">
-                    <thead>
-                        <tr>
-                            <th width="10%">DATE / AGE</th>
-                            <th width="25%">CHIEF COMPLAINTS & VITAL SIGNS<br>(BP, Wt, Ht, Temp, CR, RR)</th>
-                            <th width="35%">DIAGNOSIS / TREATMENT / MEDICATION / INSTRUCTION</th>
-                            <th width="30%">REMARKS<br>CONSULTED / REFERRED / SIGNATURE</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><span id="printDate"></span> <br> <b><span id="printVisitAge"></span> years old</b></span></td>
-                            <td>
-                                <span id="printChiefComplaints"></span><br> <br>
-                                Wt: <span id="printBmi"></span>, <br>
-                                Wt: <span id="printHt"></span>, <br>
-                                Ht: <span id="printWt"></span>, <br>
-                                BP: <span id="printBp"></span>, <br>
-                                Temp: <span id="printTemp"></span>, <br>
-                                CR: <span id="printCr"></span>, <br>
-                                RR: <span id="printRr"></span> <br> <br> <br> <br><br><br><br><br><br><br><br><br><br><br><br>
-                            </td>
-                            <td><span id="printDiagnosis"></span></td>
-                            <td><span id="printRemarks"></span></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+<!-- PRINT TEMPLATE (replace the whole #printContent block with this) -->
+<div id="printContent" style="display:none;">
+  <div class="header">
+    <img src="../img/RHUlogo.png" alt="RHU Logo" class="logo-print">
+    <strong>Republic of the Philippines<br>Daet, Camarines Norte</strong>
+    <h2><span id="printBarangay"></span></h2>
+    <h3>INDIVIDUAL TREATMENT RECORD</h3>
+  </div>
+
+  <p><strong>Family Serial No.:</strong> <span id="printFamilySerial"></span></p>
+
+  <table class="info-table">
+    <tr>
+      <td><strong>Last Name:</strong> <span id="printLastName"></span></td>
+      <td><strong>First Name:</strong> <span id="printFirstName"></span></td>
+      <td><strong>Middle Name:</strong> <span id="printMiddleName"></span></td>
+      <td><strong>Ext:</strong> <span id="printExt"></span></td>
+    </tr>
+    <tr>
+      <td><strong>Age:</strong> <span id="printAge"></span></td>
+      <td><strong>Birthday:</strong> <span id="printBirthday"></span></td>
+      <td><strong>Sex:</strong> <span id="printSex"></span></td>
+      <td><strong>Civil Status:</strong> <span id="printCivilStatus"></span></td>
+    </tr>
+    <tr>
+      <td colspan="2"><strong>Address:</strong> <span id="printAddress"></span></td>
+      <td colspan="2"><strong>Mobile No.:</strong> <span id="printMobileNo"></span></td>
+    </tr>
+    <tr>
+      <td colspan="2"><strong>Educational Attainment:</strong> <span id="printEducationalAttainment"></span></td>
+      <td><strong>PHILHEALTH Member#:</strong> <span id="printPhilhealthNum"></span></td>
+      <td><strong>Category:</strong> <span id="printCategory"></span></td>
+    </tr>
+    <tr>
+      <td><strong>Birth Weight:</strong> <span id="printBirthWeight"></span></td>
+      <td><strong>4Ps:</strong> <span id="print4ps"></span></td>
+      <td></td><td></td>
+    </tr>
+  </table>
+
+  <table class="info-table">
+    <tr>
+      <td><strong>Patient Alert:</strong> <span id="printPatientAlert"></span></td>
+    </tr>
+  </table>
+
+  <table class="treatment-table">
+    <thead>
+      <tr>
+        <th width="10%">DATE</th>
+        <th width="10%">AGE</th>
+        <th width="25%">CHIEF COMPLAINTS & VITAL SIGNS<br>(BMI, Ht, Wt, BP, Temp, PR, RR)</th>
+        <th width="35%">DIAGNOSIS / TREATMENT / MEDICATION / INSTRUCTION</th>
+        <th width="20%">REMARKS<br>CONSULTED / REFERRED / SIGNATURE</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span id="printDate"></span></td>
+        <td><span id="printVisitAge"></span></td>
+        <td>
+          <span id="printChiefComplaints"></span><br><br>
+          BMI: <span id="printBmi"></span><br>
+          Ht: <span id="printHt"></span><br>
+          Wt: <span id="printWt"></span><br>
+          BP: <span id="printBp"></span><br>
+          Temp: <span id="printTemp"></span><br>
+          PR: <span id="printCr"></span><br>
+          RR: <span id="printRr"></span>
+        </td>
+        <td><span id="printDiagnosis"></span></td>
+        <td><span id="printRemarks"></span></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
             
             <div class="referral-form-footer">
 
@@ -480,104 +485,96 @@ fetch('php/getUserId.php')
     <script>
         
         
-        document.getElementById("printBtn").addEventListener("click", function () {
+ document.getElementById("printBtn").addEventListener("click", function () {
+  const printContent = document.getElementById("printContent");
+  if (!printContent) return;
 
-            printContent.style.display = "block";
-    // Populate print template
-    document.getElementById("printBarangay").textContent = document.querySelector(".bhs").textContent;
-    document.getElementById("printFamilySerial").textContent = document.querySelector(".family-serial-no").textContent;
-    
-    document.getElementById("printLastName").textContent = document.querySelector(".patient-last-name").textContent;
-    document.getElementById("printFirstName").textContent = document.querySelector(".patient-first-name").textContent;
-    document.getElementById("printMiddleName").textContent = document.querySelector(".patient-middle-name").textContent;
-    document.getElementById("printExt").textContent = document.querySelector(".patient-extension").textContent;
-    document.getElementById("printAge").textContent = document.querySelector(".age").textContent;
-    document.getElementById("printBirthday").textContent = document.querySelector(".date-of-birth").textContent;
-    document.getElementById("printSex").textContent = document.querySelector(".sex").textContent;
-    document.getElementById("printCivilStatus").textContent = document.querySelector(".civil-status").textContent;
-    document.getElementById("printAddress").textContent = document.querySelector(".address").textContent;
-    document.getElementById("printMobileNo").textContent = document.querySelector(".contact-number").textContent;
-    document.getElementById("printEducationalAttainment").textContent = document.querySelector(".educational-attainment").textContent;
-    document.getElementById("printPhilhealthNum").textContent = document.querySelector(".philhealth-member-no").textContent;
-    document.getElementById("printBirthWeight").textContent = document.querySelector(".birth-weight").textContent;
-    document.getElementById("print4ps").textContent = document.querySelector(".fourps-status").textContent;
-    document.getElementById("printCategory").textContent = document.querySelector(".category").textContent;
-    document.getElementById("printPatientAlert").textContent = document.querySelector(".patient-alert").textContent;
-    
-    // Example: Visit data
-    document.getElementById("printDate").textContent = document.querySelector(".visit-date").textContent;
-    document.getElementById("printVisitAge").textContent = document.querySelector(".age").textContent;
-    document.getElementById("printChiefComplaints").textContent = document.querySelector(".chief-complaints").textContent;
-    document.getElementById("printBp").textContent = document.querySelector(".blood-pressure").textContent;
-    document.getElementById("printBmi").textContent = document.querySelector(".bmi").textContent;
-    document.getElementById("printWt").textContent = document.querySelector(".weight").textContent;
-    document.getElementById("printHt").textContent = document.querySelector(".height").textContent;
-    document.getElementById("printTemp").textContent = document.querySelector(".temperature").textContent;
-    document.getElementById("printCr").textContent = document.querySelector(".pulse-rate").textContent;
-    document.getElementById("printRr").textContent = document.querySelector(".respiratory-rate").textContent;
+  // Show, populate, clone
+  printContent.style.display = "block";
 
-    // Clone only the print section
-    const contentToPrint = document.getElementById("printContent").cloneNode(true);
+  const q = s => (document.querySelector(s)?.textContent || "N/A");
 
-    // Open new print window
-    const printWindow = window.open('', '', 'height=800,width=1000');
-    printWindow.document.write(`
-        <html>
-        <head>
-            <title>Print Preview</title>
-            <style>
-                body { font-family: Arial, sans-serif; padding: 20px; }
-                h2, h3 { margin: 0; text-align: center; }
-                .header { text-align: center; margin-bottom: 20px; }
-               .info-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-}
+  // Header & personal info
+  document.getElementById("printBarangay").textContent = q(".bhs");
+  document.getElementById("printFamilySerial").textContent = q(".family-serial-no");
+  document.getElementById("printLastName").textContent = q(".patient-last-name");
+  document.getElementById("printFirstName").textContent = q(".patient-first-name");
+  document.getElementById("printMiddleName").textContent = q(".patient-middle-name");
+  document.getElementById("printExt").textContent = q(".patient-extension");
+  document.getElementById("printAge").textContent = q(".age");
+  document.getElementById("printBirthday").textContent = q(".date-of-birth");
+  document.getElementById("printSex").textContent = q(".sex");
+  document.getElementById("printCivilStatus").textContent = q(".civil-status");
+  document.getElementById("printAddress").textContent = q(".address");
+  document.getElementById("printMobileNo").textContent = q(".contact-number");
+  document.getElementById("printEducationalAttainment").textContent = q(".educational-attainment");
+  document.getElementById("printPhilhealthNum").textContent = q(".philhealth-member-no");
+  document.getElementById("printBirthWeight").textContent = q(".birth-weight");
+  document.getElementById("print4ps").textContent = q(".fourps-status");
+  document.getElementById("printCategory").textContent = q(".category");
+  document.getElementById("printPatientAlert").textContent = q(".patient-alert");
 
-.info-table td {
-    padding: 5px;
-    font-size: 14px;
-    border: none; /* 🚫 Removes outlines from personal info table */
-}
+  // Visit data
+  document.getElementById("printDate").textContent = q(".visit-date");
+  document.getElementById("printVisitAge").textContent = /^\d+$/.test(q(".age")) ? q(".age") : "-";
+  document.getElementById("printChiefComplaints").textContent = q(".chief-complaints");
+  document.getElementById("printBp").textContent = q(".blood-pressure");
+  document.getElementById("printBmi").textContent = q(".bmi");
+  document.getElementById("printWt").textContent = q(".weight");
+  document.getElementById("printHt").textContent = q(".height");
+  document.getElementById("printTemp").textContent = q(".temperature");
+  document.getElementById("printCr").textContent = q(".pulse-rate");
+  document.getElementById("printRr").textContent = q(".respiratory-rate");
+  document.getElementById("printRemarks").textContent = q(".remarks");
+  // Optional diagnosis field: set somewhere in your page if you have it
+  document.getElementById("printDiagnosis").textContent = q(".diagnosis");
 
-.treatment-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-}
+  const contentToPrint = printContent.cloneNode(true);
 
-.treatment-table th,
-.treatment-table td {
-    border: 1px solid black;
-    text-align: left;
-    font-size: 12px; /* Match standard font size */
-    padding: 4px;     /* Reduce internal spacing */
-    height: 100px;    /* Maintain large space for handwritten notes */
-    vertical-align: top;
-}
+  // Open print window (keeps same relative path for ../img/logo.png)
+  const w = window.open('', '', 'height=900,width=1100');
+  if (!w) return;
+  w.opener = null;
+  w.document.open();
+  w.document.write(`<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Print Preview</title>
+  <style>
+    /* === Standardized font & sizing === */
+    html, body { font-family: Arial, Helvetica, sans-serif; font-size: 12px; color: #000; }
+    .header { text-align: center; margin-bottom: 14px; }
+    .header strong { display: block; margin-top: 6px; }
+    .header h2 { margin: 4px 0 0; font-size: 18px; font-weight: 700; }
+    .header h3 { margin: 2px 0 0; font-size: 14px; font-weight: 700; letter-spacing: .5px; }
+    .logo-print { width: 64px; height: 64px; object-fit: contain; display: block; margin: 6px auto 2px; }
 
+    /* === Tables === */
+    table { width: 100%; border-collapse: collapse; page-break-inside: avoid; }
+    .info-table td { padding: 4px 6px; vertical-align: top; border: none; }
+    .treatment-table th, .treatment-table td {
+      border: 1px solid #000; padding: 6px; vertical-align: top;
+    }
+    .treatment-table th { background: #f2f2f2; font-weight: 700; text-align: left; }
+    /* Make the grid balanced on A4/Letter */
+    .treatment-table td { height: 120px; }
 
+    /* Spacing rules */
+    p { margin: 4px 0; }
+    @page { margin: 14mm; }
+  </style>
+</head>
+<body>
+  ${contentToPrint.outerHTML}
+</body>
+</html>`);
+  w.document.close();
 
-.treatment-table th {
-    background-color: #f0f0f0;
-    text-align: left;
-}
+  // Hide the template back in the main page
+  printContent.style.display = "none";
 
-            </style>
-        </head>
-        <body>
-            ${contentToPrint.outerHTML}
-        </body>
-        </html>
-    `);
-    printWindow.document.close();
-    printWindow.focus();
-    printContent.style.display = "none";
-    setTimeout(() => {
-        printWindow.print();
-        printWindow.close();
-    }, 500);
+  setTimeout(() => { w.focus(); w.print(); w.close(); }, 300);
 });
 
 
