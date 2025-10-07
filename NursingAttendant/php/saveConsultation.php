@@ -44,7 +44,8 @@ try {
     $user_id = clean_input($_POST['user_id']);
     $diagnosis = clean_input($_POST['diagnosis']);
     $status = clean_input($_POST['status'] ?? '');
-    $instructions = clean_input($_POST['rhu_remarks'] ?? '');
+    $physician2 = clean_input($_POST['physician2'] ?? '');
+    $remarks = clean_input($_POST['rhu_remarks'] ?? '');
     $consultation_date = date("Y-m-d");
     $followup = isset($_POST['followup']) ? clean_input($_POST['followup']) : null;
 
@@ -85,7 +86,7 @@ try {
         INSERT INTO rhu_consultations 
         (patient_id, doctor_id, consultation_date, diagnosis, instruction_prescription, visit_id, lab_result_path, diagnosis_status, follow_up_date) 
         VALUES 
-        (:patient_id, :user_id, :consultation_date, :diagnosis, :instructions, :visit_id, :lab_result_path, :diagnosis_status, :followup)
+        (:patient_id, :user_id, :consultation_date, :diagnosis, :remarks, :visit_id, :lab_result_path, :diagnosis_status, :followup)
     ");
 
     $stmt_consultation->execute([
@@ -93,7 +94,7 @@ try {
         ':user_id' => $user_id,
         ':consultation_date' => $consultation_date,
         ':diagnosis' => $diagnosis,
-        ':instructions' => $instructions,
+        ':remarks' => $remarks,
         ':visit_id' => $visit_id,
         ':lab_result_path' => $photoPath ?? null,
         ':diagnosis_status' => $status,
@@ -126,12 +127,14 @@ try {
     if (!empty($_POST['medicine_given']) && is_array($_POST['medicine_given'])) {
         $_POST['medicine_given'] = clean_input_recursive($_POST['medicine_given']);
         $_POST['quantity_given'] = clean_input_recursive($_POST['quantity_given'] ?? []);
+        $_POST['med_instruction'] = clean_input_recursive($_POST['med_instruction'] ?? []);
+    
 
         $stmt_medicine_dispensed = $pdo->prepare("
             INSERT INTO rhu_medicine_dispensed 
-            (consultation_id, medicine_name, quantity_dispensed, dispensed_by, dispensed_date) 
+            (consultation_id, medicine_name, quantity_dispensed, instruction, dispensed_by, dispensed_date) 
             VALUES 
-            (:consultation_id, :medicine_name, :quantity_dispensed, :dispensed_by, NOW())
+            (:consultation_id, :medicine_name, :quantity_dispensed, :instruction, :dispensed_by, NOW())
         ");
 
         foreach ($_POST['medicine_given'] as $key => $medicine) {
@@ -140,7 +143,8 @@ try {
                     ':consultation_id' => $consultation_id,
                     ':medicine_name' => $medicine,
                     ':quantity_dispensed' => $_POST['quantity_given'][$key],
-                    ':dispensed_by' => $user_id
+                    ':instruction' => $_POST['med_instruction'][$key] ?? '',
+                    ':dispensed_by' => $physician2
                 ]);
             }
         }
