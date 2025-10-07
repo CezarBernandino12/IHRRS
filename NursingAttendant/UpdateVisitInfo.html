@@ -360,6 +360,14 @@
                                         Remove
                                     </button>
                                 </div>
+                                 <div class="form-group">
+                            <label for="rhu_instruction[]">Instruction:</label>
+                            <select id="rhu_instruction[]" name="rhu_instruction[]" class="select2">
+                                <option value="">Select</option>
+                                <option value="other">Other (Enter manually)</option>
+                            
+                            </select>
+                        </div>
                             </div>
                         </div>
                         
@@ -391,7 +399,7 @@ document.addEventListener("click", function(event) {
                     </div>
 
                    <div class="form-group">
-                            <label for="rhu_remarks">Instructions/Remarks:</label>
+                            <label for="rhu_remarks">Remarks:</label>
                             <select id="rhu_remarks" name="rhu_remarks" class="select2">
                                 <option value="">Select</option>
                                 <option value="other">Other (Enter manually)</option>
@@ -1188,11 +1196,21 @@ function showResponseModal(type, message, hasPrescription = false) {
         closeBtn.off('click');
 
         // Proceed button click
-        $('#proceedButton').on('click', function() {
-            if ($('#printInstruction').is(':checked')) printInstruction();
-            if ($('#printPrescription').length && $('#printPrescription').is(':checked')) printPrescription();
-            modal.fadeOut();
-        });
+$('#proceedButton').on('click', function() {
+    const consultationId = $('#responseModal').data('consultationId');
+
+    // Print Instruction (Patient Copy)
+    if ($('#printInstruction').is(':checked')) {
+        window.open(`php/printPrescription.php?consultation_id=${encodeURIComponent(consultationId)}&type=instruction`, '_blank');
+    }
+
+    // Print Prescription (Doctor Copy)
+    if ($('#printPrescription').is(':checked')) {
+        window.open(`php/printPrescription.php?consultation_id=${encodeURIComponent(consultationId)}&type=prescription`, '_blank');
+    }
+
+    $('#responseModal').fadeOut();
+});
 
         // OK button closes modal
         $('#okButton').on('click', function() {
@@ -1217,12 +1235,6 @@ function showResponseModal(type, message, hasPrescription = false) {
 }
 
 
-function printInstruction() {
-    const consultationId = $('#responseModal').data('consultationId'); // Store this when opening modal
-
-    // Open a new window for print preview
-    window.open(`php/printInstruction.php?consultation_id=${encodeURIComponent(consultationId)}`, '_blank');
-}
 
 function printPrescription() {
     const consultationId = $('#responseModal').data('consultationId');
