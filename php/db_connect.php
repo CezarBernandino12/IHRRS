@@ -1,6 +1,6 @@
 <?php
 $host = 'localhost'; 
-$dbname = 'ihrrs_database'; 
+$dbname = 'ihrrs_final'; 
 $username = 'root'; 
 $password = ''; 
 

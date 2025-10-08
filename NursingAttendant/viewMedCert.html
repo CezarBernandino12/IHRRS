@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Certificate</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Times New Roman', serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #000;
+            padding-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: 14px;
+            font-weight: normal;
+            margin: 5px 0;
+        }
+
+        .header h2 {
+            font-size: 16px;
+            margin: 5px 0;
+        }
+
+        .title {
+            text-align: center;
+            margin: 40px 0 30px 0;
+        }
+
+        .title h1 {
+            font-size: 24px;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+
+        .issuance-date {
+            text-align: left;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .content {
+            line-height: 2;
+            font-size: 14px;
+            text-align: justify;
+            margin-bottom: 60px;
+        }
+
+        .content p {
+            margin-bottom: 20px;
+        }
+
+        .signature {
+            margin-top: 80px;
+            text-align: right;
+        }
+
+        .signature-line {
+            border-top: 1px solid #000;
+            width: 250px;
+            margin-left: auto;
+            margin-bottom: 5px;
+        }
+
+        .signature-name {
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .signature-title {
+            font-size: 12px;
+        }
+
+        .signature-license {
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .buttons {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .button {
+            padding: 10px 30px;
+            margin: 0 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .button-print {
+            background: #3498db;
+            color: white;
+        }
+
+        .button-back {
+            background: #95a5a6;
+            color: white;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .container {
+                box-shadow: none;
+                padding: 0;
+                max-width: 100%;
+            }
+
+            .buttons {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="certificate">
+        <div class="header">
+            <h1>Republic of the Philippines</h1>
+            <h1>Province of Camarines Norte</h1>
+            <h2>Municipality of Daet</h2>
+            <h1>Municipal Health Office of Daet</h1>
+        </div>
+
+        <div class="title">
+            <h1>MEDICAL CERTIFICATE</h1>
+        </div>
+
+        <div class="issuance-date">
+            <p>Issuance Date: <strong><span id="issuanceDate"></span></strong></p>
+        </div>
+
+        <div class="content">
+            <p id="certificateText"></p>
+        </div>
+
+        <div class="signature">
+            <div class="signature-line"></div>
+            <div class="signature-name" id="doctorName"></div>
+            <div class="signature-title">Nurse Attendant</div>
+            <div class="signature-license">
+                <span id="licenseInfo"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="buttons">
+        <button class="button button-print" onclick="window.print()">Print Certificate</button>
+        <button class="button button-back" onclick="goBack()">Back to Records</button>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const medcertId = urlParams.get('medcert_id');
+
+        if (medcertId) {
+            loadCertificate(medcertId);
+        } else {
+            alert('No certificate ID provided');
+            window.history.back();
+        }
+
+        function loadCertificate(medcertId) {
+            fetch(`php/get_medcert.php?medcert_id=${medcertId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.certificate) {
+                        displayCertificate(data.certificate);
+                    } else {
+                        alert('Error loading certificate');
+                        window.history.back();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error loading certificate');
+                });
+        }
+
+        function displayCertificate(cert) {
+            // Format issuance date
+            document.getElementById('issuanceDate').textContent = formatDate(cert.issuance_date);
+
+            // Build certificate text
+            let text = `This is to certify that ${cert.patient_name}, ${cert.age} years old, ${cert.sex.toLowerCase()}, `;
+            text += `${cert.civil_status.toLowerCase()}, born on ${formatDate(cert.date_of_birth)} in ${cert.birthplace} `;
+            text += `presently residing at ${cert.address} was been examined. `;
+            
+            if (cert.diagnosis) {
+                text += `He/She is suffering from ${cert.diagnosis}`;
+                
+                if (cert.rest_period_days) {
+                    text += `, that I consider that a period of absence from work for at least ${cert.rest_period_days} `;
+                    text += `${cert.rest_period_days > 1 ? 'days' : 'day'}`;
+                    
+                    if (cert.rest_from_date && cert.rest_to_date) {
+                        text += `, with effect from ${formatDate(cert.rest_from_date)} to ${formatDate(cert.rest_to_date)}`;
+                    }
+                    
+                    text += ` is absolutely necessary for the restoration of his/her health.`;
+                } else {
+                    text += `.`;
+                }
+            }
+
+            if (cert.purpose) {
+                text += `\n\n\n\n\nPurpose: ${cert.purpose}`;
+            }
+
+            document.getElementById('certificateText').textContent = text;
+
+            // Display doctor/nurse information
+            document.getElementById('doctorName').textContent = cert.issued_by_name.toUpperCase();
+            
+            let licenseInfo = '';
+            if (cert.license_no) {
+                licenseInfo += `Lic. No. ${cert.license_no}`;
+            }
+            if (cert.ptr_no) {
+                if (licenseInfo) licenseInfo += '\n';
+                licenseInfo += `PTR No. ${cert.ptr_no}`;
+            }
+            document.getElementById('licenseInfo').textContent = licenseInfo;
+        }
+
+        function formatDate(dateString) {
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString('en-US', options);
+        }
+
+        function goBack() {
+            window.history.back();
+        }
+    </script>
+</body>
+</html>
