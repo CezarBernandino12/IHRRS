@@ -11,11 +11,13 @@ if (!isset($_SESSION['user_id'])) {
 $userId = $_SESSION['user_id'];// or however you store the logged-in user's ID
 
 // Fetch user info
-$stmt = $pdo->prepare("SELECT rhu FROM users WHERE user_id = ?");
+$stmt = $pdo->prepare("SELECT full_name, rhu FROM users WHERE user_id = ?");
 $stmt->execute([$userId]);
 $user = $stmt->fetch();
 
 $rhu = $user ? $user['rhu'] : 'N/A';
+$username = $user ? $user['full_name'] : 'N/A';
+
 
 
 
@@ -232,11 +234,8 @@ $total_patients = count(array_unique(array_column($visits, 'patient_id')));
    
     <!-- Filter Modal Trigger -->
    
-        <div class="form-submit">
-               <button type="button" class="btn-export" id="openFilterModal">Filter</button>
-        <button type="button" class="btn-export" onclick="exportTableToExcel('reportTable')">Export to Excel</button>
-        <button type="button" class="btn-export" onclick="exportTableToPDF()">Export to PDF</button>
-        <button type="button" class="btn-print" onclick="printDiv()">Print this page</button>
+        <div class="form-submit" style="margin-top: -10px;">
+               <button type="button" class="btn-export" id="openFilterModal">Select Filters</button>
     </div>
 
     <!-- Modern Filter Tags Display -->
@@ -284,7 +283,7 @@ $total_patients = count(array_unique(array_column($visits, 'patient_id')));
                 !$from_date && !$to_date && !$sex && !$age_group &&
                 !$purok && !$bmi && !$medication
             ) {
-                echo '<span style="color:#888;">All</span>';
+                echo '<span style="color:#888;">None</span>';
             }
             ?>
         </div>
@@ -441,6 +440,7 @@ $total_patients = count(array_unique(array_column($visits, 'patient_id')));
 
 <div class="print-area">
 <div class="print-header" style="text-align: center;">
+      <img src="../../img/RHUlogo.png" alt="RHU Logo" class="print-logo" style="height: 50px; width: auto;" />
   <h3>Republic of the Philippines</h3>
   <p>Province of Camarines Norte</p>
   <h3>Municipality of Daet</h3>
@@ -471,14 +471,18 @@ echo $filters ? implode("&nbsp; | &nbsp;", $filters) : "All Records";
 
 <style>
     @media print {
-        .chart-title { 
+       
+         .form-submit { 
            display: none;
+        }
+          .report-table-container{
+            margin-top: -150px;
+        }
+         .report-table-container table{
+            font-size: 12px;
         }
     }
 </style>
-
-
-
 
 
 <!-- Chart Visibility Controls -->
@@ -781,7 +785,58 @@ document.addEventListener("DOMContentLoaded", () => {
 
 <br><br>
 
-<!-- Summary Section -->
+<!-- Table with Visit Details -->
+<?php if ($visits): ?>
+    <div class="report-table-container">
+	<table id="reportTable">
+    <thead>
+        <tr>
+            <th>Visit Date</th>
+            <th>Patient Name</th>
+            <th>Sex</th>
+            <th>Age</th>
+            <th>BMI</th>
+            <th>Weight</th>
+            <th>Height</th>
+            <th>Address</th>
+            
+          
+        </tr>
+    </thead>
+<?php
+// Sort visits from latest to oldest by visit_date
+usort($visits, function($a, $b) {
+    return strtotime($b['visit_date']) - strtotime($a['visit_date']);
+});
+?>
+<tbody>
+    <?php foreach ($visits as $visit): ?>
+        <tr>
+            <td><?= date('Y-m-d', strtotime($visit['visit_date'])) ?></td>
+            <td><?= htmlspecialchars($visit['first_name'] . ' ' . $visit['last_name']) ?></td>
+            <td><?= htmlspecialchars($visit['sex']) ?></td>
+            <td><?= htmlspecialchars($visit['age']) ?></td>
+            <td><?= htmlspecialchars($visit['bmi']) ?></td>
+            <td><?= htmlspecialchars($visit['weight']) ?></td>
+            <td><?= htmlspecialchars($visit['height']) ?></td>
+            <td><?= htmlspecialchars($visit['address']) ?></td>
+        </tr>
+    <?php endforeach; ?>
+</tbody>
+
+</table>
+           <br>
+
+
+
+    <br> <br>
+     <span id="generated_by"></span>
+</div>
+<?php else: ?>
+    <p>No visits found for the selected filters.</p>
+<?php endif; ?>
+
+           <!-- Summary Section -->
 <div class="summary-container">
     <div class="summary">
         <h3><i class="bx bx-file"></i> Summary:</h3>
@@ -839,58 +894,23 @@ document.addEventListener("DOMContentLoaded", () => {
     </div>
     </div>
 
- 
-
-
-<!-- Table with Visit Details -->
-<?php if ($visits): ?>
-      <div class="report-table-container">
-	<table id="reportTable">
-    <thead>
-        <tr>
-            <th>Visit Date</th>
-            <th>Patient Name</th>
-            <th>Sex</th>
-            <th>Age</th>
-            <th>BMI</th>
-            <th>Weight</th>
-            <th>Height</th>
-            <th>Address</th>
-            
-          
-        </tr>
-    </thead>
-    <tbody>
-    <?php foreach ($visits as $visit): ?>
-        <tr>
-            <td><?= date('Y-m-d', strtotime($visit['visit_date'])) ?></td>
-            <td><?= htmlspecialchars($visit['first_name'] . ' ' . $visit['last_name']) ?></td>
-            <td><?= htmlspecialchars($visit['sex']) ?></td>
-            <td><?= htmlspecialchars($visit['age']) ?></td>
-            <td><?= htmlspecialchars($visit['bmi']) ?></td>
-            <td><?= htmlspecialchars($visit['weight']) ?></td>
-            <td><?= htmlspecialchars($visit['height']) ?></td>
-            <td><?= htmlspecialchars($visit['address']) ?></td>
-           
-         
-        </tr>
-    <?php endforeach; ?>
-    </tbody>
-</table>
-           <br>
-
-    <br> <br>
-     <span id="generated_by"></span>
+    <div class="generated-by">
+      <b>Report Generated By: </b><?php echo htmlspecialchars($username); ?> -  Nursing Attedant
 </div>
-  </div>
-<?php else: ?>
-    <p>No visits found for the selected filters.</p>
-<?php endif; ?>
+</div> 
 
+<!-- Print Button at Bottom -->
+   <div class="form-submit">
+          <button type="button" class="btn-export" onclick="exportTableToExcel('reportTable')">Export to Excel</button>
+        <button type="button" class="btn-export" onclick="exportTableToPDF()">Export to PDF</button>
+       
+    <button type="button" class="btn-print" onclick="printDiv()">
+        <i class='bx bx-printer'></i>
+        Print Report
+    </button>
+</div>
 
-</div> </div> 
-
-
+</div> 
 
 
 <div id="logoutModal" class="logout-modal">
@@ -907,6 +927,9 @@ document.addEventListener("DOMContentLoaded", () => {
         </div>
     </div>
 </div>
+</div>
+
+
 
 </div>
 
@@ -1037,33 +1060,8 @@ async function exportTableToPDF() {
         doc.save("report.pdf");
     });
 }
+
 function printDiv() {
-    function getChartImage(id, title) {
-        const canvas = document.getElementById(id);
-        if (canvas && canvas.toDataURL) {
-            return `<div style="text-align:center;margin-bottom:20px;">
-                        <h3 style="margin-bottom:8px;">${title}</h3>
-                        <img src="${canvas.toDataURL('image/png')}" style="max-width:100%;height:auto;">
-                    </div>`;
-        }
-        return '';
-    }
-
-    // Collect chart images based on checkboxes
-    let chartsHTML = '';
-    chartsHTML += getChartImage('barangayBarChart', 'Patient Address');
-
-    if (document.getElementById("toggleSexChart")?.checked) {
-        chartsHTML += getChartImage('sexPieChart', 'Patients by Sex');
-    }
-    if (document.getElementById("toggleAgeGroupChart")?.checked) {
-        chartsHTML += getChartImage('ageGroupBarChart', 'Age Group');
-    }
-    if (document.getElementById("toggleBMIChart")?.checked) {
-        chartsHTML += getChartImage('bmiPieChart', 'Patients by BMI Category');
-    }
-   
-
     // Clone print area
     const originalArea = document.querySelector(".print-area");
     const printHeaderElement = document.querySelector(".print-header");
@@ -1093,8 +1091,14 @@ function printDiv() {
     const headerInClone = clone.querySelector('.print-header');
     if (headerInClone) headerInClone.remove();
 
-    // Remove canvases from clone
+    // Remove ALL chart elements completely
     clone.querySelectorAll('canvas').forEach(c => c.remove());
+    clone.querySelectorAll('#sexChart, #ageGroupChart, #bmiChart, #barangayBarChart').forEach(el => el.remove());
+    clone.querySelectorAll('.chart-title').forEach(el => el.remove());
+    
+    // Remove chart visibility controls
+    const chartControls = clone.querySelector('div[style*="margin: 20px"]');
+    if (chartControls) chartControls.remove();
 
     // Build print window
     const printWindow = window.open('', '', 'height=900,width=1100');
@@ -1105,13 +1109,13 @@ function printDiv() {
             table { width: 100%; border-collapse: collapse; }
             th, td { border: 1px solid #000; padding: 4px; text-align: left; }
             thead { background-color: #f0f0f0; }
-            img { display: block; margin: 0 auto; max-width: 100%; height: auto; }
             h3 { margin: 10px 0 5px 0; }
+            /* Ensure no charts appear */
+            canvas, .chart-title { display: none !important; }
         </style>
     `);
     printWindow.document.write('</head><body>');
     printWindow.document.write(printHeaderElement.outerHTML);
-    printWindow.document.write(chartsHTML);
     printWindow.document.write(clone.innerHTML);
     printWindow.document.write('</body></html>');
 
@@ -1135,7 +1139,7 @@ function closeModal() {
 }
 
 function proceedLogout() {
-    window.location.href = '../../role.html';
+    window.location.href = '../../ADMIN/php/logout.php'; 
 }
 
 // Close modal when clicking outside
@@ -1164,28 +1168,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 });
 
-    function confirmLogout() {
-    document.getElementById('logoutModal').style.display = 'block';
-    return false; // Prevent the default link behavior
-}
-
-function closeModal() {
-    document.getElementById('logoutModal').style.display = 'none';
-}
-
-function proceedLogout() {
-    window.location.href = '../../ADMIN/php/logout.php'; 
-}
-
-// Close modal when clicking outside
-window.onclick = function(event) {
-    const modal = document.getElementById('logoutModal');
-    if (event.target == modal) {
-        closeModal();
-    }
-}
-
-
 	// Check if user is logged in
 fetch('../php/getUserId.php')
     .then(response => response.json())
@@ -1201,23 +1183,6 @@ fetch('../php/getUserId.php')
     });
 
 </script>
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  const sidebar = document.getElementById("sidebar");
 
-  function applyResponsiveSidebar() {
-    if (window.innerWidth <= 1024) {
-      sidebar.classList.add("hide");   // collapsed on small screens
-    } else {
-      sidebar.classList.remove("hide"); // expanded on larger screens
-    }
-  }
-
-  applyResponsiveSidebar();
-  window.addEventListener("resize", applyResponsiveSidebar);
-
-  // keep the rest of your existing code (auth, stats, modals, etc.)
-});
-</script>
 </body>
 </html>

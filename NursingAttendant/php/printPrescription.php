@@ -60,23 +60,99 @@ if (!$consultations) die("No record found.");
 <html>
 <head>
     <title>Consultation Record</title>
-    <style>
-        body { font-family: Arial, sans-serif; padding: 40px; }
-        h2, h3 { text-align: center; margin-bottom: 10px; }
-        .info { margin-bottom: 10px; }
-        .label { font-weight: bold; }
-        .section { margin-bottom: 50px; page-break-after: always; }
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        th, td { border: 1px solid #333; padding: 8px; text-align: left; }
-        th { background-color: #f2f2f2; }
-    </style>
+  <style>
+    @page {
+        size: A4;
+        margin: 0;
+    }
+
+    body {
+        font-family: Arial, sans-serif;
+        font-size: 12px;
+        margin: 0;
+        padding: 0;
+        width: 210mm;
+        height: 297mm;
+        box-sizing: border-box;
+    }
+
+    /* This div is 1/4 of A4 (A6 size) and placed at top-left corner */
+    .quarter-page {
+        width: 105mm;      /* half of A4 width */
+        height: 148mm;     /* half of A4 height */
+        padding: 6mm;
+        box-sizing: border-box;
+        position: relative;
+        border: 1px solid #ccc; /* guide border; remove later */
+        overflow: hidden;
+        page-break-after: always;
+    }
+
+    h2, h3 {
+        text-align: center;
+        margin: 4px 0;
+        font-size: 12px;
+    }
+
+    .info {
+        margin-bottom: 4px;
+        line-height: 1.3;
+    }
+
+    .label {
+        font-weight: bold;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 5px;
+        font-size: 12px;
+    }
+
+    th, td {
+        border: 1px solid #333;
+        padding: 3px;
+        text-align: left;
+        vertical-align: top;
+        word-wrap: break-word;
+    }
+
+    th {
+        background-color: #f2f2f2;
+    }
+
+    img.print-logo {
+        height: 25px;
+        width: auto;
+    }
+
+    img[alt="Rx"] {
+        width: 35px;
+        height: 35px;
+    }
+
+    @media print {
+        body {
+            margin: 0;
+            padding: 0;
+        }
+        .quarter-page {
+            border: none; /* remove border on print */
+            page-break-inside: avoid;
+        }
+    }
+</style>
+
+
 </head>
 <body onload="window.print()">
 
 <!-- ===== HEADER TEMPLATE ===== -->
 <?php
 function headerSection($consultation) { ?>
-    <div style="text-align: center;">
+    <div class="header" style="text-align: center;">
+          <img src="../../img/RHUlogo.png" alt="RHU Logo" class="print-logo" style="height: 50px; width: auto;" />
         <h3>Republic of the Philippines</h3>
         <p style="margin-top: -5px;">Province of Camarines Norte</p>
         <h3 style="margin-top: -5px;">Municipality of Daet</h3>
@@ -89,9 +165,12 @@ function headerSection($consultation) { ?>
 
 <!-- ===== INSTRUCTION COPY (IF ALLOWED) ===== -->
 <?php if (in_array('instruction', $types) || in_array('all', $types)): ?>
- <?php headerSection($consultations[0]); ?>
 
+
+    <div class="quarter-page">
+    <?php headerSection($consultations[0]); ?>
     <div class="section">
+
         <h3>Instructions (Patient's Copy)</h3><br><br>
         <div class="info"><span class="label">Consultation Date:</span> <?= htmlspecialchars($consultations[0]['consultation_date']) ?></div><br>
         <div class="info"><span class="label">Patient:</span> <?= htmlspecialchars($consultations[0]['patient_name']) ?></div>
@@ -103,7 +182,7 @@ function headerSection($consultation) { ?>
          <table>
             <thead>
                 <tr>
-                    <th>Medicine Name</th>
+                    <th>Given Medicine</th>
                     <th>Quantity</th>
                     <th>Instruction</th>
                 </tr>
@@ -119,11 +198,11 @@ function headerSection($consultation) { ?>
             </tbody>
         </table><br><br>
         
-                    <div class="info"><span class="label">Remarks/Instructions:</span><br> <?= nl2br(htmlspecialchars($consultations[0]['instruction_prescription'])) ?></div>
+                    <div class="info"><span class="label">Remarks:</span><br> <?= nl2br(htmlspecialchars($consultations[0]['instruction_prescription'])) ?></div>
         <br><br>
          <div class="info"><span class="label">Physician:</span> <?= htmlspecialchars($consultations[0]['physician_name']) ?></div>
         <div class="info"><span class="label">License No.:</span> <?= htmlspecialchars($consultations[0]['physician_license']) ?></div>
-    </div>
+    </div> </div>
 <?php endif; ?>
 
 
@@ -134,10 +213,14 @@ function headerSection($consultation) { ?>
 
 <!-- ===== PRESCRIPTION COPY (IF ALLOWED) ===== -->
 <?php if (!empty($prescriptions) && (in_array('prescription', $types) || in_array('all', $types))): ?>
- <?php headerSection($consultations[0]); ?>
+ 
+     <div class="quarter-page">
+    <?php headerSection($consultations[0]); ?>
     <div class="section">
+
+   
         <h2>Prescription</h2><br>
-        <img src="../../img/rx.png" alt="Rx" style="width:70px;height:70px;"><br><br>
+        <img src="../../img/rx.png" alt="Rx" style="width:50px;height:50px;"><br><br>
 
         <div class="info"><span class="label">Patient:</span> <?= htmlspecialchars($consultations[0]['patient_name']) ?></div>
         <div class="info"><span class="label">Address:</span> <?= htmlspecialchars($consultations[0]['address']) ?></div>
@@ -167,7 +250,7 @@ function headerSection($consultation) { ?>
 
         <div class="info"><span class="label">Physician:</span> <?= htmlspecialchars($prescriptions[0]['physician_name']) ?></div>
         <div class="info"><span class="label">License No.:</span> <?= htmlspecialchars($prescriptions[0]['physician_license']) ?></div>
-    </div>
+    </div>  </div>
 <?php endif; ?>
 
 </body>

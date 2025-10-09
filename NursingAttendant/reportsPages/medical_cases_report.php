@@ -11,12 +11,12 @@ if (!isset($_SESSION['user_id'])) {
 $userId = $_SESSION['user_id'];// or however you store the logged-in user's ID
 
 // Fetch user info
-$stmt = $pdo->prepare("SELECT rhu FROM users WHERE user_id = ?");
+$stmt = $pdo->prepare("SELECT full_name, rhu FROM users WHERE user_id = ?");
 $stmt->execute([$userId]);
 $user = $stmt->fetch();
 
 $rhu = $user ? $user['rhu'] : 'N/A';
-
+$username = $user ? $user['full_name'] : 'N/A';
 
 
 
@@ -229,11 +229,8 @@ $visits = $stmt->fetchAll();
     
     <!-- Filter Modal Trigger -->
    
-        <div class="form-submit">
-               <button type="button" class="btn-export" id="openFilterModal">Filter</button>
-        <button type="button" class="btn-export" onclick="exportTableToExcel('reportTable')">Export to Excel</button>
-        <button type="button" class="btn-export" onclick="exportTableToPDF()">Export to PDF</button>
-        <button type="button" class="btn-print" onclick="printDiv()">Print this page</button>
+        <div class="form-submit" style="margin-top: -10px;">
+               <button type="button" class="btn-export" id="openFilterModal">Select Filters</button>
     </div>
 
     <!-- Modern Filter Tags Display -->
@@ -277,7 +274,7 @@ $visits = $stmt->fetchAll();
                 !$from_date && !$to_date && !$sex && !$age_group &&
                 !$purok && !$diagnosis_status && !$diagnosis
             ) {
-                echo '<span style="color:#888;">All</span>';
+                echo '<span style="color:#888;">None</span>';
             }
             ?>
         </div>
@@ -451,12 +448,13 @@ $visits = $stmt->fetchAll();
 
 <div class="print-area">
 <div class="print-header" style="text-align: center;">
+  <img src="../../img/RHUlogo.png" alt="RHU Logo" class="print-logo" style="height: 50px; width: auto;" />
   <h3>Republic of the Philippines</h3>
   <p>Province of Camarines Norte</p>
   <h3>Municipality of Daet</h3>
   <h2><?php echo htmlspecialchars($rhu); ?></h2>
   <br> 
-  <h2>MEDICAL CASE MONITORING REPORT</h2>
+ <h2>MEDICAL CASE MONITORING REPORT</h2>
   (<?php
 $filters = [];
 if ($from_date) $filters[] = "From <strong>" . htmlspecialchars($from_date) . "</strong>";
@@ -492,7 +490,17 @@ echo $filters ? implode("&nbsp; | &nbsp;", $filters) : "All Records";
         .chart-title { 
            display: none;
         }
+         .form-submit { 
+           display: none;
+        }
+        .summary-list{
+            font-size: 16px;
+        }
+        .generated-by{
+            font-size: 16px;
+        }
     }
+    
 </style>
 
 <!-- Chart Visibility Controls -->
@@ -751,6 +759,69 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
+<br>
+
+<!-- Table with Visit Details -->
+<?php if ($visits && count($visits) > 0): ?>
+         <div class="report-table-container">
+    <table id="reportTable">
+        <thead>
+            <tr>
+                <th>Date Diagnosed</th>
+                <th>Diagnosis</th>
+                <th>Status</th>
+                <th>Patient Name</th>
+                <th>Sex</th>
+                <th>Age</th>
+                <th>Address</th>
+            </tr>
+        </thead>
+<?php
+// Sort visits from latest to oldest by consultation_date
+usort($visits, function($a, $b) {
+    return strtotime($b['consultation_date']) - strtotime($a['consultation_date']);
+});
+
+// Track unique combinations of patient name + diagnosis
+$seen = [];
+$unique_visits = [];
+
+foreach ($visits as $visit) {
+    $key = strtolower(trim($visit['first_name'] . ' ' . $visit['last_name'] . '|' . $visit['diagnosis']));
+    if (!isset($seen[$key])) {
+        $seen[$key] = true;
+        $unique_visits[] = $visit;
+    }
+}
+?>
+<tbody>
+    <?php if (!empty($unique_visits)): ?>
+        <?php foreach ($unique_visits as $visit): ?>
+            <tr>
+                <td><?= date('Y-m-d', strtotime($visit['consultation_date'])) ?></td>
+                <td><?= htmlspecialchars($visit['diagnosis']) ?></td>
+                <td><?= htmlspecialchars($visit['diagnosis_status']) ?></td>
+                <td><?= htmlspecialchars($visit['first_name'] . ' ' . $visit['last_name']) ?></td>
+                <td><?= htmlspecialchars($visit['sex']) ?></td>
+                <td><?= htmlspecialchars($visit['age']) ?></td>
+                <td><?= htmlspecialchars($visit['address']) ?></td>
+            </tr>
+        <?php endforeach; ?>
+    <?php else: ?>
+        <tr><td colspan="7" style="text-align:center;">No unique records found</td></tr>
+    <?php endif; ?>
+</tbody>
+
+    </table>
+</div>
+<?php else: ?>
+    <p>No visits found for the selected filters.</p>
+<?php endif; ?>
+           
+  
+</div>
+
+
 <!-- Summary Section -->
 <?php
 // Calculate total unique patients
@@ -764,23 +835,7 @@ $total_patients = count($unique_patient_ids);
     <div class="summary">
         <h3><i class="bx bx-file"></i> Summary:</h3>
         <ul class="summary-list">
-             <li>
-                <strong>Report Generated On:</strong> <?= date('Y-m-d H:i:s') ?>
-            </li>
-            <li><strong>Total Unique Patients in Report:</strong> <?= $total_patients ?? 0 ?></li>
             <li>
-                <strong>By Sex:</strong>
-                Male – <?= isset($sex_counts['Male']) ? $sex_counts['Male'] : 0 ?>,
-                Female – <?= isset($sex_counts['Female']) ? $sex_counts['Female'] : 0 ?>
-            </li>
-            <li>
-                <strong>By Age Group:</strong>
-                Young Children: <?= isset($age_group_counts['0–5']) ? $age_group_counts['0–5'] : 0 ?>,
-                Children: <?= isset($age_group_counts['6–17']) ? $age_group_counts['6–17'] : 0 ?>,
-                Adults: <?= isset($age_group_counts['18–59']) ? $age_group_counts['18–59'] : 0 ?>,
-                Seniors: <?= isset($age_group_counts['60+']) ? $age_group_counts['60+'] : 0 ?>
-            </li>
-<li>
     <strong>Case Counts:</strong>
     <?php
     // Prepare disease breakdown by sex and age group (unique patients only)
@@ -835,7 +890,7 @@ $total_patients = count($unique_patient_ids);
         echo "<table border='1' cellpadding='6' cellspacing='0' style='border-collapse:collapse; margin-top:8px; width:100%; text-align:center;'>";
         echo "<thead style='background:#f2f2f2;'>";
         echo "<tr>
-                <th>Disease</th>
+                <th>Case</th>
                 <th>Total Cases</th>
                 <th>Male</th>
                 <th>Female</th>
@@ -863,51 +918,49 @@ $total_patients = count($unique_patient_ids);
     }
     ?>
 </li>
+<br>
+             <li>
+                <strong>Report Generated On:</strong> <?= date('Y-m-d H:i:s') ?>
+            </li>
+            <li><strong>Total Unique Patients in Report:</strong> <?= $total_patients ?? 0 ?></li>
+            <li>
+                <strong>By Sex:</strong>
+                Male – <?= isset($sex_counts['Male']) ? $sex_counts['Male'] : 0 ?>,
+                Female – <?= isset($sex_counts['Female']) ? $sex_counts['Female'] : 0 ?>
+            </li>
+            <li>
+                <strong>By Age Group:</strong>
+                Young Children: <?= isset($age_group_counts['0–5']) ? $age_group_counts['0–5'] : 0 ?>,
+                Children: <?= isset($age_group_counts['6–17']) ? $age_group_counts['6–17'] : 0 ?>,
+                Adults: <?= isset($age_group_counts['18–59']) ? $age_group_counts['18–59'] : 0 ?>,
+                Seniors: <?= isset($age_group_counts['60+']) ? $age_group_counts['60+'] : 0 ?>
+            </li>
 
 
        
         </ul>
     </div>
+<br> <br>
+<div class="generated-by">
+     <b>Report Generated By: </b><?php echo htmlspecialchars($username); ?> -  Nursing Attedant
 </div>
-<br>
 
-<h3>Detailed Report</h3>
-<!-- Table with Visit Details -->
-<?php if ($visits && count($visits) > 0): ?>
-    <div class="report-table-container">
-    <table id="reportTable">
-        <thead>
-            <tr>
-                <th>Date Diagnosed</th>
-                <th>Diagnosis</th>
-                <th>Status</th>
-                <th>Patient Name</th>
-                <th>Sex</th>
-                <th>Age</th>
-                <th>Address</th>
-            </tr>
-        </thead>
-        <tbody>
-        <?php foreach ($visits as $visit): ?>
-            <tr>
-                <td><?= date('Y-m-d', strtotime($visit['consultation_date'])) ?></td>
-                <td><?= htmlspecialchars($visit['diagnosis']) ?></td>
-                <td><?= htmlspecialchars($visit['diagnosis_status']) ?></td>
-                <td><?= htmlspecialchars($visit['first_name'] . ' ' . $visit['last_name']) ?></td>
-                <td><?= htmlspecialchars($visit['sex']) ?></td>
-                <td><?= htmlspecialchars($visit['age']) ?></td>
-                <td><?= htmlspecialchars($visit['address']) ?></td>
-            </tr>
-        <?php endforeach; ?>
-        </tbody>
-    </table>
-    </div>
-<?php else: ?>
-    <p>No visits found for the selected filters.</p>
-<?php endif; ?>
-           
-  
-</div> </div> 
+</div>
+
+
+
+<!-- Print Button at Bottom -->
+   <div class="form-submit">
+          <button type="button" class="btn-export" onclick="exportTableToExcel('reportTable')">Export to Excel</button>
+        <button type="button" class="btn-export" onclick="exportTableToPDF()">Export to PDF</button>
+       
+    <button type="button" class="btn-print" onclick="printDiv()">
+        <i class='bx bx-printer'></i>
+        Print Report
+    </button>
+</div>
+
+</div> 
 
 
 
@@ -926,7 +979,6 @@ $total_patients = count($unique_patient_ids);
         </div>
     </div>
 </div>
-
 </div>
 
 <!-- jsPDF and html2canvas libraries -->
@@ -1041,33 +1093,25 @@ function exportTableToExcel(tableID, filename = 'Medical Cases Report') {
     }
 }
 
+async function exportTableToPDF() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    const table = document.getElementById('reportTable');
+
+    await html2canvas(table).then(canvas => {
+        const imgData = canvas.toDataURL('image/png');
+        const imgProps = doc.getImageProperties(imgData);
+        const pdfWidth = doc.internal.pageSize.getWidth();
+        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+        doc.addImage(imgData, 'PNG', 10, 10, pdfWidth - 20, pdfHeight);
+        doc.save("report.pdf");
+    });
+}
+
 
 function printDiv() {
-    // Get chart images from the original canvases
-    function getChartImage(id, title) {
-        const canvas = document.getElementById(id);
-        if (canvas && canvas.toDataURL) {
-            return `<div style="text-align:center;margin-bottom:20px;">
-                        <h3 style="margin-bottom:8px;">${title}</h3>
-                        <img src="${canvas.toDataURL('image/png')}" style="max-width:100%;height:auto;">
-                    </div>`;
-        }
-        return '';
-    }
-
-    // Collect chart images with titles
-    let chartsHTML = '';
-      chartsHTML += getChartImage('casesLineChart', 'Medical Cases');
-   if (document.getElementById("toggleSexChart").checked) {
-        chartsHTML += getChartImage('sexPieChart', 'Patients by Sex');
-    }
-    if (document.getElementById("toggleAgeGroupChart").checked) {
-        chartsHTML += getChartImage('ageGroupBarChart', 'Age Group');
-    }
-   
-
   
-
     // Clone the print area (table and summary)
     const originalArea = document.querySelector(".print-area").cloneNode(true);
 
@@ -1114,7 +1158,6 @@ canvases.forEach(c => c.parentNode.removeChild(c));
     `);
     printWindow.document.write('</head><body>');
     printWindow.document.write(printHeader); // Print header at the very top
-    printWindow.document.write(chartsHTML);  // Then charts
     printWindow.document.write(originalArea.innerHTML);  // Then table and summary
     printWindow.document.write('</body></html>');
 
@@ -1166,6 +1209,14 @@ window.onclick = function(event) {
     }
 }
 
+// Close modal when clicking outside
+window.onclick = function(event) {
+    const modal = document.getElementById('logoutModal');
+    if (event.target == modal) {
+        closeModal();
+    }
+}
+
     function confirmLogout() {
     document.getElementById('logoutModal').style.display = 'block';
     return false; // Prevent the default link behavior
@@ -1176,7 +1227,7 @@ function closeModal() {
 }
 
 function proceedLogout() {
-    window.location.href = '../../role.html';
+    window.location.href = '../../ADMIN/php/logout.php'; 
 }
 
 // Close modal when clicking outside
@@ -1199,27 +1250,10 @@ fetch('../php/getUserId.php')
     })
     .catch(error => {
         console.error('Error checking session:', error);
-        window.location.href = '../../ADMIN/php/logout.php'; 
+        window.location.href = '../role.html';
     });
 
 </script>
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  const sidebar = document.getElementById("sidebar");
 
-  function applyResponsiveSidebar() {
-    if (window.innerWidth <= 1024) {
-      sidebar.classList.add("hide");   // collapsed on small screens
-    } else {
-      sidebar.classList.remove("hide"); // expanded on larger screens
-    }
-  }
-
-  applyResponsiveSidebar();
-  window.addEventListener("resize", applyResponsiveSidebar);
-
-  // keep the rest of your existing code (auth, stats, modals, etc.)
-});
-</script>
 </body>
 </html>

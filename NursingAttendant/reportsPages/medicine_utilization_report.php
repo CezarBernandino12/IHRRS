@@ -10,11 +10,13 @@ if (!isset($_SESSION['user_id'])) {
 $userId = $_SESSION['user_id'];
 
 
-$stmt = $pdo->prepare("SELECT rhu FROM users WHERE user_id = ?");
+$stmt = $pdo->prepare("SELECT full_name, rhu FROM users WHERE user_id = ?");
 $stmt->execute([$userId]);
 $user = $stmt->fetch();
 
 $rhu = $user ? $user['rhu'] : 'N/A';
+$username = $user ? $user['full_name'] : 'N/A';
+
 
 
 
@@ -36,7 +38,8 @@ SELECT
     p.date_of_birth,
     p.age,
     p.sex,
-    p.philhealth_member_no
+    p.philhealth_member_no,
+    MIN(md.dispensed_date) AS date_dispensed
 FROM rhu_medicine_dispensed md
 JOIN rhu_consultations c ON md.consultation_id = c.consultation_id
 JOIN patients p ON c.patient_id = p.patient_id
@@ -179,7 +182,7 @@ if (count($patient_meds) > 0) {
     $med_placeholders = implode(',', array_fill(0, count($medicine_list), '?'));
 
     $disp_sql = "
-        SELECT p.patient_id, dm.medicine_name, SUM(dm.quantity_dispensed) AS qty
+        SELECT p.patient_id, dm.medicine_name, dm.dispensed_date, SUM(dm.quantity_dispensed) AS qty
         FROM rhu_medicine_dispensed dm
         JOIN rhu_consultations c ON dm.consultation_id = c.consultation_id
         JOIN patients p ON c.patient_id = p.patient_id
@@ -339,11 +342,8 @@ if (count($patient_meds) > 0) {
 
     <!-- Filter Modal Trigger -->
    
-        <div class="form-submit">
-        <button type="button" class="btn-export" id="openFilterModal">Filter</button>
-        <button type="button" class="btn-export" onclick="exportTableToExcel('reportTable')">Export to Excel</button>
-        <button type="button" class="btn-export" onclick="exportTableToPDF()">Export to PDF</button>
-        <button type="button" class="btn-print" onclick="printDiv()">Print this page</button>
+        <div class="form-submit" style="margin-top: -10px;">
+        <button type="button" class="btn-export" id="openFilterModal">Select Filters</button>
     </div>
 
     <!-- Modern Filter Tags Display -->
@@ -404,7 +404,7 @@ if (count($patient_meds) > 0) {
                 !$from_date && !$to_date && !$sex && !$age_group &&
                 !$medicine && !$barangay
             ) {
-                echo '<span style="color:#888;">All</span>';
+                echo '<span style="color:#888;">None</span>';
             }
             ?>
         </div>
@@ -569,13 +569,14 @@ if (count($patient_meds) > 0) {
 
 <div class="print-area">
 <div class="print-header" style="text-align: center;">
+      <img src="../../img/RHUlogo.png" alt="RHU Logo" class="print-logo" style="height: 50px; width: auto;" />
   <h3>Republic of the Philippines</h3>
   <h3>Department of Health</h3>
   <h3>Province of Camarines Norte</h3>
   <h3>Municipality of Daet</h3>
   <h2><?php echo htmlspecialchars($rhu); ?></h2>
   <br> 
-  <h2>DOH MAINTAINANCE MEDICINE UTILIZATION REPORT</h2>
+   <h2>DOH MAINTAINANCE MEDICINE UTILIZATION REPORT</h2>
    (<?php
 $filters = [];
 if ($from_date) $filters[] = "From <strong>" . htmlspecialchars($from_date) . "</strong>";
@@ -605,6 +606,15 @@ echo $filters ? implode("&nbsp; | &nbsp;", $filters) : "All Records";
     @media print {
         .chart-title { 
            display: none;
+        }
+         .form-submit { 
+           display: none;
+        }
+     .report-table-container{
+            margin-top: -100px;
+        }
+         .report-table-container table{
+            font-size: 12px;
         }
     }
 </style>
@@ -854,12 +864,54 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 </script>
 
+<!-- Patient Table -->
+<div class="report-table-container">
+<table id="reportTable" border="1" cellpadding="8" cellspacing="0"> 
+<thead>
+        <tr>
+            <th>Date Given</th>
+            <th>Patient Name</th>
+            <th>Address</th>
+            <th>Age</th>
+            <th>Date of Birth</th>
+            <th>Gender</th>
+            <th>PhilHealth No.</th>
+            <?php foreach ($medicine_list as $med): ?>
+            <th><?= htmlspecialchars($med) ?></th>
+            <?php endforeach; ?>
+           
+        </tr>
+    </thead>
+
+   <?php
+// Sort visits (patient meds) from latest to oldest by nested date_dispensed
+usort($patient_meds, function($a, $b) {
+    return strtotime($b['row']['date_dispensed']) - strtotime($a['row']['date_dispensed']);
+});
+?>
+<tbody>
+    <?php foreach ($patient_meds as $pm): $row = $pm['row']; ?>
+    <tr>
+        <td><?= htmlspecialchars($row['date_dispensed']) ?></td>
+        <td><?= htmlspecialchars($row['full_name']) ?></td>
+        <td><?= htmlspecialchars($row['address']) ?></td>
+        <td><?= htmlspecialchars($row['age']) ?></td>
+        <td><?= htmlspecialchars($row['date_of_birth']) ?></td>
+        <td><?= htmlspecialchars($row['sex']) ?></td>
+        <td><?= htmlspecialchars($row['philhealth_member_no']) ?></td>
+        <?php foreach ($medicine_list as $med): ?>
+            <td><?= htmlspecialchars($pm['medicines'][$med] ?? '') ?></td>
+        <?php endforeach; ?>
+        <td></td>
+    </tr>
+    <?php endforeach; ?>
+</tbody>
+
+</table>
+<br> <br>
 
 
-<!-- Selected Filters Section -->
-
-<br>
-
+</div> 
 
 
 <!-- Summary Section -->
@@ -870,8 +922,7 @@ document.addEventListener("DOMContentLoaded", () => {
              <li>
                 <strong>Report Generated On:</strong> <?= date('Y-m-d H:i:s') ?>
             </li>
-            <!--
-            <li><strong>Total Patients in Report:</strong> <?= count($rows) ?></li>
+    <!--        <li><strong>Total Patients in Report:</strong> <?= count($rows) ?></li>
             <li>
                 <strong>By Sex:</strong>
                 Male – <?= $sex_counts['Male'] ?? 0 ?>,
@@ -894,7 +945,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 </ul>
             </li> -->
          <li>
-    <strong>Dispensed Medicines:</strong>
+    <strong>Dispensed Medicines:</strong><br> <br> 
     <?php if (!empty($medicine_list)): ?>
         <ul>
             <table border="1" cellpadding="4" cellspacing="0">
@@ -923,53 +974,31 @@ document.addEventListener("DOMContentLoaded", () => {
     <?php else: ?>
         All Medicines
     <?php endif; ?>
- </li>
+</li>
 
         </ul>
     </div>
-</div>
-
- <h3>Detailed Visit Report</h3>
-<!-- Patient Table -->
- <div class="report-table-container">
-<table id="reportTable" border="1" cellpadding="8" cellspacing="0"> 
-<thead>
-        <tr>
-        <th>Patient Name</th>
-            <th>Address</th>
-            <th>Age</th>
-            <th>Date of Birth</th>
-            <th>Gender</th>
-            <th>PhilHealth No.</th>
-            <?php foreach ($medicine_list as $med): ?>
-            <th><?= htmlspecialchars($med) ?></th>
-            <?php endforeach; ?>
-            <th>Signature</th>
-        </tr>
-    </thead>
-    <tbody>
-        <?php foreach ($patient_meds as $pm): $row = $pm['row']; ?>
-        <tr>
-        <td><?= htmlspecialchars($row['full_name']) ?></td>
-            <td><?= htmlspecialchars($row['address']) ?></td>
-            <td><?= htmlspecialchars($row['age']) ?></td>
-            <td><?= htmlspecialchars($row['date_of_birth']) ?></td>
-            <td><?= htmlspecialchars($row['sex']) ?></td>
-            <td><?= htmlspecialchars($row['philhealth_member_no']) ?></td>
-            <?php foreach ($medicine_list as $med): ?>
-            <td><?= $pm['medicines'][$med] ?></td>
-            <?php endforeach; ?>
-            <td></td>
-        </tr>
-        <?php endforeach; ?>
-    </tbody>
-</table>
 <br> <br>
+    <div class="generated-by">
+    <b>Report Generated By: </b><?php echo htmlspecialchars($username); ?> -  Nursing Attedant
 </div>
 
-</div> 
-</div> 
+</div>
 
+<!-- Print Button at Bottom -->
+   <div class="form-submit">
+          <button type="button" class="btn-export" onclick="exportTableToExcel('reportTable')">Export to Excel</button>
+        <button type="button" class="btn-export" onclick="exportTableToPDF()">Export to PDF</button>
+       
+    <button type="button" class="btn-print" onclick="printDiv()">
+        <i class='bx bx-printer'></i>
+        Print Report
+    </button>
+</div>
+
+
+</div> 
+</div>
 <div id="logoutModal" class="logout-modal">
     <div class="logout-modal-content">
         <div class="logout-modal-header">
@@ -986,7 +1015,6 @@ document.addEventListener("DOMContentLoaded", () => {
 </div>
 
 </div>
-
 <!-- jsPDF and html2canvas libraries -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -1012,7 +1040,7 @@ function exportTableToExcel(tableID, filename = 'Medicine Utilization Report') {
         
         // Clone the summary section
         const summary = document.querySelector('.summary-container');
-        if (summary) {
+        if ($summary) {
             const summaryClone = summary.cloneNode(true);
             const summaryScripts = summaryClone.querySelectorAll('script');
             summaryScripts.forEach(script => script.remove());
@@ -1117,22 +1145,6 @@ async function exportTableToPDF() {
 
 //PRINT
 function printDiv() {
-    // Get chart images from the original canvases
-    function getChartImage(id, title) {
-        const canvas = document.getElementById(id);
-        if (canvas && canvas.toDataURL) {
-            return `<div style="text-align:center;margin-bottom:20px;">
-                        <h3 style="margin-bottom:8px;">${title}</h3>
-                        <img src="${canvas.toDataURL('image/png')}" style="max-width:100%;height:auto;">
-                    </div>`;
-        }
-        return '';
-    }
-
-    // Collect chart images with titles
-
-
-
     // Clone the print area (table and summary)
     const originalArea = document.querySelector(".print-area").cloneNode(true);
 
@@ -1178,8 +1190,7 @@ function printDiv() {
         </style>
     `);
     printWindow.document.write('</head><body>');
-    printWindow.document.write(printHeader);            // Print header first
-           // Then charts
+    printWindow.document.write(printHeader);           // Then charts
     printWindow.document.write(originalArea.innerHTML); // Then table and summary
     printWindow.document.write('</body></html>');
 
@@ -1211,6 +1222,13 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 });
 
+// Close modal when clicking outside
+window.onclick = function(event) {
+    const modal = document.getElementById('logoutModal');
+    if (event.target == modal) {
+        closeModal();
+    }
+}
 
     function confirmLogout() {
     document.getElementById('logoutModal').style.display = 'block';
@@ -1222,7 +1240,7 @@ function closeModal() {
 }
 
 function proceedLogout() {
-    window.location.href = '../../ADMIN/php/logout.php'; 
+   window.location.href = '../../ADMIN/php/logout.php'; 
 }
 
 // Close modal when clicking outside
@@ -1232,6 +1250,7 @@ window.onclick = function(event) {
         closeModal();
     }
 }
+
 
 	// Check if user is logged in
 fetch('../php/getUserId.php')
@@ -1248,23 +1267,9 @@ fetch('../php/getUserId.php')
     });
 
 </script>
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  const sidebar = document.getElementById("sidebar");
 
-  function applyResponsiveSidebar() {
-    if (window.innerWidth <= 1024) {
-      sidebar.classList.add("hide");   // collapsed on small screens
-    } else {
-      sidebar.classList.remove("hide"); // expanded on larger screens
-    }
-  }
 
-  applyResponsiveSidebar();
-  window.addEventListener("resize", applyResponsiveSidebar);
 
-  // keep the rest of your existing code (auth, stats, modals, etc.)
-});
-</script>
+
 </body>
 </html>
