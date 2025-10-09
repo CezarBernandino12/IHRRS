@@ -3,11 +3,20 @@ require '../../php/db_connect.php';
 session_start();
 
 if (!isset($_SESSION['user_id'])) {
-    echo "User is not logged in.";
+    header("Location: ../../role.html");
     exit;
 }
 
 $userId = $_SESSION['user_id'];
+
+
+$stmt = $pdo->prepare("SELECT rhu FROM users WHERE user_id = ?");
+$stmt->execute([$userId]);
+$user = $stmt->fetch();
+
+$rhu = $user ? $user['rhu'] : 'N/A';
+
+
 
 $from_date = $_GET['from_date'] ?? '';
 $to_date   = $_GET['to_date'] ?? '';
@@ -325,7 +334,7 @@ if (count($patient_meds) > 0) {
 <!-- Filter Form -->
 
 <form method="GET" class="filter-form">
-      <h2>Medicine Utilization Report - RHU</h2> <br>
+      <h2>Medicine Utilization Report - <?php echo htmlspecialchars($rhu); ?></h2> <br>
        
 
     <!-- Filter Modal Trigger -->
@@ -561,9 +570,10 @@ if (count($patient_meds) > 0) {
 <div class="print-area">
 <div class="print-header" style="text-align: center;">
   <h3>Republic of the Philippines</h3>
-  <p>Department of Health</p>
- 
-  <h2>Rural Health Unit</h2>
+  <h3>Department of Health</h3>
+  <h3>Province of Camarines Norte</h3>
+  <h3>Municipality of Daet</h3>
+  <h2><?php echo htmlspecialchars($rhu); ?></h2>
   <br> 
   <h2>DOH MAINTAINANCE MEDICINE UTILIZATION REPORT</h2>
    (<?php
@@ -1120,18 +1130,8 @@ function printDiv() {
     }
 
     // Collect chart images with titles
-    let chartsHTML = '';
-  if (document.getElementById("toggleSexChart").checked) {
-        chartsHTML += getChartImage('sexPieChart', 'Patients by Sex');
-    }
-    if (document.getElementById("toggleAgeGroupChart").checked) {
-        chartsHTML += getChartImage('ageGroupBarChart', 'Age Group');
-    }
-        if (document.getElementById("toggleBarangayChart").checked) {
-            chartsHTML += getChartImage('barangayBarChart', 'Patient Counts per Barangay');
-        }
 
-    chartsHTML += getChartImage('medicineLineChart', 'Quantity of Dispensed Medicines Over Time');
+
 
     // Clone the print area (table and summary)
     const originalArea = document.querySelector(".print-area").cloneNode(true);
@@ -1179,7 +1179,7 @@ function printDiv() {
     `);
     printWindow.document.write('</head><body>');
     printWindow.document.write(printHeader);            // Print header first
-    printWindow.document.write(chartsHTML);             // Then charts
+           // Then charts
     printWindow.document.write(originalArea.innerHTML); // Then table and summary
     printWindow.document.write('</body></html>');
 

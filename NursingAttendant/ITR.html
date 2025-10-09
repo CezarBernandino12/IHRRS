@@ -454,7 +454,7 @@ fetch('php/getUserId.php')
                 </div>
             </div>
 
-            <div class="form-group">
+            <div class="form-group" style="display: none;">
                 <div class="form-group">
                     <label for="treatment">Treatment:</label>
                     <select id="treatment" name="treatment">
@@ -956,6 +956,24 @@ updateRemoveButtons();
 
 </div>
 </div>
+
+  <div id="errorModal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <img src="../img/error.jpg" alt="Checkmark" class="checkmark-image">
+                        <h3>Unexpected Error</h3>
+                        <span class="close-btn" id="errorCloseBtn">&times;</span>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="modal-body">
+                            <p>Something went wrong. Try again.</p>
+                        </div>
+                    </div>
+                </div>
+            </div> 
+
+
+
 <div id="successMessage" style="display: none; color: green;">
                 Patient information successfully saved!
             </div>  
@@ -986,6 +1004,7 @@ updateRemoveButtons();
 
 
 <script>
+
 function confirmLogout() {
     document.getElementById('logoutModal').style.display = 'block';
     return false; // Prevent the default link behavior

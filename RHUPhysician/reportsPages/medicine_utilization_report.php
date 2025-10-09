@@ -3,11 +3,20 @@ require '../../php/db_connect.php';
 session_start();
 
 if (!isset($_SESSION['user_id'])) {
-    echo "User is not logged in.";
+    header("Location: ../../role.html");
     exit;
 }
 
 $userId = $_SESSION['user_id'];
+
+
+$stmt = $pdo->prepare("SELECT rhu FROM users WHERE user_id = ?");
+$stmt->execute([$userId]);
+$user = $stmt->fetch();
+
+$rhu = $user ? $user['rhu'] : 'N/A';
+
+
 
 $from_date = $_GET['from_date'] ?? '';
 $to_date   = $_GET['to_date'] ?? '';
@@ -222,7 +231,12 @@ if (count($patient_meds) > 0) {
 					<span class="text">Dashboard</span>
 				</a>
 			</li>
-		
+			<li>
+				<a href= "../ITR.html">
+					<i class="bx bxs-user"></i>
+					<span class="text">Add New ITR</span>
+				</a>
+			</li>
 			<li>
 				<a href="../pending.html" id="updateReferrals">
 					<i class="bx bxs-user"></i>
@@ -320,15 +334,16 @@ if (count($patient_meds) > 0) {
 <!-- Filter Form -->
 
 <form method="GET" class="filter-form">
-      <h2>Medicine Utilization Report - RHU</h2> <br>
+      <h2>Medicine Utilization Report - <?php echo htmlspecialchars($rhu); ?></h2> <br>
        
 
     <!-- Filter Modal Trigger -->
    
         <div class="form-submit">
-               <button type="button" class="btn-export" id="openFilterModal">Filter</button>
+        <button type="button" class="btn-export" id="openFilterModal">Filter</button>
         <button type="button" class="btn-export" onclick="exportTableToExcel('reportTable')">Export to Excel</button>
         <button type="button" class="btn-export" onclick="exportTableToPDF()">Export to PDF</button>
+        <button type="button" class="btn-print" onclick="printDiv()">Print this page</button>
     </div>
 
     <!-- Modern Filter Tags Display -->
@@ -453,7 +468,7 @@ if (count($patient_meds) > 0) {
                                 }
                                 ?>
                             </select>
-                        </div>        -->
+                        </div>  -->
 
                     <div class="form-item">
                         <label for="medicine">Given Medicine:</label>
@@ -555,9 +570,10 @@ if (count($patient_meds) > 0) {
 <div class="print-area">
 <div class="print-header" style="text-align: center;">
   <h3>Republic of the Philippines</h3>
-  <p>Department of Health</p>
- 
-  <h2>Rural Health Unit</h2>
+  <h3>Department of Health</h3>
+  <h3>Province of Camarines Norte</h3>
+  <h3>Municipality of Daet</h3>
+  <h2><?php echo htmlspecialchars($rhu); ?></h2>
   <br> 
   <h2>DOH MAINTAINANCE MEDICINE UTILIZATION REPORT</h2>
    (<?php
@@ -854,7 +870,8 @@ document.addEventListener("DOMContentLoaded", () => {
              <li>
                 <strong>Report Generated On:</strong> <?= date('Y-m-d H:i:s') ?>
             </li>
-    <!--        <li><strong>Total Patients in Report:</strong> <?= count($rows) ?></li>
+            <!--
+            <li><strong>Total Patients in Report:</strong> <?= count($rows) ?></li>
             <li>
                 <strong>By Sex:</strong>
                 Male – <?= $sex_counts['Male'] ?? 0 ?>,
@@ -906,7 +923,7 @@ document.addEventListener("DOMContentLoaded", () => {
     <?php else: ?>
         All Medicines
     <?php endif; ?>
-</li>
+ </li>
 
         </ul>
     </div>
@@ -914,7 +931,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
  <h3>Detailed Visit Report</h3>
 <!-- Patient Table -->
-<div class="report-table-container">
+ <div class="report-table-container">
 <table id="reportTable" border="1" cellpadding="8" cellspacing="0"> 
 <thead>
         <tr>
@@ -948,11 +965,11 @@ document.addEventListener("DOMContentLoaded", () => {
     </tbody>
 </table>
 <br> <br>
-
-
-</div> 
-</div> 
 </div>
+
+</div> 
+</div> 
+
 <div id="logoutModal" class="logout-modal">
     <div class="logout-modal-content">
         <div class="logout-modal-header">
@@ -969,6 +986,7 @@ document.addEventListener("DOMContentLoaded", () => {
 </div>
 
 </div>
+
 <!-- jsPDF and html2canvas libraries -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -1112,18 +1130,8 @@ function printDiv() {
     }
 
     // Collect chart images with titles
-    let chartsHTML = '';
-  if (document.getElementById("toggleSexChart").checked) {
-        chartsHTML += getChartImage('sexPieChart', 'Patients by Sex');
-    }
-    if (document.getElementById("toggleAgeGroupChart").checked) {
-        chartsHTML += getChartImage('ageGroupBarChart', 'Age Group');
-    }
-        if (document.getElementById("toggleBarangayChart").checked) {
-            chartsHTML += getChartImage('barangayBarChart', 'Patient Counts per Barangay');
-        }
 
-    chartsHTML += getChartImage('medicineLineChart', 'Quantity of Dispensed Medicines Over Time');
+
 
     // Clone the print area (table and summary)
     const originalArea = document.querySelector(".print-area").cloneNode(true);
@@ -1171,7 +1179,7 @@ function printDiv() {
     `);
     printWindow.document.write('</head><body>');
     printWindow.document.write(printHeader);            // Print header first
-    printWindow.document.write(chartsHTML);             // Then charts
+           // Then charts
     printWindow.document.write(originalArea.innerHTML); // Then table and summary
     printWindow.document.write('</body></html>');
 
@@ -1203,13 +1211,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 });
 
-// Close modal when clicking outside
-window.onclick = function(event) {
-    const modal = document.getElementById('logoutModal');
-    if (event.target == modal) {
-        closeModal();
-    }
-}
 
     function confirmLogout() {
     document.getElementById('logoutModal').style.display = 'block';
@@ -1221,7 +1222,7 @@ function closeModal() {
 }
 
 function proceedLogout() {
-   window.location.href = '../../ADMIN/php/logout.php'; 
+    window.location.href = '../../ADMIN/php/logout.php'; 
 }
 
 // Close modal when clicking outside
@@ -1231,7 +1232,6 @@ window.onclick = function(event) {
         closeModal();
     }
 }
-
 
 	// Check if user is logged in
 fetch('../php/getUserId.php')
@@ -1248,16 +1248,23 @@ fetch('../php/getUserId.php')
     });
 
 </script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const sidebar = document.getElementById("sidebar");
 
-<!-- Print Button at Bottom -->
-<div class="print-button-container">
-    <button type="button" class="btn-print" onclick="printDiv()">
-        <i class='bx bx-printer'></i>
-        Print Report
-    </button>
-</div>
+  function applyResponsiveSidebar() {
+    if (window.innerWidth <= 1024) {
+      sidebar.classList.add("hide");   // collapsed on small screens
+    } else {
+      sidebar.classList.remove("hide"); // expanded on larger screens
+    }
+  }
 
+  applyResponsiveSidebar();
+  window.addEventListener("resize", applyResponsiveSidebar);
 
-
+  // keep the rest of your existing code (auth, stats, modals, etc.)
+});
+</script>
 </body>
 </html>

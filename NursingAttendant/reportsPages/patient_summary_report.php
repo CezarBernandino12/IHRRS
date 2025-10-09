@@ -11,11 +11,11 @@ if (!isset($_SESSION['user_id'])) {
 $userId = $_SESSION['user_id'];// or however you store the logged-in user's ID
 
 // Fetch user info
-$stmt = $pdo->prepare("SELECT barangay FROM users WHERE user_id = ?");
+$stmt = $pdo->prepare("SELECT rhu FROM users WHERE user_id = ?");
 $stmt->execute([$userId]);
 $user = $stmt->fetch();
 
-$barangayName = $user ? $user['barangay'] : 'N/A';
+$rhu = $user ? $user['rhu'] : 'N/A';
 
 
 
@@ -32,11 +32,11 @@ $medication = $_GET['medication'] ?? '';
 // Build query with filters
 $sql = "SELECT v.*, p.first_name, p.last_name, p.age, p.sex, p.address FROM patient_assessment v 
         JOIN patients p ON v.patient_id = p.patient_id 
-        WHERE p.address LIKE :barangay"; 
+        WHERE 1=1"; 
         // Always require barangay match
 
 $params = [];
-$params['barangay'] = '%' . $barangayName . '%'; // Always set this param
+
 
 if (!empty($from_date) && !empty($to_date)) {
     $sql .= " AND DATE(v.visit_date) BETWEEN :from_date AND :to_date";
@@ -228,7 +228,7 @@ $total_patients = count(array_unique(array_column($visits, 'patient_id')));
 
 <!-- Filter Form -->
 <form method="GET" class="filter-form">
-    <h2>Patient Summary Report - BHS <?php echo htmlspecialchars($barangayName); ?></h2> <br>
+    <h2>Patient Summary Report - <?php echo htmlspecialchars($rhu); ?></h2> <br>
    
     <!-- Filter Modal Trigger -->
    
@@ -444,7 +444,7 @@ $total_patients = count(array_unique(array_column($visits, 'patient_id')));
   <h3>Republic of the Philippines</h3>
   <p>Province of Camarines Norte</p>
   <h3>Municipality of Daet</h3>
-  <h2><?php echo htmlspecialchars($barangayName); ?></h2>
+  <h2><?php echo htmlspecialchars($rhu); ?></h2>
   <br> 
   <h2>Patients Summary Report</h2>
        (<?php

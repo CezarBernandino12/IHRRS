@@ -361,13 +361,10 @@
 
     <!-- Instruction -->
      <div class="form-group" style="flex: 2; min-width: 300px;">
-      <label for="med_instruction[]" style="display: block; margin-bottom: 5px;">Instruction:</label>
-      <select id="med_instruction[]" name="med_instruction[]" class="select2" style="width: 100%; height: 30px; background-color: white; padding: 0px; padding-left: 2px;">
+      <label for="med_instruction" style="display: block; margin-bottom: 5px;">Instruction:</label>
+      <select id="med_instruction[]" name="med_instruction[]" class="med-instruction select2" style="width: 100%; height: 30px; background-color: white; padding: 0px; padding-left: 2px;">
         <option value="">Select</option>
         <option value="other">Other (Enter manually)</option>
-        <option value="Take 1x daily">Take 1x daily</option>
-        <option value="Take 2x daily">Take 2x daily</option>
-        <option value="Take 3x daily">Take 3x daily</option>
       </select>
     </div>
 
@@ -432,8 +429,10 @@ document.addEventListener("click", function(event) {
                         <input type="date" id="followup" name="followup" class="tall-input" placeholder="Set follow-up consultation date" min="<?= date('Y-m-d'); ?>">
                     </div> <br>
 
-                            <!-- HTML -->
+   
+  <label>No medicine available?</label>
 <div class="prescription-option">
+ 
   <input type="checkbox" id="prescriptionCheckbox">
   <label for="prescriptionCheckbox">Generate Prescription (Rx)</label>
 </div>
@@ -473,12 +472,8 @@ document.addEventListener("click", function(event) {
 
                   <!-- Instructions -->
           <div class="form-group instruction-field">
-              <label for="prescription_instruction">Dosage Instructions / Remarks</label>
-              <select name="prescription_instruction[]" class="select2"  style="background-color: white;">
-                  <option value="">-- Choose Instruction --</option>
-                  <option value="after_meal">Take after meals</option>
-                  <option value="before_meal">Take before meals</option>
-                  <option value="bedtime">Take before bedtime</option>
+              <label for="prescription_instruction">Dosage Instruction:</label>
+              <select name="prescription_instruction[]" class="med-instruction select2"  style="background-color: white;">
                   <option value="other">Other (Enter Manually)</option>
               </select>
           </div>
@@ -649,6 +644,7 @@ $(document).ready(function () {
         allowClear: true,
         minimumResultsForSearch: 0
     });
+  
     
 
         // Initialize Select2 for treatment
@@ -670,6 +666,12 @@ $(document).ready(function () {
         allowClear: true,
         minimumResultsForSearch: 0
     });
+          $('.med-instruction').select2({
+        placeholder: "Select or type instruction",
+        allowClear: true,
+        minimumResultsForSearch: 0
+    });
+    
 
       $('#physician').select2({
         placeholder: "Select physician",
@@ -743,89 +745,83 @@ $(document).ready(function () {
         }
     });
 
+// === INITIALIZATION ===
+document.querySelectorAll('.medicine-select').forEach(select => loadCustomOptions(select, 'medicine'));
+document.querySelectorAll('.med-instruction').forEach(select => loadCustomOptions(select, 'instruction'));
 
-    // Initialize medicine selects
-    const medicineSelects = document.querySelectorAll('.medicine-select');
-    medicineSelects.forEach(select => loadCustomOptions(select, 'medicine'));
-
-    // Add medicine button handler
-// Add medicine button handler
+// === ADD MEDICINE HANDLER ===
 $('#add-medicine').on('click', function () {
-    let container = $('#medicine-container');
-    let newEntry = container.children().first().clone();
+    const container = $('#medicine-container');
+    const newEntry = container.children().first().clone();
 
-    // Reset values in the cloned elements
+    // Reset form values
     newEntry.find('select').val('').trigger('change');
     newEntry.find('input[type="number"]').val('0');
 
-    // Replace the existing Select2 container to avoid duplication
-    newEntry.find('.select2-container').remove(); // Remove old Select2 container
-    let newSelect = newEntry.find('.medicine-select');
-    newSelect.removeAttr('data-select2-id').off().empty().append('<option></option>');
-    // Clean select options & events
+    // Remove old Select2 containers
+    newEntry.find('.select2-container').remove();
 
-    // Re-initialize Select2
-    newSelect.select2({
-        placeholder: "Select or type medication",
-        allowClear: true,
-        minimumResultsForSearch: 0
-    });
+    // --- Reinit MEDICINE select ---
+    const newMedicineSelect = newEntry.find('.medicine-select');
+    newMedicineSelect
+        .removeAttr('data-select2-id')
+        .off()
+        .empty()
+        .append('<option></option>')
+        .select2({
+            placeholder: "Select or type medication",
+            allowClear: true,
+            minimumResultsForSearch: 0
+        });
+    loadCustomOptions(newMedicineSelect[0], 'medicine');
+    handleOtherSelection(newMedicineSelect[0], 'medicine', 'medicine name (dosage)');
 
-    // Load custom options for this new select
-    loadCustomOptions(newSelect[0], 'medicine');
+    // --- Reinit INSTRUCTION select ---
+    const newInstructionSelect = newEntry.find('.med-instruction');
+    newInstructionSelect
+        .removeAttr('data-select2-id')
+        .off()
+        .empty()
+        .append('<option></option>')
+        .select2({
+            placeholder: "Select or type instruction",
+            allowClear: true,
+            minimumResultsForSearch: 0
+        });
+    loadCustomOptions(newInstructionSelect[0], 'instruction');
+    handleOtherSelection(newInstructionSelect[0], 'instruction', 'instruction');
 
-    // Re-attach custom "other" entry handler
-    handleOtherSelection(newSelect[0], 'medicine', 'medicine name (dosage)');
-
-    // Append the new entry to the container
+    // Append the new entry
     container.append(newEntry);
 
-    // Scroll the form container to the bottom to prevent overlap
+    // Scroll smoothly
     container[0].scrollIntoView({ behavior: 'smooth', block: 'end' });
 });
 
+// === EVENT DELEGATION FOR BUTTONS ===
 
- // Initialize medicine selects
-    const medicineSelects2 = document.querySelectorAll('.medicine-select2');
-    medicineSelects2.forEach(select => loadCustomOptions(select, 'prescription'));
-
-    // Add medicine button handler
-// Add medicine button handler
-$('#add-medicine').on('click', function () {
-    let container = $('#medicine-container');
-    let newEntry = container.children().first().clone();
-
-    // Reset values in the cloned elements
-    newEntry.find('select').val('').trigger('change');
-    newEntry.find('input[type="number"]').val('0');
-
-    // Replace the existing Select2 container to avoid duplication
-    newEntry.find('.select2-container').remove(); // Remove old Select2 container
-    let newSelect = newEntry.find('.medicine-select2');
-    newSelect.removeAttr('data-select2-id').off().empty().append('<option></option>');
-    // Clean select options & events
-
-    // Re-initialize Select2
-    newSelect.select2({
-        placeholder: "Select or type medication",
-        allowClear: true,
-        minimumResultsForSearch: 0
-    });
-
-    // Load custom options for this new select
-    loadCustomOptions(newSelect[0], 'prescription');
-
-    // Re-attach custom "other" entry handler
-    handleOtherSelection(newSelect[0], 'prescription', 'medicine name (dosage)');
-
-    // Append the new entry to the container
-    container.append(newEntry);
-
-    // Scroll the form container to the bottom to prevent overlap
-    container[0].scrollIntoView({ behavior: 'smooth', block: 'end' });
+// Plus button → increase quantity
+$('#medicine-container').on('click', '.btn-plus', function () {
+    const input = $(this).siblings('input[type="number"]');
+    const current = parseInt(input.val()) || 0;
+    input.val(current + 1);
 });
 
+// Minus button → decrease quantity
+$('#medicine-container').on('click', '.btn-minus', function () {
+    const input = $(this).siblings('input[type="number"]');
+    const current = parseInt(input.val()) || 0;
+    if (current > 0) input.val(current - 1);
+});
 
+// Remove button → remove this medicine entry
+$('#medicine-container').on('click', '.btn-remove', function () {
+    if ($('#medicine-container .medicine-entry').length > 1) {
+        $(this).closest('.medicine-entry').remove();
+    } else {
+        alert('At least one medicine entry is required.');
+    }
+});
 
 
     // Handle custom medicine entry for all medicine selects
@@ -867,6 +863,32 @@ $('#add-medicine').on('click', function () {
                             $(this).append(newOption).trigger('change');
                         } else {
                             alert('Failed to save custom medication.');
+                            $(this).val('').trigger('change');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        $(this).val('').trigger('change');
+                    });
+            } else {
+                $(this).val('').trigger('change');
+            }
+        }
+    });
+
+
+        // Handle custom INSTRUCTION entry 
+    $(document).on('change', '.med-instruction', function() {
+        if (this.value === 'other') {
+            const userInput = prompt("Enter instruction:");
+            if (userInput) {
+                saveCustomOption('instruction', userInput)
+                    .then(data => {
+                        if (data.success) {
+                            const newOption = new Option(userInput, userInput, true, true);
+                            $(this).append(newOption).trigger('change');
+                        } else {
+                            alert('Failed to save custom instruction.');
                             $(this).val('').trigger('change');
                         }
                     })
@@ -1005,7 +1027,7 @@ const diagnosisSelect = document.getElementById('diagnosis');
 const remarksSelect = document.getElementById('rhu_remarks');
 const medicineSelects = document.querySelectorAll('.medicine-select');
 const medicineSelects2 = document.querySelectorAll('.medicine-select2');
-
+const medInstruction= document.querySelectorAll('.med-instruction');
 
 // Helper to load options from DB
 function loadCustomOptions(selectElement, category) {
@@ -1076,6 +1098,9 @@ medicineSelects.forEach(select => {
 medicineSelects2.forEach(select => {
     handleOtherSelection(select, 'prescription', 'medicine name (dosage)');
 });
+medInstruction.forEach(select => {
+    handleOtherSelection(select, 'instruction', 'instruction');
+});
 // Load options on page load
 loadCustomOptions(diagnosisSelect, 'diagnosis');
 loadCustomOptions(remarksSelect, 'rhu_remarks');
@@ -1093,6 +1118,9 @@ medicineSelects.forEach(select => {
 });
 medicineSelects2.forEach(select => {
     loadCustomOptions(select, 'prescription');
+});
+medInstruction.forEach(select => {
+    loadCustomOptions(select, 'instruction');
 });
 
 

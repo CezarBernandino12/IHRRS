@@ -12,11 +12,12 @@ if (!isset($_SESSION['user_id'])) {
 $userId = $_SESSION['user_id'];
 
 // Fetch user info
-$stmt = $pdo->prepare("SELECT barangay FROM users WHERE user_id = ?");
+$stmt = $pdo->prepare("SELECT rhu FROM users WHERE user_id = ?");
 $stmt->execute([$userId]);
 $user = $stmt->fetch();
 
-$barangayName = $user ? $user['barangay'] : 'N/A';
+$rhu = $user ? $user['rhu'] : 'N/A';
+
 
 // Filters
 $from_date = $_GET['from_date'] ?? '';
@@ -100,7 +101,12 @@ $total_pending = 0;
 					<span class="text">Dashboard</span>
 				</a>
 			</li>
-			
+			<li>
+				<a href= "../ITR.html">
+					<i class="bx bxs-user"></i>
+					<span class="text">Add New ITR</span>
+				</a>
+			</li>
 			<li>
 				<a href="../pending.html" id="updateReferrals">
 					<i class="bx bxs-user"></i>
@@ -198,7 +204,7 @@ $total_pending = 0;
 <!-- Filter Form -->
 <form method="GET" class="filter-form">
 
- <h2>RHU Referral Intake Summary Report</h2> <br>
+ <h2>Referral Intake Summary Report - <?php echo htmlspecialchars($rhu); ?></h2> <br>
 
 
  <!-- Filter Modal Trigger -->
@@ -207,6 +213,7 @@ $total_pending = 0;
                <button type="button" class="btn-export" id="openFilterModal">Filter</button>
         <button type="button" class="btn-export" onclick="exportTableToExcel('reportTable')">Export to Excel</button>
         <button type="button" class="btn-export" onclick="exportTableToPDF()">Export to PDF</button>
+        <button type="button" class="btn-print" onclick="printDiv()">Print this page</button>
     </div>
 
     <!-- Modern Filter Tags Display -->
@@ -374,7 +381,7 @@ $total_pending = 0;
   <h3>Republic of the Philippines</h3>
   <p>Province of Camarines Norte</p>
   <h3>Municipality of Daet</h3>
-  <h2>Rural Health Unit</h2>
+  <h2><?php echo htmlspecialchars($rhu); ?></h2>
   <br> 
   <h2>REFERRAL INTAKE SUMMARY REPORT</h2>
   <h3></h3>
@@ -559,7 +566,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 <br>
-     <div class="report-table-container">
+<div class="report-table-container">
 <table border="1" cellpadding="8" cellspacing="0" id="reportTable"> 
     <thead>
         <tr>
@@ -592,6 +599,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <?php endforeach; ?>
     </tbody>
 </table>
+ </div>
 <br> <br>
 
 
@@ -612,9 +620,8 @@ document.addEventListener("DOMContentLoaded", () => {
     </div>
 </div>
 
+</div>
 
-</div>
-</div>
 <!-- jsPDF and html2canvas libraries -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -842,14 +849,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 });
 
-// Close modal when clicking outside
-window.onclick = function(event) {
-    const modal = document.getElementById('logoutModal');
-    if (event.target == modal) {
-        closeModal();
-    }
-}
-
     function confirmLogout() {
     document.getElementById('logoutModal').style.display = 'block';
     return false; // Prevent the default link behavior
@@ -887,16 +886,23 @@ fetch('../php/getUserId.php')
     });
 
 </script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const sidebar = document.getElementById("sidebar");
 
-<!-- Print Button at Bottom -->
-<div class="print-button-container">
-    <button type="button" class="btn-print" onclick="printDiv()">
-        <i class='bx bx-printer'></i>
-        Print Report
-    </button>
-</div>
+  function applyResponsiveSidebar() {
+    if (window.innerWidth <= 1024) {
+      sidebar.classList.add("hide");   // collapsed on small screens
+    } else {
+      sidebar.classList.remove("hide"); // expanded on larger screens
+    }
+  }
 
+  applyResponsiveSidebar();
+  window.addEventListener("resize", applyResponsiveSidebar);
 
-
+  // keep the rest of your existing code (auth, stats, modals, etc.)
+});
+</script>
 </body>
 </html>

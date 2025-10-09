@@ -85,6 +85,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const closeBtn6 = $('closeBtn6'); // X on patientExistsModal
     const doneButton = $('doneButton');
 
+    const errorModal = $('errorModal');
+    const errorCloseBtn = $('errorCloseBtn');
+
     dbg("Elements:", {
         submitButton, modal1, closeBtn1, svButton, yesButton1,
         modal2, modal3, modal4, modal5, diagButton, patientExistsModal, closeBtn6
@@ -100,7 +103,9 @@ document.addEventListener("DOMContentLoaded", () => {
     on(closeBtn1, 'click', function () {
         if (modal1) modal1.style.display = 'none';
     });
-
+ on(errorCloseBtn, 'click', function () {
+        errorModal.style.display = 'none';
+    });
     on(doneButton, 'click', function () {
         if (modal3) modal1.style.display = 'none';
         try {
@@ -167,17 +172,20 @@ function noButton1ClickHandler() {
                         dbg("✅ Data successfully saved under patient ID:", savedPatientId);
                         alert("Patient record saved successfully.");
                         modal.style.display = "none";
-                        modal4.style.display = "block"; // Hide modal only if successful
+                        modal4.style.display = "block"; 
                     } else {
+                        errorModal.style.display = "block";
                         dbg("❌ Error saving record:", data.message);
                         alert("Error saving record: " + (data.message || "Unknown error"));
                     }
                 } catch (error) {
+                    errorModal.style.display = "block";
                     dbg("❌ JSON Parsing Error (useExisting):", error);
                     alert("Invalid response from server.");
                 }
             })
             .catch(error => {
+                errorModal.style.display = "block";
                 dbg("❌ Fetch Error (useExisting):", error);
                 alert("Network error. Please try again.");
             });
@@ -211,10 +219,12 @@ function noButton1ClickHandler() {
                         modal.style.display = "none";
                          modal4.style.display = "block";  // Hide modal only if successful
                     } else {
+                        errorModal.style.display = "block";
                         dbg("❌ Error saving new patient:", data.message);
                         alert("Error saving record: " + (data.message || "Unknown error"));
                     }
                 } catch (error) {
+                    errorModal.style.display = "block";
                     dbg("❌ JSON Parsing Error (addNew):", error);
                     alert("Invalid response from server.");
                 }
@@ -292,10 +302,12 @@ function noButton1ClickHandler() {
 
                 if (typeof callback === "function") callback();
             } else {
+                errorModal.style.display = "block";
                 alert('❌ Error: ' + (data.message || "Unknown error."));
             }
         })
         .catch(error => {
+            errorModal.style.display = "block";
             console.error("❌ Fetch Error (saveFormData):", error);
             alert("Network error. Please check your connection.");
         });
@@ -348,7 +360,7 @@ function noButton1ClickHandler() {
     if (event && typeof event.preventDefault === 'function') event.preventDefault();
 
     if (modal1) modal1.style.display = 'none';
-    if (modal2) modal2.style.display = 'block';
+  
 
     // Save patient form data first
     saveFormData("no", function () {
@@ -373,7 +385,7 @@ function noButton1ClickHandler() {
         // Move to next modal after successful referral
         if (modal2) modal2.style.display = 'none';
         if (modal4) modal4.style.display = 'none';
-        if (modal3) modal3.style.display = 'block';
+       
     });
 });
 
@@ -405,14 +417,17 @@ function noButton1ClickHandler() {
             }
 
             if (data.status === "success") {
+                modal3.style.display = 'block';
                 localStorage.setItem("referral_id", data.referral_id);
                 dbg("📌 Referral saved successfully:", data.referral_id);
             } else {
+                errorModal.style.display = "block";
                 console.error("❌ Error saving referral:", data.message);
                 alert("Error: " + (data.message || "Unknown error"));
             }
         })
         .catch(error => {
+            errorModal.style.display = "block";
             console.error("❌ Fetch Error (saveReferral):", error);
             alert("Network error. Please try again.");
         });

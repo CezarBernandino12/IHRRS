@@ -44,7 +44,7 @@ try {
     $user_id = clean_input($_POST['user_id']);
     $diagnosis = clean_input($_POST['diagnosis']);
     $status = clean_input($_POST['status'] ?? '');
-    $physician2 = clean_input($_POST['physician2'] ?? '');
+    $physician = clean_input($_POST['physician2'] ?? '');
     $remarks = clean_input($_POST['rhu_remarks'] ?? '');
     $consultation_date = date("Y-m-d");
     $followup = isset($_POST['followup']) ? clean_input($_POST['followup']) : null;
@@ -84,13 +84,14 @@ try {
     // --------------------------
     $stmt_consultation = $pdo->prepare("
         INSERT INTO rhu_consultations 
-        (patient_id, doctor_id, consultation_date, diagnosis, instruction_prescription, visit_id, lab_result_path, diagnosis_status, follow_up_date) 
+        (patient_id, doctor_id, recorded_by, consultation_date, diagnosis, instruction_prescription, visit_id, lab_result_path, diagnosis_status, follow_up_date) 
         VALUES 
-        (:patient_id, :user_id, :consultation_date, :diagnosis, :remarks, :visit_id, :lab_result_path, :diagnosis_status, :followup)
+        (:patient_id, :physician, :user_id, :consultation_date, :diagnosis, :remarks, :visit_id, :lab_result_path, :diagnosis_status, :followup)
     ");
 
     $stmt_consultation->execute([
         ':patient_id' => $patient_id,
+        ':physician' => $physician,
         ':user_id' => $user_id,
         ':consultation_date' => $consultation_date,
         ':diagnosis' => $diagnosis,
@@ -144,7 +145,7 @@ try {
                     ':medicine_name' => $medicine,
                     ':quantity_dispensed' => $_POST['quantity_given'][$key],
                     ':instruction' => $_POST['med_instruction'][$key] ?? '',
-                    ':dispensed_by' => $physician2
+                    ':dispensed_by' => $physician
                 ]);
             }
         }

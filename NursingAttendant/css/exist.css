@@ -1217,6 +1217,8 @@ button.print-btn{
     .button-container, .print-btn {
         display: none;
     }
+    
+    
 }
 /*BUTTONS*/
 
@@ -1785,7 +1787,7 @@ input[type="date"]{
 
 /* Container Styling */
 .prescription-container {
-  width: 700px;
+  width: auto;
   min-height: 300px;  /* taller than wide */
   margin: 20px auto;
   background: #ffffff;

@@ -11,11 +11,12 @@ if (!isset($_SESSION['user_id'])) {
 $userId = $_SESSION['user_id'];// or however you store the logged-in user's ID
 
 // Fetch user info
-$stmt = $pdo->prepare("SELECT barangay FROM users WHERE user_id = ?");
+$stmt = $pdo->prepare("SELECT rhu FROM users WHERE user_id = ?");
 $stmt->execute([$userId]);
 $user = $stmt->fetch();
 
-$barangayName = $user ? $user['barangay'] : 'N/A';
+$rhu = $user ? $user['rhu'] : 'N/A';
+
 
 
 
@@ -223,7 +224,7 @@ $visits = $stmt->fetchAll();
 
 <!-- Filter Form -->
 <form method="GET" class="filter-form">
-    <h2>Medical Cases Monitoring Report - BHS <?php echo htmlspecialchars($barangayName); ?>   </h2> <br>
+    <h2>Medical Cases Monitoring Report - <?php echo htmlspecialchars($rhu); ?>   </h2> <br>
 
     
     <!-- Filter Modal Trigger -->
@@ -453,7 +454,7 @@ $visits = $stmt->fetchAll();
   <h3>Republic of the Philippines</h3>
   <p>Province of Camarines Norte</p>
   <h3>Municipality of Daet</h3>
-  <h2><?php echo htmlspecialchars($barangayName); ?></h2>
+  <h2><?php echo htmlspecialchars($rhu); ?></h2>
   <br> 
   <h2>MEDICAL CASE MONITORING REPORT</h2>
   (<?php

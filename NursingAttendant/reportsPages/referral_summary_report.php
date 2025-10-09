@@ -12,11 +12,12 @@ if (!isset($_SESSION['user_id'])) {
 $userId = $_SESSION['user_id'];
 
 // Fetch user info
-$stmt = $pdo->prepare("SELECT barangay FROM users WHERE user_id = ?");
+$stmt = $pdo->prepare("SELECT rhu FROM users WHERE user_id = ?");
 $stmt->execute([$userId]);
 $user = $stmt->fetch();
 
-$barangayName = $user ? $user['barangay'] : 'N/A';
+$rhu = $user ? $user['rhu'] : 'N/A';
+
 
 // Filters
 $from_date = $_GET['from_date'] ?? '';
@@ -203,7 +204,7 @@ $total_pending = 0;
 <!-- Filter Form -->
 <form method="GET" class="filter-form">
 
- <h2>RHU Referral Intake Summary Report</h2> <br>
+ <h2>Referral Intake Summary Report - <?php echo htmlspecialchars($rhu); ?></h2> <br>
 
 
  <!-- Filter Modal Trigger -->
@@ -380,7 +381,7 @@ $total_pending = 0;
   <h3>Republic of the Philippines</h3>
   <p>Province of Camarines Norte</p>
   <h3>Municipality of Daet</h3>
-  <h2>Rural Health Unit</h2>
+  <h2><?php echo htmlspecialchars($rhu); ?></h2>
   <br> 
   <h2>REFERRAL INTAKE SUMMARY REPORT</h2>
   <h3></h3>

@@ -11,11 +11,12 @@ if (!isset($_SESSION['user_id'])) {
 $userId = $_SESSION['user_id'];// or however you store the logged-in user's ID
 
 // Fetch user info
-$stmt = $pdo->prepare("SELECT barangay FROM users WHERE user_id = ?");
+$stmt = $pdo->prepare("SELECT rhu FROM users WHERE user_id = ?");
 $stmt->execute([$userId]);
 $user = $stmt->fetch();
 
-$barangayName = $user ? $user['barangay'] : 'N/A';
+$rhu = $user ? $user['rhu'] : 'N/A';
+
 
 
 
@@ -119,7 +120,12 @@ $visits = $stmt->fetchAll();
 					<span class="text">Dashboard</span>
 				</a>
 			</li>
-		
+			<li>
+				<a href= "../ITR.html">
+					<i class="bx bxs-user"></i>
+					<span class="text">Add New ITR</span>
+				</a>
+			</li>
 			<li>
 				<a href="../pending.html" id="updateReferrals">
 					<i class="bx bxs-user"></i>
@@ -218,7 +224,7 @@ $visits = $stmt->fetchAll();
 
 <!-- Filter Form -->
 <form method="GET" class="filter-form">
-    <h2>Medical Cases Monitoring Report - BHS <?php echo htmlspecialchars($barangayName); ?>   </h2> <br>
+    <h2>Medical Cases Monitoring Report - <?php echo htmlspecialchars($rhu); ?>   </h2> <br>
 
     
     <!-- Filter Modal Trigger -->
@@ -227,6 +233,7 @@ $visits = $stmt->fetchAll();
                <button type="button" class="btn-export" id="openFilterModal">Filter</button>
         <button type="button" class="btn-export" onclick="exportTableToExcel('reportTable')">Export to Excel</button>
         <button type="button" class="btn-export" onclick="exportTableToPDF()">Export to PDF</button>
+        <button type="button" class="btn-print" onclick="printDiv()">Print this page</button>
     </div>
 
     <!-- Modern Filter Tags Display -->
@@ -447,7 +454,7 @@ $visits = $stmt->fetchAll();
   <h3>Republic of the Philippines</h3>
   <p>Province of Camarines Norte</p>
   <h3>Municipality of Daet</h3>
-  <h2><?php echo htmlspecialchars($barangayName); ?></h2>
+  <h2><?php echo htmlspecialchars($rhu); ?></h2>
   <br> 
   <h2>MEDICAL CASE MONITORING REPORT</h2>
   (<?php
@@ -867,7 +874,7 @@ $total_patients = count($unique_patient_ids);
 <h3>Detailed Report</h3>
 <!-- Table with Visit Details -->
 <?php if ($visits && count($visits) > 0): ?>
-         <div class="report-table-container">
+    <div class="report-table-container">
     <table id="reportTable">
         <thead>
             <tr>
@@ -894,7 +901,7 @@ $total_patients = count($unique_patient_ids);
         <?php endforeach; ?>
         </tbody>
     </table>
-</div>
+    </div>
 <?php else: ?>
     <p>No visits found for the selected filters.</p>
 <?php endif; ?>
@@ -919,6 +926,7 @@ $total_patients = count($unique_patient_ids);
         </div>
     </div>
 </div>
+
 </div>
 
 <!-- jsPDF and html2canvas libraries -->
@@ -1031,22 +1039,6 @@ function exportTableToExcel(tableID, filename = 'Medical Cases Report') {
         console.error('Excel export error:', error);
         alert('Error exporting to Excel: ' + error.message);
     }
-}
-
-async function exportTableToPDF() {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-    const table = document.getElementById('reportTable');
-
-    await html2canvas(table).then(canvas => {
-        const imgData = canvas.toDataURL('image/png');
-        const imgProps = doc.getImageProperties(imgData);
-        const pdfWidth = doc.internal.pageSize.getWidth();
-        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-
-        doc.addImage(imgData, 'PNG', 10, 10, pdfWidth - 20, pdfHeight);
-        doc.save("report.pdf");
-    });
 }
 
 
@@ -1174,14 +1166,6 @@ window.onclick = function(event) {
     }
 }
 
-// Close modal when clicking outside
-window.onclick = function(event) {
-    const modal = document.getElementById('logoutModal');
-    if (event.target == modal) {
-        closeModal();
-    }
-}
-
     function confirmLogout() {
     document.getElementById('logoutModal').style.display = 'block';
     return false; // Prevent the default link behavior
@@ -1192,7 +1176,7 @@ function closeModal() {
 }
 
 function proceedLogout() {
-    window.location.href = '../../ADMIN/php/logout.php'; 
+    window.location.href = '../../role.html';
 }
 
 // Close modal when clicking outside
@@ -1215,18 +1199,27 @@ fetch('../php/getUserId.php')
     })
     .catch(error => {
         console.error('Error checking session:', error);
-        window.location.href = '../role.html';
+        window.location.href = '../../ADMIN/php/logout.php'; 
     });
 
 </script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const sidebar = document.getElementById("sidebar");
 
-<!-- Print Button at Bottom -->
-<div class="print-button-container">
-    <button type="button" class="btn-print" onclick="printDiv()">
-        <i class='bx bx-printer'></i>
-        Print Report
-    </button>
-</div>
+  function applyResponsiveSidebar() {
+    if (window.innerWidth <= 1024) {
+      sidebar.classList.add("hide");   // collapsed on small screens
+    } else {
+      sidebar.classList.remove("hide"); // expanded on larger screens
+    }
+  }
 
+  applyResponsiveSidebar();
+  window.addEventListener("resize", applyResponsiveSidebar);
+
+  // keep the rest of your existing code (auth, stats, modals, etc.)
+});
+</script>
 </body>
 </html>

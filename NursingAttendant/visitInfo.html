@@ -297,17 +297,17 @@
                 <div class="additional-options">
                         <div class="assessment-card">
                          <label>Laboratory Test Result:</label>
-                    <div id="lab-file-container">
+                    <div id="lab-file-container" style="font-family: 'Trebuchet MS', sans-serif; border: 1px solid #fff; padding: 10px; border-style: none; background-color: #fff; color: #00000079; font-weight: bolder;">
                        <!-- File preview will load here -->
                   </div>
                     </div>
                        <div class="assessment-card">
                         <label for="diagnosis">Diagnosis:</label>
-                         <input type="text" id="diagnosis" name="diagnosis" class="diagnosis" readonly value="N/A">
+                         <input type="text" id="diagnosis" name="diagnosis" class="diagnosis" style="background-color: #fff; color: #0447ac; border-style: none; font-weight: bolder; font-size: 15px;" readonly value="N/A">
                     </div>
                          <div class="assessment-card">
                         <label for="diagnosis_status">Status:</label>
-                         <p class="diagnosis_status">N/A</p>
+                         <p class="diagnosis_status" style="font-family: 'Trebuchet MS', sans-serif; margin-left: 10px;">N/A</p>
                     </div>
 
                        <div class="assessment-card">
@@ -320,13 +320,28 @@
                         </div>
                        </div>
                 <div class="assessment-card">
-                <label for="instruction">Instructions/Remarks:</label>
-                <p class="instruction">N/A</p>
+                <label for="instruction">Remarks:</label>
+                <p class="instruction" style="margin-left: 10px;">N/A</p>
             </div>
-                <div class="assessment-card">
-                <label for="doctor">Recorded by:</label>
-                <p class="doctor">N/A</p>
-            </div>
+            <div class="assessment-card" 
+     style="display: flex; align-items: center; flex-wrap: wrap; gap: 20px; font-family: 'Trebuchet MS', sans-serif;">
+  
+  <div style="display: flex; align-items: center;">
+    <label for="doctor">Physician:</label>
+    <p style="margin-top: 5px;" class="doctor" >N/A</p>
+  </div>
+
+  <div style="display: flex; align-items: center;">
+    <label for="licenseNo">License Number:</label>
+    <p style="margin-top: 5px;" class="licenseNo" >N/A</p>
+  </div>
+  <div style="display: none;">
+    <label for="rhu">RHU:</label>
+    <p class="rhu">N/A</p>
+  </div>
+
+</div>
+
 
 
           
@@ -347,7 +362,7 @@
     <div class="header">
       <img src="../img/RHUlogo.png" alt="RHU Logo" class="print-logo" />
       <strong>Republic of the Philippines<br />Daet, Camarines Norte</strong>
-      <h2><span id="printBarangay"></span></h2>
+      <h2><span id="printRHU"></span></h2>
       <h3>INDIVIDUAL TREATMENT RECORD</h3>
       <br /><br />
     </div>
@@ -416,13 +431,19 @@
             <div>BMI: <span id="printBmi"></span></div>
           </td>
           <td>
-            <div><strong>Diagnosis:</strong> <span id="printDiagnosis"></span></div>
-            <div><strong>Medication:</strong> <span id="printMedication"></span></div>
-            <div><strong>BHW Remarks:</strong> <span id="printBHWremarks"></span></div>
+            <div><strong>Diagnosis:</strong> <span id="printDiagnosis"></span></div> <br>
+            <div>
+ <strong>Medications:</strong>
+<span id="printMedication" 
+      style="display: block; white-space: pre-line; line-height: 1.0; margin: 0; padding: 0; margin-top: -25px;"></span>
+
+</div>
+            
           </td>
           <td>
-            <div><strong>Instructions/Remarks:</strong> <span id="printInstruction"></span></div>
-            <div style="margin-top:10px;"><strong>Recorded by:</strong> <span id="printUsername"></span></div>
+            <div><strong>Remarks:</strong> <span id="printInstruction"></span></div> <br>
+            <div style="margin-top:10px;"><strong>Physician:</strong> <br> <span id="printUsername"></span></div>
+              <div><strong>Lic. No.:</strong> <span id="printLicenseNo"></span></div>
           </td>
         </tr>
       </tbody>
@@ -586,7 +607,7 @@
         };
 
         // Header & personal
-        set("printBarangay", ".bhs");
+        set("printRHU", ".rhu");
         set("printFamilySerial", ".family-serial-no");
         set("printLastName", ".patient-last-name");
         set("printFirstName", ".patient-first-name");
@@ -622,12 +643,12 @@
         document.getElementById("printDiagnosis").textContent = diagInput?.value || "";
         document.getElementById("printMedication").textContent =
           document.querySelector(".rhu-medicine-lists")?.textContent || "";
-        document.getElementById("printBHWremarks").textContent =
-          document.querySelector(".remarks")?.textContent || "";
         document.getElementById("printInstruction").textContent =
           document.querySelector(".instruction")?.textContent || "";
         document.getElementById("printUsername").textContent =
           document.querySelector(".doctor")?.textContent || "";
+         document.getElementById("printLicenseNo").textContent =
+          document.querySelector(".licenseNo")?.textContent || "";
 
         // Clone & prepare
         const printContent = document.getElementById("printContent");

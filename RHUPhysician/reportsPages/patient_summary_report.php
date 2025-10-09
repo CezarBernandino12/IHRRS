@@ -11,11 +11,11 @@ if (!isset($_SESSION['user_id'])) {
 $userId = $_SESSION['user_id'];// or however you store the logged-in user's ID
 
 // Fetch user info
-$stmt = $pdo->prepare("SELECT barangay FROM users WHERE user_id = ?");
+$stmt = $pdo->prepare("SELECT rhu FROM users WHERE user_id = ?");
 $stmt->execute([$userId]);
 $user = $stmt->fetch();
 
-$barangayName = $user ? $user['barangay'] : 'N/A';
+$rhu = $user ? $user['rhu'] : 'N/A';
 
 
 
@@ -32,11 +32,11 @@ $medication = $_GET['medication'] ?? '';
 // Build query with filters
 $sql = "SELECT v.*, p.first_name, p.last_name, p.age, p.sex, p.address FROM patient_assessment v 
         JOIN patients p ON v.patient_id = p.patient_id 
-        WHERE p.address LIKE :barangay"; 
+        WHERE 1=1"; 
         // Always require barangay match
 
 $params = [];
-$params['barangay'] = '%' . $barangayName . '%'; // Always set this param
+
 
 if (!empty($from_date) && !empty($to_date)) {
     $sql .= " AND DATE(v.visit_date) BETWEEN :from_date AND :to_date";
@@ -83,9 +83,6 @@ if (!empty($barangayName) && $barangayName !== 'N/A') {
     $params['barangay'] = '%' . $barangayName . '%';
 }
 
-// Add sorting by visit_date (most recent first)
-$sql .= " ORDER BY v.visit_date DESC";
-
 $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $visits = $stmt->fetchAll();
@@ -100,12 +97,13 @@ $total_patients = count(array_unique(array_column($visits, 'patient_id')));
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
+	<meta charset="UTF-8"> 
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="icon" href="../../img/logo.png">
 	<link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../css/reportsDesign.css">
-	<link rel="stylesheet" href="../css/logout.css">
+    <link rel="stylesheet" href="../css/logout.css">
+	
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <title>Patient Summary Report</title>
@@ -126,7 +124,12 @@ $total_patients = count(array_unique(array_column($visits, 'patient_id')));
 					<span class="text">Dashboard</span>
 				</a>
 			</li>
-		
+			<li>
+				<a href= "../ITR.html">
+					<i class="bx bxs-user"></i>
+					<span class="text">Add New ITR</span>
+				</a>
+			</li>
 			<li>
 				<a href="../pending.html" id="updateReferrals">
 					<i class="bx bxs-user"></i>
@@ -225,7 +228,7 @@ $total_patients = count(array_unique(array_column($visits, 'patient_id')));
 
 <!-- Filter Form -->
 <form method="GET" class="filter-form">
-    <h2>Patient Summary Report - BHS <?php echo htmlspecialchars($barangayName); ?></h2> <br>
+    <h2>Patient Summary Report - <?php echo htmlspecialchars($rhu); ?></h2> <br>
    
     <!-- Filter Modal Trigger -->
    
@@ -233,6 +236,7 @@ $total_patients = count(array_unique(array_column($visits, 'patient_id')));
                <button type="button" class="btn-export" id="openFilterModal">Filter</button>
         <button type="button" class="btn-export" onclick="exportTableToExcel('reportTable')">Export to Excel</button>
         <button type="button" class="btn-export" onclick="exportTableToPDF()">Export to PDF</button>
+        <button type="button" class="btn-print" onclick="printDiv()">Print this page</button>
     </div>
 
     <!-- Modern Filter Tags Display -->
@@ -440,7 +444,7 @@ $total_patients = count(array_unique(array_column($visits, 'patient_id')));
   <h3>Republic of the Philippines</h3>
   <p>Province of Camarines Norte</p>
   <h3>Municipality of Daet</h3>
-  <h2><?php echo htmlspecialchars($barangayName); ?></h2>
+  <h2><?php echo htmlspecialchars($rhu); ?></h2>
   <br> 
   <h2>Patients Summary Report</h2>
        (<?php
@@ -464,6 +468,15 @@ echo $filters ? implode("&nbsp; | &nbsp;", $filters) : "All Records";
 ?>)</h3> <br><br><br>
 </div>
 <div class="report-content">
+
+<style>
+    @media print {
+        .chart-title { 
+           display: none;
+        }
+    }
+</style>
+
 
 
 
@@ -831,7 +844,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 <!-- Table with Visit Details -->
 <?php if ($visits): ?>
-    <div class="report-table-container">
+      <div class="report-table-container">
 	<table id="reportTable">
     <thead>
         <tr>
@@ -869,21 +882,14 @@ document.addEventListener("DOMContentLoaded", () => {
     <br> <br>
      <span id="generated_by"></span>
 </div>
+  </div>
 <?php else: ?>
     <p>No visits found for the selected filters.</p>
 <?php endif; ?>
 
-<!-- Print Button at Bottom -->
-<div class="print-button-container">
-    <button type="button" class="btn-print" onclick="printDiv()">
-        <i class='bx bx-printer'></i>
-        Print Report
-    </button>
-</div>
 
-</div> 
-</div> 
-</div>
+</div> </div> 
+
 
 
 
@@ -901,6 +907,7 @@ document.addEventListener("DOMContentLoaded", () => {
         </div>
     </div>
 </div>
+
 </div>
 
 <!-- jsPDF and html2canvas libraries -->
@@ -1030,8 +1037,33 @@ async function exportTableToPDF() {
         doc.save("report.pdf");
     });
 }
-
 function printDiv() {
+    function getChartImage(id, title) {
+        const canvas = document.getElementById(id);
+        if (canvas && canvas.toDataURL) {
+            return `<div style="text-align:center;margin-bottom:20px;">
+                        <h3 style="margin-bottom:8px;">${title}</h3>
+                        <img src="${canvas.toDataURL('image/png')}" style="max-width:100%;height:auto;">
+                    </div>`;
+        }
+        return '';
+    }
+
+    // Collect chart images based on checkboxes
+    let chartsHTML = '';
+    chartsHTML += getChartImage('barangayBarChart', 'Patient Address');
+
+    if (document.getElementById("toggleSexChart")?.checked) {
+        chartsHTML += getChartImage('sexPieChart', 'Patients by Sex');
+    }
+    if (document.getElementById("toggleAgeGroupChart")?.checked) {
+        chartsHTML += getChartImage('ageGroupBarChart', 'Age Group');
+    }
+    if (document.getElementById("toggleBMIChart")?.checked) {
+        chartsHTML += getChartImage('bmiPieChart', 'Patients by BMI Category');
+    }
+   
+
     // Clone print area
     const originalArea = document.querySelector(".print-area");
     const printHeaderElement = document.querySelector(".print-header");
@@ -1061,14 +1093,8 @@ function printDiv() {
     const headerInClone = clone.querySelector('.print-header');
     if (headerInClone) headerInClone.remove();
 
-    // Remove ALL chart elements completely
+    // Remove canvases from clone
     clone.querySelectorAll('canvas').forEach(c => c.remove());
-    clone.querySelectorAll('#sexChart, #ageGroupChart, #bmiChart, #barangayBarChart').forEach(el => el.remove());
-    clone.querySelectorAll('.chart-title').forEach(el => el.remove());
-    
-    // Remove chart visibility controls
-    const chartControls = clone.querySelector('div[style*="margin: 20px"]');
-    if (chartControls) chartControls.remove();
 
     // Build print window
     const printWindow = window.open('', '', 'height=900,width=1100');
@@ -1079,13 +1105,13 @@ function printDiv() {
             table { width: 100%; border-collapse: collapse; }
             th, td { border: 1px solid #000; padding: 4px; text-align: left; }
             thead { background-color: #f0f0f0; }
+            img { display: block; margin: 0 auto; max-width: 100%; height: auto; }
             h3 { margin: 10px 0 5px 0; }
-            /* Ensure no charts appear */
-            canvas, .chart-title { display: none !important; }
         </style>
     `);
     printWindow.document.write('</head><body>');
     printWindow.document.write(printHeaderElement.outerHTML);
+    printWindow.document.write(chartsHTML);
     printWindow.document.write(clone.innerHTML);
     printWindow.document.write('</body></html>');
 
@@ -1109,7 +1135,7 @@ function closeModal() {
 }
 
 function proceedLogout() {
-    window.location.href = '../../ADMIN/php/logout.php'; 
+    window.location.href = '../../role.html';
 }
 
 // Close modal when clicking outside
@@ -1138,6 +1164,28 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 });
 
+    function confirmLogout() {
+    document.getElementById('logoutModal').style.display = 'block';
+    return false; // Prevent the default link behavior
+}
+
+function closeModal() {
+    document.getElementById('logoutModal').style.display = 'none';
+}
+
+function proceedLogout() {
+    window.location.href = '../../ADMIN/php/logout.php'; 
+}
+
+// Close modal when clicking outside
+window.onclick = function(event) {
+    const modal = document.getElementById('logoutModal');
+    if (event.target == modal) {
+        closeModal();
+    }
+}
+
+
 	// Check if user is logged in
 fetch('../php/getUserId.php')
     .then(response => response.json())
@@ -1153,6 +1201,23 @@ fetch('../php/getUserId.php')
     });
 
 </script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const sidebar = document.getElementById("sidebar");
 
+  function applyResponsiveSidebar() {
+    if (window.innerWidth <= 1024) {
+      sidebar.classList.add("hide");   // collapsed on small screens
+    } else {
+      sidebar.classList.remove("hide"); // expanded on larger screens
+    }
+  }
+
+  applyResponsiveSidebar();
+  window.addEventListener("resize", applyResponsiveSidebar);
+
+  // keep the rest of your existing code (auth, stats, modals, etc.)
+});
+</script>
 </body>
 </html>

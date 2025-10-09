@@ -64,6 +64,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     updateElement(".diagnosis_status", data.consultation.diagnosis_status);
                     updateElement(".instruction", data.consultation.instruction_prescription);
                     updateElement(".doctor", data.consultation.full_name);
+                    updateElement(".licenseNo", data.consultation.license_number);
+                    updateElement(".rhu", data.consultation.rhu);
 
                     // store consultation_id in a hidden field
                     const consultationField = document.getElementById("consultation_id");
@@ -109,20 +111,25 @@ if (medicineContainer) {
 // ✅ Medicines (RHU)
 const medicineContainer2 = document.querySelector(".rhu-medicine-lists");
 if (medicineContainer2) {
-    medicineContainer2.innerHTML = "";
-    if (data.rhumedicine && data.rhumedicine.length > 0) {
-        data.rhumedicine.forEach(med => {
-          medicineContainer2.innerHTML += `
-    <div class="medicine-item" style="margin-bottom:8px; padding:6px; border-bottom:1px solid #ddd;">
-        <p><strong>Medicine:</strong> ${med.medicine_name || "None"} &nbsp;&nbsp;&nbsp; 
-           <strong>Quantity:</strong> ${med.quantity_dispensed || "0"}</p>
-    </div>
-`;
-        });
-    } else {
-        medicineContainer2.innerHTML = "<p>No medication recorded.</p>";
-    }
+  medicineContainer2.innerHTML = "";
+  if (data.rhumedicine && data.rhumedicine.length > 0) {
+    data.rhumedicine.forEach(med => {
+      medicineContainer2.innerHTML += `
+        <div class="medicine-item" style="padding:2px 0; border-bottom:1px solid #ddd; font-family:'Trebuchet MS', sans-serif; font-weight:lighter; line-height:1.5;">
+          <span style="display:block;"><strong>Medicine:</strong> ${med.medicine_name || "None"}</span>
+          <span style="display:block;"><strong>Quantity:</strong> ${med.quantity_dispensed || "0"}</span>
+          <span style="display:block;"><strong>Instruction:</strong> ${med.instruction || "None"}</span>
+        </div>
+      `;
+    });
+  } else {
+    medicineContainer2.innerHTML = "<span>No medication recorded.</span>";
+  }
 }
+
+
+document.getElementById("printMedication").textContent =
+  document.querySelector(".rhu-medicine-lists")?.textContent || "";
 
 
                 }
