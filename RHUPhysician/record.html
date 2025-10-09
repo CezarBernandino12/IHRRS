@@ -232,6 +232,7 @@
 
          <button  class="button button-secondary" id="summaryBtn">Visit Summary</button>  
         <button  class="button button-secondary" id="editBtn">Edit Personal Information</button>
+        <button class="button button-secondary" id="addMedCertBtn">Add Med Cert</button>
         <button class="button button-primary" id="addITRBtn">Add ITR</button>
     </div>
     
@@ -242,27 +243,34 @@
   const patientId = params.get('patient_id');
 
   // Build URLs with the patient_id
-  if (patientId) {
+// Build URLs with the patient_id
+if (patientId) {
 
-    document.getElementById('summaryBtn').onclick = () => {
-      window.location.href = `patientSummary.html?patient_id=${patientId}`;
-    };
-      document.getElementById('editBtn').onclick = () => {
-      window.location.href = `editPersonalInfo.html?patient_id=${patientId}`;
-    };
-      document.getElementById('addITRBtn').onclick = () => {
-      window.location.href = `ITRRecordedPatient.html?patient_id=${patientId}`;
-    };
- 
-  } else {
-    // Optionally disable buttons if patient_id is not found
-   
-    document.getElementById('summaryBtn').disabled = true;
-     document.getElementById('editBtn').disabled = true;
-    document.getElementById('addITRBtn').disabled = true;
-    console.warn('No patient_id in URL');
-  }
+  document.getElementById('summaryBtn').onclick = () => {
+    window.location.href = `patientSummary.html?patient_id=${patientId}`;
+  };
+  
+  document.getElementById('editBtn').onclick = () => {
+    window.location.href = `editPersonalInfo.html?patient_id=${patientId}`;
+  };
+  
+  // ADD THIS LINE - Med Cert Button Handler
+  document.getElementById('addMedCertBtn').onclick = () => {
+    window.location.href = `addMedCert.html?patient_id=${patientId}`;
+  };
+  
+  document.getElementById('addITRBtn').onclick = () => {
+    window.location.href = `ITRRecordedPatient.html?patient_id=${patientId}`;
+  };
 
+} else {
+  // Optionally disable buttons if patient_id is not found
+  document.getElementById('summaryBtn').disabled = true;
+  document.getElementById('editBtn').disabled = true;
+  document.getElementById('addMedCertBtn').disabled = true; // ADD THIS LINE
+  document.getElementById('addITRBtn').disabled = true;
+  console.warn('No patient_id in URL');
+}
 
 
 
@@ -416,7 +424,7 @@ function proceedLogout() {
     window.location.href = '../role.html';
 }
 
-// Close modal when clicking outside
+// Close modal when clicking outside 
 window.onclick = function(event) {
     const modal = document.getElementById('logoutModal');
     if (event.target == modal) {

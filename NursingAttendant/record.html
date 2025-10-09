@@ -230,7 +230,9 @@
 
         <button class="button button-secondary" id="summaryBtn">Visit Summary</button>  
         <button  class="button button-secondary"id="editBtn">Edit Personal Information</button>
+        <button class="button button-secondary" id="addMedCertBtn">Add Med Cert</button>
         <button class="button button-primary" id="addITRBtn">Add ITR</button>
+       
 
     </div>
     
@@ -252,6 +254,9 @@
       document.getElementById('editBtn').onclick = () => {
       window.location.href = `editPersonalInfo.html?patient_id=${patientId}`;
     };
+    document.getElementById('addMedCertBtn').onclick = () => {
+     window.location.href = `addMedCert.html?patient_id=${patientId}`;
+    };
       document.getElementById('addITRBtn').onclick = () => {
       window.location.href = `ITRRecordedPatient.html?patient_id=${patientId}`;
     };
@@ -261,6 +266,7 @@
    
     document.getElementById('summaryBtn').disabled = true;
      document.getElementById('editBtn').disabled = true;
+     document.getElementById('addMedCertBtn').disabled = true;
     document.getElementById('addITRBtn').disabled = true;
     console.warn('No patient_id in URL');
   }

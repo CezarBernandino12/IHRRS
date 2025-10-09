@@ -115,7 +115,7 @@ $visits = $stmt->fetchAll();
 		</a>
 		<ul class="side-menu top">
 			<li>
-				<a href="dashboard.html">
+				<a href="../dashboard.html">
 					<i class="bx bxs-dashboard"></i>
 					<span class="text">Dashboard</span>
 				</a>
