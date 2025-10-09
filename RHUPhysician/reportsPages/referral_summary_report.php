@@ -95,7 +95,7 @@ $total_pending = 0;
 		</a>
 		<ul class="side-menu top">
 			<li>
-				<a href="dashboard.html">
+				<a href="../dashboard.html">
 					<i class="bx bxs-dashboard"></i>
 					<span class="text">Dashboard</span>
 				</a>
@@ -745,43 +745,56 @@ async function exportTableToPDF() {
 
 //PRINT
 function printDiv() {
-    // Get chart images from the original canvases
-    function getChartImage(id, title) {
-        const canvas = document.getElementById(id);
-        if (canvas && canvas.toDataURL) {
-            return `<div style="text-align:center;margin-bottom:20px;">
-                        <h3 style="margin-bottom:8px;">${title}</h3>
-                        <img src="${canvas.toDataURL('image/png')}" style="max-width:100%;height:auto;">
-                    </div>`;
-        }
-        return '';
-    }
+    // Clone the print area (table and summary ONLY - NO CHARTS)
 
-    // Collect chart images with titles
-    let chartsHTML = '';
-    if (document.getElementById('toggleStatusChart').checked) {
-        chartsHTML += getChartImage('statusPieChart', 'Referral Status');
-    }
-    chartsHTML += getChartImage('barangayBarChart', 'Total Referrals Received Per Barangay');
-
-    // Clone the print area (table and summary)
+    
     const originalArea = document.querySelector(".print-area").cloneNode(true);
 
-    // Add 'Signature' column to header
-    const headerRow = originalArea.querySelector("thead tr");
-    if (headerRow && !headerRow.querySelector('th:last-child').textContent.includes('Signature')) {
-        const signatureHeader = document.createElement("th");
-        signatureHeader.textContent = "Signature";
-        headerRow.appendChild(signatureHeader);
+    // Remove ALL chart-related elements from the cloned area
+    const chartsToRemove = originalArea.querySelectorAll(
+        '#statusChart, #barangayBarChart, canvas, .chart-title, ' +
+        'h3.chart-title, div[id*="Chart"], #statusPieChart, ' +
+        '#noDataMessage, #noBarDataMessage'
+    );
+    chartsToRemove.forEach(chart => {
+        if (chart && chart.parentNode) {
+            chart.parentNode.removeChild(chart);
+        }
+    });
 
-        // Add 'Signature' cell to each row in tbody
-        const rows = originalArea.querySelectorAll("tbody tr");
-        rows.forEach(row => {
-            const signatureCell = document.createElement("td");
-            signatureCell.style.height = "30px";
-            signatureCell.textContent = "";
-            row.appendChild(signatureCell);
-        });
+    // Remove chart visibility controls and their parent divs
+    const chartControls = originalArea.querySelectorAll(
+        'input[type="checkbox"], label[for*="toggle"], div[style*="margin: 20px"]'
+    );
+    chartControls.forEach(control => {
+        // Remove the entire parent container if it contains chart controls
+        if (control.textContent && control.textContent.includes('Charts:')) {
+            if (control.parentNode) {
+                control.parentNode.parentNode.removeChild(control.parentNode);
+            }
+        } else if (control && control.parentNode) {
+            control.parentNode.removeChild(control);
+        }
+    });
+
+    // Add 'Signature' column to header if not present
+    const headerRow = originalArea.querySelector("thead tr");
+    if (headerRow) {
+        const lastHeader = headerRow.querySelector('th:last-child');
+        if (lastHeader && !lastHeader.textContent.includes('Signature')) {
+            const signatureHeader = document.createElement("th");
+            signatureHeader.textContent = "Signature";
+            headerRow.appendChild(signatureHeader);
+
+            // Add 'Signature' cell to each row in tbody
+            const rows = originalArea.querySelectorAll("tbody tr");
+            rows.forEach(row => {
+                const signatureCell = document.createElement("td");
+                signatureCell.style.height = "30px";
+                signatureCell.textContent = "";
+                row.appendChild(signatureCell);
+            });
+        }
     }
 
     // Get the print header HTML
@@ -791,27 +804,55 @@ function printDiv() {
     const headerInClone = originalArea.querySelector('.print-header');
     if (headerInClone) headerInClone.remove();
 
-    // Remove all canvases from the cloned area (since we replace them with images)
-    const canvases = originalArea.querySelectorAll('canvas');
-    canvases.forEach(c => c.parentNode.removeChild(c));
-
     // Create print window and write content
     const printWindow = window.open('', '', 'height=900,width=1100');
     printWindow.document.write('<html><head><title>Print Report</title>');
     printWindow.document.write(`
         <style>
-            body { font-family: Arial, sans-serif; font-size: 12px; color: black; }
-            table { width: 100%; border-collapse: collapse; }
-            th, td { border: 1px solid #000; padding: 4px; text-align: left; }
-            thead { background-color: #f0f0f0; }
-            img { display: block; margin: 0 auto; max-width: 100%; height: auto; }
-            h3 { margin: 10px 0 5px 0; }
+            body { 
+                font-family: Arial, sans-serif; 
+                font-size: 12px; 
+                color: black; 
+                margin: 20px;
+            }
+            table { 
+                width: 100%; 
+                border-collapse: collapse; 
+                margin-top: 10px;
+            }
+            th, td { 
+                border: 1px solid #000; 
+                padding: 4px; 
+                text-align: left; 
+            }
+            thead { 
+                background-color: #f0f0f0; 
+            }
+            /* Ensure NO charts appear */
+            canvas,
+            #statusChart,
+            #barangayBarChart,
+            #statusPieChart,
+            .chart-title,
+            div[id$="Chart"],
+            div[id*="Chart"] {
+                display: none !important;
+                visibility: hidden !important;
+            }
+            h3 { 
+                margin: 10px 0 5px 0; 
+            }
+            .summary {
+                margin: 20px 0;
+            }
+            .summary p {
+                margin: 5px 0;
+            }
         </style>
     `);
     printWindow.document.write('</head><body>');
-    printWindow.document.write(printHeader);          // Print header first
-    printWindow.document.write(chartsHTML);           // Then charts
-    printWindow.document.write(originalArea.innerHTML); // Then table and summary
+    printWindow.document.write(printHeader);            // Print header first
+    printWindow.document.write(originalArea.innerHTML); // Then table and summary (NO CHARTS)
     printWindow.document.write('</body></html>');
 
     printWindow.document.close();
@@ -822,7 +863,6 @@ function printDiv() {
         printWindow.close();
     }, 500);
 }
-
 
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -845,7 +885,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // Close modal when clicking outside
 window.onclick = function(event) {
     const modal = document.getElementById('logoutModal');
-    if (event.target == modal) {
+    if (event.target == modal) { 
         closeModal();
     }
 }

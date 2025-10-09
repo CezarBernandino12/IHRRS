@@ -119,7 +119,7 @@ $total_patients = count(array_unique(array_column($visits, 'patient_id')));
 		</a>
 		<ul class="side-menu top">
 			<li>
-				<a href="dashboard.html">
+				<a href="../dashboard.html">
 					<i class="bx bxs-dashboard"></i>
 					<span class="text">Dashboard</span>
 				</a>
