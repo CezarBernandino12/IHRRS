@@ -39,15 +39,14 @@ try {
     if (isset($pdo)) {
         // PDO version
         $sql = "SELECT 
-                    v.visit_id,
-                    v.visit_date,
-                    v.chief_complaints,
-                    v.remarks,
+                    v.consultation_id as visit_id,
+                    v.consultation_date as visit_date,
+                    v.diagnosis,
                     u.full_name as recorded_by_name
-                FROM patient_assessment v
+                FROM rhu_consultations v
                 LEFT JOIN users u ON v.recorded_by = u.user_id
                 WHERE v.patient_id = ?
-                ORDER BY v.visit_date DESC
+                ORDER BY v.consultation_id DESC
                 LIMIT 50";
 
         $stmt = $pdo->prepare($sql);
@@ -57,15 +56,14 @@ try {
     } elseif (isset($conn)) {
         // MySQLi version
         $sql = "SELECT 
-                    v.visit_id,
-                    v.visit_date,
-                    v.chief_complaints,
-                    v.remarks,
+                    v.consultation_id as visit_id,
+                    v.consultation_date as visit_date,
+                    v.diagnosis,
                     u.full_name as recorded_by_name
-                FROM patient_assessment v
+                FROM rhu_consultations v
                 LEFT JOIN users u ON v.recorded_by = u.user_id
                 WHERE v.patient_id = ?
-                ORDER BY v.visit_date DESC
+                ORDER BY v.consultation_id DESC
                 LIMIT 50";
 
         $stmt = $conn->prepare($sql);

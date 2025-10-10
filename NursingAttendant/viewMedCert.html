@@ -210,7 +210,7 @@
             // Build certificate text
             let text = `This is to certify that ${cert.patient_name}, ${cert.age} years old, ${cert.sex.toLowerCase()}, `;
             text += `${cert.civil_status.toLowerCase()}, born on ${formatDate(cert.date_of_birth)} in ${cert.birthplace} `;
-            text += `presently residing at ${cert.address} was been examined. `;
+            text += `presently residing at ${cert.address} has been examined. `;
             
             if (cert.diagnosis) {
                 text += `He/She is suffering from ${cert.diagnosis}`;

@@ -128,7 +128,7 @@
                         <div class="form-group">
                             <label for="diagnosis">Diagnosis/Condition <span class="required">*</span></label>
                             <textarea id="diagnosis" name="diagnosis" rows="3" required 
-                                placeholder="e.g., Acute Respiratory Infection"></textarea>
+                                placeholder="e.g., Acute Respiratory Infection" readonly></textarea>
                         </div>
 
                         <div class="form-group">
@@ -303,36 +303,47 @@
                         throw new Error('Invalid JSON response from server');
                     }
                 })
-                .then(data => {
-                    console.log('Received data:', data);
-                    
-                    const select = document.getElementById('visitSelect');
-                    select.innerHTML = '<option value="" disabled selected hidden>Select a visit...</option>';
-                    
-                    if (data.error) {
-                        console.error('Server error:', data.error);
-                        alert('Error: ' + data.error);
-                        select.innerHTML = '<option value="">Error loading visits</option>';
-                        return;
-                    }
-                    
-                    if (data.visits && data.visits.length > 0) {
-                        data.visits.forEach(visit => {
-                            const option = document.createElement('option');
-                            option.value = visit.visit_id;
-                            
-                            const visitDate = formatDate(visit.visit_date);
-                            const complaints = visit.chief_complaints || 'No complaints recorded';
-                            const remarks = visit.remarks ? ` - ${visit.remarks}` : '';
-                            
-                            option.textContent = `${visitDate} - ${complaints}${remarks}`;
-                            select.appendChild(option);
-                        });
-                    } else {
-                        select.innerHTML = '<option value="">No visits found for this patient</option>';
-                        alert('No visits found for this patient. Please create a patient assessment first.');
-                    }
-                })
+.then(data => {
+    console.log('Received data:', data);
+
+    const select = document.getElementById('visitSelect');
+    select.innerHTML = '<option value="" disabled selected hidden>Select a visit...</option>';
+
+    // Store diagnoses by visit_id
+    const diagnosisMap = {};
+
+    if (data.error) {
+        console.error('Server error:', data.error);
+        alert('Error: ' + data.error);
+        select.innerHTML = '<option value="">Error loading visits</option>';
+        return;
+    }
+
+    if (data.visits && data.visits.length > 0) {
+        data.visits.forEach(visit => {
+            const option = document.createElement('option');
+            option.value = visit.visit_id;
+
+            const visitDate = formatDate(visit.visit_date);
+            const diagnosis = visit.diagnosis || 'No diagnosis recorded';
+
+            option.textContent = `${visitDate} - ${diagnosis}`;
+            select.appendChild(option);
+
+            // Store diagnosis for this visit
+            diagnosisMap[visit.visit_id] = visit.diagnosis || '';
+        });
+
+        // Listen for changes to update diagnosis field
+        select.addEventListener('change', function() {
+            const selectedId = this.value;
+            document.getElementById('diagnosis').value = diagnosisMap[selectedId] || '';
+        });
+    } else {
+        select.innerHTML = '<option value="">No visits found for this patient</option>';
+        alert('No visits found for this patient. Please create a patient assessment first.');
+    }
+})
                 .catch(error => {
                     console.error('Error loading visits:', error);
                     alert('Error loading patient visits. Please check the console for details.');
