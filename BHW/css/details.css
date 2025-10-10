@@ -449,309 +449,116 @@ select {
 
 
 
-/* Improved print styles for the referral form */
+/* =========================
+   UNIFIED PRINT (A4, 10mm)
+   ========================= */
 @media print {
-    @page {
-        size: A4;
-        margin: 10mm; /* Reduced margins */
-    }
-    
-    body * {
-        visibility: hidden;
-    }
-    
-    .referral-container, .referral-container * {
-        visibility: visible;
-    }
-    
-    .referral-container {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-        max-width: 100%;
-        margin: 0;
-        padding: 10px;
-        box-shadow: none;
-        border: none;
-        font-size: 11pt; /* Slightly smaller font size */
-    }
-
-    /* Header adjustments */
-    .header-info {
-        margin-bottom: 15px;
-        padding-bottom: 10px;
-    }
-    
-    .header-info h3 {
-        margin: 3px 0;
-        font-size: 14pt;
-    }
-    
-    /* Compress spacing */
-    .form-group {
-        margin-bottom: 15px;
-    }
-    
-    .field-container {
-        margin-bottom: 10px;
-    }
-    
-    /* Make fields more compact */
-    .name-fields, .patient-info, .vitals {
-        gap: 10px;
-    }
-    
-    /* Reduce space in text areas */
-    .diagnosis-container, .treatment-container {
-        margin-top: 15px;
-    }
-    
-    /* Make chief complaints area shorter */
-    .complaints-container textarea {
-        min-height: 60px;
-    }
-    
-    /* Make diagnosis and treatment areas shorter */
-    .diagnosis-container textarea, 
-    .treatment-container textarea {
-        min-height: 80px;
-    }
-    
-    /* Hide navigation elements */
-    .view-record-link, .footer-btn, .referral-form-footer {
-        display: none;
-    }
-    
-    /* Adjust form spacing */
-    .form-group-title {
-        margin-bottom: 5px;
-        font-size: 12pt;
-    }
-    
-    /* Adjust field label spacing */
-    .field-label {
-        margin-bottom: 2px;
-        font-size: 9pt;
-    }
-    
-    /* Adjust field value spacing */
-    .field-value {
-        font-size: 11pt;
-        line-height: 1.3;
-    }
-}
-
-@media print{
-  .referral-logo.right{ width:72px; height:72px; margin-bottom:4px; }
-  .referral-heading .line-1{ font-size:12pt; }
-  .referral-heading .line-2{ font-size:18pt; }
-  .referral-heading .line-3{ font-size:11pt; }
-  .referral-heading .title{ font-size:14pt; margin-top:6px; }
-  .referral-rule{ height:2px; margin:6px 0 8px; background:#000; }
-}
-@media print{
-  .referral-header .referral-heading .line-1{ font-size: 14pt; }
-  .referral-header .referral-heading .line-2{ font-size: 18pt; }
-  .referral-header .referral-heading .line-3{ font-size: 12pt; }
-}    @media print {
-            @page {
-                size: A4;
-                margin: 10mm; /* Reduced margins */
-            }
-            
-            body * {
-                visibility: hidden;
-            }
-            
-            .referral-container, .referral-container * {
-                visibility: visible;
-            }
-            
-            .referral-container {
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100%;
-                max-width: 100%;
-                margin: 0;
-                padding: 10px;
-                box-shadow: none;
-                border: none;
-                font-size: 11pt; /* Slightly smaller font size */
-            }
-
-            /* Header adjustments */
-            .header-info {
-                margin-bottom: 15px;
-                padding-bottom: 10px;
-            }
-            
-            .header-info h3 {
-                margin: 3px 0;
-                font-size: 14pt;
-            }
-            
-            /* Compress spacing */
-            .form-group {
-                margin-bottom: 15px;
-            }
-            
-            .field-container {
-                margin-bottom: 10px;
-            }
-            
-            /* Make fields more compact */
-            .name-fields, .patient-info, .vitals {
-                gap: 10px;
-            }
-            
-            /* Reduce space in text areas */
-            .diagnosis-container, .treatment-container {
-                margin-top: 10px;
-            }
-            
-            /* Make chief complaints area shorter */
-            .complaints-container {
-                min-height: 40px;
-            }
-            
-            /* Make diagnosis and treatment areas shorter */
-            .diagnosis-container, 
-            .treatment-container {
-                min-height: 40px;
-            }
-            
-            /* Hide navigation elements */
-            .view-record-link, .footer-btn, .referral-form-footer {
-                display: none;
-            }
-            
-            /* Adjust form spacing */
-            .form-group-title {
-                margin-bottom: 5px;
-                font-size: 12pt;
-            }
-            
-            /* Adjust field label spacing */
-            .field-label {
-                margin-bottom: 2px;
-                font-size: 9pt;
-            }
-            
-            /* Adjust field value spacing */
-            .field-value {
-                font-size: 11pt;
-                line-height: 1.3;
-            }
-
-            /* Optimize page break and spacing */
-            .complaints-container,
-            .diagnosis-container,
-            .treatment-container {
-                page-break-inside: avoid;
-            }
-
-            /* Reduce the height for text containers */
-            .treatment-container textarea {
-                height: 60px !important;
-                min-height: 60px !important;
-            }
-
-            /* Make the page fit better */
-            textarea {
-                height: auto !important;
-                min-height: 40px !important;
-            }
-        }
-
-
-        /* Reduce default size of treatment text area */
-        .treatment-container textarea {
-            min-height: 80px;
-        }
-/* ================================
-   PRINT — FORCE 1×A4 (minimal)
-   ================================ */
-@media print{
-  /* Page + base */
-  @page { size: A4; margin: 6mm; } /* tight margins */
-  html, body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-
-  /* Hide app chrome */
-  #sidebar, nav, .referral-form-footer, .view-record-link { display:none !important; }
-
-  /* Container: compact typography + minimal padding */
-  .referral-container{
-    max-width:100%; margin:0; padding:6mm;
-    border:0; box-shadow:none; background:#fff;
-    font-size:10.2pt; line-height:1.22; color:#0b1733;
-    transform-origin: top left; /* for autoscale */
+  /* Page setup */
+  @page { size: A4; margin: 10mm; }
+  html, body {
+    background: #fff !important;
+    -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
   }
 
-  /* Header: smaller logos & titles */
-  .referral-header{ margin-bottom:4.5mm; gap:4px; align-items:center; }
-  .referral-logo{ width:44px; height:44px; }
-  .referral-heading .line-1{ font-size:9.2pt; color:#6b7280; }
-  .referral-heading .line-2{ font-size:11pt; font-weight:700; color:#0f2242; }
-  .referral-heading .line-3{ font-size:9pt; color:#6b7280; }
-  .referral-heading .title{ font-size:12pt; margin-top:2px; }
-  .referral-rule{ height:1px; margin:3.5mm 0; background:#d7deea; border:0; }
+  /* Show ONLY the referral card; no visibility hacks */
+  /* Hide app chrome / everything outside the card */
+  body > :not(.referral-container) { display: none !important; }
+  /* In case the card lives deeper in the DOM */
+  #sidebar, nav, .referral-form-footer, .view-record-link { display: none !important; }
 
-  /* Meta row: tiny chips */
-  .referral-meta{ display:flex; gap:6px; flex-wrap:wrap; margin:0 0 4mm; }
-  .badge{ padding:2px 7px; font-size:9.6pt; border:1px solid #e2e7f1; border-radius:999px; background:#fff; }
+  /* Lock the card to the printable width (A4 width 210mm − 2×10mm margins = 190mm) */
+  .referral-container {
+    position: static !important;
+    box-shadow: none !important;
+    border: 0 !important;
+    background: #fff !important;
 
-  /* Sections: remove decoration; keep thin separators */
-  .section-card{
-    background:transparent; border:0; border-radius:0;
-    padding:0; margin:0 0 4mm;
-  }
-  .section-title{
-    margin:0 0 2.5mm; font-weight:700; font-size:10.8pt; color:#0f2242;
-    padding-bottom:1.5mm; border-bottom:1px solid #e7ecf6;
-  }
+    width: 190mm !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;   /* we’ll pad inside */
+    font-size: 11pt !important;
+    line-height: 1.3 !important;
+    color: #0b1733 !important;
 
-  /* Grids: very tight */
-  .info-grid{ display:grid; grid-template-columns:1fr 1fr; gap:5px 12px; }
-  .vitals-grid{ grid-template-columns:repeat(4,1fr); gap:5px 8px; }
+    /* Avoid accidental scaling from leftover transforms */
+    transform: none !important;
+    transform-origin: initial !important;
 
-  .kv .label{
-    display:block; font-size:8.4pt; margin-bottom:1px; letter-spacing:.15px;
-    color:#7a879a; text-transform:uppercase;
-  }
-  .kv .value{
-    font-size:10.2pt; font-weight:600; line-height:1.18; overflow-wrap:anywhere;
+    /* Some engines break if overflow is auto during print */
+    overflow: visible !important;
   }
 
-  /* Text boxes: plain, shallow */
-  .textbox{
-    background:#fff; border:1px solid #e3e8f4;
-    border-radius:4px; padding:4px 6px; min-height:20px;
+  /* Inner padding to feel like margins inside the card */
+  .referral-container > * {
+    padding-left: 6mm;
+    padding-right: 6mm;
   }
 
-  /* Clamp long free text to prevent overflow (still shows a few lines) */
-  #complaints, .diagnosis-field{
-    display:-webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow:hidden;
+  /* Header */
+  .referral-header { margin-top: 4mm; margin-bottom: 4mm; gap: 6px !important; }
+  .referral-logo { width: 80px !important; height: 80px !important; object-fit: contain; }
+  .referral-heading .line-1 { font-size: 12pt !important; }
+  .referral-heading .line-2 { font-size: 18pt !important; font-weight: 700; color: #0f2242; }
+  .referral-heading .line-3 { font-size: 11pt !important; color: #6b7280; }
+  .referral-heading .title  { font-size: 16pt !important; margin-top: 4px !important; }
+  .referral-rule {
+    height: 1px !important; margin: 6px 0 10px !important;
+    background: #cfd8e3 !important; border: 0 !important; box-shadow: none !important;
   }
 
-  /* Treatment box: short */
-  .treatment-container textarea{
-    width:100%; background:#fff; border:1px solid #e3e8f4;
-    border-radius:4px; padding:4px 6px; min-height:24px; height:24px;
-    font-size:10pt; outline:none;
+  /* Meta badges */
+  .referral-meta { display: flex; gap: 6px; flex-wrap: wrap; margin: 0 0 4mm !important; }
+  .badge {
+    padding: 2px 7px !important; font-size: 9.6pt !important;
+    border: 1px solid #e2e7f1 !important; border-radius: 999px !important; background: #fff !important;
   }
 
-  /* Signature: thin line, small gap */
-  .signature{ display:flex; align-items:center; gap:8px; margin-top:3.5mm; }
-  .signature .line{ flex:1; border-bottom:1px dotted #c7cedd; height:14px; }
-  .signature .name{ font-weight:700; font-size:10.2pt; min-width:150px; text-align:right; }
+  /* Sections flattened */
+  .section-card {
+    background: transparent !important;
+    border: 0 !important; border-radius: 0 !important; box-shadow: none !important;
+    padding: 0 !important; margin: 0 0 4mm !important;
+  }
+  .section-title {
+    margin: 0 0 2.5mm !important; font-weight: 700 !important; font-size: 12pt !important; color: #0f2242 !important;
+    padding-bottom: 1.5mm !important; border-bottom: 1px solid #e7ecf6 !important;
+  }
 
-  /* Reduce generic gaps */
-  .form-group{ margin-bottom:4mm !important; }
-  .field-container{ margin-bottom:1.8mm !important; }
+  /* Tight grids */
+  .info-grid { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 8px 16px !important; }
+  .vitals-grid { grid-template-columns: repeat(4, 1fr) !important; gap: 8px 12px !important; }
 
-  /* Keep blocks together where it helps legibility */
+  .kv .label {
+    font-size: 9pt !important; margin-bottom: 2px !important; color: #7a879a !important;
+    letter-spacing: .15px !important; text-transform: uppercase !important;
+  }
+  .kv .value { font-size: 11pt !important; font-weight: 600 !important; overflow-wrap: anywhere !important; }
+
+  /* Text boxes */
+  .textbox {
+    background: #fff !important; border: 1px solid #e3e8f4 !important;
+    border-radius: 4px !important; padding: 6px 8px !important; min-height: 24px !important;
+  }
+  #complaints, .diagnosis-field {
+    display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden !important;
+  }
+
+  /* Textareas: no resize borders, fixed short height for print */
+  textarea {
+    resize: none !important; overflow: hidden !important;
+    background: #fff !important; border: 1px solid #e3e8f4 !important;
+    border-radius: 4px !important; padding: 6px 8px !important; min-height: 60px !important; height: 60px !important;
+    font-size: 10.5pt !important;
+  }
+
+  /* Signature line */
+  .signature { display: flex !important; align-items: center !important; gap: 8px !important; margin-top: 4mm !important; }
+  .signature .line { flex: 1 !important; border-bottom: 1px dotted #c7cedd !important; height: 14px !important; }
+  .signature .name { font-weight: 700 !important; font-size: 10.5pt !important; min-width: 150px !important; text-align: right !important; }
+
+  /* Keep these together; avoid ugly splits */
   .referral-header, .referral-meta,
-  .complaints-container, .diagnosis-container, .treatment-container { page-break-inside: avoid; }
+  .complaints-container, .diagnosis-container, .treatment-container { page-break-inside: avoid !important; }
 }
