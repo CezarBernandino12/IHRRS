@@ -412,12 +412,7 @@ fetch('php/getUserName.php')
   }
 
   // Run right before printing / when print preview opens
-  const mq = window.matchMedia && window.matchMedia("print");
-  if (mq) {
-    (mq.addEventListener || mq.addListener).call(mq, "change", e => { if (e.matches) fitToA4Once(); });
-  }
-  window.addEventListener("beforeprint", fitToA4Once);
-})();
+
 </script>
 
 <script>
