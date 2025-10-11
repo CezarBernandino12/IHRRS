@@ -974,23 +974,7 @@ function exportTableToExcel(tableID, filename = 'Patient Summary Report') {
             return;
         }
         
-        const tableClone = originalTable.cloneNode(true);
-        
-        // Add signature header if not present
-        const headerRow = tableClone.querySelector('thead tr');
-        if (headerRow && !headerRow.querySelector('th:last-child')?.textContent.includes('Signature')) {
-            const signatureHeader = document.createElement('th');
-            signatureHeader.textContent = 'Signature';
-            headerRow.appendChild(signatureHeader);
-            
-            // Add empty signature cells for each row
-            const rows = tableClone.querySelectorAll('tbody tr');
-            rows.forEach(row => {
-                const signatureCell = document.createElement('td');
-                signatureCell.textContent = ''; // Empty for Excel
-                row.appendChild(signatureCell);
-            });
-        }
+    
         
         tempDiv.appendChild(tableClone);
         document.body.appendChild(tempDiv);
@@ -1075,17 +1059,7 @@ function printDiv() {
 
     // Add Signature column if not already present
     const headerRow = clone.querySelector("thead tr");
-    if (headerRow && !headerRow.querySelector('th:last-child')?.textContent.includes('Signature')) {
-        const signatureHeader = document.createElement("th");
-        signatureHeader.textContent = "Signature";
-        headerRow.appendChild(signatureHeader);
-
-        clone.querySelectorAll("tbody tr").forEach(row => {
-            const cell = document.createElement("td");
-            cell.style.height = "30px";
-            row.appendChild(cell);
-        });
-    }
+  
 
     // Remove header duplication
     const headerInClone = clone.querySelector('.print-header');

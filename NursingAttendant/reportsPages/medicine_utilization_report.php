@@ -902,7 +902,7 @@ usort($patient_meds, function($a, $b) {
         <?php foreach ($medicine_list as $med): ?>
             <td><?= htmlspecialchars($pm['medicines'][$med] ?? '') ?></td>
         <?php endforeach; ?>
-        <td></td>
+       
     </tr>
     <?php endforeach; ?>
 </tbody>
@@ -1058,19 +1058,7 @@ function exportTableToExcel(tableID, filename = 'Medicine Utilization Report') {
         
         // Add signature header if not present
         const headerRow = tableClone.querySelector('thead tr');
-        if (headerRow && !headerRow.querySelector('th:last-child')?.textContent.includes('Signature')) {
-            const signatureHeader = document.createElement('th');
-            signatureHeader.textContent = 'Signature';
-            headerRow.appendChild(signatureHeader);
-            
-            // Add empty signature cells for each row
-            const rows = tableClone.querySelectorAll('tbody tr');
-            rows.forEach(row => {
-                const signatureCell = document.createElement('td');
-                signatureCell.textContent = ''; // Empty for Excel
-                row.appendChild(signatureCell);
-            });
-        }
+    
         
         tempDiv.appendChild(tableClone);
         document.body.appendChild(tempDiv);
@@ -1150,20 +1138,7 @@ function printDiv() {
 
     // Add 'Signature' column to header
     const headerRow = originalArea.querySelector("thead tr");
-    if (headerRow && !headerRow.querySelector('th:last-child').textContent.includes('Signature')) {
-        const signatureHeader = document.createElement("th");
-        signatureHeader.textContent = "Signature";
-        headerRow.appendChild(signatureHeader);
 
-        // Add 'Signature' cell to each row in tbody
-        const rows = originalArea.querySelectorAll("tbody tr");
-        rows.forEach(row => {
-            const signatureCell = document.createElement("td");
-            signatureCell.style.height = "30px";
-            signatureCell.textContent = "";
-            row.appendChild(signatureCell);
-        });
-    }
 
     // Get the print header HTML
     const printHeader = document.querySelector('.print-header').outerHTML;
