@@ -119,6 +119,7 @@ fetch('php/getUserId.php')
     <div class="container">
         <form class="personal-info-form" id="individualRecordForm" action="php/saveInitialAssessment.php" method="POST">
             <input type="hidden" name="form_type" value="individual_record">
+            <input type="hidden" name="permanent_address" id="permanent_address_combined">
 
             <p><b>PERSONAL INFORMATION:</b></p>
 
@@ -160,13 +161,43 @@ fetch('php/getUserId.php')
                 
 
                 <!-- Column 2 -->
-                <div class="form-group">
-                    <label for="permanent_address" class="required">Address:</label>
-                    <select name="permanent_address" id="permanent_address" class="form-control select2">
-                        <option value="">Select Address</option>
-                       
-                    </select>
-                </div>        
+<!-- ADDRESS -->
+<div class="form-group full-width">
+  <fieldset class="address-fieldset">
+    <legend>ADDRESS</legend>
+
+    <div class="address-grid">
+      <div class="form-item">
+        <label for="region" class="required">Region:</label>
+        <select id="region" name="region" class="form-control" required>
+          <option value="">Select Region</option>
+        </select>
+      </div>
+
+      <div class="form-item">
+        <label for="province" class="required">Province:</label>
+        <select id="province" name="province" class="form-control" required disabled>
+          <option value="">Select Province</option>
+        </select>
+      </div>
+
+      <div class="form-item">
+        <label for="city" class="required">Municipality/City:</label>
+        <select id="city" name="city" class="form-control" required disabled>
+          <option value="">Select Municipality/City</option>
+        </select>
+      </div>
+
+      <div class="form-item">
+        <label for="barangay" class="required">Barangay:</label>
+        <select id="barangay" name="barangay" class="form-control" required disabled>
+          <option value="">Select Barangay</option>
+        </select>
+      </div>
+    </div>
+  </fieldset>
+</div>
+  
 
           
     
@@ -523,9 +554,12 @@ document.addEventListener("click", function(event) {
             </div>
         
 
-<div class="button-container"> 
-    <button type="button" class="submit-btn" id="submitButton" disabled>Submit</button>
+<div class="button-container">
+  <button type="submit" class="submit-btn" id="submitButton" disabled>
+    Submit
+  </button>
 </div>
+
 
 <script>
     document.addEventListener("input", function () {
@@ -545,6 +579,85 @@ document.addEventListener("click", function(event) {
             
         </form>
 
+<script>
+// Philippine location cascading selects (Region → Province → City → Barangay)
+document.addEventListener("DOMContentLoaded", function() {
+  const regionSelect = document.getElementById("region");
+  const provinceSelect = document.getElementById("province");
+  const citySelect = document.getElementById("city");
+  const barangaySelect = document.getElementById("barangay");
+
+  // Load regions on page load
+  fetch("https://psgc.cloud/api/regions/")
+    .then(res => res.json())
+    .then(data => {
+      data.forEach(region => {
+        const option = new Option(region.name, region.code);
+        regionSelect.appendChild(option);
+      });
+    });
+
+  // When Region changes → load Provinces
+  regionSelect.addEventListener("change", function() {
+    provinceSelect.innerHTML = "<option value=''>Select Province</option>";
+    citySelect.innerHTML = "<option value=''>Select Municipality/City</option>";
+    barangaySelect.innerHTML = "<option value=''>Select Barangay</option>";
+    provinceSelect.disabled = true;
+    citySelect.disabled = true;
+    barangaySelect.disabled = true;
+
+    if (!this.value) return;
+
+    fetch(`https://psgc.cloud/api/regions/${this.value}/provinces/`)
+      .then(res => res.json())
+      .then(data => {
+        data.forEach(province => {
+          const option = new Option(province.name, province.code);
+          provinceSelect.appendChild(option);
+        });
+        provinceSelect.disabled = false;
+      });
+  });
+
+  // When Province changes → load Cities/Municipalities
+  provinceSelect.addEventListener("change", function() {
+    citySelect.innerHTML = "<option value=''>Select Municipality/City</option>";
+    barangaySelect.innerHTML = "<option value=''>Select Barangay</option>";
+    citySelect.disabled = true;
+    barangaySelect.disabled = true;
+
+    if (!this.value) return;
+
+    fetch(`https://psgc.cloud/api/provinces/${this.value}/cities-municipalities/`)
+      .then(res => res.json())
+      .then(data => {
+        data.forEach(city => {
+          const option = new Option(city.name, city.code);
+          citySelect.appendChild(option);
+        });
+        citySelect.disabled = false;
+      });
+  });
+
+  // When City changes → load Barangays
+  citySelect.addEventListener("change", function() {
+    barangaySelect.innerHTML = "<option value=''>Select Barangay</option>";
+    barangaySelect.disabled = true;
+
+    if (!this.value) return;
+
+    fetch(`https://psgc.cloud/api/cities-municipalities/${this.value}/barangays/`)
+      .then(res => res.json())
+      .then(data => {
+        data.forEach(barangay => {
+          const option = new Option(barangay.name, barangay.code);
+          barangaySelect.appendChild(option);
+        });
+        barangaySelect.disabled = false;
+      });
+  });
+});
+</script>
 
         <script>
             document.addEventListener("DOMContentLoaded", function () {
@@ -596,7 +709,7 @@ document.addEventListener("click", function(event) {
                 }
             }
             
-            const addressSelect = document.getElementById('permanent_address');
+
 const religionSelect = document.getElementById('religion');
 const extensionSelect = document.getElementById('extension');
 const medicineSelects = document.querySelectorAll('.medicine-select');
@@ -665,7 +778,6 @@ function handleOtherSelection(selectElement, category, promptLabel) {
 }
 
 // Apply handlers for each dropdown
-handleOtherSelection(addressSelect, 'address', 'address');
 handleOtherSelection(religionSelect, 'religion', 'religion');
 handleOtherSelection(extensionSelect, 'extension', 'extension');
 handleOtherSelection(treatmentSelect, 'treatment', 'treatment');
@@ -677,7 +789,6 @@ medicineSelects.forEach(select => {
 });
 
 // Load options on page load
-loadCustomOptions(addressSelect, 'address');
 loadCustomOptions(religionSelect, 'religion');
 loadCustomOptions(extensionSelect, 'extension');
 loadCustomOptions(treatmentSelect, 'treatment');
@@ -690,9 +801,7 @@ medicineSelects.forEach(select => {
 
 fetch('php/get_addresses.php')
 .then(response => response.json())
-    .then(data => {
-        const addressSelect = document.getElementById('permanent_address');
-        
+    .then(data => {        
         // Clear existing options except the first one (Select Address)
         addressSelect.innerHTML = '<option value="">Select Address</option>';
    // Add the "Other" option manually at the bottom
@@ -957,7 +1066,110 @@ updateRemoveButtons();
         </div>
     </div>
 </div>
-    
+    <script>
+// --- Medicine options: load once, reuse everywhere ---
+let MEDICINE_OPTIONS = [];   // cache from server
+let MEDICINE_OPTIONS_READY = false;
+
+function fetchMedicineOptionsOnce() {
+  if (MEDICINE_OPTIONS_READY) return Promise.resolve(MEDICINE_OPTIONS);
+
+  return fetch('php/get_custom_options.php?category=medicine')
+    .then(r => r.json())
+    .then(list => {
+      MEDICINE_OPTIONS = Array.isArray(list) ? list : [];
+      MEDICINE_OPTIONS_READY = true;
+      return MEDICINE_OPTIONS;
+    })
+    .catch(() => {
+      MEDICINE_OPTIONS = [];
+      MEDICINE_OPTIONS_READY = true;
+      return MEDICINE_OPTIONS;
+    });
+}
+
+// Build a <select> safely without wiping the cache
+function initMedicineSelect(selectEl) {
+  if (!selectEl) return;
+  const current = selectEl.value; // keep selection if any
+  // Reset to a known baseline
+  selectEl.innerHTML = '';
+  selectEl.appendChild(new Option('Select', ''));
+  selectEl.appendChild(new Option('Other (Enter manually)', 'other'));
+
+  MEDICINE_OPTIONS.forEach(val => {
+    // avoid duplicates with "Other"
+    if (val && val.toLowerCase() !== 'other (enter manually)') {
+      selectEl.appendChild(new Option(val, val));
+    }
+  });
+
+  // Restore selection if still present; otherwise leave empty
+  if ([...selectEl.options].some(o => o.value === current)) {
+    selectEl.value = current;
+  }
+}
+
+// When “Other” is chosen, capture and persist custom value
+function attachOtherHandler(selectEl) {
+  selectEl.addEventListener('change', function () {
+    if (this.value === 'other') {
+      const userInput = prompt('Enter medicine name (dosage):');
+      if (userInput && userInput.trim()) {
+        // Add to this select immediately
+        const exists = [...this.options].some(o => o.value === userInput);
+        if (!exists) this.appendChild(new Option(userInput, userInput, true, true));
+        this.value = userInput;
+
+        // Persist to DB (best-effort)
+        fetch('php/save_custom_option.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: `category=medicine&value=${encodeURIComponent(userInput)}`
+        }).then(() => {
+          // update cache in-memory so future rows see it
+          if (!MEDICINE_OPTIONS.includes(userInput)) MEDICINE_OPTIONS.push(userInput);
+        });
+      } else {
+        this.value = '';
+      }
+    }
+  });
+}
+
+// Initialize existing selects on load
+document.addEventListener('DOMContentLoaded', () => {
+  fetchMedicineOptionsOnce().then(() => {
+    document.querySelectorAll('.medicine-select').forEach(sel => {
+      initMedicineSelect(sel);
+      attachOtherHandler(sel);
+    });
+  });
+});
+
+// Handle the “+ Add” button: always initialize the new select
+document.getElementById('add-medicine').addEventListener('click', function() {
+  const container = document.getElementById('medicine-container');
+  const first = container.querySelector('.medicine-entry');
+  const clone = first.cloneNode(true);
+
+  // reset values
+  clone.querySelector("input[type='number']").value = "0";
+  const select = clone.querySelector('.medicine-select');
+
+  // ensure select is rebuilt from cache, not just cloned
+  fetchMedicineOptionsOnce().then(() => {
+    initMedicineSelect(select);
+    attachOtherHandler(select);
+    container.appendChild(clone);
+    container.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  });
+});
+
+// Optional: if you had any generic "loadCustomOptions(select, 'medicine')" calls elsewhere,
+// remove them to avoid re-wiping the list. Rely only on the cached init above.
+</script>
+
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
@@ -1014,6 +1226,39 @@ fetch('php/getUserName.php')
         console.error('Error fetching user name:', error);
         document.getElementById('userGreeting').textContent = 'Hello, BHW!';
     });
+</script>
+<script>
+(function(){
+  const regionSel    = document.getElementById('region');
+  const provinceSel  = document.getElementById('province');
+  const citySel      = document.getElementById('city');
+  const barangaySel  = document.getElementById('barangay');
+  const hiddenFull   = document.getElementById('permanent_address_combined');
+
+  function updateFullAddress() {
+    const r = regionSel.options[regionSel.selectedIndex]?.text || '';
+    const p = provinceSel.options[provinceSel.selectedIndex]?.text || '';
+    const c = citySel.options[citySel.selectedIndex]?.text || '';
+    const b = barangaySel.options[barangaySel.selectedIndex]?.text || '';
+
+    // Only set when all four are selected
+    if (r && p && c && b) {
+      hiddenFull.value = `${b}, ${c}, ${p}, ${r}`;
+    } else {
+      hiddenFull.value = '';
+    }
+  }
+
+  ['change','input'].forEach(evt => {
+    regionSel.addEventListener(evt, updateFullAddress);
+    provinceSel.addEventListener(evt, updateFullAddress);
+    citySel.addEventListener(evt, updateFullAddress);
+    barangaySel.addEventListener(evt, updateFullAddress);
+  });
+
+  // Run once on load in case of edit mode
+  updateFullAddress();
+})();
 </script>
 
 <!-- Error Modal -->

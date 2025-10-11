@@ -726,7 +726,7 @@ p {
   }
 
   .form-container {
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     display: grid;
     flex-wrap: wrap;
     gap: 20px;
@@ -735,7 +735,7 @@ p {
     margin-top: 30px;
     white-space: nowrap;
     font-family: 'Trebuchet MS', sans-serif;
-    align-items: center; 
+   align-items:start;
 }
 
 .form-group {
@@ -1216,7 +1216,6 @@ button.reset-btn {
     margin-top: 20px;
 }
 
-
 button.submit-btn {
     background-color: #162e51;
     color: white;
@@ -1328,11 +1327,7 @@ input[type="number"] {
     flex-direction: column; 
 }
 
-.button-container {
-    display: flex;
-    justify-content: flex-end; 
-    margin-top: 10px; 
-}
+
 
 .confirm-btn {
     background-color: #3B778E; 
@@ -2092,10 +2087,46 @@ input[type="number"] {
     }
 }
 
-
-  
-
     #submitButton:disabled {
         background-color: #828386; /* Gray when disabled */
         cursor: not-allowed;   /* Show "not allowed" cursor */
     }
+    .form-group.full-width{
+  grid-column: 1 / -1;
+}
+
+/* Keep labels above inputs, align consistently */
+.form-group label,
+.form-item label{
+  display:block;
+  margin: 0 0 6px;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+/* Ensure Select2 matches width */
+.select2-container{ width:100% !important; }
+
+/* === Address fieldset with its own clean grid === */
+.address-fieldset{
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: 8px;
+  padding: 14px 16px 18px;
+  background: var(--bg, #fff);
+}
+
+.address-fieldset > legend{
+  padding: 0 10px;
+  font-weight: 700;
+  color: #444;
+  letter-spacing: .5px;
+  font-size: 14px;
+}
+
+/* 4 columns on desktop, 2 on tablet, 1 on mobile */
+.address-grid{
+  display:grid;
+  gap: 16px;
+  grid-template-columns: repeat(4, minmax(0,1fr));
+}
+

@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="../BHW/css/form.css">
     <link rel="stylesheet" href="css/logout.css">
     <title>Individual Treatment Record</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
@@ -209,17 +211,45 @@ fetch('php/getUserId.php')
                 
 
                 <!-- Column 2 -->
-                <div class="form-group">
-                    <label for="permanent_address" class="required">Address:</label>
-                    <select name="permanent_address" id="permanent_address" class="form-control select2">
-                        <option value="">Select Address</option>
-                       
-                    </select>
-                </div>        
+                <div class="form-group full-width">
+                <fieldset class="address-fieldset">
+                    <legend>ADDRESS</legend>
 
-          
-    
+                    <div class="address-grid">
+                    <div class="form-item">
+                        <label for="region" class="required">Region:</label>
+                        <select id="region" name="region" class="form-control" required>
+                        <option value="">Select Region</option>
+                        </select>
+                    </div>
 
+                    <div class="form-item">
+                        <label for="province" class="required">Province:</label>
+                        <select id="province" name="province" class="form-control" required disabled>
+                        <option value="">Select Province</option>
+                        </select>
+                    </div>
+
+                    <div class="form-item">
+                        <label for="city" class="required">Municipality/City:</label>
+                        <select id="city" name="city" class="form-control" required disabled>
+                        <option value="">Select Municipality/City</option>
+                        </select>
+                    </div>
+
+                    <div class="form-item">
+                        <label for="barangay" class="required">Barangay:</label>
+                        <select id="barangay" name="barangay" class="form-control" required disabled>
+                        <option value="">Select Barangay</option>
+                        </select>
+                    </div>
+                    </div>
+                </fieldset>
+                </div>
+
+                <!-- Hidden field your backend (saveInitialAssessment.php) still expects -->
+                <input type="hidden" name="permanent_address" id="permanent_address_combined">
+                    
                 <div class="form-group">
                     <label for="dob" class="required">Date of Birth:</label>
                     <input type="text" id="dob" name="dob" class="flatpickr-dob" onchange="calculateAge()" required placeholder="Select date of birth">
@@ -626,7 +656,6 @@ document.addEventListener("click", function(event) {
                 }
             }
             
-            const addressSelect = document.getElementById('permanent_address');
 const religionSelect = document.getElementById('religion');
 const extensionSelect = document.getElementById('extension');
 const medicineSelects = document.querySelectorAll('.medicine-select');
@@ -695,7 +724,6 @@ function handleOtherSelection(selectElement, category, promptLabel) {
 }
 
 // Apply handlers for each dropdown
-handleOtherSelection(addressSelect, 'address', 'address');
 handleOtherSelection(religionSelect, 'religion', 'religion');
 handleOtherSelection(extensionSelect, 'extension', 'extension');
 handleOtherSelection(treatmentSelect, 'treatment', 'treatment');
@@ -707,7 +735,6 @@ medicineSelects.forEach(select => {
 });
 
 // Load options on page load
-loadCustomOptions(addressSelect, 'address');
 loadCustomOptions(religionSelect, 'religion');
 loadCustomOptions(extensionSelect, 'extension');
 loadCustomOptions(treatmentSelect, 'treatment');
@@ -718,31 +745,6 @@ medicineSelects.forEach(select => {
     loadCustomOptions(select, 'medicine');
 });
 
-fetch('php/get_addresses.php')
-.then(response => response.json())
-    .then(data => {
-        const addressSelect = document.getElementById('permanent_address');
-        
-        // Clear existing options except the first one (Select Address)
-        addressSelect.innerHTML = '<option value="">Select Address</option>';
-   // Add the "Other" option manually at the bottom
-   const otherOption = document.createElement('option');
-        otherOption.value = 'other';
-        otherOption.textContent = 'Other (Enter manually)';
-        addressSelect.appendChild(otherOption);
-        // Add the fetched addresses
-        data.forEach(address => {
-            const option = document.createElement('option');
-            option.value = address;
-            option.textContent = address;
-            addressSelect.appendChild(option);
-        });
-
-     
-    })
-    .catch(error => {
-        console.error('Error fetching addresses:', error);
-    });
 
 
 // For medicine-selects, you can loop each one
@@ -1058,5 +1060,121 @@ document.addEventListener("DOMContentLoaded", () => {
   // keep the rest of your existing code (auth, stats, modals, etc.)
 });
 </script>
+
+<script>
+// PSGC cascading: Region → Province → City/Municipality → Barangay
+document.addEventListener("DOMContentLoaded", function () {
+  const regionSel   = document.getElementById("region");
+  const provinceSel = document.getElementById("province");
+  const citySel     = document.getElementById("city");
+  const brgySel     = document.getElementById("barangay");
+  const hiddenFull  = document.getElementById("permanent_address_combined");
+
+  // Load regions
+  fetch("https://psgc.cloud/api/regions/")
+    .then(r => r.json())
+    .then(regions => {
+      regions.forEach(r => regionSel.appendChild(new Option(r.name, r.code)));
+    });
+
+  // Helpers
+  function resetSelect(sel, placeholder, disable = true) {
+    sel.innerHTML = "";
+    sel.appendChild(new Option(placeholder, ""));
+    sel.disabled = disable;
+  }
+
+  function composeFullAddress() {
+    const r = regionSel.options[regionSel.selectedIndex]?.text || "";
+    const p = provinceSel.options[provinceSel.selectedIndex]?.text || "";
+    const c = citySel.options[citySel.selectedIndex]?.text || "";
+    const b = brgySel.options[brgySel.selectedIndex]?.text || "";
+    hiddenFull.value = (r && p && c && b) ? `${b}, ${c}, ${p}, ${r}` : "";
+  }
+
+  // Region → Provinces
+  regionSel.addEventListener("change", () => {
+    resetSelect(provinceSel, "Select Province");
+    resetSelect(citySel, "Select Municipality/City");
+    resetSelect(brgySel, "Select Barangay");
+    composeFullAddress();
+
+    if (!regionSel.value) return;
+
+    fetch(`https://psgc.cloud/api/regions/${regionSel.value}/provinces/`)
+      .then(r => r.json())
+      .then(provinces => {
+        provinces.forEach(p => provinceSel.appendChild(new Option(p.name, p.code)));
+        provinceSel.disabled = false;
+      });
+  });
+
+  // Province → Cities/Municipalities
+  provinceSel.addEventListener("change", () => {
+    resetSelect(citySel, "Select Municipality/City");
+    resetSelect(brgySel, "Select Barangay");
+    composeFullAddress();
+
+    if (!provinceSel.value) return;
+
+    fetch(`https://psgc.cloud/api/provinces/${provinceSel.value}/cities-municipalities/`)
+      .then(r => r.json())
+      .then(cities => {
+        cities.forEach(c => citySel.appendChild(new Option(c.name, c.code)));
+        citySel.disabled = false;
+      });
+  });
+
+  // City → Barangays
+  citySel.addEventListener("change", () => {
+    resetSelect(brgySel, "Select Barangay");
+    composeFullAddress();
+
+    if (!citySel.value) return;
+
+    fetch(`https://psgc.cloud/api/cities-municipalities/${citySel.value}/barangays/`)
+      .then(r => r.json())
+      .then(brgys => {
+        brgys.forEach(b => brgySel.appendChild(new Option(b.name, b.code)));
+        brgySel.disabled = false;
+      });
+  });
+
+  // Final compose on barangay change
+  brgySel.addEventListener("change", composeFullAddress);
+});
+
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const dob = document.getElementById("dob");
+  if (!dob) return;
+
+  // Destroy any existing instance (defensive)
+  if (dob._flatpickr) { dob._flatpickr.destroy(); }
+
+  // Attach Flatpickr and render the calendar to <body> so it can't be clipped,
+  // and keep it above sticky elements.
+  if (window.flatpickr) {
+    flatpickr(dob, {
+      dateFormat: "Y-m-d",
+      altInput: true,
+      altFormat: "F j, Y",
+      maxDate: "today",
+      allowInput: false,   // avoids stray text breaking parsing
+      clickOpens: true,
+      appendTo: document.body, // <-- crucial to avoid overflow/stacking issues
+      onChange: function () {
+        if (typeof calculateAge === "function") {
+          calculateAge();
+        }
+      }
+    });
+  } else {
+    console.error("Flatpickr library not loaded");
+  }
+});
+</script>
+
 </body>
 </html>
