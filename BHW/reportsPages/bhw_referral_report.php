@@ -183,13 +183,11 @@ $rows = $stmt->fetchAll();
 
    
     <!-- Filter Modal Trigger -->
-   
-        <div class="form-submit">
-               <button type="button" class="btn-export" id="openFilterModal">Filter</button>
-        <button type="button" class="btn-export" onclick="exportTableToExcel('reportTable')">Export to Excel</button>
-        <button type="button" class="btn-export" onclick="exportTableToPDF()">Export to PDF</button>
-        <button type="button" class="btn-print" onclick="printDiv()">Print this page</button>
+
+        <div class="form-submit" style="margin-top: -10px;">
+               <button type="button" class="btn-export" id="openFilterModal">Select Filters</button>
     </div>
+
 
     <!-- Modern Filter Tags Display -->
     <div class="selected-filters" style="margin: 20px 0;">
@@ -370,6 +368,7 @@ $rows = $stmt->fetchAll();
 
 <div class="print-area">
 <div class="print-header" style="text-align: center;">
+    <img src="../../img/RHUlogo.png" alt="RHU Logo" class="print-logo" style="height: 50px; width: auto;" />
   <h3>Republic of the Philippines</h3>
   <p>Province of Camarines Norte</p>
   <h3>Municipality of Daet</h3>
@@ -413,6 +412,15 @@ echo $filters ? implode("&nbsp; | &nbsp;", $filters) : "All Records";
     @media print {
         .chart { 
            display: none;
+        }
+            .form-submit { 
+           display: none;
+        }
+        .summary-list{
+            font-size: 16px;
+        }
+        .generated-by{
+            font-size: 16px;
         }
     }
 </style>
@@ -586,28 +594,6 @@ const statusPieChart = new Chart(statusCtx, {
 
 
 
-<!-- Summary -->
-<div class="summary-container">
-    <div class="summary">
-        <h4><i class="bx bx-filter-alt"></i>Summary:</h4>
-    <ul  class="summary-list">
-         <li>
-                <strong>Report Generated On:</strong> <?= date('Y-m-d H:i:s') ?>
-            </li>
-        <li><strong>Total Referrals:</strong> <?= $referral_count ?></li>
-        <li><strong>Visits With Referral:</strong> <?= $referral_count ?></li>
-        <li><strong>Visits Without Referral:</strong> <?= $visits_without_referral ?></li>
-        <li><strong>Pending Referrals:</strong> <?= $status_counts['Pending'] ?></li>
-        <li><strong>Completed Referrals:</strong> <?= $status_counts['Completed'] ?></li>
-        <li><strong>Uncompleted Referrals:</strong> <?= $status_counts['Uncompleted'] ?></li>
-        <li><strong>Canceled Referrals:</strong> <?= $status_counts['Canceled'] ?></li>
-    </ul>
-    </div>
-
-</div>
-
-
-
 <?php if ($rows): ?>
      <div class="report-table-container">
 <table id="reportTable">
@@ -659,6 +645,27 @@ const statusPieChart = new Chart(statusCtx, {
 </table>
 </div>
      <br>
+     
+<!-- Summary -->
+<div class="summary-container">
+    <div class="summary">
+        <h4><i class="bx bx-filter-alt"></i>Summary:</h4>
+    <ul  class="summary-list">
+         <li>
+                <strong>Report Generated On:</strong> <?= date('Y-m-d H:i:s') ?>
+            </li>
+        <li><strong>Total Referrals:</strong> <?= $referral_count ?></li>
+        <li><strong>Visits With Referral:</strong> <?= $referral_count ?></li>
+        <li><strong>Visits Without Referral:</strong> <?= $visits_without_referral ?></li>
+        <li><strong>Pending Referrals:</strong> <?= $status_counts['Pending'] ?></li>
+        <li><strong>Completed Referrals:</strong> <?= $status_counts['Completed'] ?></li>
+        <li><strong>Uncompleted Referrals:</strong> <?= $status_counts['Uncompleted'] ?></li>
+        <li><strong>Canceled Referrals:</strong> <?= $status_counts['Canceled'] ?></li>
+    </ul>
+    </div>
+
+</div>
+
 
     <br> <br>
      <span id="generated_by"></span>
@@ -666,7 +673,20 @@ const statusPieChart = new Chart(statusCtx, {
 <?php else: ?>
     <p>No referrals found for the selected filters.</p>
 <?php endif; ?>
-</div> </div>
+</div> 
+
+
+<!-- Print Button at Bottom -->
+   <div class="form-submit">
+          <button type="button" class="btn-export" onclick="exportTableToExcel('reportTable')">Export to Excel</button>
+        <button type="button" class="btn-export" onclick="exportTableToPDF()">Export to PDF</button>
+       
+    <button type="button" class="btn-print" onclick="printDiv()">
+        <i class='bx bx-printer'></i>
+        Print Report
+    </button>
+</div>
+</div>
 
 
 <div id="logoutModal" class="logout-modal">
@@ -728,19 +748,7 @@ function exportTableToExcel(tableID, filename = 'Referral Summary Report') {
         
         // Add signature header if not present
         const headerRow = tableClone.querySelector('thead tr');
-        if (headerRow && !headerRow.querySelector('th:last-child')?.textContent.includes('Signature')) {
-            const signatureHeader = document.createElement('th');
-            signatureHeader.textContent = 'Signature';
-            headerRow.appendChild(signatureHeader);
-            
-            // Add empty signature cells for each row
-            const rows = tableClone.querySelectorAll('tbody tr');
-            rows.forEach(row => {
-                const signatureCell = document.createElement('td');
-                signatureCell.textContent = ''; // Empty for Excel
-                row.appendChild(signatureCell);
-            });
-        }
+      
         
         tempDiv.appendChild(tableClone);
         document.body.appendChild(tempDiv);
@@ -833,32 +841,14 @@ function printDiv() {
         return '';
     }
 
-    // Collect chart images with titles
-    let chartsHTML = '';
-    if (document.getElementById('toggleReferralChart').checked) {
-        chartsHTML += getChartImage('referralChart', 'Visits With and Without Referral');
-    }
-    chartsHTML += getChartImage('statusPieChart', 'Status');
+ 
 
     // Clone the print area (table and summary)
     const originalArea = document.querySelector(".print-area").cloneNode(true);
 
     // Add 'Signature' column to header
     const headerRow = originalArea.querySelector("thead tr");
-    if (headerRow && !headerRow.querySelector('th:last-child').textContent.includes('Signature')) {
-        const signatureHeader = document.createElement("th");
-        signatureHeader.textContent = "Signature";
-        headerRow.appendChild(signatureHeader);
-
-        // Add 'Signature' cell to each row in tbody
-        const rows = originalArea.querySelectorAll("tbody tr");
-        rows.forEach(row => {
-            const signatureCell = document.createElement("td");
-            signatureCell.style.height = "30px";
-            signatureCell.textContent = "";
-            row.appendChild(signatureCell);
-        });
-    }
+  
 
     // Get the print header HTML
     const printHeader = document.querySelector('.print-header').outerHTML;
@@ -876,7 +866,7 @@ function printDiv() {
     printWindow.document.write('<html><head><title>Print Report</title>');
     printWindow.document.write(`
         <style>
-            body { font-family: Arial, sans-serif; font-size: 12px; color: black; }
+            body { font-family: Arial, sans-serif; font-size: 16px; color: black; }
             table { width: 100%; border-collapse: collapse; }
             th, td { border: 1px solid #000; padding: 4px; text-align: left; }
             thead { background-color: #f0f0f0; }
@@ -904,7 +894,6 @@ function printDiv() {
     `);
     printWindow.document.write('</head><body>');
     printWindow.document.write(printHeader); // Print header at the very top
-    printWindow.document.write(chartsHTML);  // Then charts
     printWindow.document.write(originalArea.innerHTML);  // Then table and summary
     printWindow.document.write('</body></html>');
 
@@ -923,7 +912,7 @@ fetch('../php/getUserName.php')
     .then(data => {
         if (data.full_name) {
             document.getElementById('userGreeting').textContent = `Hello, ${data.full_name}!`;
-                   document.getElementById('generated_by').textContent = `Generated by: ${data.full_name}`;
+               document.getElementById('generated_by').textContent = `Report Generated by: ${data.full_name} - BHW`;
         } else {
             document.getElementById('userGreeting').textContent = 'Hello, BHW!';
               document.getElementById('generated_by').textContent = 'Generated by: N/A';

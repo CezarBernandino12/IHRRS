@@ -89,6 +89,7 @@ if (!empty($barangayName) && $barangayName !== 'N/A') {
     $sql .= " AND p.address LIKE :barangay";
     $params['barangay'] = '%' . $barangayName . '%';
 }
+$sql .= " ORDER BY v.visit_date DESC";
 
 $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
@@ -227,12 +228,9 @@ $most_dispensed_quantity = current($medicine_counts);
  
 
     <!-- Filter Modal Trigger -->
-   
-        <div class="form-submit">
-               <button type="button" class="btn-export" id="openFilterModal">Filter</button>
-        <button type="button" class="btn-export" onclick="exportTableToExcel('reportTable')">Export to Excel</button>
-        <button type="button" class="btn-export" onclick="exportTableToPDF()">Export to PDF</button>
-        <button type="button" class="btn-print" onclick="printDiv()">Print this page</button>
+
+        <div class="form-submit" style="margin-top: -10px;">
+               <button type="button" class="btn-export" id="openFilterModal">Select Filters</button>
     </div>
 
     <!-- Modern Filter Tags Display -->
@@ -460,6 +458,7 @@ while ($row = $barangay_stmt->fetch(PDO::FETCH_ASSOC)) {
 
 <div class="print-area">
 <div class="print-header" style="text-align: center;">
+    <img src="../../img/RHUlogo.png" alt="RHU Logo" class="print-logo" style="height: 50px; width: auto;" />
   <h3>Republic of the Philippines</h3>
   <p>Province of Camarines Norte</p>
   <h3>Municipality of Daet</h3>
@@ -499,6 +498,15 @@ echo $filters ? implode("&nbsp; | &nbsp;", $filters) : "All Records";
     @media print {
         .chart { 
            display: none;
+        }
+            .form-submit { 
+           display: none;
+        }
+        .summary-list{
+            font-size: 16px;
+        }
+        .generated-by{
+            font-size: 16px;
         }
     }
 </style>
@@ -875,6 +883,55 @@ if (addressData.length > 0 && addressData.reduce((a, b) => a + b, 0) > 0) {
     });
 }
 </script>
+
+
+
+<!-- Table with Visit Details -->
+<?php if ($visits): ?>
+    <div class="report-table-container">
+	<table id="reportTable">
+    <thead>
+        <tr>
+            <th>Visit Date</th>
+            <th>Patient Name</th>
+            <th>Sex</th>
+            <th>Age</th>
+            <th>BMI</th>
+            <th>Weight</th>
+            <th>Height</th>
+            <th>Blood Pressure</th>
+            <th>Temperature</th>
+            <th>Chest Rate</th>
+            <th>Respiratory Rate</th>
+            <th>Chief Complaints</th>
+            <th>Treatment</th>
+            <th>Address</th>
+        </tr>
+    </thead>
+    <tbody>
+
+    <?php foreach ($visits as $visit): ?>
+       <tr>
+  <td data-label="Visit Date"><?= date('Y-m-d', strtotime($visit['visit_date'])) ?></td>
+  <td data-label="Patient Name"><?= htmlspecialchars($visit['first_name'] . ' ' . $visit['last_name']) ?></td>
+  <td data-label="Sex"><?= htmlspecialchars($visit['sex']) ?></td>
+  <td data-label="Age"><?= htmlspecialchars($visit['age']) ?></td>
+  <td data-label="BMI"><?= htmlspecialchars($visit['bmi']) ?></td>
+  <td data-label="Weight"><?= htmlspecialchars($visit['weight']) ?></td>
+  <td data-label="Height"><?= htmlspecialchars($visit['height']) ?></td>
+  <td data-label="Blood Pressure"><?= htmlspecialchars($visit['blood_pressure']) ?></td>
+  <td data-label="Temperature"><?= htmlspecialchars($visit['temperature']) ?></td>
+  <td data-label="Chest Rate"><?= htmlspecialchars($visit['chest_rate']) ?></td>
+  <td data-label="Respiratory Rate"><?= htmlspecialchars($visit['respiratory_rate']) ?></td>
+  <td data-label="Chief Complaints"><?= htmlspecialchars($visit['chief_complaints']) ?></td>
+  <td data-label="Treatment"><?= htmlspecialchars($visit['treatment']) ?></td>
+  <td data-label="Address"><?= htmlspecialchars($visit['address']) ?></td>
+</tr>
+
+    <?php endforeach; ?>
+    </tbody>
+</table> </div>
+           <br>
   
 <!-- Summary Section -->
 <div class="summary-container">
@@ -958,62 +1015,24 @@ if (addressData.length > 0 && addressData.reduce((a, b) => a + b, 0) > 0) {
     </div>
 
  
-
-
-<!-- Table with Visit Details -->
-<?php if ($visits): ?>
-    <div class="report-table-container">
-	<table id="reportTable">
-    <thead>
-        <tr>
-            <th>Visit Date</th>
-            <th>Patient Name</th>
-            <th>Sex</th>
-            <th>Age</th>
-            <th>BMI</th>
-            <th>Weight</th>
-            <th>Height</th>
-            <th>Blood Pressure</th>
-            <th>Temperature</th>
-            <th>Chest Rate</th>
-            <th>Respiratory Rate</th>
-            <th>Chief Complaints</th>
-            <th>Treatment</th>
-            <th>Address</th>
-        </tr>
-    </thead>
-    <tbody>
-</div>
-    <?php foreach ($visits as $visit): ?>
-       <tr>
-  <td data-label="Visit Date"><?= date('Y-m-d', strtotime($visit['visit_date'])) ?></td>
-  <td data-label="Patient Name"><?= htmlspecialchars($visit['first_name'] . ' ' . $visit['last_name']) ?></td>
-  <td data-label="Sex"><?= htmlspecialchars($visit['sex']) ?></td>
-  <td data-label="Age"><?= htmlspecialchars($visit['age']) ?></td>
-  <td data-label="BMI"><?= htmlspecialchars($visit['bmi']) ?></td>
-  <td data-label="Weight"><?= htmlspecialchars($visit['weight']) ?></td>
-  <td data-label="Height"><?= htmlspecialchars($visit['height']) ?></td>
-  <td data-label="Blood Pressure"><?= htmlspecialchars($visit['blood_pressure']) ?></td>
-  <td data-label="Temperature"><?= htmlspecialchars($visit['temperature']) ?></td>
-  <td data-label="Chest Rate"><?= htmlspecialchars($visit['chest_rate']) ?></td>
-  <td data-label="Respiratory Rate"><?= htmlspecialchars($visit['respiratory_rate']) ?></td>
-  <td data-label="Chief Complaints"><?= htmlspecialchars($visit['chief_complaints']) ?></td>
-  <td data-label="Treatment"><?= htmlspecialchars($visit['treatment']) ?></td>
-  <td data-label="Address"><?= htmlspecialchars($visit['address']) ?></td>
-</tr>
-
-    <?php endforeach; ?>
-    </tbody>
-</table>
-           <br>
-
     <br> <br>
-     <span id="generated_by"></span>
+     <span id="generated_by" style="font-size: 16px;"></span>
 </div>
 <?php else: ?>
     <p>No visits found for the selected filters.</p>
 <?php endif; ?>
 
+
+<!-- Print Button at Bottom -->
+   <div class="form-submit">
+          <button type="button" class="btn-export" onclick="exportTableToExcel('reportTable')">Export to Excel</button>
+        <button type="button" class="btn-export" onclick="exportTableToPDF()">Export to PDF</button>
+       
+    <button type="button" class="btn-print" onclick="printDiv()">
+        <i class='bx bx-printer'></i>
+        Print Report
+    </button>
+</div>
 
 </div> </div> 
 
@@ -1080,19 +1099,7 @@ function exportTableToExcel(tableID, filename = 'Patient Summary Report') {
         
         // Add signature header if not present
         const headerRow = tableClone.querySelector('thead tr');
-        if (headerRow && !headerRow.querySelector('th:last-child')?.textContent.includes('Signature')) {
-            const signatureHeader = document.createElement('th');
-            signatureHeader.textContent = 'Signature';
-            headerRow.appendChild(signatureHeader);
-            
-            // Add empty signature cells for each row
-            const rows = tableClone.querySelectorAll('tbody tr');
-            rows.forEach(row => {
-                const signatureCell = document.createElement('td');
-                signatureCell.textContent = ''; // Empty for Excel
-                row.appendChild(signatureCell);
-            });
-        }
+    
         
         tempDiv.appendChild(tableClone);
         document.body.appendChild(tempDiv);
@@ -1176,40 +1183,13 @@ function printDiv() {
         return '';
     }
 
-    // Collect chart images with titles (only if checkbox is checked)
-    let chartsHTML = '';
-    chartsHTML += getChartImage('addressBarChart', 'Patient Address');
-    if (document.getElementById("toggleSexChart").checked) {
-        chartsHTML += getChartImage('sexPieChart', 'Patients by Sex');
-    }
-    if (document.getElementById("toggleAgeGroupChart").checked) {
-        chartsHTML += getChartImage('ageGroupBarChart', 'Age Group');
-    }
-    if (document.getElementById("toggleBMIChart").checked) {
-        chartsHTML += getChartImage('bmiPieChart', 'Patients by BMI Category');
-    }
-    if (document.getElementById("toggleTreatmentChart").checked) {
-        chartsHTML += getChartImage('treatmentBarChart', 'Treatments');
-    }
-
+   
     // Clone the print area (table and summary)
     const originalArea = document.querySelector(".print-area").cloneNode(true);
 
     // ✅ Add 'Signature' column only if not already present
     const headerRow = originalArea.querySelector("thead tr");
-    if (headerRow && !headerRow.querySelector("th:last-child")?.textContent.includes("Signature")) {
-        const signatureHeader = document.createElement("th");
-        signatureHeader.textContent = "Signature";
-        headerRow.appendChild(signatureHeader);
 
-        // Add empty signature cells for each row in tbody
-        const rows = originalArea.querySelectorAll("tbody tr");
-        rows.forEach(row => {
-            const signatureCell = document.createElement("td");
-            signatureCell.style.height = "30px";
-            row.appendChild(signatureCell);
-        });
-    }
 
     // Get the print header HTML
     const printHeader = document.querySelector(".print-header").outerHTML;
@@ -1233,7 +1213,6 @@ function printDiv() {
     `);
     printWindow.document.write("</head><body>");
     printWindow.document.write(printHeader);     // header first
-    printWindow.document.write(chartsHTML);      // only selected charts
     printWindow.document.write(originalArea.innerHTML); // then table + summary
     printWindow.document.write("</body></html>");
 
@@ -1251,7 +1230,7 @@ fetch('../php/getUserName.php')
     .then(data => {
         if (data.full_name) {
             document.getElementById('userGreeting').textContent = `Hello, ${data.full_name}!`;
-            document.getElementById('generated_by').textContent = `Generated by: ${data.full_name}`;
+            document.getElementById('generated_by').textContent = `Report Generated by: ${data.full_name} - BHW`;
         } else {
             document.getElementById('userGreeting').textContent = 'Hello, BHW!';
             document.getElementById('generated_by').textContent = 'Generated by: N/A';

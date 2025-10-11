@@ -1277,11 +1277,16 @@ td a:hover {
 /* scroll the table inside the page instead of overflowing */
 .report-table-container {
   max-width: 100%;
-  overflow-x: auto;                 /* ← key */
-  -webkit-overflow-scrolling: touch;
-  padding-bottom: 8px;              /* room for scrollbar on some OSes */
+  height: 600px;                          /* ← fixed height */
+  overflow: auto;                         /* ← enables both horizontal and vertical scroll */
+  -webkit-overflow-scrolling: touch;     /* smooth scrolling on touch devices */
+  padding-bottom: 8px;                   /* space for horizontal scrollbar */
+  padding-right: 8px;                    /* space for vertical scrollbar */
   border-radius: 10px;
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
 }
+
+
 
 /* Let the table be as wide as it needs, but never exceed its wrapper */
 #reportTable {

@@ -803,6 +803,7 @@ document.addEventListener("DOMContentLoaded", () => {
           
         </tr>
     </thead>
+    
 <?php
 // Sort visits from latest to oldest by visit_date
 usort($visits, function($a, $b) {
