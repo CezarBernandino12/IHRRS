@@ -772,7 +772,7 @@ p {
 
 .form-group p {
     background-color: #b0d2ff33;
-     font-family: 'Trebuchet MS', sans-serif;
+    font-family: 'Trebuchet MS', sans-serif;
     border-radius: 2px;
     font-size: 15px;
     font-weight: bold;
@@ -784,7 +784,7 @@ p {
     word-wrap: break-word; 
 	white-space: normal; 
 	overflow: hidden; 
-	   border: 1px solid #d0d0d0; /* light gray border */
+	border: 1px solid #d0d0d0; /* light gray border */
 }
 .form-group2 p {
     background-color: #fff;
