@@ -1103,6 +1103,7 @@ td a:hover {
   padding-bottom: 8px;                   /* space for horizontal scrollbar */
   padding-right: 8px;                    /* space for vertical scrollbar */
   border-radius: 10px;
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2); 
 }
 
 

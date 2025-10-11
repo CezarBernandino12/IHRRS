@@ -190,13 +190,11 @@ $bhws = $bhw_stmt->fetchAll();
       <h2>Medicine Dispensation Report - BHS <?php echo htmlspecialchars($barangayName); ?></h2> <br>
 
     <!-- Filter Modal Trigger -->
-   
-        <div class="form-submit">
-               <button type="button" class="btn-export" id="openFilterModal">Filter</button>
-        <button type="button" class="btn-export" onclick="exportTableToExcel('reportTable')">Export to Excel</button>
-        <button type="button" class="btn-export" onclick="exportTableToPDF()">Export to PDF</button>
-        <button type="button" class="btn-print" onclick="printDiv()">Print this page</button>
+
+        <div class="form-submit" style="margin-top: -10px;">
+               <button type="button" class="btn-export" id="openFilterModal">Select Filters</button>
     </div>
+
 
     <!-- Modern Filter Tags Display -->
     <div class="selected-filters" style="margin: 20px 0;">
@@ -418,6 +416,7 @@ $bhws = $bhw_stmt->fetchAll();
 
 <div class="print-area">
 <div class="print-header" style="text-align: center;">
+<img src="../../img/RHUlogo.png" alt="RHU Logo" class="print-logo" style="height: 50px; width: auto;" />
   <h3>Republic of the Philippines</h3>
   <p>Province of Camarines Norte</p>
   <h3>Municipality of Daet</h3>
@@ -466,10 +465,27 @@ echo $filters ? implode("&nbsp; | &nbsp;", $filters) : "All Records";
 </div>
 <div class="report-content">
 
+<style>
+    @media print {
+
+        .form-submit { 
+           display: none;
+        }
+        .summary-list{
+            font-size: 16px;
+        }
+        .generated-by{
+            font-size: 16px;
+        }
+        .chart { 
+           display: none;
+        }
+    }
+</style>
 <!-- Chart.js CDN -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<div style="margin: 30px 0;">
+<div style="margin: 30px 0;" class="chart">
     <h3 style="margin-bottom:10px;"><i class="bx bx-line-chart"></i> Medicine Dispensation Trends</h3>
     <canvas id="dispensationChart" height="80"></canvas>
 </div>
@@ -534,11 +550,47 @@ const dispensationChart = new Chart(ctx, {
 });
 </script>
 
+
+ <div class="report-table-container">
+    <table id="reportTable">
+  <thead>
+    <tr>
+      <th data-abbr="Dispensed">Dispensed Date</th>
+      <th data-abbr="Name">Patient Name</th>
+      <th data-abbr="Sex">Sex</th>
+      <th data-abbr="Age">Age</th>
+      <th data-abbr="Medicine">Medicine Name</th>
+      <th data-abbr="Qty">Quantity</th>
+      <th data-abbr="Visit">Visit Date</th>
+      <th data-abbr="BHW">Dispensed by</th>
+    </tr>
+  </thead>
+  <tbody>
+    <?php foreach ($rows as $row): ?>
+      <tr>
+        <td data-label="Dispensed Date"><?= htmlspecialchars($row['dispensed_date']) ?></td>
+        <td data-label="Patient Name"><?= htmlspecialchars($row['first_name'] . ' ' . $row['last_name']) ?></td>
+        <td data-label="Sex"><?= htmlspecialchars($row['sex']) ?></td>
+        <td data-label="Age"><?= htmlspecialchars($row['age']) ?></td>
+        <td data-label="Medicine Name"><?= htmlspecialchars($row['medicine_name']) ?></td>
+        <td data-label="Quantity"><?= htmlspecialchars($row['quantity_dispensed']) ?></td>
+        <td data-label="Visit Date"><?= htmlspecialchars($row['visit_date']) ?></td>
+        <td data-label="BHW"><?= htmlspecialchars($row['bhw_name']) ?></td>
+      </tr>
+    <?php endforeach; ?>
+  </tbody>
+</table>
+</div>
+
+
+
+
 <?php if ($rows): ?>
     <div class="summary-container">
     <div class="summary">
         <h4><i class="bx bx-filter-alt"></i>Summary:</h4>
         <p><strong>Report Generated On:</strong> <?= date('Y-m-d H:i:s') ?></p>
+        <p><strong>Total Records:</strong> <?= count($rows) ?></p>
     <table class="summary-table" style="width: 100%; border-collapse: collapse; margin-top: 10px;">
         <thead>
             <tr>
@@ -575,43 +627,7 @@ const dispensationChart = new Chart(ctx, {
     </table>
     </div>
 
-
-    <div class="summary">
-        <strong><i class="bx bx-file"></i> Total Records:</strong> <?= count($rows) ?>
-    </div>
-</div>
-
-<br><br>
-<h3>Detailed Report</h3>
- <div class="report-table-container">
-    <table id="reportTable">
-  <thead>
-    <tr>
-      <th data-abbr="Dispensed">Dispensed Date</th>
-      <th data-abbr="Name">Patient Name</th>
-      <th data-abbr="Sex">Sex</th>
-      <th data-abbr="Age">Age</th>
-      <th data-abbr="Medicine">Medicine Name</th>
-      <th data-abbr="Qty">Quantity</th>
-      <th data-abbr="Visit">Visit Date</th>
-      <th data-abbr="BHW">BHW</th>
-    </tr>
-  </thead>
-  <tbody>
-    <?php foreach ($rows as $row): ?>
-      <tr>
-        <td data-label="Dispensed Date"><?= htmlspecialchars($row['dispensed_date']) ?></td>
-        <td data-label="Patient Name"><?= htmlspecialchars($row['first_name'] . ' ' . $row['last_name']) ?></td>
-        <td data-label="Sex"><?= htmlspecialchars($row['sex']) ?></td>
-        <td data-label="Age"><?= htmlspecialchars($row['age']) ?></td>
-        <td data-label="Medicine Name"><?= htmlspecialchars($row['medicine_name']) ?></td>
-        <td data-label="Quantity"><?= htmlspecialchars($row['quantity_dispensed']) ?></td>
-        <td data-label="Visit Date"><?= htmlspecialchars($row['visit_date']) ?></td>
-        <td data-label="BHW"><?= htmlspecialchars($row['bhw_name']) ?></td>
-      </tr>
-    <?php endforeach; ?>
-  </tbody>
-</table>
+ 
 </div>
 
      <br>
@@ -622,7 +638,21 @@ const dispensationChart = new Chart(ctx, {
 <?php else: ?>
     <p>No records found for the selected filters.</p>
 <?php endif; ?>
-</div> </div> 
+</div> 
+
+
+<!-- Print Button at Bottom -->
+   <div class="form-submit">
+          <button type="button" class="btn-export" onclick="exportTableToExcel('reportTable')">Export to Excel</button>
+        <button type="button" class="btn-export" onclick="exportTableToPDF()">Export to PDF</button>
+       
+    <button type="button" class="btn-print" onclick="printDiv()">
+        <i class='bx bx-printer'></i>
+        Print Report
+    </button>
+</div>
+
+</div> 
 
 <div id="logoutModal" class="logout-modal">
     <div class="logout-modal-content">
@@ -684,19 +714,7 @@ function exportTableToExcel(tableID, filename = 'Medicine Utilization Report') {
         
         // Add signature header if not present
         const headerRow = tableClone.querySelector('thead tr');
-        if (headerRow && !headerRow.querySelector('th:last-child')?.textContent.includes('Signature')) {
-            const signatureHeader = document.createElement('th');
-            signatureHeader.textContent = 'Signature';
-            headerRow.appendChild(signatureHeader);
-            
-            // Add empty signature cells for each row
-            const rows = tableClone.querySelectorAll('tbody tr');
-            rows.forEach(row => {
-                const signatureCell = document.createElement('td');
-                signatureCell.textContent = ''; // Empty for Excel
-                row.appendChild(signatureCell);
-            });
-        }
+     
         
         tempDiv.appendChild(tableClone);
         document.body.appendChild(tempDiv);
@@ -790,7 +808,7 @@ function printDiv() {
     printWindow.document.write('<html><head><title>Print Report</title>');
     printWindow.document.write(`
         <style>
-            body { font-family: Arial, sans-serif; font-size: 12px; color: black; }
+            body { font-family: Arial, sans-serif; font-size: 16px; color: black; }
             table { width: 100%; border-collapse: collapse; }
             th, td { border: 1px solid #000; padding: 4px; text-align: left; }
             thead { background-color: #f0f0f0; }
@@ -826,7 +844,7 @@ fetch('../php/getUserName.php')
     .then(data => {
          if (data.full_name) {
             document.getElementById('userGreeting').textContent = `Hello, ${data.full_name}!`;
-                   document.getElementById('generated_by').textContent = `Generated by: ${data.full_name}`;
+                   document.getElementById('generated_by').textContent = `Report Generated by: ${data.full_name} - BHW`;
         } else {
             document.getElementById('userGreeting').textContent = 'Hello, BHW!';
               document.getElementById('generated_by').textContent = 'Generated by: N/A';
