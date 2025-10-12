@@ -304,5 +304,12 @@
     color: black;
   }
 
-  
-  
+  .remember-forgot a {
+    text-decoration: none;          
+  }
+
+  .remember-forgot a:hover,
+  .remember-forgot a:focus {
+    text-decoration: none;          
+    color: #36d1dc;                
+  }

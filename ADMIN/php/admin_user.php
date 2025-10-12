@@ -414,9 +414,9 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
   <label for="rhu">Select RHU:</label>
   <select id="rhu" name="rhu">
     <option value="" disabled selected>Select RHU</option>
-    <option value="RHU I">RHU I</option>
-    <option value="RHU II">RHU II</option>
-    <option value="RHU III">RHU III</option>
+    <option value="Rural Health Unit I">Rural Health Unit I</option>
+    <option value="Rural Health Unit II">Rural Health Unit  II</option>
+    <option value="Rural Health Unit III">Rural Health Unit  III</option>
   </select>
 </div>
  
