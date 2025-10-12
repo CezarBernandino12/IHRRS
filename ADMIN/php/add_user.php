@@ -84,7 +84,7 @@ if ($adminId) {
         echo "User added successfully!";
     } catch (PDOException $e) {
         echo "Error: " . $e->getMessage();
-    }
+    } 
 } else {
     echo "Error: Invalid request method.";
 }
