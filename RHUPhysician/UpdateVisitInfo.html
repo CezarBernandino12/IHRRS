@@ -286,8 +286,10 @@
                 </div>
             </div> <br>
 
+            <input type="hidden" id="visit_id" name="visit_id" value="">
+
                 <div class="button-container">
-                <button type="button" class="submit-btn" id="sendButton"> Send Record Request</button>
+                <button type="button" class="submit-btn" id="dashButton">Go back to Dashboard</button>
             </div>
 
               <div id="myModal" class="modal">
@@ -369,8 +371,8 @@
 const urlParams = new URLSearchParams(window.location.search);
 const visitId = urlParams.get('visit_id');
 
-document.getElementById("sendButton").onclick = function() {
-    document.getElementById("myModal").style.display = "block";
+document.getElementById("dashButton").onclick = function() {
+    window.location.href = 'dashboard.html';
 }
 
 document.getElementById("confirmBtn").onclick = function() {

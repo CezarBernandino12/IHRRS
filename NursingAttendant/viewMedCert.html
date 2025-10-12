@@ -203,51 +203,58 @@
                 });
         }
 
-        function displayCertificate(cert) {
-            // Format issuance date
-            document.getElementById('issuanceDate').textContent = formatDate(cert.issuance_date);
+     function displayCertificate(cert) { 
+    // Format issuance date
+    document.getElementById('issuanceDate').textContent = formatDate(cert.issuance_date);
 
-            // Build certificate text
-            let text = `This is to certify that ${cert.patient_name}, ${cert.age} years old, ${cert.sex.toLowerCase()}, `;
-            text += `${cert.civil_status.toLowerCase()}, born on ${formatDate(cert.date_of_birth)} in ${cert.birthplace} `;
-            text += `presently residing at ${cert.address} has been examined. `;
-            
-            if (cert.diagnosis) {
-                text += `He/She is suffering from ${cert.diagnosis}`;
-                
-                if (cert.rest_period_days) {
-                    text += `, that I consider that a period of absence from work for at least ${cert.rest_period_days} `;
-                    text += `${cert.rest_period_days > 1 ? 'days' : 'day'}`;
-                    
-                    if (cert.rest_from_date && cert.rest_to_date) {
-                        text += `, with effect from ${formatDate(cert.rest_from_date)} to ${formatDate(cert.rest_to_date)}`;
-                    }
-                    
-                    text += ` is absolutely necessary for the restoration of his/her health.`;
-                } else {
-                    text += `.`;
-                }
+    // Determine pronouns
+    let pronounSubject = cert.sex.toLowerCase() === 'male' ? 'He' : 'She';
+    let pronounObject = cert.sex.toLowerCase() === 'male' ? 'his' : 'her';
+
+    // Build certificate text
+    let text = `This is to certify that ${cert.patient_name}, ${cert.age} years old, ${cert.sex.toLowerCase()}, `;
+    text += `${cert.civil_status.toLowerCase()}, born on ${formatDate(cert.date_of_birth)} in ${cert.birthplace} `;
+    text += `presently residing at ${cert.address} was examined. `;
+
+    // Check diagnosis
+    if (cert.diagnosis && cert.diagnosis.toLowerCase() !== 'none') {
+        text += `${pronounSubject} is suffering from ${cert.diagnosis}.`;
+
+        if (cert.rest_period_days) {
+            text += ` A period of absence from work for at least ${cert.rest_period_days} `;
+            text += `${cert.rest_period_days > 1 ? 'days' : 'day'}`;
+
+            if (cert.rest_from_date && cert.rest_to_date) {
+                text += `, from ${formatDate(cert.rest_from_date)} to ${formatDate(cert.rest_to_date)}`;
             }
 
-            if (cert.purpose) {
-                text += `\n\n\n\n\nPurpose: ${cert.purpose}`;
-            }
-
-            document.getElementById('certificateText').textContent = text;
-
-            // Display doctor/nurse information
-            document.getElementById('doctorName').textContent = cert.issued_by_name.toUpperCase();
-            
-            let licenseInfo = '';
-            if (cert.license_no) {
-                licenseInfo += `Lic. No. ${cert.license_no}`;
-            }
-            if (cert.ptr_no) {
-                if (licenseInfo) licenseInfo += '\n';
-                licenseInfo += `PTR No. ${cert.ptr_no}`;
-            }
-            document.getElementById('licenseInfo').textContent = licenseInfo;
+            text += ` is necessary for the restoration of ${pronounObject} health.`;
         }
+    } else {
+        // Patient is healthy
+        text += `${pronounSubject} is in good health and shows no signs of illness or medical condition.`;
+    }
+
+    // Include purpose if provided
+    if (cert.purpose) {
+        text += `\n\n\n\n\nPurpose: ${cert.purpose}`;
+    }
+
+    document.getElementById('certificateText').textContent = text;
+
+    // Display doctor/nurse information
+    document.getElementById('doctorName').textContent = cert.issued_by_name.toUpperCase();
+    
+    let licenseInfo = '';
+    if (cert.license_no) {
+        licenseInfo += `Lic. No. ${cert.license_no}`;
+    }
+    if (cert.ptr_no) {
+        if (licenseInfo) licenseInfo += '\n';
+        licenseInfo += `PTR No. ${cert.ptr_no}`;
+    }
+    document.getElementById('licenseInfo').textContent = licenseInfo;
+}
 
         function formatDate(dateString) {
             const options = { year: 'numeric', month: 'long', day: 'numeric' };

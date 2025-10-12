@@ -72,15 +72,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
 
 
-                      // ✅ Resume Button
-const resumeBtn = document.getElementById("resumeBtn");
 
-if (data.consultation.diagnosis_status !== "Ongoing") {
-        resumeBtn.disabled = true;
-        resumeBtn.style.opacity = "0.6";   // make it look disabled
-        resumeBtn.style.cursor = "not-allowed";
-
-}
              
                 }
 
@@ -187,13 +179,6 @@ if (medicineContainer2) {
     }
 
 
-
-
-    if (resumeBtn) {
-        resumeBtn.addEventListener("click", function () {
-            window.location.href = "resumeTreatment.html?visit_id=" + visit_id;
-        });
-    }
 
     // ✅ Load Lab File
 

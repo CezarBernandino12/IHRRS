@@ -324,7 +324,7 @@
                         $(document).ready(function () {
                             // Show/hide diagnosis status based on diagnosis selection
                             $('#diagnosis').on('change', function () {
-                                if ($(this).val() && $(this).val() !== '') {
+                                if ($(this).val() && $(this).val() !== '' && $(this).val() !== 'None') {
                                     $('#diagnosis-status-wrapper').show();
                                 } else {
                                     $('#diagnosis-status-wrapper').hide();
