@@ -194,6 +194,20 @@ fetch('php/getUserId.php')
           <option value="">Select Barangay</option>
         </select>
       </div>
+
+            <div class="form-item">
+            <label for="street" class="required">Purok / Street:</label>
+            <input
+                type="text"
+                id="street"
+                name="street"
+                placeholder="e.g., Purok 3, Mabini St."
+                autocomplete="address-line1"
+                maxlength="120"
+                required
+            />
+            </div>
+
     </div>
   </fieldset>
 </div>
@@ -1254,6 +1268,43 @@ fetch('php/getUserName.php')
     provinceSel.addEventListener(evt, updateFullAddress);
     citySel.addEventListener(evt, updateFullAddress);
     barangaySel.addEventListener(evt, updateFullAddress);
+  });
+
+  // Run once on load in case of edit mode
+  updateFullAddress();
+})();
+</script>
+
+<script>
+(function(){
+  const regionSel    = document.getElementById('region');
+  const provinceSel  = document.getElementById('province');
+  const citySel      = document.getElementById('city');
+  const barangaySel  = document.getElementById('barangay');
+  const streetInput  = document.getElementById('street'); // NEW
+  const hiddenFull   = document.getElementById('permanent_address_combined');
+
+  function updateFullAddress() {
+    const r = regionSel.options[regionSel.selectedIndex]?.text || '';
+    const p = provinceSel.options[provinceSel.selectedIndex]?.text || '';
+    const c = citySel.options[citySel.selectedIndex]?.text || '';
+    const b = barangaySel.options[barangaySel.selectedIndex]?.text || '';
+    const s = (streetInput?.value || '').trim();
+
+    // Require all parts (including street) before composing
+    if (r && p && c && b && s) {
+      hiddenFull.value = [s, b, c, p, r].join(', ');
+    } else {
+      hiddenFull.value = '';
+    }
+  }
+
+  ['change','input'].forEach(evt => {
+    regionSel.addEventListener(evt, updateFullAddress);
+    provinceSel.addEventListener(evt, updateFullAddress);
+    citySel.addEventListener(evt, updateFullAddress);
+    barangaySel.addEventListener(evt, updateFullAddress);
+    if (streetInput) streetInput.addEventListener('input', updateFullAddress); // NEW
   });
 
   // Run once on load in case of edit mode

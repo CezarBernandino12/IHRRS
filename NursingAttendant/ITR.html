@@ -243,6 +243,20 @@ fetch('php/getUserId.php')
                         <option value="">Select Barangay</option>
                         </select>
                     </div>
+
+                    <div class="form-item">
+                        <label for="street" class="required">Purok / Street:</label>
+                        <input
+                            type="text"
+                            id="street"
+                            name="street"
+                            placeholder="e.g., Purok 3, Mabini St."
+                            autocomplete="address-line1"
+                            maxlength="120"
+                            required
+                        />
+                    </div>
+
                     </div>
                 </fieldset>
                 </div>
@@ -662,6 +676,22 @@ const medicineSelects = document.querySelectorAll('.medicine-select');
 const treatmentSelect = document.getElementById('treatment');
 const patientAlertSelect = document.getElementById('patient_alert');
 const remarksSelect= document.getElementById('remarks');
+const streetSel  = document.getElementById("street"); // NEW
+
+function composeFullAddress() {
+  const r = regionSel.options[regionSel.selectedIndex]?.text || "";
+  const p = provinceSel.options[provinceSel.selectedIndex]?.text || "";
+  const c = citySel.options[citySel.selectedIndex]?.text || "";
+  const b = brgySel.options[brgySel.selectedIndex]?.text || "";
+  const s = (streetSel?.value || "").trim();
+
+  // Now Purok/Street is required, so it will always be present
+  hiddenFull.value = [s, b, c, p, r].filter(Boolean).join(", ");
+}
+
+if (streetSel) {
+  streetSel.addEventListener("input", composeFullAddress);
+}
 
 // Helper to load options from DB
 function loadCustomOptions(selectElement, category) {
