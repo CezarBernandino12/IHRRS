@@ -865,10 +865,17 @@ body {
     font-weight: bold;
   }
 
-  .pagination .prev,
+ .pagination .prev,
   .pagination .next {
-    font-size: 16px;
+    font-size: 14px;
+    color: #000000; 
   }
+
+  .pagination .next:hover {
+    background-color: #f0f0f0;
+    color: #333;
+}
+
 
   .filter-container {
     display: flex;

@@ -188,7 +188,6 @@
 <div class="section-card">
   <div class="section-title">Diagnosis <span class="lock-note">(To be filled out by the doctor only. Do not write anything.)</span></div>
   <div class="textbox" id="diagnosisBox">
-    <!-- keep an empty box for print; your JS can fill .diagnosis-field if needed -->
     <div class="field-value diagnosis-field"></div>
   </div>
 </div>
@@ -215,7 +214,11 @@
 <!-- Footer buttons (unchanged) -->
 <div class="referral-form-footer">
   <button id="goBackBtn" class="footer-btn">Back to dashboard</button>
-  <button id="printBtn" class="footer-btns">Print</button>
+<button id="printBtn" class="footer-btns print-pill" type="button" title="Print">
+  <i class='bx bxs-printer' aria-hidden="true"></i>
+  <span>Print</span>
+</button>
+
 </div>
 
 

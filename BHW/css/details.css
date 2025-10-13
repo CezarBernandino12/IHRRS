@@ -417,20 +417,47 @@ select {
     margin-right: 5px;
     font-size: 18px;
 }
-.footer-btns {
-    padding: 10px 18px;
-    margin-left: 10px;
-    background-color: #162e51;
-    color: white;
-    font-size: 15px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+
+/* Pill-style primary action (matches the screenshot) */
+#printBtn.print-pill{
+   background-color: #162e51;           /* rich blue */
+  color: #fff;
+  border: 0;
+  border-radius: 9999px;
+  padding: 10px 18px;
+  min-height: 36px;
+  font-size: 14px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 12px rgba(31, 94, 168, .35); /* soft glow */
+  transition: transform .06s ease, box-shadow .2s ease, background .2s ease;
 }
 
-.footer-btns:hover {
-    background-color: #15253d;
+#printBtn.print-pill i{
+  font-size: 18px; line-height: 0;
+}
+
+#printBtn.print-pill:hover{
+ background-color: #15253d;            /* slightly darker on hover */
+  box-shadow: 0 6px 16px rgba(31, 94, 168, .45);
+}
+
+#printBtn.print-pill:active{
+  transform: translateY(1px);
+  box-shadow: 0 3px 10px rgba(31, 94, 168, .35);
+}
+
+#printBtn.print-pill:focus-visible{
+  outline: 3px solid rgba(31, 94, 168, .35);
+  outline-offset: 2px;
+}
+
+#printBtn.print-pill:disabled{
+  background: #a7b7cf;
+  box-shadow: none;
+  cursor: not-allowed;
 }
 
 /* View record link */
