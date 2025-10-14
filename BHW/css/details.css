@@ -8,8 +8,8 @@
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 .referral-container {
-  --ink:#0f2242; --muted:#667085; --line:#e6e9f2; --subtle:#f7f9fc;
-  --brand:#27548A; --accent:#17B26A; --radius:14px; --shadow:0 6px 28px rgba(16,40,87,.08);
+  --ink:#000000; --muted:#667085; --line:#e6e9f2; --subtle:#f7f9fc;
+  --brand:#232324; --accent:#17B26A; --radius:14px; --shadow:0 6px 28px rgba(16,40,87,.08);
 }
 
 .referral-header .referral-heading{
@@ -206,7 +206,7 @@ select {
 /* Section headings a bit heavier to match letterhead */
 .form-group-title{
   font-weight: 700;
-  color:#0f2242;
+  color:#030303;
   font-size: 15.5px;
 }
 
@@ -263,8 +263,8 @@ select {
 /* solid black rule under the heading */
 /* ===== Modern referral section styling (scoped) ===== */
 .referral-container {
-  --ink:#0f2242; --muted:#667085; --line:#e6e9f2; --subtle:#f7f9fc;
-  --brand:#27548A; --accent:#17B26A; --radius:14px; --shadow:0 6px 28px rgba(16,40,87,.08);
+  --ink:#000000; --muted:#667085; --line:#e6e9f2; --subtle:#f7f9fc;
+  --brand:#272727; --accent:#17B26A; --radius:14px; --shadow:0 6px 28px rgba(16,40,87,.08);
 }
 
 /* Meta strip (Referral ID / Date) */
@@ -274,7 +274,7 @@ select {
 .badge{
   display:inline-flex; align-items:center; gap:8px;
   background:var(--subtle); border:1px solid var(--line);
-  padding:8px 12px; border-radius:999px; font-size:13px; color:#344054;
+  padding:8px 12px; border-radius:999px; font-size:13px; color:#000000;
 }
 .badge i{ font-size:18px; opacity:.8; }
 
@@ -299,7 +299,7 @@ select {
   color:#8a94a6; margin-bottom:6px;
 }
 .kv .value{
-  color:#0b1733; font-size:16px; font-weight:600; line-height:1.4;
+  color:#050505; font-size:16px; font-weight:600; line-height:1.4;
 }
 
 /* Vital signs: compact 4-up when space allows */
@@ -312,7 +312,7 @@ select {
 }
 
 /* Doctor-only areas */
-.lock-note{ font-style:italic; color:#6b7280; font-weight:500; }
+.lock-note{ font-style:italic; color:#242424d2; font-weight:500; }
 
 /* Readonly textarea restyle */
 .treatment-container textarea{
@@ -328,7 +328,7 @@ select {
   flex:1; border-bottom:2px dotted #c7cedd; height:32px;
 }
 .signature .name{
-  min-width:180px; text-align:right; font-weight:600; color:#0b1733;
+  min-width:180px; text-align:right; font-weight:600; color:#020202;
 }
 
 /* Meta spacing for the footer (keeps your current buttons) */
@@ -343,7 +343,7 @@ select {
 /* Print: flatten effects, tighter spacing */
 @media print{
   .section-card{ box-shadow:none; border-color:#cfd8e3; }
-  .badge{ background:#fff; }
+  .badge{ background:#fff; color:#000000; }
   .treatment-container textarea{ background:#fff; }
 }
 
@@ -480,7 +480,7 @@ select {
     padding: 0 !important;   /* we’ll pad inside */
     font-size: 11pt !important;
     line-height: 1.3 !important;
-    color: #0b1733 !important;
+    color: #000000 !important;
 
     /* Avoid accidental scaling from leftover transforms */
     transform: none !important;
@@ -500,8 +500,8 @@ select {
   .referral-header { margin-top: 4mm; margin-bottom: 4mm; gap: 6px !important; }
   .referral-logo { width: 80px !important; height: 80px !important; object-fit: contain; }
   .referral-heading .line-1 { font-size: 12pt !important; }
-  .referral-heading .line-2 { font-size: 18pt !important; font-weight: 700; color: #0f2242; }
-  .referral-heading .line-3 { font-size: 11pt !important; color: #6b7280; }
+  .referral-heading .line-2 { font-size: 18pt !important; font-weight: 700; color: #000000; }
+  .referral-heading .line-3 { font-size: 11pt !important; color: #000000; }
   .referral-heading .title  { font-size: 16pt !important; margin-top: 4px !important; }
   .referral-rule {
     height: 1px !important; margin: 6px 0 10px !important;
@@ -522,7 +522,7 @@ select {
     padding: 0 !important; margin: 0 0 4mm !important;
   }
   .section-title {
-    margin: 0 0 2.5mm !important; font-weight: 700 !important; font-size: 12pt !important; color: #0f2242 !important;
+    margin: 0 0 2.5mm !important; font-weight: 700 !important; font-size: 12pt !important; color: #000000 !important;
     padding-bottom: 1.5mm !important; border-bottom: 1px solid #e7ecf6 !important;
   }
 
@@ -531,7 +531,7 @@ select {
   .vitals-grid { grid-template-columns: repeat(4, 1fr) !important; gap: 8px 12px !important; }
 
   .kv .label {
-    font-size: 9pt !important; margin-bottom: 2px !important; color: #7a879a !important;
+    font-size: 9pt !important; margin-bottom: 2px !important; color: #262627 !important;
     letter-spacing: .15px !important; text-transform: uppercase !important;
   }
   .kv .value { font-size: 11pt !important; font-weight: 600 !important; overflow-wrap: anywhere !important; }

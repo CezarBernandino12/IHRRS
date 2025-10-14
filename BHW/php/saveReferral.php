@@ -24,7 +24,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         $patient_id = clean_input($_POST['patient_id']);
         $user_id = clean_input($_POST['user_id']);
-        $referral_date = clean_input($_POST['referral_date']);
+       
 
         // 🔹 Get the latest visit_id for this patient
         $stmt_visit = $pdo->prepare("SELECT visit_id FROM patient_assessment WHERE patient_id = :patient_id ORDER BY visit_id DESC LIMIT 1");
@@ -39,13 +39,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         // 🔹 Insert into referrals with visit_id
         $stmt_referral = $pdo->prepare("INSERT INTO referrals (patient_id, visit_id, referred_by, referral_status, referral_date) 
-                                        VALUES (:patient_id, :visit_id, :user_id, 'pending', :referral_date)");
+                                        VALUES (:patient_id, :visit_id, :user_id, 'pending', NOW())");
 
         $stmt_referral->execute([
             ':patient_id' => $patient_id,
             ':visit_id' => $visit_id,
-            ':user_id' => $user_id,
-            ':referral_date' => $referral_date
+            ':user_id' => $user_id
         ]);
 
         $referral_id = $pdo->lastInsertId();

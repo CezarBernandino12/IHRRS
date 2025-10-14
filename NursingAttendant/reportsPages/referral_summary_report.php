@@ -38,8 +38,9 @@ $sql = "
         SUM(CASE WHEN r.referral_status = 'Pending' THEN 1 ELSE 0 END) AS pending
     FROM referrals r
     LEFT JOIN users u ON r.referred_by = u.user_id
-    WHERE 1 = 1
+    WHERE u.barangay IS NOT NULL AND u.barangay != ''
 ";
+
 
 // Add date filter if present
 if (!empty($from_date) && !empty($to_date)) {

@@ -741,7 +741,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!isset($unique_patients_address[$pid])) {
                 // Extract barangay from the address
                 $address_parts = explode(' - ', $visit['address']);
-                $barangay = isset($address_parts[1]) ? explode(' ', $address_parts[1])[1] : 'Unknown';
+                $barangay = isset($address_parts[1]) ? explode(' ', $address_parts[1])[1] : 'Others';
                 $barangay_counts[$barangay] = ($barangay_counts[$barangay] ?? 0) + 1;
                 $unique_patients_address[$pid] = true;
             }
