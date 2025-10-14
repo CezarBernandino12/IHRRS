@@ -1,5 +1,4 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Poppins:wght@400;500;600;700&display=swap');
 
 * {
 	margin: 0;
@@ -877,13 +876,12 @@ body {
   .pagination .prev,
   .pagination .next {
     font-size: 14px;
-    background-color:  #162e51;
-    color: #fff; 
+    color: #000000; 
   }
 
   .pagination .next:hover {
-    background-color:  #162e51;
-    color: #fff;
+    background-color: #f0f0f0;
+    color: #333;
 }
 
   .filter-container {

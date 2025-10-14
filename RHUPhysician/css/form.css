@@ -1133,30 +1133,62 @@ button.print-btn:hover {
     gap: 10px; 
 }
 
-button.submit-btn, button.reset-btn {
-    padding: 10px 20px;
-    font-size: 15px;
-    font-weight: bold;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+.submit-btn{
+  --accent: #000000;                 /* tweak to match your red */
+  --radius: 9999px;
+
+  background: transparent;
+  color: var(--accent);
+  border: 2.5px solid var(--accent);
+  border-radius: var(--radius);
+  padding: 10px 28px;
+  font-weight: 700;
+  letter-spacing: .2px;
+
+  position: relative;
+  transition: background .25s ease, color .2s ease, border-color .25s ease, transform .15s ease;
+  box-shadow: none;
 }
 
-button.submit-btn {
-    background-color: #162e51;
-    color: white;
-    border: none;
+/* hover: fill + show check, hide text by making it transparent (keeps accessibility) */
+.submit-btn:not(:disabled):hover{
+  background: var(--accent);
+  border-color: var(--accent);
+  color: transparent;                /* visually hides "Submit" text on hover */
 }
 
-button.submit-btn:hover {
-    background-color: #02131a;
-    transform: translateY(-3px);
+/* centered check icon that fades in on hover */
+.submit-btn::after{
+  content: "✓";
+  color: #fff;
+  font-size: 25px;
+  line-height: 1;
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  opacity: 0;
+  transform: scale(.85);
+  transition: opacity .2s ease, transform .2s ease;
 }
 
-button.submit-btn:active {
-    background-color: #2a4e5e;
-    transform: translateY(0);
+.submit-btn:not(:disabled):hover::after{
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* focus state for keyboard users */
+.submit-btn:focus-visible{
+  outline: 3px solid rgba(255, 15, 79, .35);
+  outline-offset: 2px;
+}
+
+/* disabled matches your existing look */
+#submitButton:disabled{
+  background: #828386;
+  color: #fff;
+  border-color: #828386;
+  cursor: not-allowed;
 }
 
 button.reset-btn {

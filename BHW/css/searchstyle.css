@@ -128,20 +128,54 @@
   margin-bottom: 20px;
 }
 
+/* Pill look, no layout changes */
 .btn {
-  padding: 8px 16px;
-  background-color: rgb(30, 30, 63);
-  color: white;
-  text-decoration: none;
-  border-radius: 2px;
+  /* visuals */
+  background-color: #033974;     /* blue */
+  color: #fff;
   border: none;
-  font-size: 15px;
+  border-radius: 9999px;         /* pill */
+  box-shadow: 0 6px 12px rgba(0,0,0,.15), inset 0 -2px 0 rgba(0,0,0,.20);
+  text-decoration: none;
+
+  /* keep layout behavior the same */
+  display: inline-block;         /* same flow as your link/button */
+  padding: 10px 18px;            /* slight bump for pill look */
+  font-size: 15px;               /* same as before */
+  line-height: 1;                /* compact pill text */
+  vertical-align: middle;        /* no shift */
   cursor: pointer;
+
+  /* interactions */
+  transition: background-color .2s ease, box-shadow .2s ease, transform .06s ease;
 }
 
 .btn:hover {
-    background-color: #0056b3;
+  background-color: #1a5491;
 }
+
+.btn:active {
+  background-color: #184d86;
+  transform: translateY(1px);
+  box-shadow: 0 4px 10px rgba(0,0,0,.18), inset 0 -1px 0 rgba(0,0,0,.25);
+}
+
+.btn:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 3px rgba(66,133,244,.35),
+    0 6px 12px rgba(0,0,0,.15),
+    inset 0 -2px 0 rgba(0,0,0,.20);
+}
+
+/* Optional: if you place a Boxicons icon inside */
+.btn .bx {
+  font-size: 1.1em;
+  margin-right: 8px;   /* spacing before text */
+  vertical-align: -1px;
+  color: #fff;
+}
+
 
 #results {
     font-size: 18px;

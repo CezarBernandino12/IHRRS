@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="css/exist.css">
     <link rel="stylesheet" href="css/print.css">
     <link rel="stylesheet" href="css/logout.css">
-
     <title>Visit Information</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
@@ -453,8 +452,16 @@ fetch('php/getUserId.php')
                  <input type="number" id="user_id" hidden>
        
              
-                <button id="printBtn" class="footer-btn">Print</button>
-                <button class="footer-btn" id="referButton">Refer to RHU</button>
+           <button id="printBtn" class="footer-btn print-pill" type="button" title="Print">
+            <i class='bx bxs-printer' aria-hidden="true"></i>
+            <span>Print</span>
+        </button>
+
+        <button id="referButton" class="footer-btn action-pill" type="button" title="Refer to RHU">
+        <i class='bx bxs-send' aria-hidden="true"></i>
+        <span>Refer to RHU</span>
+        </button>
+
               </div>
               <style>
                 

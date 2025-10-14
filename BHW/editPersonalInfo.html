@@ -33,16 +33,37 @@ fetch('php/getUserId.php')
     });
 </script>
 
-    <section id="sidebar">
+<section id="sidebar">
 		<a href="#" class="brand" style="display: flex; align-items: center;">
 			<img src="../img/logo.png" alt="RHULogo" class="logo">
 			<span class="text">Hello BHW</span>
 		</a>
-        <ul class="side-menu top">
-            <li><a href="dashboard.html"><i class="bx bxs-dashboard"></i><span class="text">Dashboard</span></a></li>
-            <li><a href="ITR.html"><i class="bx bxs-user"></i><span class="text">Add New ITR</span></a></li>
-            <li><a href="searchPatient.html"><i class="bx bxs-notepad"></i><span class="text">Patient Records</span></a></li>
-            <li><a href="History.html"><i class="bx bx-history"></i><span class="text">Referral History</span></a></li>
+
+		<ul class="side-menu top">
+			<li>
+				<a href="dashboard.html">
+					<i class="bx bxs-dashboard"></i>
+					<span class="text">Dashboard</span>
+				</a>
+			</li>
+			<li>
+				<a href= "ITR.html">
+					<i class="bx bxs-user"></i>
+					<span class="text">Add New ITR</span>
+				</a>
+			</li>
+			<li>
+				<a href="searchPatient.html">
+					<i class="bx bxs-notepad"></i>
+					<span class="text">Patient Records</span>
+				</a>
+			</li>
+			<li>
+				<a href="History.html">
+					<i class="bx bx-history"></i>
+					<span class="text">Referral History</span>
+				</a>
+			</li>
             <li>
 				<a href="reports.html">
 					<i class="bx bx-notepad"></i>
@@ -50,12 +71,15 @@ fetch('php/getUserId.php')
 				</a>
 			</li>
         </ul>
-        <ul class="side-menu">
-<a href="#" class="logout" onclick="return confirmLogout()">
+		<ul class="side-menu">
+			<li>
+        <a href="#" class="logout" onclick="return confirmLogout()">
                <i class="bx bxs-log-out-circle"></i>
                 <span class="text">Logout</span>
-                </a>        </ul>
-    </section>
+                </a>			</li>
+          
+		</ul>
+	</section>
 
     <section id="content">
         <nav>
