@@ -487,21 +487,6 @@ fetch('php/getUserId.php')
                 </div>
                 
                 <script>
-document.getElementById("add-medicine").addEventListener("click", function() {
-    let container = document.getElementById("medicine-container");
-    let newEntry = container.firstElementChild.cloneNode(true);
-    
-    // Reset values in the cloned elements
-    newEntry.querySelector("select").value = "";
-    newEntry.querySelector("input[type='number']").value = "0";
-    
-    // Append the new entry to the container
-    container.appendChild(newEntry);
-
-    // Scroll the form container to the bottom to prevent overlap
-    container.scrollIntoView({ behavior: 'smooth', block: 'end' });
-});
-
 // Add remove button handler
 document.addEventListener("click", function(event) {
     if (event.target.classList.contains("btn-remove")) {
