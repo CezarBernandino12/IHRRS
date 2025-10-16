@@ -18,7 +18,7 @@
     <section id="sidebar">
         <a href="#" class="brand">
             <img src="../img/logo.png" alt="RHULogo" class="logo">
-            <span class="text">Hello Physician</span>
+            <span class="text">Hello Nurse</span>
         </a>
         <ul class="side-menu top">
             <li>
@@ -27,7 +27,7 @@
 					<span class="text">Dashboard</span>
 				</a>
 			</li>
-          
+         
 			<li>
                 <a href="#" id="updateReferrals">
                     <i class="bx bxs-user"></i>
@@ -94,7 +94,7 @@
 				
 			</form>
 			<div class="greeting">
-                <span id="userGreeting">Hello Physician!</span>
+                <span id="userGreeting">Hello Nurse!</span>
             </div>
 			<a href="#" class="profile">
 				<img src="../img/nurse.png">
@@ -121,19 +121,19 @@
             <div class="patient-name">
                 
                 <div class="name-part">
-                    <span class="last-name">Last Name</span>
+                    <span class="last-name" id="last_name">Last Name</span>
                     <span class="name-label">Last Name</span>
                 </div>
                 <div class="name-part">
-                    <span class="first-name">First Name</span>
+                    <span class="first-name" id="first_name">First Name</span>
                     <span class="name-label">First Name</span>
                 </div>
                 <div class="name-part">
-                    <span class="middle-name">Middle Name</span>
+                    <span class="middle-name" id="middle_name">Middle Name</span>
                     <span class="name-label">Middle Name</span>
                 </div>
                 <div class="name-part">
-                    <span class="extension"></span>
+                    <span class="extension" id="extension"></span>
                     <span class="name-label">Extension</span>
                 </div>
                 
@@ -153,49 +153,49 @@
             <section class="personal-info-section">
                 <h2 class="section-title">Personal Information</h2>
                 <div class="detail">
-                    <strong>Address:</strong> <span class="underline">N/A</span>
+                    <strong>Address:</strong> <span class="underline" id="address">N/A</span>
                 </div>
                 <div class="detail">
-                    <strong>Age:</strong> <span class="underline">N/A</span>
+                    <strong>Age:</strong> <span class="underline" id="age">N/A</span>
                 </div>
                 <div class="detail">
-                    <strong>Gender:</strong> <span class="underline">N/A</span>
+                    <strong>Gender:</strong> <span class="underline" id="gender">N/A</span>
                 </div>
                 <div class="detail">
-                    <strong>Date of Birth:</strong> <span class="underline">N/A</span>
+                    <strong>Date of Birth:</strong> <span class="underline" id="date_of_birth">N/A</span>
                 </div>
                 <div class="detail">
-                    <strong>Contact:</strong> <span class="underline">N/A</span>
+                    <strong>Contact:</strong> <span class="underline" id="contact">N/A</span>
                 </div>
                 <div class="detail">
-                    <strong>Family No:</strong> <span class="underline">N/A</span>
+                    <strong>Family No:</strong> <span class="underline" id="family_no">N/A</span>
                 </div>
                 <div class="detail">
-                    <strong>Civil Status:</strong> <span class="underline">N/A</span>
+                    <strong>Civil Status:</strong> <span class="underline" id="civil_status">N/A</span>
                 </div>
                 <div class="detail">
-                    <strong>Birthplace:</strong> <span class="underline">N/A</span>
+                    <strong>Birthplace:</strong> <span class="underline" id="birth_place">N/A</span>
                 </div>
                 <div class="detail">
-                    <strong>Education:</strong> <span class="underline">N/A</span>
+                    <strong>Education:</strong> <span class="underline" id="education">N/A</span>
                 </div>
                 <div class="detail">
-                    <strong>Occupation:</strong> <span class="underline">N/A</span>
+                    <strong>Occupation:</strong> <span class="underline" id="occupation">N/A</span>
                 </div>
                 <div class="detail">
-                    <strong>Religion:</strong> <span class="underline">N/A</span>
+                    <strong>Religion:</strong> <span class="underline" id="religion">N/A</span>
                 </div>
                 <div class="detail">
-                    <strong>Birth Weight:</strong> <span class="underline">N/A</span>
+                    <strong>Birth Weight:</strong> <span class="underline" id="birth_weight">N/A</span>
                 </div>
                 <div class="detail">
-                    <strong>PhilHealth No:</strong> <span class="underline">N/A</span>
+                    <strong>PhilHealth No:</strong> <span class="underline" id="philhealth_no">N/A</span>
                 </div>
                 <div class="detail">
-                    <strong>Category:</strong> <span class="underline">N/A</span>
+                    <strong>Category:</strong> <span class="underline" id="category">N/A</span>
                 </div>
                 <div class="detail">
-                    <strong>4Ps Status:</strong> <span class="underline">N/A</span>
+                    <strong>4Ps:</strong> <span class="underline" id="fourps">N/A</span>
                 </div>
             </section>                 
     
@@ -206,6 +206,22 @@
                              
             </section>
             
+
+            <!-- 🔹 Hidden Table (populated but not visible) -->
+<table id="history-table" class="status" style="display: none;">
+    <thead>
+        <tr>
+            <th>Date of Visit</th>
+            <th>Age</th>
+            <th>Chief Complaints & Vital Signs (BP, Wt, Ht, Temp, CR, RR, BMI)</th>
+            <th>Diagnosis/Treatment/Medication/Instruction</th>
+            <th>Remarks Consulted/Referred</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+
             
 <div id="logoutModal" class="logout-modal">
     <div class="logout-modal-content">
@@ -223,11 +239,25 @@
 </div>            
         </main>
 
-<button type="button" class="btn-pill btn-pill--sm btn-pill--primary" id="summaryBtn">
+<button type="button" class="btn-pill btn-pill--sm btn-pill--primary" id="printHistoryBtn">
   <i class="bx bx-calendar" aria-hidden="true"></i>
-  <span>Visit Summary</span>
+  <span>Print Visit Summary</span>
 </button>
 
+<button type="button" class="btn-pill btn-pill--sm btn-pill--info" id="editBtn">
+  <i class="bx bx-pencil" aria-hidden="true"></i>
+  <span>Edit Personal Information</span>
+</button>
+
+<button type="button" class="btn-pill btn-pill--sm btn-pill--success" id="addMedCertBtn">
+  <i class="bx bx-badge-check" aria-hidden="true"></i>
+  <span>Add Med Cert</span>
+</button>
+
+<button type="button" class="btn-pill btn-pill--sm btn-pill--danger" id="addITRBtn">
+  <i class="bx bx-plus" aria-hidden="true"></i>
+  <span>Add ITR</span>
+</button>
 
 
     </div>
@@ -241,11 +271,42 @@
 
 
 
+  // Build URLs with the patient_id
+  if (patientId) {
 
-        document.addEventListener("DOMContentLoaded", function() {
+    
+
+ 
+      document.getElementById('editBtn').onclick = () => {
+      window.location.href = `editPersonalInfo.html?patient_id=${patientId}`;
+    };
+    document.getElementById('addMedCertBtn').onclick = () => {
+     window.location.href = `addMedCert.html?patient_id=${patientId}`;
+    };
+      document.getElementById('addITRBtn').onclick = () => {
+      window.location.href = `ITRRecordedPatient.html?patient_id=${patientId}`;
+    };
+ 
+  } else {
+    // Optionally disable buttons if patient_id is not found
+   
+    document.getElementById('printHistoryBtn').disabled = true;
+     document.getElementById('editBtn').disabled = true;
+     document.getElementById('addMedCertBtn').disabled = true;
+    document.getElementById('addITRBtn').disabled = true;
+    console.warn('No patient_id in URL');
+  }
+
+
+document.addEventListener("DOMContentLoaded", function() {
             // Get patient_id from the URL
             const urlParams = new URLSearchParams(window.location.search);
             const patient_id = urlParams.get("patient_id");
+
+
+
+
+    
             function displayOrNA(value) {
                   return (value !== null && value !== undefined && value !== "") ? value : "N/A";
                 }
@@ -254,6 +315,64 @@
                 }
      
             if (patient_id) {
+
+                
+            
+// 🔹 Fetch data from PHP file
+fetch(`php/patient_summary.php?patient_id=${patient_id}`) 
+    .then(response => response.json())
+    .then(data => {
+        console.log("Patient summary data:", data); // Add this line
+        // Display patient info if needed
+     
+
+        const historyTableBody = document.querySelector("#history-table tbody");
+        historyTableBody.innerHTML = ""; // Clear existing rows
+
+        // 🔹 Loop through visit history
+        data.history.forEach(record => {
+            // Filter medicines linked to this consultation
+            const relatedMedicines = data.medicines.filter(
+                med => med.consultation_id === record.consultation_id
+            );
+
+            // Build medicines HTML block
+            const medsHtml = relatedMedicines.length > 0
+                ? relatedMedicines.map(med => 
+                    `Medicine: ${med.medicine_name} <br>
+                     Quantity: ${med.quantity_dispensed} <br>
+                     Instruction: ${med.instruction}<br><br>`
+                  ).join('')
+                : 'No medicines dispensed';
+
+            // Create table row
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td style="padding: 18px 10px;">${record.consultation_date}</td>
+                <td>${data.age}</td>
+                <td>
+                    Complaints: ${record.chief_complaints} <br>
+                    BP: ${record.blood_pressure} <br>
+                    Wt: ${record.weight} <br>
+                    Ht: ${record.height} <br>
+                    Temp: ${record.temperature} <br>
+                    CR: ${record.chest_rate} <br>
+                    RR: ${record.respiratory_rate} <br>
+                    BMI: ${record.bmi}
+                </td>
+                <td>${record.diagnosis} <br><br>${medsHtml}</td>
+                <td>
+                    Remarks: ${record.instruction_prescription || ''} <br><br>
+                    Physician: ${record.doctor_name || 'N/A'} <br>
+                    License No.: ${record.doctor_license_number || 'N/A'}
+                </td>
+            `;
+            historyTableBody.appendChild(row);
+        });
+    })
+    .catch(error => console.error('Error fetching data:', error));
+
+
                 fetch(`php/patient_details.php?patient_id=${patient_id}`)
                     .then(response => response.json())
                     .then(data => {
@@ -331,6 +450,135 @@ details[14].textContent = displayOrNA(data.patient.fourps_status);
                 })
                 .catch(error => console.error("Error fetching patient data:", error));
         }
+
+ // 🖨️ PRINT BUTTON FUNCTIONALITY
+const printBtn = document.getElementById("printHistoryBtn");
+
+if (printBtn) {
+  printBtn.addEventListener("click", function () {
+    const tableBodyHTML = document.querySelector("#history-table tbody").innerHTML;
+
+    // If no data yet, prevent empty print
+    if (!tableBodyHTML.trim()) {
+      alert("No visit history to print yet.");
+      return;
+    }
+
+    // 🧠 Get patient info from the current page
+    const patientInfo = {
+      lastName: document.getElementById("last_name")?.textContent || "",
+      firstName: document.getElementById("first_name")?.textContent || "",
+      middleName: document.getElementById("middle_name")?.textContent || "",
+      extension: document.getElementById("extension")?.textContent || "",
+      familyNo: document.getElementById("family_no")?.textContent || "",
+      address: document.getElementById("address")?.textContent || "",
+      age: document.getElementById("age")?.textContent || "",
+      gender: document.getElementById("gender")?.textContent || "",
+      dateOfBirth: document.getElementById("date_of_birth")?.textContent || "",
+      contact: document.getElementById("contact")?.textContent || "",
+      civilStatus: document.getElementById("civil_status")?.textContent || "",
+      birthPlace: document.getElementById("birth_place")?.textContent || "",
+      education: document.getElementById("education")?.textContent || "",
+      occupation: document.getElementById("occupation")?.textContent || "",
+      religion: document.getElementById("religion")?.textContent || "",
+      birthWeight: document.getElementById("birth_weight")?.textContent || "",
+      philhealthNo: document.getElementById("philhealth_no")?.textContent || "",
+      category: document.getElementById("category")?.textContent || "",
+      fourps: document.getElementById("fourps")?.textContent || ""
+    };
+
+    // 🪟 Create a new temporary print window
+    const printWindow = window.open('', '', 'width=900,height=700');
+    printWindow.document.write(`
+      <html>
+      <head>
+          
+        <title>Individual Treatment Record</title>
+        <style>
+          @page { size: A4; margin: 18mm 16mm; }
+          * { box-sizing: border-box; }
+          body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; line-height: 1.3; color: #000; }
+          .print-logo { width: 70px; height: 70px; object-fit: contain; display: block; margin: 0 auto 6px auto; }
+          .header { text-align: center; margin-bottom: 10px; }
+          .header strong { font-size: 12pt; display: block; margin-bottom: 4px; }
+          .header h2 { font-size: 14pt; margin: 2px 0; font-weight: 700; }
+          .header h3 { font-size: 12.5pt; margin: 4px 0 6px 0; font-weight: 700; letter-spacing: .3px; }
+          .info-table { width: 100%; border-collapse: collapse; margin-top: 6px; }
+          .info-table td { padding: 4px 6px; font-size: 10.5pt; vertical-align: top; }
+          .treatment-table { width: 100%; border-collapse: collapse; margin-top: 10px; table-layout: fixed; }
+          .treatment-table th, .treatment-table td {
+            border: 1px solid #000; padding: 6px; vertical-align: top; word-wrap: break-word; font-size: 10.5pt;
+          }
+          .treatment-table th { background: #f2f2f2; text-align: left; font-weight: 700; }
+        </style>
+      </head>
+      <body>
+  
+    <div class="header">
+          <img src="../img/RHUlogo.png" alt="RHU Logo" /> <br>
+          <strong>Republic of the Philippines<br>Daet, Camarines Norte</strong>
+          <h3>INDIVIDUAL TREATMENT RECORD</h3>
+        </div>
+        <h3>Patient Information</h3>
+        <table>
+          <tr><td><strong>Family No:</strong> ${patientInfo.familyNo}</td></tr>
+            <tr>
+            <td><strong>Last Name:</strong> ${patientInfo.lastName}</td>
+            <td><strong>First Name:</strong> ${patientInfo.firstName}</td>
+            <td><strong>Middle Name:</strong> ${patientInfo.middleName}</td>
+            <td><strong>Ext:</strong> ${patientInfo.ext}</td>
+          </tr>
+          <tr><td><strong>Address:</strong> ${patientInfo.address}</td></tr>
+          <tr>
+            <td><strong>Age:</strong> ${patientInfo.age}</td>
+            <td><strong>Gender:</strong> ${patientInfo.gender}</td>
+            <td><strong>Date of Birth:</strong> ${patientInfo.dateOfBirth}</td>
+          </tr>
+          <tr>
+            <td><strong>Contact:</strong> ${patientInfo.contact}</td>
+            <td><strong>Civil Status:</strong> ${patientInfo.civilStatus}</td>
+            <td><strong>Birthplace:</strong> ${patientInfo.birthPlace}</td>
+          </tr>
+          <tr>
+            <td><strong>Education:</strong> ${patientInfo.education}</td>
+            <td><strong>Occupation:</strong> ${patientInfo.occupation}</td>
+            <td><strong>Religion:</strong> ${patientInfo.religion}</td>
+          </tr>
+          <tr>
+            <td><strong>Birth Weight:</strong> ${patientInfo.birthWeight}</td>
+            <td><strong>PhilHealth No:</strong> ${patientInfo.philhealthNo}</td>
+            <td><strong>Category:</strong> ${patientInfo.category}</td>
+          </tr>
+          <tr><td><strong>4Ps:</strong> ${patientInfo.fourps}</td></tr>
+        </table>
+
+        <br><br>
+       
+        <table id="treatment-table" class="treatment-table">
+          <thead>
+            <tr>
+              <th>Date of Visit</th>
+              <th>Age</th>
+              <th>Chief Complaints & Vital Signs</th>
+              <th>Diagnosis/Treatment/Medication</th>
+              <th>Remarks Consulted/Referred</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${tableBodyHTML}
+          </tbody>
+        </table>
+      </body>
+      </html>
+    `);
+    printWindow.document.close();
+    printWindow.focus();
+    printWindow.print();
+    printWindow.close();
+  });
+}
+
+
     });
 
     function formatDate(dateString) {
@@ -385,12 +633,12 @@ details[14].textContent = displayOrNA(data.patient.fourps_status);
         if (data.full_name) {
             document.getElementById('userGreeting').textContent = `Hello, ${data.full_name}!`;
         } else {
-            document.getElementById('userGreeting').textContent = 'Hello, Physician!';
+            document.getElementById('userGreeting').textContent = 'Hello, BHW!';
         }
     })
     .catch(error => {
         console.error('Error fetching user name:', error);
-        document.getElementById('userGreeting').textContent = 'Hello, Physician!';
+        document.getElementById('userGreeting').textContent = 'Hello, BHW!';
     });
     function confirmLogout() {
             document.getElementById('logoutModal').style.display = 'block';
