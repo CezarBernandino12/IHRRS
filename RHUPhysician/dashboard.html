@@ -342,7 +342,7 @@ function renderReferrals(data) {
             <td>${referral.referral_id}</td>
             <td>${formatDate(referral.referral_date)}</td>
             <td>${referral.patient_name}</td>
-            <td>${referral.referral_from}</td>
+            <td>${referral.referred_by} <br> <span style="opacity: 0.6;">Nursing Attendant</span></td>
             <td class="${referral.referral_status.toLowerCase()}">${referral.referral_status}</td>
             <td>
                 <a href="UpdateVisitInfo.html?visit_id=${referral.visit_id}" class="view-icon">

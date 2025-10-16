@@ -30,24 +30,46 @@ try {
     }
 
     // Fetch visit history
-    $sql2 = "SELECT 
-                consultation_date AS date_of_visit, 
-                diagnosis, 
-                diagnosis_status,
-                visit_id 
-            FROM rhu_consultations 
-            WHERE patient_id = :patient_id 
-            ORDER BY consultation_date DESC";
+$sql2 = "SELECT 
+    rc.*, 
+    pa.*, 
+    u.full_name AS doctor_name, 
+    u.license_number AS doctor_license_number
+FROM rhu_consultations rc
+LEFT JOIN patient_assessment pa 
+    ON rc.visit_id = pa.visit_id
+LEFT JOIN users u 
+    ON rc.doctor_id = u.user_id
+WHERE rc.patient_id = :patient_id
+ORDER BY rc.consultation_date DESC";
+            
     $stmt2 = $pdo->prepare($sql2);
     $stmt2->bindParam(':patient_id', $patient_id, PDO::PARAM_INT);
     $stmt2->execute();
     $history = $stmt2->fetchAll(PDO::FETCH_ASSOC);
 
+    
+      // Fetch medicine dispensed
+$sql3 = "SELECT 
+    md.*,
+    md.consultation_id
+FROM rhu_medicine_dispensed md
+LEFT JOIN rhu_consultations rc 
+    ON md.consultation_id = rc.consultation_id
+WHERE rc.patient_id = :patient_id
+ORDER BY rc.consultation_id DESC";
+            
+    $stmt3 = $pdo->prepare($sql3);
+    $stmt3->bindParam(':patient_id', $patient_id, PDO::PARAM_INT);
+    $stmt3->execute();
+    $medicines = $stmt3->fetchAll(PDO::FETCH_ASSOC);
+
     echo json_encode([
         "full_name" => $patient['full_name'],
         "age" => $patient['age'],
         "sex" => $patient['sex'],
-        "history" => $history
+        "history" => $history,
+        "medicines" => $medicines
     ]);
 } catch (Exception $e) {
     http_response_code(500);

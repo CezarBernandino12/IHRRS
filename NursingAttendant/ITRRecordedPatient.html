@@ -348,7 +348,7 @@ document.addEventListener("click", function(event) {
                     </div>
 
                      <div class="form-group">
-                            <label for="rhu_remarks" class="required">Instructions/Remarks:</label>
+                            <label for="rhu_remarks" class="required">Remarks:</label>
                             <select id="rhu_remarks" name="rhu_remarks" class="select2">
                                 <option value="">Select</option>
                                 <option value="other">Other (Enter manually)</option>
@@ -356,10 +356,7 @@ document.addEventListener("click", function(event) {
                             </select>
                         </div>
 
-                    <div>
-                        <label for="followup">Schedule Follow-up Consultation:</label>
-                        <input type="date" id="followup" name="followup" class="tall-input" placeholder="Set follow-up consultation date" min="<?= date('Y-m-d'); ?>">
-                    </div>
+                   
                     
                       <input type="hidden" name="patient_id" id="patient_id">
                       <input type="hidden" name="user_id" id="user_id">

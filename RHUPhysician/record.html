@@ -27,7 +27,7 @@
 					<span class="text">Dashboard</span>
 				</a>
 			</li>
-           
+          
 			<li>
                 <a href="#" id="updateReferrals">
                     <i class="bx bxs-user"></i>
@@ -51,7 +51,7 @@
                 });
             });
             </script>
-            
+
             	<li>
 				<a href="followUpConsultations.html">
 					<i class="bx bxs-user"></i>
@@ -80,27 +80,26 @@
         </ul>
         <ul class="side-menu">
             <li>
-                <a href="#" class="logout" onclick="return confirmLogout()">
+               <a href="#" class="logout" onclick="return confirmLogout()">
                <i class="bx bxs-log-out-circle"></i>
                 <span class="text">Logout</span>
                 </a>
-
             </li>
         </ul>
     </section>
 
     <section id="content">
         <nav>
-            <form action="#">
-               
-            </form>
-            <div class="greeting">
-                <span id="userGreeting">Hello RHU Physician!</span>
+			<form action="#">
+				
+			</form>
+			<div class="greeting">
+                <span id="userGreeting">Hello Physician!</span>
             </div>
 			<a href="#" class="profile">
-				<img src="../img/doctor.png">
+				<img src="../img/nurse.png">
 			</a>
-        </nav>
+		</nav>
 
         <main>
             <div class="head-title">
@@ -114,8 +113,6 @@
                 </div>
             </div>
         </main>
-
-    
     </section>
 
     <div class="patient-header-container">
@@ -200,18 +197,17 @@
                 <div class="detail">
                     <strong>4Ps Status:</strong> <span class="underline">N/A</span>
                 </div>
-                
-            </section>     
-                     
+            </section>                 
     
             <section class="patient-records-section">
-                <h2 class="section-title">Treatment Records</h2>
-                
+                <h2 class="section-title">Individual Treatment Records</h2>
+            
+             
+                             
             </section>
-
-
-                                     
-          <div id="logoutModal" class="logout-modal">
+            
+            
+<div id="logoutModal" class="logout-modal">
     <div class="logout-modal-content">
         <div class="logout-modal-header">
             <h3>Confirm Logout</h3>
@@ -224,66 +220,25 @@
             <button onclick="proceedLogout()" class="logout-confirm-btn">Yes, Logout</button>
         </div>
     </div>
-</div>
-          
-            
-            
+</div>            
         </main>
 
-<button class="btn-pill btn-pill--sm btn-pill--primary" id="summaryBtn">
-  <i class="bx bx-notepad" aria-hidden="true"></i><span>Visit Summary</span>
+<button type="button" class="btn-pill btn-pill--sm btn-pill--primary" id="summaryBtn">
+  <i class="bx bx-calendar" aria-hidden="true"></i>
+  <span>Visit Summary</span>
 </button>
 
-<button class="btn-pill btn-pill--sm btn-pill--info" id="editBtn">
-  <i class="bx bx-pencil" aria-hidden="true"></i><span>Edit Personal Information</span>
-</button>
-
-<button class="btn-pill btn-pill--sm btn-pill--success" id="addMedCertBtn">
-  <i class="bx bx-badge-check" aria-hidden="true"></i><span>Add Med Cert</span>
-</button>
-
-<button class="btn-pill btn-pill--sm btn-pill--danger" id="addITRBtn">
-  <i class="bx bx-plus" aria-hidden="true"></i><span>Add ITR</span>
-</button>
 
 
     </div>
     
-    <script>
+    <script> 
 
-               // Get the patient_id from the URL
+        
+         // Get the patient_id from the URL
   const params = new URLSearchParams(window.location.search);
   const patientId = params.get('patient_id');
 
-  // Build URLs with the patient_id
-// Build URLs with the patient_id
-if (patientId) {
-
-  document.getElementById('summaryBtn').onclick = () => {
-    window.location.href = `patientSummary.html?patient_id=${patientId}`;
-  };
-  
-  document.getElementById('editBtn').onclick = () => {
-    window.location.href = `editPersonalInfo.html?patient_id=${patientId}`;
-  };
-  
-  // ADD THIS LINE - Med Cert Button Handler
-  document.getElementById('addMedCertBtn').onclick = () => {
-    window.location.href = `addMedCert.html?patient_id=${patientId}`;
-  };
-  
-  document.getElementById('addITRBtn').onclick = () => {
-    window.location.href = `ITRRecordedPatient.html?patient_id=${patientId}`;
-  };
-
-} else {
-  // Optionally disable buttons if patient_id is not found
-  document.getElementById('summaryBtn').disabled = true;
-  document.getElementById('editBtn').disabled = true;
-  document.getElementById('addMedCertBtn').disabled = true; // ADD THIS LINE
-  document.getElementById('addITRBtn').disabled = true;
-  console.warn('No patient_id in URL');
-}
 
 
 
@@ -297,7 +252,7 @@ if (patientId) {
                 function nothing(value) {
                   return (value !== null && value !== undefined && value !== "") ? value : "--";
                 }
-    
+     
             if (patient_id) {
                 fetch(`php/patient_details.php?patient_id=${patient_id}`)
                     .then(response => response.json())
@@ -334,19 +289,17 @@ details[14].textContent = displayOrNA(data.patient.fourps_status);
 
                         // Clear existing records before appending new ones
                         recordsContainer.innerHTML = `
-                            <h2 class="section-title">Individual Treatment Records</h2> <br>
-                             
+                            <h2 class="section-title">Consultations</h2>
                         `;
 
                         data.visit_history.forEach(visit => {
                             let recordDiv = document.createElement("div");
                             recordDiv.classList.add("record");
-
-                            recordDiv.innerHTML = `
+       recordDiv.innerHTML = `
                                 <div class="record-header">
                                     <div class="record-date">
                                         <i class='bx bx-calendar'></i>
-                                        <span>${formatDate(visit.visit_date)}</span>
+                                        <span>${formatDate(visit.consultation_date)}</span>
                                     </div>
                                    
                                     <div class="record-actions">
@@ -360,10 +313,13 @@ details[14].textContent = displayOrNA(data.patient.fourps_status);
                                 <div class="record-details">
                                     <p class="last-updated" style="background-color: transparent;">
                                         <i class='bx bx-user'></i>
-                                        Recorded by: <span>${visit.bhw_name || "Unknown"}</span>
+                                        Recorded by: <span>${visit.recorded_by_name || "Unknown"}</span>
                                     </p>
                                 </div>
                             `;
+
+
+
 
                             recordsContainer.appendChild(recordDiv);
                         });
@@ -392,7 +348,7 @@ details[14].textContent = displayOrNA(data.patient.fourps_status);
 
 
     
-function calculateAge(dob) {
+  function calculateAge(dob) {
     let birthDate = new Date(dob);
     let today = new Date();
 
@@ -423,59 +379,54 @@ function calculateAge(dob) {
 }
 
 
-     
-function confirmLogout() {
-    document.getElementById('logoutModal').style.display = 'block';
-    return false; // Prevent the default link behavior
-}
-
-function closeModal() {
-    document.getElementById('logoutModal').style.display = 'none';
-}
-
-function proceedLogout() {
-    window.location.href = '../role.html';
-}
-
-// Close modal when clicking outside 
-window.onclick = function(event) {
-    const modal = document.getElementById('logoutModal');
-    if (event.target == modal) {
-        closeModal();
-    }
-}
-fetch('php/getUserName.php')
+        fetch('php/getUserName.php')
     .then(response => response.json())
     .then(data => {
         if (data.full_name) {
             document.getElementById('userGreeting').textContent = `Hello, ${data.full_name}!`;
         } else {
-            document.getElementById('userGreeting').textContent = 'Hello, BHW!';
+            document.getElementById('userGreeting').textContent = 'Hello, Physician!';
         }
     })
     .catch(error => {
         console.error('Error fetching user name:', error);
-        document.getElementById('userGreeting').textContent = 'Hello, BHW!';
+        document.getElementById('userGreeting').textContent = 'Hello, Physician!';
     });
-
-    	// Check if user is logged in
-fetch('php/getUserId.php')
-    .then(response => response.json())
-    .then(data => {
-        if (data.error) {
-            // User is not logged in, redirect to role selection page
-            window.location.href = '../role.html';
+    function confirmLogout() {
+            document.getElementById('logoutModal').style.display = 'block';
+            return false; // Prevent the default link behavior
         }
-    })
-    .catch(error => {
-        console.error('Error checking session:', error);
-        window.location.href = '../role.html';
-    });
-
-
+        
+        function closeModal() {
+            document.getElementById('logoutModal').style.display = 'none';
+        }
+        
+        function proceedLogout() {
+           window.location.href = '../ADMIN/php/logout.php'; 
+        }
+        
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('logoutModal');
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+              // Check if user is logged in
+              fetch('php/getUserId.php')
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    // User is not logged in, redirect to role selection page
+                    window.location.href = '../role.html';
+                }
+            })
+            .catch(error => {
+                console.error('Error checking session:', error);
+                window.location.href = '../role.html';
+            });
     </script>
-    <script src="js/logout.js"></script>
-    <script>
+<script>
 document.addEventListener("DOMContentLoaded", () => {
   const sidebar = document.getElementById("sidebar");
 
@@ -493,5 +444,6 @@ document.addEventListener("DOMContentLoaded", () => {
   // keep the rest of your existing code (auth, stats, modals, etc.)
 });
 </script>
+    
 </body>
 </html>

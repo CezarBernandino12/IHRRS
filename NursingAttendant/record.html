@@ -297,7 +297,7 @@
                 function nothing(value) {
                   return (value !== null && value !== undefined && value !== "") ? value : "--";
                 }
-    
+     
             if (patient_id) {
                 fetch(`php/patient_details.php?patient_id=${patient_id}`)
                     .then(response => response.json())
@@ -344,7 +344,7 @@ details[14].textContent = displayOrNA(data.patient.fourps_status);
                                 <div class="record-header">
                                     <div class="record-date">
                                         <i class='bx bx-calendar'></i>
-                                        <span>${formatDate(visit.visit_date)}</span>
+                                        <span>${formatDate(visit.consultation_date)}</span>
                                     </div>
                                    
                                     <div class="record-actions">
@@ -358,7 +358,7 @@ details[14].textContent = displayOrNA(data.patient.fourps_status);
                                 <div class="record-details">
                                     <p class="last-updated" style="background-color: transparent;">
                                         <i class='bx bx-user'></i>
-                                        Recorded by: <span>${visit.bhw_name || "Unknown"}</span>
+                                        Recorded by: <span>${visit.recorded_by_name || "Unknown"}</span>
                                     </p>
                                 </div>
                             `;

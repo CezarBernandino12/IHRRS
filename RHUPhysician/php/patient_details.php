@@ -16,11 +16,11 @@ if (isset($_GET['patient_id'])) {
         echo json_encode(["error" => "Patient not found."]);
         exit;
     }
-    $sql2 = "SELECT bv.visit_id, bv.visit_date, bv.recorded_by, u.full_name AS bhw_name
-    FROM patient_assessment bv
-    LEFT JOIN users u ON bv.recorded_by = u.user_id
-    WHERE bv.patient_id = :patient_id 
-    ORDER BY bv.visit_date DESC";
+    $sql2 = "SELECT rc.consultation_id, rc.consultation_date, rc.recorded_by, rc.visit_id AS visit_id, u.full_name AS recorded_by_name
+    FROM rhu_consultations rc
+    LEFT JOIN users u ON rc.recorded_by = u.user_id
+    WHERE rc.patient_id = :patient_id 
+    ORDER BY rc.consultation_date DESC";
  
 
     $stmt2 = $pdo->prepare($sql2);
