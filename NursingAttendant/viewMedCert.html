@@ -160,10 +160,19 @@
             <p id="certificateText"></p>
         </div>
 
+          <div class="signature">
+            <div class="signature-title">Prepared by:</div> <br> <br>
+            <div class="signature-line"></div>
+            <div class="signature-name" id="attendantName"></div>
+            <div class="signature-title">Nursing Attendant</div>
+           
+        </div>
+
         <div class="signature">
+             <div class="signature-title">Issued by:</div> <br> <br>
             <div class="signature-line"></div>
             <div class="signature-name" id="doctorName"></div>
-            <div class="signature-title">Nurse Attendant</div>
+            <div class="signature-title">Physician</div>
             <div class="signature-license">
                 <span id="licenseInfo"></span>
             </div>
@@ -243,11 +252,12 @@
     document.getElementById('certificateText').textContent = text;
 
     // Display doctor/nurse information
-    document.getElementById('doctorName').textContent = cert.issued_by_name.toUpperCase();
+    document.getElementById('doctorName').textContent = cert.issued_by.toUpperCase();
+    document.getElementById('attendantName').textContent = cert.prepared_by.toUpperCase();
     
     let licenseInfo = '';
-    if (cert.license_no) {
-        licenseInfo += `Lic. No. ${cert.license_no}`;
+    if (cert.license_number) {
+        licenseInfo += `Lic. No. ${cert.license_number}`;
     }
     if (cert.ptr_no) {
         if (licenseInfo) licenseInfo += '\n';

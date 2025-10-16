@@ -38,10 +38,10 @@ try {
     $rest_period_days = $_POST['rest_period_days'] ?? null;
     $rest_from_date = $_POST['rest_from_date'] ?? null;
     $rest_to_date = $_POST['rest_to_date'] ?? null;
-    $issued_by_name = $_POST['issued_by_name'] ?? '';
-    $license_no = $_POST['license_no'] ?? '';
-    $ptr_no = $_POST['ptr_no'] ?? '';
-    $issued_by_user_id = $_SESSION['user_id'];
+    $prepared_by = $_POST['user_id'] ?? '';
+    $issued_by = $_POST['physician'] ?? '';
+ 
+
 
     // Validate required fields
     if (!$patient_id || !$visit_id || !$issuance_date || !$diagnosis) {
@@ -53,34 +53,31 @@ try {
     $rest_period_days = ($rest_period_days !== '' && $rest_period_days !== null) ? intval($rest_period_days) : null;
     $rest_from_date = ($rest_from_date !== '') ? $rest_from_date : null;
     $rest_to_date = ($rest_to_date !== '') ? $rest_to_date : null;
-    $license_no = ($license_no !== '') ? $license_no : null;
-    $ptr_no = ($ptr_no !== '') ? $ptr_no : null;
+    
 
     // Check if we're using PDO or mysqli
     if (isset($pdo)) {
         // PDO version
         $sql = "INSERT INTO medical_certificates (
             patient_id, visit_id, issuance_date, diagnosis, findings, purpose,
-            rest_period_days, rest_from_date, rest_to_date,
-            issued_by_user_id, issued_by_name, license_no, ptr_no
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            rest_period_days, rest_from_date, rest_to_date, issued_by, prepared_by
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         $stmt = $pdo->prepare($sql);
         $stmt->execute([
             $patient_id, $visit_id, $issuance_date, $diagnosis, $findings, $purpose,
             $rest_period_days, $rest_from_date, $rest_to_date,
-            $issued_by_user_id, $issued_by_name, $license_no, $ptr_no
+            $issued_by, $prepared_by
         ]);
 
         $medcert_id = $pdo->lastInsertId();
 
     } elseif (isset($conn)) {
         // MySQLi version
-        $sql = "INSERT INTO medical_certificates (
+         $sql = "INSERT INTO medical_certificates (
             patient_id, visit_id, issuance_date, diagnosis, findings, purpose,
-            rest_period_days, rest_from_date, rest_to_date,
-            issued_by_user_id, issued_by_name, license_no, ptr_no
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            rest_period_days, rest_from_date, rest_to_date, issued_by, prepared_by
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         $stmt = $conn->prepare($sql);
         
@@ -90,10 +87,10 @@ try {
         }
 
         $stmt->bind_param(
-            "iissssisssss",
+            "iissssissii",
             $patient_id, $visit_id, $issuance_date, $diagnosis, $findings, $purpose,
             $rest_period_days, $rest_from_date, $rest_to_date,
-            $issued_by_user_id, $issued_by_name, $license_no, $ptr_no
+            $issued_by, $prepared_by
         );
 
         if (!$stmt->execute()) {

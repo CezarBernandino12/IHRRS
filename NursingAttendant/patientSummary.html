@@ -137,8 +137,10 @@
                     <thead>
                         <tr>
                             <th>Date of Visit</th>
-                            <th>Diagnosis</th>
-                            <th>Status</th>
+                            <th>Age</th>
+                            <th>Chief Complaints & Vital Signs (BP, Wt, Ht, Temp, CR, RR, BMI)</th>
+                            <th>Diagnosis/Treatment/Medication/Instruction</th>
+                            <th>Remarks Consulted/Referred</th>
                           
                         </tr>
                     </thead>
@@ -185,26 +187,58 @@
 
             // If patient_id exists, fetch and display the patient's summary
          if (patientId) {
-    fetch(`php/patient_summary.php?patient_id=${patientId}`)
-        .then(response => response.json())
-        .then(data => {
-            document.getElementById("patientName").textContent = `Name: ${data.full_name}`;
-            document.getElementById("patientAge").textContent = `Age: ${data.age}`;
-            document.getElementById("patientGender").textContent = `Sex: ${data.sex}`;
+fetch(`php/patient_summary.php?patient_id=${patientId}`) 
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById("patientName").textContent = `Name: ${data.full_name}`;
+        document.getElementById("patientAge").textContent = `Age: ${data.age}`;
+        document.getElementById("patientGender").textContent = `Sex: ${data.sex}`;
 
-            const historyTableBody = document.querySelector("#history-table tbody");
-            historyTableBody.innerHTML = ""; // Clear existing rows
+        const historyTableBody = document.querySelector("#history-table tbody");
+        historyTableBody.innerHTML = ""; // Clear existing rows
 
-            data.history.forEach(record => {
-                const row = document.createElement("tr");
-                row.style.cursor = "pointer"; // make it clear it's clickable
+        data.history.forEach(record => {
+            // Filter all medicines linked to this consultation
+            const relatedMedicines = data.medicines.filter(
+                med => med.consultation_id === record.consultation_id
+            );
 
-                row.innerHTML = `
-                    <td style="padding: 18px 10px;">${record.date_of_visit}</td>
-                    <td>${record.diagnosis}</td>
-                    <td>${record.diagnosis_status}</td>
-                `;
+            // Build the medicines HTML block
+            const medsHtml = relatedMedicines.length > 0
+                ? relatedMedicines.map(med => 
+                    `Medicine: ${med.medicine_name} <br>
+                     Quantity: ${med.quantity_dispensed} <br>
+                     Instruction: ${med.instruction}<br><br>`
+                  ).join('')
+                : 'No medicines dispensed';
 
+            // Create the row
+            const row = document.createElement("tr");
+            row.style.cursor = "pointer";
+
+            row.innerHTML = `
+                <td style="padding: 18px 10px;">${record.consultation_date}</td>
+                <td>${data.age}</td>
+                <td>
+                    Complaints: ${record.chief_complaints} <br>
+                    BP: ${record.blood_pressure} <br>
+                    Wt: ${record.weight} <br>
+                    Ht: ${record.height} <br>
+                    Temp: ${record.temperature} <br>
+                    CR: ${record.chest_rate} <br>
+                    RR: ${record.respiratory_rate} <br>
+                    BMI: ${record.bmi}
+                </td>
+                <td>${record.diagnosis} <br> <br> ${medsHtml}</td>
+          
+                <td>
+                    Remarks: ${record.instruction_prescription || ''} <br> <br> <br>
+                    Physician: ${record.doctor_name || 'N/A'} <br>
+                    License No.: ${record.doctor_license_number || 'N/A'}
+                </td>
+            `;
+
+    
                 // Redirect on click
                 row.addEventListener("click", () => {
                     window.location.href = `visitInfo.html?visit_id=${record.visit_id}`;

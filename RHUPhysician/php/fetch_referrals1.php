@@ -6,6 +6,7 @@ try {
     SELECT r.referral_id, r.referral_date, r.visit_id,
            CONCAT(p.last_name, ', ', p.first_name, ' ', COALESCE(p.middle_name, '')) AS patient_name,
            u.barangay AS referral_from,
+           u.full_name AS referred_by,
            r.referral_status 
     FROM referrals r
     JOIN patients p ON r.patient_id = p.patient_id
