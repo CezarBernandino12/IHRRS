@@ -365,13 +365,18 @@ fetch('php/getUserId.php')
             </div> 
 
 
-<!-- PRINT TEMPLATE (replace the whole #printContent block with this) -->
+<!-- PRINT TEMPLATE -->
 <div id="printContent" style="display:none;">
-  <div class="header">
-    <img src="../img/RHUlogo.png" alt="RHU Logo" class="logo-print">
-    <strong>Republic of the Philippines<br>Daet, Camarines Norte</strong>
-    <h2><span id="printBarangay"></span></h2>
-    <h3>INDIVIDUAL TREATMENT RECORD</h3>
+  <div class="print-letterhead">
+    <img src="../img/logo.png" alt="Barangay Logo" class="print-logo">
+    <div class="print-heading">
+      <div class="ph-line-1">Republic of the Philippines</div>
+      <div class="ph-line-2">Daet, Camarines Norte</div>
+      <div class="ph-line-3" id="printBarangay"></div>
+      <hr class="print-rule">
+      <h2 class="print-title">VISIT INFORMATION</h2>
+    </div>
+    <img src="../img/RHUlogo.png" alt="RHU Logo" class="print-logo">
   </div>
 
   <p><strong>Family Serial No.:</strong> <span id="printFamilySerial"></span></p>
@@ -441,6 +446,7 @@ fetch('php/getUserId.php')
     </tbody>
   </table>
 </div>
+
 
             
             <div class="referral-form-footer">
@@ -543,39 +549,90 @@ fetch('php/getUserId.php')
   if (!w) return;
   w.opener = null;
   w.document.open();
-  w.document.write(`<!doctype html>
+w.document.write(`<!doctype html>
 <html>
 <head>
   <meta charset="utf-8">
   <title>Print Preview</title>
   <style>
-    /* === Standardized font & sizing === */
-    html, body { font-family: Arial, Helvetica, sans-serif; font-size: 12px; color: #000; }
-    .header { text-align: center; margin-bottom: 14px; }
-    .header strong { display: block; margin-top: 6px; }
-    .header h2 { margin: 4px 0 0; font-size: 18px; font-weight: 700; }
-    .header h3 { margin: 2px 0 0; font-size: 14px; font-weight: 700; letter-spacing: .5px; }
-    .logo-print { width: 64px; height: 64px; object-fit: contain; display: block; margin: 6px auto 2px; }
-
-    /* === Tables === */
-    table { width: 100%; border-collapse: collapse; page-break-inside: avoid; }
-    .info-table td { padding: 4px 6px; vertical-align: top; border: none; }
-    .treatment-table th, .treatment-table td {
-      border: 1px solid #000; padding: 6px; vertical-align: top;
+    /* === Page & typography === */
+    @page { size: A4; margin: 12mm; }
+    html, body {
+      background: #fff !important;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 11pt;
+      color: #000;
     }
-    .treatment-table th { background: #f2f2f2; font-weight: 700; text-align: left; }
-    /* Make the grid balanced on A4/Letter */
-    .treatment-table td { height: 120px; }
+    * { box-sizing: border-box; }
 
-    /* Spacing rules */
-    p { margin: 4px 0; }
-    @page { margin: 14mm; }
+    /* === Two-logo letterhead (centered) === */
+    .print-letterhead{
+      display: grid;
+      grid-template-columns: 64px auto 64px;
+      align-items: center;
+      justify-content: center;
+      column-gap: 35px;
+      width: fit-content;
+      margin: 0 auto 10mm;
+      text-align: center;
+    }
+    .print-logo{
+      width: 80px; height: 80px; object-fit: contain;
+    }
+    .print-heading{ line-height: 1.1; color: #0d2546; }
+    .ph-line-1{ font-size: 12pt; font-weight: 500; margin: 0; }
+    .ph-line-2{ font-size: 16pt; font-weight: 500; margin: 0; }
+    .ph-line-3{ font-size: 11pt; font-weight: 500; margin: 2px 0 0; }
+    .print-rule{ height: 1px; border: 0; background: #cfd8e3; margin: 6px 0 8px; }
+    .print-title{ font-size: 14pt; font-weight: 700; color: #000; margin: 0; }
+
+    /* === Info tables === */
+    table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+    .info-table td {
+      padding: 6px 8px;
+      vertical-align: top;
+      border: 1px solid #e3e8f4;
+      word-break: break-word;
+    }
+    /* remove any margin added directly on the title */
+    .referral-heading .title {
+    margin-bottom: 0 !important;
+    }
+
+    /* add spacing below the whole header block */
+    .referral-header {
+    margin-bottom: 40px; 
+    }
+
+    /* print version */
+    @media print {
+    .referral-header {
+        margin-bottom: 40pt !important;
+    }
+    }
+    /* === Treatment table === */
+    .treatment-table th, .treatment-table td {
+      border: 1px solid #000;
+      padding: 6px 8px;
+      vertical-align: top;
+      word-break: break-word;
+    }
+    .treatment-table th {
+      background: #f2f2f2;
+      font-weight: 700;
+      text-align: left;
+    }
+    .treatment-table td { min-height: 110px; }
+
+    /* === Spacing === */
+    p { margin: 6px 0; }
   </style>
 </head>
 <body>
   ${contentToPrint.outerHTML}
 </body>
 </html>`);
+
   w.document.close();
 
   // Hide the template back in the main page

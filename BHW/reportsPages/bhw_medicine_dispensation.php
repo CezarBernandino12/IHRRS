@@ -415,55 +415,62 @@ $bhws = $bhw_stmt->fetchAll();
 
 
 <div class="print-area">
-<div class="print-header" style="text-align: center;">
-<img src="../../img/RHUlogo.png" alt="RHU Logo" class="print-logo" style="height: 50px; width: auto;" />
-  <h3>Republic of the Philippines</h3>
-  <p>Province of Camarines Norte</p>
-  <h3>Municipality of Daet</h3>
-  <h2><?php echo htmlspecialchars($barangayName); ?></h2>
-  <br> 
-  <h2>MEDICINE DISPENSATION REPORT</h2>
-  (<?php
-$filters = [];
-if ($from_date) $filters[] = "From <strong>" . htmlspecialchars($from_date) . "</strong>";
-if ($to_date) $filters[] = "To <strong>" . htmlspecialchars($to_date) . "</strong>";
-if ($medicine) {
-    $medicine_list = is_array($medicine) ? $medicine : [$medicine];
-    $filters[] = "Medicine: <strong>" . implode(', ', array_map('htmlspecialchars', $medicine_list)) . "</strong>";
-    
-}
-if ($bhw_id) {
-    $bhw_name = '';
-    foreach ($bhws as $bhw) {
-        if ($bhw['user_id'] == $bhw_id) {
-            $bhw_name = $bhw['full_name'];
-            break;
-        }
-    }
-    $filters[] = "Given by: <strong>" . htmlspecialchars($bhw_name) . "</strong>";
-}
 
-if ($sex) $filters[] = "Sex: <strong>" . htmlspecialchars($sex) . "</strong>";
-if ($age_group) {
-    $age_labels = [
-        'child' => 'Child (0–12)',
-        'teen' => 'Teen (13–19)',
-        'adult' => 'Adult (20–59)',
-        'senior' => 'Senior (60+)'
-    ];
-    $filters[] = "Age Group: <strong>" . ($age_labels[$age_group] ?? htmlspecialchars($age_group)) . "</strong>";
-}
+  <!-- Unified two-logo letterhead -->
+  <div class="print-letterhead">
+    <img src="../../img/RHUlogo.png" alt="Left Logo"  class="print-logo">
+    <div class="print-heading">
+      <div class="ph-line-1">Republic of the Philippines</div>
+      <div class="ph-line-1">Province of Camarines Norte</div>
+      <div class="ph-line-2">Municipality of Daet</div>
+      <div class="ph-line-3"><?php echo htmlspecialchars($barangayName); ?></div>
+      <div class="ph-line-4">MEDICINE DISPENSATION REPORT</div>
+      <div class="print-sub">
+        (<?php
+          $filters = [];
+          if ($from_date) $filters[] = "From <strong>" . htmlspecialchars($from_date) . "</strong>";
+          if ($to_date)   $filters[] = "To <strong>" . htmlspecialchars($to_date) . "</strong>";
+          if ($medicine)  { $ml = is_array($medicine)?$medicine:[$medicine]; $filters[] = "Medicine: <strong>".implode(', ', array_map('htmlspecialchars',$ml))."</strong>"; }
+          if ($bhw_id)    { $bhw_name=''; foreach ($bhws as $bhw){ if ($bhw['user_id']==$bhw_id){ $bhw_name=$bhw['full_name']; break; } }
+                           $filters[] = "Given by: <strong>".htmlspecialchars($bhw_name)."</strong>"; }
+          if ($sex)       $filters[] = "Sex: <strong>".htmlspecialchars($sex)."</strong>";
+          if ($age_group) { $age_labels=['child'=>'Child (0–12)','teen'=>'Teen (13–19)','adult'=>'Adult (20–59)','senior'=>'Senior (60+)'];
+                            $filters[]="Age Group: <strong>".($age_labels[$age_group]??htmlspecialchars($age_group))."</strong>"; }
+          echo $filters ? implode("&nbsp; | &nbsp;", $filters) : "All Records";
+        ?>)
+      </div>
+    </div>
+    <img src="../../img/RHUlogo.png" alt="Right Logo" class="print-logo">
+  </div>
+  <hr class="print-rule">
 
 
-
-
-echo $filters ? implode("&nbsp; | &nbsp;", $filters) : "All Records";
-?>)</h3> <br><br><br>
-
-
-
-</div>
 <div class="report-content">
+<style>
+     .print-letterhead { display: none; }
+
+  @media print {
+    .print-letterhead { display: block; }
+  .print-letterhead{
+    display:grid;
+    grid-template-columns:64px auto 64px;
+    align-items:center;
+    justify-content:center;
+    column-gap:14px;
+    margin:0 auto 10px;
+    text-align:center;
+    width:fit-content;
+  }
+  .print-logo{ width:64px; height:64px; object-fit:contain; }
+  .print-heading{ line-height:1.1; color:#0d2546; }
+  .print-heading .ph-line-1{ font-size:12pt; font-weight:500; }
+  .print-heading .ph-line-2{ font-size:14pt; font-weight:500; }
+  .print-heading .ph-line-3{ font-size:11pt; font-weight:500; }
+  .print-heading .ph-line-4{ font-size:12pt; font-weight:600; margin-top:4px; letter-spacing:.3px; }
+  .print-sub{ font-size:10.5pt; margin-top:4px; }
+  .print-rule{ height:1px; border:0; background:#cfd8e3; margin:8px 0 12px; }
+}
+</style>
 
 <style>
     @media print {
@@ -685,7 +692,7 @@ function exportTableToExcel(tableID, filename = 'Medicine Utilization Report') {
         tempDiv.style.top = '-9999px';
         
         // Clone the print header
-        const printHeader = document.querySelector('.print-header');
+        const printHeader = document.querySelector('.print-letterhead, .print-header');
         if (printHeader) {
             const headerClone = printHeader.cloneNode(true);
             // Remove any scripts or interactive elements
@@ -789,56 +796,71 @@ async function exportTableToPDF() {
 
 //PRINT
 function printDiv() {
-    const divContents = document.querySelector(".print-area").innerHTML;
+  // 1) Grab header (new class first, fallback to old)
+  const headerEl = document.querySelector('.print-letterhead, .print-header');
+  const printHeader = headerEl ? headerEl.outerHTML : '';
 
-    // Convert Chart.js canvas to image and replace in print content
-    const chartCanvas = document.getElementById('dispensationChart');
-    let chartImgHTML = '';
-    if (chartCanvas) {
-        const chartImg = chartCanvas.toDataURL("image/png");
-        chartImgHTML = `<img id="printChartImg" src="${chartImg}" style="max-width:100%;height:auto;">`;
+  // 2) Clone the printable area
+  const area = document.querySelector(".print-area");
+  if (!area) return;
+  const clone = area.cloneNode(true);
+
+  // 3) Replace the chart canvas with an image inside the clone
+  const liveCanvas = document.getElementById('dispensationChart');
+  if (liveCanvas) {
+    const img = document.createElement('img');
+    img.src = liveCanvas.toDataURL("image/png");
+    img.style.maxWidth = "100%";
+    img.style.height = "auto";
+    const toReplace = clone.querySelector('#dispensationChart');
+    if (toReplace && toReplace.parentNode) {
+      toReplace.parentNode.replaceChild(img, toReplace);
     }
-    // Replace the canvas with the image in the print content
-    let printContent = divContents.replace(
-        /<canvas[^>]*id="dispensationChart"[^>]*>[\s\S]*?<\/canvas>/,
-        chartImgHTML
-    );
+  }
+  // Remove any other canvases in the clone
+  clone.querySelectorAll('canvas').forEach(c => c.remove());
 
-    const printWindow = window.open('', '', 'height=700,width=900');
-    printWindow.document.write('<html><head><title>Print Report</title>');
-    printWindow.document.write(`
+  // 4) Don’t duplicate header if it exists inside the clone
+  const headerInClone = clone.querySelector('.print-letterhead, .print-header');
+  if (headerInClone) headerInClone.remove();
+
+  // 5) Open print window
+  const w = window.open('', '', 'height=900,width=1100');
+  if (!w) { alert('Please allow pop-ups to print this report.'); return; }
+
+  w.document.write(`
+    <html>
+      <head>
+        <title>Print Report</title>
+        <meta charset="utf-8" />
         <style>
-            body { font-family: Arial, sans-serif; font-size: 16px; color: black; }
-            table { width: 100%; border-collapse: collapse; }
-            th, td { border: 1px solid #000; padding: 4px; text-align: left; }
-            thead { background-color: #f0f0f0; }
+          body { font-family: Arial, sans-serif; font-size: 16px; color: #000; }
+          table { width: 100%; border-collapse: collapse; }
+          th, td { border: 1px solid #000; padding: 4px; text-align: left; }
+          thead { background-color: #f0f0f0; }
+          /* letterhead styles in print window */
+          .print-letterhead{ display:grid; grid-template-columns:64px auto 64px; align-items:center; justify-content:center; column-gap:14px; margin:0 auto 10px; text-align:center; width:fit-content; }
+          .print-logo{ width:64px; height:64px; object-fit:contain; }
+          .print-heading{ line-height:1.1; color:#0d2546; }
+          .print-heading .ph-line-1{ font-size:12pt; font-weight:500; }
+          .print-heading .ph-line-2{ font-size:14pt; font-weight:800; }
+          .print-heading .ph-line-3{ font-size:11pt; font-weight:500; }
+          .print-heading .ph-line-4{ font-size:12pt; font-weight:800; margin-top:4px; letter-spacing:.3px; }
+          .print-sub{ font-size:10.5pt; margin-top:4px; }
+          .print-rule{ height:1px; border:0; background:#cfd8e3; margin:8px 0 12px; }
         </style>
-    `);
-    printWindow.document.write('</head><body>');
-    printWindow.document.write(printContent);
-    printWindow.document.write('</body></html>');
-    printWindow.document.close();
-
-    // Wait for the image to load before printing
-    printWindow.onload = function() {
-        const img = printWindow.document.getElementById('printChartImg');
-        if (img) {
-            img.onload = function() {
-                printWindow.focus();
-                printWindow.print();
-                printWindow.close();
-            };
-            // If image is cached and already loaded
-            if (img.complete) {
-                img.onload();
-            }
-        } else {
-            printWindow.focus();
-            printWindow.print();
-            printWindow.close();
-        }
-    };
+      </head>
+      <body>
+        ${printHeader}
+        ${clone.innerHTML}
+      </body>
+    </html>
+  `);
+  w.document.close();
+  w.focus();
+  setTimeout(() => { w.print(); w.close(); }, 300);
 }
+
 fetch('../php/getUserName.php')
     .then(response => response.json())
     .then(data => {

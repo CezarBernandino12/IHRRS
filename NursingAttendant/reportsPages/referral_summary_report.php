@@ -377,16 +377,33 @@ $total_pending = 0;
 
 
 <div class="print-area">
-<div class="print-header" style="text-align: center;">
-      <img src="../../img/RHUlogo.png" alt="RHU Logo" class="print-logo" style="height: 50px; width: auto;" />
-  <h3>Republic of the Philippines</h3>
-  <p>Province of Camarines Norte</p>
-  <h3>Municipality of Daet</h3>
-  <h2><?php echo htmlspecialchars($rhu); ?></h2>
-  <br> 
- <h2>REFERRAL INTAKE SUMMARY REPORT</h2>
-  <h3></h3>
+<!-- PRINT-ONLY LETTERHEAD (shows only when printing) -->
+<div class="print-only-letterhead">
+  <div class="print-letterhead">
+    <img src="../../img/RHUlogo.png" alt="Left Logo" class="print-logo">
+    <div class="print-heading">
+      <div class="ph-line-1">Republic of the Philippines</div>
+      <div class="ph-line-1">Province of Camarines Norte</div>
+      <div class="ph-line-2">Municipality of Daet</div>
+      <div class="ph-line-3"><?= htmlspecialchars($rhu) ?></div>
+      <div class="ph-line-4">REFERRAL INTAKE SUMMARY REPORT</div>
+      <div class="print-sub">
+        (<?php
+          $filters = [];
+          if (!empty($from_date)) echo "From <strong>" . htmlspecialchars($from_date) . "</strong>";
+          if (!empty($to_date))   echo ($from_date ? " &nbsp;|&nbsp; " : "") . "To <strong>" . htmlspecialchars($to_date) . "</strong>";
+          if (!empty($status))    echo " &nbsp;|&nbsp; Status: <strong>" . htmlspecialchars($status) . "</strong>";
+          if (!empty($barangay))  echo " &nbsp;|&nbsp; Barangay: <strong>" . htmlspecialchars($barangay) . "</strong>";
+          if (empty($from_date) && empty($to_date) && empty($status) && empty($barangay)) echo "All Records";
+        ?>)
+      </div>
+    </div>
+    <img src="../../img/RHUlogo.png" alt="Right Logo" class="print-logo">
+  </div>
+  <hr class="print-rule">
 </div>
+<!-- /PRINT-ONLY LETTERHEAD -->
+
 <div class="report-content">
 <!-- Summary Section -->
  <style>
@@ -401,6 +418,36 @@ $total_pending = 0;
             font-size: 12px;
         }
     }
+</style>
+<style>
+  /* Hide the print letterhead on screen */
+  .print-only-letterhead { display: none; }
+
+  @media print {
+    .print-only-letterhead { display: block; }
+
+    .print-letterhead{
+      display: grid;
+      grid-template-columns: 64px auto 64px;
+      align-items: center;
+      justify-content: center;
+      column-gap: 14px;
+      margin: 0 auto 10px;
+      text-align: center;
+      width: fit-content;
+    }
+    .print-logo{ width:64px; height:64px; object-fit:contain; }
+    .print-heading{ line-height:1.1; color:#0d2546; }
+    .print-heading .ph-line-1{ font-size:12pt; font-weight:500; }
+    .print-heading .ph-line-2{ font-size:14pt; font-weight:500; }
+    .print-heading .ph-line-3{ font-size:11pt; font-weight:500; }
+    .print-heading .ph-line-4{ font-size:12pt; font-weight:600; margin-top:4px; letter-spacing:.3px; }
+    .print-sub{ font-size:10.5pt; margin-top:4px; }
+    .print-rule{ height:1px; border:0; background:#cfd8e3; margin:8px 0 12px; }
+
+    /* keep your existing print hides working */
+    .chart-title, .form-submit { display: none !important; }
+  }
 </style>
 
 <!-- Chart Visibility Controls -->
@@ -763,50 +810,55 @@ async function exportTableToPDF() {
 
 //PRINT
 function printDiv() {
+  const originalArea = document.querySelector(".print-area");
+  if (!originalArea) {
+    alert("Error: Missing .print-area on page.");
+    return;
+  }
 
+  const clone = originalArea.cloneNode(true);
 
-    // Clone the print area (table and summary)
-    const originalArea = document.querySelector(".print-area").cloneNode(true);
+  // Remove all charts/controls in the clone
+  clone.querySelectorAll('canvas').forEach(c => c.remove());
+  clone.querySelectorAll('.chart-title').forEach(el => el.remove());
 
-    // Add 'Signature' column to header
-    const headerRow = originalArea.querySelector("thead tr");
-
-    // Get the print header HTML
-    const printHeader = document.querySelector('.print-header').outerHTML;
-
-    // Remove the header from the cloned area so it doesn't appear twice
-    const headerInClone = originalArea.querySelector('.print-header');
-    if (headerInClone) headerInClone.remove();
-
-    // Remove all canvases from the cloned area (since we replace them with images)
-    const canvases = originalArea.querySelectorAll('canvas');
-    canvases.forEach(c => c.parentNode.removeChild(c));
-
-    // Create print window and write content
-    const printWindow = window.open('', '', 'height=900,width=1100');
-    printWindow.document.write('<html><head><title>Print Report</title>');
-    printWindow.document.write(`
+  const w = window.open('', '', 'height=900,width=1100');
+  w.document.write(`
+    <html>
+      <head>
+        <title>Print Report</title>
+        <meta charset="utf-8" />
         <style>
-            body { font-family: Arial, sans-serif; font-size: 12px; color: black; }
-            table { width: 100%; border-collapse: collapse; }
-            th, td { border: 1px solid #000; padding: 4px; text-align: left; }
-            thead { background-color: #f0f0f0; }
-            img { display: block; margin: 0 auto; max-width: 100%; height: auto; }
-            h3 { margin: 10px 0 5px 0; }
+          body { font-family: Arial, sans-serif; font-size: 12px; color: black; }
+          table { width: 100%; border-collapse: collapse; }
+          th, td { border: 1px solid #000; padding: 4px; text-align: left; }
+          thead { background-color: #f0f0f0; }
+          img { display: block; margin: 0 auto; max-width: 100%; height: auto; }
+          h3 { margin: 10px 0 5px 0; }
+
+          /* same print-only rules inside the print window */
+          .print-only { display: block; }
+          .print-letterhead{
+            display:grid; grid-template-columns:64px auto 64px;
+            align-items:center; justify-content:center; column-gap:14px;
+            margin:0 auto 10px; text-align:center; width:fit-content;
+          }
+          .print-logo{ width:64px; height:64px; object-fit:contain; }
+          .print-heading{ line-height:1.1; color:#0d2546; }
+          .print-heading .ph-line-1{ font-size:12pt; font-weight:500; }
+          .print-heading .ph-line-2{ font-size:14pt; font-weight:800; }
+          .print-heading .ph-line-3{ font-size:11pt; font-weight:500; }
+          .print-heading .ph-line-4{ font-size:12pt; font-weight:800; margin-top:4px; letter-spacing:.3px; }
+          .print-sub{ font-size:10.5pt; margin-top:4px; }
+          .print-rule{ height:1px; border:0; background:#cfd8e3; margin:8px 0 12px; }
         </style>
-    `);
-    printWindow.document.write('</head><body>');
-    printWindow.document.write(printHeader);          // Print header first
-    printWindow.document.write(originalArea.innerHTML); // Then table and summary
-    printWindow.document.write('</body></html>');
-
-    printWindow.document.close();
-    printWindow.focus();
-
-    setTimeout(() => {
-        printWindow.print();
-        printWindow.close();
-    }, 500);
+      </head>
+      <body>${clone.innerHTML}</body>
+    </html>
+  `);
+  w.document.close();
+  w.focus();
+  setTimeout(() => { w.print(); w.close(); }, 500);
 }
 
 
