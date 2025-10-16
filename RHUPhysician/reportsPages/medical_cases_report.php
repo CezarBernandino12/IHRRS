@@ -1110,12 +1110,6 @@ function printDiv() {
 
   // Which charts to include
   let chartsHTML = '';
-  chartsHTML += chartBlock('casesLineChart', 'Medical Cases');
-  const sexToggle   = byId('toggleSexChart');
-  const ageToggle   = byId('toggleAgeGroupChart');
-  if (sexToggle && sexToggle.checked) chartsHTML += chartBlock('sexPieChart', 'Patients by Sex');
-  if (ageToggle && ageToggle.checked) chartsHTML += chartBlock('ageGroupBarChart', 'Age Group');
-
   // Clone the printable area
   const clone = area.cloneNode(true);
 

@@ -77,10 +77,9 @@ if (!empty($purok)) {
     $params['purok'] = '%' . $purok . '%';
 }
 
-
-if (!empty($barangayName) && $barangayName !== 'N/A') {
+if (!empty($barangay) && $barangay !== 'N/A') {
     $sql .= " AND p.address LIKE :barangay";
-    $params['barangay'] = '%' . $barangayName . '%';
+    $params['barangay'] = '%' . $barangay . '%';
 }
 
 $sql .= " ORDER BY r.consultation_date DESC";
@@ -449,7 +448,7 @@ $visits = $stmt->fetchAll();
 <div class="print-area">
 <!-- Two-logo letterhead -->
 <div class="print-letterhead">
-  <img src="../../img/RHUlogo.png" alt="Left Logo" class="print-logo">
+  <img src="../../img/Plogo.png" alt="Left Logo" class="print-logo">
   <div class="print-heading">
     <div class="ph-line-1">Republic of the Philippines</div>
     <div class="ph-line-1">Province of Camarines Norte</div>
@@ -1138,8 +1137,21 @@ function printDiv() {
   const headerInClone = clone.querySelector('.print-letterhead');
   if (headerInClone) headerInClone.remove();
 
-  // (keep your existing canvas/chart handling as-is; if you want, leave it unchanged)
-  // ...
+  // 4) *** REMOVE ALL CHARTS FROM THE CLONE ***
+  // hide the chart title block
+  clone.querySelectorAll('.chart-title').forEach(n => n.remove());
+  // whole “Patients by Sex” and “Age Groups” sections
+  clone.querySelectorAll('#sexChart, #ageGroupChart').forEach(n => n.remove());
+  // the line chart (canvas lives inside a wrapper div)
+  const lineCanvas = clone.querySelector('#casesLineChart');
+  if (lineCanvas) {
+    const wrapper = lineCanvas.closest('div');
+    if (wrapper) wrapper.remove(); else lineCanvas.remove();
+  }
+  // safety: remove any remaining canvases
+  clone.querySelectorAll('canvas').forEach(n => n.remove());
+
+  // 5) Print
   const w = window.open('', '', 'height=900,width=1100');
   if (!w) { alert('Please allow pop-ups to print this report.'); return; }
   w.document.write(`
@@ -1153,7 +1165,6 @@ function printDiv() {
           th, td { border:1px solid #000; padding:4px; text-align:left; }
           thead { background:#f0f0f0; }
 
-          /* header visuals (same as inline style above) */
           .print-letterhead{
             display:grid; grid-template-columns:64px auto 64px;
             align-items:center; justify-content:center; column-gap:14px;
@@ -1179,8 +1190,6 @@ function printDiv() {
   w.focus();
   setTimeout(() => { w.print(); w.close(); }, 300);
 }
-
-
 
 document.addEventListener('DOMContentLoaded', function() {
     // Add event listeners to all delete icons
