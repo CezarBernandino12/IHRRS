@@ -36,23 +36,37 @@ if (!$medcert_id) {
 
 try {
     // Get certificate with patient information
-    $sql = "SELECT 
-                mc.*,
-                p.first_name,
-                p.middle_name,
-                p.last_name,
-                p.date_of_birth,
-                p.age,
-                p.sex,
-                p.address,
-                p.civil_status,
-                p.birthplace,
-                pa.visit_date,
-                pa.chief_complaints
-            FROM medical_certificates mc
-            INNER JOIN patients p ON mc.patient_id = p.patient_id
-            LEFT JOIN patient_assessment pa ON mc.visit_id = pa.visit_id
-            WHERE mc.medcert_id = ?";
+    $sql = "SELECT  
+    mc.*,
+    p.first_name,
+    p.middle_name,
+    p.last_name,
+    p.date_of_birth,
+    p.age,
+    p.sex,
+    p.address,
+    p.civil_status,
+    p.birthplace,
+    pa.visit_date,
+    pa.chief_complaints,
+
+    -- Issuing physician details
+    issued_user.full_name AS issued_by,
+    issued_user.license_number AS license_number,
+
+    -- Preparer details
+    prepared_user.full_name AS prepared_by
+
+FROM medical_certificates mc
+INNER JOIN patients p 
+    ON mc.patient_id = p.patient_id
+LEFT JOIN patient_assessment pa 
+    ON mc.visit_id = pa.visit_id
+LEFT JOIN users AS issued_user 
+    ON mc.issued_by = issued_user.user_id
+LEFT JOIN users AS prepared_user 
+    ON mc.prepared_by = prepared_user.user_id
+WHERE mc.medcert_id = ?";
 
     if (isset($pdo)) {
         // PDO version
@@ -114,9 +128,9 @@ try {
             'rest_period_days' => $row['rest_period_days'],
             'rest_from_date' => $row['rest_from_date'],
             'rest_to_date' => $row['rest_to_date'],
-            'issued_by_name' => $row['issued_by_name'],
-            'license_no' => $row['license_no'],
-            'ptr_no' => $row['ptr_no'],
+            'issued_by' => $row['issued_by'],
+            'prepared_by' => $row['prepared_by'],
+            'license_number' => $row['license_number'],
             'visit_date' => $row['visit_date'] ?? '',
             'chief_complaints' => $row['chief_complaints'] ?? ''
         ];

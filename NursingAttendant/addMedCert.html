@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="css/logout.css">
     <!-- Flatpickr CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <title>Issue Medical Certificate</title>
 </head>
 <body>
@@ -137,11 +139,28 @@
                                 placeholder=""></textarea>
                         </div>
 
-                        <div class="form-group">
-                            <label for="purpose">Purpose</label>
-                            <input type="text" id="purpose" name="purpose" 
-                                placeholder="e.g., For work requirement">
-                        </div>
+                     <div class="form-group">
+  <label for="purpose">Purpose</label>
+  <select id="purpose" name="purpose" class="form-control" required>
+    <option value="" disabled selected hidden>Select purpose...</option>
+    <option value="For work requirement">For work requirement</option>
+    <option value="For travel requirement">For travel requirement</option>
+    <option value="For school requirement">For school requirement</option>
+    <option value="For insurance claim">For insurance claim</option>
+    <option value="For employment application">For employment application</option>
+    <option value="For medical leave">For medical leave</option>
+    <option value="For fitness to work">For fitness to work</option>
+    <option value="For sports participation">For sports participation</option>
+    <option value="For driver's license application">For driver's license application</option>
+    <option value="For police or court requirement">For police or court requirement</option>
+    <option value="For visa or immigration requirement">For visa or immigration requirement</option>
+    <option value="For hospitalization or confinement">For hospitalization or confinement</option>
+    <option value="For SSS or PhilHealth claim">For SSS or PhilHealth claim</option>
+    <option value="For barangay clearance requirement">For barangay clearance requirement</option>
+    <option value="For others">Others (specify)</option>
+  </select>
+</div>
+
                     </div>
 
                     <div class="form-section">
@@ -149,8 +168,47 @@
                         
                         <div class="form-group">
                             <label for="rest_period_days">Number of Days Rest</label>
-                            <input type="number" id="rest_period_days" name="rest_period_days" 
+                            <select type="number" id="rest_period_days" name="rest_period_days" 
                                 min="0" placeholder="">
+
+                                <option value="" disabled selected hidden>Select days...</option>
+                                <option value="1">1 day</option>
+                                <option value="2">2 days</option>
+                                <option value="3">3 days</option>
+                                <option value="4">4 days</option>
+                                <option value="5">5 days</option>
+                                <option value="6">6 days</option>
+                                <option value="7">7 days</option>
+                                <option value="8">8 days</option>
+                                <option value="9">9 days</option>
+                                <option value="10">10 days</option>
+                                 <option value="11">11 days</option>
+                                <option value="12">12 days</option>
+                                <option value="13">13 days</option>
+                                <option value="14">14 days</option>
+                                <option value="15">15 days</option>
+                                <option value="16">16 days</option>
+                                <option value="17">17 days</option>
+                                <option value="18">18 days</option>
+                                <option value="19">19 days</option>
+                                <option value="20">20 days</option>
+                                 <option value="21">21 day</option>
+                                <option value="22">22 days</option>
+                                <option value="23">23 days</option>
+                                <option value="24">24 days</option>
+                                <option value="25">25 days</option>
+                                <option value="26">26 days</option>
+                                <option value="27">27 days</option>
+                                <option value="28">28 days</option>
+                                <option value="29">29 days</option>
+                                <option value="30">30 days</option>
+
+                            </select>
+                                
+
+
+
+
                         </div>
 
                         <div class="form-row">
@@ -167,21 +225,19 @@
                     </div>
 
                     <div class="form-section">
-                        <h3>Issued By</h3>
+                        <h3>Physician</h3>
                         
-                        <div class="form-group">
-                            <label for="issued_by_name">Health Officer Name <span class="required">*</span></label>
-                            <input type="text" id="issued_by_name" name="issued_by_name" required readonly>
-                        </div>
+                          <div class="form-group">
+       
+        <select id="physician" name="physician" class="select2" required>
 
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="license_no">License No.</label>
-                                <input type="text" id="license_no" name="license_no" 
-                                    placeholder="">
-                            </div>
-                        </div>
+            
+        </select>
+          </div>
+
                     </div>
+
+                    <input type="hidden" id="user_id" name="user_id">
 
                     <div class="form-actions">
                         <button type="button" class="button button-secondary" onclick="goBack()">Cancel</button>
@@ -455,18 +511,9 @@
             }
         }
 
-        // Check if user is logged in
-        fetch('php/getUserId.php')
-            .then(response => response.json())
-            .then(data => {
-                if (data.error) {
-                    window.location.href = '../role.html';
-                }
-            })
-            .catch(error => {
-                console.error('Error checking session:', error);
-                window.location.href = '../role.html';
-            });
+    
+
+
 
         document.getElementById("updateReferrals").addEventListener("click", function (event) {
             event.preventDefault();
@@ -481,6 +528,58 @@
                 window.location.href = "pending.html";
             });
         });
+
+
+
+
+
+const physicianSelect = document.getElementById('physician');
+
+// Check if user is logged in
+fetch('php/getUserId.php')
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            // User is not logged in, redirect to role selection page
+            window.location.href = '../role.html';
+        } else {
+            document.getElementById('user_id').value = data.user_id;
+            // Now that we have a valid user_id, load physicians
+            loadPhysicians(physicianSelect, data.user_id);
+        }
+    })
+    .catch(error => {
+        console.error('Error checking session:', error);
+        window.location.href = '../role.html';
+    });
+
+// Function to load physician options
+function loadPhysicians(selectElement, userIdInput) {
+    fetch(`php/get_physicians.php?user_id=${encodeURIComponent(userIdInput)}`)
+        .then(response => response.json())
+        .then(physicians => {
+            console.log("Physicians returned:", physicians);
+
+            selectElement.innerHTML = '<option value="">Select Physician</option>';
+
+            physicians.forEach(physician => {
+                const option = new Option(physician.full_name, physician.id);
+                selectElement.appendChild(option);
+            });
+
+            // Refresh Select2 dropdown
+            $('#physician').trigger('change.select2');
+        })
+        .catch(error => console.error('Error fetching options:', error));
+}
+
+
+
+
+
+
+
+
     </script>
 
     <style>
