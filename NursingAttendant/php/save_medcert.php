@@ -22,6 +22,7 @@ if (!isset($_SESSION['user_id'])) {
 // Database connection
 try {
     require '../../php/db_connect.php';
+    require '../../ADMIN/php/log_functions.php';
 } catch (Exception $e) {
     echo json_encode(['success' => false, 'message' => 'Database connection failed']);
     exit;
@@ -39,7 +40,7 @@ try {
     $rest_from_date = $_POST['rest_from_date'] ?? null;
     $rest_to_date = $_POST['rest_to_date'] ?? null;
     $prepared_by = $_POST['user_id'] ?? '';
-    $issued_by = $_POST['physician'] ?? '';
+    $issued_by = $_SESSION['user_id'];
  
 
 
@@ -58,34 +59,24 @@ try {
     // Check if we're using PDO or mysqli
     if (isset($pdo)) {
         // PDO version
-        $sql = "INSERT INTO medical_certificates (
-            patient_id, visit_id, issuance_date, diagnosis, findings, purpose,
-            rest_period_days, rest_from_date, rest_to_date, issued_by, prepared_by
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+      $sql = "INSERT INTO medical_certificates (
+    patient_id, visit_id, issuance_date, diagnosis, findings, purpose,
+    rest_period_days, rest_from_date, rest_to_date, issued_by_user_id
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute([
-            $patient_id, $visit_id, $issuance_date, $diagnosis, $findings, $purpose,
-            $rest_period_days, $rest_from_date, $rest_to_date,
-            $issued_by, $prepared_by
-        ]);
+$stmt = $pdo->prepare($sql);
+$stmt->execute([
+    $patient_id, $visit_id, $issuance_date, $diagnosis, $findings, $purpose,
+    $rest_period_days, $rest_from_date, $rest_to_date,
+    $issued_by
+]);
 
         $medcert_id = $pdo->lastInsertId();
 
-        if ($medcert_id) {
-        //ADDED MEDICAL CERTIFICATE FOR ACTIVITY LOG
-        $stmt_log = $pdo->prepare("INSERT INTO logs (
-            user_id, action, performed_by, user_affected
-        ) VALUES (
-            :user_id, :action, :performed_by, :user_affected
-        )");
-        $stmt_log->execute([
-            ':user_id' => $_SESSION['user_id'],
-            ':action' => "Generated Medical Certificate",
-            ':performed_by' => $_SESSION['user_id'],
-            ':user_affected' => $patient_id
-        ]);
-        }
+      if ($medcert_id) {
+    // ✅ LOG ACTIVITY: Generated Medical Certificate
+    logActivity($pdo, $_SESSION['user_id'], "Generated Medical Certificate");
+}
 
     } elseif (isset($conn)) {
         // MySQLi version
@@ -105,7 +96,7 @@ try {
             "iissssissii",
             $patient_id, $visit_id, $issuance_date, $diagnosis, $findings, $purpose,
             $rest_period_days, $rest_from_date, $rest_to_date,
-            $issued_by, $prepared_by
+            $issued_by, $prepared_by 
         );
 
         if (!$stmt->execute()) {
@@ -116,21 +107,10 @@ try {
         $medcert_id = $conn->lastInsertId();
 
 
-           if ($medcert_id) {
-        //ADDED MEDICAL CERTIFICATE FOR ACTIVITY LOG
-        $stmt_log = $pdo->prepare("INSERT INTO logs (
-            user_id, action, performed_by, user_affected
-        ) VALUES (
-            :user_id, :action, :performed_by, :user_affected
-        )");
-        $stmt_log->execute([
-            ':user_id' => $_SESSION['user_id'],
-            ':action' => "Generated Medical Certificate",
-            ':performed_by' => $_SESSION['user_id'],
-            ':user_affected' => $patient_id
-        ]);
-        }
-
+if ($medcert_id) {
+    // ✅ LOG ACTIVITY: Generated Medical Certificate
+    logActivity($pdo, $_SESSION['user_id'], "Generated Medical Certificate");
+}
         $stmt->close();
         $conn->close();
 

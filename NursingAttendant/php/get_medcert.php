@@ -36,7 +36,7 @@ if (!$medcert_id) {
 
 try {
     // Get certificate with patient information
-    $sql = "SELECT  
+$sql = "SELECT  
     mc.*,
     p.first_name,
     p.middle_name,
@@ -49,23 +49,15 @@ try {
     p.birthplace,
     pa.visit_date,
     pa.chief_complaints,
-
-    -- Issuing physician details
-    issued_user.full_name AS issued_by,
-    issued_user.license_number AS license_number,
-
-    -- Preparer details
-    prepared_user.full_name AS prepared_by
-
+    u.full_name AS issued_by,
+    u.license_number AS license_number
 FROM medical_certificates mc
 INNER JOIN patients p 
     ON mc.patient_id = p.patient_id
 LEFT JOIN patient_assessment pa 
     ON mc.visit_id = pa.visit_id
-LEFT JOIN users AS issued_user 
-    ON mc.issued_by = issued_user.user_id
-LEFT JOIN users AS prepared_user 
-    ON mc.prepared_by = prepared_user.user_id
+LEFT JOIN users u
+    ON mc.issued_by_user_id = u.user_id
 WHERE mc.medcert_id = ?";
 
     if (isset($pdo)) {

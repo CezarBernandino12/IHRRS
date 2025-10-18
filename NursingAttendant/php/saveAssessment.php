@@ -1,5 +1,7 @@
 <?php
+session_start(); // Add this line
 require '../../php/db_connect.php';
+require '../../ADMIN/php/log_functions.php'; // Add this line
 
 header('Content-Type: application/json');
 error_reporting(E_ALL);
@@ -70,24 +72,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     
 
-            if ($new_visit_id) {
-
-    //ADDED PATIENT ASSESSMENT RECORD FOR ACTIVITY LOG
-    $stmt_log2 = $pdo->prepare("INSERT INTO logs (
-        user_id, action, performed_by, user_affected
-    ) VALUES (
-        :user_id, :action, :performed_by, :user_affected
-    )");
-
-    $stmt_log2->execute([
-        ':user_id' => $user_id,
-        ':action' => "Added Patient Assessment Record",
-        ':performed_by' => $user_id,
-        ':user_affected' => $patient_id
-    ]);
-    
-        }
-
+if ($new_visit_id) {
+    // ✅ LOG ACTIVITY: Added Patient Assessment Record
+    logActivity($pdo, $user_id, "Added Patient Assessment Record");
+}
 
 
 

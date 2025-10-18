@@ -1,5 +1,8 @@
+
 <?php 
+session_start(); // Add this line
 require '../../php/db_connect.php';
+require '../../ADMIN/php/log_functions.php'; // Add this line
 
 header('Content-Type: application/json');
 error_reporting(E_ALL);
@@ -42,20 +45,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
 
-        if ($referral_id) {
-        //ADDED REFERRAL FOR ACTIVITY LOG
-        $stmt_log = $pdo->prepare("INSERT INTO logs (
-            user_id, action, performed_by, user_affected
-        ) VALUES (
-            :user_id, :action, :performed_by, :user_affected
-        )");
-        $stmt_log->execute([
-            ':user_id' => $user_id,
-            ':action' => "Forwarded Referral to Physician",
-            ':performed_by' => $user_id,
-            ':user_affected' => $patient_id
-        ]);
-        }
+       if ($referral_id) {
+    // ✅ LOG ACTIVITY: Forwarded Referral to Physician
+    logActivity($pdo, $user_id, "Forwarded Referral to Physician");
+}
 
 
 
