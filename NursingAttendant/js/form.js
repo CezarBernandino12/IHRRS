@@ -53,7 +53,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     updateElement(".temperature", data.visit.temperature);
                     updateElement(".weight", data.visit.weight);
                     updateElement(".height", data.visit.height);
-                    updateElement(".pulse-rate", data.visit.pulse_rate);
+                    updateElement(".chest-rate", data.visit.chest_rate);
                     updateElement(".respiratory-rate", data.visit.respiratory_rate);
                     updateElement(".remarks", data.visit.remarks);
                 }

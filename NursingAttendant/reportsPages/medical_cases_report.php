@@ -89,6 +89,18 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $visits = $stmt->fetchAll();
 
+
+        //ADDED GENERATED REPORT FOR ACTIVITY LOG
+        $stmt_log = $pdo->prepare("INSERT INTO logs (
+            user_id, action, performed_by
+        ) VALUES (
+            :user_id, :action, :performed_by
+        )");
+        $stmt_log->execute([
+            ':user_id' => $_SESSION['user_id'],
+            ':action' => "Generated RHU Medical Cases Report",
+            ':performed_by' => $_SESSION['user_id']
+        ]);
 ?>
 
 <!DOCTYPE html>

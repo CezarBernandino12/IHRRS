@@ -104,6 +104,26 @@ try {
 
     $consultation_id = $pdo->lastInsertId();
 
+
+
+    if ($consultation_id) {
+
+        //ADDED CONSULTATION RECORD INFO FOR ACTIVITY LOG
+    $stmt_log = $pdo->prepare("INSERT INTO logs (
+        user_id, action, performed_by, user_affected
+    ) VALUES (
+        :user_id, :action, :performed_by, :user_affected
+    )");
+
+    $stmt_log->execute([
+        ':user_id' => $user_id,
+        ':action' => "Added Diagnosis/Consultation Record",
+        ':performed_by' => $user_id,
+        ':user_affected' => $patient_id
+    ]);
+    
+    }
+
     // --------------------------
     // Update related consultations if status not "Ongoing"
     // --------------------------
@@ -148,6 +168,25 @@ try {
                     ':dispensed_by' => $physician
                 ]);
             }
+        }
+
+        $dispensed_id = $pdo->lastInsertId();
+
+        if ($dispensed_id) {
+
+            //ADDED DISPENSED MEDICINE INFO FOR ACTIVITY LOG
+        $stmt_log3 = $pdo->prepare("INSERT INTO logs (
+            user_id, action, performed_by, user_affected
+        ) VALUES (
+            :user_id, :action, :performed_by, :user_affected
+        )");
+        $stmt_log3->execute([
+            ':user_id' => $user_id,
+            ':action' => "Dispensed Medicine to Patient (RHU)",
+            ':performed_by' => $user_id,
+            ':user_affected' => $patient_id
+        ]);
+        
         }
     }
 
@@ -217,6 +256,24 @@ try {
                 ]);
                 $prescriptionSaved = true;
             }
+        }
+
+        $prescription_id = $pdo->lastInsertId();
+        if ($prescription_id) {
+
+            //ADDED PRESCRIPTION INFO FOR ACTIVITY LOG  
+        $stmt_log4 = $pdo->prepare("INSERT INTO logs (
+            user_id, action, performed_by, user_affected
+        ) VALUES (
+            :user_id, :action, :performed_by, :user_affected
+        )");
+        $stmt_log4->execute([
+            ':user_id' => $user_id,
+            ':action' => "Generated Prescription",
+            ':performed_by' => $user_id,
+            ':user_affected' => $patient_id
+        ]);
+        
         }
     }
 

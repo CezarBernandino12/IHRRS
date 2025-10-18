@@ -84,6 +84,18 @@ $rows = $stmt->fetchAll();
 // Get list of BHWs for dropdown
 $bhw_stmt = $pdo->query("SELECT user_id, full_name FROM users WHERE role = 'BHW'");
 $bhws = $bhw_stmt->fetchAll();
+
+        //ADDED GENERATED REPORT FOR ACTIVITY LOG
+        $stmt_log = $pdo->prepare("INSERT INTO logs (
+            user_id, action, performed_by
+        ) VALUES (
+            :user_id, :action, :performed_by
+        )");
+        $stmt_log->execute([
+            ':user_id' => $_SESSION['user_id'],
+            ':action' => "Generated BHS Medicine Dispensation Report",
+            ':performed_by' => $_SESSION['user_id']
+        ]);
 ?>
 
 <!DOCTYPE html>

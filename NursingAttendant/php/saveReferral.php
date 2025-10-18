@@ -26,16 +26,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $user_id = clean_input($_POST['user_id']);
         
 
-        // 🔹 Get the latest visit_id for this patient
-        $stmt_visit = $pdo->prepare("SELECT visit_id FROM patient_assessment WHERE patient_id = :patient_id ORDER BY visit_id DESC LIMIT 1");
-        $stmt_visit->execute([':patient_id' => $patient_id]);
-        $visit = $stmt_visit->fetch(PDO::FETCH_ASSOC);
-
-        if (!$visit) {
-            throw new Exception("No visit found for this patient.");
-        }
-
-        $visit_id = $visit['visit_id'];
+       $visit_id = $_POST['visit_id'];
 
         // 🔹 Insert into referrals with visit_id
         $stmt_referral = $pdo->prepare("INSERT INTO referrals (patient_id, visit_id, referred_by, referral_status) 
@@ -48,6 +39,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         ]);
 
         $referral_id = $pdo->lastInsertId();
+
+
+
+        if ($referral_id) {
+        //ADDED REFERRAL FOR ACTIVITY LOG
+        $stmt_log = $pdo->prepare("INSERT INTO logs (
+            user_id, action, performed_by, user_affected
+        ) VALUES (
+            :user_id, :action, :performed_by, :user_affected
+        )");
+        $stmt_log->execute([
+            ':user_id' => $user_id,
+            ':action' => "Forwarded Referral to Physician",
+            ':performed_by' => $user_id,
+            ':user_affected' => $patient_id
+        ]);
+        }
+
+
+
+
         $pdo->commit();
 
         echo json_encode([

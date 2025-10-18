@@ -100,6 +100,22 @@ try {
         $consultationInfo[$key] = $value ?? "N/A";
     }
 
+
+    
+        //ADDED PHYSICIAN VIEWED FOR ACTIVITY LOG
+        $stmt_log = $pdo->prepare("INSERT INTO logs (
+            user_id, action, performed_by, user_affected
+        ) VALUES (
+            :user_id, :action, :performed_by, :user_affected
+        )");
+        $stmt_log->execute([
+            ':user_id' => $_SESSION['user_id'],
+            ':action' => "Viewed Patient Assessment Record",
+            ':performed_by' => $_SESSION['user_id'],
+            ':user_affected' => $patient_id
+        ]);
+        
+
     // Return JSON response
     echo json_encode([
         'visit' => $visitInfo,

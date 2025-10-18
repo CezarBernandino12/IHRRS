@@ -11,6 +11,22 @@ try {
 
         if ($stmt->execute()) {
             echo json_encode(["success" => true]);
+
+            
+            //ADDED CANCELLED REFERRAL FOR ACTIVITY LOG
+    $stmt_log = $pdo->prepare("INSERT INTO logs (
+        user_id, action, performed_by, user_affected
+    ) VALUES (
+        :user_id, :action, :performed_by, :user_affected
+    )");
+    $stmt_log->execute([
+        ':user_id' => $user_id,
+        ':action' => "Cancelled Referral",
+        ':performed_by' => $user_id,
+        ':user_affected' => $patient_id
+    ]);
+        
+
         } else {
             echo json_encode(["success" => false, "error" => "Failed to update referral status."]);
         }

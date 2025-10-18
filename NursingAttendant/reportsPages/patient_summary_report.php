@@ -92,7 +92,17 @@ $visits = $stmt->fetchAll();
 // Calculate summary data
 $total_patients = count(array_unique(array_column($visits, 'patient_id')));
 
-
+        //ADDED GENERATED REPORT FOR ACTIVITY LOG
+        $stmt_log = $pdo->prepare("INSERT INTO logs (
+            user_id, action, performed_by
+        ) VALUES (
+            :user_id, :action, :performed_by
+        )");
+        $stmt_log->execute([
+            ':user_id' => $_SESSION['user_id'],
+            ':action' => "Generated RHU Patient Visit Summary Report",
+            ':performed_by' => $_SESSION['user_id']
+        ]);
 
 ?>
 

@@ -118,6 +118,18 @@ foreach ($visits as $visit) {
 arsort($medicine_counts);
 $most_dispensed_medicine = key($medicine_counts);
 $most_dispensed_quantity = current($medicine_counts);
+
+        //ADDED GENERATED REPORT FOR ACTIVITY LOG
+        $stmt_log = $pdo->prepare("INSERT INTO logs (
+            user_id, action, performed_by
+        ) VALUES (
+            :user_id, :action, :performed_by
+        )");
+        $stmt_log->execute([
+            ':user_id' => $_SESSION['user_id'],
+            ':action' => "Generated BHS Patient Visit Summary Report",
+            ':performed_by' => $_SESSION['user_id']
+        ]);
 ?>
 
 <!DOCTYPE html>

@@ -72,6 +72,21 @@ try {
 
         $medcert_id = $pdo->lastInsertId();
 
+        if ($medcert_id) {
+        //ADDED MEDICAL CERTIFICATE FOR ACTIVITY LOG
+        $stmt_log = $pdo->prepare("INSERT INTO logs (
+            user_id, action, performed_by, user_affected
+        ) VALUES (
+            :user_id, :action, :performed_by, :user_affected
+        )");
+        $stmt_log->execute([
+            ':user_id' => $_SESSION['user_id'],
+            ':action' => "Generated Medical Certificate",
+            ':performed_by' => $_SESSION['user_id'],
+            ':user_affected' => $patient_id
+        ]);
+        }
+
     } elseif (isset($conn)) {
         // MySQLi version
          $sql = "INSERT INTO medical_certificates (
@@ -98,7 +113,24 @@ try {
             exit;
         }
 
-        $medcert_id = $conn->insert_id;
+        $medcert_id = $conn->lastInsertId();
+
+
+           if ($medcert_id) {
+        //ADDED MEDICAL CERTIFICATE FOR ACTIVITY LOG
+        $stmt_log = $pdo->prepare("INSERT INTO logs (
+            user_id, action, performed_by, user_affected
+        ) VALUES (
+            :user_id, :action, :performed_by, :user_affected
+        )");
+        $stmt_log->execute([
+            ':user_id' => $_SESSION['user_id'],
+            ':action' => "Generated Medical Certificate",
+            ':performed_by' => $_SESSION['user_id'],
+            ':user_affected' => $patient_id
+        ]);
+        }
+
         $stmt->close();
         $conn->close();
 

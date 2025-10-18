@@ -31,7 +31,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             echo json_encode(["status" => "error", "message" => "Submission unsuccessful."]);
             exit;
         }
-
+        $chief_complaints = clean_input($_POST['chief_complaints'] ?? '');
         $temperature = clean_input($_POST['temperature'] ?? '');
         $weight = clean_input($_POST['weight'] ?? '');
         $height = clean_input($_POST['height'] ?? '');
@@ -43,17 +43,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $patient_id = clean_input($_POST['patient_id']); // old ID (reference)
         $user_id = clean_input($_POST['user_id']);
         $instructions = clean_input($_POST['rhu_remarks'] ?? '');
-        $followup = clean_input($_POST['followup']);
+       
 
         // 🔹 Step 1: Always create a NEW visit record in patient_assessment
         $stmt_assessment = $pdo->prepare("
             INSERT INTO patient_assessment 
-            (patient_id, recorded_by, bmi, temperature, height, weight, blood_pressure, chest_rate, respiratory_rate, visit_date, remarks) 
-            VALUES (:patient_id, :user_id, :bmi, :temperature, :height, :weight, :blood_pressure, :pulse_rate, :respiratory_rate, NOW(), :remarks)
+            (patient_id, recorded_by, chief_complaints, bmi, temperature, height, weight, blood_pressure, chest_rate, respiratory_rate, visit_date, remarks) 
+            VALUES (:patient_id, :user_id, :chief_complaints, :bmi, :temperature, :height, :weight, :blood_pressure, :pulse_rate, :respiratory_rate, NOW(), :remarks)
         ");
         $stmt_assessment->execute([
             ':patient_id' => $patient_id,
             ':user_id' => $user_id,
+            ':chief_complaints' => $chief_complaints,
             ':bmi' => $bmi,
             ':temperature' => $temperature,
             ':height' => $height,
@@ -69,21 +70,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     
 
+            if ($new_visit_id) {
+
+    //ADDED PATIENT ASSESSMENT RECORD FOR ACTIVITY LOG
+    $stmt_log2 = $pdo->prepare("INSERT INTO logs (
+        user_id, action, performed_by, user_affected
+    ) VALUES (
+        :user_id, :action, :performed_by, :user_affected
+    )");
+
+    $stmt_log2->execute([
+        ':user_id' => $user_id,
+        ':action' => "Added Patient Assessment Record",
+        ':performed_by' => $user_id,
+        ':user_affected' => $patient_id
+    ]);
     
-        // 🔹 Insert follow-up
-        if (!empty($followup)) {
-            $stmt_followup = $pdo->prepare("
-                INSERT INTO follow_ups (visit_id, date, set_by, followup_status, patient_id) 
-                VALUES (:visit_id, :followup, :set_by, :status, :patient_id)
-            ");
-            $stmt_followup->execute([
-                ':visit_id' => $new_visit_id,
-                ':followup' => date("Y-m-d", strtotime($followup)),
-                ':set_by' => $user_id,
-                ':status' => 'Pending',
-                ':patient_id' => $patient_id
-            ]);
         }
+
 
 
 
@@ -92,7 +96,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         echo json_encode([
               "status" => "success",
              "message" => "Assessment saved successfully!",
-             "action" => "assessment"
+             "action" => "assessment",
+             'visit_id' => $new_visit_id
         ]);
     } catch (Exception $e) {
         $pdo->rollBack();
