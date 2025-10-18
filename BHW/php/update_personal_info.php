@@ -1,5 +1,7 @@
 <?php
+session_start(); // ✅ Must be at the very top
 require '../../php/db_connect.php';
+require '../../ADMIN/php/log_functions.php'; // ✅ Include logging functions
 
 ob_start();
 error_reporting(E_ALL);
@@ -36,6 +38,18 @@ if (!empty($missingFields)) {
     echo json_encode([
         'success' => false,
         'error' => 'Missing required fields: ' . implode(', ', $missingFields)
+    ]);
+    exit;
+}
+
+// Get user_id from session
+$user_id = $_SESSION['user_id'] ?? null;
+
+if (!$user_id) {
+    ob_clean();
+    echo json_encode([
+        'success' => false,
+        'error' => 'User not logged in'
     ]);
     exit;
 }
@@ -109,22 +123,8 @@ try {
 
     $stmt->execute($patientParams);
 
-
-
-//ADDED UPDATED PATIENT INFO FOR ACTIVITY LOG
-    $stmt_log2 = $pdo->prepare("INSERT INTO logs (
-        user_id, action, performed_by, user_affected
-    ) VALUES (
-        :user_id, :action, :performed_by, :user_affected
-    )");
-
-    $stmt_log2->execute([
-        ':user_id' => $user_id,
-        ':action' => "Updated Patient Information",
-        ':performed_by' => $user_id,
-        ':user_affected' => $patient_id
-    ]);
-    
+    // 🔹 LOG ACTIVITY: Updated Patient Information
+    logActivity($pdo, $user_id, "Updated Patient Information");
 
     $pdo->commit();
 

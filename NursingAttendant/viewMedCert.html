@@ -160,13 +160,7 @@
             <p id="certificateText"></p>
         </div>
 
-          <div class="signature">
-            <div class="signature-title">Prepared by:</div> <br> <br>
-            <div class="signature-line"></div>
-            <div class="signature-name" id="attendantName"></div>
-            <div class="signature-title">Nursing Attendant</div>
-           
-        </div>
+         
 
         <div class="signature">
              <div class="signature-title">Issued by:</div> <br> <br>
@@ -253,7 +247,6 @@
 
     // Display doctor/nurse information
     document.getElementById('doctorName').textContent = cert.issued_by.toUpperCase();
-    document.getElementById('attendantName').textContent = cert.prepared_by.toUpperCase();
     
     let licenseInfo = '';
     if (cert.license_number) {
