@@ -3,14 +3,15 @@ require_once 'config.php'; // Ensure you have the DB connection
 
 // Function to log activity
 function logActivity($pdo, $user_id, $action, $suspicious = 0) {
-    $ip_address = $_SERVER['REMOTE_ADDR']; // Get user's IP
-    $stmt = $pdo->prepare("SELECT role FROM users WHERE user_id = ?");
-    $stmt->execute([$user_id]);
-    $role = $stmt->fetchColumn();
+    $stmt = $pdo->prepare("INSERT INTO logs (performed_by, action, timestamp) 
+                           VALUES (?, ?, NOW())");
+    $stmt->execute([$user_id, $action]);
+}
 
-    $stmt = $pdo->prepare("INSERT INTO logs (performed_by, role, action, ip_address, suspicious_flag) 
-                           VALUES (?, ?, ?, ?, ?)");
-    $stmt->execute([$user_id, $role, $action, $ip_address, $suspicious]);
+// Track logins for "users currently online"
+function logUserLogin($pdo, $user_id) {
+    $stmt = $pdo->prepare("INSERT INTO user_logs (user_id, action, log_time) VALUES (:user_id, 'login', NOW())");
+    $stmt->execute(['user_id' => $user_id]);
 }
 
 // Function to check suspicious logins
@@ -35,7 +36,6 @@ function checkFailedLogins($pdo, $user_id) {
     }
 }
 
-
 function checkRapidActions($pdo, $user_id) {
     // Fetch actions in the last 10 seconds
     $stmt = $pdo->prepare("SELECT COUNT(*) FROM logs WHERE performed_by = ? AND timestamp >= NOW() - INTERVAL 10 SECOND");
@@ -47,5 +47,4 @@ function checkRapidActions($pdo, $user_id) {
         logActivity($pdo, $user_id, "Suspicious rapid actions detected", 1);
     }
 }
-
 ?>

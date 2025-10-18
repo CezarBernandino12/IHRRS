@@ -238,28 +238,36 @@
                 <div class="additional-options">
                     <div class="form-group">
 
-                      
+                          <div class="additonal-group">
+                        <label for="chief_complaints" class="required">Chief Complaints:</label>
+                        <textarea type="text" name="chief_complaints" id="chief_complaints" class="tall-input" placeholder="Enter complaints"></textarea>
+                    </div>
+
                      
                         <br>
 
                           <div class="form-row">
+                            
                         <label for="vitals"><b>Vital Signs:</b></label>
                         <div class="vitals-section">
-                              <div class="form-group" style="font-weight: bold; display: none;">
+                                  <div class="form-group" style="font-weight: bold; display: none;" id="bmiContainer" >
                                 <label for="bmi">BMI:</label>
                                  <input type="number" step="any" name="bmi" id="bmi" placeholder="BMI will appear here" readonly>
                             </div>
-                             <div class="additional-group" id="bmiSpace" hidden>
+                             <div class="form-group" id="bmiSpace" hidden>
                             <label for="space"></label>
+                            
                              </div>
+                            
+                          
                           
                             <div class="form-group" style="font-weight: bold;">
                                 <label>Weight (kg):</label>
-                                 <input type="number" step="any" name="weight" id="weight" placeholder="e.g., 55.5">
+                                 <input type="number" step="any" name="weight" id="weight" placeholder="e.g., 55.5" oninput="calculateBMI()">
                             </div>
                             <div class="form-group" style="font-weight: bold;">
                                 <label>Height (cm):</label>
-                                 <input type="number" step="any" name="height" id="height" placeholder="e.g., 155.5">
+                                 <input type="number" step="any" name="height" id="height" placeholder="e.g., 155.5" oninput="calculateBMI()">
                             </div>
                             
                             <div class="form-group" style="font-weight: bold;">
@@ -285,45 +293,34 @@
                     </div>
                
 <script>
+        function calculateBMI() {
+                const heightInput = document.getElementById('height').value;
+                const weightInput = document.getElementById('weight').value;
+                const bmiField = document.getElementById('bmi');
+
+                document.getElementById('bmiContainer').style.display = (heightInput && weightInput) ? 'block' : 'none';
+                document.getElementById('bmiSpace').style.display = (heightInput && weightInput) ? 'block' : 'none';
+            
+                const height = parseFloat(heightInput);
+                const weight = parseFloat(weightInput);
+            
+                if (height > 0 && weight > 0) {
+                    // Convert height from cm to meters
+                    const heightInMeters = height / 100;
+                    const bmi = weight / (heightInMeters * heightInMeters);
+                    bmiField.value = bmi.toFixed(2);
+                } else {
+                    bmiField.value = '';
+                }
+            }
+            
+
 document.addEventListener("DOMContentLoaded", function () {
      var today = new Date().toISOString().split('T')[0];
-    document.getElementById('folowup').setAttribute('min', today);
-
-  
 
 
 });
 
-  const weightInput = document.querySelector('#weight, input[name="weight"]');
-  const heightInput = document.querySelector('#height, input[name="height"]');
-  const bmiInput    = document.querySelector('#bmi, input[name="bmi"]');
-
-  function computeBMI() {
-    if (!bmiInput) return;
-    const w = parseFloat(weightInput?.value);
-    const hCm = parseFloat(heightInput?.value);
-
-     document.getElementById('bmiContainer').style.display = (heightInput && weightInput) ? 'block' : 'none';
-     document.getElementById('bmiSpace').style.display = (heightInput && weightInput) ? 'block' : 'none';
-
-    if (Number.isFinite(w) && Number.isFinite(hCm) && hCm > 0) {
-      const hM = hCm / 100;
-      const bmi = w / (hM * hM);
-      bmiInput.value = bmi.toFixed(2);
-    } else {
-      bmiInput.value = "";
-    }
-  }
-
-  // Auto-update when fields change (no inline attributes needed)
-  weightInput?.addEventListener("input", computeBMI);
-  heightInput?.addEventListener("input", computeBMI);
-
-  // Make it available to inline handlers like oninput="calculateBMI()"
-  window.calculateBMI = computeBMI;
-
-  // If values are prefilled, compute once on load
-  computeBMI();
                    
 // Add remove button handler
 document.addEventListener("click", function(event) {
@@ -646,8 +643,9 @@ $('#add-medicine').on('click', function () {
 
     
     // Add form submission handler
+// Add form submission handler
 $('#individualRecordForm').on('submit', function(e) {
-    e.preventDefault();
+   e.preventDefault();
 
     const formData = new FormData(this);
 
@@ -708,10 +706,9 @@ $('#yesButton2').on('click', function(e) {
     $('#myModal2').hide();
 
     // Gather form data
-    const formData = new FormData($('#individualRecordForm')[0]); // replace with your form ID
-    let patient_id = $('#patient_id').val(); 
-    let user_id = $('#user_id').val(); 
-  
+    const formData = new FormData($('#individualRecordForm')[0]);
+    const patient_id = $('#patient_id').val();
+    const user_id = $('#user_id').val();
 
     $.ajax({
         url: 'php/saveAssessment.php',
@@ -728,14 +725,18 @@ $('#yesButton2').on('click', function(e) {
                 $('#responseTitle').text('Success');
                 $('#responseMessage').text(response.message);
 
+                // ✅ Get the newly inserted visit_id from the response
+                const visit_id = response.visit_id;
+ 
                 // Save action for redirect later
                 $('#okButton').data('action', 'assessment');
 
-                // 🔹 After assessment is saved, also save referral
-                if (patient_id && user_id) {
+                // 🔹 After assessment is saved, also save referral with the same visit_id
+                if (patient_id && user_id && visit_id) {
                     let refData = new FormData();
                     refData.append("patient_id", patient_id);
                     refData.append("user_id", user_id);
+                    refData.append("visit_id", visit_id); // ✅ Use exact visit_id from assessment
 
                     fetch('php/saveReferral.php', {
                         method: 'POST',
@@ -744,9 +745,10 @@ $('#yesButton2').on('click', function(e) {
                     .then(res => res.json().catch(() => null))
                     .then(refResponse => {
                         if (refResponse && refResponse.status === "success") {
+                            // ✅ Update modal to show referral success
                             $('#responseTitle').text('Referral Saved');
                             $('#responseMessage').text(refResponse.message);
-                            $('#okButton').data('action', 'referral'); // ✅ redirect to pending.html
+                            $('#okButton').data('action', 'referral'); // redirect to pending.html
                         } else {
                             console.error("Referral error:", refResponse);
                         }

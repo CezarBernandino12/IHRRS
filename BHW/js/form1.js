@@ -239,8 +239,8 @@ noButton2.addEventListener('click', function () {
     modal4.style.display = 'block';
 });
 
-// Yes button in modal2: Confirm referral
-yesButton2.addEventListener('click', function () { 
+// Yes button in modal2: Confirm referral 
+yesButton2.addEventListener('click', function () {
     modal2.style.display = 'none';
 
     const urlParams = new URLSearchParams(window.location.search);
@@ -256,7 +256,6 @@ yesButton2.addEventListener('click', function () {
     document.getElementById("patient_id").value = patientId;
     document.getElementById("referral_needed").value = "yes";
 
-    // Correct selector: assuming it's an id
     const form = document.getElementById("individualRecordForm");
     const formData = new FormData(form);
 
@@ -264,6 +263,7 @@ yesButton2.addEventListener('click', function () {
     formData.append("patient_id", patientId);
     formData.append("referral_needed", "yes");
 
+    // Save initial assessment first
     fetch("php/saveInitialAssessment1.php", {
         method: "POST",
         body: formData
@@ -271,8 +271,25 @@ yesButton2.addEventListener('click', function () {
     .then(response => response.json())
     .then(data => {
         console.log("✅ Server response:", data);
+
         if (data.status === "success") {
             alert("✔ Visit summary saved successfully!");
+
+            // Now that we have the visit_id, call saveReferral()
+            let bhwId = document.getElementById('user_id')?.value;
+            let visitId = data.visit_id;
+
+            if (!visitId) {
+                console.error("❌ Missing visit_id in response.");
+                alert("Error: Missing visit ID from server.");
+                return;
+            }
+
+            console.log("📋 Passing to saveReferral:", { patientId, bhwId, visitId });
+            saveReferral(patientId, bhwId, visitId);
+
+            modal3.style.display = 'block';
+
         } else {
             alert("❌ Error saving visit: " + (data.message || "Unknown error."));
         }
@@ -281,18 +298,16 @@ yesButton2.addEventListener('click', function () {
         console.error("❌ Fetch error:", error);
         alert("❌ Network error. " + error.message);
     });
-    let bhwId = document.getElementById('user_id')?.value;
-    saveReferral(patientId, bhwId);
-    modal3.style.display = 'block';
 });
 
 
 
 // Function to save referral
-function saveReferral(patientId, bhwId) {
+function saveReferral(patientId, bhwId, visitId) {
     let formData = new FormData();
     formData.append("patient_id", patientId);
     formData.append("user_id", bhwId);
+    formData.append("visit_id", visitId); // ✅ include visit_id
 
     // Always include referral_date if available in the form
     let referralDateField = document.getElementById("referral_date");

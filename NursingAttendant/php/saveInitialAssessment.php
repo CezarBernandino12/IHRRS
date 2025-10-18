@@ -121,6 +121,28 @@ if (!empty($_POST['existing_patient_id'])) {
 
     $patient_id = $pdo->lastInsertId();  // ✅ Get the newly inserted patient ID
     error_log("🆕 New patient ID assigned: " . $patient_id);
+
+
+    if ($patient_id) {
+               
+
+    //ADDED NEW PATIENT RECORD FOR ACTIVITY LOG
+    $stmt_log2 = $pdo->prepare("INSERT INTO logs (
+        user_id, action, performed_by, user_affected
+    ) VALUES (
+        :user_id, :action, :performed_by, :user_affected
+    )");
+
+    $stmt_log2->execute([
+        ':user_id' => $user_id,
+        ':action' => "Added New Patient Record",
+        ':performed_by' => $user_id,
+        ':user_affected' => $patient_id
+    ]);
+    
+        
+
+    }
 }
 
 // Ensure patient_id is set
@@ -178,45 +200,28 @@ if (empty($patient_id)) {
 
         $visit_id = $pdo->lastInsertId();
         $user_id = filter_var($_POST['user_id'], FILTER_VALIDATE_INT) ?: 0;
-        $consent_given = clean_input($_POST['consent_given'] ?? '');
-        $consent_method = clean_input($_POST['consent_method'] ?? '');
+
+
+    if ($visit_id) {
+
+    //ADDED PATIENT ASSESSMENT RECORD FOR ACTIVITY LOG
+    $stmt_log2 = $pdo->prepare("INSERT INTO logs (
+        user_id, action, performed_by, user_affected
+    ) VALUES (
+        :user_id, :action, :performed_by, :user_affected
+    )");
+
+    $stmt_log2->execute([
+        ':user_id' => $user_id,
+        ':action' => "Added Patient Assessment Record",
+        ':performed_by' => $user_id,
+        ':user_affected' => $patient_id
+    ]);
     
-
-        $stmt_consent = $pdo->prepare("INSERT INTO patient_consents (patient_id, consent_given, consent_method, received_by_user_id, visit_id
-        ) VALUES (
-            :patient_id, :consent_given, :consent_method, :user_id, :visit_id
-        )");
-        
-        $stmt_consent->execute([
-            ':patient_id' => $patient_id,  
-            ':consent_given' => $consent_given,
-            ':consent_method' => $consent_method,
-            ':user_id' => $user_id, 
-           ':visit_id' => $visit_id,
-            
-        ]);
-
-        if (!empty($_POST['medicine_given']) && is_array($_POST['medicine_given'])) {
-            $stmt_medicine = $pdo->prepare("INSERT INTO bhs_medicine_dispensed (
-                visit_id, medicine_name, quantity_dispensed, dispensed_by, dispensed_date
-            ) VALUES (
-                :visit_id, :medicine_name, :quantity_dispensed, :dispensed_by, NOW()
-            )");
-
-            foreach ($_POST['medicine_given'] as $index => $medicine_name) {
-                $medicine_name = clean_input($medicine_name);
-                $quantity_dispensed = clean_input($_POST['quantity_given'][$index] ?? '0');
-
-                if ($medicine_name && $quantity_dispensed > 0) {
-                    $stmt_medicine->execute([
-                        ':visit_id' => $visit_id,
-                        ':medicine_name' => $medicine_name,
-                        ':quantity_dispensed' => $quantity_dispensed,
-                        ':dispensed_by' => $user_id
-                    ]);
-                }
-            }
         }
+
+
+  
 
         $referral_id = null;
         error_log("Referral Needed Value: " . $referralNeeded);

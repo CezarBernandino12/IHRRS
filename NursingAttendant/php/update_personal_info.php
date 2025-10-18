@@ -109,6 +109,24 @@ try {
 
     $stmt->execute($patientParams);
 
+
+
+    //ADDED UPDATED PATIENT INFO FOR ACTIVITY LOG
+    $stmt_log2 = $pdo->prepare("INSERT INTO logs (
+        user_id, action, performed_by, user_affected
+    ) VALUES (
+        :user_id, :action, :performed_by, :user_affected
+    )");
+
+    $stmt_log2->execute([
+        ':user_id' => $user_id,
+        ':action' => "Updated Patient Information",
+        ':performed_by' => $user_id,
+        ':user_affected' => $patient_id
+    ]);
+    
+    
+
     $pdo->commit();
 
     // Send success response

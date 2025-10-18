@@ -1,5 +1,5 @@
-
-    function calculateAge() {
+// ...existing code...
+function calculateAge() {
         const dobInput = document.getElementById("dob");
         const ageDisplay = document.getElementById("age-display");
         const ageInput = document.getElementById("age-input"); 
@@ -41,6 +41,7 @@
         ageDisplay.textContent = ageText;
     }
     
+// ...existing code...
 
 /// Declare global variable for saved patient ID
 let savedPatientId = null;
@@ -72,18 +73,30 @@ const viewDetailsButton = document.getElementById('viewDetailsButton');
 errorModal = document.getElementById('errorModal');
 const closeBtnError = document.getElementById('errorCloseBtn');
 
-
-
-
-
+// Helper: get BHW/user id — prefer element value, then localStorage, then URL param
+function getBhwId() {
+    const el = document.getElementById('user_id');
+    if (el) {
+        // element might be input or hidden field
+        if (typeof el.value !== 'undefined' && el.value !== '') return el.value;
+        if (typeof el.textContent !== 'undefined' && el.textContent.trim() !== '') return el.textContent.trim();
+    }
+    const fromStorage = localStorage.getItem('user_id');
+    if (fromStorage) return fromStorage;
+    const fromUrl = new URLSearchParams(window.location.search).get('user_id');
+    if (fromUrl) return fromUrl;
+    return null;
+}
 
 const checkToday = document.getElementById("setToday");
 const checkTomorrow = document.getElementById("setTomorrow");
 const referralDateInput = document.getElementById("referral_date");
 
 // Disable Yes button initially
-yesButton2.disabled = true;
-yesButton2.style.opacity = "0.5";
+if (yesButton2) {
+    yesButton2.disabled = true;
+    yesButton2.style.opacity = "0.5";
+}
 
 // Function to handle checkbox selection
 function handleCheckboxChange(selectedCheckbox) {
@@ -116,15 +129,10 @@ function handleCheckboxChange(selectedCheckbox) {
 }
 
 // Event listeners
-checkToday.addEventListener("change", () => handleCheckboxChange(checkToday));
-checkTomorrow.addEventListener("change", () => handleCheckboxChange(checkTomorrow));
+if (checkToday) checkToday.addEventListener("change", () => handleCheckboxChange(checkToday));
+if (checkTomorrow) checkTomorrow.addEventListener("change", () => handleCheckboxChange(checkTomorrow));
 
-
-
-
-
-
-
+// ...existing code...
 
 // Show first modal when submit button is clicked
 submitButton.addEventListener('click', function (event) {
@@ -171,9 +179,12 @@ function showPatientExistsModal(patientId) {
                     localStorage.setItem("patient_id", savedPatientId);
 
                     // If we came from referral modal, also save referral
-                    if (modal2.style.display === "block") {
-                        let bhwId = document.getElementById("user_id")?.value;
-                        if (bhwId) saveReferral(savedPatientId, bhwId);
+                    if (modal2 && modal2.style.display === "block") {
+                        let bhwId = getBhwId();
+                        if (bhwId) {
+                            const visitId = data.visit_id || null;
+                            saveReferral(savedPatientId, visitId, bhwId);
+                        }
                     }
 
                     modal.style.display = "none";
@@ -214,13 +225,14 @@ function showPatientExistsModal(patientId) {
                 let data = JSON.parse(text);
                 if (data.status === "success") {
                     savedPatientId = data.patient_id;
+                    const visitId = data.visit_id || null;
                     console.log("✅ New patient added with ID:", savedPatientId);
                     localStorage.setItem("patient_id", savedPatientId);
 
                     // If we came from referral modal, also save referral
-                    if (modal2.style.display === "block") {
-                        let bhwId = document.getElementById("user_id")?.value;
-                        if (bhwId) saveReferral(savedPatientId, bhwId);
+                    if (modal2 && modal2.style.display === "block") {
+                        let bhwId = getBhwId();
+                        if (bhwId) saveReferral(savedPatientId, visitId, bhwId);
                     }
 
                     modal.style.display = "none";
@@ -249,17 +261,13 @@ function showPatientExistsModal(patientId) {
 }
 
 // Function to save form data (Initial Assessment + Referral)
-/// Declare global variable for saved patient ID
-
-
-// Function to save form data (Initial Assessment + Referral)
+// ...existing code...
 function saveFormData(referralNeeded, callback) {
     let formData = new FormData(document.getElementById('individualRecordForm'));
     formData.append("referralNeeded", referralNeeded);
 
     if (referralNeeded === "yes") {  // Ensure referralNeeded is "yes" before checking bhw_id
-        let bhwElement = document.getElementById('user_id');
-        let bhwId = bhwElement ? bhwElement.value : "";  // Handle null case
+        const bhwId = getBhwId();
 
         if (!bhwId) {
             console.error("❌ Error: No BHW ID provided.");
@@ -286,19 +294,21 @@ function saveFormData(referralNeeded, callback) {
             savedPatientId = data.patient_id;  
             console.log("✅ Saved Patient ID:", savedPatientId);
             localStorage.setItem("patient_id", savedPatientId); // Store patient ID in localStorage
-            if (modal2.style.display === "block") modal2.style.display = "none";
+            if (modal2 && modal2.style.display === "block") modal2.style.display = "none";
             
             if (referralNeeded === "yes") {
-                modal2.style.display = 'block'; // Show confirmation modal for referral
+                if (modal2) modal2.style.display = 'block'; // Show confirmation modal for referral
             } else {
-                modal4.style.display = 'block'; // Show success modal for saving without referral
+                if (modal4) modal4.style.display = 'block'; // Show success modal for saving without referral
             }
 
-            if (typeof callback === "function") callback();
+            // ✅ FIXED: pass `data` to the callback so the next function gets visit_id and patient_id
+            if (typeof callback === "function") callback(data);
+
         } else {
             alert('❌ Error: ' + (data.message || "Unknown error."));
-            errorModal.style.display = 'block';
-            modal2.style.display = 'none';
+            if (errorModal) errorModal.style.display = 'block';
+            if (modal2) modal2.style.display = 'none';
         }
     })
     .catch(error => {
@@ -307,19 +317,15 @@ function saveFormData(referralNeeded, callback) {
     });
 }
 
-
-
-
-
+// ...existing code...
 
 // No button: Save Initial Assessment only
 function noButton1ClickHandler() {
     modal1.style.display = 'none';
-    let isNewPatient = document.getElementById("addNewBtn").clicked;  // Detect if "Add New" was clicked
-    let existingPatientId = savedPatientId || null;
 
-    saveFormData("no", isNewPatient, existingPatientId, function () {
-        modal4.style.display = 'block';
+    // Save without referral; callback shows success modal
+    saveFormData("no", function () {
+        if (modal4) modal4.style.display = 'block';
     });
 }
 
@@ -347,43 +353,60 @@ noButton2.addEventListener('click', function () {
     modal2.style.display = 'none';
 });
 
-// Yes button in modal2: Confirm referral
+// Yes button in modal2: Confirm referral 
 yesButton2.addEventListener('click', function () {
-    
 
     // Save the form FIRST, then continue in the callback
-    saveFormData("yes", function () {
+    saveFormData("yes", function (responseData) {
+        // ✅ Expecting { status: "success", patient_id: ..., visit_id: ... }
+        if (!responseData || responseData.status !== "success") {
+            console.error("❌ Error: Failed to save form or missing response data.");
+            alert("Error: Failed to save form or missing response data.");
+            return;
+        }
+
+        const savedPatientId = responseData.patient_id;
+        const visitId = responseData.visit_id;
+
         if (!savedPatientId) {
-            errorModal.style.display = 'block';
             console.error("❌ Error: No patient ID available for referral.");
             alert("Error: No patient ID available for referral.");
             return;
         }
 
-        let bhwId = document.getElementById('user_id')?.value;
+        if (!visitId) {
+            console.error("❌ Error: No visit ID available for referral.");
+            alert("Error: No visit ID available for referral.");
+            return;
+        }
+
+        const bhwId = getBhwId();
         if (!bhwId) {
-            errorModal.style.display = 'block';
             console.error("❌ Error: No BHW ID provided.");
             alert("Error: No BHW ID provided.");
             return;
         }
 
-        console.log("📤 Saving Referral for:", { savedPatientId, bhwId });
+        console.log("📤 Saving Referral for:", { savedPatientId, visitId, bhwId });
 
-        saveReferral(savedPatientId, bhwId);
-        modal2.style.display = 'none';
-        modal3.style.display = 'block'; // Show referral saved modal    
-        
+        saveReferral(savedPatientId, visitId, bhwId);
+        if (modal2) modal2.style.display = 'none';
+        if (modal3) modal3.style.display = 'block'; // Show referral saved modal    
     });
 });
-// Function to save referral
-function saveReferral(patientId, bhwId) {
-    let formData = new FormData();
+
+
+// ✅ Function to save referral
+function saveReferral(patientId, visitId, bhwId) {
+    const formData = new FormData();
     formData.append("patient_id", patientId);
+    // visitId may be null if not provided by server; still append if present
+    if (typeof visitId !== 'undefined' && visitId !== null) {
+        formData.append("visit_id", visitId); // ✅ Include visit ID
+    }
     formData.append("user_id", bhwId);
 
-    // Always include referral_date if available in the form
-    let referralDateField = document.getElementById("referral_date");
+    const referralDateField = document.getElementById("referral_date");
     if (referralDateField) {
         formData.append("referral_date", referralDateField.value);
     }
@@ -417,6 +440,7 @@ function saveReferral(patientId, bhwId) {
     });
 }
 
+// ...existing code...
 
 // Close modal3
 closeBtn3.addEventListener('click', function () {
@@ -480,4 +504,4 @@ window.addEventListener('click', function (event) {
         }
     });
 });
-
+// ...existing code...

@@ -73,6 +73,19 @@ $total_completed = 0;
 $total_uncompleted = 0;
 $total_pending = 0;
 
+
+
+        //ADDED GENERATED REPORT FOR ACTIVITY LOG
+        $stmt_log = $pdo->prepare("INSERT INTO logs (
+            user_id, action, performed_by
+        ) VALUES (
+            :user_id, :action, :performed_by
+        )");
+        $stmt_log->execute([
+            ':user_id' => $_SESSION['user_id'],
+            ':action' => "Generated RHU Referral Summary Report",
+            ':performed_by' => $_SESSION['user_id']
+        ]);
 ?>
 
 <!DOCTYPE html>
