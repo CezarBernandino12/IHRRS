@@ -648,6 +648,44 @@ if (count($patient_meds) > 0) {
 </style>
 
 <style>
+
+    /* Add breathing room above the summary */
+.summary-container {
+  margin-top: 32px;
+}
+
+/* Two-column summary table */
+.summary-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 16px;
+}
+
+.summary-table th,
+.summary-table td {
+  border: 1px solid #d5d7db;
+  padding: 8px 12px;
+  vertical-align: top;
+  text-align: left;
+  word-wrap: break-word;
+}
+
+.summary-table th {
+  background: #f2f4f7;
+  font-weight: 600;
+}
+
+/* Hide the “Summary” title on print only; keep spacing a bit larger */
+@media print {
+  .summary > h3 { 
+    display: none !important;
+  }
+  .summary-container { 
+    margin-top: 40px; 
+  }
+}
+
     @media print {
         .chart-title { 
            display: none;
@@ -954,81 +992,86 @@ usort($patient_meds, function($a, $b) {
 
 </table>
 <br> <br>
-
-
 </div> 
 
-
-<!-- Summary Section -->
 <div class="summary-container">
-    <div class="summary">
-        <h3><i class="bx bx-file"></i> Summary:</h3>
-        <ul class="summary-list">
-             <li>
-                <strong>Report Generated On:</strong> <?= date('Y-m-d H:i:s') ?>
-            </li>
-    <!--        <li><strong>Total Patients in Report:</strong> <?= count($rows) ?></li>
-            <li>
-                <strong>By Sex:</strong>
-                Male – <?= $sex_counts['Male'] ?? 0 ?>,
-                Female – <?= $sex_counts['Female'] ?? 0 ?>
-            </li>
-            <li>
-                <strong>By Age Group:</strong>
-                Children – <?= $age_group_counts['0–12'] ?? 0 ?>,
-                Teens – <?= $age_group_counts['13–19'] ?? 0 ?>,
-                Adults – <?= $age_group_counts['20–59'] ?? 0 ?>,
-                Seniors – <?= $age_group_counts['60+'] ?? 0 ?>
-            </li>
-            
-            <li>
-                <strong>Patients Given per Barangay:</strong>
-                <ul>
-                    <?php foreach ($barangay_counts as $barangay => $count): ?>
-                        <li>Barangay <?= htmlspecialchars($barangay) ?>: <?= $count ?></li>
-                    <?php endforeach; ?>
-                </ul>
-            </li> -->
-         <li>
-    <strong>Dispensed Medicines:</strong><br> <br> 
-    <?php if (!empty($medicine_list)): ?>
-        <ul>
-            <table border="1" cellpadding="4" cellspacing="0">
-                <thead>
-                    <tr>
-                        <th>Medicine</th>
-                        <th>Total Dispensed</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($medicine_list as $medicine): 
-                        $total_dispensed = 0;
-                        foreach ($patient_meds as $pm) {
-                            $total_dispensed += $pm['medicines'][$medicine] ?? 0;
-                        }
-                        if ($total_dispensed > 0): // Only show if quantity > 0
-                    ?>
-                        <tr>
-                            <td><?= htmlspecialchars($medicine) ?></td>
-                            <td><?= $total_dispensed ?></td>
-                        </tr>
-                    <?php endif; endforeach; ?>
-                </tbody>
-            </table>
-        </ul>
-    <?php else: ?>
+  <div class="summary">
+    <h3><i class="bx bx-file"></i> Summary</h3>
+
+    <table class="summary-table">
+      <colgroup>
+        <col style="width:30%">
+        <col style="width:70%">
+      </colgroup>
+      <tbody>
+        <tr>
+          <th>Report Generated On</th>
+          <td><?= date('F j, Y g:i:s A') ?></td>
+        </tr>
+        <tr>
+          <th>Total Patients in Report</th>
+          <td><?= count($rows) ?></td>
+        </tr>
+        <tr>
+          <th>By Sex</th>
+          <td>
+            Male — <?= $sex_counts['Male'] ?? 0 ?>,
+            Female — <?= $sex_counts['Female'] ?? 0 ?>
+          </td>
+        </tr>
+        <tr>
+          <th>By Age Group</th>
+          <td>
+            Children (0–12): <?= $age_group_counts['0–12'] ?? 0 ?>,
+            Teens (13–19): <?= $age_group_counts['13–19'] ?? 0 ?>,
+            Adults (20–59): <?= $age_group_counts['20–59'] ?? 0 ?>,
+            Seniors (60+): <?= $age_group_counts['60+'] ?? 0 ?>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Keep your “Dispensed Medicines” block just below if you want -->
+    <div style="margin-top:12px;">
+      <strong>Dispensed Medicines:</strong>
+      <?php if (!empty($medicine_list)): ?>
+        <table class="summary-table" style="margin-top:8px;">
+          <colgroup>
+            <col style="width:70%">
+            <col style="width:30%">
+          </colgroup>
+          <thead>
+            <tr>
+              <th>Medicine</th>
+              <th>Total Dispensed</th>
+            </tr>
+          </thead>
+          <tbody>
+            <?php foreach ($medicine_list as $medicine):
+              $total_dispensed = 0;
+              foreach ($patient_meds as $pm) {
+                $total_dispensed += $pm['medicines'][$medicine] ?? 0;
+              }
+              if ($total_dispensed > 0): ?>
+                <tr>
+                  <td><?= htmlspecialchars($medicine) ?></td>
+                  <td><?= $total_dispensed ?></td>
+                </tr>
+            <?php endif; endforeach; ?>
+          </tbody>
+        </table>
+      <?php else: ?>
         All Medicines
-    <?php endif; ?>
-</li>
-
-        </ul>
+      <?php endif; ?>
     </div>
-<br> <br>
-    <div class="generated-by">
-    <b>Report Generated By: </b><?php echo htmlspecialchars($username); ?> -  Nursing Attedant
+  </div>
+
+  <br><br>
+  <div class="generated-by">
+    <b>Report Generated By: </b><?= htmlspecialchars($username); ?> - Nursing Attedant
+  </div>
 </div>
 
-</div>
 
 <!-- Print Button at Bottom -->
    <div class="form-submit">

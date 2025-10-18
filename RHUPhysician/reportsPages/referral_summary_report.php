@@ -418,6 +418,11 @@ $total_pending = 0;
 <div class="report-content">
 <!-- Summary Section -->
  <style>
+@media print {
+  .summary > h3 { display: none !important; }
+  .summary-container { margin-top: 50px; }
+}
+
   .print-only-letterhead { display: none; }
   @media print {
     .print-only-letterhead { display: block; }
@@ -610,15 +615,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 </script>
 
-<div class="summary">
-    <h3>Summary:</h3>
-     
-    <p><strong>Report Generated On:</strong> <?= date('Y-m-d H:i:s') ?></p>
-	<p><strong>Total Referrals Received:</strong> <?= $total_received ?></p>
-	<p><strong>Completed Referrals:</strong> <?= $total_completed ?></p>
-	<p><strong>Uncompleted Referrals:</strong> <?= $total_uncompleted ?></p>
-	<p><strong>Pending Referrals:</strong> <?= $total_pending ?></p>
-</div> 
 
 
 <br>
@@ -657,9 +653,85 @@ document.addEventListener("DOMContentLoaded", () => {
 </table>
  </div>
 <br> <br>
+<div class="summary">
+  <h3>Summary:</h3>
+
+  <table class="summary-table" id="summaryTable">
+    <thead>
+      <tr>
+        <th>Metric</th>
+        <th>Value</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Report Generated On</td>
+        <td><?= date('F j, Y g:i:s A') ?></td>
+      </tr>
+      <tr>
+        <td>Total Referrals Received</td>
+        <td class="num"><?= (int)$total_received ?></td>
+      </tr>
+      <tr>
+        <td>Completed Referrals</td>
+        <td class="num"><?= (int)$total_completed ?></td>
+      </tr>
+      <tr>
+        <td>Uncompleted Referrals</td>
+        <td class="num"><?= (int)$total_uncompleted ?></td>
+      </tr>
+      <tr>
+        <td>Pending Referrals</td>
+        <td class="num"><?= (int)$total_pending ?></td>
+      </tr>
+      <?php if (isset($total_cancelled)) : ?>
+      <tr>
+        <td>Cancelled Referrals</td>
+        <td class="num"><?= (int)$total_cancelled ?></td>
+      </tr>
+      <?php endif; ?>
+    </tbody>
+  </table>
+</div>
 
 
 </div> </div>
+<style>
+.summary-table thead th:nth-child(2) {
+  text-align: left;
+}
+
+
+
+  .summary-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 8px;
+  }
+  .summary-table th, .summary-table td {
+    border: 1px solid #dfe3e8;
+    padding: 8px 10px;
+    font-size: 14px;
+  }
+  .summary-table thead th {
+    background: #f6f8fa;
+    text-align: left;
+    font-weight: 600;
+  }
+
+.summary-table td.num {
+  text-align: left;             
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";     
+  white-space: nowrap;           
+  padding-right: 10px;         
+}
+
+  @media print {
+    .summary-table th, .summary-table td { border-color: #000; }
+  }
+  
+</style>
 
 <div id="logoutModal" class="logout-modal">
     <div class="logout-modal-content">
@@ -815,27 +887,31 @@ function printDiv() {
   clone.querySelectorAll('canvas, .chart-title, #statusChart, #barangayBarChart, #statusPieChart, #noDataMessage, #noBarDataMessage')
        .forEach(el => el.remove());
 
-  // Add Signature column if missing
-  const headerRow = clone.querySelector("table thead tr");
-  if (headerRow) {
-    const lastTh = headerRow.querySelector("th:last-child");
-    if (!lastTh || !/Signature/i.test((lastTh.textContent||"").trim())) {
-      const th = document.createElement("th");
-      th.textContent = "Signature";
-      headerRow.appendChild(th);
-      clone.querySelectorAll("table tbody tr").forEach(tr => {
-        const td = document.createElement("td");
-        td.style.height = "30px";
-        tr.appendChild(td);
-      });
+  // ✅ Add Signature column ONLY to the main report table
+  const reportTable = clone.querySelector("#reportTable");
+  if (reportTable) {
+    const headerRow = reportTable.querySelector("thead tr");
+    if (headerRow) {
+      const lastTh = headerRow.lastElementChild;
+      const hasSignature = lastTh && /Signature/i.test((lastTh.textContent || '').trim());
+      if (!hasSignature) {
+        const th = document.createElement("th");
+        th.textContent = "Signature";
+        headerRow.appendChild(th);
+        reportTable.querySelectorAll("tbody tr").forEach(tr => {
+          const td = document.createElement("td");
+          td.style.height = "30px";
+          tr.appendChild(td);
+        });
+      }
     }
   }
 
-  // Prefer new letterhead (fallback to old .print-header if ever present)
+  // Prefer letterhead block
   const headerSource = document.querySelector(".print-only-letterhead") || document.querySelector(".print-header");
   const headerHTML = headerSource ? headerSource.outerHTML : "";
 
-  // Don't duplicate header in body
+  // Don’t duplicate header inside body content
   const headerInClone = clone.querySelector(".print-only-letterhead, .print-header");
   if (headerInClone) headerInClone.remove();
 
@@ -846,10 +922,15 @@ function printDiv() {
     <meta charset="utf-8">
     <style>
       body { font-family: Arial, sans-serif; font-size: 12px; color:#000; margin: 20px; }
-      table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-      th, td { border: 1px solid #000; padding: 4px; text-align: left; }
+      table { width: 100%; border-collapse: collapse; }
+      th, td { border: 1px solid #000; padding: 4px; text-align: left; vertical-align: middle; }
       thead { background:#f0f0f0; }
-      h3 { margin: 10px 0 6px; }
+
+      /* 🔒 Keep Summary table tidy and two-column */
+      .summary-table { table-layout: fixed; }
+      .summary-table th:first-child, .summary-table td:first-child { width: 65%; }
+      .summary-table th:nth-child(2), .summary-table td:nth-child(2) { width: 35%; }
+
       .print-only-letterhead { display:block; }
       .print-letterhead{
         display:grid; grid-template-columns:64px auto 64px; align-items:center; justify-content:center;
@@ -871,7 +952,6 @@ function printDiv() {
   w.document.close();
   w.onload = () => { try { w.focus(); w.print(); } finally { w.close(); } };
 }
-
     function confirmLogout() {
     document.getElementById('logoutModal').style.display = 'block';
     return false; // Prevent the default link behavior

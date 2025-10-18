@@ -26,6 +26,12 @@ $sex = $_GET['sex'] ?? '';
 $age_group = $_GET['age_group'] ?? '';
 $status = $_GET['status'] ?? '';
 
+// Pretty month names everywhere
+function prettyDate($dateStr, $withTime = false) {
+    $ts = strtotime($dateStr);
+    if (!$ts) return htmlspecialchars($dateStr);
+    return $withTime ? date('F d, Y H:i:s', $ts) : date('M d, Y', $ts);
+}
 
 // Fetch BHWs for dropdown
 $bhw_stmt = $pdo->query("SELECT user_id, full_name FROM users WHERE role = 'BHW'");
@@ -43,9 +49,9 @@ $params = [];
 $params['barangay'] = '%' . $barangayName . '%';
 
 if (!empty($from_date) && !empty($to_date)) {
-    $sql .= " AND DATE(r.referral_date) BETWEEN :from AND :to";
-    $params['from'] = $from_date;
-    $params['to'] = $to_date;
+    $sql .= " AND r.referral_date >= :from_dt AND r.referral_date < :to_dt_plus1";
+    $params['from_dt'] = $from_date . " 00:00:00";
+    $params['to_dt_plus1'] = date('Y-m-d', strtotime($to_date . ' +1 day')) . " 00:00:00";
 }
 
 if (!empty($referral_status)) {
@@ -191,7 +197,7 @@ $rows = $stmt->fetchAll();
 <div class="history-container">
 
 
-<form method="GET" class="filter-form">
+<form method="GET" class="filter-form" id="filterForm">
     <h2>Referral Report - BHS <?php echo htmlspecialchars($barangayName); ?></h2> <br>
 
    
@@ -220,11 +226,17 @@ $rows = $stmt->fetchAll();
             }
 
             // Render tags for each filter if set
-            if ($from_date) renderTag('From', 'from_date', $from_date);
-            if ($to_date) renderTag('To', 'to_date', $to_date);
+            if ($from_date) renderTag('From', 'from_date', prettyDate($from_date));
+            if ($to_date) renderTag('To', 'to_date', prettyDate($to_date));
             if ($sex) renderTag('Sex', 'sex', $sex);
             if ($status) renderTag('Status', 'status', $status);
-            if ($bhw_id) renderTag('Bhw', 'bhw', $bhw_id);
+            if ($bhw_id) {
+                $bhw_name = '';
+                foreach ($bhws as $bhw) {
+                    if ($bhw['user_id'] == $bhw_id) { $bhw_name = $bhw['full_name']; break; }
+                }
+                renderTag('BHW', 'bhw', $bhw_name ?: $bhw_id);
+            }
             if ($age_group) {
                 $age_labels = [
                     'child' => 'Child (0–12)', 'teen' => 'Teen (13–19)',
@@ -254,71 +266,65 @@ $rows = $stmt->fetchAll();
             <div class="modal-header">
                 <h3>Apply Filters</h3>
             </div>
-            <form method="GET" id="filterForm">
-                <div class="modal-body">
-                    <div class="form-row">
-                        <!-- From Date -->
-                        <div class="form-item">
-                            <label for="from_date">From:</label>
-                            <input type="date" name="from_date" id="from_date" class="form-control" value="<?= $from_date ? htmlspecialchars($from_date) : '' ?>" placeholder="Select date">
-                        </div>
-                        <!-- To Date -->
-                        <div class="form-item">
-                            <label for="to_date">To:</label>
-                            <input type="date" name="to_date" id="to_date" class="form-control" value="<?= $to_date ? htmlspecialchars($to_date) : '' ?>" placeholder="Select date">
-                        </div>
-                        <div class="form-item">
-                            <label for="sex">Sex:</label>
-                            <select name="sex" id="sex" class="form-control">
-                                <option value="" <?= $sex == '' ? 'selected' : '' ?>>All</option>
-                                <option value="Male" <?= $sex == 'Male' ? 'selected' : '' ?>>Male</option>
-                                <option value="Female" <?= $sex == 'Female' ? 'selected' : '' ?>>Female</option>
-                            </select>
-                        </div>
-                        <div class="form-item">
-                            <label for="age_group">Age Group:</label>
-                            <select name="age_group" id="age_group" class="form-control">
-                                <option value="">All</option> 
-                                <option value="child" <?= $age_group == 'child' ? 'selected' : '' ?>>Child (0–12)</option>
-                                <option value="teen" <?= $age_group == 'teen' ? 'selected' : '' ?>>Teen (13–19)</option>
-                                <option value="adult" <?= $age_group == 'adult' ? 'selected' : '' ?>>Adult (20–59)</option>
-                                <option value="senior" <?= $age_group == 'senior' ? 'selected' : '' ?>>Senior (60+)</option>
-                            </select> </div>
-                            
-        <div class="form-item">
-            <label for="status">Status:</label>
-            <select name="status" id="status">
-                <option value="">-- All --</option>
-                <option value="Pending" <?= $referral_status === 'Pending' ? 'selected' : '' ?>>Pending</option>
-                <option value="Completed" <?= $referral_status === 'Completed' ? 'selected' : '' ?>>Completed</option>
-                <option value="Uncompleted" <?= $referral_status === 'Uncompleted' ? 'selected' : '' ?>>Uncompleted</option>
-                <option value="Canceled" <?= $referral_status === 'Canceled' ? 'selected' : '' ?>>Canceled</option>
-            </select>
-        </div>
-
-        <div class="form-item">
-            <label for="bhw">Referred by:</label>
-            <select name="bhw" id="bhw">
-                <option value="">-- All --</option>
-                <?php foreach ($bhws as $bhw): ?>
-                    <option value="<?= $bhw['user_id'] ?>" <?= $bhw['user_id'] == $bhw_id ? 'selected' : '' ?>>
-                        <?= htmlspecialchars($bhw['full_name']) ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
-        </div>       
-                            
-                        </div>
+            <div class="modal-body">
+                <div class="form-row">
+                    <!-- From Date -->
+                    <div class="form-item">
+                        <label for="from_date">From:</label>
+                        <input type="date" name="from_date" id="from_date" class="form-control" value="<?= $from_date ? htmlspecialchars($from_date) : '' ?>" placeholder="Select date">
                     </div>
-                     <div class="modal-footer" style="text-align:right;">
-                    <button type="button" class="btn" id="closeFilterModal">Cancel</button>
-                    <button type="submit" class="btn-submit">Apply Filter</button>
+                    <!-- To Date -->
+                    <div class="form-item">
+                        <label for="to_date">To:</label>
+                        <input type="date" name="to_date" id="to_date" class="form-control" value="<?= $to_date ? htmlspecialchars($to_date) : '' ?>" placeholder="Select date">
+                    </div>
+                    <div class="form-item">
+                        <label for="sex">Sex:</label>
+                        <select name="sex" id="sex" class="form-control">
+                            <option value="" <?= $sex == '' ? 'selected' : '' ?>>All</option>
+                            <option value="Male" <?= $sex == 'Male' ? 'selected' : '' ?>>Male</option>
+                            <option value="Female" <?= $sex == 'Female' ? 'selected' : '' ?>>Female</option>
+                        </select>
+                    </div>
+                    <div class="form-item">
+                        <label for="age_group">Age Group:</label>
+                        <select name="age_group" id="age_group" class="form-control">
+                            <option value="">All</option> 
+                            <option value="child" <?= $age_group == 'child' ? 'selected' : '' ?>>Child (0–12)</option>
+                            <option value="teen" <?= $age_group == 'teen' ? 'selected' : '' ?>>Teen (13–19)</option>
+                            <option value="adult" <?= $age_group == 'adult' ? 'selected' : '' ?>>Adult (20–59)</option>
+                            <option value="senior" <?= $age_group == 'senior' ? 'selected' : '' ?>>Senior (60+)</option>
+                        </select> 
+                    </div>
+                    <div class="form-item">
+                        <label for="status">Status:</label>
+                        <select name="status" id="status">
+                            <option value="">-- All --</option>
+                            <option value="Pending" <?= $referral_status === 'Pending' ? 'selected' : '' ?>>Pending</option>
+                            <option value="Completed" <?= $referral_status === 'Completed' ? 'selected' : '' ?>>Completed</option>
+                            <option value="Uncompleted" <?= $referral_status === 'Uncompleted' ? 'selected' : '' ?>>Uncompleted</option>
+                            <option value="Canceled" <?= $referral_status === 'Canceled' ? 'selected' : '' ?>>Canceled</option>
+                        </select>
+                    </div>
+                    <div class="form-item">
+                        <label for="bhw">Referred by:</label>
+                        <select name="bhw" id="bhw">
+                            <option value="">-- All --</option>
+                            <?php foreach ($bhws as $bhw): ?>
+                                <option value="<?= $bhw['user_id'] ?>" <?= $bhw['user_id'] == $bhw_id ? 'selected' : '' ?>>
+                                    <?= htmlspecialchars($bhw['full_name']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>  
                 </div>
-              
-               
-            </form>
-              </div>
+            </div>
+            <div class="modal-footer" style="text-align:right;">
+                <button type="button" class="btn" id="closeFilterModal">Cancel</button>
+                <button type="submit" class="btn-submit">Apply Filter</button>
+            </div>
         </div>
+    </div>
 
 
 
@@ -328,33 +334,17 @@ $rows = $stmt->fetchAll();
         document.getElementById('filterModal').style.display = 'block';
     };
 
-          // Initialize Flatpickr AFTER the modal is visible
+    // Initialize Flatpickr AFTER the modal is visible
     setTimeout(() => {
-        // Check if Flatpickr instances already exist, destroy them first
         const fromDateInput = document.getElementById('from_date');
         const toDateInput = document.getElementById('to_date');
         
-        if (fromDateInput._flatpickr) {
-            fromDateInput._flatpickr.destroy();
-        }
-        if (toDateInput._flatpickr) {
-            toDateInput._flatpickr.destroy();
-        }
+        if (fromDateInput._flatpickr) fromDateInput._flatpickr.destroy();
+        if (toDateInput._flatpickr) toDateInput._flatpickr.destroy();
         
-        // Initialize Flatpickr on visible elements
-        flatpickr("#from_date", {
-            dateFormat: "Y-m-d",
-            allowInput: true,
-            disableMobile: true
-        });
-        
-        flatpickr("#to_date", {
-            dateFormat: "Y-m-d",
-            allowInput: true,
-            disableMobile: true
-        });
-    }, 100); // Small delay to ensure modal is fully visible
-
+        flatpickr("#from_date", { dateFormat: "Y-m-d", allowInput: true, disableMobile: true });
+        flatpickr("#to_date",   { dateFormat: "Y-m-d", allowInput: true, disableMobile: true });
+    }, 100);
 
     document.getElementById('closeFilterModal').onclick = function() {
         document.getElementById('filterModal').style.display = 'none';
@@ -393,9 +383,9 @@ $rows = $stmt->fetchAll();
       <div class="print-sub">
         (<?php
           $filters = [];
-          if ($from_date) $filters[] = "From <strong>" . htmlspecialchars($from_date) . "</strong>";
-          if ($to_date)   $filters[] = "To <strong>" . htmlspecialchars($to_date) . "</strong>";
-          if ($referral_status) $filters[] = "Status: <strong>" . htmlspecialchars($status) . "</strong>";
+          if ($from_date) $filters[] = "From <strong>" . prettyDate($from_date) . "</strong>";
+          if ($to_date)   $filters[] = "To <strong>"   . prettyDate($to_date)   . "</strong>";
+          if ($referral_status) $filters[] = "Status: <strong>" . htmlspecialchars($referral_status) . "</strong>";
           if ($bhw_id) { $bhw_name=''; foreach ($bhws as $bhw) { if ($bhw['user_id']==$bhw_id){ $bhw_name=$bhw['full_name']; break; } }
                          $filters[] = "Referred by: <strong>" . htmlspecialchars($bhw_name) . "</strong>"; }
           if ($sex) $filters[] = "Sex: <strong>" . htmlspecialchars($sex) . "</strong>";
@@ -501,9 +491,9 @@ $visit_params = ['barangay' => '%' . $barangayName . '%'];
 
 // Apply filters to visits (reuse logic)
 if (!empty($from_date) && !empty($to_date)) {
-    $visit_sql .= " AND DATE(v.visit_date) BETWEEN :from AND :to";
-    $visit_params['from'] = $from_date;
-    $visit_params['to'] = $to_date;
+    $visit_sql .= " AND v.visit_date >= :from_dt AND v.visit_date < :to_dt_plus1";
+    $visit_params['from_dt'] = $from_date . " 00:00:00";
+    $visit_params['to_dt_plus1'] = date('Y-m-d', strtotime($to_date . ' +1 day')) . " 00:00:00";
 }
 if (!empty($sex)) {
     $visit_sql .= " AND p.sex = :sex";
@@ -571,9 +561,9 @@ $status_counts = [
     'Canceled' => 0
 ];
 foreach ($rows as $row) {
-    $status = ucfirst(strtolower($row['referral_status']));
-    if (isset($status_counts[$status])) {
-        $status_counts[$status]++;
+    $statusVal = ucfirst(strtolower($row['referral_status']));
+    if (isset($status_counts[$statusVal])) {
+        $status_counts[$statusVal]++;
     }
 }
 ?>
@@ -643,11 +633,11 @@ const statusPieChart = new Chart(statusCtx, {
     <tbody>
         <?php foreach ($rows as $row): ?>
         <tr>
-            <td><?= htmlspecialchars($row['referral_date']) ?></td>
+            <td><?= prettyDate($row['referral_date']) ?></td>
             <td><?= htmlspecialchars($row['first_name'] . ' ' . $row['last_name']) ?></td>
             <td><?= htmlspecialchars($row['sex']) ?></td>
             <td><?= htmlspecialchars($row['age']) ?></td>
-            <td><?= htmlspecialchars($row['visit_date']) ?></td>
+            <td><?= prettyDate($row['visit_date']) ?></td>
             <td><?= htmlspecialchars($row['chief_complaints']) ?></td>
             <td>
                 <?php 
@@ -677,29 +667,70 @@ const statusPieChart = new Chart(statusCtx, {
 </div>
      <br>
      
-<!-- Summary -->
-<div class="summary-container">
-    <div class="summary">
-        <h4><i class="bx bx-filter-alt"></i>Summary:</h4>
-    <ul  class="summary-list">
-         <li>
-                <strong>Report Generated On:</strong> <?= date('Y-m-d H:i:s') ?>
-            </li>
-        <li><strong>Total Referrals:</strong> <?= $referral_count ?></li>
-        <li><strong>Visits With Referral:</strong> <?= $referral_count ?></li>
-        <li><strong>Visits Without Referral:</strong> <?= $visits_without_referral ?></li>
-        <li><strong>Pending Referrals:</strong> <?= $status_counts['Pending'] ?></li>
-        <li><strong>Completed Referrals:</strong> <?= $status_counts['Completed'] ?></li>
-        <li><strong>Uncompleted Referrals:</strong> <?= $status_counts['Uncompleted'] ?></li>
-        <li><strong>Canceled Referrals:</strong> <?= $status_counts['Canceled'] ?></li>
-    </ul>
-    </div>
+<!-- Summary (tables) -->
+<style>
+  .summary-container { margin-top: 48px; }
+  .kv-table, .status-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 14px;
+    font-size: 14px;
+  }
+  .kv-table th, .kv-table td,
+  .status-table th, .status-table td {
+    border: 1px solid #d1d5db;
+    padding: 8px 10px;
+  }
+  .kv-table th { width: 40%; text-align: left; background: #f8fafc; }
+  .status-table th { background: #f8fafc; text-align: left; }
+  @media print {
+    .summary-container { margin-top: 24mm; }
+    .summary-container .summary h4 { display: none !important; }
+  }
+</style>
 
+<div class="summary-container">
+  <div class="summary">
+    <h4><i class="bx bx-filter-alt"></i> Summary</h4>
+
+    <table class="kv-table">
+      <tr>
+        <th>Report Generated On</th>
+        <td><?= prettyDate(date('c'), true) ?></td>
+      </tr>
+      <tr>
+        <th>Total Referrals</th>
+        <td><?= $referral_count ?></td>
+      </tr>
+      <tr>
+        <th>Visits With Referral</th>
+        <td><?= $referral_count ?></td>
+      </tr>
+      <tr>
+        <th>Visits Without Referral</th>
+        <td><?= $visits_without_referral ?></td>
+      </tr>
+    </table>
+
+    <table class="status-table">
+      <thead>
+        <tr>
+          <th>Status</th>
+          <th>Count</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Pending</td><td><?= $status_counts['Pending'] ?></td></tr>
+        <tr><td>Completed</td><td><?= $status_counts['Completed'] ?></td></tr>
+        <tr><td>Uncompleted</td><td><?= $status_counts['Uncompleted'] ?></td></tr>
+        <tr><td>Canceled</td><td><?= $status_counts['Canceled'] ?></td></tr>
+      </tbody>
+    </table>
+  </div>
 </div>
 
-
-    <br> <br>
-     <span id="generated_by"></span>
+<br><br>
+<span id="generated_by"></span>
 
 <?php else: ?>
     <p>No referrals found for the selected filters.</p>
@@ -750,10 +781,9 @@ function exportTableToExcel(tableID, filename = 'Referral Summary Report') {
         tempDiv.style.top = '-9999px';
         
         // Clone the print header
-       const printHeader = document.querySelector('.print-letterhead, .print-header');
+        const printHeader = document.querySelector('.print-letterhead, .print-header');
         if (printHeader) {
             const headerClone = printHeader.cloneNode(true);
-            // Remove any scripts or interactive elements
             const scripts = headerClone.querySelectorAll('script');
             scripts.forEach(script => script.remove());
             tempDiv.appendChild(headerClone);
@@ -768,19 +798,13 @@ function exportTableToExcel(tableID, filename = 'Referral Summary Report') {
             tempDiv.appendChild(summaryClone);
         }
         
-        // Clone and modify the table to include signature column
+        // Clone and modify the table
         const originalTable = document.getElementById(tableID);
         if (!originalTable) {
             alert('Table not found!');
             return;
         }
-        
         const tableClone = originalTable.cloneNode(true);
-        
-        // Add signature header if not present
-        const headerRow = tableClone.querySelector('thead tr');
-      
-        
         tempDiv.appendChild(tableClone);
         document.body.appendChild(tempDiv);
         
@@ -811,17 +835,13 @@ function exportTableToExcel(tableID, filename = 'Referral Summary Report') {
         `;
         
         // Create blob and download
-        const blob = new Blob([htmlContent], {
-            type: 'application/vnd.ms-excel'
-        });
-        
+        const blob = new Blob([htmlContent], { type: 'application/vnd.ms-excel' });
         const downloadLink = document.createElement('a');
         downloadLink.href = URL.createObjectURL(blob);
         downloadLink.download = filename + '.xls';
         document.body.appendChild(downloadLink);
         downloadLink.click();
         
-        // Clean up
         setTimeout(() => {
             document.body.removeChild(downloadLink);
             document.body.removeChild(tempDiv);
@@ -850,15 +870,6 @@ async function exportTableToPDF() {
     });
 }
 
-// Make sure the status styling is preserved in exports
-function addExportStyles(doc) {
-    doc.addStyle(`
-        .referral-status { font-weight: bold; }
-        .status-pending { color: #1c538a; }
-        .status-completed { color: #2e8540; }
-        .status-uncompleted, .status-canceled { color: #d83933; }
-    `);
-}
 function printDiv() {
   // 1) Header (prefer new, fallback to old)
   const headerEl = document.querySelector('.print-letterhead, .print-header');

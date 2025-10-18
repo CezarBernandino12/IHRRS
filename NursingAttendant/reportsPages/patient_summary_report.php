@@ -516,6 +516,42 @@ $total_patients = count(array_unique(array_column($visits, 'patient_id')));
 </style>
 
 <style>
+/* Add breathing room above the summary */
+.summary-container {
+  margin-top: 32px;
+}
+
+/* Two-column summary table */
+.summary-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 16px;
+}
+
+.summary-table th,
+.summary-table td {
+  border: 1px solid #d5d7db;
+  padding: 8px 12px;
+  vertical-align: top;
+  text-align: left;
+  word-wrap: break-word;
+}
+
+.summary-table th {
+  background: #f2f4f7;
+  font-weight: 600;
+}
+
+/* Print-only: hide the "Summary" title; add a bit more top spacing */
+@media print {
+  .summary > h3 { 
+    display: none !important;
+  }
+  .summary-container { 
+    margin-top: 40px;
+  }
+}
 
     @media print {
        
@@ -886,61 +922,65 @@ usort($visits, function($a, $b) {
 
            <!-- Summary Section -->
 <div class="summary-container">
-    <div class="summary">
-        <h3><i class="bx bx-file"></i> Summary:</h3>
-        <ul class="summary-list">
-             <li>
-                <strong>Report Generated On:</strong> <?= date('Y-m-d H:i:s') ?>
-            </li>
-            <li><strong>Total Patients in Report:</strong> <?= $total_patients ?></li>
-            <li>
-                <strong>By Sex:</strong>
-                Male – <?= $sex_counts['Male'] ?? 0 ?>,
-                Female – <?= $sex_counts['Female'] ?? 0 ?>
-            </li>
-            <li>
-                <strong>By Age Group:</strong>
-                Children – <?= $age_group_counts['0–5'] + $age_group_counts['6–17'] ?>,
-                Adults – <?= $age_group_counts['18–59'] ?>,
-                Seniors – <?= $age_group_counts['60+'] ?>
-            </li>
-            <li>
-                <strong>By BMI:</strong>
-                Underweight – <?= $bmi_categories['Underweight'] ?? 0 ?>,
-                Normal – <?= $bmi_categories['Normal'] ?? 0 ?>,
-                Overweight – <?= $bmi_categories['Overweight'] ?? 0 ?>,
-                Obese – <?= ($bmi_categories['Class 1'] ?? 0) + ($bmi_categories['Class 2'] ?? 0) + ($bmi_categories['Class 3'] ?? 0) ?>
-            </li>
-               <li>
-                    <strong>Patient Counts per Barangay:</strong>
-                    <ul>
-                        <?php
-                        // Use the same logic as the graph to calculate patient counts per barangay
-                        $barangay_counts = [];
-                        $unique_patients_address = [];
-                        foreach ($visits as $visit) {
-                            $pid = $visit['patient_id'];
-                            if (!isset($unique_patients_address[$pid])) {
-                                // Extract barangay from the address
-                                $address_parts = explode(' - ', $visit['address']);
-                                $barangay = isset($address_parts[1]) ? explode(' ', $address_parts[1])[1] : 'Unknown';
-                                $barangay_counts[$barangay] = ($barangay_counts[$barangay] ?? 0) + 1;
-                                $unique_patients_address[$pid] = true;
-                            }
-                        }
+  <div class="summary">
+    <h3><i class="bx bx-file"></i> Summary</h3>
 
-                        // Display the counts
-                        foreach ($barangay_counts as $barangay => $count) {
-                            echo "<li>" . "Barangay " . htmlspecialchars($barangay) . " – " . $count . "</li>";
-                        }
-                        ?>
-                    </ul>
-                </li>
-         
-         
-        </ul>
+    <table class="summary-table">
+      <colgroup>
+        <col style="width:30%">
+        <col style="width:70%">
+      </colgroup>
+      <tbody>
+        <tr>
+          <th>Report Generated On</th>
+          <td><?= date('F j, Y g:i:s A') ?></td>
+        </tr>
+        <tr>
+          <th>Total Patients in Report</th>
+          <td><?= $total_patients ?></td>
+        </tr>
+        <tr>
+          <th>By Sex</th>
+          <td>
+            Male — <?= $sex_counts['Male'] ?? 0 ?>,
+            Female — <?= $sex_counts['Female'] ?? 0 ?>
+          </td>
+        </tr>
+        <tr>
+          <th>By Age Group</th>
+          <td>
+            0–5: <?= $age_group_counts['0–5'] ?? 0 ?>,
+            6–17: <?= $age_group_counts['6–17'] ?? 0 ?>,
+            18–59: <?= $age_group_counts['18–59'] ?? 0 ?>,
+            60+: <?= $age_group_counts['60+'] ?? 0 ?>
+          </td>
+        </tr>
+        <tr>
+          <th>By BMI</th>
+          <td>
+            Underweight — <?= $bmi_categories['Underweight'] ?? 0 ?>,
+            Normal — <?= $bmi_categories['Normal'] ?? 0 ?>,
+            Overweight — <?= $bmi_categories['Overweight'] ?? 0 ?>,
+            Obese — <?= ($bmi_categories['Class 1'] ?? 0) + ($bmi_categories['Class 2'] ?? 0) + ($bmi_categories['Class 3'] ?? 0) ?>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div style="margin-top:12px;">
+      <strong>Patient Counts per Barangay:</strong>
+      <ul style="margin-top:6px;">
+        <?php
+        // reuse the counts you already computed just above
+        foreach ($barangay_counts as $barangay => $count) {
+          echo "<li>Barangay " . htmlspecialchars($barangay) . " — " . $count . "</li>";
+        }
+        ?>
+      </ul>
     </div>
-    </div>
+  </div>
+</div>
+
 
     <div class="generated-by">
       <b>Report Generated By: </b><?php echo htmlspecialchars($username); ?> -  Nursing Attedant

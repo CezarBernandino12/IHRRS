@@ -533,6 +533,39 @@ $visits = $stmt->fetchAll();
 </style>
 
 <style>
+    /* spacing above the summary section */
+.summary-container {
+  margin-top: 32px;
+}
+
+/* two-column summary table */
+.summary-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 16px;
+}
+
+.summary-table th,
+.summary-table td {
+  border: 1px solid #d5d7db;
+  padding: 8px 12px;
+  vertical-align: top;
+  text-align: left;
+  word-wrap: break-word;
+}
+
+.summary-table th {
+  background: #f2f4f7;
+  font-weight: 600;
+}
+
+/* print-only: hide the Summary title, add a touch more space */
+@media print {
+  .summary > h3 { display: none !important; }
+  .summary-container { margin-top: 40px; }
+}
+
     @media print {
         .chart-title { 
            display: none;
@@ -805,28 +838,85 @@ foreach ($visits as $visit) {
 }
 $total_patients = count($unique_patient_ids);
 ?>
-<div class="summary-container">
-    <div class="summary">
-        <h3><i class="bx bx-file"></i> Summary:</h3>
-        <ul class="summary-list">
-             <li>
-                <strong>Report Generated On:</strong> <?= date('Y-m-d H:i:s') ?>
-            </li>
-            <li><strong>Total Unique Patients in Report:</strong> <?= $total_patients ?? 0 ?></li>
-            <li>
-                <strong>By Sex:</strong>
-                Male – <?= isset($sex_counts['Male']) ? $sex_counts['Male'] : 0 ?>,
-                Female – <?= isset($sex_counts['Female']) ? $sex_counts['Female'] : 0 ?>
-            </li>
-            <li>
-                <strong>By Age Group:</strong>
-                Young Children: <?= isset($age_group_counts['0–5']) ? $age_group_counts['0–5'] : 0 ?>,
-                Children: <?= isset($age_group_counts['6–17']) ? $age_group_counts['6–17'] : 0 ?>,
-                Adults: <?= isset($age_group_counts['18–59']) ? $age_group_counts['18–59'] : 0 ?>,
-                Seniors: <?= isset($age_group_counts['60+']) ? $age_group_counts['60+'] : 0 ?>
-            </li>
-<li>
-    <strong>Case Counts:</strong>
+
+
+
+<br>
+
+<h3>Detailed Report</h3>
+<!-- Table with Visit Details -->
+<?php if ($visits && count($visits) > 0): ?>
+    <div class="report-table-container">
+    <table id="reportTable">
+        <thead>
+            <tr>
+                <th>Date Diagnosed</th>
+                <th>Diagnosis</th>
+                <th>Status</th>
+                <th>Patient Name</th>
+                <th>Sex</th>
+                <th>Age</th>
+                <th>Address</th>
+            </tr>
+        </thead>
+        <tbody>
+        <?php foreach ($visits as $visit): ?>
+            <tr>
+                <td><?= date('Y-m-d', strtotime($visit['consultation_date'])) ?></td>
+                <td><?= htmlspecialchars($visit['diagnosis']) ?></td>
+                <td><?= htmlspecialchars($visit['diagnosis_status']) ?></td>
+                <td><?= htmlspecialchars($visit['first_name'] . ' ' . $visit['last_name']) ?></td>
+                <td><?= htmlspecialchars($visit['sex']) ?></td>
+                <td><?= htmlspecialchars($visit['age']) ?></td>
+                <td><?= htmlspecialchars($visit['address']) ?></td>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+    </div>
+<?php else: ?>
+    <p>No visits found for the selected filters.</p>
+<?php endif; ?>
+           
+  <div class="summary-container">
+  <div class="summary">
+    <h3><i class="bx bx-file"></i> Summary</h3>
+
+    <table class="summary-table">
+      <colgroup>
+        <col style="width:40%">
+        <col style="width:60%">
+      </colgroup>
+      <tbody>
+        <tr>
+          <th>Report Generated On</th>
+          <td><?= date('F j, Y g:i:s A') ?></td>
+        </tr>
+        <tr>
+          <th>Total Unique Patients in Report</th>
+          <td><?= $total_patients ?? 0 ?></td>
+        </tr>
+        <tr>
+          <th>By Sex</th>
+          <td>
+            Male — <?= isset($sex_counts['Male']) ? $sex_counts['Male'] : 0 ?>,
+            Female — <?= isset($sex_counts['Female']) ? $sex_counts['Female'] : 0 ?>
+          </td>
+        </tr>
+        <tr>
+          <th>By Age Group</th>
+          <td>
+            Young Children: <?= $age_group_counts['0–5'] ?? 0 ?>,
+            Children: <?= $age_group_counts['6–17'] ?? 0 ?>,
+            Adults: <?= $age_group_counts['18–59'] ?? 0 ?>,
+            Seniors: <?= $age_group_counts['60+'] ?? 0 ?>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+<div class="print-keep" id="caseCountsBlock" style="margin-top:12px">
+  <strong>Case Counts:</strong>
     <?php
     // Prepare disease breakdown by sex and age group (unique patients only)
     $disease_summary = [];
@@ -907,51 +997,17 @@ $total_patients = count($unique_patient_ids);
         echo "</tbody></table>";
     }
     ?>
-</li>
+    </div>
+  </div>
+</div>
+
+
 
 
        
         </ul>
     </div>
 </div>
-<br>
-
-<h3>Detailed Report</h3>
-<!-- Table with Visit Details -->
-<?php if ($visits && count($visits) > 0): ?>
-    <div class="report-table-container">
-    <table id="reportTable">
-        <thead>
-            <tr>
-                <th>Date Diagnosed</th>
-                <th>Diagnosis</th>
-                <th>Status</th>
-                <th>Patient Name</th>
-                <th>Sex</th>
-                <th>Age</th>
-                <th>Address</th>
-            </tr>
-        </thead>
-        <tbody>
-        <?php foreach ($visits as $visit): ?>
-            <tr>
-                <td><?= date('Y-m-d', strtotime($visit['consultation_date'])) ?></td>
-                <td><?= htmlspecialchars($visit['diagnosis']) ?></td>
-                <td><?= htmlspecialchars($visit['diagnosis_status']) ?></td>
-                <td><?= htmlspecialchars($visit['first_name'] . ' ' . $visit['last_name']) ?></td>
-                <td><?= htmlspecialchars($visit['sex']) ?></td>
-                <td><?= htmlspecialchars($visit['age']) ?></td>
-                <td><?= htmlspecialchars($visit['address']) ?></td>
-            </tr>
-        <?php endforeach; ?>
-        </tbody>
-    </table>
-    </div>
-<?php else: ?>
-    <p>No visits found for the selected filters.</p>
-<?php endif; ?>
-           
-  
 </div> </div> 
 
 
@@ -973,6 +1029,65 @@ $total_patients = count($unique_patient_ids);
 </div>
 
 </div>
+<script>
+function printDiv() {
+  const area = document.querySelector(".print-area");
+  if (!area) { alert("Nothing to print."); return; }
+
+  // open window early to avoid popup blockers
+  const w = window.open("", "", "height=900,width=1100");
+  if (!w) { alert("Please enable pop-ups to print."); return; }
+
+  const clone = area.cloneNode(true);
+
+  // remove canvases and chart controls
+  clone.querySelectorAll('canvas, .chart-title').forEach(el => el.remove());
+
+  // ✅ Add Signature column only to #reportTable (detail rows), not summary/case counts
+  const reportTable = clone.querySelector("#reportTable");
+  if (reportTable) {
+    const headerRow = reportTable.querySelector("thead tr");
+    const hasSignature = headerRow && /Signature/i.test((headerRow.lastElementChild?.textContent||"").trim());
+    if (!hasSignature) {
+      const th = document.createElement("th");
+      th.textContent = "Signature";
+      headerRow.appendChild(th);
+      reportTable.querySelectorAll("tbody tr").forEach(tr => {
+        const td = document.createElement("td");
+        td.style.height = "28px";
+        tr.appendChild(td);
+      });
+    }
+  }
+
+  // Prefer print-only letterhead
+  const headerSource = document.querySelector(".print-only-letterhead") || document.querySelector(".print-header");
+  const headerHTML = headerSource ? headerSource.outerHTML : "";
+
+  // Remove any header inside clone to avoid duplicates
+  const headerInClone = clone.querySelector(".print-only-letterhead, .print-header");
+  if (headerInClone) headerInClone.remove();
+
+  w.document.write(`<!doctype html><html><head><title>Print Report</title>
+    <meta charset="utf-8">
+    <style>
+      * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      body { font-family: Arial, sans-serif; font-size: 12px; color:#000; margin: 20px; }
+      table { width: 100%; border-collapse: collapse; }
+      th, td { border: 1px solid #000; padding: 4px; text-align: left; vertical-align: middle; }
+      thead { background:#f0f0f0; }
+      .case-counts-table th, .case-counts-table td { text-align: center; }
+      @media print { .form-submit, .chart-title { display: none !important; } }
+    </style>
+  </head><body>`);
+  if (headerHTML) w.document.write(headerHTML);
+  w.document.write(clone.innerHTML);
+  w.document.write(`</body></html>`);
+  w.document.close();
+  w.onload = () => { try { w.focus(); w.print(); } finally { w.close(); } };
+}
+</script>
+
 
 <!-- jsPDF and html2canvas libraries -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -1084,104 +1199,6 @@ function exportTableToExcel(tableID, filename = 'Medical Cases Report') {
         console.error('Excel export error:', error);
         alert('Error exporting to Excel: ' + error.message);
     }
-}
-
-
-function printDiv() {
-  // Open the window immediately to avoid popup blockers
-  const pw = window.open('', '_blank', 'height=900,width=1100');
-  if (!pw) {
-    alert('Please enable pop-ups to print.');
-    return;
-  }
-
-  // Helpers
-  const byId = (id) => document.getElementById(id);
-  const area = document.querySelector('.print-area');
-  if (!area) {
-    alert('No .print-area found.');
-    pw.close();
-    return;
-  }
-
-  // Build chart images (only if the canvas exists)
-  function chartBlock(id, title) {
-    const c = byId(id);
-    if (!c || !c.toDataURL) return '';
-    try {
-      const dataURL = c.toDataURL('image/png');
-      return `<div style="text-align:center;margin:0 0 16px;">
-                <h3 style="margin:0 0 8px;">${title}</h3>
-                <img src="${dataURL}" style="max-width:100%;height:auto;">
-              </div>`;
-    } catch (e) {
-      return '';
-    }
-  }
-
-  // Which charts to include
-  let chartsHTML = '';
-  // Clone the printable area
-  const clone = area.cloneNode(true);
-
-  // Remove canvases from the clone (we’ll use the images above)
-  clone.querySelectorAll('canvas').forEach(el => el.remove());
-  // Remove chart title blocks inside the clone
-  clone.querySelectorAll('.chart-title').forEach(el => el.remove());
-
-  // Add Signature column if there is a table
-  const headerRow = clone.querySelector('table thead tr');
-  if (headerRow) {
-    const lastThText = (headerRow.lastElementChild && headerRow.lastElementChild.textContent) ? headerRow.lastElementChild.textContent : '';
-    if (!/Signature/i.test(lastThText)) {
-      const th = document.createElement('th');
-      th.textContent = 'Signature';
-      headerRow.appendChild(th);
-      clone.querySelectorAll('table tbody tr').forEach(tr => {
-        const td = document.createElement('td');
-        td.style.height = '28px';
-        tr.appendChild(td);
-      });
-    }
-  }
-
-  // Prefer the print-only letterhead if present; else fall back to .print-header
-  let headerHTML = '';
-  const printOnly = document.querySelector('.print-only-letterhead');
-  const printHeader = document.querySelector('.print-header');
-  if (printOnly) headerHTML = printOnly.outerHTML;
-  else if (printHeader) headerHTML = printHeader.outerHTML;
-
-  // Avoid duplicate header if the clone also contains it
-  const headerInClone = clone.querySelector('.print-only-letterhead, .print-header');
-  if (headerInClone) headerInClone.remove();
-
-  // Write the print document
-  pw.document.write('<html><head><title>Print Report</title>');
-  pw.document.write(`
-    <style>
-      body { font-family: Arial, sans-serif; font-size: 12px; color: #000; }
-      table { width: 100%; border-collapse: collapse; }
-      th, td { border: 1px solid #000; padding: 4px; text-align: left; }
-      thead { background: #f0f0f0; }
-      img { display: block; margin: 0 auto; max-width: 100%; height: auto; }
-      h3 { margin: 10px 0 6px; }
-      @media print {
-        .form-submit, .chart-title { display: none !important; }
-      }
-    </style>
-  `);
-  pw.document.write('</head><body>');
-  if (headerHTML) pw.document.write(headerHTML);
-  if (chartsHTML) pw.document.write(chartsHTML);
-  pw.document.write(clone.innerHTML);
-  pw.document.write('</body></html>');
-  pw.document.close();
-
-  // Print when ready
-  pw.onload = () => {
-    try { pw.focus(); pw.print(); } finally { pw.close(); }
-  };
 }
 
 

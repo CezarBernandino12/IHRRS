@@ -608,7 +608,13 @@ const dispensationChart = new Chart(ctx, {
     <div class="summary-container">
     <div class="summary">
         <h4><i class="bx bx-filter-alt"></i>Summary:</h4>
-        <p><strong>Report Generated On:</strong> <?= date('Y-m-d H:i:s') ?></p>
+        <tr>
+  <th>Report Generated On</th>
+  <td class="summary-mono">
+    <?= htmlspecialchars(date('F jS, Y \a\t g:i A'), ENT_QUOTES, 'UTF-8') ?>
+  </td>
+</tr>
+
         <p><strong>Total Records:</strong> <?= count($rows) ?></p>
     <table class="summary-table" style="width: 100%; border-collapse: collapse; margin-top: 10px;">
         <thead>
