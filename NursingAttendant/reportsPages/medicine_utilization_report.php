@@ -579,40 +579,74 @@ if (count($patient_meds) > 0) {
 
 
 <div class="print-area">
-<div class="print-header" style="text-align: center;">
-      <img src="../../img/RHUlogo.png" alt="RHU Logo" class="print-logo" style="height: 50px; width: auto;" />
-  <h3>Republic of the Philippines</h3>
-  <h3>Department of Health</h3>
-  <h3>Province of Camarines Norte</h3>
-  <h3>Municipality of Daet</h3>
-  <h2><?php echo htmlspecialchars($rhu); ?></h2>
-  <br> 
-   <h2>DOH MAINTAINANCE MEDICINE UTILIZATION REPORT</h2>
-   (<?php
-$filters = [];
-if ($from_date) $filters[] = "From <strong>" . htmlspecialchars($from_date) . "</strong>";
-if ($to_date) $filters[] = "To <strong>" . htmlspecialchars($to_date) . "</strong>";
-if (!empty($_GET['medicine'])) {
-    $medicine_list = is_array($_GET['medicine']) ? $_GET['medicine'] : [$_GET['medicine']];
-    $filters[] = "Medicine: <strong>" . implode(', ', array_map('htmlspecialchars', $medicine_list)) . "</strong>";
-}
-
-if ($sex) $filters[] = "Sex: <strong>" . htmlspecialchars($sex) . "</strong>";
-if ($age_group) {
-    $age_labels = [
-        'child' => 'Child (0–12)',
-        'teen' => 'Teen (13–19)',
-        'adult' => 'Adult (20–59)',
-        'senior' => 'Senior (60+)'
-    ];
-    $filters[] = "Age Group: <strong>" . ($age_labels[$age_group] ?? htmlspecialchars($age_group)) . "</strong>";
-}
-if ($barangay) $filters[] = "Barangay: <strong>" . htmlspecialchars($barangay) . "</strong>";
-
-echo $filters ? implode("&nbsp; | &nbsp;", $filters) : "All Records";
-?>)</h3> <br><br><br>
+<!-- Two-logo letterhead -->
+<div class="print-letterhead">
+  <img src="../../img/RHUlogo.png" alt="Left Logo" class="print-logo">
+  <div class="print-heading">
+    <div class="ph-line-1">Republic of the Philippines</div>
+    <div class="ph-line-1">Department of Health</div>
+    <div class="ph-line-1">Province of Camarines Norte</div>
+    <div class="ph-line-2">Municipality of Daet</div>
+    <div class="ph-line-3"><?php echo htmlspecialchars($rhu); ?></div>
+    <div class="ph-line-4">DOH MAINTAINANCE MEDICINE UTILIZATION REPORT</div>
+    <div class="print-sub">
+      (<?php
+        $filters = [];
+        if ($from_date) $filters[] = "From <strong>" . htmlspecialchars($from_date) . "</strong>";
+        if ($to_date)   $filters[] = "To <strong>" . htmlspecialchars($to_date) . "</strong>";
+        if (!empty($_GET['medicine'])) {
+          $medicine_list = is_array($_GET['medicine']) ? $_GET['medicine'] : [$_GET['medicine']];
+          $filters[] = "Medicine: <strong>" . implode(', ', array_map('htmlspecialchars', $medicine_list)) . "</strong>";
+        }
+        if ($sex) $filters[] = "Sex: <strong>" . htmlspecialchars($sex) . "</strong>";
+        if ($age_group) {
+          $age_labels = [
+            'child' => 'Child (0–12)', 'teen' => 'Teen (13–19)',
+            'adult' => 'Adult (20–59)', 'senior' => 'Senior (60+)'
+          ];
+          $filters[] = "Age Group: <strong>" . ($age_labels[$age_group] ?? htmlspecialchars($age_group)) . "</strong>";
+        }
+        if ($barangay) $filters[] = "Barangay: <strong>" . htmlspecialchars($barangay) . "</strong>";
+        echo $filters ? implode("&nbsp; | &nbsp;", $filters) : "All Records";
+      ?>)
+    </div>
+  </div>
+  <img src="../../img/RHUlogo.png" alt="Right Logo" class="print-logo">
 </div>
+<hr class="print-rule">
+
+
 <div class="report-content">
+    <style>
+  .print-letterhead { display: none; }
+
+  @media print {
+    .print-letterhead { display: block; }
+
+    .print-letterhead{
+      display: grid;
+      grid-template-columns: 64px auto 64px;
+      align-items: center;
+      justify-content: center;
+      column-gap: 14px;
+      margin: 0 auto 10px;
+      text-align: center;
+      width: fit-content;
+    }
+    .print-logo{ width:64px; height:64px; object-fit:contain; }
+    .print-heading{ line-height:1.1; color:#0d2546; }
+    .print-heading .ph-line-1{ font-size:12pt; font-weight:500; }
+    .print-heading .ph-line-2{ font-size:14pt; font-weight:500; }
+    .print-heading .ph-line-3{ font-size:11pt; font-weight:500; }
+    .print-heading .ph-line-4{ font-size:12pt; font-weight:600; margin-top:4px; letter-spacing:.3px; }
+    .print-sub{ font-size:10.5pt; margin-top:4px; }
+    .print-rule{ height:1px; border:0; background:#cfd8e3; margin:8px 0 12px; }
+
+    /* keep your existing print hides working */
+    .chart-title, .form-submit { display: none !important; }
+  }
+</style>
+
 <style>
     @media print {
         .chart-title { 
@@ -1144,49 +1178,63 @@ async function exportTableToPDF() {
 
 //PRINT
 function printDiv() {
-    // Clone the print area (table and summary)
-    const originalArea = document.querySelector(".print-area").cloneNode(true);
+  // Use the new header
+  const headerEl = document.querySelector('.print-letterhead');
+  const printHeader = headerEl ? headerEl.outerHTML : '';
 
-    // Add 'Signature' column to header
-    const headerRow = originalArea.querySelector("thead tr");
+  // Clone the print area
+  const originalArea = document.querySelector(".print-area");
+  if (!originalArea) return;
+  const clone = originalArea.cloneNode(true);
 
+  // Remove duplicate header inside the clone
+  const headerInClone = clone.querySelector('.print-letterhead');
+  if (headerInClone) headerInClone.remove();
 
-    // Get the print header HTML
-    const printHeader = document.querySelector('.print-header').outerHTML;
+  // Remove canvases from the clone
+  clone.querySelectorAll('canvas').forEach(c => c.remove());
 
-    // Remove the header from the cloned area so it doesn't appear twice
-    const headerInClone = originalArea.querySelector('.print-header');
-    if (headerInClone) headerInClone.remove();
-
-    // Remove all canvases from the cloned area (since we use chart images instead)
-    const canvases = originalArea.querySelectorAll('canvas');
-    canvases.forEach(c => c.parentNode.removeChild(c));
-
-    // Create print window and write content
-    const printWindow = window.open('', '', 'height=900,width=1100');
-    printWindow.document.write('<html><head><title>Print Report</title>');
-    printWindow.document.write(`
+  // Open print window
+  const w = window.open('', '', 'height=900,width=1100');
+  w.document.write(`
+    <html>
+ <head>
+        <title>Print Report</title>
+        <meta charset="utf-8" />
         <style>
-            body { font-family: Arial, sans-serif; font-size: 12px; color: black; }
-            table { width: 100%; border-collapse: collapse; }
-            th, td { border: 1px solid #000; padding: 4px; text-align: left; }
-            thead { background-color: #f0f0f0; }
-            img { display: block; margin: 0 auto; max-width: 100%; height: auto; }
-            h3 { margin: 10px 0 5px 0; }
+          body { font-family: Arial, sans-serif; font-size: 12px; color: black; }
+          table { width: 100%; border-collapse: collapse; }
+          th, td { border: 1px solid #000; padding: 4px; text-align: left; }
+          thead { background-color: #f0f0f0; }
+          img { display: block; margin: 0 auto; max-width: 100%; height: auto; }
+          h3 { margin: 10px 0 5px 0; }
+
+          /* same print-only rules inside the print window */
+          .print-only { display: block; }
+          .print-letterhead{
+            display:grid; grid-template-columns:64px auto 64px;
+            align-items:center; justify-content:center; column-gap:14px;
+            margin:0 auto 10px; text-align:center; width:fit-content;
+          }
+          .print-logo{ width:64px; height:64px; object-fit:contain; }
+          .print-heading{ line-height:1.1; color:#0d2546; }
+          .print-heading .ph-line-1{ font-size:12pt; font-weight:500; }
+          .print-heading .ph-line-2{ font-size:14pt; font-weight:800; }
+          .print-heading .ph-line-3{ font-size:11pt; font-weight:500; }
+          .print-heading .ph-line-4{ font-size:12pt; font-weight:800; margin-top:4px; letter-spacing:.3px; }
+          .print-sub{ font-size:10.5pt; margin-top:4px; }
+          .print-rule{ height:1px; border:0; background:#cfd8e3; margin:8px 0 12px; }
         </style>
-    `);
-    printWindow.document.write('</head><body>');
-    printWindow.document.write(printHeader);           // Then charts
-    printWindow.document.write(originalArea.innerHTML); // Then table and summary
-    printWindow.document.write('</body></html>');
-
-    printWindow.document.close();
-    printWindow.focus();
-
-    setTimeout(() => {
-        printWindow.print();
-        printWindow.close();
-    }, 500);
+      </head>
+      <body>
+        ${printHeader}
+        ${clone.innerHTML}
+      </body>
+    </html>
+  `);
+  w.document.close();
+  w.focus();
+  setTimeout(() => { w.print(); w.close(); }, 500);
 }
 
 

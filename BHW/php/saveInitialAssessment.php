@@ -1,5 +1,6 @@
 <?php 
 require '../../php/db_connect.php'; // Ensure this file correctly initializes $pdo
+require '../../ADMIN/php/log_functions.php'; // Include the logging functions
 
 ob_start(); 
 header('Content-Type: application/json');
@@ -9,7 +10,7 @@ ini_set('display_errors', 1);
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     file_put_contents("logs.txt", json_encode($_POST) . PHP_EOL, FILE_APPEND);
-error_log("📌 Received data: " . json_encode($_POST));
+    error_log("📌 Received data: " . json_encode($_POST));
 
     try {
         if (!$pdo) {
@@ -42,7 +43,6 @@ error_log("📌 Received data: " . json_encode($_POST));
             }
         }
         
-
         $first_name = clean_input($_POST['firstName']);
         $middle_name = clean_input($_POST['middleName'] ?? '');
         $last_name = clean_input($_POST['lastName']);
@@ -50,7 +50,7 @@ error_log("📌 Received data: " . json_encode($_POST));
         $family_serial_no = clean_input($_POST['familySerialNo'] ?? '');
         $dob = clean_input($_POST['dob']);
         $age = clean_input($_POST['age'] ?? '');
-        $sex = in_array($_POST['sex'], ['Male', 'Female']) ? $_POST['sex'] : null; // Ensure valid values
+        $sex = in_array($_POST['sex'], ['Male', 'Female']) ? $_POST['sex'] : null;
         $civil_status = clean_input($_POST['civilStatus']);
         $address = clean_input($_POST['permanent_address']);
         $birthplace = clean_input($_POST['birthplace'] ?? '');
@@ -76,48 +76,49 @@ error_log("📌 Received data: " . json_encode($_POST));
             exit;
         }
         
-        // Check if 'Use Existing' is selected
-// Determine patient ID
-$patient_id = null;
+        // Determine patient ID
+        $patient_id = null;
+        $is_new_patient = false; // Track if this is a new patient
 
-if (!empty($_POST['existing_patient_id'])) {
-    $patient_id = clean_input($_POST['existing_patient_id']);
-    error_log("✅ Using existing patient ID: " . $patient_id);
-} else {
-    // Insert a new patient
-    error_log("🆕 Creating a new patient...");
+        if (!empty($_POST['existing_patient_id'])) {
+            $patient_id = clean_input($_POST['existing_patient_id']);
+            error_log("✅ Using existing patient ID: " . $patient_id);
+        } else {
+            // Insert a new patient
+            error_log("🆕 Creating a new patient...");
+            $is_new_patient = true; // Mark as new patient
 
-    $stmt_patient = $pdo->prepare("INSERT INTO patients (
-        first_name, middle_name, last_name, extension, family_serial_no, date_of_birth, age, 
-        sex, civil_status, address, birthplace, contact_number, 
-        educational_attainment, occupation, religion, birth_weight, philhealth_member_no, fourps_status, category
-    ) VALUES (
-        :first_name, :middle_name, :last_name, :extension, :family_serial_no, :dob, :age, 
-        :sex, :civil_status, :address, :birthplace, :contact_number, 
-        :education, :occupation, :religion, :birth_weight, :philhealth, :four_ps, :category
-    )");
+            $stmt_patient = $pdo->prepare("INSERT INTO patients (
+                first_name, middle_name, last_name, extension, family_serial_no, date_of_birth, age, 
+                sex, civil_status, address, birthplace, contact_number, 
+                educational_attainment, occupation, religion, birth_weight, philhealth_member_no, fourps_status, category
+            ) VALUES (
+                :first_name, :middle_name, :last_name, :extension, :family_serial_no, :dob, :age, 
+                :sex, :civil_status, :address, :birthplace, :contact_number, 
+                :education, :occupation, :religion, :birth_weight, :philhealth, :four_ps, :category
+            )");
 
-    $stmt_patient->execute([
-        ':first_name' => $first_name,
-        ':middle_name' => $middle_name,
-        ':last_name' => $last_name,
-        ':extension' => $extension,
-        ':family_serial_no' => $family_serial_no,
-        ':dob' => $dob,
-        ':age' => $age,
-        ':sex' => $sex,
-        ':civil_status' => $civil_status,
-        ':address' => $address,
-        ':birthplace' => $birthplace,
-        ':contact_number' => $contact_number,
-        ':education' => $education,
-        ':occupation' => $occupation,
-        ':religion' => $religion,
-        ':birth_weight' => $birth_weight,
-        ':philhealth' => $philhealth,
-        ':four_ps' => $four_ps,
-        ':category' => $category
-    ]);
+            $stmt_patient->execute([
+                ':first_name' => $first_name,
+                ':middle_name' => $middle_name,
+                ':last_name' => $last_name,
+                ':extension' => $extension,
+                ':family_serial_no' => $family_serial_no,
+                ':dob' => $dob,
+                ':age' => $age,
+                ':sex' => $sex,
+                ':civil_status' => $civil_status,
+                ':address' => $address,
+                ':birthplace' => $birthplace,
+                ':contact_number' => $contact_number,
+                ':education' => $education,
+                ':occupation' => $occupation,
+                ':religion' => $religion,
+                ':birth_weight' => $birth_weight,
+                ':philhealth' => $philhealth,
+                ':four_ps' => $four_ps,
+                ':category' => $category
+            ]);
 
     $patient_id = $pdo->lastInsertId();  // ✅ Get the newly inserted patient ID
     error_log("🆕 New patient ID assigned: " . $patient_id);
@@ -155,7 +156,6 @@ if (empty($patient_id)) {
 
         $user_id = filter_var($_POST['user_id'], FILTER_VALIDATE_INT) ?: 0;
         $bp = clean_input($_POST['bp']);
-       
         $temp = clean_input($_POST['temp']);
         $weight = clean_input($_POST['weight']);
         $height = clean_input($_POST['height']);
@@ -175,7 +175,6 @@ if (empty($patient_id)) {
             :pr, :rr, :chief_complaints, :remarks, :patient_alert, :treatment
         )");
         
-
         $stmt_visit->execute([
             ':patient_id' => $patient_id,  
             ':user_id' => $user_id, 
@@ -190,7 +189,6 @@ if (empty($patient_id)) {
             ':remarks' => $remarks,
             ':patient_alert' => $patient_alert,
             ':treatment' => $treatment
-            
         ]);
 
         $visit_id = $pdo->lastInsertId();
@@ -261,35 +259,38 @@ if (empty($patient_id)) {
         }
 
         $referral_id = null;
+        $referral_created = false; // Track if referral was created
         error_log("Referral Needed Value: " . $referralNeeded);
 
         if ($referralNeeded === "yes" && !empty($patient_id) && !empty($user_id)) {
-            // Only refer if it's an existing patient OR user explicitly picked "Use Existing"
-            if (!empty($_POST['existing_patient_id'])) {  
-                $referral_status = clean_input($_POST['referral_status'] ?? 'pending');
-        
-                $stmt_referral = $pdo->prepare("INSERT INTO referrals (patient_id, visit_id, referred_by, referral_status) VALUES (
-                    :patient_id, :user_id, :referral_status
-                )");
-        
-                $stmt_referral->execute([
-                    ':patient_id' => $patient_id,
-                    ':visit_id' => $visit_id,
-                    ':user_id' => $user_id,
-                    ':referral_status' => $referral_status
-                ]);
-        
-                $referral_id = $pdo->lastInsertId();
-                error_log("✅ Referral saved with ID: " . $referral_id);
+            $referral_status = clean_input($_POST['referral_status'] ?? 'pending');
+    
+            $stmt_referral = $pdo->prepare("INSERT INTO referrals (patient_id, visit_id, referred_by, referral_status) VALUES (
+                :patient_id, :visit_id, :user_id, :referral_status
+            )");
+    
+            $stmt_referral->execute([
+                ':patient_id' => $patient_id,
+                ':visit_id' => $visit_id,
+                ':user_id' => $user_id,
+                ':referral_status' => $referral_status
+            ]);
+    
+            $referral_id = $pdo->lastInsertId();
+            $referral_created = true; // Mark that referral was created
+            error_log("✅ Referral saved with ID: " . $referral_id);
+        } else {
+            error_log("⚠️ Skipping referral: referralNeeded is not 'yes' or missing patient/user ID.");
+        }
+
+        // 🔹 LOG ACTIVITY: Added New Patient (only if new)
+        if ($is_new_patient) {
+            if ($referralNeeded === "yes" && !empty($referral_id)) {
+                logActivity($pdo, $user_id, "Added New Patient and Referred to RHU");
             } else {
-                error_log("⚠️ Referral skipped: This is a new patient.");
+                logActivity($pdo, $user_id, "Added New Patient");
             }
         }
-         else {
-            error_log("⚠️ Skipping referral: Either patient ID or BHW ID is missing.");
-        }
-        
-        
 
         $pdo->commit();
 

@@ -39,12 +39,12 @@ $sql = "
     WHERE 1 = 1
 ";
 
-// Add date filter if present
 if (!empty($from_date) && !empty($to_date)) {
-    $sql .= " AND DATE(r.referral_date) BETWEEN :from_date AND :to_date";
-    $params['from_date'] = $from_date;
-    $params['to_date'] = $to_date;
+    $sql .= " AND r.referral_date >= :from_date AND r.referral_date < DATE_ADD(:to_date, INTERVAL 1 DAY)";
+    $params['from_date'] = $from_date;   // e.g., 2025-01-01
+    $params['to_date']   = $to_date;     // e.g., 2025-01-31
 }
+
 if (!empty($status)) {
     $sql .= " AND r.referral_status = :status";
     $params['status'] = $status;
@@ -389,17 +389,61 @@ $total_pending = 0;
 
 
 <div class="print-area">
-<div class="print-header" style="text-align: center;">
-  <h3>Republic of the Philippines</h3>
-  <p>Province of Camarines Norte</p>
-  <h3>Municipality of Daet</h3>
-  <h2><?php echo htmlspecialchars($rhu); ?></h2>
-  <br> 
-  <h2>REFERRAL INTAKE SUMMARY REPORT</h2>
-  <h3></h3>
+<!-- PRINT-ONLY LETTERHEAD (shows only when printing) -->
+<div class="print-only-letterhead">
+  <div class="print-letterhead">
+    <img src="../../img/RHUlogo.png" alt="Left Logo" class="print-logo">
+    <div class="print-heading">
+      <div class="ph-line-1">Republic of the Philippines</div>
+      <div class="ph-line-1">Province of Camarines Norte</div>
+      <div class="ph-line-2">Municipality of Daet</div>
+      <div class="ph-line-3"><?= htmlspecialchars($rhu) ?></div>
+      <div class="ph-line-4">REFERRAL INTAKE SUMMARY REPORT</div>
+      <div class="print-sub">
+        (<?php
+          $parts = [];
+          if (!empty($from_date)) $parts[] = "From <strong>" . htmlspecialchars($from_date) . "</strong>";
+          if (!empty($to_date))   $parts[] = "To <strong>" . htmlspecialchars($to_date) . "</strong>";
+          if (!empty($status))    $parts[] = "Status: <strong>" . htmlspecialchars($status) . "</strong>";
+          if (!empty($barangay))  $parts[] = "Barangay: <strong>" . htmlspecialchars($barangay) . "</strong>";
+          echo $parts ? implode(" &nbsp;|&nbsp; ", $parts) : "All Records";
+        ?>)
+      </div>
+    </div>
+    <img src="../../img/RHUlogo.png" alt="Right Logo" class="print-logo">
+  </div>
+  <hr class="print-rule">
 </div>
+
 <div class="report-content">
 <!-- Summary Section -->
+ <style>
+  .print-only-letterhead { display: none; }
+  @media print {
+    .print-only-letterhead { display: block; }
+    .print-header { display: none !important; }
+    .print-letterhead{
+      display: grid;
+      grid-template-columns: 64px auto 64px;
+      align-items: center;
+      justify-content: center;
+      column-gap: 30px;
+      margin: 0 auto 10px;
+      text-align: center;
+      width: fit-content;
+    }
+    .print-logo{ width:64px; height:64px; object-fit:contain; }
+    .print-heading{ line-height:1.1; color:#0d2546; }
+    .print-heading .ph-line-1{ font-size:12pt; font-weight:500; }
+    .print-heading .ph-line-2{ font-size:14pt; font-weight:500; }
+    .print-heading .ph-line-3{ font-size:11pt; font-weight:500; }
+    .print-heading .ph-line-4{ font-size:12pt; font-weight:600; margin-top:4px; letter-spacing:.3px; }
+    .print-sub{ font-size:10.5pt; margin-top:4px; }
+    .print-rule{ height:1px; border:0; background:#cfd8e3; margin:8px 0 12px; }
+    .chart-title, .form-submit { display: none !important; }
+  }
+</style>
+
  <style>
     @media print {
         .chart-title { 
@@ -647,15 +691,14 @@ function exportTableToExcel(tableID, filename = 'Referral Summary Report') {
         tempDiv.style.left = '-9999px';
         tempDiv.style.top = '-9999px';
         
-        // Clone the print header
-        const printHeader = document.querySelector('.print-header');
-        if (printHeader) {
-            const headerClone = printHeader.cloneNode(true);
-            // Remove any scripts or interactive elements
-            const scripts = headerClone.querySelectorAll('script');
-            scripts.forEach(script => script.remove());
-            tempDiv.appendChild(headerClone);
-        }
+// Prefer the print-only letterhead; fallback to .print-header
+const headerBlock = document.querySelector('.print-only-letterhead') || document.querySelector('.print-header');
+if (headerBlock) {
+  const headerClone = headerBlock.cloneNode(true);
+  headerClone.querySelectorAll('script').forEach(s => s.remove());
+  tempDiv.appendChild(headerClone);
+}
+
         
         // Clone the summary section
         const summary = document.querySelector('.summary-container');
@@ -762,156 +805,73 @@ async function exportTableToPDF() {
 
 
 
-//PRINT
 function printDiv() {
-    // Clone the print area (table and summary ONLY - NO CHARTS)
+  const area = document.querySelector(".print-area");
+  if (!area) { alert("Nothing to print."); return; }
 
-    
-    const originalArea = document.querySelector(".print-area").cloneNode(true);
+  const clone = area.cloneNode(true);
 
-    // Remove ALL chart-related elements from the cloned area
-    const chartsToRemove = originalArea.querySelectorAll(
-        '#statusChart, #barangayBarChart, canvas, .chart-title, ' +
-        'h3.chart-title, div[id*="Chart"], #statusPieChart, ' +
-        '#noDataMessage, #noBarDataMessage'
-    );
-    chartsToRemove.forEach(chart => {
-        if (chart && chart.parentNode) {
-            chart.parentNode.removeChild(chart);
-        }
-    });
+  // Remove charts/controls from clone
+  clone.querySelectorAll('canvas, .chart-title, #statusChart, #barangayBarChart, #statusPieChart, #noDataMessage, #noBarDataMessage')
+       .forEach(el => el.remove());
 
-    // Remove chart visibility controls and their parent divs
-    const chartControls = originalArea.querySelectorAll(
-        'input[type="checkbox"], label[for*="toggle"], div[style*="margin: 20px"]'
-    );
-    chartControls.forEach(control => {
-        // Remove the entire parent container if it contains chart controls
-        if (control.textContent && control.textContent.includes('Charts:')) {
-            if (control.parentNode) {
-                control.parentNode.parentNode.removeChild(control.parentNode);
-            }
-        } else if (control && control.parentNode) {
-            control.parentNode.removeChild(control);
-        }
-    });
-
-    // Add 'Signature' column to header if not present
-    const headerRow = originalArea.querySelector("thead tr");
-    if (headerRow) {
-        const lastHeader = headerRow.querySelector('th:last-child');
-        if (lastHeader && !lastHeader.textContent.includes('Signature')) {
-            const signatureHeader = document.createElement("th");
-            signatureHeader.textContent = "Signature";
-            headerRow.appendChild(signatureHeader);
-
-            // Add 'Signature' cell to each row in tbody
-            const rows = originalArea.querySelectorAll("tbody tr");
-            rows.forEach(row => {
-                const signatureCell = document.createElement("td");
-                signatureCell.style.height = "30px";
-                signatureCell.textContent = "";
-                row.appendChild(signatureCell);
-            });
-        }
+  // Add Signature column if missing
+  const headerRow = clone.querySelector("table thead tr");
+  if (headerRow) {
+    const lastTh = headerRow.querySelector("th:last-child");
+    if (!lastTh || !/Signature/i.test((lastTh.textContent||"").trim())) {
+      const th = document.createElement("th");
+      th.textContent = "Signature";
+      headerRow.appendChild(th);
+      clone.querySelectorAll("table tbody tr").forEach(tr => {
+        const td = document.createElement("td");
+        td.style.height = "30px";
+        tr.appendChild(td);
+      });
     }
+  }
 
-    // Get the print header HTML
-    const printHeader = document.querySelector('.print-header').outerHTML;
+  // Prefer new letterhead (fallback to old .print-header if ever present)
+  const headerSource = document.querySelector(".print-only-letterhead") || document.querySelector(".print-header");
+  const headerHTML = headerSource ? headerSource.outerHTML : "";
 
-    // Remove the header from the cloned area so it doesn't appear twice
-    const headerInClone = originalArea.querySelector('.print-header');
-    if (headerInClone) headerInClone.remove();
+  // Don't duplicate header in body
+  const headerInClone = clone.querySelector(".print-only-letterhead, .print-header");
+  if (headerInClone) headerInClone.remove();
 
-    // Create print window and write content
-    const printWindow = window.open('', '', 'height=900,width=1100');
-    printWindow.document.write('<html><head><title>Print Report</title>');
-    printWindow.document.write(`
-        <style>
-            body { 
-                font-family: Arial, sans-serif; 
-                font-size: 12px; 
-                color: black; 
-                margin: 20px;
-            }
-            table { 
-                width: 100%; 
-                border-collapse: collapse; 
-                margin-top: 10px;
-            }
-            th, td { 
-                border: 1px solid #000; 
-                padding: 4px; 
-                text-align: left; 
-            }
-            thead { 
-                background-color: #f0f0f0; 
-            }
-            /* Ensure NO charts appear */
-            canvas,
-            #statusChart,
-            #barangayBarChart,
-            #statusPieChart,
-            .chart-title,
-            div[id$="Chart"],
-            div[id*="Chart"] {
-                display: none !important;
-                visibility: hidden !important;
-            }
-            h3 { 
-                margin: 10px 0 5px 0; 
-            }
-            .summary {
-                margin: 20px 0;
-            }
-            .summary p {
-                margin: 5px 0;
-            }
-        </style>
-    `);
-    printWindow.document.write('</head><body>');
-    printWindow.document.write(printHeader);            // Print header first
-    printWindow.document.write(originalArea.innerHTML); // Then table and summary (NO CHARTS)
-    printWindow.document.write('</body></html>');
+  const w = window.open("", "", "height=900,width=1100");
+  if (!w) { alert("Please enable pop-ups to print."); return; }
 
-    printWindow.document.close();
-    printWindow.focus();
-
-    setTimeout(() => {
-        printWindow.print();
-        printWindow.close();
-    }, 500);
+  w.document.write(`<!doctype html><html><head><title>Print Report</title>
+    <meta charset="utf-8">
+    <style>
+      body { font-family: Arial, sans-serif; font-size: 12px; color:#000; margin: 20px; }
+      table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+      th, td { border: 1px solid #000; padding: 4px; text-align: left; }
+      thead { background:#f0f0f0; }
+      h3 { margin: 10px 0 6px; }
+      .print-only-letterhead { display:block; }
+      .print-letterhead{
+        display:grid; grid-template-columns:64px auto 64px; align-items:center; justify-content:center;
+        column-gap:14px; margin:0 auto 10px; text-align:center; width:fit-content;
+      }
+      .print-logo{ width:64px; height:64px; object-fit:contain; }
+      .print-heading{ line-height:1.1; color:#0d2546; }
+      .print-heading .ph-line-1{ font-size:12pt; font-weight:500; }
+      .print-heading .ph-line-2{ font-size:14pt; font-weight:800; }
+      .print-heading .ph-line-3{ font-size:11pt; font-weight:500; }
+      .print-heading .ph-line-4{ font-size:12pt; font-weight:800; margin-top:4px; letter-spacing:.3px; }
+      .print-sub{ font-size:10.5pt; margin-top:4px; }
+      .print-rule{ height:1px; border:0; background:#cfd8e3; margin:8px 0 12px; }
+    </style>
+  </head><body>`);
+  w.document.write(headerHTML);
+  w.document.write(clone.innerHTML);
+  w.document.write(`</body></html>`);
+  w.document.close();
+  w.onload = () => { try { w.focus(); w.print(); } finally { w.close(); } };
 }
 
-
-document.addEventListener('DOMContentLoaded', function() {
-    // Add event listeners to all delete icons
- 	fetch('../php/getUserName.php')
-        .then(response => response.json())
-        .then(data => {
-            if (data.full_name) {
-                document.getElementById('userGreeting').textContent = `Hello, ${data.full_name}!`;
-            } else {
-                document.getElementById('userGreeting').textContent = 'Hello, User!';
-            }
-        })
-        .catch(error => {
-            console.error('Error fetching user name:', error);
-            document.getElementById('userGreeting').textContent = 'Hello, User!';
-        });
-});
-
-<<<<<<< HEAD
-=======
-// Close modal when clicking outside
-window.onclick = function(event) {
-    const modal = document.getElementById('logoutModal');
-    if (event.target == modal) { 
-        closeModal();
-    }
-}
-
->>>>>>> 8e1cbd2320de12c26eaf0404b9f02c7afd73ca59
     function confirmLogout() {
     document.getElementById('logoutModal').style.display = 'block';
     return false; // Prevent the default link behavior
@@ -924,15 +884,6 @@ function closeModal() {
 function proceedLogout() {
     window.location.href = '../../ADMIN/php/logout.php'; 
 }
-
-// Close modal when clicking outside
-window.onclick = function(event) {
-    const modal = document.getElementById('logoutModal');
-    if (event.target == modal) {
-        closeModal();
-    }
-}
-
 
 	// Check if user is logged in
 fetch('../php/getUserId.php')

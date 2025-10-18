@@ -450,34 +450,80 @@ $total_patients = count(array_unique(array_column($visits, 'patient_id')));
 
 
 <div class="print-area">
-<div class="print-header" style="text-align: center;">
-  <h3>Republic of the Philippines</h3>
-  <p>Province of Camarines Norte</p>
-  <h3>Municipality of Daet</h3>
-  <h2><?php echo htmlspecialchars($rhu); ?></h2>
-  <br> 
-  <h2>Patients Summary Report</h2>
-       (<?php
-$filters = [];
-if ($from_date) $filters[] = "From <strong>" . htmlspecialchars($from_date) . "</strong>";
-if ($to_date) $filters[] = "To <strong>" . htmlspecialchars($to_date) . "</strong>";
-
-if ($sex) $filters[] = "Sex: <strong>" . htmlspecialchars($sex) . "</strong>";
-if ($age_group) {
-    $age_labels = [
-        'child' => 'Child (0–12)',
-        'teen' => 'Teen (13–19)',
-        'adult' => 'Adult (20–59)',
-        'senior' => 'Senior (60+)'
-    ];
-    $filters[] = "Age Group: <strong>" . ($age_labels[$age_group] ?? htmlspecialchars($age_group)) . "</strong>";
-}
-if ($purok) $filters[] = "Barangay: <strong>" . htmlspecialchars($purok) . "</strong>";
-if ($bmi) $filters[] = "BMI: <strong>" . htmlspecialchars($bmi) . "</strong>";
-echo $filters ? implode("&nbsp; | &nbsp;", $filters) : "All Records";
-?>)</h3> <br><br><br>
+<!-- PRINT-ONLY LETTERHEAD (shows only when printing) -->
+<div class="print-only-letterhead">
+  <div class="print-letterhead">
+    <img src="../../img/RHUlogo.png" alt="Left Logo" class="print-logo">
+    <div class="print-heading">
+      <div class="ph-line-1">Republic of the Philippines</div>
+      <div class="ph-line-1">Province of Camarines Norte</div>
+      <div class="ph-line-2">Municipality of Daet</div>
+      <div class="ph-line-3"><?= htmlspecialchars($rhu) ?></div>
+      <div class="ph-line-4">PATIENTS SUMMARY REPORT</div>
+      <div class="print-sub">
+        (<?php
+          $filters = [];
+          if ($from_date) $filters[] = "From <strong>" . htmlspecialchars($from_date) . "</strong>";
+          if ($to_date)   $filters[] = "To <strong>" . htmlspecialchars($to_date) . "</strong>";
+          if ($sex) $filters[] = "Sex: <strong>" . htmlspecialchars($sex) . "</strong>";
+          if ($age_group) {
+              $age_labels = [
+                  'child' => 'Child (0–12)',
+                  'teen' => 'Teen (13–19)',
+                  'adult' => 'Adult (20–59)',
+                  'senior' => 'Senior (60+)'
+              ];
+              $filters[] = "Age Group: <strong>" . ($age_labels[$age_group] ?? htmlspecialchars($age_group)) . "</strong>";
+          }
+          if ($purok) $filters[] = "Barangay: <strong>" . htmlspecialchars($purok) . "</strong>";
+          if ($bmi) {
+              $bmi_labels = [
+                'underweight'=>'Underweight','normal'=>'Normal','overweight'=>'Overweight',
+                'class1'=>'Class 1','class2'=>'Class 2','class3'=>'Class 3'
+              ];
+              $filters[] = "BMI: <strong>" . ($bmi_labels[$bmi] ?? htmlspecialchars($bmi)) . "</strong>";
+          }
+          echo $filters ? implode(" &nbsp;|&nbsp; ", $filters) : "All Records";
+        ?>)
+      </div>
+    </div>
+    <img src="../../img/RHUlogo.png" alt="Right Logo" class="print-logo">
+  </div>
+  <hr class="print-rule">
 </div>
+<!-- /PRINT-ONLY LETTERHEAD -->
+
 <div class="report-content">
+<style>
+  /* Hidden on screen; visible only when printing */
+  .print-only-letterhead { display: none; }
+
+  @media print {
+    .print-only-letterhead { display: block; }
+    .print-header { display: none !important; }
+
+    .print-letterhead{
+      display: grid;
+      grid-template-columns: 64px auto 64px;
+      align-items: center;
+      justify-content: center;
+      column-gap: 14px;
+      margin: 0 auto 10px;
+      text-align: center;
+      width: fit-content;
+    }
+    .print-logo{ width:64px; height:64px; object-fit:contain; }
+    .print-heading{ line-height:1.1; color:#0d2546; }
+    .print-heading .ph-line-1{ font-size:12pt; font-weight:500; }
+    .print-heading .ph-line-2{ font-size:14pt; font-weight:500; }
+    .print-heading .ph-line-3{ font-size:11pt; font-weight:500; }
+    .print-heading .ph-line-4{ font-size:12pt; font-weight:600; margin-top:4px; letter-spacing:.3px; }
+    .print-sub{ font-size:10.5pt; margin-top:4px; }
+    .print-rule{ height:1px; border:0; background:#cfd8e3; margin:8px 0 12px; }
+
+    .chart-title, .form-submit { display: none !important; }
+  }
+</style>
 
 <style>
     @media print {
@@ -1048,92 +1094,84 @@ async function exportTableToPDF() {
     });
 }
 function printDiv() {
-    function getChartImage(id, title) {
-        const canvas = document.getElementById(id);
-        if (canvas && canvas.toDataURL) {
-            return `<div style="text-align:center;margin-bottom:20px;">
-                        <h3 style="margin-bottom:8px;">${title}</h3>
-                        <img src="${canvas.toDataURL('image/png')}" style="max-width:100%;height:auto;">
-                    </div>`;
-        }
-        return '';
+  const area = document.querySelector(".print-area");
+  if (!area) { alert("Nothing to print."); return; }
+  const clone = area.cloneNode(true);
+
+  // Add Signature column if missing
+  const headerRow = clone.querySelector("table thead tr");
+  if (headerRow) {
+    const lastTh = headerRow.querySelector("th:last-child");
+    const hasSig = lastTh && /Signature/i.test((lastTh.textContent || "").trim());
+    if (!hasSig) {
+      const th = document.createElement("th");
+      th.textContent = "Signature";
+      headerRow.appendChild(th);
+      clone.querySelectorAll("table tbody tr").forEach(tr => {
+        const td = document.createElement("td");
+        td.style.height = "30px";
+        tr.appendChild(td);
+      });
     }
+  }
 
-    // Collect chart images based on checkboxes
-    let chartsHTML = '';
-    chartsHTML += getChartImage('barangayBarChart', 'Patient Address');
+  // Prefer new letterhead; fallback to old header; guard if absent
+  const headerSource =
+    document.querySelector(".print-only-letterhead") ||
+    document.querySelector(".print-header");
+  const headerHTML = headerSource ? headerSource.outerHTML : "";
 
-    if (document.getElementById("toggleSexChart")?.checked) {
-        chartsHTML += getChartImage('sexPieChart', 'Patients by Sex');
-    }
-    if (document.getElementById("toggleAgeGroupChart")?.checked) {
-        chartsHTML += getChartImage('ageGroupBarChart', 'Age Group');
-    }
-    if (document.getElementById("toggleBMIChart")?.checked) {
-        chartsHTML += getChartImage('bmiPieChart', 'Patients by BMI Category');
-    }
-   
+  // Remove header from the clone (avoid duplicate)
+  const headerInClone = clone.querySelector(".print-only-letterhead, .print-header");
+  if (headerInClone) headerInClone.remove();
 
-    // Clone print area
-    const originalArea = document.querySelector(".print-area");
-    const printHeaderElement = document.querySelector(".print-header");
+  // Remove canvases (optional: you could convert to images instead)
+  clone.querySelectorAll("canvas").forEach(c => c.remove());
 
-    if (!originalArea || !printHeaderElement) {
-        alert("Error: Missing .print-area or .print-header on page.");
-        return;
-    }
+  const w = window.open("", "", "height=900,width=1100");
+  if (!w) { alert("Please enable pop-ups to print."); return; }
 
-    const clone = originalArea.cloneNode(true);
+  w.document.write(`<!doctype html><html><head><title>Print Report</title>
+    <meta charset="utf-8">
+    <style>
+      body { font-family: Arial, sans-serif; font-size: 12px; color: #000; }
+      table { width: 100%; border-collapse: collapse; }
+      th, td { border: 1px solid #000; padding: 4px; text-align: left; }
+      thead { background: #f0f0f0; }
+      img { display: block; margin: 0 auto; max-width: 100%; height: auto; }
+      h3 { margin: 10px 0 6px; }
 
-    // Add Signature column if not already present
-    const headerRow = clone.querySelector("thead tr");
-    if (headerRow && !headerRow.querySelector('th:last-child')?.textContent.includes('Signature')) {
-        const signatureHeader = document.createElement("th");
-        signatureHeader.textContent = "Signature";
-        headerRow.appendChild(signatureHeader);
+      .print-only-letterhead { display: block; } /* ensure visible in print window */
+      .print-letterhead{
+        display: grid;
+        grid-template-columns: 64px auto 64px;
+        align-items: center;
+        justify-content: center;
+        column-gap: 14px;
+        margin: 0 auto 10px;
+        text-align: center;
+        width: fit-content;
+      }
+      .print-logo{ width:64px; height:64px; object-fit:contain; }
+      .print-heading{ line-height:1.1; color:#0d2546; }
+      .print-heading .ph-line-1{ font-size:12pt; font-weight:500; }
+      .print-heading .ph-line-2{ font-size:14pt; font-weight:500; }
+      .print-heading .ph-line-3{ font-size:11pt; font-weight:500; }
+      .print-heading .ph-line-4{ font-size:12pt; font-weight:600; margin-top:4px; letter-spacing:.3px; }
+      .print-sub{ font-size:10.5pt; margin-top:4px; }
+      .print-rule{ height:1px; border:0; background:#cfd8e3; margin:8px 0 12px; }
+    </style>
+  </head><body>`);
 
-        clone.querySelectorAll("tbody tr").forEach(row => {
-            const cell = document.createElement("td");
-            cell.style.height = "30px";
-            row.appendChild(cell);
-        });
-    }
+  w.document.write(headerHTML);
+  w.document.write(clone.innerHTML);
+  w.document.write(`</body></html>`);
+  w.document.close();
 
-    // Remove header duplication
-    const headerInClone = clone.querySelector('.print-header');
-    if (headerInClone) headerInClone.remove();
-
-    // Remove canvases from clone
-    clone.querySelectorAll('canvas').forEach(c => c.remove());
-
-    // Build print window
-    const printWindow = window.open('', '', 'height=900,width=1100');
-    printWindow.document.write('<html><head><title>Print Report</title>');
-    printWindow.document.write(`
-        <style>
-            body { font-family: Arial, sans-serif; font-size: 12px; color: black; }
-            table { width: 100%; border-collapse: collapse; }
-            th, td { border: 1px solid #000; padding: 4px; text-align: left; }
-            thead { background-color: #f0f0f0; }
-            img { display: block; margin: 0 auto; max-width: 100%; height: auto; }
-            h3 { margin: 10px 0 5px 0; }
-        </style>
-    `);
-    printWindow.document.write('</head><body>');
-    printWindow.document.write(printHeaderElement.outerHTML);
-    printWindow.document.write(chartsHTML);
-    printWindow.document.write(clone.innerHTML);
-    printWindow.document.write('</body></html>');
-
-    printWindow.document.close();
-    printWindow.focus();
-
-    setTimeout(() => {
-        printWindow.print();
-        printWindow.close();
-    }, 500);
+  w.onload = () => {
+    try { w.focus(); w.print(); } finally { w.close(); }
+  };
 }
-
 
     function confirmLogout() {
     document.getElementById('logoutModal').style.display = 'block';

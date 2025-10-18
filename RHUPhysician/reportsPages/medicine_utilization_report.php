@@ -579,39 +579,88 @@ if (count($patient_meds) > 0) {
 
 
 <div class="print-area">
-<div class="print-header" style="text-align: center;">
-  <h3>Republic of the Philippines</h3>
-  <h3>Department of Health</h3>
-  <h3>Province of Camarines Norte</h3>
-  <h3>Municipality of Daet</h3>
-  <h2><?php echo htmlspecialchars($rhu); ?></h2>
-  <br> 
-  <h2>DOH MAINTAINANCE MEDICINE UTILIZATION REPORT</h2>
-   (<?php
-$filters = [];
-if ($from_date) $filters[] = "From <strong>" . htmlspecialchars($from_date) . "</strong>";
-if ($to_date) $filters[] = "To <strong>" . htmlspecialchars($to_date) . "</strong>";
-if (!empty($_GET['medicine'])) {
-    $medicine_list = is_array($_GET['medicine']) ? $_GET['medicine'] : [$_GET['medicine']];
-    $filters[] = "Medicine: <strong>" . implode(', ', array_map('htmlspecialchars', $medicine_list)) . "</strong>";
-}
+<!-- PRINT-ONLY LETTERHEAD (shows only when printing) -->
+<div class="print-only-letterhead">
+  <div class="print-letterhead">
+    <img src="../../img/RHUlogo.png" alt="Left Logo" class="print-logo">
+    <div class="print-heading">
+      <div class="ph-line-1">Republic of the Philippines</div>
+      <div class="ph-line-1">Province of Camarines Norte</div>
+      <div class="ph-line-2">Municipality of Daet</div>
+      <div class="ph-line-3"><?= htmlspecialchars($rhu) ?></div>
+      <div class="ph-line-4">DOH MAINTENANCE MEDICINE UTILIZATION REPORT</div>
+      <div class="print-sub">
+        (<?php
+          $parts = [];
+          if (!empty($from_date)) $parts[] = "From <strong>" . htmlspecialchars($from_date) . "</strong>";
+          if (!empty($to_date))   $parts[] = "To <strong>" . htmlspecialchars($to_date) . "</strong>";
 
-if ($sex) $filters[] = "Sex: <strong>" . htmlspecialchars($sex) . "</strong>";
-if ($age_group) {
-    $age_labels = [
-        'child' => 'Child (0–12)',
-        'teen' => 'Teen (13–19)',
-        'adult' => 'Adult (20–59)',
-        'senior' => 'Senior (60+)'
-    ];
-    $filters[] = "Age Group: <strong>" . ($age_labels[$age_group] ?? htmlspecialchars($age_group)) . "</strong>";
-}
-if ($barangay) $filters[] = "Barangay: <strong>" . htmlspecialchars($barangay) . "</strong>";
+          // Medicine list from GET for summary (don’t rely on $medicine_list being redefined later)
+          if (!empty($_GET['medicine'])) {
+              $meds = is_array($_GET['medicine']) ? $_GET['medicine'] : [$_GET['medicine']];
+              $parts[] = "Medicine: <strong>" . implode(', ', array_map('htmlspecialchars', $meds)) . "</strong>";
+          }
 
-echo $filters ? implode("&nbsp; | &nbsp;", $filters) : "All Records";
-?>)</h3> <br><br><br>
+          if (!empty($sex)) $parts[] = "Sex: <strong>" . htmlspecialchars($sex) . "</strong>";
+
+          if (!empty($age_group)) {
+              $age_labels = [
+                  'child'  => 'Child (0–12)',
+                  'teen'   => 'Teen (13–19)',
+                  'adult'  => 'Adult (20–59)',
+                  'senior' => 'Senior (60+)'
+              ];
+              $parts[] = "Age Group: <strong>" . ($age_labels[$age_group] ?? htmlspecialchars($age_group)) . "</strong>";
+          }
+
+          // NOTE: your filter uses ?purok= for barangay; we keep that here
+          if (!empty($barangay)) $parts[] = "Barangay: <strong>" . htmlspecialchars($barangay) . "</strong>";
+
+          echo $parts ? implode(" &nbsp;|&nbsp; ", $parts) : "All Records";
+        ?>)
+      </div>
+    </div>
+    <img src="../../img/RHUlogo.png" alt="Right Logo" class="print-logo">
+  </div>
+  <hr class="print-rule">
 </div>
+<!-- /PRINT-ONLY LETTERHEAD -->
+
+
 <div class="report-content">
+    <style>
+  /* Hidden on screen; visible only when printing */
+  .print-only-letterhead { display: none; }
+
+  @media print {
+    /* Show the new letterhead, hide any old header blocks if present */
+    .print-only-letterhead { display: block; }
+    .print-header { display: none !important; }
+
+    .print-letterhead{
+      display: grid;
+      grid-template-columns: 64px auto 64px;
+      align-items: center;
+      justify-content: center;
+      column-gap: 14px;
+      margin: 0 auto 10px;
+      text-align: center;
+      width: fit-content;
+    }
+    .print-logo{ width:64px; height:64px; object-fit:contain; }
+    .print-heading{ line-height:1.1; color:#0d2546; }
+    .print-heading .ph-line-1{ font-size:12pt; font-weight:500; }
+    .print-heading .ph-line-2{ font-size:14pt; font-weight:500; }
+    .print-heading .ph-line-3{ font-size:11pt; font-weight:500; }
+    .print-heading .ph-line-4{ font-size:12pt; font-weight:600; margin-top:4px; letter-spacing:.3px; }
+    .print-sub{ font-size:10.5pt; margin-top:4px; }
+    .print-rule{ height:1px; border:0; background:#cfd8e3; margin:8px 0 12px; }
+
+    /* Optional: hide UI controls in print */
+    .chart-title, .form-submit { display: none !important; }
+  }
+</style>
+
 <style>
     @media print {
         .chart-title { 
@@ -619,15 +668,6 @@ echo $filters ? implode("&nbsp; | &nbsp;", $filters) : "All Records";
         }
     }
 </style>
-
-
-<!-- Chart Visibility Controls 
-<div style="margin: 20px;" class="chart-title">
-    <h3>Charts:</h3>
-    <label><input type="checkbox" id="toggleSexChart"> Show Patients by Sex</label> <br>
-    <label><input type="checkbox" id="toggleAgeGroupChart"> Show Age Group</label> <br>
-    <label><input type="checkbox" id="toggleBarangayChart"> Show Barangays</label> <br> -->
-
 
 </div>
 <script>
@@ -1128,81 +1168,94 @@ async function exportTableToPDF() {
 
 //PRINT
 function printDiv() {
-    // Get chart images from the original canvases
-    function getChartImage(id, title) {
-        const canvas = document.getElementById(id);
-        if (canvas && canvas.toDataURL) {
-            return `<div style="text-align:center;margin-bottom:20px;">
-                        <h3 style="margin-bottom:8px;">${title}</h3>
-                        <img src="${canvas.toDataURL('image/png')}" style="max-width:100%;height:auto;">
-                    </div>`;
-        }
-        return '';
+  // Clone the printable area
+  const area = document.querySelector(".print-area");
+  if (!area) { alert("Nothing to print."); return; }
+  const clone = area.cloneNode(true);
+
+  // Add Signature column if missing
+  const headerRow = clone.querySelector("table thead tr");
+  if (headerRow) {
+    const lastTh = headerRow.querySelector("th:last-child");
+    const hasSig = lastTh && /Signature/i.test(lastTh.textContent || "");
+    if (!hasSig) {
+      const th = document.createElement("th");
+      th.textContent = "Signature";
+      headerRow.appendChild(th);
+      clone.querySelectorAll("table tbody tr").forEach(tr => {
+        const td = document.createElement("td");
+        td.style.height = "30px";
+        tr.appendChild(td);
+      });
     }
+  }
 
-    // Collect chart images with titles
+  // Prefer new letterhead; fallback to old header; guard if absent
+  const headerSource =
+    document.querySelector(".print-only-letterhead") ||
+    document.querySelector(".print-header");
+  const headerHTML = headerSource ? headerSource.outerHTML : "";
 
+  // Remove header from the clone (avoid duplicate in the print doc)
+  const headerInClone = clone.querySelector(".print-only-letterhead, .print-header");
+  if (headerInClone) headerInClone.remove();
 
+  // Remove canvases inside clone (we're not printing live canvases)
+  clone.querySelectorAll("canvas").forEach(c => c.remove());
 
-    // Clone the print area (table and summary)
-    const originalArea = document.querySelector(".print-area").cloneNode(true);
+  // Open print window and write content
+  const w = window.open("", "", "height=900,width=1100");
+  if (!w) { alert("Please enable pop-ups to print."); return; }
 
-    // Add 'Signature' column to header
-    const headerRow = originalArea.querySelector("thead tr");
-    if (headerRow && !headerRow.querySelector('th:last-child').textContent.includes('Signature')) {
-        const signatureHeader = document.createElement("th");
-        signatureHeader.textContent = "Signature";
-        headerRow.appendChild(signatureHeader);
+  w.document.write(`<!doctype html><html><head><title>Print Report</title>
+    <meta charset="utf-8">
+    <style>
+      body { font-family: Arial, sans-serif; font-size: 12px; color: #000; }
+      table { width: 100%; border-collapse: collapse; }
+      th, td { border: 1px solid #000; padding: 4px; text-align: left; }
+      thead { background: #f0f0f0; }
+      img { display: block; margin: 0 auto; max-width: 100%; height: auto; }
+      h3 { margin: 10px 0 6px; }
 
-        // Add 'Signature' cell to each row in tbody
-        const rows = originalArea.querySelectorAll("tbody tr");
-        rows.forEach(row => {
-            const signatureCell = document.createElement("td");
-            signatureCell.style.height = "30px";
-            signatureCell.textContent = "";
-            row.appendChild(signatureCell);
-        });
-    }
+      /* ensure the print-only letterhead is visible in print window */
+      .print-only-letterhead { display: block; }
+      .print-header { display: none !important; }
 
-    // Get the print header HTML
-    const printHeader = document.querySelector('.print-header').outerHTML;
+      /* match your other page’s letterhead styles */
+      .print-letterhead{
+        display: grid;
+        grid-template-columns: 64px auto 64px;
+        align-items: center;
+        justify-content: center;
+        column-gap: 14px;
+        margin: 0 auto 10px;
+        text-align: center;
+        width: fit-content;
+      }
+      .print-logo{ width:64px; height:64px; object-fit:contain; }
+      .print-heading{ line-height:1.1; color:#0d2546; }
+      .print-heading .ph-line-1{ font-size:12pt; font-weight:500; }
+      .print-heading .ph-line-2{ font-size:14pt; font-weight:500; }
+      .print-heading .ph-line-3{ font-size:11pt; font-weight:500; }
+      .print-heading .ph-line-4{ font-size:12pt; font-weight:600; margin-top:4px; letter-spacing:.3px; }
+      .print-sub{ font-size:10.5pt; margin-top:4px; }
+      .print-rule{ height:1px; border:0; background:#cfd8e3; margin:8px 0 12px; }
 
-    // Remove the header from the cloned area so it doesn't appear twice
-    const headerInClone = originalArea.querySelector('.print-header');
-    if (headerInClone) headerInClone.remove();
+      /* hide UI bits */
+      .chart-title, .form-submit { display: none !important; }
+    </style>
+  </head><body>`);
 
-    // Remove all canvases from the cloned area (since we use chart images instead)
-    const canvases = originalArea.querySelectorAll('canvas');
-    canvases.forEach(c => c.parentNode.removeChild(c));
+  w.document.write(headerHTML);        // header first
+  w.document.write(clone.innerHTML);   // report contents
+  w.document.write(`</body></html>`);
+  w.document.close();
 
-    // Create print window and write content
-    const printWindow = window.open('', '', 'height=900,width=1100');
-    printWindow.document.write('<html><head><title>Print Report</title>');
-    printWindow.document.write(`
-        <style>
-            body { font-family: Arial, sans-serif; font-size: 12px; color: black; }
-            table { width: 100%; border-collapse: collapse; }
-            th, td { border: 1px solid #000; padding: 4px; text-align: left; }
-            thead { background-color: #f0f0f0; }
-            img { display: block; margin: 0 auto; max-width: 100%; height: auto; }
-            h3 { margin: 10px 0 5px 0; }
-        </style>
-    `);
-    printWindow.document.write('</head><body>');
-    printWindow.document.write(printHeader);            // Print header first
-           // Then charts
-    printWindow.document.write(originalArea.innerHTML); // Then table and summary
-    printWindow.document.write('</body></html>');
-
-    printWindow.document.close();
-    printWindow.focus();
-
-    setTimeout(() => {
-        printWindow.print();
-        printWindow.close();
-    }, 500);
+  // Print when ready (no setTimeout needed)
+  w.onload = () => {
+    try { w.focus(); w.print(); } finally { w.close(); }
+  };
 }
-
 
 
 document.addEventListener('DOMContentLoaded', function() {

@@ -461,42 +461,76 @@ $visits = $stmt->fetchAll();
 
 
 <div class="print-area">
-<div class="print-header" style="text-align: center;">
-  <h3>Republic of the Philippines</h3>
-  <p>Province of Camarines Norte</p>
-  <h3>Municipality of Daet</h3>
-  <h2><?php echo htmlspecialchars($rhu); ?></h2>
-  <br> 
-  <h2>MEDICAL CASE MONITORING REPORT</h2>
-  (<?php
-$filters = [];
-if ($from_date) $filters[] = "From <strong>" . htmlspecialchars($from_date) . "</strong>";
-if ($to_date) $filters[] = "To <strong>" . htmlspecialchars($to_date) . "</strong>";
-if ($diagnosis) {
-    $diagnosis_list = is_array($diagnosis) ? $diagnosis : [$diagnosis];
-    $filters[] = "Diagnosis: <strong>" . implode(', ', array_map('htmlspecialchars', $diagnosis_list)) . "</strong>";
-    
-}
-if ($diagnosis_status) $filters[] = "Status: <strong>" . htmlspecialchars($diagnosis_status) . "</strong>";
-if ($sex) $filters[] = "Sex: <strong>" . htmlspecialchars($sex) . "</strong>";
-if ($age_group) {
-    $age_labels = [
-        'child' => 'Child (0–12)',
-        'teen' => 'Teen (13–19)',
-        'adult' => 'Adult (20–59)',
-        'senior' => 'Senior (60+)'
-    ];
-    $filters[] = "Age Group: <strong>" . ($age_labels[$age_group] ?? htmlspecialchars($age_group)) . "</strong>";
-}
-if ($purok) $filters[] = "Barangay: <strong>" . htmlspecialchars($purok) . "</strong>";
-
-
-
-echo $filters ? implode("&nbsp; | &nbsp;", $filters) : "All Records";
-?>)
+<!-- PRINT-ONLY LETTERHEAD (shows only when printing) -->
+<div class="print-only-letterhead">
+  <div class="print-letterhead">
+    <img src="../../img/RHUlogo.png" alt="Left Logo" class="print-logo">
+    <div class="print-heading">
+      <div class="ph-line-1">Republic of the Philippines</div>
+      <div class="ph-line-1">Province of Camarines Norte</div>
+      <div class="ph-line-2">Municipality of Daet</div>
+      <div class="ph-line-3"><?= htmlspecialchars($rhu) ?></div>
+      <div class="ph-line-4">MEDICAL CASE MONITORING REPORT</div>
+      <div class="print-sub">
+        (<?php
+          $parts = [];
+          if (!empty($from_date)) $parts[] = "From <strong>" . htmlspecialchars($from_date) . "</strong>";
+          if (!empty($to_date))   $parts[] = "To <strong>" . htmlspecialchars($to_date) . "</strong>";
+          if (!empty($diagnosis)) {
+            $dlist = is_array($diagnosis) ? $diagnosis : [$diagnosis];
+            $parts[] = "Diagnosis: <strong>" . implode(', ', array_map('htmlspecialchars', $dlist)) . "</strong>";
+          }
+          if (!empty($diagnosis_status)) $parts[] = "Status: <strong>" . htmlspecialchars($diagnosis_status) . "</strong>";
+          if (!empty($sex)) $parts[] = "Sex: <strong>" . htmlspecialchars($sex) . "</strong>";
+          if (!empty($age_group)) {
+            $age_labels = ['child'=>'Child (0–12)','teen'=>'Teen (13–19)','adult'=>'Adult (20–59)','senior'=>'Senior (60+)'];
+            $parts[] = "Age Group: <strong>" . ($age_labels[$age_group] ?? htmlspecialchars($age_group)) . "</strong>";
+          }
+          if (!empty($purok)) $parts[] = "Barangay: <strong>" . htmlspecialchars($purok) . "</strong>";
+          echo $parts ? implode(" &nbsp;|&nbsp; ", $parts) : "All Records";
+        ?>)
+      </div>
+    </div>
+    <img src="../../img/RHUlogo.png" alt="Right Logo" class="print-logo">
+  </div>
+  <hr class="print-rule">
 </div>
+<!-- /PRINT-ONLY LETTERHEAD -->
+
 
 <div class="report-content">
+<style>
+  /* Hidden on screen; visible only when printing */
+  .print-only-letterhead { display: none; }
+
+  @media print {
+    /* Show the new letterhead, hide the old header */
+    .print-only-letterhead { display: block; }
+    .print-header { display: none !important; }
+
+    .print-letterhead{
+      display: grid;
+      grid-template-columns: 64px auto 64px;
+      align-items: center;
+      justify-content: center;
+      column-gap: 14px;
+      margin: 0 auto 10px;
+      text-align: center;
+      width: fit-content;
+    }
+    .print-logo{ width:64px; height:64px; object-fit:contain; }
+    .print-heading{ line-height:1.1; color:#0d2546; }
+    .print-heading .ph-line-1{ font-size:12pt; font-weight:500; }
+    .print-heading .ph-line-2{ font-size:14pt; font-weight:500; }
+    .print-heading .ph-line-3{ font-size:11pt; font-weight:500; }
+    .print-heading .ph-line-4{ font-size:12pt; font-weight:600; margin-top:4px; letter-spacing:.3px; }
+    .print-sub{ font-size:10.5pt; margin-top:4px; }
+    .print-rule{ height:1px; border:0; background:#cfd8e3; margin:8px 0 12px; }
+
+    /* keep your existing print-hides working if you want */
+    .chart-title, .form-submit { display: none !important; }
+  }
+</style>
 
 <style>
     @media print {
@@ -1054,88 +1088,100 @@ function exportTableToExcel(tableID, filename = 'Medical Cases Report') {
 
 
 function printDiv() {
-    // Get chart images from the original canvases
-    function getChartImage(id, title) {
-        const canvas = document.getElementById(id);
-        if (canvas && canvas.toDataURL) {
-            return `<div style="text-align:center;margin-bottom:20px;">
-                        <h3 style="margin-bottom:8px;">${title}</h3>
-                        <img src="${canvas.toDataURL('image/png')}" style="max-width:100%;height:auto;">
-                    </div>`;
-        }
-        return '';
+  // Open the window immediately to avoid popup blockers
+  const pw = window.open('', '_blank', 'height=900,width=1100');
+  if (!pw) {
+    alert('Please enable pop-ups to print.');
+    return;
+  }
+
+  // Helpers
+  const byId = (id) => document.getElementById(id);
+  const area = document.querySelector('.print-area');
+  if (!area) {
+    alert('No .print-area found.');
+    pw.close();
+    return;
+  }
+
+  // Build chart images (only if the canvas exists)
+  function chartBlock(id, title) {
+    const c = byId(id);
+    if (!c || !c.toDataURL) return '';
+    try {
+      const dataURL = c.toDataURL('image/png');
+      return `<div style="text-align:center;margin:0 0 16px;">
+                <h3 style="margin:0 0 8px;">${title}</h3>
+                <img src="${dataURL}" style="max-width:100%;height:auto;">
+              </div>`;
+    } catch (e) {
+      return '';
     }
+  }
 
-    // Collect chart images with titles
-    let chartsHTML = '';
-      chartsHTML += getChartImage('casesLineChart', 'Medical Cases');
-   if (document.getElementById("toggleSexChart").checked) {
-        chartsHTML += getChartImage('sexPieChart', 'Patients by Sex');
+  // Which charts to include
+  let chartsHTML = '';
+  // Clone the printable area
+  const clone = area.cloneNode(true);
+
+  // Remove canvases from the clone (we’ll use the images above)
+  clone.querySelectorAll('canvas').forEach(el => el.remove());
+  // Remove chart title blocks inside the clone
+  clone.querySelectorAll('.chart-title').forEach(el => el.remove());
+
+  // Add Signature column if there is a table
+  const headerRow = clone.querySelector('table thead tr');
+  if (headerRow) {
+    const lastThText = (headerRow.lastElementChild && headerRow.lastElementChild.textContent) ? headerRow.lastElementChild.textContent : '';
+    if (!/Signature/i.test(lastThText)) {
+      const th = document.createElement('th');
+      th.textContent = 'Signature';
+      headerRow.appendChild(th);
+      clone.querySelectorAll('table tbody tr').forEach(tr => {
+        const td = document.createElement('td');
+        td.style.height = '28px';
+        tr.appendChild(td);
+      });
     }
-    if (document.getElementById("toggleAgeGroupChart").checked) {
-        chartsHTML += getChartImage('ageGroupBarChart', 'Age Group');
-    }
-   
+  }
 
-  
+  // Prefer the print-only letterhead if present; else fall back to .print-header
+  let headerHTML = '';
+  const printOnly = document.querySelector('.print-only-letterhead');
+  const printHeader = document.querySelector('.print-header');
+  if (printOnly) headerHTML = printOnly.outerHTML;
+  else if (printHeader) headerHTML = printHeader.outerHTML;
 
-    // Clone the print area (table and summary)
-    const originalArea = document.querySelector(".print-area").cloneNode(true);
+  // Avoid duplicate header if the clone also contains it
+  const headerInClone = clone.querySelector('.print-only-letterhead, .print-header');
+  if (headerInClone) headerInClone.remove();
 
-    // Add 'Signature' column to header
-    const headerRow = originalArea.querySelector("thead tr");
-    if (headerRow && !headerRow.querySelector('th:last-child').textContent.includes('Signature')) {
-        const signatureHeader = document.createElement("th");
-        signatureHeader.textContent = "Signature";
-        headerRow.appendChild(signatureHeader);
+  // Write the print document
+  pw.document.write('<html><head><title>Print Report</title>');
+  pw.document.write(`
+    <style>
+      body { font-family: Arial, sans-serif; font-size: 12px; color: #000; }
+      table { width: 100%; border-collapse: collapse; }
+      th, td { border: 1px solid #000; padding: 4px; text-align: left; }
+      thead { background: #f0f0f0; }
+      img { display: block; margin: 0 auto; max-width: 100%; height: auto; }
+      h3 { margin: 10px 0 6px; }
+      @media print {
+        .form-submit, .chart-title { display: none !important; }
+      }
+    </style>
+  `);
+  pw.document.write('</head><body>');
+  if (headerHTML) pw.document.write(headerHTML);
+  if (chartsHTML) pw.document.write(chartsHTML);
+  pw.document.write(clone.innerHTML);
+  pw.document.write('</body></html>');
+  pw.document.close();
 
-        // Add 'Signature' cell to each row in tbody
-        const rows = originalArea.querySelectorAll("tbody tr");
-        rows.forEach(row => {
-            const signatureCell = document.createElement("td");
-            signatureCell.style.height = "30px";
-            signatureCell.textContent = "";
-            row.appendChild(signatureCell);
-        });
-    }
-
-    // Get the print header HTML
-    const printHeader = document.querySelector('.print-header').outerHTML;
-
-    // Remove the header from the cloned area so it doesn't appear twice
-    const headerInClone = originalArea.querySelector('.print-header');
-    if (headerInClone) headerInClone.remove();
-
-    // *** REMOVE ALL CANVAS ELEMENTS FROM THE CLONED AREA ***
-    const canvases = originalArea.querySelectorAll('canvas');
-canvases.forEach(c => c.parentNode.removeChild(c));
-
-    // Create print window and write content
-    const printWindow = window.open('', '', 'height=900,width=1100');
-    printWindow.document.write('<html><head><title>Print Report</title>');
-    printWindow.document.write(`
-        <style>
-            body { font-family: Arial, sans-serif; font-size: 12px; color: black; }
-            table { width: 100%; border-collapse: collapse; }
-            th, td { border: 1px solid #000; padding: 4px; text-align: left; }
-            thead { background-color: #f0f0f0; }
-            img { display: block; margin: 0 auto; max-width: 100%; height: auto; }
-            h3 { margin: 10px 0 5px 0; }
-        </style>
-    `);
-    printWindow.document.write('</head><body>');
-    printWindow.document.write(printHeader); // Print header at the very top
-    printWindow.document.write(chartsHTML);  // Then charts
-    printWindow.document.write(originalArea.innerHTML);  // Then table and summary
-    printWindow.document.write('</body></html>');
-
-    printWindow.document.close();
-    printWindow.focus();
-
-    setTimeout(() => {
-        printWindow.print();
-        printWindow.close();
-    }, 500);
+  // Print when ready
+  pw.onload = () => {
+    try { pw.focus(); pw.print(); } finally { pw.close(); }
+  };
 }
 
 

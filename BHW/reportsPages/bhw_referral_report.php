@@ -380,47 +380,65 @@ $rows = $stmt->fetchAll();
 <div class="main-content">
 
 <div class="print-area">
-<div class="print-header" style="text-align: center;">
-    <img src="../../img/RHUlogo.png" alt="RHU Logo" class="print-logo" style="height: 50px; width: auto;" />
-  <h3>Republic of the Philippines</h3>
-  <p>Province of Camarines Norte</p>
-  <h3>Municipality of Daet</h3>
-  <h2><?php echo htmlspecialchars($barangayName); ?></h2>
-  <br> 
-  <h2>BHS REFERRAL REPORT</h2>
-  (<?php
-$filters = [];
-if ($from_date) $filters[] = "From <strong>" . htmlspecialchars($from_date) . "</strong>";
-if ($to_date) $filters[] = "To <strong>" . htmlspecialchars($to_date) . "</strong>";
-if ($referral_status) $filters[] = "Status: <strong>" . htmlspecialchars($status) . "</strong>";
-if ($bhw_id) {
-    $bhw_name = '';
-    foreach ($bhws as $bhw) {
-        if ($bhw['user_id'] == $bhw_id) {
-            $bhw_name = $bhw['full_name'];
-            break;
-        }
-    }
-    $filters[] = "Referred by: <strong>" . htmlspecialchars($bhw_name) . "</strong>";
-}
 
-if ($sex) $filters[] = "Sex: <strong>" . htmlspecialchars($sex) . "</strong>";
-if ($age_group) {
-    $age_labels = [
-        'child' => 'Child (0–12)',
-        'teen' => 'Teen (13–19)',
-        'adult' => 'Adult (20–59)',
-        'senior' => 'Senior (60+)'
-    ];
-    $filters[] = "Age Group: <strong>" . ($age_labels[$age_group] ?? htmlspecialchars($age_group)) . "</strong>";
-}
+  <!-- Two-logo letterhead -->
+  <div class="print-letterhead">
+    <img src="../../img/Plogo.png" alt="Left Logo"  class="print-logo">
+    <div class="print-heading">
+      <div class="ph-line-1">Republic of the Philippines</div>
+      <div class="ph-line-1">Province of Camarines Norte</div>
+      <div class="ph-line-2">Municipality of Daet</div>
+      <div class="ph-line-3"><?php echo htmlspecialchars($barangayName); ?></div>
+      <div class="ph-line-4">BHS REFERRAL REPORT</div>
+      <div class="print-sub">
+        (<?php
+          $filters = [];
+          if ($from_date) $filters[] = "From <strong>" . htmlspecialchars($from_date) . "</strong>";
+          if ($to_date)   $filters[] = "To <strong>" . htmlspecialchars($to_date) . "</strong>";
+          if ($referral_status) $filters[] = "Status: <strong>" . htmlspecialchars($status) . "</strong>";
+          if ($bhw_id) { $bhw_name=''; foreach ($bhws as $bhw) { if ($bhw['user_id']==$bhw_id){ $bhw_name=$bhw['full_name']; break; } }
+                         $filters[] = "Referred by: <strong>" . htmlspecialchars($bhw_name) . "</strong>"; }
+          if ($sex) $filters[] = "Sex: <strong>" . htmlspecialchars($sex) . "</strong>";
+          if ($age_group) {
+            $age_labels = ['child'=>'Child (0–12)','teen'=>'Teen (13–19)','adult'=>'Adult (20–59)','senior'=>'Senior (60+)'];
+            $filters[] = "Age Group: <strong>" . ($age_labels[$age_group] ?? htmlspecialchars($age_group)) . "</strong>";
+          }
+          echo $filters ? implode("&nbsp; | &nbsp;", $filters) : "All Records";
+        ?>)
+      </div>
+    </div>
+    <img src="../../img/RHUlogo.png" alt="Right Logo" class="print-logo">
+  </div>
+  <hr class="print-rule">
 
 
-
-echo $filters ? implode("&nbsp; | &nbsp;", $filters) : "All Records";
-?>)</h3> <br><br><br>
-</div>
 <div class="report-content">
+    <style>
+         .print-letterhead { display: none; }
+
+  @media print {
+    .print-letterhead { display: block; }
+  .print-letterhead{
+    display:grid;
+    grid-template-columns:64px auto 64px;
+    align-items:center;
+    justify-content:center;
+    column-gap:14px;
+    margin:0 auto 10px;
+    text-align:center;
+    width:fit-content;
+  }
+  .print-logo{ width:64px; height:64px; object-fit:contain; }
+  .print-heading{ line-height:1.1; color:#0d2546; }
+  .print-heading .ph-line-1{ font-size:12pt; font-weight:500; }
+  .print-heading .ph-line-2{ font-size:14pt; font-weight:500; }
+  .print-heading .ph-line-3{ font-size:11pt; font-weight:500; }
+  .print-heading .ph-line-4{ font-size:12pt; font-weight:600; margin-top:4px; letter-spacing:.3px; }
+  .print-sub{ font-size:10.5pt; margin-top:4px; }
+  .print-rule{ height:1px; border:0; background:#cfd8e3; margin:8px 0 12px; }
+}
+</style>
+
 <style>
     @media print {
         .chart { 
@@ -732,7 +750,7 @@ function exportTableToExcel(tableID, filename = 'Referral Summary Report') {
         tempDiv.style.top = '-9999px';
         
         // Clone the print header
-        const printHeader = document.querySelector('.print-header');
+       const printHeader = document.querySelector('.print-letterhead, .print-header');
         if (printHeader) {
             const headerClone = printHeader.cloneNode(true);
             // Remove any scripts or interactive elements
@@ -842,81 +860,79 @@ function addExportStyles(doc) {
     `);
 }
 function printDiv() {
-    // Get chart images from the original canvases
-    function getChartImage(id, title) {
-        const canvas = document.getElementById(id);
-        if (canvas && canvas.toDataURL) {
-            return `<div style="text-align:center;margin-bottom:20px;">
-                        <h3 style="margin-bottom:8px;">${title}</h3>
-                        <img src="${canvas.toDataURL('image/png')}" style="max-width:100%;height:auto;">
-                    </div>`;
-        }
-        return '';
+  // 1) Header (prefer new, fallback to old)
+  const headerEl = document.querySelector('.print-letterhead, .print-header');
+  const printHeader = headerEl ? headerEl.outerHTML : '';
+
+  // 2) Clone area
+  const area = document.querySelector('.print-area');
+  if (!area) return;
+  const clone = area.cloneNode(true);
+
+  // 3) Replace canvases with images for each known chart
+  const chartIds = ['referralPieChart', 'statusPieChart'];
+  chartIds.forEach(id => {
+    const live = document.getElementById(id);
+    const inClone = clone.querySelector('#' + id);
+    if (live && inClone) {
+      const img = document.createElement('img');
+      img.src = live.toDataURL('image/png');
+      img.style.maxWidth = '100%';
+      img.style.height = 'auto';
+      inClone.parentNode.replaceChild(img, inClone);
     }
+  });
 
- 
+  // Remove any other canvases that might be inside the clone
+  clone.querySelectorAll('canvas').forEach(c => c.remove());
 
-    // Clone the print area (table and summary)
-    const originalArea = document.querySelector(".print-area").cloneNode(true);
+  // 4) Avoid duplicating header
+  const headerInClone = clone.querySelector('.print-letterhead, .print-header');
+  if (headerInClone) headerInClone.remove();
 
-    // Add 'Signature' column to header
-    const headerRow = originalArea.querySelector("thead tr");
-  
-
-    // Get the print header HTML
-    const printHeader = document.querySelector('.print-header').outerHTML;
-
-    // Remove the header from the cloned area so it doesn't appear twice
-    const headerInClone = originalArea.querySelector('.print-header');
-    if (headerInClone) headerInClone.remove();
-
-    // *** REMOVE ALL CANVAS ELEMENTS FROM THE CLONED AREA ***
-    const canvases = originalArea.querySelectorAll('canvas');
-    canvases.forEach(c => c.parentNode.removeChild(c));
-
-    // Create print window and write content
-    const printWindow = window.open('', '', 'height=900,width=1100');
-    printWindow.document.write('<html><head><title>Print Report</title>');
-    printWindow.document.write(`
+  // 5) Open window & print
+  const w = window.open('', '', 'height=900,width=1100');
+  if (!w) { alert('Please allow pop-ups to print this report.'); return; }
+  w.document.write(`
+    <html>
+      <head>
+        <title>Print Report</title>
+        <meta charset="utf-8" />
         <style>
-            body { font-family: Arial, sans-serif; font-size: 16px; color: black; }
-            table { width: 100%; border-collapse: collapse; }
-            th, td { border: 1px solid #000; padding: 4px; text-align: left; }
-            thead { background-color: #f0f0f0; }
-            img { display: block; margin: 0 auto; max-width: 100%; height: auto; }
-            h3 { margin: 10px 0 5px 0; }
-            .referral-status {
-                font-weight: bold;
-                padding: 4px 8px;
-                border-radius: 3px;
-                display: inline-block;
-            }
-            .status-pending {
-                color: #1c538a;
-                border-left: 2px solid #1c538a;
-            }
-            .status-completed {
-                color: #2e8540;
-                border-left: 2px solid #2e8540;
-            }
-            .status-uncompleted, .status-canceled {
-                color: #d83933;
-                border-left: 2px solid #d83933;
-            }
+          body { font-family: Arial, sans-serif; font-size: 16px; color:#000; }
+          table { width:100%; border-collapse:collapse; }
+          th, td { border:1px solid #000; padding:4px; text-align:left; }
+          thead { background:#f0f0f0; }
+          /* Letterhead in print window */
+          .print-letterhead{
+            display:grid; grid-template-columns:64px auto 64px;
+            align-items:center; justify-content:center; column-gap:14px;
+            margin:0 auto 10px; text-align:center; width:fit-content;
+          }
+          .print-logo{ width:64px; height:64px; object-fit:contain; }
+          .print-heading{ line-height:1.1; color:#0d2546; }
+          .print-heading .ph-line-1{ font-size:12pt; font-weight:500; }
+          .print-heading .ph-line-2{ font-size:14pt; font-weight:800; }
+          .print-heading .ph-line-3{ font-size:11pt; font-weight:500; }
+          .print-heading .ph-line-4{ font-size:12pt; font-weight:800; margin-top:4px; letter-spacing:.3px; }
+          .print-sub{ font-size:10.5pt; margin-top:4px; }
+          .print-rule{ height:1px; border:0; background:#cfd8e3; margin:8px 0 12px; }
+          /* Status colors */
+          .referral-status { font-weight:bold; padding:4px 8px; border-radius:3px; display:inline-block; }
+          .status-pending { color:#1c538a; border-left:2px solid #1c538a; }
+          .status-completed { color:#2e8540; border-left:2px solid #2e8540; }
+          .status-uncompleted, .status-canceled { color:#d83933; border-left:2px solid #d83933; }
         </style>
-    `);
-    printWindow.document.write('</head><body>');
-    printWindow.document.write(printHeader); // Print header at the very top
-    printWindow.document.write(originalArea.innerHTML);  // Then table and summary
-    printWindow.document.write('</body></html>');
-
-    printWindow.document.close();
-    printWindow.focus();
-
-    setTimeout(() => {
-        printWindow.print();
-        printWindow.close();
-    }, 500);
+      </head>
+      <body>
+        ${printHeader}
+        ${clone.innerHTML}
+      </body>
+    </html>
+  `);
+  w.document.close();
+  w.focus();
+  setTimeout(() => { w.print(); w.close(); }, 300);
 }
 
 
