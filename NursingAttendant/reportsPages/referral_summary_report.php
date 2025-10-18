@@ -407,6 +407,44 @@ $total_pending = 0;
 <div class="report-content">
 <!-- Summary Section -->
  <style>
+
+    /* Space above the summary section */
+.summary-container {
+  margin-top: 32px;
+}
+
+/* Two-column table styling */
+.summary-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 16px;
+}
+
+.summary-table th,
+.summary-table td {
+  border: 1px solid #d5d7db;
+  padding: 8px 12px;
+  vertical-align: top;
+  text-align: left;
+  word-wrap: break-word;
+}
+
+.summary-table th {
+  background: #f2f4f7;
+  font-weight: 600;
+}
+
+/* Print-only tweaks: hide the Summary title, add a touch more space */
+@media print {
+  .summary > h3 {
+    display: none !important;
+  }
+  .summary-container {
+    margin-top: 40px;
+  }
+}
+
     @media print {
         .chart-title { 
            display: none;
@@ -419,6 +457,7 @@ $total_pending = 0;
         }
     }
 </style>
+
 <style>
   /* Hide the print letterhead on screen */
   .print-only-letterhead { display: none; }
@@ -642,15 +681,41 @@ document.addEventListener("DOMContentLoaded", () => {
     </tbody>
 </table>
 <br> <br>
-<div class="summary">
-    <h3>Summary:</h3>
-     
-    <p><strong>Report Generated On:</strong> <?= date('Y-m-d H:i:s') ?></p>
-	<p><strong>Total Referrals Received:</strong> <?= $total_received ?></p>
-	<p><strong>Completed Referrals:</strong> <?= $total_completed ?></p>
-	<p><strong>Uncompleted Referrals:</strong> <?= $total_uncompleted ?></p>
-	<p><strong>Pending Referrals:</strong> <?= $total_pending ?></p>
-</div> <br> <br>
+<div class="summary-container">
+  <div class="summary">
+    <h3>Summary</h3>
+
+    <table class="summary-table">
+      <colgroup>
+        <col style="width:40%">
+        <col style="width:60%">
+      </colgroup>
+      <tbody>
+        <tr>
+          <th>Report Generated On</th>
+          <td><?= date('F j, Y g:i:s A') ?></td>
+        </tr>
+        <tr>
+          <th>Total Referrals Received</th>
+          <td><?= $total_received ?></td>
+        </tr>
+        <tr>
+          <th>Completed Referrals</th>
+          <td><?= $total_completed ?></td>
+        </tr>
+        <tr>
+          <th>Uncompleted Referrals</th>
+          <td><?= $total_uncompleted ?></td>
+        </tr>
+        <tr>
+          <th>Pending Referrals</th>
+          <td><?= $total_pending ?></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<br> <br>
 
 
 <div class="generated-by">

@@ -538,6 +538,47 @@ while ($row = $barangay_stmt->fetch(PDO::FETCH_ASSOC)) {
   }
 }
 </style>
+<style>
+  /* Extra space above the summary block */
+  .summary-container { margin-top: 48px; }
+
+  @media print {
+    .summary-container { margin-top: 64px; }
+  }
+
+  /* Summary table styling */
+  .summary-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 16px;
+    background: #fff;
+  }
+  .summary-table th, .summary-table td {
+    border: 1px solid #000;
+    padding: 8px 10px;
+    vertical-align: top;
+  }
+  .summary-table th {
+    background: #f0f0f0;
+    text-align: left;
+    width: 280px; /* label column */
+  }
+  .summary-title {
+    margin: 0 0 10px 0;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .summary-title i { font-size: 20px; }
+  .summary-sublist {
+    margin: 0;
+    padding-left: 20px;
+    list-style: disc;
+  }
+  .summary-mono { white-space: nowrap; }
+</style>
+
 
 <style>
     @media print {
@@ -554,6 +595,12 @@ while ($row = $barangay_stmt->fetch(PDO::FETCH_ASSOC)) {
             font-size: 16px;
         }
     }
+        @media print {
+    .summary-container .summary h3 { 
+      display: none !important; 
+    }
+    .summary-container .kv-table { margin-top: 0 !important; }
+  }
 </style>
 
 
@@ -980,84 +1027,96 @@ if (addressData.length > 0 && addressData.reduce((a, b) => a + b, 0) > 0) {
   
 <!-- Summary Section -->
 <div class="summary-container">
-    <div class="summary">
-        <h3><i class="bx bx-file"></i> Summary:</h3>
-        <ul class="summary-list">
-             <li>
-                <strong>Report Generated On:</strong> <?= date('Y-m-d H:i:s') ?>
-            </li>
-            <li><strong>Total Patients in Report:</strong> <?= $total_patients ?></li>
-            <li>
-                <strong>By Sex:</strong>
-                Male – <?= $sex_counts['Male'] ?? 0 ?>,
-                Female – <?= $sex_counts['Female'] ?? 0 ?>
-            </li>
-            <li>
-                <strong>By Age Group:</strong>
-                Children – <?= $age_group_counts['0–5'] + $age_group_counts['6–17'] ?>,
-                Adults – <?= $age_group_counts['18–59'] ?>,
-                Seniors – <?= $age_group_counts['60+'] ?>
-            </li>
-            <li>
-                <strong>By BMI:</strong>
-                Underweight – <?= $bmi_categories['Underweight'] ?? 0 ?>,
-                Normal – <?= $bmi_categories['Normal'] ?? 0 ?>,
-                Overweight – <?= $bmi_categories['Overweight'] ?? 0 ?>,
-                Obese – <?= ($bmi_categories['Class 1'] ?? 0) + ($bmi_categories['Class 2'] ?? 0) + ($bmi_categories['Class 3'] ?? 0) ?>
-            </li>
-            
-            <li>
-                <strong>Most Common Treatment Given:</strong>
-                <?php
-                    // Find most common treatment
-                    $max_treatment = '';
-                    $max_treatment_count = 0;
-                    foreach ($treatment_types as $treat => $count) {
-                        if ($count > $max_treatment_count) {
-                            $max_treatment = $treat;
-                            $max_treatment_count = $count;
-                        }
-                    }
-                    echo htmlspecialchars($max_treatment ?: 'N/A');
-                ?>
-            </li>
-            <li>
-                <li>
-                    <strong>Patient Counts per Purok:</strong>
-                    <ul>
-                        <?php
-                        // Calculate patient counts per barangay
-                        $barangay_patient_counts = [];
-                     foreach ($visits as $visit) {
-    $patient_id = $visit['patient_id'];
-    $address = $visit['address'] ?? 'Unknown';
-    $unique_patient_addresses[$patient_id] = $address;
-}
-                        foreach ($unique_patient_addresses as $address) {
-                            $parts = explode('-', $address, 2);
-                            $barangay = trim($parts[0]); // "Purok X"
-                            $barangay_patient_counts[$barangay] = ($barangay_patient_counts[$barangay] ?? 0) + 1;
-                        }
-                        // Sort by numeric purok order
-                        uksort($barangay_patient_counts, function($a, $b) {
-                            preg_match('/\d+/', $a, $matchA);
-                            preg_match('/\d+/', $b, $matchB);
-                            $numA = $matchA[0] ?? 0;
-                            $numB = $matchB[0] ?? 0;
-                            return $numA - $numB;
-                        });
-                        foreach ($barangay_patient_counts as $barangay => $count) {
-                            echo '<li>' . htmlspecialchars($barangay) . ' – ' . $count . '</li>';
-                        }
+  <div class="summary">
+    <h3 class="summary-title"><i class="bx bx-file"></i> Summary</h3>
 
-                        
-                        ?>
-                    </ul>
-                </li>
-            </li>
-        </ul>
-    </div>
-    </div>
+    <table class="summary-table">
+      <tbody>
+        <tr>
+        <th>Report Generated On</th>
+        <td class="summary-mono">
+            <?= htmlspecialchars(date('F jS, Y \a\t g:i A'), ENT_QUOTES, 'UTF-8') ?>
+        </td>
+        </tr>
+
+        <tr>
+          <th>Total Patients in Report</th>
+          <td><?= (int)$total_patients ?></td>
+        </tr>
+        <tr>
+          <th>By Sex</th>
+          <td>
+            Male – <?= (int)($sex_counts['Male'] ?? 0) ?>,
+            Female – <?= (int)($sex_counts['Female'] ?? 0) ?>
+          </td>
+        </tr>
+        <tr>
+          <th>By Age Group</th>
+          <td>
+            Children – <?= (int)(($age_group_counts['0–5'] ?? 0) + ($age_group_counts['6–17'] ?? 0)) ?>,
+            Adults – <?= (int)($age_group_counts['18–59'] ?? 0) ?>,
+            Seniors – <?= (int)($age_group_counts['60+'] ?? 0) ?>
+          </td>
+        </tr>
+        <tr>
+          <th>By BMI</th>
+          <td>
+            Underweight – <?= (int)($bmi_categories['Underweight'] ?? 0) ?>,
+            Normal – <?= (int)($bmi_categories['Normal'] ?? 0) ?>,
+            Overweight – <?= (int)($bmi_categories['Overweight'] ?? 0) ?>,
+            Obese – <?= (int)(($bmi_categories['Class 1'] ?? 0) + ($bmi_categories['Class 2'] ?? 0) + ($bmi_categories['Class 3'] ?? 0)) ?>
+          </td>
+        </tr>
+        <tr>
+          <th>Most Common Treatment Given</th>
+          <td>
+            <?php
+              $max_treatment = '';
+              $max_treatment_count = 0;
+              foreach ($treatment_types as $treat => $count) {
+                if ($count > $max_treatment_count) {
+                  $max_treatment = $treat;
+                  $max_treatment_count = $count;
+                }
+              }
+              echo htmlspecialchars($max_treatment ?: 'N/A', ENT_QUOTES, 'UTF-8');
+            ?>
+          </td>
+        </tr>
+        <tr>
+          <th>Patient Counts per Purok</th>
+          <td>
+            <ul class="summary-sublist">
+              <?php
+              // Rebuild (or reuse) the per-purok counts safely
+              $unique_patient_addresses = [];
+              foreach ($visits as $visit) {
+                  $pid = $visit['patient_id'];
+                  $unique_patient_addresses[$pid] = $visit['address'] ?? 'Unknown';
+              }
+              $barangay_patient_counts = [];
+              foreach ($unique_patient_addresses as $address) {
+                  $parts = explode('-', $address, 2);
+                  $purok = trim($parts[0]); // "Purok X"
+                  $barangay_patient_counts[$purok] = ($barangay_patient_counts[$purok] ?? 0) + 1;
+              }
+              uksort($barangay_patient_counts, function($a, $b) {
+                  preg_match('/\d+/', $a, $ma);
+                  preg_match('/\d+/', $b, $mb);
+                  return (int)($ma[0] ?? 0) <=> (int)($mb[0] ?? 0);
+              });
+              foreach ($barangay_patient_counts as $purok => $count) {
+                  echo '<li>' . htmlspecialchars($purok, ENT_QUOTES, 'UTF-8') . ' – ' . (int)$count . '</li>';
+              }
+              ?>
+            </ul>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
 
  
     <br> <br>

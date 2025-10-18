@@ -511,6 +511,79 @@ $visits = $stmt->fetchAll();
 </style>
 
 <style>
+
+.summary-container { 
+  margin-top: 32px;          
+}
+
+/* Summary table styling */
+.summary-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 16px;
+}
+
+.case-table,
+.summary-table,
+.report-table-container table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;     
+}
+
+.case-table th, .case-table td,
+.summary-table th, .summary-table td,
+.report-table-container th, .report-table-container td {
+  border: 1px solid #d5d7db;
+  padding: 8px 12px;
+  vertical-align: middle;
+  text-align: center;
+  word-wrap: break-word;    
+}
+
+.case-table th.tl,
+.case-table td:nth-child(1) {    
+  text-align: left;
+}
+
+.case-table thead th {
+  white-space: nowrap;
+}
+
+.summary-list,
+.summary-list li {
+  list-style: none;
+  padding-left: 0;
+  margin-left: 0;
+}
+
+
+@media print {
+  .case-table thead { display: table-header-group; }
+  .case-table tr, .summary-table tr, #reportTable tr {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+}
+
+.summary-table th,
+.summary-table td {
+  border: 1px solid #d5d7db;
+  padding: 8px 12px;
+  vertical-align: top;
+  text-align: left;
+}
+
+.summary-table th {
+  width: 260px;
+  background: #f2f4f7;
+  font-weight: 600;
+}
+
+@media print {
+  .summary-container { margin-top: 40px; } /* a bit more space when printing */
+}
+
     @media print {
         .chart-title { 
            display: none;
@@ -525,7 +598,12 @@ $visits = $stmt->fetchAll();
             font-size: 16px;
         }
     }
-    
+    @media print {
+  .summary > h3 { 
+    display: none !important;
+  }
+}
+
 </style>
 
 <!-- Chart Visibility Controls -->
@@ -912,19 +990,29 @@ $total_patients = count($unique_patient_ids);
     if (count($disease_summary) === 0) {
         echo "<p style='color:#888;'>No disease cases found for the selected filters.</p>";
     } else {
-        echo "<table border='1' cellpadding='6' cellspacing='0' style='border-collapse:collapse; margin-top:8px; width:100%; text-align:center;'>";
-        echo "<thead style='background:#f2f2f2;'>";
-        echo "<tr>
-                <th>Case</th>
-                <th>Total Cases</th>
-                <th>Male</th>
-                <th>Female</th>
-                <th>0–5 yrs. old</th>
-                <th>6–17 yrs. old</th>
-                <th>18–59 yrs. old</th>
-                <th>60+ yrs. old</th>
-              </tr>";
-        echo "</thead><tbody>";
+echo "<table class='case-table'>
+  <colgroup>
+    <col style='width:28%'>    <!-- Case -->
+    <col style='width:12%'>    <!-- Total -->
+    <col style='width:10%'>    <!-- Male -->
+    <col style='width:10%'>    <!-- Female -->
+    <col style='width:10%'>    <!-- 0–5 -->
+    <col style='width:10%'>    <!-- 6–17 -->
+    <col style='width:10%'>    <!-- 18–59 -->
+    <col style='width:10%'>    <!-- 60+ -->
+  </colgroup>
+  <thead>
+    <tr>
+      <th class='tl'>Case</th>
+      <th>Total</th>
+      <th>Male</th>
+      <th>Female</th>
+      <th>0–5</th>
+      <th>6–17</th>
+      <th>18–59</th>
+      <th>60+</th>
+    </tr>
+  </thead><tbody>";
 
         foreach ($disease_summary as $disease => $info) {
             echo "<tr>";
@@ -944,27 +1032,40 @@ $total_patients = count($unique_patient_ids);
     ?>
 </li>
 <br>
-             <li>
-                <strong>Report Generated On:</strong> <?= date('Y-m-d H:i:s') ?>
-            </li>
-            <li><strong>Total Unique Patients in Report:</strong> <?= $total_patients ?? 0 ?></li>
-            <li>
-                <strong>By Sex:</strong>
-                Male – <?= isset($sex_counts['Male']) ? $sex_counts['Male'] : 0 ?>,
-                Female – <?= isset($sex_counts['Female']) ? $sex_counts['Female'] : 0 ?>
-            </li>
-            <li>
-                <strong>By Age Group:</strong>
-                Young Children: <?= isset($age_group_counts['0–5']) ? $age_group_counts['0–5'] : 0 ?>,
-                Children: <?= isset($age_group_counts['6–17']) ? $age_group_counts['6–17'] : 0 ?>,
-                Adults: <?= isset($age_group_counts['18–59']) ? $age_group_counts['18–59'] : 0 ?>,
-                Seniors: <?= isset($age_group_counts['60+']) ? $age_group_counts['60+'] : 0 ?>
-            </li>
+<table class="summary-table">
+  <colgroup>
+    <col style="width:30%">
+    <col style="width:70%">
+  </colgroup>
+  <tbody>
+    <tr>
+      <th>Report Generated On</th>
+      <td><?= date('F j, Y g:i:s A') ?></td>
+    </tr>
+    <tr>
+      <th>Total Unique Patients</th>
+      <td><?= $total_patients ?? 0 ?></td>
+    </tr>
+    <tr>
+      <th>By Sex</th>
+      <td>Male — <?= $sex_counts['Male'] ?? 0 ?>, Female — <?= $sex_counts['Female'] ?? 0 ?></td>
+    </tr>
+    <tr>
+      <th>By Age Group</th>
+      <td>
+        Young Children: <?= $age_group_counts['0–5'] ?? 0 ?>,
+        Children: <?= $age_group_counts['6–17'] ?? 0 ?>,
+        Adults: <?= $age_group_counts['18–59'] ?? 0 ?>,
+        Seniors: <?= $age_group_counts['60+'] ?? 0 ?>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 
-       
         </ul>
     </div>
+
 <br> <br>
 <div class="generated-by">
      <b>Report Generated By: </b><?php echo htmlspecialchars($username); ?> -  Nursing Attedant

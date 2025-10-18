@@ -523,6 +523,43 @@ while ($row = $barangay_stmt->fetch(PDO::FETCH_ASSOC)) {
   }
   }
 </style>
+<style>
+  .summary-container { margin-top: 48px; } /* add more space at the top */
+  .summary h3 { margin-bottom: 12px; }
+
+  .kv-table, .mini-table, .purok-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 14px;
+    font-size: 14px;
+  }
+  .kv-table th, .kv-table td,
+  .mini-table th, .mini-table td,
+  .purok-table th, .purok-table td {
+    border: 1px solid #d1d5db;
+    padding: 8px 10px;
+  }
+  .kv-table th { width: 40%; text-align: left; background: #f8fafc; }
+  .mini-wrap {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+  .mini-table th { text-align: left; }
+  .purok-table th {  text-align: left; }
+
+  @media print {
+    .summary-container { margin-top: 24mm; }
+    .kv-table, .mini-table, .purok-table { font-size: 12pt; }
+  }
+    @media print {
+    .summary-container .summary h3 { 
+      display: none !important; 
+    }
+    .summary-container .kv-table { margin-top: 0 !important; }
+  }
+</style>
 
 <!-- Chart Visibility Controls -->
 <div style="margin: 20px;" class="chart-title">
@@ -796,7 +833,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <tbody>
         <?php foreach ($visits as $visit): ?>
             <tr>
-                <td><?= date('Y-m-d', strtotime($visit['consultation_date'])) ?></td>
+                <td><?= date('M d, Y', strtotime($visit['consultation_date'])) ?></td>
                 <td><?= htmlspecialchars($visit['diagnosis']) ?></td>
                 <td><?= htmlspecialchars($visit['diagnosis_status']) ?></td>
                 <td><?= htmlspecialchars($visit['first_name'] . ' ' . $visit['last_name']) ?></td>
@@ -816,6 +853,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 <!-- Summary Section -->
+ <?php
+function prettyDate($dateStr, $withTime = false) {
+    $ts = strtotime($dateStr);
+    if (!$ts) return htmlspecialchars($dateStr);
+    return $withTime ? date('F d, Y H:i:s', $ts) : date('M d, Y', $ts);
+}
+?>
+
 <?php
 // Calculate total unique patients
 $unique_patient_ids = [];
@@ -824,114 +869,136 @@ foreach ($visits as $visit) {
 }
 $total_patients = count($unique_patient_ids);
 ?>
+<?php
+// --- Patient counts per Purok (unique patients) ---
+$patient_purok = []; // pid => purok label
+foreach ($visits as $v) {
+    $pid = $v['patient_id'] ?? null;
+    $addr = trim($v['address'] ?? '');
+    if (!$pid) continue;
+
+    // Try to extract "Purok X" from address; fallback to full address or "Unspecified"
+    $purokLabel = 'Unspecified';
+    if (preg_match('/purok\s*([A-Za-z0-9\-]+)/i', $addr, $m)) {
+        $purokLabel = 'Purok ' . strtoupper($m[1]);
+    } elseif ($addr !== '') {
+        $purokLabel = $addr;
+    }
+    // First seen purok per patient wins
+    if (!isset($patient_purok[$pid])) {
+        $patient_purok[$pid] = $purokLabel;
+    }
+}
+$purok_counts = [];
+foreach ($patient_purok as $purok) {
+    $purok_counts[$purok] = ($purok_counts[$purok] ?? 0) + 1;
+}
+// Sort by natural order (Purok 1, Purok 2, ...)
+uksort($purok_counts, 'strnatcasecmp');
+
+// --- Optional: BMI counts (unique patients) if your rows have bmi_category ---
+$bmi_counts = ['Underweight' => 0, 'Normal' => 0, 'Overweight' => 0, 'Obese' => 0];
+$seen_bmi = [];
+foreach ($visits as $v) {
+    $pid = $v['patient_id'] ?? null;
+    if (!$pid || isset($seen_bmi[$pid])) continue;
+    if (isset($v['bmi_category']) && isset($bmi_counts[$v['bmi_category']])) {
+        $bmi_counts[$v['bmi_category']]++;
+        $seen_bmi[$pid] = true;
+    }
+}
+// If you don’t have BMI, this will remain all zeros and we’ll hide the row.
+
+// --- Optional: most common treatment if your rows have `treatment` ---
+$treatment_counts = [];
+$seen_treatment = [];
+foreach ($visits as $v) {
+    $pid = $v['patient_id'] ?? null;
+    if (!$pid) continue;
+    // Count each patient once per treatment
+    $treat = trim($v['treatment'] ?? '');
+    if ($treat === '') continue;
+    $key = $pid . '|' . $treat;
+    if (isset($seen_treatment[$key])) continue;
+    $seen_treatment[$key] = true;
+    $treatment_counts[$treat] = ($treatment_counts[$treat] ?? 0) + 1;
+}
+arsort($treatment_counts);
+$most_common_treatment = $treatment_counts ? array_key_first($treatment_counts) : '—';
+?>
+
 <div class="summary-container">
-    <div class="summary">
-        <h3><i class="bx bx-file"></i> Summary:</h3>
-        <ul class="summary-list">
-             <li>
-                <strong>Report Generated On:</strong> <?= date('Y-m-d H:i:s') ?>
-            </li></li>
-            <li><strong>Total Unique Patients in Report:</strong> <?= $total_patients ?? 0 ?></li>
-            <li>
-                <strong>By Sex:</strong>
-                Male – <?= isset($sex_counts['Male']) ? $sex_counts['Male'] : 0 ?>,
-                Female – <?= isset($sex_counts['Female']) ? $sex_counts['Female'] : 0 ?>
-            </li>
-            <li>
-                <strong>By Age Group:</strong>
-                Young Children: <?= isset($age_group_counts['0–5']) ? $age_group_counts['0–5'] : 0 ?>,
-                Children: <?= isset($age_group_counts['6–17']) ? $age_group_counts['6–17'] : 0 ?>,
-                Adults: <?= isset($age_group_counts['18–59']) ? $age_group_counts['18–59'] : 0 ?>,
-                Seniors: <?= isset($age_group_counts['60+']) ? $age_group_counts['60+'] : 0 ?>
-            </li>
-           <li>
-    <strong>Diseases and Case Counts:</strong>
-    <?php
-    // Prepare disease breakdown by sex and age group (unique patients only)
-    $disease_summary = [];
-    $seen = []; // track patient+diagnosis globally
+  <div class="summary">
+  <h3><i class="bx bx-file"></i> Summary</h3>
+    <!-- Key values -->
+    <table class="kv-table">
+      <tr>
+        <th>Report Generated On</th>
+        <td><?= date('F d, Y H:i:s') ?></td>
+      </tr>
+      <tr>
+        <th>Total Patients in Report</th>
+        <td><?= $total_patients ?? 0 ?></td>
+      </tr>
+      <?php
+      $has_bmi = array_sum($bmi_counts) > 0;
+      if ($has_bmi): ?>
+      <tr>
+        <th>By BMI</th>
+        <td>
+          Underweight – <?= $bmi_counts['Underweight'] ?>,
+          Normal – <?= $bmi_counts['Normal'] ?>,
+          Overweight – <?= $bmi_counts['Overweight'] ?>,
+          Obese – <?= $bmi_counts['Obese'] ?>
+        </td>
+      </tr>
+      <?php endif; ?>
+      <?php if (!empty($treatment_counts)): ?>
+      <tr>
+        <th>Most Common Treatment Given</th>
+        <td><?= htmlspecialchars($most_common_treatment) ?></td>
+      </tr>
+      <?php endif; ?>
+    </table>
 
-    foreach ($visits as $visit) {
-        $d = $visit['diagnosis'] ?? 'Unknown';
-        $s = $visit['sex'] ?? 'Unknown';
-        $a = (int)($visit['age'] ?? 0);
-        $p = $visit['patient_id'] ?? null;
+    <!-- Two small tables side-by-side -->
+    <div class="mini-wrap">
+      <table class="mini-table">
+        <thead><tr><th colspan="2">By Sex (Unique Patients)</th></tr></thead>
+        <tbody>
+          <tr><td>Male</td><td><?= $sex_counts['Male'] ?? 0 ?></td></tr>
+          <tr><td>Female</td><td><?= $sex_counts['Female'] ?? 0 ?></td></tr>
+        </tbody>
+      </table>
 
-        if (!$p) continue;
-
-        $key = $d . '_' . $p;
-
-        // Skip if this patient already counted for this disease
-        if (isset($seen[$key])) continue;
-        $seen[$key] = true;
-
-        if (!isset($disease_summary[$d])) {
-            $disease_summary[$d] = [
-                'total' => 0,
-                'sex' => ['Male' => 0, 'Female' => 0],
-                'age' => ['0–5' => 0, '6–17' => 0, '18–59' => 0, '60+' => 0]
-            ];
-        }
-
-        // Count this unique patient once
-        $disease_summary[$d]['total']++;
-
-        // Count sex
-        if (isset($disease_summary[$d]['sex'][$s])) {
-            $disease_summary[$d]['sex'][$s]++;
-        }
-
-        // Count age group
-        if ($a >= 0 && $a <= 5) {
-            $disease_summary[$d]['age']['0–5']++;
-        } elseif ($a >= 6 && $a <= 17) {
-            $disease_summary[$d]['age']['6–17']++;
-        } elseif ($a >= 18 && $a <= 59) {
-            $disease_summary[$d]['age']['18–59']++;
-        } elseif ($a >= 60) {
-            $disease_summary[$d]['age']['60+']++;
-        }
-    }
-
-    if (count($disease_summary) === 0) {
-        echo "<p style='color:#888;'>No disease cases found for the selected filters.</p>";
-    } else {
-        echo "<table border='1' cellpadding='6' cellspacing='0' style='border-collapse:collapse; margin-top:8px; width:100%; text-align:center;'>";
-        echo "<thead style='background:#f2f2f2;'>";
-        echo "<tr>
-                <th>Medical Cases</th>
-                <th>Total Cases</th>
-                <th>Male</th>
-                <th>Female</th>
-                <th>0–5 yrs. old</th>
-                <th>6–17 yrs. old</th>
-                <th>18–59 yrs. old</th>
-                <th>60+ yrs. old</th>
-              </tr>";
-        echo "</thead><tbody>";
-
-        foreach ($disease_summary as $disease => $info) {
-            echo "<tr>";
-            echo "<td>" . htmlspecialchars($disease) . "</td>";
-            echo "<td>{$info['total']}</td>";
-            echo "<td>{$info['sex']['Male']}</td>";
-            echo "<td>{$info['sex']['Female']}</td>";
-            echo "<td>{$info['age']['0–5']}</td>";
-            echo "<td>{$info['age']['6–17']}</td>";
-            echo "<td>{$info['age']['18–59']}</td>";
-            echo "<td>{$info['age']['60+']}</td>";
-            echo "</tr>";
-        }
-
-        echo "</tbody></table>";
-    }
-    ?>
-</li>
-
-        
-        </ul>
+      <table class="mini-table">
+        <thead><tr><th colspan="2">By Age Group (Unique Patients)</th></tr></thead>
+        <tbody>
+          <tr><td>Children</td><td><?= $age_group_counts['6–17'] ?? 0 ?></td></tr>
+          <tr><td>Adults</td><td><?= $age_group_counts['18–59'] ?? 0 ?></td></tr>
+          <tr><td>Seniors</td><td><?= $age_group_counts['60+'] ?? 0 ?></td></tr>
+        </tbody>
+      </table>
     </div>
+
+    <!-- Purok table -->
+    <?php if (!empty($purok_counts)): ?>
+    <table class="purok-table">
+      <thead><tr><th colspan="2">Patient Counts per Purok (Unique Patients)</th></tr></thead>
+      <tbody>
+        <?php foreach ($purok_counts as $purok => $count): ?>
+          <tr>
+            <td><?= htmlspecialchars($purok) ?></td>
+            <td><?= $count ?></td>
+          </tr>
+        <?php endforeach; ?>
+      </tbody>
+    </table>
+    <?php endif; ?>
+  </div>
 </div>
+
+
 <br> <br> <br>
    <span id="generated_by"></span>
 <br>
