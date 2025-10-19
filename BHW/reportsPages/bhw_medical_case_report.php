@@ -572,7 +572,7 @@ while ($row = $barangay_stmt->fetch(PDO::FETCH_ASSOC)) {
 }
 
 #generated_by .sig-line {
-  width: 310px;           
+  width: 200px;           
   border: 0;
   border-top: 1.5px solid #000;
   margin: 26px 0 6px;       
@@ -591,11 +591,11 @@ while ($row = $barangay_stmt->fetch(PDO::FETCH_ASSOC)) {
 
 /* Print sizing (optional, nicer on paper) */
 @media print {
-  #generated_by { margin: 10mm 0 0 10mm; }
+  #generated_by {  margin: 60mm 0 0 10mm;}
   #generated_by .sig-label { font-size: 12pt; }
   #generated_by .sig-name  { font-size: 12pt; }
   #generated_by .sig-title { font-size: 11pt; }
-  #generated_by .sig-line  { width: 60mm; border-top-width: 1px; margin: 10mm 0 3mm; }
+  #generated_by .sig-line  { width: 45mm; border-top-width: 1px; margin: 10mm 0 3mm; }
 }
 </style>
 
@@ -1036,10 +1036,7 @@ $most_common_treatment = $treatment_counts ? array_key_first($treatment_counts) 
   </div>
 </div>
 
-
-<br> <br> <br>
    <span id="generated_by"></span>
-<br>
 
 </div> 
 

@@ -513,7 +513,7 @@ $total_pending = 0;
 }
 
 #generated_by .sig-line {
-  width: 310px;           
+  width: 200px;           
   border: 0;
   border-top: 1.5px solid #000;
   margin: 26px 0 6px;       
@@ -532,11 +532,11 @@ $total_pending = 0;
 
 /* Print sizing (optional, nicer on paper) */
 @media print {
-  #generated_by { margin: 10mm 0 0 10mm; }
+  #generated_by {  margin: 60mm 0 0 10mm;}
   #generated_by .sig-label { font-size: 12pt; }
   #generated_by .sig-name  { font-size: 12pt; }
   #generated_by .sig-title { font-size: 11pt; }
-  #generated_by .sig-line  { width: 60mm; border-top-width: 1px; margin: 10mm 0 3mm; }
+  #generated_by .sig-line  { width: 45mm; border-top-width: 1px; margin: 10mm 0 3mm; }
 }
 </style>
 
@@ -766,7 +766,6 @@ document.addEventListener("DOMContentLoaded", () => {
     </table>
   </div>
 </div>
-<br> <br>
 
 <span id="generated_by"></span>
 

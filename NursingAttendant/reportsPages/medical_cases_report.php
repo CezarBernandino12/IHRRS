@@ -521,7 +521,7 @@ $visits = $stmt->fetchAll();
   .print-rule{ height:1px; border:0; background:#cfd8e3; margin:8px 0 12px; }
 }
 
-  #generated_by {
+   #generated_by {
   display: block;           
   margin: 22px 0 0 48px;    
   color: #000;
@@ -533,7 +533,7 @@ $visits = $stmt->fetchAll();
 }
 
 #generated_by .sig-line {
-  width: 310px;           
+  width: 200px;           
   border: 0;
   border-top: 1.5px solid #000;
   margin: 26px 0 6px;       
@@ -552,11 +552,11 @@ $visits = $stmt->fetchAll();
 
 /* Print sizing (optional, nicer on paper) */
 @media print {
-  #generated_by { margin: 10mm 0 0 10mm; }
+  #generated_by {  margin: 60mm 0 0 10mm;}
   #generated_by .sig-label { font-size: 12pt; }
   #generated_by .sig-name  { font-size: 12pt; }
   #generated_by .sig-title { font-size: 11pt; }
-  #generated_by .sig-line  { width: 60mm; border-top-width: 1px; margin: 10mm 0 3mm; }
+  #generated_by .sig-line  { width: 45mm; border-top-width: 1px; margin: 10mm 0 3mm; }
 }
 </style>
 
@@ -1116,7 +1116,6 @@ echo "<table class='case-table'>
         </ul>
     </div>
 
-<br> <br>
 <span id="generated_by"></span>
 
 </div>
