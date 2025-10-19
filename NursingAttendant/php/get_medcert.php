@@ -1,25 +1,17 @@
 <?php
-// Prevent any output before JSON
 ob_start();
-
 session_start();
-
-// Clear any previous output
 ob_end_clean();
 
 header('Content-Type: application/json');
-
-// Disable error display (log errors instead)
 ini_set('display_errors', 0);
 error_reporting(E_ALL);
 
-// Check if user is logged in
 if (!isset($_SESSION['user_id'])) {
     echo json_encode(['success' => false, 'message' => 'Not authenticated']);
     exit;
 }
 
-// Database connection
 try {
     require '../../php/db_connect.php';
 } catch (Exception $e) {
@@ -35,30 +27,30 @@ if (!$medcert_id) {
 }
 
 try {
-    // Get certificate with patient information
-$sql = "SELECT  
-    mc.*,
-    p.first_name,
-    p.middle_name,
-    p.last_name,
-    p.date_of_birth,
-    p.age,
-    p.sex,
-    p.address,
-    p.civil_status,
-    p.birthplace,
-    pa.visit_date,
-    pa.chief_complaints,
-    u.full_name AS issued_by,
-    u.license_number AS license_number
-FROM medical_certificates mc
-INNER JOIN patients p 
-    ON mc.patient_id = p.patient_id
-LEFT JOIN patient_assessment pa 
-    ON mc.visit_id = pa.visit_id
-LEFT JOIN users u
-    ON mc.issued_by_user_id = u.user_id
-WHERE mc.medcert_id = ?";
+    // FIXED: Use 'issued_by' not 'issued_by_user_id'
+    $sql = "SELECT  
+        mc.*,
+        p.first_name,
+        p.middle_name,
+        p.last_name,
+        p.date_of_birth,
+        p.age,
+        p.sex,
+        p.address,
+        p.civil_status,
+        p.birthplace,
+        pa.visit_date,
+        pa.chief_complaints,
+        u.full_name AS issued_by,
+        u.license_number AS license_number
+    FROM medical_certificates mc
+    INNER JOIN patients p 
+        ON mc.patient_id = p.patient_id
+    LEFT JOIN patient_assessment pa 
+        ON mc.visit_id = pa.visit_id
+    LEFT JOIN users u
+        ON mc.issued_by = u.user_id
+    WHERE mc.medcert_id = ?";
 
     if (isset($pdo)) {
         // PDO version
@@ -121,7 +113,6 @@ WHERE mc.medcert_id = ?";
             'rest_from_date' => $row['rest_from_date'],
             'rest_to_date' => $row['rest_to_date'],
             'issued_by' => $row['issued_by'],
-            'prepared_by' => $row['prepared_by'],
             'license_number' => $row['license_number'],
             'visit_date' => $row['visit_date'] ?? '',
             'chief_complaints' => $row['chief_complaints'] ?? ''

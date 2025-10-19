@@ -187,6 +187,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             ':visit_id' => $visit_id,
         ]);
 
+        // Track if medicine was dispensed
+        $medicine_dispensed = false;
+
         if (!empty($_POST['medicine_given']) && is_array($_POST['medicine_given'])) {
             $stmt_medicine = $pdo->prepare("INSERT INTO bhs_medicine_dispensed (
                 visit_id, medicine_name, quantity_dispensed, dispensed_by, dispensed_date
@@ -205,6 +208,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         ':quantity_dispensed' => $quantity_dispensed,
                         ':dispensed_by' => $user_id
                     ]);
+                    $medicine_dispensed = true; // Mark that medicine was dispensed
                 }
             }
         }
@@ -234,26 +238,29 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             error_log("⚠️ Skipping referral: referralNeeded is not 'yes' or missing patient/user ID.");
         }
 
-        // 🔹 LOG ACTIVITY: Added New Patient (only if new)
+        // 📝 LOG ACTIVITY: Added New Patient (only if new)
         if ($is_new_patient) {
             if ($referralNeeded === "yes" && !empty($referral_id)) {
-                logActivity($pdo, $user_id, "Added New Patient Record & Referred to RHU");
+                logActivity($pdo, $user_id, "Added New Patient Records with Referral to the RHU");
             } else {
                 logActivity($pdo, $user_id, "Added New Patient Record");
             }
         }
 
+        // 📝 LOG ACTIVITY: Dispensed Medicine
+        if ($medicine_dispensed) {
+            logActivity($pdo, $user_id, "Dispensed Medicine to Patient");
+        }
+
         $pdo->commit();
 
-        // Line where you echo JSON response - ADD visit_id
-
-echo json_encode([
-    "status" => "success",
-    "message" => "Patient information and visit record saved successfully!",
-    "patient_id" => $patient_id,
-    "visit_id" => $visit_id,  // ✅ ADD THIS LINE
-    "referral_id" => $referral_id  
-]);
+        echo json_encode([
+            "status" => "success",
+            "message" => "Patient information and visit record saved successfully!",
+            "patient_id" => $patient_id,
+            "visit_id" => $visit_id,
+            "referral_id" => $referral_id  
+        ]);
         
 
     } catch (Exception $e) {

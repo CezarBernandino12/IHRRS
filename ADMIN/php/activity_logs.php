@@ -173,6 +173,7 @@ $logs = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <option value="Added New Patient" <?= ($_GET['action'] ?? '') === 'Added New Patient' ? 'selected' : '' ?>>Added New Patient</option>
         <option value="Added New Patient and Referred to RHU" <?= ($_GET['action'] ?? '') === 'Added New Patient and Referred to RHU' ? 'selected' : '' ?>>Added New Patient and Referred to RHU</option>
         <option value="Updated Patient Information" <?= ($_GET['action'] ?? '') === 'Updated Patient Information' ? 'selected' : '' ?>>Updated Patient Information</option>
+        <option value="Dispensed Medicine to Patient">Dispensed Medicine to Patient</option>
         
         <!-- BHW Referral Actions -->
         <option value="Added Referral" <?= ($_GET['action'] ?? '') === 'Added Referral' ? 'selected' : '' ?>>Added Referral</option>
