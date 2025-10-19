@@ -197,6 +197,40 @@ if (count($patient_meds) > 0) {
             $patient_meds[$pid]['medicines'][$disp_row['medicine_name']] = $disp_row['qty'];
         }
     }
+    // ---------- SUMMARY PRECOMPUTE ----------
+$num_patients = count($rows);
+
+// Sex counts were computed below for the pie; compute here for reuse (safe if repeated)
+$sex_counts = ['Male' => 0, 'Female' => 0];
+foreach ($rows as $r) {
+    if (isset($sex_counts[$r['sex']])) $sex_counts[$r['sex']]++;
+}
+
+// Age group buckets (same logic as your chart, but reusable here)
+$age_group_counts = [
+    '0–12' => 0,
+    '13–19' => 0,
+    '20–59' => 0,
+    '60+'   => 0
+];
+foreach ($rows as $r) {
+    $age = (int)$r['age'];
+    if ($age >= 0 && $age <= 12) $age_group_counts['0–12']++;
+    elseif ($age >= 13 && $age <= 19) $age_group_counts['13–19']++;
+    elseif ($age >= 20 && $age <= 59) $age_group_counts['20–59']++;
+    elseif ($age >= 60) $age_group_counts['60+']++;
+}
+
+// Totals per medicine (for the table)
+$dispensed_totals = [];
+foreach ($medicine_list as $m) {
+    $sum = 0;
+    foreach ($patient_meds as $pm) {
+        $sum += (int)($pm['medicines'][$m] ?? 0);
+    }
+    $dispensed_totals[$m] = $sum;
+}
+
 }
 
         //ADDED GENERATED REPORT FOR ACTIVITY LOG
@@ -335,8 +369,6 @@ if (count($patient_meds) > 0) {
                   </ul>
                 </div>
               </div>
-
-      <br> <br>
             </div>
 
 <div class="history-container">
@@ -582,7 +614,7 @@ if (count($patient_meds) > 0) {
 <!-- PRINT-ONLY LETTERHEAD (shows only when printing) -->
 <div class="print-only-letterhead">
   <div class="print-letterhead">
-    <img src="../../img/RHUlogo.png" alt="Left Logo" class="print-logo">
+    <img src="../../img/Plogo.png" alt="Left Logo" class="print-logo">
     <div class="print-heading">
       <div class="ph-line-1">Republic of the Philippines</div>
       <div class="ph-line-1">Province of Camarines Norte</div>
@@ -648,11 +680,11 @@ if (count($patient_meds) > 0) {
       width: fit-content;
     }
     .print-logo{ width:64px; height:64px; object-fit:contain; }
-    .print-heading{ line-height:1.1; color:#0d2546; }
-    .print-heading .ph-line-1{ font-size:12pt; font-weight:500; }
-    .print-heading .ph-line-2{ font-size:14pt; font-weight:500; }
-    .print-heading .ph-line-3{ font-size:11pt; font-weight:500; }
-    .print-heading .ph-line-4{ font-size:12pt; font-weight:600; margin-top:4px; letter-spacing:.3px; }
+    .print-heading{ line-height:1.1; color:#000; }
+    .print-heading .ph-line-1{ font-size:12pt; font-weight:500; margin-bottom:4px;}
+    .print-heading .ph-line-2{ font-size:14pt; font-weight:500; margin-bottom:4px;}
+    .print-heading .ph-line-3{ font-size:11pt; font-weight:500; margin-bottom:4px; }
+    .print-heading .ph-line-4{ font-size:12pt; font-weight:600; margin-top:15px; letter-spacing:.3px; }
     .print-sub{ font-size:10.5pt; margin-top:4px; }
     .print-rule{ height:1px; border:0; background:#cfd8e3; margin:8px 0 12px; }
 
@@ -662,6 +694,43 @@ if (count($patient_meds) > 0) {
 </style>
 
 <style>
+      .report-table-container { margin-bottom: 26px; }
+  .summary-container { margin-top: 22px; }
+
+  @media print {
+    /* bring content closer to the page edge */
+    @page { margin: 10mm 10mm; }   /* adjust to taste */
+    body { margin: 0; }
+
+ .report-table-container {
+      margin-top: 80px !important;
+      margin-bottom: 40px !important;
+    }
+
+    .summary-container { margin-top: 26px !important; }
+
+    /* keep headings snug */
+    .summary h3 { margin: 0 0 6px !important; }
+    .summary strong { display: block; margin-top: 26px !important; }
+
+    /* just in case stray <br> sneak back in */
+    .report-table-container + br,
+    .report-table-container + br + br { display: none !important; }
+
+    /* remove any inherited top padding/margins above the summary block */
+    .history-container, .report-content { margin-top: 0 !important; padding-top: 0 !important; }
+  }
+    .table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+  .table th, .table td { border: 1px solid #d5d7db; padding: 8px 12px; vertical-align: top; text-align: left; word-wrap: break-word; }
+  .table th { background: #f2f4f7; font-weight: 600; }
+
+  /* Keep blocks together when printing */
+  .print-keep { break-inside: avoid; page-break-inside: avoid; }
+
+  /* Stronger borders in print */
+  @media print {
+    .table th, .table td { border-color: #000; }
+  }
     @media print {
         .chart-title { 
            display: none;
@@ -736,7 +805,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     </script>
 
-    <br><br>
     <!-- Age Group Distribution Bar Chart -->
     <div id="ageGroupChart" style="max-width: 500px; margin: 30px auto 0 auto; text-align:center; display: none;">
         <h3 class="chart-title">Age Groups</h3>
@@ -799,7 +867,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     </script>
 
-    <br><br>
     <!-- Address Distribution Bar Chart -->
     <div id="barangayChart" style="max-width: 500px; margin: 30px auto 0 auto; text-align:center; display: none;">
       <h3 class="chart-title">Patient Counts per Barangay</h3>
@@ -858,7 +925,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     </script>
     <!-- Line Graph: Quantity of Dispensed Medicines Over Time -->
-<div style="max-width: 700px; margin: 30px auto 0 auto; text-align:center;">
+<div style="max-width: 900px; margin: 30px auto 0 auto; text-align:center;">
    <h3 class="chart-title">Quantity of Dispensed Medicines Over Time</h3>
     <canvas id="medicineLineChart"></canvas>
 </div>
@@ -905,80 +972,14 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 </script>
 
+<style>
+.summary-container { margin-top: 32px; }
+.summary-table { width:100%; border-collapse:collapse; table-layout:fixed; font-size:16px; margin-bottom: 26px; }
+.summary-table th, .summary-table td { border:1px solid #d5d7db; padding:8px 12px; vertical-align:top; text-align:left; word-wrap:break-word; }
+.summary-table th { background:#f2f4f7; font-weight:600; }
+@media print { .summary > h3 { display:none !important; } .summary-container { margin-top:40px; } }
+</style>
 
-
-<!-- Selected Filters Section -->
-
-<br>
-
-
-
-<!-- Summary Section -->
-<div class="summary-container">
-    <div class="summary">
-        <h3><i class="bx bx-file"></i> Summary:</h3>
-        <ul class="summary-list">
-             <li>
-                <strong>Report Generated On:</strong> <?= date('Y-m-d H:i:s') ?>
-            </li>
-            <!--
-            <li><strong>Total Patients in Report:</strong> <?= count($rows) ?></li>
-            <li>
-                <strong>By Sex:</strong>
-                Male – <?= $sex_counts['Male'] ?? 0 ?>,
-                Female – <?= $sex_counts['Female'] ?? 0 ?>
-            </li>
-            <li>
-                <strong>By Age Group:</strong>
-                Children – <?= $age_group_counts['0–12'] ?? 0 ?>,
-                Teens – <?= $age_group_counts['13–19'] ?? 0 ?>,
-                Adults – <?= $age_group_counts['20–59'] ?? 0 ?>,
-                Seniors – <?= $age_group_counts['60+'] ?? 0 ?>
-            </li>
-            
-            <li>
-                <strong>Patients Given per Barangay:</strong>
-                <ul>
-                    <?php foreach ($barangay_counts as $barangay => $count): ?>
-                        <li>Barangay <?= htmlspecialchars($barangay) ?>: <?= $count ?></li>
-                    <?php endforeach; ?>
-                </ul>
-            </li> -->
-         <li>
-    <strong>Dispensed Medicines:</strong>
-    <?php if (!empty($medicine_list)): ?>
-        <ul>
-            <table border="1" cellpadding="4" cellspacing="0">
-                <thead>
-                    <tr>
-                        <th>Medicine</th>
-                        <th>Total Dispensed</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($medicine_list as $medicine): 
-                        $total_dispensed = 0;
-                        foreach ($patient_meds as $pm) {
-                            $total_dispensed += $pm['medicines'][$medicine] ?? 0;
-                        }
-                        if ($total_dispensed > 0): // Only show if quantity > 0
-                    ?>
-                        <tr>
-                            <td><?= htmlspecialchars($medicine) ?></td>
-                            <td><?= $total_dispensed ?></td>
-                        </tr>
-                    <?php endif; endforeach; ?>
-                </tbody>
-            </table>
-        </ul>
-    <?php else: ?>
-        All Medicines
-    <?php endif; ?>
- </li>
-
-        </ul>
-    </div>
-</div>
 
  <h3>Detailed Visit Report</h3>
 <!-- Patient Table -->
@@ -1015,9 +1016,84 @@ document.addEventListener("DOMContentLoaded", () => {
         <?php endforeach; ?>
     </tbody>
 </table>
-<br> <br>
 </div>
 
+<div class="summary-container print-keep">
+  <div class="summary">
+    <h3><i class="bx bx-file"></i> Summary</h3>
+
+    <table class="table summary-table">
+      <colgroup>
+        <!-- Match widths with Dispensed Medicines below so columns align -->
+        <col style="width:65%">
+        <col style="width:35%">
+      </colgroup>
+      <tbody>
+        <tr>
+          <th>Report Generated On</th>
+          <td><?= date('F j, Y g:i:s A') ?></td>
+        </tr>
+        <tr>
+          <th>Total Patients in Report</th>
+          <td><?= $num_patients ?></td>
+        </tr>
+        <tr>
+          <th>By Sex</th>
+          <td>
+            Male — <?= $sex_counts['Male'] ?? 0 ?> &nbsp; | &nbsp;
+            Female — <?= $sex_counts['Female'] ?? 0 ?>
+          </td>
+        </tr>
+        <tr>
+          <th>By Age Group</th>
+          <td>
+            0–12 — <?= $age_group_counts['0–12'] ?? 0 ?>,
+            13–19 — <?= $age_group_counts['13–19'] ?? 0 ?>,
+            20–59 — <?= $age_group_counts['20–59'] ?? 0 ?>,
+            60+ — <?= $age_group_counts['60+'] ?? 0 ?>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+
+
+    <div class="print-keep" style="margin-top:12px;">
+      <strong>Dispensed Medicines:</strong>
+
+      <?php if (!empty($medicine_list)): ?>
+        <table class="table" style="margin-top:6px;">
+          <colgroup>
+            <!-- Same widths as Summary above to align columns -->
+            <col style="width:65%">
+            <col style="width:35%">
+          </colgroup>
+          <thead>
+            <tr>
+              <th>Medicine</th>
+              <th>Total Dispensed</th>
+            </tr>
+          </thead>
+          <tbody>
+            <?php foreach ($medicine_list as $medicine): 
+              $total_dispensed = 0;
+              foreach ($patient_meds as $pm) {
+                $total_dispensed += $pm['medicines'][$medicine] ?? 0;
+              }
+              if ($total_dispensed > 0): ?>
+                <tr>
+                  <td><?= htmlspecialchars($medicine) ?></td>
+                  <td><?= $total_dispensed ?></td>
+                </tr>
+            <?php endif; endforeach; ?>
+          </tbody>
+        </table>
+      <?php else: ?>
+        <div style="color:#666; margin-top:6px;">All medicines</div>
+      <?php endif; ?>
+    </div>
+  </div> 
+</div> 
 </div> 
 </div> 
 
@@ -1233,7 +1309,7 @@ function printDiv() {
         width: fit-content;
       }
       .print-logo{ width:64px; height:64px; object-fit:contain; }
-      .print-heading{ line-height:1.1; color:#0d2546; }
+      .print-heading{ line-height:1.1; color:#000; }
       .print-heading .ph-line-1{ font-size:12pt; font-weight:500; }
       .print-heading .ph-line-2{ font-size:14pt; font-weight:500; }
       .print-heading .ph-line-3{ font-size:11pt; font-weight:500; }

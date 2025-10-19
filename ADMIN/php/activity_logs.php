@@ -23,7 +23,7 @@ $params = []; // Initialize parameters array
 
 // Filter by User
 if (!empty($_GET['user'])) {
-    $query .= " AND logs.performed_by = :user";
+    $query .= " AND logs.performed_by = :user"; 
     $params[':user'] = $_GET['user'];
 }
 
@@ -159,11 +159,39 @@ $logs = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <label for="action">Action Type</label>
                         <select name="action" id="action" class="auto-submit">
                             <option value="">All Actions</option>
-                            <option value="Successful Login" <?= ($_GET['action'] ?? '') === 'Successful Login' ? 'selected' : '' ?>>User Login</option>
-                            <option value="User Logged Out" <?= ($_GET['action'] ?? '') === 'User Logged Out' ? 'selected' : '' ?>>User Logout</option>
-                            <option value="Added New User" <?= ($_GET['action'] ?? '') === 'Added New User' ? 'selected' : '' ?>>Added New User</option>
-                            <option value="Terminated User" <?= ($_GET['action'] ?? '') === 'Terminated User' ? 'selected' : '' ?>>Terminated User</option>
-                            <option value="Reset Password" <?= ($_GET['action'] ?? '') === 'Reset Password' ? 'selected' : '' ?>>Password Change</option>
+
+                             <!-- Login/Logout Actions -->
+        <option value="Successful Login" <?= ($_GET['action'] ?? '') === 'Successful Login' ? 'selected' : '' ?>>User Login</option>
+        <option value="User Logged Out" <?= ($_GET['action'] ?? '') === 'User Logged Out' ? 'selected' : '' ?>>User Logout</option>
+        
+        <!-- Admin Actions -->
+        <option value="Added New User" <?= ($_GET['action'] ?? '') === 'Added New User' ? 'selected' : '' ?>>Added New User</option>
+        <option value="Terminated User" <?= ($_GET['action'] ?? '') === 'Terminated User' ? 'selected' : '' ?>>Terminated User</option>
+        <option value="Reset Password" <?= ($_GET['action'] ?? '') === 'Reset Password' ? 'selected' : '' ?>>Password Change</option>
+        
+        <!-- BHW Patient Actions -->
+        <option value="Added New Patient" <?= ($_GET['action'] ?? '') === 'Added New Patient' ? 'selected' : '' ?>>Added New Patient</option>
+        <option value="Added New Patient and Referred to RHU" <?= ($_GET['action'] ?? '') === 'Added New Patient and Referred to RHU' ? 'selected' : '' ?>>Added New Patient and Referred to RHU</option>
+        <option value="Updated Patient Information" <?= ($_GET['action'] ?? '') === 'Updated Patient Information' ? 'selected' : '' ?>>Updated Patient Information</option>
+        <option value="Dispensed Medicine to Patient">Dispensed Medicine to Patient</option>
+        
+        <!-- BHW Referral Actions -->
+        <option value="Added Referral" <?= ($_GET['action'] ?? '') === 'Added Referral' ? 'selected' : '' ?>>Added Referral</option>
+        <option value="Cancelled Referral" <?= ($_GET['action'] ?? '') === 'Cancelled Referral' ? 'selected' : '' ?>>Cancelled Referral</option>
+        
+        <!-- BHW Report Actions -->
+        <option value="Generated BHS Patient Visit Summary Report" <?= ($_GET['action'] ?? '') === 'Generated BHS Patient Visit Summary Report' ? 'selected' : '' ?>>Generated BHS Patient Visit Summary Report</option>
+        <option value="Generated BHS Referral Summary Report" <?= ($_GET['action'] ?? '') === 'Generated BHS Referral Summary Report' ? 'selected' : '' ?>>Generated BHS Referral Summary Report</option>
+        <option value="Generated BHS Medicine Dispensation Report" <?= ($_GET['action'] ?? '') === 'Generated BHS Medicine Dispensation Report' ? 'selected' : '' ?>>Generated BHS Medicine Dispensation Report</option>
+        <option value="Generated BHS Medical Cases Report" <?= ($_GET['action'] ?? '') === 'Generated BHS Medical Cases Report' ? 'selected' : '' ?>>Generated BHS Medical Cases Report</option>
+
+        <!-- Nurse Actions -->
+        <option value="Forwarded Referral to Physician" <?= ($_GET['action'] ?? '') === 'Forwarded Referral to Physician' ? 'selected' : '' ?>>Forwarded Referral to Physician</option>
+        <option value="Added Patient Assessment Record" <?= ($_GET['action'] ?? '') === 'Added Patient Assessment Record' ? 'selected' : '' ?>>Added Patient Assessment Record</option>
+        <option value="Added Diagnosis/Consultation Record" <?= ($_GET['action'] ?? '') === 'Added Diagnosis/Consultation Record' ? 'selected' : '' ?>>Added Diagnosis/Consultation Record</option>
+        <option value="Dispensed Medicine to Patient (RHU)" <?= ($_GET['action'] ?? '') === 'Dispensed Medicine to Patient (RHU)' ? 'selected' : '' ?>>Dispensed Medicine to Patient (RHU)</option>
+        <option value="Generated Prescription" <?= ($_GET['action'] ?? '') === 'Generated Prescription' ? 'selected' : '' ?>>Generated Prescription</option>
+        <option value="Generated Medical Certificate" <?= ($_GET['action'] ?? '') === 'Generated Medical Certificate' ? 'selected' : '' ?>>Generated Medical Certificate</option>
                         </select>
                     </div>
 

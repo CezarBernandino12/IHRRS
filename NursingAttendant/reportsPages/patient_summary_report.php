@@ -451,7 +451,7 @@ $total_patients = count(array_unique(array_column($visits, 'patient_id')));
 <div class="print-area">
 <!-- Two-logo letterhead -->
 <div class="print-letterhead">
-  <img src="../../img/RHUlogo.png" alt="Left Logo" class="print-logo">
+  <img src="../../img/Plogo.png" alt="Left Logo" class="print-logo">
   <div class="print-heading">
     <div class="ph-line-1">Republic of the Philippines</div>
     <div class="ph-line-1">Department of Health</div>
@@ -505,29 +505,98 @@ $total_patients = count(array_unique(array_column($visits, 'patient_id')));
   }
   
   .print-logo{ width:64px; height:64px; object-fit:contain; }
-  .print-heading{ line-height:1.1; color:#0d2546; }
-  .print-heading .ph-line-1{ font-size:12pt; font-weight:500; }
-  .print-heading .ph-line-2{ font-size:14pt; font-weight:500; }
-  .print-heading .ph-line-3{ font-size:11pt; font-weight:500; }
-  .print-heading .ph-line-4{ font-size:12pt; font-weight:600; margin-top:4px; letter-spacing:.3px; }
+  .print-heading{ line-height:1.1; color:#000; }
+  .print-heading .ph-line-1{ font-size:12pt; font-weight:500; margin-bottom:3px;}
+  .print-heading .ph-line-2{ font-size:14pt; font-weight:500; margin-bottom:3px;}
+  .print-heading .ph-line-3{ font-size:11pt; font-weight:500; margin-bottom:3px;}
+  .print-heading .ph-line-4{ font-size:12pt; font-weight:600; margin-top:15px; letter-spacing:.3px; }
   .print-sub{ font-size:10.5pt; margin-top:4px; }
   .print-rule{ height:1px; border:0; background:#cfd8e3; margin:8px 0 12px; }
+}
+
+  #generated_by {
+  display: block;           
+  margin: 22px 0 0 48px;    
+  color: #000;
+}
+
+#generated_by .sig-label {
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+
+#generated_by .sig-line {
+  width: 200px;           
+  border: 0;
+  border-top: 1.5px solid #000;
+  margin: 26px 0 6px;       
+}
+
+#generated_by .sig-name {
+  font-weight: 600;
+  font-size: 16px;
+  margin-top: 4px;
+}
+
+#generated_by .sig-title {
+  font-size: 13px;
+  color: #333;
+}
+
+/* Print sizing (optional, nicer on paper) */
+@media print {
+  #generated_by {  margin: 60mm 0 0 10mm;}
+  #generated_by .sig-label { font-size: 12pt; }
+  #generated_by .sig-name  { font-size: 12pt; }
+  #generated_by .sig-title { font-size: 11pt; }
+  #generated_by .sig-line  { width: 45mm; border-top-width: 1px; margin: 10mm 0 3mm; }
 }
 </style>
 
 <style>
+/* Add breathing room above the summary */
+.summary-container {
+  margin-top: 32px;
+}
+
+/* Two-column summary table */
+.summary-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 16px;
+}
+
+.summary-table th,
+.summary-table td {
+  border: 1px solid #d5d7db;
+  padding: 8px 12px;
+  vertical-align: top;
+  text-align: left;
+  word-wrap: break-word;
+}
+
+.summary-table th {
+  background: #f2f4f7;
+  font-weight: 600;
+}
+
+/* Print-only: hide the "Summary" title; add a bit more top spacing */
+@media print {
+  .summary > h3 { 
+    display: none !important;
+  }
+  .summary-container { 
+    margin-top: 40px;
+  }
+}
 
     @media print {
        
          .form-submit { 
            display: none;
         }
-          .report-table-container{
-            margin-top: -150px;
-        }
-         .report-table-container table{
-            font-size: 12px;
-        }
+    
     }
 </style>
 
@@ -873,12 +942,6 @@ usort($visits, function($a, $b) {
 </tbody>
 
 </table>
-           <br>
-
-
-
-    <br> <br>
-     <span id="generated_by"></span>
 </div>
 <?php else: ?>
     <p>No visits found for the selected filters.</p>
@@ -886,65 +949,67 @@ usort($visits, function($a, $b) {
 
            <!-- Summary Section -->
 <div class="summary-container">
-    <div class="summary">
-        <h3><i class="bx bx-file"></i> Summary:</h3>
-        <ul class="summary-list">
-             <li>
-                <strong>Report Generated On:</strong> <?= date('Y-m-d H:i:s') ?>
-            </li>
-            <li><strong>Total Patients in Report:</strong> <?= $total_patients ?></li>
-            <li>
-                <strong>By Sex:</strong>
-                Male – <?= $sex_counts['Male'] ?? 0 ?>,
-                Female – <?= $sex_counts['Female'] ?? 0 ?>
-            </li>
-            <li>
-                <strong>By Age Group:</strong>
-                Children – <?= $age_group_counts['0–5'] + $age_group_counts['6–17'] ?>,
-                Adults – <?= $age_group_counts['18–59'] ?>,
-                Seniors – <?= $age_group_counts['60+'] ?>
-            </li>
-            <li>
-                <strong>By BMI:</strong>
-                Underweight – <?= $bmi_categories['Underweight'] ?? 0 ?>,
-                Normal – <?= $bmi_categories['Normal'] ?? 0 ?>,
-                Overweight – <?= $bmi_categories['Overweight'] ?? 0 ?>,
-                Obese – <?= ($bmi_categories['Class 1'] ?? 0) + ($bmi_categories['Class 2'] ?? 0) + ($bmi_categories['Class 3'] ?? 0) ?>
-            </li>
-               <li>
-                    <strong>Patient Counts per Barangay:</strong>
-                    <ul>
-                        <?php
-                        // Use the same logic as the graph to calculate patient counts per barangay
-                        $barangay_counts = [];
-                        $unique_patients_address = [];
-                        foreach ($visits as $visit) {
-                            $pid = $visit['patient_id'];
-                            if (!isset($unique_patients_address[$pid])) {
-                                // Extract barangay from the address
-                                $address_parts = explode(' - ', $visit['address']);
-                                $barangay = isset($address_parts[1]) ? explode(' ', $address_parts[1])[1] : 'Unknown';
-                                $barangay_counts[$barangay] = ($barangay_counts[$barangay] ?? 0) + 1;
-                                $unique_patients_address[$pid] = true;
-                            }
-                        }
+  <div class="summary">
+    <h3><i class="bx bx-file"></i> Summary</h3>
 
-                        // Display the counts
-                        foreach ($barangay_counts as $barangay => $count) {
-                            echo "<li>" . "Barangay " . htmlspecialchars($barangay) . " – " . $count . "</li>";
-                        }
-                        ?>
-                    </ul>
-                </li>
-         
-         
-        </ul>
-    </div>
-    </div>
+    <table class="summary-table">
+      <colgroup>
+        <col style="width:30%">
+        <col style="width:70%">
+      </colgroup>
+      <tbody>
+        <tr>
+          <th>Report Generated On</th>
+          <td><?= date('F j, Y g:i:s A') ?></td>
+        </tr>
+        <tr>
+          <th>Total Patients in Report</th>
+          <td><?= $total_patients ?></td>
+        </tr>
+        <tr>
+          <th>By Sex</th>
+          <td>
+            Male — <?= $sex_counts['Male'] ?? 0 ?>,
+            Female — <?= $sex_counts['Female'] ?? 0 ?>
+          </td>
+        </tr>
+        <tr>
+          <th>By Age Group</th>
+          <td>
+            0–5: <?= $age_group_counts['0–5'] ?? 0 ?>,
+            6–17: <?= $age_group_counts['6–17'] ?? 0 ?>,
+            18–59: <?= $age_group_counts['18–59'] ?? 0 ?>,
+            60+: <?= $age_group_counts['60+'] ?? 0 ?>
+          </td>
+        </tr>
+        <tr>
+          <th>By BMI</th>
+          <td>
+            Underweight — <?= $bmi_categories['Underweight'] ?? 0 ?>,
+            Normal — <?= $bmi_categories['Normal'] ?? 0 ?>,
+            Overweight — <?= $bmi_categories['Overweight'] ?? 0 ?>,
+            Obese — <?= ($bmi_categories['Class 1'] ?? 0) + ($bmi_categories['Class 2'] ?? 0) + ($bmi_categories['Class 3'] ?? 0) ?>
+          </td>
+        </tr>
+      </tbody>
+    </table>
 
-    <div class="generated-by">
-      <b>Report Generated By: </b><?php echo htmlspecialchars($username); ?> -  Nursing Attedant
+    <div style="margin-top:12px;">
+      <strong>Patient Counts per Barangay:</strong>
+      <ul style="margin-top:6px;">
+        <?php
+        // reuse the counts you already computed just above
+        foreach ($barangay_counts as $barangay => $count) {
+          echo "<li>Barangay " . htmlspecialchars($barangay) . " — " . $count . "</li>";
+        }
+        ?>
+      </ul>
+    </div>
+  </div>
 </div>
+
+
+<div id="generated_by"></div>
 </div> 
 
 <!-- Print Button at Bottom -->
@@ -1136,7 +1201,7 @@ function printDiv() {
             margin:0 auto 10px; text-align:center; width:fit-content;
           }
           .print-logo{ width:64px; height:64px; object-fit:contain; }
-          .print-heading{ line-height:1.1; color:#0d2546; }
+          .print-heading{ line-height:1.1; color:#000; }
           .print-heading .ph-line-1{ font-size:12pt; font-weight:500; }
           .print-heading .ph-line-2{ font-size:14pt; font-weight:800; }
           .print-heading .ph-line-3{ font-size:11pt; font-weight:500; }
@@ -1179,22 +1244,36 @@ window.onclick = function(event) {
     }
 }
 
+document.addEventListener('DOMContentLoaded', () => {
+  fetch('../php/getUserName.php')
+    .then(r => r.json())
+    .then(data => {
+      const fullName = (data && data.full_name) ? data.full_name : '';
 
-document.addEventListener('DOMContentLoaded', function() {
-    // Add event listeners to all delete icons
- 	fetch('../php/getUserName.php')
-        .then(response => response.json())
-        .then(data => {
-            if (data.full_name) {
-                document.getElementById('userGreeting').textContent = `Hello, ${data.full_name}!`;
-            } else {
-                document.getElementById('userGreeting').textContent = 'Hello, User!';
-            }
-        })
-        .catch(error => {
-            console.error('Error fetching user name:', error);
-            document.getElementById('userGreeting').textContent = 'Hello, User!';
-        });
+      // Greeting (keep current behavior)
+      document.getElementById('userGreeting').textContent =
+        fullName ? `Hello, ${fullName}!` : 'Hello, User!';
+
+      // Build the signature block
+      const gb = document.getElementById('generated_by');
+      gb.innerHTML = `
+        <div class="sig-label">Report Generated by:</div>
+        <hr class="sig-line">
+        <div class="sig-name"></div>
+        <div class="sig-title">Nursing Attendant</div>
+      `;
+      gb.querySelector('.sig-name').textContent = fullName || '________________';
+    })
+    .catch(() => {
+      document.getElementById('userGreeting').textContent = 'Hello, User!';
+      const gb = document.getElementById('generated_by');
+      gb.innerHTML = `
+        <div class="sig-label">Report Generated by:</div>
+        <hr class="sig-line">
+        <div class="sig-name">________________</div>
+        <div class="sig-title">Nursing Attendant</div>
+      `;
+    });
 });
 
 	// Check if user is logged in

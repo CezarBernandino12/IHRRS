@@ -120,37 +120,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 ':category' => $category
             ]);
 
-    $patient_id = $pdo->lastInsertId();  // ✅ Get the newly inserted patient ID
-    error_log("🆕 New patient ID assigned: " . $patient_id);
+            $patient_id = $pdo->lastInsertId();
+            error_log("🆕 New patient ID assigned: " . $patient_id);
+        }
 
-
-    if ($patient_id) {
-
-     //ADDED NEW PATIENT RECORD FOR ACTIVITY LOG
-    $stmt_log = $pdo->prepare("INSERT INTO logs (
-        user_id, action, performed_by, user_affected
-    ) VALUES (
-        :user_id, :action, :performed_by, :user_affected
-    )");
-
-    $stmt_log->execute([
-        ':user_id' => $user_id,
-        ':action' => "Added New Patient Record",
-        ':performed_by' => $user_id,
-        ':user_affected' => $patient_id
-    ]);
-    
-    }
-
-}
-
-// Ensure patient_id is set
-if (empty($patient_id)) {
-    error_log("❌ Error: Patient ID is missing.");
-    echo json_encode(["status" => "error", "message" => "Error: Patient ID is missing. Unable to proceed."]);
-    exit;
-}
-
+        // Ensure patient_id is set
+        if (empty($patient_id)) {
+            error_log("❌ Error: Patient ID is missing.");
+            echo json_encode(["status" => "error", "message" => "Error: Patient ID is missing. Unable to proceed."]);
+            exit;
+        }
 
         validate_required($_POST, ['user_id', 'bp', 'temp', 'weight', 'height', 'bmi']);
 
@@ -192,30 +171,24 @@ if (empty($patient_id)) {
         ]);
 
         $visit_id = $pdo->lastInsertId();
-        $user_id = filter_var($_POST['user_id'], FILTER_VALIDATE_INT) ?: 0;
+        $consent_given = clean_input($_POST['consent_given'] ?? '');
+        $consent_method = clean_input($_POST['consent_method'] ?? '');
 
+        $stmt_consent = $pdo->prepare("INSERT INTO patient_consents (patient_id, consent_given, consent_method, received_by_user_id, visit_id
+        ) VALUES (
+            :patient_id, :consent_given, :consent_method, :user_id, :visit_id
+        )");
         
+        $stmt_consent->execute([
+            ':patient_id' => $patient_id,  
+            ':consent_given' => $consent_given,
+            ':consent_method' => $consent_method,
+            ':user_id' => $user_id, 
+            ':visit_id' => $visit_id,
+        ]);
 
-        if ($visit_id) {
-
-            //ADDED PATIENT ASSESSMENT RECORD FOR ACTIVITY LOG
-    $stmt_log2 = $pdo->prepare("INSERT INTO logs (
-        user_id, action, performed_by, user_affected
-    ) VALUES (
-        :user_id, :action, :performed_by, :user_affected
-    )");
-
-    $stmt_log2->execute([
-        ':user_id' => $user_id,
-        ':action' => "Added Patient Assessment Record",
-        ':performed_by' => $user_id,
-        ':user_affected' => $patient_id
-    ]);
-    
-        }
-        
-
-
+        // Track if medicine was dispensed
+        $medicine_dispensed = false;
 
         if (!empty($_POST['medicine_given']) && is_array($_POST['medicine_given'])) {
             $stmt_medicine = $pdo->prepare("INSERT INTO bhs_medicine_dispensed (
@@ -235,27 +208,9 @@ if (empty($patient_id)) {
                         ':quantity_dispensed' => $quantity_dispensed,
                         ':dispensed_by' => $user_id
                     ]);
+                    $medicine_dispensed = true; // Mark that medicine was dispensed
                 }
             }
-
-            $dispensed_id = $pdo->lastInsertId();
-            if ($dispensed_id) {
-
-            //ADDED DISPENSED MEDICINE FOR ACTIVITY LOG
-    $stmt_log3 = $pdo->prepare("INSERT INTO logs (
-        user_id, action, performed_by, user_affected
-    ) VALUES (
-        :user_id, :action, :performed_by, :user_affected
-    )");
-
-    $stmt_log3->execute([
-        ':user_id' => $user_id,
-        ':action' => "Dispensed Medicine to Patient",
-        ':performed_by' => $user_id,
-        ':user_affected' => $patient_id
-    ]);
-}
-    
         }
 
         $referral_id = null;
@@ -283,13 +238,18 @@ if (empty($patient_id)) {
             error_log("⚠️ Skipping referral: referralNeeded is not 'yes' or missing patient/user ID.");
         }
 
-        // 🔹 LOG ACTIVITY: Added New Patient (only if new)
+        // 📝 LOG ACTIVITY: Added New Patient (only if new)
         if ($is_new_patient) {
             if ($referralNeeded === "yes" && !empty($referral_id)) {
-                logActivity($pdo, $user_id, "Added New Patient and Referred to RHU");
+                logActivity($pdo, $user_id, "Added New Patient Records with Referral to the RHU");
             } else {
-                logActivity($pdo, $user_id, "Added New Patient");
+                logActivity($pdo, $user_id, "Added New Patient Record");
             }
+        }
+
+        // 📝 LOG ACTIVITY: Dispensed Medicine
+        if ($medicine_dispensed) {
+            logActivity($pdo, $user_id, "Dispensed Medicine to Patient");
         }
 
         $pdo->commit();
@@ -298,12 +258,10 @@ if (empty($patient_id)) {
             "status" => "success",
             "message" => "Patient information and visit record saved successfully!",
             "patient_id" => $patient_id,
-            "referral_id" => $referral_id,
             "visit_id" => $visit_id,
-            "user_id"  => $user_id
+            "referral_id" => $referral_id  
         ]);
- 
-       
+        
 
     } catch (Exception $e) {
         $pdo->rollBack();

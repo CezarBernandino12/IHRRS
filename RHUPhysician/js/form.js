@@ -2,7 +2,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const urlParams = new URLSearchParams(window.location.search);
     const visit_id = urlParams.get("visit_id");
 
-    $patient_id = document.getElementById("patient_id");
+    // Check if element exists before using it
+    const $patient_id = document.getElementById("patient_id");
+    
     if (visit_id) {
         const visitIdField = document.getElementById("visit_id");
         if (visitIdField) visitIdField.value = visit_id;
@@ -17,7 +19,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     return;
                 }
 
-                   // ✅ Patient Info
+                // ✅ Patient Info
                 if (data.patient) {
                     if ($patient_id) $patient_id.value = data.patient.patient_id || "";
                     updateElement(".patient-first-name", data.patient.first_name);
@@ -40,12 +42,12 @@ document.addEventListener("DOMContentLoaded", function () {
                     updateElement(".family-serial-no", data.patient.family_serial_no);
                     updateElement(".sex", data.patient.sex);
                     updateElement(".fourps-status", data.patient.fourps_status);
-                   
                 }
 
                 // ✅ Visit Info
                 if (data.visit) {
-                    document.getElementById("visit_id").value = data.visit.visit_id || "";
+                    const visitIdElement = document.getElementById("visit_id");
+                    if (visitIdElement) visitIdElement.value = data.visit.visit_id || "";
                     updateElement(".visit-date", data.visit.visit_date);
                     updateElement(".patient-alert", data.visit.patient_alert);
                     updateElement(".chief-complaints", data.visit.chief_complaints);
@@ -53,88 +55,75 @@ document.addEventListener("DOMContentLoaded", function () {
                     updateElement(".temperature", data.visit.temperature);
                     updateElement(".weight", data.visit.weight);
                     updateElement(".height", data.visit.height);
-                    updateElement(".pulse-rate", data.visit.pulse_rate);
+                    updateElement(".pulse-rate", data.visit.chest_rate); // Map chest_rate to pulse-rate
                     updateElement(".respiratory-rate", data.visit.respiratory_rate);
                     updateElement(".remarks", data.visit.remarks);
                 }
 
-                // ✅ Consultation Info
+                // ✅ Consultation Info (only if elements exist)
                 if (data.consultation) { 
-                    document.getElementById("diagnosis").value = data.consultation.diagnosis || "";
+                    const diagnosisElement = document.getElementById("diagnosis");
+                    if (diagnosisElement) diagnosisElement.value = data.consultation.diagnosis || "";
+                    
                     updateElement(".diagnosis_status", data.consultation.diagnosis_status);
                     updateElement(".instruction", data.consultation.instruction_prescription);
                     updateElement(".doctor", data.consultation.full_name);
 
-                    // store consultation_id in a hidden field
+                    // Store consultation_id in a hidden field if it exists
                     const consultationField = document.getElementById("consultation_id");
                     if (consultationField) {
                         consultationField.value = data.consultation.consultation_id;
                     }
-
-
-
-             
                 }
 
-
+                // ✅ Medicines (BHS and RHU)
                 if (data.medicine || data.rhumedicine) {
-               
-// ✅ Medicines (BHS)
-const medicineContainer = document.querySelector(".medicine-lists");
-if (medicineContainer) {
-    medicineContainer.innerHTML = "";
-    if (data.medicine && data.medicine.length > 0) {
-        data.medicine.forEach(med => {
-          medicineContainer.innerHTML += `
-    <div class="medicine-item" style="margin-bottom:8px; padding:6px; border-bottom:1px solid #ddd;">
-        <p><strong>Medicine:</strong> ${med.medicine_name || "None"} &nbsp;&nbsp;&nbsp; 
-           <strong>Quantity:</strong> ${med.quantity_dispensed || "0"}</p>
-    </div>
-`;
+                    // BHS Medicines
+                    const medicineContainer = document.querySelector(".medicine-lists");
+                    if (medicineContainer) {
+                        medicineContainer.innerHTML = "";
+                        if (data.medicine && data.medicine.length > 0) {
+                            data.medicine.forEach(med => {
+                                medicineContainer.innerHTML += `
+                    <div class="medicine-item" style="margin-bottom:8px; padding:6px; border-bottom:1px solid #ddd;">
+                        <p><strong>Medicine:</strong> ${med.medicine_name || "None"} &nbsp;&nbsp;&nbsp; 
+                           <strong>Quantity:</strong> ${med.quantity_dispensed || "0"}</p>
+                    </div>
+                `;
+                            });
+                        } else {
+                            medicineContainer.innerHTML = "<p>No medication recorded.</p>";
+                        }
+                    }
 
-        });
-    } else {
-        medicineContainer.innerHTML = "<p>No medication recorded.</p>";
-    }
-}
-
-// ✅ Medicines (RHU)
-const medicineContainer2 = document.querySelector(".rhu-medicine-lists");
-if (medicineContainer2) {
-    medicineContainer2.innerHTML = "";
-    if (data.rhumedicine && data.rhumedicine.length > 0) {
-        data.rhumedicine.forEach(med => {
-          medicineContainer2.innerHTML += `
-    <div class="medicine-item" style="margin-bottom:8px; padding:6px; border-bottom:1px solid #ddd;">
-        <p><strong>Medicine:</strong> ${med.medicine_name || "None"} &nbsp;&nbsp;&nbsp; 
-           <strong>Quantity:</strong> ${med.quantity_dispensed || "0"}</p>
-    </div>
-`;
-        });
-    } else {
-        medicineContainer2.innerHTML = "<p>No medication recorded.</p>";
-    }
-}
-
-
+                    // RHU Medicines
+                    const medicineContainer2 = document.querySelector(".rhu-medicine-lists");
+                    if (medicineContainer2) {
+                        medicineContainer2.innerHTML = "";
+                        if (data.rhumedicine && data.rhumedicine.length > 0) {
+                            data.rhumedicine.forEach(med => {
+                                medicineContainer2.innerHTML += `
+                    <div class="medicine-item" style="margin-bottom:8px; padding:6px; border-bottom:1px solid #ddd;">
+                        <p><strong>Medicine:</strong> ${med.medicine_name || "None"} &nbsp;&nbsp;&nbsp; 
+                           <strong>Quantity:</strong> ${med.quantity_dispensed || "0"}</p>
+                    </div>
+                `;
+                            });
+                        } else {
+                            medicineContainer2.innerHTML = "<p>No medication recorded.</p>";
+                        }
+                    }
                 }
-
-
-             
             })
             .catch(error => console.error("Error fetching visit info:", error));
-
-
-            
-
-
-
     }
 
     // ✅ Utility: Update element text
     function updateElement(selector, value) {
         const element = document.querySelector(selector);
-        if (element) element.textContent = value || "N/A";
+        if (element) {
+            element.textContent = value || "N/A";
+        }
     }
 
     // ✅ Utility: Age Calculation
@@ -153,7 +142,7 @@ if (medicineContainer2) {
         return age >= 0 ? age : "N/A";
     }
 
-    // ✅ Edit Record Button
+    // ✅ Edit Record Button (if it exists)
     const editBtn = document.getElementById("editRecord");
     if (editBtn) {
         editBtn.onclick = () => {
@@ -178,58 +167,47 @@ if (medicineContainer2) {
         });
     }
 
+    // ✅ Load Lab File (only if container exists)
+    const container = document.getElementById("lab-file-container");
+    if (container && visit_id) {
+        fetch(`php/get_file.php?visit_id=${visit_id}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === "success") {
+                    const fileUrl = data.file;
+                    const fileExt = fileUrl.split('.').pop().toLowerCase();
+                    let content = "";
 
+                    if (["jpg", "jpeg", "png", "gif"].includes(fileExt)) {
+                        content = `
+                            <a href="${fileUrl}" target="_blank">
+                                <img src="${fileUrl}" 
+                                     alt="Lab Image" 
+                                     style="width:40px; height:40px; object-fit:cover; vertical-align:middle; margin-right:8px; margin-left:8px;">
+                                View Image
+                            </a>
+                        `;
+                    } else {
+                        content = `
+                            <a href="${fileUrl}" target="_blank">
+                                <img src="css/img/file.png"
+                                     alt="File" 
+                                     style="width:40px; height:40px; vertical-align:middle; margin-right:8px; margin-left:8px;">
+                                View File
+                            </a>
+                        `;
+                    }
 
-    // ✅ Load Lab File
-
-const container = document.getElementById("lab-file-container");
-
-if (visit_id) {
-    fetch(`php/get_file.php?visit_id=${visit_id}`)
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === "success") {
-                const fileUrl = data.file;
-                const fileExt = fileUrl.split('.').pop().toLowerCase();
-                let content = "";
-
-           
-                   if (["jpg", "jpeg", "png", "gif"].includes(fileExt)) {
-                    // Show actual image
-                    content = `
-                        <a href="${fileUrl}" target="_blank">
-                            <img src="${fileUrl}" 
-                                 alt="Lab Image" 
-                                 style="width:40px; height:40px; object-fit:cover; vertical-align:middle; margin-right:8px; margin-left:8px;">
-                            View Image
-                        </a>
-                    `;
+                    container.innerHTML = content;
                 } else {
-                    // Generic file preview for all non-image types
-                    content = `
-                        <a href="${fileUrl}" target="_blank">
-                            <img src="css/img/file.png"
-                                 alt="File" 
-                                 style="width:40px; height:40px; vertical-align:middle; margin-right:8px; margin-left:8px;">
-                            View File
-                        </a>
-                    `;
+                    container.textContent = "No file uploaded.";
                 }
-
-                container.innerHTML = content;
-            } else {
-                container.textContent = "No file uploaded.";
-            }
-        })
-        .catch(error => {
-            console.error("Error fetching file:", error);
-            container.textContent = "Error loading file.";
-        });
-} else {
-    container.textContent = "No visit_id selected.";
-}
-
-
-
-
+            })
+            .catch(error => {
+                console.error("Error fetching file:", error);
+                if (container) {
+                    container.textContent = "Error loading file.";
+                }
+            });
+    }
 });

@@ -14,6 +14,7 @@ if (!isset($_SESSION['user_id'])) {
 
 try {
     require '../../php/db_connect.php';
+    require '../../ADMIN/php/log_functions.php';
 } catch (Exception $e) {
     echo json_encode(['success' => false, 'message' => 'Database connection failed']);
     exit;
@@ -34,7 +35,7 @@ try {
     $issued_by = $_POST['physician'] ?? '';
 
     // Validate required fields
-    if (!$patient_id || !$visit_id || !$issuance_date || !$diagnosis) {
+    if ($patient_id === 0 || $visit_id === 0 || empty($issuance_date) || empty($diagnosis)) {
         echo json_encode(['success' => false, 'message' => 'Missing required fields']);
         exit;
     }
@@ -42,6 +43,7 @@ try {
     $rest_period_days = ($rest_period_days !== '' && $rest_period_days !== null) ? intval($rest_period_days) : null;
     $rest_from_date = ($rest_from_date !== '') ? $rest_from_date : null;
     $rest_to_date = ($rest_to_date !== '') ? $rest_to_date : null;
+
 
     if (isset($pdo)) {
         // 🔹 Generate control number (resets every year)

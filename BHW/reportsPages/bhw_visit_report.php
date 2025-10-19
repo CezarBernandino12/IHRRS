@@ -398,10 +398,10 @@ while ($row = $barangay_stmt->fetch(PDO::FETCH_ASSOC)) {
                         </div>
                     </div>
                      <!-- Filter Modal Footer Buttons -->
-<div class="modal-footer" style="text-align:right;">
-    <button type="button" class="btn" id="closeFilterModal">Cancel</button>
-    <button type="submit" class="btn-submit">Apply Filter</button>
-</div>
+            <div class="modal-footer" style="text-align:right;">
+                <button type="button" class="btn" id="closeFilterModal">Cancel</button>
+                <button type="submit" class="btn-submit">Apply Filter</button>
+            </div>
               
                
             </form>
@@ -537,11 +537,11 @@ while ($row = $barangay_stmt->fetch(PDO::FETCH_ASSOC)) {
     width:fit-content;
   }
   .print-logo{ width:64px; height:64px; object-fit:contain; }
-  .print-heading{ line-height:1.1; color:#0d2546; }
+  .print-heading{ line-height:1.1; color:#000; }
   .print-heading .ph-line-1{ font-size:12pt; font-weight:500; }
   .print-heading .ph-line-2{ font-size:14pt; font-weight:500; }
   .print-heading .ph-line-3{ font-size:11pt; font-weight:500; }
-  .print-heading .ph-line-4{ font-size:12pt; font-weight:600; margin-top:4px; letter-spacing:.3px; }
+  .print-heading .ph-line-4{ font-size:12pt; font-weight:600; margin-top:15px; letter-spacing:.3px; }
   .print-sub{ font-size:10.5pt; margin-top:4px; }
   .print-rule{ height:1px; border:0; background:#cfd8e3; margin:8px 0 12px; }
   @media print {
@@ -549,7 +549,86 @@ while ($row = $barangay_stmt->fetch(PDO::FETCH_ASSOC)) {
     .summary-list, #generated_by { font-size:16px; }
   }
 }
+
+  #generated_by {
+  display: block;           
+  margin: 22px 0 0 48px;    
+  color: #000;
+}
+
+#generated_by .sig-label {
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+
+#generated_by .sig-line {
+  width: 200px;           
+  border: 0;
+  border-top: 1.5px solid #000;
+  margin: 26px 0 6px;       
+}
+
+#generated_by .sig-name {
+  font-weight: 600;
+  font-size: 16px;
+  margin-top: 4px;
+}
+
+#generated_by .sig-title {
+  font-size: 13px;
+  color: #333;
+}
+
+/* Print sizing (optional, nicer on paper) */
+@media print {
+  #generated_by {  margin: 60mm 0 0 10mm;}
+  #generated_by .sig-label { font-size: 12pt; }
+  #generated_by .sig-name  { font-size: 12pt; }
+  #generated_by .sig-title { font-size: 11pt; }
+  #generated_by .sig-line  { width: 45mm; border-top-width: 1px; margin: 10mm 0 3mm; }
+}
 </style>
+<style>
+  /* Extra space above the summary block */
+  .summary-container { margin-top: 48px; }
+
+  @media print {
+    .summary-container { margin-top: 64px; }
+  }
+
+  /* Summary table styling */
+  .summary-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 16px;
+    background: #fff;
+  }
+  .summary-table th, .summary-table td {
+    border: 1px solid #000;
+    padding: 8px 10px;
+    vertical-align: top;
+  }
+  .summary-table th {
+    background: #f0f0f0;
+    text-align: left;
+    width: 280px; /* label column */
+  }
+  .summary-title {
+    margin: 0 0 10px 0;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .summary-title i { font-size: 20px; }
+  .summary-sublist {
+    margin: 0;
+    padding-left: 20px;
+    list-style: disc;
+  }
+  .summary-mono { white-space: nowrap; }
+</style>
+
 
 <style>
     @media print {
@@ -566,6 +645,17 @@ while ($row = $barangay_stmt->fetch(PDO::FETCH_ASSOC)) {
             font-size: 16px;
         }
     }
+        @media print {
+    .summary-container .summary h3 { 
+      display: none !important; 
+    }
+    .summary-container .kv-table { margin-top: 0 !important; }
+    
+     .report-table-container {
+      margin-top: 80px !important;
+      margin-bottom: 40px !important;
+    }
+  }
 </style>
 
 
@@ -992,84 +1082,96 @@ if (addressData.length > 0 && addressData.reduce((a, b) => a + b, 0) > 0) {
   
 <!-- Summary Section -->
 <div class="summary-container">
-    <div class="summary">
-        <h3><i class="bx bx-file"></i> Summary:</h3>
-        <ul class="summary-list">
-             <li>
-                <strong>Report Generated On:</strong> <?= date('Y-m-d H:i:s') ?>
-            </li>
-            <li><strong>Total Patients in Report:</strong> <?= $total_patients ?></li>
-            <li>
-                <strong>By Sex:</strong>
-                Male – <?= $sex_counts['Male'] ?? 0 ?>,
-                Female – <?= $sex_counts['Female'] ?? 0 ?>
-            </li>
-            <li>
-                <strong>By Age Group:</strong>
-                Children – <?= $age_group_counts['0–5'] + $age_group_counts['6–17'] ?>,
-                Adults – <?= $age_group_counts['18–59'] ?>,
-                Seniors – <?= $age_group_counts['60+'] ?>
-            </li>
-            <li>
-                <strong>By BMI:</strong>
-                Underweight – <?= $bmi_categories['Underweight'] ?? 0 ?>,
-                Normal – <?= $bmi_categories['Normal'] ?? 0 ?>,
-                Overweight – <?= $bmi_categories['Overweight'] ?? 0 ?>,
-                Obese – <?= ($bmi_categories['Class 1'] ?? 0) + ($bmi_categories['Class 2'] ?? 0) + ($bmi_categories['Class 3'] ?? 0) ?>
-            </li>
-            
-            <li>
-                <strong>Most Common Treatment Given:</strong>
-                <?php
-                    // Find most common treatment
-                    $max_treatment = '';
-                    $max_treatment_count = 0;
-                    foreach ($treatment_types as $treat => $count) {
-                        if ($count > $max_treatment_count) {
-                            $max_treatment = $treat;
-                            $max_treatment_count = $count;
-                        }
-                    }
-                    echo htmlspecialchars($max_treatment ?: 'N/A');
-                ?>
-            </li>
-            <li>
-                <li>
-                    <strong>Patient Counts per Purok:</strong>
-                    <ul>
-                        <?php
-                        // Calculate patient counts per barangay
-                        $barangay_patient_counts = [];
-                     foreach ($visits as $visit) {
-    $patient_id = $visit['patient_id'];
-    $address = $visit['address'] ?? 'Unknown';
-    $unique_patient_addresses[$patient_id] = $address;
-}
-                        foreach ($unique_patient_addresses as $address) {
-                            $parts = explode('-', $address, 2);
-                            $barangay = trim($parts[0]); // "Purok X"
-                            $barangay_patient_counts[$barangay] = ($barangay_patient_counts[$barangay] ?? 0) + 1;
-                        }
-                        // Sort by numeric purok order
-                        uksort($barangay_patient_counts, function($a, $b) {
-                            preg_match('/\d+/', $a, $matchA);
-                            preg_match('/\d+/', $b, $matchB);
-                            $numA = $matchA[0] ?? 0;
-                            $numB = $matchB[0] ?? 0;
-                            return $numA - $numB;
-                        });
-                        foreach ($barangay_patient_counts as $barangay => $count) {
-                            echo '<li>' . htmlspecialchars($barangay) . ' – ' . $count . '</li>';
-                        }
+  <div class="summary">
+    <h3 class="summary-title"><i class="bx bx-file"></i> Summary</h3>
 
-                        
-                        ?>
-                    </ul>
-                </li>
-            </li>
-        </ul>
-    </div>
-    </div>
+    <table class="summary-table">
+      <tbody>
+        <tr>
+        <th>Report Generated On</th>
+        <td class="summary-mono">
+            <?= htmlspecialchars(date('F jS, Y \a\t g:i A'), ENT_QUOTES, 'UTF-8') ?>
+        </td>
+        </tr>
+
+        <tr>
+          <th>Total Patients in Report</th>
+          <td><?= (int)$total_patients ?></td>
+        </tr>
+        <tr>
+          <th>By Sex</th>
+          <td>
+            Male – <?= (int)($sex_counts['Male'] ?? 0) ?>,
+            Female – <?= (int)($sex_counts['Female'] ?? 0) ?>
+          </td>
+        </tr>
+        <tr>
+          <th>By Age Group</th>
+          <td>
+            Children – <?= (int)(($age_group_counts['0–5'] ?? 0) + ($age_group_counts['6–17'] ?? 0)) ?>,
+            Adults – <?= (int)($age_group_counts['18–59'] ?? 0) ?>,
+            Seniors – <?= (int)($age_group_counts['60+'] ?? 0) ?>
+          </td>
+        </tr>
+        <tr>
+          <th>By BMI</th>
+          <td>
+            Underweight – <?= (int)($bmi_categories['Underweight'] ?? 0) ?>,
+            Normal – <?= (int)($bmi_categories['Normal'] ?? 0) ?>,
+            Overweight – <?= (int)($bmi_categories['Overweight'] ?? 0) ?>,
+            Obese – <?= (int)(($bmi_categories['Class 1'] ?? 0) + ($bmi_categories['Class 2'] ?? 0) + ($bmi_categories['Class 3'] ?? 0)) ?>
+          </td>
+        </tr>
+        <tr>
+          <th>Most Common Treatment Given</th>
+          <td>
+            <?php
+              $max_treatment = '';
+              $max_treatment_count = 0;
+              foreach ($treatment_types as $treat => $count) {
+                if ($count > $max_treatment_count) {
+                  $max_treatment = $treat;
+                  $max_treatment_count = $count;
+                }
+              }
+              echo htmlspecialchars($max_treatment ?: 'N/A', ENT_QUOTES, 'UTF-8');
+            ?>
+          </td>
+        </tr>
+        <tr>
+          <th>Patient Counts per Purok</th>
+          <td>
+            <ul class="summary-sublist">
+              <?php
+              // Rebuild (or reuse) the per-purok counts safely
+              $unique_patient_addresses = [];
+              foreach ($visits as $visit) {
+                  $pid = $visit['patient_id'];
+                  $unique_patient_addresses[$pid] = $visit['address'] ?? 'Unknown';
+              }
+              $barangay_patient_counts = [];
+              foreach ($unique_patient_addresses as $address) {
+                  $parts = explode('-', $address, 2);
+                  $purok = trim($parts[0]); // "Purok X"
+                  $barangay_patient_counts[$purok] = ($barangay_patient_counts[$purok] ?? 0) + 1;
+              }
+              uksort($barangay_patient_counts, function($a, $b) {
+                  preg_match('/\d+/', $a, $ma);
+                  preg_match('/\d+/', $b, $mb);
+                  return (int)($ma[0] ?? 0) <=> (int)($mb[0] ?? 0);
+              });
+              foreach ($barangay_patient_counts as $purok => $count) {
+                  echo '<li>' . htmlspecialchars($purok, ENT_QUOTES, 'UTF-8') . ' – ' . (int)$count . '</li>';
+              }
+              ?>
+            </ul>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
 
  
     <br> <br>
@@ -1276,7 +1378,7 @@ function printDiv() {
             margin:0 auto 10px; text-align:center; width:fit-content;
           }
           .print-logo{ width:64px; height:64px; object-fit:contain; }
-          .print-heading{ line-height:1.1; color:#0d2546; }
+          .print-heading{ line-height:1.1; color:#000; }
           .print-heading .ph-line-1{ font-size:12pt; font-weight:500; }
           .print-heading .ph-line-2{ font-size:14pt; font-weight:800; }
           .print-heading .ph-line-3{ font-size:11pt; font-weight:500; }
@@ -1297,34 +1399,36 @@ function printDiv() {
 }
 
 fetch('../php/getUserName.php')
-    .then(response => response.json())
-    .then(data => {
-        if (data.full_name) {
-            document.getElementById('userGreeting').textContent = `Hello, ${data.full_name}!`;
-            document.getElementById('generated_by').textContent = `Report Generated by: ${data.full_name} - BHW`;
-        } else {
-            document.getElementById('userGreeting').textContent = 'Hello, BHW!';
-            document.getElementById('generated_by').textContent = 'Generated by: N/A';
-        }
-    })
-    .catch(error => {
-        console.error('Error fetching user name:', error);
-        document.getElementById('userGreeting').textContent = 'Hello, BHW!';
-    });
+  .then(response => response.json())
+  .then(data => {
+    const fullName = (data && data.full_name) ? data.full_name : '';
 
-    	// Check if user is logged in
-fetch('../php/getUserId.php')
-    .then(response => response.json())
-    .then(data => {
-        if (data.error) {
-            // User is not logged in, redirect to role selection page
-            window.location.href = '../role.html';
-        }
-    })
-    .catch(error => {
-        console.error('Error checking session:', error);
-        window.location.href = '../role.html';
-    });
+    // Keep the greeting as before
+    document.getElementById('userGreeting').textContent =
+      fullName ? `Hello, ${fullName}!` : 'Hello, BHW!';
+
+    // Build the signature block content
+    const gb = document.getElementById('generated_by');
+    gb.innerHTML = `
+      <div class="sig-label">Report Generated by:</div>
+      <hr class="sig-line">
+      <div class="sig-name"></div>
+      <div class="sig-title">Barangay Health Worker</div>
+    `;
+
+    // Safely set the name text
+    gb.querySelector('.sig-name').textContent = fullName || '________________';
+  })
+  .catch(() => {
+    document.getElementById('userGreeting').textContent = 'Hello, BHW!';
+    const gb = document.getElementById('generated_by');
+    gb.innerHTML = `
+      <div class="sig-label">Report Generated by:</div>
+      <hr class="sig-line">
+      <div class="sig-name">________________</div>
+      <div class="sig-title">Barangay Health Worker</div>
+    `;
+  });
 
     function confirmLogout() {
     document.getElementById('logoutModal').style.display = 'block';

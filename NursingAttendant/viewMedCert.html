@@ -446,7 +446,6 @@ function displayCertificate(cert) {
 
     // Display doctor/nurse information
     document.getElementById('doctorName').textContent = cert.issued_by.toUpperCase();
-    document.getElementById('attendantName').textContent = cert.prepared_by.toUpperCase();
     
     let licenseInfo = '';
     if (cert.license_number) licenseInfo += `Lic. No. ${cert.license_number}`;

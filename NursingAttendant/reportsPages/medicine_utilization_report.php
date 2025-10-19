@@ -581,7 +581,7 @@ if (count($patient_meds) > 0) {
 <div class="print-area">
 <!-- Two-logo letterhead -->
 <div class="print-letterhead">
-  <img src="../../img/RHUlogo.png" alt="Left Logo" class="print-logo">
+  <img src="../../img/Plogo.png" alt="Left Logo" class="print-logo">
   <div class="print-heading">
     <div class="ph-line-1">Republic of the Philippines</div>
     <div class="ph-line-1">Department of Health</div>
@@ -634,11 +634,11 @@ if (count($patient_meds) > 0) {
       width: fit-content;
     }
     .print-logo{ width:64px; height:64px; object-fit:contain; }
-    .print-heading{ line-height:1.1; color:#0d2546; }
-    .print-heading .ph-line-1{ font-size:12pt; font-weight:500; }
-    .print-heading .ph-line-2{ font-size:14pt; font-weight:500; }
-    .print-heading .ph-line-3{ font-size:11pt; font-weight:500; }
-    .print-heading .ph-line-4{ font-size:12pt; font-weight:600; margin-top:4px; letter-spacing:.3px; }
+    .print-heading{ line-height:1.1; color:#000; }
+    .print-heading .ph-line-1{ font-size:12pt; font-weight:500; margin-bottom:3px;}
+    .print-heading .ph-line-2{ font-size:14pt; font-weight:500; margin-bottom:3px;}
+    .print-heading .ph-line-3{ font-size:11pt; font-weight:500; margin-bottom:3px;}
+    .print-heading .ph-line-4{ font-size:12pt; font-weight:600; margin-top:15px; letter-spacing:.3px; }
     .print-sub{ font-size:10.5pt; margin-top:4px; }
     .print-rule{ height:1px; border:0; background:#cfd8e3; margin:8px 0 12px; }
 
@@ -648,6 +648,44 @@ if (count($patient_meds) > 0) {
 </style>
 
 <style>
+
+    /* Add breathing room above the summary */
+.summary-container {
+  margin-top: 32px;
+}
+
+/* Two-column summary table */
+.summary-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 16px;
+}
+
+.summary-table th,
+.summary-table td {
+  border: 1px solid #d5d7db;
+  padding: 8px 12px;
+  vertical-align: top;
+  text-align: left;
+  word-wrap: break-word;
+}
+
+.summary-table th {
+  background: #f2f4f7;
+  font-weight: 600;
+}
+
+/* Hide the “Summary” title on print only; keep spacing a bit larger */
+@media print {
+  .summary > h3 { 
+    display: none !important;
+  }
+  .summary-container { 
+    margin-top: 40px; 
+  }
+}
+
     @media print {
         .chart-title { 
            display: none;
@@ -655,13 +693,50 @@ if (count($patient_meds) > 0) {
          .form-submit { 
            display: none;
         }
-     .report-table-container{
-            margin-top: -100px;
-        }
-         .report-table-container table{
-            font-size: 12px;
+        
+    .report-table-container {
+        margin-top: 80px !important;
+        margin-bottom: 40px !important;
         }
     }
+
+   #generated_by {
+  display: block;           
+  margin: 22px 0 0 48px;    
+  color: #000;
+}
+
+#generated_by .sig-label {
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+
+#generated_by .sig-line {
+  width: 200px;           
+  border: 0;
+  border-top: 1.5px solid #000;
+  margin: 26px 0 6px;       
+}
+
+#generated_by .sig-name {
+  font-weight: 600;
+  font-size: 16px;
+  margin-top: 4px;
+}
+
+#generated_by .sig-title {
+  font-size: 13px;
+  color: #333;
+}
+
+/* Print sizing (optional, nicer on paper) */
+@media print {
+  #generated_by {  margin: 60mm 0 0 10mm;}
+  #generated_by .sig-label { font-size: 12pt; }
+  #generated_by .sig-name  { font-size: 12pt; }
+  #generated_by .sig-title { font-size: 11pt; }
+  #generated_by .sig-line  { width: 45mm; border-top-width: 1px; margin: 10mm 0 3mm; }
+}
 </style>
 
 
@@ -954,81 +1029,83 @@ usort($patient_meds, function($a, $b) {
 
 </table>
 <br> <br>
-
-
 </div> 
 
-
-<!-- Summary Section -->
 <div class="summary-container">
-    <div class="summary">
-        <h3><i class="bx bx-file"></i> Summary:</h3>
-        <ul class="summary-list">
-             <li>
-                <strong>Report Generated On:</strong> <?= date('Y-m-d H:i:s') ?>
-            </li>
-    <!--        <li><strong>Total Patients in Report:</strong> <?= count($rows) ?></li>
-            <li>
-                <strong>By Sex:</strong>
-                Male – <?= $sex_counts['Male'] ?? 0 ?>,
-                Female – <?= $sex_counts['Female'] ?? 0 ?>
-            </li>
-            <li>
-                <strong>By Age Group:</strong>
-                Children – <?= $age_group_counts['0–12'] ?? 0 ?>,
-                Teens – <?= $age_group_counts['13–19'] ?? 0 ?>,
-                Adults – <?= $age_group_counts['20–59'] ?? 0 ?>,
-                Seniors – <?= $age_group_counts['60+'] ?? 0 ?>
-            </li>
-            
-            <li>
-                <strong>Patients Given per Barangay:</strong>
-                <ul>
-                    <?php foreach ($barangay_counts as $barangay => $count): ?>
-                        <li>Barangay <?= htmlspecialchars($barangay) ?>: <?= $count ?></li>
-                    <?php endforeach; ?>
-                </ul>
-            </li> -->
-         <li>
-    <strong>Dispensed Medicines:</strong><br> <br> 
-    <?php if (!empty($medicine_list)): ?>
-        <ul>
-            <table border="1" cellpadding="4" cellspacing="0">
-                <thead>
-                    <tr>
-                        <th>Medicine</th>
-                        <th>Total Dispensed</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($medicine_list as $medicine): 
-                        $total_dispensed = 0;
-                        foreach ($patient_meds as $pm) {
-                            $total_dispensed += $pm['medicines'][$medicine] ?? 0;
-                        }
-                        if ($total_dispensed > 0): // Only show if quantity > 0
-                    ?>
-                        <tr>
-                            <td><?= htmlspecialchars($medicine) ?></td>
-                            <td><?= $total_dispensed ?></td>
-                        </tr>
-                    <?php endif; endforeach; ?>
-                </tbody>
-            </table>
-        </ul>
-    <?php else: ?>
+  <div class="summary">
+    <h3><i class="bx bx-file"></i> Summary</h3>
+
+    <table class="summary-table">
+      <colgroup>
+        <col style="width:30%">
+        <col style="width:70%">
+      </colgroup>
+      <tbody>
+        <tr>
+          <th>Report Generated On</th>
+          <td><?= date('F j, Y g:i:s A') ?></td>
+        </tr>
+        <tr>
+          <th>Total Patients in Report</th>
+          <td><?= count($rows) ?></td>
+        </tr>
+        <tr>
+          <th>By Sex</th>
+          <td>
+            Male — <?= $sex_counts['Male'] ?? 0 ?>,
+            Female — <?= $sex_counts['Female'] ?? 0 ?>
+          </td>
+        </tr>
+        <tr>
+          <th>By Age Group</th>
+          <td>
+            Children (0–12): <?= $age_group_counts['0–12'] ?? 0 ?>,
+            Teens (13–19): <?= $age_group_counts['13–19'] ?? 0 ?>,
+            Adults (20–59): <?= $age_group_counts['20–59'] ?? 0 ?>,
+            Seniors (60+): <?= $age_group_counts['60+'] ?? 0 ?>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Keep your “Dispensed Medicines” block just below if you want -->
+    <div style="margin-top:12px;">
+      <strong>Dispensed Medicines:</strong>
+      <?php if (!empty($medicine_list)): ?>
+        <table class="summary-table" style="margin-top:8px;">
+          <colgroup>
+            <col style="width:70%">
+            <col style="width:30%">
+          </colgroup>
+          <thead>
+            <tr>
+              <th>Medicine</th>
+              <th>Total Dispensed</th>
+            </tr>
+          </thead>
+          <tbody>
+            <?php foreach ($medicine_list as $medicine):
+              $total_dispensed = 0;
+              foreach ($patient_meds as $pm) {
+                $total_dispensed += $pm['medicines'][$medicine] ?? 0;
+              }
+              if ($total_dispensed > 0): ?>
+                <tr>
+                  <td><?= htmlspecialchars($medicine) ?></td>
+                  <td><?= $total_dispensed ?></td>
+                </tr>
+            <?php endif; endforeach; ?>
+          </tbody>
+        </table>
+      <?php else: ?>
         All Medicines
-    <?php endif; ?>
-</li>
-
-        </ul>
+      <?php endif; ?>
     </div>
-<br> <br>
-    <div class="generated-by">
-    <b>Report Generated By: </b><?php echo htmlspecialchars($username); ?> -  Nursing Attedant
+  </div>
+  
+<span id="generated_by"></span>
 </div>
 
-</div>
 
 <!-- Print Button at Bottom -->
    <div class="form-submit">
@@ -1217,7 +1294,7 @@ function printDiv() {
             margin:0 auto 10px; text-align:center; width:fit-content;
           }
           .print-logo{ width:64px; height:64px; object-fit:contain; }
-          .print-heading{ line-height:1.1; color:#0d2546; }
+          .print-heading{ line-height:1.1; color:#000; }
           .print-heading .ph-line-1{ font-size:12pt; font-weight:500; }
           .print-heading .ph-line-2{ font-size:14pt; font-weight:800; }
           .print-heading .ph-line-3{ font-size:11pt; font-weight:500; }
@@ -1239,23 +1316,37 @@ function printDiv() {
 
 
 
-document.addEventListener('DOMContentLoaded', function() {
-    // Add event listeners to all delete icons
- 	fetch('../php/getUserName.php')
-        .then(response => response.json())
-        .then(data => {
-            if (data.full_name) {
-                document.getElementById('userGreeting').textContent = `Hello, ${data.full_name}!`;
-            } else {
-                document.getElementById('userGreeting').textContent = 'Hello, User!';
-            }
-        })
-        .catch(error => {
-            console.error('Error fetching user name:', error);
-            document.getElementById('userGreeting').textContent = 'Hello, User!';
-        });
-});
+document.addEventListener('DOMContentLoaded', () => {
+  fetch('../php/getUserName.php')
+    .then(r => r.json())
+    .then(data => {
+      const fullName = (data && data.full_name) ? data.full_name : '';
 
+      // Greeting (keep current behavior)
+      document.getElementById('userGreeting').textContent =
+        fullName ? `Hello, ${fullName}!` : 'Hello, User!';
+
+      // Build the signature block
+      const gb = document.getElementById('generated_by');
+      gb.innerHTML = `
+        <div class="sig-label">Report Generated by:</div>
+        <hr class="sig-line">
+        <div class="sig-name"></div>
+        <div class="sig-title">Nursing Attendant</div>
+      `;
+      gb.querySelector('.sig-name').textContent = fullName || '________________';
+    })
+    .catch(() => {
+      document.getElementById('userGreeting').textContent = 'Hello, User!';
+      const gb = document.getElementById('generated_by');
+      gb.innerHTML = `
+        <div class="sig-label">Report Generated by:</div>
+        <hr class="sig-line">
+        <div class="sig-name">________________</div>
+        <div class="sig-title">Nursing Attendant</div>
+      `;
+    });
+});
 // Close modal when clicking outside
 window.onclick = function(event) {
     const modal = document.getElementById('logoutModal');

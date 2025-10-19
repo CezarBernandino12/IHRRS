@@ -353,12 +353,12 @@ noButton2.addEventListener('click', function () {
     modal2.style.display = 'none';
 });
 
-// Yes button in modal2: Confirm referral 
+// ✅ FIXED: Yes button in modal2 - Save form with referral (NO separate saveReferral call)
 yesButton2.addEventListener('click', function () {
 
-    // Save the form FIRST, then continue in the callback
+    // Save the form with referral included
     saveFormData("yes", function (responseData) {
-        // ✅ Expecting { status: "success", patient_id: ..., visit_id: ... }
+        // ✅ Expecting { status: "success", patient_id: ..., visit_id: ..., referral_id: ... }
         if (!responseData || responseData.status !== "success") {
             console.error("❌ Error: Failed to save form or missing response data.");
             alert("Error: Failed to save form or missing response data.");
@@ -367,6 +367,7 @@ yesButton2.addEventListener('click', function () {
 
         const savedPatientId = responseData.patient_id;
         const visitId = responseData.visit_id;
+        const referralId = responseData.referral_id; // ✅ Referral already created in PHP
 
         if (!savedPatientId) {
             console.error("❌ Error: No patient ID available for referral.");
@@ -380,21 +381,41 @@ yesButton2.addEventListener('click', function () {
             return;
         }
 
-        const bhwId = getBhwId();
-        if (!bhwId) {
-            console.error("❌ Error: No BHW ID provided.");
-            alert("Error: No BHW ID provided.");
+        if (!referralId) {
+            console.error("❌ Error: No referral ID returned from server.");
+            alert("Error: No referral ID returned from server.");
             return;
         }
 
-        console.log("📤 Saving Referral for:", { savedPatientId, visitId, bhwId });
+        console.log("✅ Referral saved successfully:", { savedPatientId, visitId, referralId });
+        
+        // Store referral ID for printing
+        localStorage.setItem("referral_id", referralId);
 
-        saveReferral(savedPatientId, visitId, bhwId);
+        // Close modal2 and show success modal
         if (modal2) modal2.style.display = 'none';
         if (modal3) modal3.style.display = 'block'; // Show referral saved modal    
     });
 });
 
+//Close button and Cancel button for Patient Exists Modal
+const patientExistsModal = document.getElementById('patientExistsModal');
+const closeBtnPatientExists = document.querySelector('#patientExistsModal .close-btn');
+const cancelBtnPatientExists = document.getElementById('cancelBtnPatientExists');
+
+if (closeBtnPatientExists) {
+    closeBtnPatientExists.addEventListener('click', function() {
+        patientExistsModal.style.display = 'none';
+        console.log("❌ Patient exists modal closed via X button.");
+    });
+}
+
+if (cancelBtnPatientExists) {
+    cancelBtnPatientExists.addEventListener('click', function() {
+        patientExistsModal.style.display = 'none';
+        console.log("❌ Patient exists modal cancelled.");
+    });
+}
 
 // ✅ Function to save referral
 function saveReferral(patientId, visitId, bhwId) {

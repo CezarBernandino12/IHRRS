@@ -6,7 +6,7 @@ session_start();
 if (!isset($_SESSION['user_id'])) {
     header("Location: ../../role.html");
     exit;
-}
+} 
 
 $userId = $_SESSION['user_id'];// or however you store the logged-in user's ID
 
@@ -91,19 +91,6 @@ $sql .= " ORDER BY r.consultation_date DESC";
 $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $visits = $stmt->fetchAll();
-
-
-        //ADDED GENERATED REPORT FOR ACTIVITY LOG
-        $stmt_log = $pdo->prepare("INSERT INTO logs (
-            user_id, action, performed_by
-        ) VALUES (
-            :user_id, :action, :performed_by
-        )");
-        $stmt_log->execute([
-            ':user_id' => $_SESSION['user_id'],
-            ':action' => "Generated BHS Medical Cases Report",
-            ':performed_by' => $_SESSION['user_id']
-        ]);
 ?>
 
 <!DOCTYPE html>
@@ -451,6 +438,7 @@ while ($row = $barangay_stmt->fetch(PDO::FETCH_ASSOC)) {
     <div class="ph-line-4"><?php echo htmlspecialchars($barangayName); ?></div>
     <hr class="print-rule">
     <h2 class="print-title">MEDICAL CASE MONITORING REPORT</h2>
+
     <div class="print-sub">
       (<?php
         $filters = [];
@@ -521,13 +509,13 @@ while ($row = $barangay_stmt->fetch(PDO::FETCH_ASSOC)) {
     width:fit-content;
   }
   .print-logo{ width:64px; height:64px; object-fit:contain; }
-  .print-heading{ line-height:1.1; color:#0d2546; }
+  .print-heading{ line-height:1.1;  color: #000; }
   .print-heading > *{ margin:0; }
-  .ph-line-1{ font-size:12pt; font-weight:500; }
-  .ph-line-2{ font-size:16pt; font-weight:500; }
-  .ph-line-3{ font-size:11pt; font-weight:500; }
-  .ph-line-4{ font-size:12pt; font-weight:500; margin-top:2px; }
-  .print-rule{ height:1px; border:0; background:#cfd8e3; margin:8px 0 10px; }
+  .ph-line-1{ font-size:12pt; font-weight:500; margin-bottom:4px; }
+  .ph-line-2{ font-size:16pt; font-weight:500; margin-bottom:4px;}
+  .ph-line-3{ font-size:11pt; font-weight:500; margin-bottom:4px;}
+  .ph-line-4{ font-size:12pt; font-weight:500; margin-top:4px; }
+  .print-rule{ height:1px; border:0; background:#cfd8e3; margin-top:15px; }
   .print-title{ font-size:14pt; font-weight:600; letter-spacing:.3px; color:#000; }
   .print-sub{ font-size:10.5pt; margin-top:4px; }
   @media print {
@@ -535,6 +523,87 @@ while ($row = $barangay_stmt->fetch(PDO::FETCH_ASSOC)) {
     .print-letterhead{ margin-bottom:12mm; }
   }
   }
+</style>
+<style>
+  .summary-container { margin-top: 58px; } 
+  .summary h3 { margin-bottom: 12px; }
+
+  .kv-table, .mini-table, .purok-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 14px;
+    font-size: 14px;
+  }
+  .kv-table th, .kv-table td,
+  .mini-table th, .mini-table td,
+  .purok-table th, .purok-table td {
+    border: 1px solid #d1d5db;
+    padding: 8px 10px;
+  }
+  .kv-table th { width: 40%; text-align: left; background: #f8fafc; }
+  .mini-wrap {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+  .mini-table th { text-align: left; }
+  .purok-table th {  text-align: left; }
+
+  @media print {
+    .summary-container { margin-top: 80px; }
+    .kv-table, .mini-table, .purok-table { font-size: 12pt; }
+  }
+    @media print {
+    .summary-container .summary h3 { 
+      display: none !important; 
+    }
+    .summary-container .kv-table { margin-top: 0 !important; }
+
+       .report-table-container {
+      margin-top: 80px !important;
+      margin-bottom: 40px !important;
+    }
+    
+  }
+
+  #generated_by {
+  display: block;           
+  margin: 22px 0 0 48px;    
+  color: #000;
+}
+
+#generated_by .sig-label {
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+
+#generated_by .sig-line {
+  width: 200px;           
+  border: 0;
+  border-top: 1.5px solid #000;
+  margin: 26px 0 6px;       
+}
+
+#generated_by .sig-name {
+  font-weight: 600;
+  font-size: 16px;
+  margin-top: 4px;
+}
+
+#generated_by .sig-title {
+  font-size: 13px;
+  color: #333;
+}
+
+/* Print sizing (optional, nicer on paper) */
+@media print {
+  #generated_by {  margin: 60mm 0 0 10mm;}
+  #generated_by .sig-label { font-size: 12pt; }
+  #generated_by .sig-name  { font-size: 12pt; }
+  #generated_by .sig-title { font-size: 11pt; }
+  #generated_by .sig-line  { width: 45mm; border-top-width: 1px; margin: 10mm 0 3mm; }
+}
 </style>
 
 <!-- Chart Visibility Controls -->
@@ -809,7 +878,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <tbody>
         <?php foreach ($visits as $visit): ?>
             <tr>
-                <td><?= date('Y-m-d', strtotime($visit['consultation_date'])) ?></td>
+                <td><?= date('M d, Y', strtotime($visit['consultation_date'])) ?></td>
                 <td><?= htmlspecialchars($visit['diagnosis']) ?></td>
                 <td><?= htmlspecialchars($visit['diagnosis_status']) ?></td>
                 <td><?= htmlspecialchars($visit['first_name'] . ' ' . $visit['last_name']) ?></td>
@@ -829,6 +898,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 <!-- Summary Section -->
+ <?php
+function prettyDate($dateStr, $withTime = false) {
+    $ts = strtotime($dateStr);
+    if (!$ts) return htmlspecialchars($dateStr);
+    return $withTime ? date('F d, Y H:i:s', $ts) : date('M d, Y', $ts);
+}
+?>
+
 <?php
 // Calculate total unique patients
 $unique_patient_ids = [];
@@ -837,117 +914,136 @@ foreach ($visits as $visit) {
 }
 $total_patients = count($unique_patient_ids);
 ?>
+<?php
+// --- Patient counts per Purok (unique patients) ---
+$patient_purok = []; // pid => purok label
+foreach ($visits as $v) {
+    $pid = $v['patient_id'] ?? null;
+    $addr = trim($v['address'] ?? '');
+    if (!$pid) continue;
+
+    // Try to extract "Purok X" from address; fallback to full address or "Unspecified"
+    $purokLabel = 'Unspecified';
+    if (preg_match('/purok\s*([A-Za-z0-9\-]+)/i', $addr, $m)) {
+        $purokLabel = 'Purok ' . strtoupper($m[1]);
+    } elseif ($addr !== '') {
+        $purokLabel = $addr;
+    }
+    // First seen purok per patient wins
+    if (!isset($patient_purok[$pid])) {
+        $patient_purok[$pid] = $purokLabel;
+    }
+}
+$purok_counts = [];
+foreach ($patient_purok as $purok) {
+    $purok_counts[$purok] = ($purok_counts[$purok] ?? 0) + 1;
+}
+// Sort by natural order (Purok 1, Purok 2, ...)
+uksort($purok_counts, 'strnatcasecmp');
+
+// --- Optional: BMI counts (unique patients) if your rows have bmi_category ---
+$bmi_counts = ['Underweight' => 0, 'Normal' => 0, 'Overweight' => 0, 'Obese' => 0];
+$seen_bmi = [];
+foreach ($visits as $v) {
+    $pid = $v['patient_id'] ?? null;
+    if (!$pid || isset($seen_bmi[$pid])) continue;
+    if (isset($v['bmi_category']) && isset($bmi_counts[$v['bmi_category']])) {
+        $bmi_counts[$v['bmi_category']]++;
+        $seen_bmi[$pid] = true;
+    }
+}
+// If you don’t have BMI, this will remain all zeros and we’ll hide the row.
+
+// --- Optional: most common treatment if your rows have `treatment` ---
+$treatment_counts = [];
+$seen_treatment = [];
+foreach ($visits as $v) {
+    $pid = $v['patient_id'] ?? null;
+    if (!$pid) continue;
+    // Count each patient once per treatment
+    $treat = trim($v['treatment'] ?? '');
+    if ($treat === '') continue;
+    $key = $pid . '|' . $treat;
+    if (isset($seen_treatment[$key])) continue;
+    $seen_treatment[$key] = true;
+    $treatment_counts[$treat] = ($treatment_counts[$treat] ?? 0) + 1;
+}
+arsort($treatment_counts);
+$most_common_treatment = $treatment_counts ? array_key_first($treatment_counts) : '—';
+?>
+
 <div class="summary-container">
-    <div class="summary">
-        <h3><i class="bx bx-file"></i> Summary:</h3>
-        <ul class="summary-list">
-             <li>
-                <strong>Report Generated On:</strong> <?= date('Y-m-d H:i:s') ?>
-            </li></li>
-            <li><strong>Total Unique Patients in Report:</strong> <?= $total_patients ?? 0 ?></li>
-            <li>
-                <strong>By Sex:</strong>
-                Male – <?= isset($sex_counts['Male']) ? $sex_counts['Male'] : 0 ?>,
-                Female – <?= isset($sex_counts['Female']) ? $sex_counts['Female'] : 0 ?>
-            </li>
-            <li>
-                <strong>By Age Group:</strong>
-                Young Children: <?= isset($age_group_counts['0–5']) ? $age_group_counts['0–5'] : 0 ?>,
-                Children: <?= isset($age_group_counts['6–17']) ? $age_group_counts['6–17'] : 0 ?>,
-                Adults: <?= isset($age_group_counts['18–59']) ? $age_group_counts['18–59'] : 0 ?>,
-                Seniors: <?= isset($age_group_counts['60+']) ? $age_group_counts['60+'] : 0 ?>
-            </li>
-           <li>
-    <strong>Diseases and Case Counts:</strong>
-    <?php
-    // Prepare disease breakdown by sex and age group (unique patients only)
-    $disease_summary = [];
-    $seen = []; // track patient+diagnosis globally
+  <div class="summary">
+  <h3><i class="bx bx-file"></i> Summary</h3>
+    <!-- Key values -->
+    <table class="kv-table">
+      <tr>
+        <th>Report Generated On</th>
+        <td><?= date('F d, Y H:i:s') ?></td>
+      </tr>
+      <tr>
+        <th>Total Patients in Report</th>
+        <td><?= $total_patients ?? 0 ?></td>
+      </tr>
+      <?php
+      $has_bmi = array_sum($bmi_counts) > 0;
+      if ($has_bmi): ?>
+      <tr>
+        <th>By BMI</th>
+        <td>
+          Underweight – <?= $bmi_counts['Underweight'] ?>,
+          Normal – <?= $bmi_counts['Normal'] ?>,
+          Overweight – <?= $bmi_counts['Overweight'] ?>,
+          Obese – <?= $bmi_counts['Obese'] ?>
+        </td>
+      </tr>
+      <?php endif; ?>
+      <?php if (!empty($treatment_counts)): ?>
+      <tr>
+        <th>Most Common Treatment Given</th>
+        <td><?= htmlspecialchars($most_common_treatment) ?></td>
+      </tr>
+      <?php endif; ?>
+    </table>
 
-    foreach ($visits as $visit) {
-        $d = $visit['diagnosis'] ?? 'Unknown';
-        $s = $visit['sex'] ?? 'Unknown';
-        $a = (int)($visit['age'] ?? 0);
-        $p = $visit['patient_id'] ?? null;
+    <!-- Two small tables side-by-side -->
+    <div class="mini-wrap">
+      <table class="mini-table">
+        <thead><tr><th colspan="2">By Sex (Unique Patients)</th></tr></thead>
+        <tbody>
+          <tr><td>Male</td><td><?= $sex_counts['Male'] ?? 0 ?></td></tr>
+          <tr><td>Female</td><td><?= $sex_counts['Female'] ?? 0 ?></td></tr>
+        </tbody>
+      </table>
 
-        if (!$p) continue;
-
-        $key = $d . '_' . $p;
-
-        // Skip if this patient already counted for this disease
-        if (isset($seen[$key])) continue;
-        $seen[$key] = true;
-
-        if (!isset($disease_summary[$d])) {
-            $disease_summary[$d] = [
-                'total' => 0,
-                'sex' => ['Male' => 0, 'Female' => 0],
-                'age' => ['0–5' => 0, '6–17' => 0, '18–59' => 0, '60+' => 0]
-            ];
-        }
-
-        // Count this unique patient once
-        $disease_summary[$d]['total']++;
-
-        // Count sex
-        if (isset($disease_summary[$d]['sex'][$s])) {
-            $disease_summary[$d]['sex'][$s]++;
-        }
-
-        // Count age group
-        if ($a >= 0 && $a <= 5) {
-            $disease_summary[$d]['age']['0–5']++;
-        } elseif ($a >= 6 && $a <= 17) {
-            $disease_summary[$d]['age']['6–17']++;
-        } elseif ($a >= 18 && $a <= 59) {
-            $disease_summary[$d]['age']['18–59']++;
-        } elseif ($a >= 60) {
-            $disease_summary[$d]['age']['60+']++;
-        }
-    }
-
-    if (count($disease_summary) === 0) {
-        echo "<p style='color:#888;'>No disease cases found for the selected filters.</p>";
-    } else {
-        echo "<table border='1' cellpadding='6' cellspacing='0' style='border-collapse:collapse; margin-top:8px; width:100%; text-align:center;'>";
-        echo "<thead style='background:#f2f2f2;'>";
-        echo "<tr>
-                <th>Medical Cases</th>
-                <th>Total Cases</th>
-                <th>Male</th>
-                <th>Female</th>
-                <th>0–5 yrs. old</th>
-                <th>6–17 yrs. old</th>
-                <th>18–59 yrs. old</th>
-                <th>60+ yrs. old</th>
-              </tr>";
-        echo "</thead><tbody>";
-
-        foreach ($disease_summary as $disease => $info) {
-            echo "<tr>";
-            echo "<td>" . htmlspecialchars($disease) . "</td>";
-            echo "<td>{$info['total']}</td>";
-            echo "<td>{$info['sex']['Male']}</td>";
-            echo "<td>{$info['sex']['Female']}</td>";
-            echo "<td>{$info['age']['0–5']}</td>";
-            echo "<td>{$info['age']['6–17']}</td>";
-            echo "<td>{$info['age']['18–59']}</td>";
-            echo "<td>{$info['age']['60+']}</td>";
-            echo "</tr>";
-        }
-
-        echo "</tbody></table>";
-    }
-    ?>
-</li>
-
-        
-        </ul>
+      <table class="mini-table">
+        <thead><tr><th colspan="2">By Age Group (Unique Patients)</th></tr></thead>
+        <tbody>
+          <tr><td>Children</td><td><?= $age_group_counts['6–17'] ?? 0 ?></td></tr>
+          <tr><td>Adults</td><td><?= $age_group_counts['18–59'] ?? 0 ?></td></tr>
+          <tr><td>Seniors</td><td><?= $age_group_counts['60+'] ?? 0 ?></td></tr>
+        </tbody>
+      </table>
     </div>
+
+    <!-- Purok table -->
+    <?php if (!empty($purok_counts)): ?>
+    <table class="purok-table">
+      <thead><tr><th colspan="2">Patient Counts per Purok (Unique Patients)</th></tr></thead>
+      <tbody>
+        <?php foreach ($purok_counts as $purok => $count): ?>
+          <tr>
+            <td><?= htmlspecialchars($purok) ?></td>
+            <td><?= $count ?></td>
+          </tr>
+        <?php endforeach; ?>
+      </tbody>
+    </table>
+    <?php endif; ?>
+  </div>
 </div>
-<br> <br> <br>
+
    <span id="generated_by"></span>
-<br>
 
 </div> 
 
@@ -1144,7 +1240,7 @@ function printDiv() {
             width:fit-content;
           }
           .print-logo{ width:80px; height:80px; object-fit:contain; }
-          .print-heading{ line-height:1.1; color:#0d2546; }
+          .print-heading{ line-height:1.1;  color: #000;; }
           .print-heading > *{ margin:0; }
           .ph-line-1{ font-size:12pt; font-weight:500; }
           .ph-line-2{ font-size:16pt; font-weight:500; }
@@ -1167,20 +1263,36 @@ function printDiv() {
 }
 
 fetch('../php/getUserName.php')
-    .then(response => response.json())
-    .then(data => {
-        if (data.full_name) {
-            document.getElementById('userGreeting').textContent = `Hello, ${data.full_name}!`;
-            document.getElementById('generated_by').textContent = `Report Generated by: ${data.full_name} - BHW`;
-        } else {
-            document.getElementById('userGreeting').textContent = 'Hello, BHW!';
-            document.getElementById('generated_by').textContent = 'Generated by: N/A';
-        }
-    })
-    .catch(error => {
-        console.error('Error fetching user name:', error);
-        document.getElementById('userGreeting').textContent = 'Hello, BHW!';
-    });
+  .then(response => response.json())
+  .then(data => {
+    const fullName = (data && data.full_name) ? data.full_name : '';
+    // Greet as before
+    document.getElementById('userGreeting').textContent =
+      fullName ? `Hello, ${fullName}!` : 'Hello, BHW!';
+
+    // Build the signature block
+    const gb = document.getElementById('generated_by');
+    gb.innerHTML = `
+      <div class="sig-label">Report Generated by:</div>
+      <hr class="sig-line">
+      <div class="sig-name"></div>
+      <div class="sig-title">Barangay Health Worker</div>
+    `;
+
+    // Set name safely as text
+    gb.querySelector('.sig-name').textContent = fullName || '________________';
+  })
+  .catch(() => {
+    document.getElementById('userGreeting').textContent = 'Hello, BHW!';
+    const gb = document.getElementById('generated_by');
+    gb.innerHTML = `
+      <div class="sig-label">Report Generated by:</div>
+      <hr class="sig-line">
+      <div class="sig-name">________________</div>
+      <div class="sig-title">Barangay Health Worker</div>
+    `;
+  });
+
     function confirmLogout() {
     document.getElementById('logoutModal').style.display = 'block';
     return false; // Prevent the default link behavior
@@ -1238,6 +1350,3 @@ document.addEventListener("DOMContentLoaded", () => {
 
 </body>
 </html>
-
-
- 

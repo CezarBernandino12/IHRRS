@@ -1,9 +1,9 @@
 <?php
+session_start();
 require '../../php/db_connect.php';
+require '../../ADMIN/php/log_functions.php';
 
 header('Content-Type: application/json');
-
-// Display all errors for debugging
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
@@ -19,9 +19,6 @@ try {
 
     $pdo->beginTransaction();
 
-    // --------------------------
-    // Functions to sanitize input
-    // --------------------------
     function clean_input($data) {
         return htmlspecialchars(trim($data), ENT_QUOTES, 'UTF-8');
     }
@@ -33,9 +30,6 @@ try {
         return clean_input($data);
     }
 
-    // --------------------------
-    // Required fields validation
-    // --------------------------
     if (empty($_POST['user_id']) || empty($_POST['diagnosis']) || empty($_POST['visit_id'])) {
         throw new Exception("Missing required fields.");
     }
@@ -45,13 +39,15 @@ try {
     $diagnosis = clean_input($_POST['diagnosis']);
     $status = clean_input($_POST['status'] ?? '');
     $physician = clean_input($_POST['physician2'] ?? '');
+if (empty($physician)) {
+    throw new Exception("Physician selection is required.");
+}
+$physician = intval($physician);
     $remarks = clean_input($_POST['rhu_remarks'] ?? '');
     $consultation_date = date("Y-m-d");
     $followup = isset($_POST['followup']) ? clean_input($_POST['followup']) : null;
 
-    // --------------------------
     // Get patient_id
-    // --------------------------
     $stmt_patient = $pdo->prepare("SELECT patient_id FROM patient_assessment WHERE visit_id = :visit_id");
     $stmt_patient->execute([':visit_id' => $visit_id]);
     $patient = $stmt_patient->fetch(PDO::FETCH_ASSOC);
@@ -62,9 +58,7 @@ try {
 
     $patient_id = $patient['patient_id'];
 
-    // --------------------------
     // Handle photo upload
-    // --------------------------
     $photoPath = null;
     if (isset($_FILES['photo']) && $_FILES['photo']['error'] === UPLOAD_ERR_OK) {
         $photoTmp = $_FILES['photo']['tmp_name'];
@@ -79,9 +73,7 @@ try {
         }
     }
 
-    // --------------------------
     // Insert into rhu_consultations
-    // --------------------------
     $stmt_consultation = $pdo->prepare("
         INSERT INTO rhu_consultations 
         (patient_id, doctor_id, recorded_by, consultation_date, diagnosis, instruction_prescription, visit_id, lab_result_path, diagnosis_status, follow_up_date) 
@@ -104,29 +96,11 @@ try {
 
     $consultation_id = $pdo->lastInsertId();
 
-
-
     if ($consultation_id) {
-
-        //ADDED CONSULTATION RECORD INFO FOR ACTIVITY LOG
-    $stmt_log = $pdo->prepare("INSERT INTO logs (
-        user_id, action, performed_by, user_affected
-    ) VALUES (
-        :user_id, :action, :performed_by, :user_affected
-    )");
-
-    $stmt_log->execute([
-        ':user_id' => $user_id,
-        ':action' => "Added Diagnosis/Consultation Record",
-        ':performed_by' => $user_id,
-        ':user_affected' => $patient_id
-    ]);
-    
+        logActivity($pdo, $user_id, "Added Diagnosis/Consultation Record");
     }
 
-    // --------------------------
     // Update related consultations if status not "Ongoing"
-    // --------------------------
     if ($status !== 'Ongoing') {
         $stmt_update_status = $pdo->prepare("
             UPDATE rhu_consultations
@@ -142,14 +116,12 @@ try {
         ]);
     }
 
-    // --------------------------
-    // Insert dispensed medicines
-    // --------------------------
+    // ✅ IMPROVED: Track if medicines were dispensed
+    $medicine_dispensed = false;
     if (!empty($_POST['medicine_given']) && is_array($_POST['medicine_given'])) {
         $_POST['medicine_given'] = clean_input_recursive($_POST['medicine_given']);
         $_POST['quantity_given'] = clean_input_recursive($_POST['quantity_given'] ?? []);
         $_POST['med_instruction'] = clean_input_recursive($_POST['med_instruction'] ?? []);
-    
 
         $stmt_medicine_dispensed = $pdo->prepare("
             INSERT INTO rhu_medicine_dispensed 
@@ -167,32 +139,12 @@ try {
                     ':instruction' => $_POST['med_instruction'][$key] ?? '',
                     ':dispensed_by' => $physician
                 ]);
+                $medicine_dispensed = true;
             }
-        }
-
-        $dispensed_id = $pdo->lastInsertId();
-
-        if ($dispensed_id) {
-
-            //ADDED DISPENSED MEDICINE INFO FOR ACTIVITY LOG
-        $stmt_log3 = $pdo->prepare("INSERT INTO logs (
-            user_id, action, performed_by, user_affected
-        ) VALUES (
-            :user_id, :action, :performed_by, :user_affected
-        )");
-        $stmt_log3->execute([
-            ':user_id' => $user_id,
-            ':action' => "Dispensed Medicine to Patient (RHU)",
-            ':performed_by' => $user_id,
-            ':user_affected' => $patient_id
-        ]);
-        
         }
     }
 
-    // --------------------------
     // Insert follow-up
-    // --------------------------
     if (!empty($followup)) {
         $stmt_followup = $pdo->prepare("
             INSERT INTO follow_ups 
@@ -208,9 +160,7 @@ try {
         ]);
     }
 
-    // --------------------------
     // Update referral status
-    // --------------------------
     $stmt_update_referral = $pdo->prepare("
         UPDATE referrals 
         SET referral_status = 'Completed'
@@ -218,9 +168,12 @@ try {
     ");
     $stmt_update_referral->execute([':visit_id' => $visit_id]);
 
-    // --------------------------
-    // Insert prescription medicines
-    // --------------------------
+    // ✅ LOG: Dispensed Medicine (after transaction confirms it was saved)
+    if ($medicine_dispensed) {
+        logActivity($pdo, $user_id, "Dispensed Medicine to Patient (RHU)");
+    }
+
+    // ✅ IMPROVED: Track if prescriptions were generated
     $prescriptionSaved = false;
     $medicines = array_filter($_POST['medicine_prescription'] ?? [], fn($m) => trim($m) !== '');
 
@@ -259,29 +212,14 @@ try {
                 $prescriptionSaved = true;
             }
         }
-
-        $prescription_id = $pdo->lastInsertId();
-        if ($prescription_id) {
-
-            //ADDED PRESCRIPTION INFO FOR ACTIVITY LOG  
-        $stmt_log4 = $pdo->prepare("INSERT INTO logs (
-            user_id, action, performed_by, user_affected
-        ) VALUES (
-            :user_id, :action, :performed_by, :user_affected
-        )");
-        $stmt_log4->execute([
-            ':user_id' => $user_id,
-            ':action' => "Generated Prescription",
-            ':performed_by' => $user_id,
-            ':user_affected' => $patient_id
-        ]);
-        
-        }
     }
 
-    // --------------------------
-    // Commit transaction & return JSON
-    // --------------------------
+    // ✅ LOG: Generated Prescription (after transaction confirms it was saved)
+    if ($prescriptionSaved) {
+        logActivity($pdo, $user_id, "Generated Prescription");
+    }
+
+    // Commit transaction
     $pdo->commit();
 
     echo json_encode([
