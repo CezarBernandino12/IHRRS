@@ -1,11 +1,9 @@
 <?php
-session_start(); // ✅ Add session_start
+session_start();
 require '../../php/db_connect.php';
-require '../../ADMIN/php/log_functions.php'; // ✅ Include logging
+require '../../ADMIN/php/log_functions.php';
 
 header('Content-Type: application/json');
-
-// Display all errors for debugging
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
@@ -21,7 +19,6 @@ try {
 
     $pdo->beginTransaction();
 
-    // Functions to sanitize input
     function clean_input($data) {
         return htmlspecialchars(trim($data), ENT_QUOTES, 'UTF-8');
     }
@@ -33,7 +30,6 @@ try {
         return clean_input($data);
     }
 
-    // Required fields validation
     if (empty($_POST['user_id']) || empty($_POST['diagnosis']) || empty($_POST['visit_id'])) {
         throw new Exception("Missing required fields.");
     }
@@ -43,6 +39,10 @@ try {
     $diagnosis = clean_input($_POST['diagnosis']);
     $status = clean_input($_POST['status'] ?? '');
     $physician = clean_input($_POST['physician2'] ?? '');
+if (empty($physician)) {
+    throw new Exception("Physician selection is required.");
+}
+$physician = intval($physician);
     $remarks = clean_input($_POST['rhu_remarks'] ?? '');
     $consultation_date = date("Y-m-d");
     $followup = isset($_POST['followup']) ? clean_input($_POST['followup']) : null;
@@ -97,7 +97,6 @@ try {
     $consultation_id = $pdo->lastInsertId();
 
     if ($consultation_id) {
-        // ✅ LOG ACTIVITY: Added Diagnosis/Consultation Record
         logActivity($pdo, $user_id, "Added Diagnosis/Consultation Record");
     }
 
@@ -117,7 +116,7 @@ try {
         ]);
     }
 
-    // Insert dispensed medicines
+    // ✅ IMPROVED: Track if medicines were dispensed
     $medicine_dispensed = false;
     if (!empty($_POST['medicine_given']) && is_array($_POST['medicine_given'])) {
         $_POST['medicine_given'] = clean_input_recursive($_POST['medicine_given']);
@@ -142,11 +141,6 @@ try {
                 ]);
                 $medicine_dispensed = true;
             }
-        }
-
-        if ($medicine_dispensed) {
-            // ✅ LOG ACTIVITY: Dispensed Medicine to Patient (RHU)
-            logActivity($pdo, $user_id, "Dispensed Medicine to Patient (RHU)");
         }
     }
 
@@ -174,7 +168,12 @@ try {
     ");
     $stmt_update_referral->execute([':visit_id' => $visit_id]);
 
-    // Insert prescription medicines
+    // ✅ LOG: Dispensed Medicine (after transaction confirms it was saved)
+    if ($medicine_dispensed) {
+        logActivity($pdo, $user_id, "Dispensed Medicine to Patient (RHU)");
+    }
+
+    // ✅ IMPROVED: Track if prescriptions were generated
     $prescriptionSaved = false;
     $medicines = array_filter($_POST['medicine_prescription'] ?? [], fn($m) => trim($m) !== '');
 
@@ -211,14 +210,14 @@ try {
                 $prescriptionSaved = true;
             }
         }
-
-        if ($prescriptionSaved) {
-            // ✅ LOG ACTIVITY: Generated Prescription
-            logActivity($pdo, $user_id, "Generated Prescription");
-        }
     }
 
-    // Commit transaction & return JSON
+    // ✅ LOG: Generated Prescription (after transaction confirms it was saved)
+    if ($prescriptionSaved) {
+        logActivity($pdo, $user_id, "Generated Prescription");
+    }
+
+    // Commit transaction
     $pdo->commit();
 
     echo json_encode([

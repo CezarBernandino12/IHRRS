@@ -1,11 +1,12 @@
 <?php
 require '../../php/db_connect.php';
+require '../../ADMIN/php/log_functions.php';
 
 header('Content-Type: application/json');
 
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
-
+ 
 // Validate visit_id
 if (!isset($_GET['visit_id']) || empty($_GET['visit_id'])) {
     echo json_encode(['error' => 'Missing visit_id']);
@@ -100,21 +101,10 @@ try {
         $consultationInfo[$key] = $value ?? "N/A";
     }
 
-
-    
-        //ADDED PHYSICIAN VIEWED FOR ACTIVITY LOG
-        $stmt_log = $pdo->prepare("INSERT INTO logs (
-            user_id, action, performed_by, user_affected
-        ) VALUES (
-            :user_id, :action, :performed_by, :user_affected
-        )");
-        $stmt_log->execute([
-            ':user_id' => $_SESSION['user_id'],
-            ':action' => "Viewed Patient Assessment Record",
-            ':performed_by' => $_SESSION['user_id'],
-            ':user_affected' => $patient_id
-        ]);
-        
+    // Log the physician's action using standardized function
+    if (isset($_SESSION['user_id'])) {
+        logActivity($pdo, $_SESSION['user_id'], "Viewed Patient Assessment Record");
+    }
 
     // Return JSON response
     echo json_encode([
@@ -124,8 +114,6 @@ try {
         'rhumedicine' => $rhuMedicineInfo,
         'consultation' => $consultationInfo
     ]);
-
-    
 
 } catch (PDOException $e) {
     echo json_encode(['error' => 'Database error: ' . $e->getMessage()]);

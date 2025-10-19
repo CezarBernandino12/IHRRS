@@ -13,7 +13,7 @@
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 </head> 
 
-<body>
+<body> 
 
     <section id="sidebar">
         <a href="#" class="brand">
@@ -630,9 +630,37 @@ document.addEventListener("DOMContentLoaded", () => {
     </div>
            </main>
     </section>
+
     
     <script src="js/form.js"></script>
-    <script src="js/script.js"></script>
+    
+    <script>
+   
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Get modal elements
+    const myModal = document.getElementById('myModal');
+    const closeBtn = document.getElementById('closeBtn');
+    const cancelButton = document.getElementById('cancelButton');
+
+    //  Close button (X icon) - closes modal
+    if (closeBtn) {
+        closeBtn.addEventListener('click', function() {
+            myModal.style.display = 'none';
+        });
+    }
+
+    //  Cancel button - closes modal
+    if (cancelButton) {
+        cancelButton.addEventListener('click', function() {
+            myModal.style.display = 'none';
+        });
+    }
+});
+
+</script>
+
     <script>
 $(document).ready(function () {
     // Initialize Select2 for diagnosis
@@ -991,7 +1019,7 @@ function loadCustomOptions(selectElement, category) {
 }
 
 const userIdInput = document.getElementById('user_id').value;
-// Function to load physician options
+// Function to load physician options 
 function loadPhysicians(selectElement, userIdInput) {
     fetch(`php/get_physicians.php?user_id=${encodeURIComponent(userIdInput)}`)
         .then(response => response.json())
@@ -1329,3 +1357,4 @@ document.addEventListener("DOMContentLoaded", () => {
 
 </body>
 </html>
+

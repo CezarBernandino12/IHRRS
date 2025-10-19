@@ -434,6 +434,22 @@ document.getElementById("backToDashboardButton").onclick = function() {
 }
 
 
+document.addEventListener('DOMContentLoaded', function() {
+    // Fetch the logged-in user's name using your existing getUserName.php
+    fetch('php/getUserName.php')
+        .then(response => response.json())
+        .then(data => {
+            if (data.full_name) {
+                const userGreeting = document.getElementById('userGreeting');
+                if (userGreeting) {
+                    userGreeting.textContent = `Hello ${data.full_name}!`;
+                }
+            }
+        })
+        .catch(error => console.error('Error fetching user name:', error));
+});
+
+
 
 
 
