@@ -116,7 +116,7 @@ fetch('php/getUserId.php')
         <h2>PATIENT DETAILS</h2>
     </div>
 
-    <form id="updateReferralForm" action="php/update_personal_info .php" method="POST">
+<form id="updateReferralForm" method="POST">
         <div class="container">
             <p style="display: flex; justify-content: space-between; align-items: center;">
                 <b>PERSONAL INFORMATION:</b>
@@ -143,7 +143,6 @@ fetch('php/getUserId.php')
                     <input type="text" class="patient-extension form-control" name="extension" value="N/A">
                 </div>
                 
-
                 <div class="form-group">
                     <label>Birth Place:</label>
                     <input type="text" class="patient-birth-place form-control" name="birthplace" value="N/A">
@@ -154,7 +153,7 @@ fetch('php/getUserId.php')
                 </div>
                 <div class="form-group">
                     <label>Age:</label>
-                    <input type="number" class="age form-control" name="age" value="N/A">
+                    <input type="text" class="age form-control" name="age" value="N/A" readonly>
                 </div>
 
                 <div class="form-group">
@@ -216,7 +215,6 @@ fetch('php/getUserId.php')
             <input type="hidden" id="referralInput" />
 
             <div class="button-container">
-                
                 <button type="submit" class="submit-btn" id="submitButton">Submit</button>
             </div>
         </div>
