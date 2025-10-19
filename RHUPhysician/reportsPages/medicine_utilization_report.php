@@ -680,11 +680,11 @@ foreach ($medicine_list as $m) {
       width: fit-content;
     }
     .print-logo{ width:64px; height:64px; object-fit:contain; }
-    .print-heading{ line-height:1.1; color:#0d2546; }
-    .print-heading .ph-line-1{ font-size:12pt; font-weight:500; }
-    .print-heading .ph-line-2{ font-size:14pt; font-weight:500; }
-    .print-heading .ph-line-3{ font-size:11pt; font-weight:500; }
-    .print-heading .ph-line-4{ font-size:12pt; font-weight:600; margin-top:4px; letter-spacing:.3px; }
+    .print-heading{ line-height:1.1; color:#000; }
+    .print-heading .ph-line-1{ font-size:12pt; font-weight:500; margin-bottom:4px;}
+    .print-heading .ph-line-2{ font-size:14pt; font-weight:500; margin-bottom:4px;}
+    .print-heading .ph-line-3{ font-size:11pt; font-weight:500; margin-bottom:4px; }
+    .print-heading .ph-line-4{ font-size:12pt; font-weight:600; margin-top:15px; letter-spacing:.3px; }
     .print-sub{ font-size:10.5pt; margin-top:4px; }
     .print-rule{ height:1px; border:0; background:#cfd8e3; margin:8px 0 12px; }
 
@@ -702,8 +702,11 @@ foreach ($medicine_list as $m) {
     @page { margin: 10mm 10mm; }   /* adjust to taste */
     body { margin: 0; }
 
-    /* tighten the gap between the two tables */
-    .report-table-container { margin-bottom: 30px !important; }
+ .report-table-container {
+      margin-top: 80px !important;
+      margin-bottom: 40px !important;
+    }
+
     .summary-container { margin-top: 26px !important; }
 
     /* keep headings snug */
@@ -1306,7 +1309,7 @@ function printDiv() {
         width: fit-content;
       }
       .print-logo{ width:64px; height:64px; object-fit:contain; }
-      .print-heading{ line-height:1.1; color:#0d2546; }
+      .print-heading{ line-height:1.1; color:#000; }
       .print-heading .ph-line-1{ font-size:12pt; font-weight:500; }
       .print-heading .ph-line-2{ font-size:14pt; font-weight:500; }
       .print-heading .ph-line-3{ font-size:11pt; font-weight:500; }

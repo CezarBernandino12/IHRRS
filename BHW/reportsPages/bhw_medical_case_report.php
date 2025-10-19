@@ -438,6 +438,7 @@ while ($row = $barangay_stmt->fetch(PDO::FETCH_ASSOC)) {
     <div class="ph-line-4"><?php echo htmlspecialchars($barangayName); ?></div>
     <hr class="print-rule">
     <h2 class="print-title">MEDICAL CASE MONITORING REPORT</h2>
+
     <div class="print-sub">
       (<?php
         $filters = [];
@@ -508,13 +509,13 @@ while ($row = $barangay_stmt->fetch(PDO::FETCH_ASSOC)) {
     width:fit-content;
   }
   .print-logo{ width:64px; height:64px; object-fit:contain; }
-  .print-heading{ line-height:1.1; color:#0d2546; }
+  .print-heading{ line-height:1.1;  color: #000; }
   .print-heading > *{ margin:0; }
-  .ph-line-1{ font-size:12pt; font-weight:500; }
-  .ph-line-2{ font-size:16pt; font-weight:500; }
-  .ph-line-3{ font-size:11pt; font-weight:500; }
-  .ph-line-4{ font-size:12pt; font-weight:500; margin-top:2px; }
-  .print-rule{ height:1px; border:0; background:#cfd8e3; margin:8px 0 10px; }
+  .ph-line-1{ font-size:12pt; font-weight:500; margin-bottom:4px; }
+  .ph-line-2{ font-size:16pt; font-weight:500; margin-bottom:4px;}
+  .ph-line-3{ font-size:11pt; font-weight:500; margin-bottom:4px;}
+  .ph-line-4{ font-size:12pt; font-weight:500; margin-top:4px; }
+  .print-rule{ height:1px; border:0; background:#cfd8e3; margin-top:15px; }
   .print-title{ font-size:14pt; font-weight:600; letter-spacing:.3px; color:#000; }
   .print-sub{ font-size:10.5pt; margin-top:4px; }
   @media print {
@@ -524,7 +525,7 @@ while ($row = $barangay_stmt->fetch(PDO::FETCH_ASSOC)) {
   }
 </style>
 <style>
-  .summary-container { margin-top: 48px; } /* add more space at the top */
+  .summary-container { margin-top: 58px; } 
   .summary h3 { margin-bottom: 12px; }
 
   .kv-table, .mini-table, .purok-table {
@@ -550,7 +551,7 @@ while ($row = $barangay_stmt->fetch(PDO::FETCH_ASSOC)) {
   .purok-table th {  text-align: left; }
 
   @media print {
-    .summary-container { margin-top: 24mm; }
+    .summary-container { margin-top: 80px; }
     .kv-table, .mini-table, .purok-table { font-size: 12pt; }
   }
     @media print {
@@ -558,6 +559,12 @@ while ($row = $barangay_stmt->fetch(PDO::FETCH_ASSOC)) {
       display: none !important; 
     }
     .summary-container .kv-table { margin-top: 0 !important; }
+
+       .report-table-container {
+      margin-top: 80px !important;
+      margin-bottom: 40px !important;
+    }
+    
   }
 
   #generated_by {
@@ -1233,7 +1240,7 @@ function printDiv() {
             width:fit-content;
           }
           .print-logo{ width:80px; height:80px; object-fit:contain; }
-          .print-heading{ line-height:1.1; color:#0d2546; }
+          .print-heading{ line-height:1.1;  color: #000;; }
           .print-heading > *{ margin:0; }
           .ph-line-1{ font-size:12pt; font-weight:500; }
           .ph-line-2{ font-size:16pt; font-weight:500; }

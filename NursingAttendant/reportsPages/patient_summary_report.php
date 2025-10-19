@@ -505,11 +505,11 @@ $total_patients = count(array_unique(array_column($visits, 'patient_id')));
   }
   
   .print-logo{ width:64px; height:64px; object-fit:contain; }
-  .print-heading{ line-height:1.1; color:#0d2546; }
-  .print-heading .ph-line-1{ font-size:12pt; font-weight:500; }
-  .print-heading .ph-line-2{ font-size:14pt; font-weight:500; }
-  .print-heading .ph-line-3{ font-size:11pt; font-weight:500; }
-  .print-heading .ph-line-4{ font-size:12pt; font-weight:600; margin-top:4px; letter-spacing:.3px; }
+  .print-heading{ line-height:1.1; color:#000; }
+  .print-heading .ph-line-1{ font-size:12pt; font-weight:500; margin-bottom:3px;}
+  .print-heading .ph-line-2{ font-size:14pt; font-weight:500; margin-bottom:3px;}
+  .print-heading .ph-line-3{ font-size:11pt; font-weight:500; margin-bottom:3px;}
+  .print-heading .ph-line-4{ font-size:12pt; font-weight:600; margin-top:15px; letter-spacing:.3px; }
   .print-sub{ font-size:10.5pt; margin-top:4px; }
   .print-rule{ height:1px; border:0; background:#cfd8e3; margin:8px 0 12px; }
 }
@@ -596,12 +596,7 @@ $total_patients = count(array_unique(array_column($visits, 'patient_id')));
          .form-submit { 
            display: none;
         }
-          .report-table-container{
-            margin-top: -150px;
-        }
-         .report-table-container table{
-            font-size: 12px;
-        }
+    
     }
 </style>
 
@@ -1206,7 +1201,7 @@ function printDiv() {
             margin:0 auto 10px; text-align:center; width:fit-content;
           }
           .print-logo{ width:64px; height:64px; object-fit:contain; }
-          .print-heading{ line-height:1.1; color:#0d2546; }
+          .print-heading{ line-height:1.1; color:#000; }
           .print-heading .ph-line-1{ font-size:12pt; font-weight:500; }
           .print-heading .ph-line-2{ font-size:14pt; font-weight:800; }
           .print-heading .ph-line-3{ font-size:11pt; font-weight:500; }
