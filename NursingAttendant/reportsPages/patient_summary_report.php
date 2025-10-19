@@ -451,7 +451,7 @@ $total_patients = count(array_unique(array_column($visits, 'patient_id')));
 <div class="print-area">
 <!-- Two-logo letterhead -->
 <div class="print-letterhead">
-  <img src="../../img/RHUlogo.png" alt="Left Logo" class="print-logo">
+  <img src="../../img/Plogo.png" alt="Left Logo" class="print-logo">
   <div class="print-heading">
     <div class="ph-line-1">Republic of the Philippines</div>
     <div class="ph-line-1">Department of Health</div>
