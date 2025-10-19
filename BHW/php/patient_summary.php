@@ -31,47 +31,44 @@ try {
 
     // Fetch visit history
 $sql2 = "SELECT 
-    rc.*, 
     pa.*, 
-    u.full_name AS doctor_name, 
-    u.license_number AS doctor_license_number,
-    u.rhu AS rhu
-FROM rhu_consultations rc
-LEFT JOIN patient_assessment pa 
-    ON rc.visit_id = pa.visit_id
+    u.full_name AS recorded_by, 
+    u.barangay AS barangay
+FROM patient_assessment pa
 LEFT JOIN users u 
-    ON rc.doctor_id = u.user_id
-WHERE rc.patient_id = :patient_id
-ORDER BY rc.consultation_date DESC";
+    ON pa.recorded_by = u.user_id
+WHERE pa.patient_id = :patient_id
+ORDER BY pa.visit_date DESC";
             
     $stmt2 = $pdo->prepare($sql2);
     $stmt2->bindParam(':patient_id', $patient_id, PDO::PARAM_INT);
     $stmt2->execute();
     $history = $stmt2->fetchAll(PDO::FETCH_ASSOC);
 
-  $rhu = !empty($history) ? $history[0]['rhu'] : null;  
+    
       // Fetch medicine dispensed
 $sql3 = "SELECT 
     md.*,
-    md.consultation_id
-FROM rhu_medicine_dispensed md
-LEFT JOIN rhu_consultations rc 
-    ON md.consultation_id = rc.consultation_id
-WHERE rc.patient_id = :patient_id
-ORDER BY rc.consultation_id DESC";
+    md.visit_id
+FROM bhs_medicine_dispensed md
+LEFT JOIN patient_assessment pa 
+    ON md.visit_id = pa.visit_id
+WHERE pa.patient_id = :patient_id
+ORDER BY pa.visit_id DESC";
             
     $stmt3 = $pdo->prepare($sql3);
     $stmt3->bindParam(':patient_id', $patient_id, PDO::PARAM_INT);
     $stmt3->execute();
     $medicines = $stmt3->fetchAll(PDO::FETCH_ASSOC);
 
+    $barangay = !empty($history) ? $history[0]['barangay'] : null;
     echo json_encode([
         "full_name" => $patient['full_name'],
         "age" => $patient['age'],
         "sex" => $patient['sex'],
         "history" => $history,
         "medicines" => $medicines,
-        "rhu" => $rhu
+        "barangay" => $barangay
     ]);
 } catch (Exception $e) {
     http_response_code(500);

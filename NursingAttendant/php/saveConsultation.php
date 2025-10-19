@@ -241,8 +241,8 @@ try {
 
         $stmt_prescription = $pdo->prepare("
             INSERT INTO prescription 
-            (consultation_id, medicine_name, quantity, instruction, date, physician) 
-            VALUES (:consultation_id, :medicine_name, :quantity, :instruction, NOW(), :physician)
+            (consultation_id, medicine_name, quantity, instruction, date, physician, patient_id, generated_by) 
+            VALUES (:consultation_id, :medicine_name, :quantity, :instruction, NOW(), :physician, :patient_id, :generated_by)
         ");
 
         foreach ($medicines as $key => $medicine) {
@@ -252,7 +252,9 @@ try {
                     ':medicine_name' => $medicine,
                     ':quantity' => $_POST['quantity_prescription'][$key],
                     ':instruction' => $_POST['prescription_instruction'][$key] ?? '',
-                    ':physician' => $_POST['physician']
+                    ':physician' => $_POST['physician'],
+                    ':patient_id' => $patient_id,
+                    ':generated_by' => $user_id
                 ]);
                 $prescriptionSaved = true;
             }

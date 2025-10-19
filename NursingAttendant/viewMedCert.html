@@ -1,20 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Medical Certificate</title>
-    <style>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="icon" href="../img/logo.png">
+	<link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="css/form.css">
+    <link rel="stylesheet" href="css/logout.css">
+   
+	<title>Issued Records</title> 
+
+     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Times New Roman', serif;
-            background: #f5f5f5;
-            padding: 20px;
         }
 
         .container {
@@ -30,12 +30,15 @@
             margin-bottom: 30px;
             border-bottom: 2px solid #000;
             padding-bottom: 20px;
+            color: black;
+            
         }
 
         .header h1 {
             font-size: 14px;
             font-weight: normal;
             margin: 5px 0;
+            color: black;
         }
 
         .header h2 {
@@ -58,6 +61,7 @@
             text-align: left;
             margin-bottom: 30px;
             font-size: 14px;
+            color: black;
         }
 
         .content {
@@ -69,11 +73,22 @@
 
         .content p {
             margin-bottom: 20px;
+            color: black;
         }
 
         .signature {
             margin-top: 80px;
             text-align: right;
+        }
+        .signature2 {
+            margin-top: 80px;
+            text-align: left;
+        }
+        .signature-line2 {
+            border-top: 1px solid #000;
+            width: 250px;
+            margin-right: auto;
+            margin-bottom: 5px;
         }
 
         .signature-line {
@@ -98,8 +113,8 @@
         }
 
         .buttons {
-            text-align: center;
-            margin-top: 30px;
+            text-align: right;
+            margin-top: 70px;
         }
 
         .button { 
@@ -140,49 +155,224 @@
     </style>
 </head>
 <body>
-    <div class="container" id="certificate">
+
+	<!-- Sidebar Section -->
+	<section id="sidebar">
+		<a href="#" class="brand">
+			<img src="../img/logo.png" alt="RHULogo" class="logo">
+			<span class="text">Hello Nurse</span>
+		</a>
+		<ul class="side-menu top">
+			<li>
+				<a href="dashboard.html">
+					<i class="bx bxs-dashboard"></i>
+					<span class="text">Dashboard</span>
+				</a>
+			</li>
+            <li>
+				<a href= "ITR.html">
+					<i class="bx bxs-user"></i>
+					<span class="text">Add New ITR</span>
+				</a>
+			</li>
+			<li class="active">
+                <a href="#" id="updateReferrals">
+                    <i class="bx bxs-user"></i>
+                    <span class="text">Pending Referrals</span>
+                </a>
+            </li>
+            
+            <script>
+            document.getElementById("updateReferrals").addEventListener("click", function (event) {
+                event.preventDefault(); // Prevent default navigation
+            
+                fetch("php/update_referrals.php") // Call PHP file
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data.message); // Log success message (optional)
+                    window.location.href = "pending.html"; // Redirect after updating
+                })
+                .catch(error => {
+                    console.error("Error updating referrals:", error);
+                    window.location.href = "pending.html"; // Still redirect even if an error occurs
+                });
+            });
+            </script>
+
+            	<li>
+				<a href="followUpConsultations.html">
+					<i class="bx bxs-user"></i>
+					<span class="text">Follow-Up Visits</span>
+				</a>
+			</li>
+            
+			<li>
+				<a href="searchPatient.html">
+					<i class="bx bxs-notepad"></i>
+					<span class="text">Patient Records</span>
+				</a>
+			</li>
+            <li>
+                <a href="history.html">
+                    <i class="bx bx-history"></i>
+                    <span class="text">Referral History</span>
+                </a>
+            </li>
+            <li>
+				<a href="reports.html">
+					<i class="bx bx-notepad"></i>
+					<span class="text">Reports</span>
+				</a>
+			</li>
+		</ul>
+		<ul class="side-menu">
+			<li>
+				<a href="#" class="logout" onclick="return confirmLogout()">
+               <i class="bx bxs-log-out-circle"></i>
+                <span class="text">Logout</span>
+                </a>
+			</li>
+		</ul>
+	</section>
+
+	<!-- Main Content Section -->
+	<section id="content">
+		<nav>
+			<form action="#" id="searchForm">
+				<div class="form-input">
+					<input type="search" id="searchInput" placeholder="Search by Referral ID or Patient Name...">
+					<button type="submit" class="search-btn">
+						<i class="bx bx-search"></i>
+					</button>
+				</div>
+			</form>
+			
+			<div class="greeting">
+                <span id="userGreeting">Hello Nurse!</span>
+            </div>
+			<a href="#" class="profile">
+				<img src="../img/nurse.png">
+			</a>
+		</nav>
+
+		<main>
+            
+            <div class="head-title">
+                <div class="left">
+                  <h1>Issued Records</h1>
+                  <ul class="breadcrumb">
+                    <li><a href="#">Issued Records</a></li>
+                    <li><i class="bx bx-chevron-right"></i></li>
+                    <li><a class="active" href="#">Home</a></li>
+                  </ul>
+                </div>
+              </div>
+
+<br>
+
+            <div class="history-container" style="padding: 80px; padding-bottom: 40px;">
+             
+ 
         <div class="header">
             <h1>Republic of the Philippines</h1>
             <h1>Province of Camarines Norte</h1>
             <h2>Municipality of Daet</h2>
-            <h1>Municipal Health Office of Daet</h1>
+            <h1> <span id="rhu"></span></h1>
+        </div>
+ <div style="text-align: right; margin-bottom: 11px; font-size: 11px;">
+            <p style="background-color: white;">Control No.: <span id="controlNo"></span></p>
         </div>
 
         <div class="title">
             <h1>MEDICAL CERTIFICATE</h1>
-        </div>
+        </div> <br> <br>
 
         <div class="issuance-date">
-            <p>Issuance Date: <strong><span id="issuanceDate"></span></strong></p>
+            <p style="background-color: white;  color: black;">Issuance Date: <strong><span id="issuanceDate"></span></strong></p>
         </div>
+       
+        
 
         <div class="content">
-            <p id="certificateText"></p>
-        </div>
+            <p id="certificateText" style="background-color: white;"></p>
+        </div> <br><br> <br>
 
-          <div class="signature">
-            <div class="signature-title">Prepared by:</div> <br> <br>
-            <div class="signature-line"></div>
+          <div class="signature2">
+            <div class="signature-title">Prepared by:</div> <br> <br> <br>
+            <div class="signature-line2"></div>
             <div class="signature-name" id="attendantName"></div>
             <div class="signature-title">Nursing Attendant</div>
            
         </div>
 
         <div class="signature">
-             <div class="signature-title">Issued by:</div> <br> <br>
+             <div class="signature-title">Issued by:</div> <br> <br> <br>
             <div class="signature-line"></div>
             <div class="signature-name" id="doctorName"></div>
             <div class="signature-title">Physician</div>
             <div class="signature-license">
                 <span id="licenseInfo"></span>
             </div>
-        </div>
-    </div>
+        </div> <br> <br> 
+    
 
     <div class="buttons">
         <button class="button button-print" onclick="window.print()">Print Certificate</button>
         <button class="button button-back" onclick="goBack()">Back to Records</button>
     </div>
+            </div>
+
+
+   <!-- Confirmation Modal -->
+<div id="confirmModal" class="modal">
+    <div class="modal-content" style="height: 250px;">
+      <div class="modal-header">
+        <h3>Confirmation</h3>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to forward this referral to the physician?</p>
+      </div>
+      <div class="modal-footer">
+        
+        <button id="confirmNo" class="btn no" style="background-color: rgb(211, 67, 67);">No</button>
+        <button id="confirmYes" class="btn yes">Yes</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Success Modal -->
+  <div id="successModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Success</h3>
+      </div>
+      <div class="modal-body">
+        <p>Referral successfully forwarded to physician.</p>
+      </div>
+      <div class="modal-footer">
+        <button id="closeSuccessModal" class="btn maybe" style="background-color: rgb(46, 128, 223);">OK</button>
+      </div>
+    </div>
+  </div>
+  
+<div id="logoutModal" class="logout-modal">
+    <div class="logout-modal-content">
+        <div class="logout-modal-header">
+            <h3>Confirm Logout</h3>
+        </div>
+        <div class="logout-modal-body">
+            <p>Are you sure you want to logout?</p>
+        </div>
+        <div class="logout-modal-footer">
+            <button onclick="closeModal()" class="logout-cancel-btn">Cancel</button>
+            <button onclick="proceedLogout()" class="logout-confirm-btn">Yes, Logout</button>
+        </div>
+    </div>
+</div>  
+
+	   </main>	
+</section>
+
 
     <script>
         const urlParams = new URLSearchParams(window.location.search);
@@ -212,25 +402,27 @@
                 });
         }
 
-     function displayCertificate(cert) { 
+function displayCertificate(cert) {
     // Format issuance date
     document.getElementById('issuanceDate').textContent = formatDate(cert.issuance_date);
+    document.getElementById('controlNo').textContent = cert.control_number;
+    document.getElementById('rhu').textContent = cert.rhu;
 
     // Determine pronouns
     let pronounSubject = cert.sex.toLowerCase() === 'male' ? 'He' : 'She';
     let pronounObject = cert.sex.toLowerCase() === 'male' ? 'his' : 'her';
 
-    // Build certificate text
-    let text = `This is to certify that ${cert.patient_name}, ${cert.age} years old, ${cert.sex.toLowerCase()}, `;
-    text += `${cert.civil_status.toLowerCase()}, born on ${formatDate(cert.date_of_birth)} in ${cert.birthplace} `;
-    text += `presently residing at ${cert.address} was examined. `;
+    // Start building the text
+    let text = `This is to certify that <strong style="text-transform: uppercase;">${cert.patient_name}</strong>, ${cert.age} years old, ${cert.sex.toLowerCase()}, `;
+    text += `${cert.civil_status.toLowerCase()}, born on ${formatDate(cert.date_of_birth)} in ${cert.birthplace}, `;
+    text += `presently residing at <strong style="text-transform: uppercase;">${cert.address}</strong>, was examined. `;
 
     // Check diagnosis
     if (cert.diagnosis && cert.diagnosis.toLowerCase() !== 'none') {
-        text += `${pronounSubject} is suffering from ${cert.diagnosis}.`;
+        text += `${pronounSubject} is suffering from ${cert.diagnosis}. `;
 
         if (cert.rest_period_days) {
-            text += ` A period of absence from work for at least ${cert.rest_period_days} `;
+            text += `A period of absence from work for at least ${cert.rest_period_days} `;
             text += `${cert.rest_period_days > 1 ? 'days' : 'day'}`;
 
             if (cert.rest_from_date && cert.rest_to_date) {
@@ -246,25 +438,25 @@
 
     // Include purpose if provided
     if (cert.purpose) {
-        text += `\n\n\n\n\nPurpose: ${cert.purpose}`;
+        text += ` Purpose: ${cert.purpose}.`;
     }
 
-    document.getElementById('certificateText').textContent = text;
+    // Insert into the page using innerHTML so bold/uppercase is rendered
+    document.getElementById('certificateText').innerHTML = text;
 
     // Display doctor/nurse information
     document.getElementById('doctorName').textContent = cert.issued_by.toUpperCase();
     document.getElementById('attendantName').textContent = cert.prepared_by.toUpperCase();
     
     let licenseInfo = '';
-    if (cert.license_number) {
-        licenseInfo += `Lic. No. ${cert.license_number}`;
-    }
+    if (cert.license_number) licenseInfo += `Lic. No. ${cert.license_number}`;
     if (cert.ptr_no) {
         if (licenseInfo) licenseInfo += '\n';
         licenseInfo += `PTR No. ${cert.ptr_no}`;
     }
     document.getElementById('licenseInfo').textContent = licenseInfo;
 }
+
 
         function formatDate(dateString) {
             const options = { year: 'numeric', month: 'long', day: 'numeric' };
@@ -274,6 +466,80 @@
         function goBack() {
             window.history.back();
         }
-    </script>
+   
+
+
+
+fetch('php/getUserName.php')
+    .then(response => response.json())
+    .then(data => {
+        if (data.full_name) {
+            document.getElementById('userGreeting').textContent = `Hello, ${data.full_name}!`;
+        } else {
+            document.getElementById('userGreeting').textContent = 'Hello, BHW!';
+        }
+    })
+    .catch(error => {
+        console.error('Error fetching user name:', error);
+        document.getElementById('userGreeting').textContent = 'Hello, BHW!';
+    }); 
+    function confirmLogout() {
+            document.getElementById('logoutModal').style.display = 'block';
+            return false; // Prevent the default link behavior
+        }
+        
+        function closeModal() {
+            document.getElementById('logoutModal').style.display = 'none';
+        }
+        
+        function proceedLogout() {
+            window.location.href = '../ADMIN/php/logout.php'; 
+        }
+        
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('logoutModal');
+            if (event.target == modal) {
+                closeModal();
+            }
+        } 
+              // Check if user is logged in
+              fetch('php/getUserId.php')
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    // User is not logged in, redirect to role selection page
+                    window.location.href = '../role.html';
+                }
+            })
+            .catch(error => {
+                console.error('Error checking session:', error);
+                window.location.href = '../role.html';
+            });
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const sidebar = document.getElementById("sidebar");
+
+  function applyResponsiveSidebar() {
+    if (window.innerWidth <= 1024) {
+      sidebar.classList.add("hide");   // collapsed on small screens
+    } else {
+      sidebar.classList.remove("hide"); // expanded on larger screens
+    }
+  }
+
+  applyResponsiveSidebar();
+  window.addEventListener("resize", applyResponsiveSidebar);
+
+  // keep the rest of your existing code (auth, stats, modals, etc.)
+});
+</script>
+	<script src="js/script.js"></script>
+    <script src="js/history.js"></script>
 </body>
 </html>
+
+
+

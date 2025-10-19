@@ -53,9 +53,11 @@ try {
     -- Issuing physician details
     issued_user.full_name AS issued_by,
     issued_user.license_number AS license_number,
+    issued_user.rhu AS rhu,
 
     -- Preparer details
     prepared_user.full_name AS prepared_by
+
 
 FROM medical_certificates mc
 INNER JOIN patients p 
@@ -132,7 +134,9 @@ WHERE mc.medcert_id = ?";
             'prepared_by' => $row['prepared_by'],
             'license_number' => $row['license_number'],
             'visit_date' => $row['visit_date'] ?? '',
-            'chief_complaints' => $row['chief_complaints'] ?? ''
+            'chief_complaints' => $row['chief_complaints'] ?? '',
+            'control_number' => $row['control_number'],
+            'rhu' => $row['rhu'] ?? ''
         ];
 
         echo json_encode(['success' => true, 'certificate' => $certificate]);

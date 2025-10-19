@@ -31,7 +31,7 @@ $stmt = $pdo->prepare("
     WHERE c.consultation_id = :consultation_id
 ");
 
-    $stmt->execute(['consultation_id' => $consultation_id]);
+    $stmt->execute([':consultation_id' => $consultation_id]);
 $consultations = $stmt->fetchAll(PDO::FETCH_ASSOC);
 if (!$consultations) die("No record found.");
 
@@ -50,7 +50,7 @@ if (!$consultations) die("No record found.");
     WHERE pr.consultation_id = :consultation_id
 ");
 
-    $stmt2->execute(['consultation_id' => $consultation_id]);
+    $stmt2->execute([':consultation_id' => $consultation_id]);
     $prescriptions = $stmt2->fetchAll(PDO::FETCH_ASSOC);
 } catch (Exception $e) {
     die("Database error: " . $e->getMessage());
