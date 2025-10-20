@@ -22,10 +22,10 @@ function resetPassword(userId) {
         headers: {'Content-Type': 'application/x-www-form-urlencoded'},
         body: 'user_id=' + userId + '&new_password=' + encodeURIComponent(newPassword)
     })
-    .then(response => response.json()) // Important: your PHP returns JSON!
+    .then(response => response.json())
     .then(data => {
         if (typeof data === 'string') {
-            alert(data); // Success
+            alert(data);
             location.reload();
         } else if (data.error) {
             alert('Error: ' + data.error);
@@ -36,15 +36,13 @@ function resetPassword(userId) {
     });
 }
 
-// Wrap all code in a DOMContentLoaded event listener to ensure the DOM is loaded
+// Wrap all code in a DOMContentLoaded event listener
 document.addEventListener("DOMContentLoaded", function() {
-    // Set up filter functionality
     const toggleBtn = document.getElementById('toggleFilterBtn');
     const filterForm = document.getElementById('filterForm');
     const iconSpan = toggleBtn.querySelector('.icon');
     const labelSpan = toggleBtn.querySelector('.label');
     
-    // Filter dropdown change event
     const roleFilter = document.getElementById('roleFilter');
     if (roleFilter) {
         roleFilter.addEventListener('change', function() {
@@ -52,12 +50,10 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // Set up filter toggle button display
     const isVisible = filterForm.style.display === 'flex';
     iconSpan.textContent = isVisible ? '×' : '+';
     labelSpan.textContent = isVisible ? 'Remove filter' : 'Add a filter';
 
-    // Toggle filter display
     toggleBtn.addEventListener('click', function() {
         const isVisible = filterForm.style.display === 'flex';
 
@@ -70,11 +66,9 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     });
 
-    // Set up modal functionality
     const modal = document.getElementById("userModal");
     const overlay = document.getElementById("modalOverlay");
     
-    // Add User Button - Critical fix here
     const addUserBtn = document.getElementById('addUserBtn');
     const addUserModal = document.getElementById('addUserModal');
     
@@ -85,14 +79,9 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
     
-    // Setup view buttons for user details
     setupViewButtons();
-    
-    
-    // Set up password toggles
     setupPasswordToggles();
     
-    // Add event to close modals when clicking outside
     if (overlay) {
         overlay.addEventListener('click', function(e) {
             if (e.target === this) {
@@ -101,9 +90,11 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         });
     }
+
+    // Initialize pagination
+    initPagination();
 });
 
-// Set up password visibility toggles
 function setupPasswordToggles() {
     const passwordToggle = document.getElementById('passwordToggle');
     const confirmPasswordToggle = document.getElementById('confirmPasswordToggle');
@@ -139,22 +130,18 @@ function setupPasswordToggles() {
     }
 }
 
-// Event delegation for reset password buttons
-    const userTableBody = document.getElementById('userTableBody');
-    if (userTableBody) {
-        userTableBody.addEventListener('click', function (e) {
-            if (e.target.classList.contains('reset-password-btn')) {
-                const userId = e.target.getAttribute('data-user-id');
-                if (userId) {
-                    resetPassword(userId);
-                }
+const userTableBody = document.getElementById('userTableBody');
+if (userTableBody) {
+    userTableBody.addEventListener('click', function (e) {
+        if (e.target.classList.contains('reset-password-btn')) {
+            const userId = e.target.getAttribute('data-user-id');
+            if (userId) {
+                resetPassword(userId);
             }
-        });
-    }
+        }
+    });
+}
 
-
-
-// Set up view buttons on user cards
 function setupViewButtons() {
     const viewButtons = document.querySelectorAll(".view-user-btn");
 
@@ -162,7 +149,6 @@ function setupViewButtons() {
         button.addEventListener("click", function() {
             const userData = JSON.parse(this.getAttribute("data-user"));
 
-            // Always show
             document.getElementById("modalFullName").textContent = userData.full_name;
             document.getElementById("modalUsername").textContent = userData.username;
             document.getElementById("modalRole").textContent = userData.role;
@@ -172,7 +158,6 @@ function setupViewButtons() {
             document.getElementById("modalContact").textContent = userData.contact_number;
             document.getElementById("modalRegistrationDate").textContent = userData.registration_date ?? 'Unknown';
 
-            // Conditionally show/hide Barangay
             const barangayRow = document.getElementById("modalBarangayRow");
             if (userData.barangay) {
                 document.getElementById("modalBarangay").textContent = userData.barangay;
@@ -187,7 +172,6 @@ function setupViewButtons() {
     });
 }
 
-// HTML Escape function for dynamic content
 function htmlEscape(str) {
     return String(str)
         .replace(/&/g, '&amp;')
@@ -197,7 +181,6 @@ function htmlEscape(str) {
         .replace(/>/g, '&gt;');
 }
 
-// Function to close user details modal
 function closeUserModal() {
     const modal = document.getElementById("userModal");
     const overlay = document.getElementById("modalOverlay");
@@ -205,7 +188,6 @@ function closeUserModal() {
     if (overlay) overlay.style.display = "none";
 }
 
-// Function to close add user modal
 function closeAddUserModal() {
     const modal = document.getElementById("addUserModal");
     const overlay = document.getElementById("modalOverlay");
@@ -222,7 +204,6 @@ function closeAddUserModal() {
     }
 }
 
-// Function to handle password reset
 function resetPassword(userId) {
     let newPassword = prompt("Enter a new password (at least 1 uppercase letter and 1 number):");
 
@@ -246,7 +227,7 @@ function resetPassword(userId) {
     .then(response => response.json())
     .then(data => {
         if (typeof data === 'string') {
-            alert(data); // Success
+            alert(data);
             location.reload();
         } else if (data.error) {
             alert('Error: ' + data.error);
@@ -261,7 +242,6 @@ function resetPassword(userId) {
     });
 }
 
-// Function to save a new user
 function saveNewUser() {
     const form = document.getElementById('addUserForm');
     const fullName = document.getElementById('fullName').value.trim();
@@ -271,25 +251,22 @@ function saveNewUser() {
     const role = document.getElementById('role').value;
     const licenseNumber = document.getElementById('licenseNumber') ? document.getElementById('licenseNumber').value.trim() : '';
 
-    // Basic validation
     if (!fullName || !username || !password || !role) {
         alert('Please fill in all required fields (Full Name, Username, Password, and Role).');
         return;
     }
 
-    // Password validation
     const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{6,}$/;
     if (!passwordRegex.test(password)) {
         alert('Password must contain at least 1 uppercase letter, 1 number, and be at least 6 characters.');
         return;
     }
 
-    // Confirm password match
     if (password !== confirmPassword) {
         alert('Passwords do not match.');
         return;
     }
-    // If doctor role, ensure license number is provided
+
     if (role === 'doctor' && !licenseNumber) {
         alert('Please enter the physician license number.');
         return;
@@ -315,7 +292,6 @@ function saveNewUser() {
     });
 }
 
-// Function to toggle barangay field based on role
 function toggleBarangayField() {
     const role = document.getElementById('role').value;
     const barangayGroup = document.getElementById('barangayGroup');
@@ -324,267 +300,109 @@ function toggleBarangayField() {
     const licenseGroup = document.getElementById('licenseGroup');
     const licenseInput = document.getElementById('licenseNumber');
 
-    // Always show RHU dropdown
     rhuGroup.style.display = 'block';
 
     if (role === 'doctor') {
-        // Hide Barangay
         barangayGroup.style.display = 'none';
         barangaySelect.removeAttribute('required');
-        barangaySelect.value = ''; // Clear barangay
+        barangaySelect.value = '';
 
-        // Show license field and make required
         if (licenseGroup) licenseGroup.style.display = 'block';
         if (licenseInput) licenseInput.setAttribute('required', '');
     } else {
-        // Show Barangay for other roles
         barangayGroup.style.display = 'block';
         barangaySelect.setAttribute('required', '');
 
-        // Hide license field
         if (licenseGroup) licenseGroup.style.display = 'none';
         if (licenseInput) licenseInput.removeAttribute('required');
     }
 }
 
-
 document.getElementById('contactNumber').addEventListener('input', function (e) {
     const input = e.target;
     const value = input.value;
 
-    // Allow only numeric input
     input.value = value.replace(/\D/g, '');
 
-    // Limit the input to 11 digits
     if (input.value.length > 11) {
         input.value = input.value.slice(0, 11);
     }
 }); 
 
-// Replace your previous load more code with this updated pagination code
-
-// Global variables for pagination
-let currentPage = 1;
+// PAGINATION IMPLEMENTATION (Similar to activity_logs.js)
 let currentOffset = 0;
-const pageSize = 10; // Number of users per page
-let isLoading = false;
-let totalUsers = parseInt(document.getElementById('totalUsers')?.textContent || '0');
-let paginationHistory = []; // Store previous page states
+const recordsPerPage = 10;
 
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize pagination buttons
-    const nextBtn = document.getElementById('nextBtn');
+function initPagination() {
     const prevBtn = document.getElementById('prevBtn');
-    
-    if (nextBtn) {
-        nextBtn.addEventListener('click', loadNextPage);
-    }
-    
+    const nextBtn = document.getElementById('nextBtn');
+
     if (prevBtn) {
-        prevBtn.addEventListener('click', loadPreviousPage);
+        prevBtn.addEventListener('click', function() {
+            currentOffset = Math.max(0, currentOffset - recordsPerPage);
+            loadUsers();
+            updatePaginationButtons();
+        });
     }
-    
-    // Initialize view buttons for the initial set of users
-    initViewButtons();
-    
-    // Save initial page state
-    saveCurrentPageState();
-});
 
-/**
- * Save current page state for history navigation
- */
-function saveCurrentPageState() {
-    const userRows = Array.from(document.querySelectorAll('#userTableBody tr')).map(row => row.outerHTML);
-    
-    paginationHistory[currentPage] = {
-        html: userRows,
-        offset: currentOffset,
-        displayedCount: parseInt(document.getElementById('displayedUsers').textContent)
-    };
-}
-
-/**
- * Load the next page of users
- */
-function loadNextPage() {
-    if (isLoading) return;
-    
-    currentPage++;
-    currentOffset += pageSize;
-    
-    // Check if we already have this page in history
-    if (paginationHistory[currentPage]) {
-        displayPageFromHistory(currentPage);
-        return;
-    }
-    
-    // Otherwise, load from server
-    loadUsersFromServer(currentOffset, true);
-}
-
-/**
- * Load the previous page of users
- */
-function loadPreviousPage() {
-    if (isLoading || currentPage <= 1) return;
-    
-    currentPage--;
-    currentOffset = Math.max(0, currentOffset - pageSize);
-    
-    // We should always have previous pages in history
-    displayPageFromHistory(currentPage);
-}
-
-/**
- * Display a page from history
- */
-function displayPageFromHistory(pageNumber) {
-    const pageData = paginationHistory[pageNumber];
-    if (!pageData) return;
-    
-    const userTableBody = document.getElementById('userTableBody');
-    userTableBody.innerHTML = pageData.html.join('');
-    
-    document.getElementById('startRecord').textContent = Math.max(1, pageData.offset + 1);
-    document.getElementById('displayedUsers').textContent = Math.min(pageData.offset + pageData.html.length, totalUsers);
-    
-    updatePaginationControls();
-    initViewButtons();
-}
-
-/**
- * Load users from server via AJAX
- */
-function loadUsersFromServer(offset, isNext = true) {
-    if (isLoading) return;
-    isLoading = true;
-    
-    // Update button states
-    const nextBtn = document.getElementById('nextBtn');
-    const prevBtn = document.getElementById('prevBtn');
-    
-    if (nextBtn) nextBtn.disabled = true;
-    if (prevBtn) prevBtn.disabled = true;
-    
-    // Show loading indicator on next button
     if (nextBtn) {
-        nextBtn.innerHTML = '<i class="bx bx-loader bx-spin"></i> Loading...';
+        nextBtn.addEventListener('click', function() {
+            currentOffset += recordsPerPage;
+            loadUsers();
+            updatePaginationButtons();
+        });
     }
-    
-    // Get current search parameters
+
+    updatePaginationButtons();
+}
+
+function loadUsers() {
     const searchInput = document.querySelector('input[name="search"]');
     const roleFilter = document.getElementById('roleFilter');
     
     const search = searchInput ? searchInput.value : '';
     const role = roleFilter ? roleFilter.value : '';
-    
-    // Create AJAX request
-    const xhr = new XMLHttpRequest();
-    xhr.open('GET', `load_more_users.php?offset=${offset}&search=${encodeURIComponent(search)}&role=${encodeURIComponent(role)}`, true);
-    
-    xhr.onload = function() {
-        if (xhr.status === 200) {
-            try {
-                const response = JSON.parse(xhr.responseText);
+
+    fetch(`load_more_users.php?offset=${currentOffset}&search=${encodeURIComponent(search)}&role=${encodeURIComponent(role)}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById('userTableBody').innerHTML = data.html;
                 
-                if (response.success) {
-                    // Replace table content
-                    const userTableBody = document.getElementById('userTableBody');
-                    userTableBody.innerHTML = response.html;
-                    
-                    // Update counters
-                    document.getElementById('startRecord').textContent = offset + 1;
-                    document.getElementById('displayedUsers').textContent = Math.min(offset + response.count, response.total);
-                    totalUsers = response.total;
-                    document.getElementById('totalUsers').textContent = totalUsers;
-                    
-                    // Save this page to history
-                    saveCurrentPageState();
-                    
-                    // Re-initialize view buttons
-                    initViewButtons();
-                } else {
-                    console.error('Error loading users:', response.message);
-                }
-            } catch (e) {
-                console.error('Error parsing response:', e);
+                // Update counters
+                const start = currentOffset + 1;
+                const end = Math.min(currentOffset + data.count, data.total);
+                
+                document.getElementById('startRecord').textContent = start;
+                document.getElementById('displayedUsers').textContent = end;
+                document.getElementById('totalUsers').textContent = data.total;
+                
+                // Re-initialize view buttons
+                setupViewButtons();
+                updatePaginationButtons();
             }
-            
-            updatePaginationControls();
-        }
-        
-        isLoading = false;
-    };
-    
-    xhr.onerror = function() {
-        console.error('Request failed');
-        isLoading = false;
-        updatePaginationControls();
-    };
-    
-    xhr.send();
+        })
+        .catch(error => console.error("Error loading users:", error));
 }
 
-/**
- * Update pagination controls based on current state
- */
-function updatePaginationControls() {
-    const nextBtn = document.getElementById('nextBtn');
+function updatePaginationButtons() {
     const prevBtn = document.getElementById('prevBtn');
-    
-    if (nextBtn) {
-        nextBtn.disabled = currentOffset + pageSize >= totalUsers;
-        nextBtn.innerHTML = 'Next <i class="bx bx-chevron-right"></i>';
-    }
-    
+    const nextBtn = document.getElementById('nextBtn');
+    const totalUsers = parseInt(document.getElementById('totalUsers').textContent);
+
     if (prevBtn) {
-        prevBtn.disabled = currentPage <= 1;
+        prevBtn.disabled = currentOffset === 0;
+        if (currentOffset === 0) {
+            prevBtn.classList.add('hidden');
+        } else {
+            prevBtn.classList.remove('hidden');
+        }
     }
-}
 
-
-function initViewButtons() {
-    // Get all view buttons
-    const viewButtons = document.querySelectorAll('.view-user-btn');
-    
-    // Add event listener to each button
-    viewButtons.forEach(button => {
-        button.removeEventListener('click', viewUserHandler); // Remove existing listener to prevent duplicates
-        button.addEventListener('click', viewUserHandler);
-    });
-    
-}
-
-/**
- * Event handler for view user button clicks
- */
-function viewUserHandler() {
-    const userData = JSON.parse(this.getAttribute('data-user'));
-    
-    // Populate the modal with user data
-    document.getElementById('modalFullName').textContent = userData.full_name;
-    document.getElementById('modalUsername').textContent = userData.username;
-    document.getElementById('modalRole').textContent = userData.role.charAt(0).toUpperCase() + userData.role.slice(1);
-    document.getElementById('modalStatus').textContent = userData.account_status === 'active' ? 'Active' : 'Account Terminated';
-    
-    // Show/hide barangay row based on role
-    const barangayRow = document.getElementById('modalBarangayRow');
-    if (userData.role === 'bhw') {
-        barangayRow.style.display = 'block';
-        document.getElementById('modalBarangay').textContent = userData.barangay || 'N/A';
-    } else {
-        barangayRow.style.display = 'none';
+    if (nextBtn) {
+        const hasMore = (currentOffset + recordsPerPage) < totalUsers;
+        nextBtn.disabled = !hasMore;
     }
-    
-    document.getElementById('modalAddress').textContent = userData.address || 'N/A';
-    document.getElementById('modalAge').textContent = userData.age || 'N/A';
-    document.getElementById('modalContact').textContent = userData.contact_number || 'N/A';
-    document.getElementById('modalRegistrationDate').textContent = userData.registration_date || 'N/A';
-    
-    // Show modal
-    document.getElementById('modalOverlay').style.display = 'block';
-    document.getElementById('userModal').style.display = 'block';
 }
 
 function showTerminateModal(userId) {
@@ -597,19 +415,15 @@ function closeTerminateModal() {
 }
 
 window.onclick = function(event) {
-    // Logout modal
     const logoutModal = document.getElementById('logoutModal');
     if (logoutModal && event.target == logoutModal) {
         closeModal();
     }
 
-    // Terminate modal
     const terminateModal = document.getElementById('terminateModal');
     if (terminateModal && event.target == terminateModal) {
         closeTerminateModal();
     }
-
-    // Add more modals here if needed
 };
 
 function showResetPasswordModal(userId) {
@@ -625,10 +439,9 @@ function closeResetPasswordModal() {
 
 function closeResetSuccessModal() {
     document.getElementById('resetSuccessModal').style.display = 'none';
-      location.reload();
+    location.reload();
 }
 
-// Password validation
 document.getElementById('resetPasswordForm').onsubmit = function(e) {
     var newPass = document.getElementById('newPassword').value;
     var confirmPass = document.getElementById('confirmNewPassword').value;
@@ -649,47 +462,46 @@ document.getElementById('resetPasswordForm').onsubmit = function(e) {
     }
     errorDiv.style.display = 'none';
 
-    // Optional: AJAX submit to avoid page reload and show success modal
     e.preventDefault();
     var formData = new FormData(this);
-  fetch('reset_password.php', {
-    method: 'POST',
-    body: formData
- })
-.then(res => res.json())
-.then(data => {
-    if (data.success) {
-        closeResetPasswordModal();
-        document.getElementById('resetSuccessModal').style.display = 'block';
-    } else {
-        errorDiv.textContent = data.error || "An error occurred.";
+    fetch('reset_password.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            closeResetPasswordModal();
+            document.getElementById('resetSuccessModal').style.display = 'block';
+        } else {
+            errorDiv.textContent = data.error || "An error occurred.";
+            errorDiv.style.display = 'block';
+        }
+    })
+    .catch(() => {
+        errorDiv.textContent = "An error occurred.";
         errorDiv.style.display = 'block';
-    }
-})
-.catch(() => {
-    errorDiv.textContent = "An error occurred.";
-    errorDiv.style.display = 'block';
-});
+    });
     return false;
 };
 
 document.getElementById('toggleNewPassword').onclick = function() {
-  const input = document.getElementById('newPassword');
-  this.classList.toggle('bx-show');
-  this.classList.toggle('bx-hide');
-  input.type = input.type === 'password' ? 'text' : 'password';
+    const input = document.getElementById('newPassword');
+    this.classList.toggle('bx-show');
+    this.classList.toggle('bx-hide');
+    input.type = input.type === 'password' ? 'text' : 'password';
 };
 
 document.getElementById('toggleConfirmPassword').onclick = function() {
-  const input = document.getElementById('confirmNewPassword');
-  this.classList.toggle('bx-show');
-  this.classList.toggle('bx-hide');
-  input.type = input.type === 'password' ? 'text' : 'password';
+    const input = document.getElementById('confirmNewPassword');
+    this.classList.toggle('bx-show');
+    this.classList.toggle('bx-hide');
+    input.type = input.type === 'password' ? 'text' : 'password';
 };
 
 function confirmLogout() {
     document.getElementById('logoutModal').style.display = 'block';
-    return false; // Prevent the default link behavior
+    return false;
 }
 
 function closeModal() {
@@ -697,6 +509,5 @@ function closeModal() {
 }
 
 function proceedLogout() {
-    window.location.href = 'logout.php'; // Adjust path if needed
+    window.location.href = 'logout.php';
 }
-
