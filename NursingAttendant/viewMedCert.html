@@ -31,19 +31,27 @@
             border-bottom: 2px solid #000;
             padding-bottom: 20px;
             color: black;
-            
+                display: flex;
+    align-items: center;
+    justify-content: center; /* Centers the text */
+    text-align: center;
+    gap: 60px; /* Space between logos and text */
         }
+        .logo {
+    height: 65px; /* Adjust as needed */
+    width: auto;
+}
 
         .header h1 {
             font-size: 14px;
             font-weight: normal;
-            margin: 5px 0;
+            margin: 2.5px 0;
             color: black;
         }
 
         .header h2 {
             font-size: 16px;
-            margin: 5px 0;
+            margin: 2.5px 0;
         }
 
         .title {
@@ -136,22 +144,77 @@
             color: white;
         }
 
-        @media print {
-            body {
-                background: white;
-                padding: 0;
-            }
+@media print {
+    @page {
+        size: A4;
+        margin: 15mm;
+    }
 
-            .container {
-                box-shadow: none;
-                padding: 0;
-                max-width: 100%;
-            }
+    body {
+        font-family: "Times New Roman", serif;
+        font-size: 11pt;
+        color: #000;
+        background: #fff;
+    }
 
-            .buttons {
-                display: none;
-            }
-        }
+    h1, h2, h3 {
+        text-align: center;
+        margin: 0;
+        font-weight: bold;
+        text-transform: uppercase;
+    }
+
+    .header {
+        text-align: center;
+        margin-bottom: 15px;
+            display: flex;
+    align-items: center;
+    justify-content: center; /* Centers the text */
+    text-align: center;
+    gap: 6s0px; /* Space between logos and text */
+    }
+
+    .logo {
+    height: 65px; 
+    width: auto;
+}
+    .title h1 {
+        text-decoration: underline;
+        text-align: center;
+        margin-top: 5px;
+        font-size: 16pt;
+    }
+
+    .content {
+        text-align: justify;
+        line-height: 1.5;
+        margin-top: 20px;
+    }
+
+    .signature, .signature2 {
+        text-align: center;
+        margin-top: 50px;
+        display: inline-block;
+        width: 45%;
+        vertical-align: top;
+    }
+
+    .signature-line, .signature-line2 {
+        border-top: 1px solid #000;
+        margin: 0 auto 5px;
+        width: 200px;
+    }
+
+    .signature-name {
+        font-weight: bold;
+        margin-bottom: 3px;
+    }
+
+    .signature-title {
+        font-style: italic;
+    }
+}
+
     </style>
 </head>
 <body>
@@ -271,14 +334,19 @@
 <br>
 
             <div class="history-container" style="padding: 80px; padding-bottom: 40px;">
-             
- 
-        <div class="header">
-            <h1>Republic of the Philippines</h1>
-            <h1>Province of Camarines Norte</h1>
-            <h2>Municipality of Daet</h2>
-            <h1> <span id="rhu"></span></h1>
-        </div>
+             <div id="certificateContent">
+
+  <div class="header">
+    <img src="../img/Plogo.png" alt="Left Logo" class="logo">
+    <div class="header-text">
+        <h1>Republic of the Philippines</h1>
+        <h1>Province of Camarines Norte</h1>
+        <h2>Municipality of Daet</h2>
+        <h1><span id="rhu"></span></h1>
+    </div>
+    <img src="../img/RHUlogo.png" alt="Right Logo" class="logo">
+</div>
+
  <div style="text-align: right; margin-bottom: 11px; font-size: 11px;">
             <p style="background-color: white;">Control No.: <span id="controlNo"></span></p>
         </div>
@@ -314,10 +382,14 @@
                 <span id="licenseInfo"></span>
             </div>
         </div> <br> <br> 
+        
+             </div>
+ 
+    
     
 
     <div class="buttons">
-        <button class="button button-print" onclick="window.print()">Print Certificate</button>
+        <button class="button button-print" onclick="printCertificate()">Print Certificate</button>
         <button class="button button-back" onclick="goBack()">Back to Records</button>
     </div>
             </div>
@@ -373,6 +445,20 @@
 	   </main>	
 </section>
 
+<script>
+
+function printCertificate() {
+    const printContents = document.getElementById('certificateContent').innerHTML;
+    const originalContents = document.body.innerHTML;
+
+    document.body.innerHTML = printContents;
+    window.print();
+    document.body.innerHTML = originalContents;
+    location.reload(); // optional: reload page to restore scripts
+}
+
+
+</script>
 
     <script>
         const urlParams = new URLSearchParams(window.location.search);
@@ -446,6 +532,7 @@ function displayCertificate(cert) {
 
     // Display doctor/nurse information
     document.getElementById('doctorName').textContent = cert.issued_by.toUpperCase();
+     document.getElementById('attendantName').textContent = cert.prepared_by.toUpperCase();
     
     let licenseInfo = '';
     if (cert.license_number) licenseInfo += `Lic. No. ${cert.license_number}`;

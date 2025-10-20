@@ -123,6 +123,7 @@ WHERE mc.medcert_id = ?";
             'rest_from_date' => $row['rest_from_date'],
             'rest_to_date' => $row['rest_to_date'],
             'issued_by' => $row['issued_by'],
+            'prepared_by' => $row['prepared_by'],
             'license_number' => $row['license_number'],
             'visit_date' => $row['visit_date'] ?? '',
             'chief_complaints' => $row['chief_complaints'] ?? '',
