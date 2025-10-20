@@ -225,8 +225,16 @@ $visits = $stmt->fetchAll();
             }
 
             // Render tags for each filter if set
-            if ($from_date) renderTag('From', 'from_date', $from_date);
-            if ($to_date) renderTag('To', 'to_date', $to_date);
+if ($from_date) {
+    $readable_from = date("F j, Y", strtotime($from_date)); // → "December 12, 2025"
+    renderTag('From', 'from_date', $readable_from);
+}
+
+if ($to_date) {
+    $readable_to = date("F j, Y", strtotime($to_date)); // → "December 12, 2025"
+    renderTag('To', 'to_date', $readable_to);
+}
+
           if ($diagnosis) {
                 foreach ($diagnosis as $diag) {
                     renderTag('Diagnosis', 'diagnosis[]', $diag);
