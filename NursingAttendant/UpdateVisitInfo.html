@@ -1222,6 +1222,8 @@ fetch('php/getUserName.php')
       container.style.display = "none"; // hide container
     }
   });
+
+  
 function showResponseModal(type, message, hasPrescription = false) {
     const modal = $('#responseModal');
     const icon = $('#responseIcon');
@@ -1252,29 +1254,28 @@ function showResponseModal(type, message, hasPrescription = false) {
     footer.empty();
 
     if (type === 'success') {
-        // ✅ Move checkboxes to modal-body
+        // Move checkboxes to modal-body
         let checkboxesHTML = `
             <div id="responseCheckboxes" class="print-option" style="margin: 10px 0;">
                 <label>
                     <input type="checkbox" id="printInstruction" checked>
                     Print Instruction Copy
-                </label> </div> 
-                ${hasPrescription ? `
-             <div id="responseCheckboxes" class="print-option" style="margin: 10px 0;">
-                <label>
-                    <input type="checkbox" id="printPrescription" checked>
-                    Print Prescription
-                </label> </div>` : ''}
-            
+                </label>
+            </div>
+            ${hasPrescription ? `
+                <div id="responseCheckboxes" class="print-option" style="margin: 10px 0;">
+                    <label>
+                        <input type="checkbox" id="printPrescription" checked>
+                        Print Prescription
+                    </label>
+                </div>
+            ` : ''}
         `;
         body.append(checkboxesHTML);
 
         // Buttons stay in footer
         footer.append(`
-
             <button id="proceedButton" class="btn yes">Proceed</button>
-      
-         
         `);
 
         // Remove previous listeners
@@ -1282,36 +1283,31 @@ function showResponseModal(type, message, hasPrescription = false) {
         closeBtn.off('click');
 
         // Proceed button click
-$('#proceedButton').on('click', function() {
-    const consultationId = $('#responseModal').data('consultationId');
-    let types = [];
+        $('#proceedButton').on('click', function() {
+            const consultationId = $('#responseModal').data('consultationId');
+            let types = [];
 
-    // Collect which checkboxes are checked
-    if ($('#printInstruction').is(':checked')) types.push('instruction');
-    if ($('#printPrescription').is(':checked')) types.push('prescription');
+            // Collect which checkboxes are checked
+            if ($('#printInstruction').is(':checked')) types.push('instruction');
+            if ($('#printPrescription').is(':checked')) types.push('prescription');
 
-    // Only proceed if at least one is selected
-    if (types.length > 0) {
-        const typeParam = types.join(','); // example: "instruction,prescription"
-        window.open(`php/printPrescription.php?consultation_id=${encodeURIComponent(consultationId)}&type=${encodeURIComponent(typeParam)}`, '_blank');
-    }
+            // Only proceed if at least one is selected
+            if (types.length > 0) {
+                const typeParam = types.join(',');
+                window.open(`php/printPrescription.php?consultation_id=${encodeURIComponent(consultationId)}&type=${encodeURIComponent(typeParam)}`, '_blank');
+            }
 
-    $('#responseModal').fadeOut();
-});
-
-
-        // OK button closes modal
-        $('#okButton').on('click', function() {
-            modal.fadeOut();
+            // Redirect to pending.html
+            window.location.href = 'pending.html';
         });
 
-        // Close icon closes modal
-        closeBtn.on('click', function() {
-            modal.fadeOut();
+        // FIXED: Close X button - redirects to pending.html
+        closeBtn.off('click').on('click', function() {
+            window.location.href = 'pending.html';
         });
 
     } else {
-        // ❌ For error/warning — only OK button
+        // For error/warning - only OK button
         footer.append('<button id="okButton" class="btn yes">OK</button>');
         $('#okButton').off('click').on('click', function() {
             modal.fadeOut();
@@ -1321,6 +1317,22 @@ $('#proceedButton').on('click', function() {
         });
     }
 }
+
+// FIXED: Close modal when clicking outside (for success modal, redirect to pending.html)
+$(document).on('click', function(event) {
+    const modal = $('#responseModal');
+    if (event.target === modal[0]) {
+        // Clicked outside the modal
+        const title = $('#responseTitle').text();
+        if (title === 'Success') {
+            // If it's a success modal, redirect to pending.html
+            window.location.href = 'pending.html';
+        } else {
+            // Otherwise just close the modal
+            modal.fadeOut();
+        }
+    }
+});
 
 
 
