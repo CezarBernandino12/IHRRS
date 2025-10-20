@@ -1,15 +1,27 @@
 <?php
-require 'config.php'; // Ensure your database connection is correctly set up
+require 'config.php';
 session_start();
 
-// Check if user is logged in and has BHW role
+// Check if user is logged in and has admin role
 if (!isset($_SESSION['user_id']) || !isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
-    // Destroy any existing session data
     session_destroy();
-    // Redirect to BHW login page
     header("Location: ../../role.html");
     exit();
 }
+
+// Fetch statistics
+// Total logs count
+$totalLogsStmt = $pdo->query("SELECT COUNT(*) as total FROM logs");
+$totalLogs = $totalLogsStmt->fetch(PDO::FETCH_ASSOC)['total'];
+
+// Today's activities count
+$todayActivitiesStmt = $pdo->query("SELECT COUNT(*) as today FROM logs WHERE DATE(timestamp) = CURDATE()");
+$todayActivities = $todayActivitiesStmt->fetch(PDO::FETCH_ASSOC)['today'];
+
+// Active users count (users with logs in the last 7 days)
+$activeUsersStmt = $pdo->query("SELECT COUNT(DISTINCT performed_by) as active FROM logs WHERE timestamp >= DATE_SUB(NOW(), INTERVAL 7 DAY)");
+$activeUsers = $activeUsersStmt->fetch(PDO::FETCH_ASSOC)['active'];
+
 // Fetch activity logs with filtering
 $query = "SELECT logs.*, users.full_name AS performed_by_name,
           DATE_FORMAT(logs.timestamp, '%M %e, %Y %l:%i %p') AS formatted_timestamp
@@ -17,9 +29,9 @@ $query = "SELECT logs.*, users.full_name AS performed_by_name,
           JOIN users ON logs.performed_by = users.user_id 
           WHERE 1";
 
-$limit = 10;  // Default limit
-$offset = 0;  // Default offset
-$params = []; // Initialize parameters array
+$limit = 10;
+$offset = 0;
+$params = [];
 
 // Filter by User
 if (!empty($_GET['user'])) {
@@ -44,14 +56,12 @@ if (!empty($_GET['to_date'])) {
     $params[':to_date'] = $_GET['to_date'];
 }
 
-// Append LIMIT and OFFSET correctly
 $query .= " ORDER BY logs.timestamp DESC LIMIT :limit OFFSET :offset";
 
 $stmt = $pdo->prepare($query);
 $stmt->bindValue(':limit', (int) $limit, PDO::PARAM_INT);
 $stmt->bindValue(':offset', (int) $offset, PDO::PARAM_INT);
 
-// Bind other parameters safely
 foreach ($params as $key => $value) {
     $stmt->bindValue($key, $value);
 }
@@ -68,9 +78,10 @@ $logs = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <link rel="icon" href="../../img/logo.png">
     <link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../css/approval.css">
-     <link rel="stylesheet" href="../css/logout.css">
+    <link rel="stylesheet" href="../css/logout.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+      <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <title>Activity Logs</title>
 </head>
@@ -101,7 +112,6 @@ $logs = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <span class="text">User management</span>
                 </a>
             </li>
-
             <li>
                 <a href="admin_reports.php">
                     <i class="bx bxs-report"></i>
@@ -110,13 +120,12 @@ $logs = $stmt->fetchAll(PDO::FETCH_ASSOC);
             </li>
         </ul>
         <ul class="side-menu">
-        <li>
-             <a href="#" class="logout" onclick="return confirmLogout()">
-    <i class="bx bxs-log-out-circle"></i>
-    <span class="text">Logout</span>
-</a>
-    </li>
-
+            <li>
+                <a href="#" class="logout" onclick="return confirmLogout()">
+                    <i class="bx bxs-log-out-circle"></i>
+                    <span class="text">Logout</span>
+                </a>
+            </li>
         </ul>
     </section>
 
@@ -125,20 +134,29 @@ $logs = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <nav>
             <form action="#"> 
             </form>
-              <div class="greeting">
+            <div class="greeting">
                 <span id="userGreeting">Hello Admin!</span>
             </div>
             <a href="#" class="profile">
-            <img src="../../img/admin.png">
+                <img src="../../img/admin.png">
             </a>
         </nav>
 
         <main> 
-            <!-- Activity logs -->
+
+
             <div class="logs-container">
                 <div class="logs-header">
-                    <h2>System Activity Logs</h2>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <h2>System Activity Logs</h2>
+                    </div>
                 </div>
+
+                <style>
+    h2 {
+      font-family: 'Poppins', sans-serif;
+    }
+  </style>
 
                 <form method="GET" action="" class="logs-filter-grid" id="logFilterForm">
                     <div class="form-group">
@@ -159,39 +177,27 @@ $logs = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <label for="action">Action Type</label>
                         <select name="action" id="action" class="auto-submit">
                             <option value="">All Actions</option>
-
-                             <!-- Login/Logout Actions -->
-        <option value="Successful Login" <?= ($_GET['action'] ?? '') === 'Successful Login' ? 'selected' : '' ?>>User Login</option>
-        <option value="User Logged Out" <?= ($_GET['action'] ?? '') === 'User Logged Out' ? 'selected' : '' ?>>User Logout</option>
-        
-        <!-- Admin Actions -->
-        <option value="Added New User" <?= ($_GET['action'] ?? '') === 'Added New User' ? 'selected' : '' ?>>Added New User</option>
-        <option value="Terminated User" <?= ($_GET['action'] ?? '') === 'Terminated User' ? 'selected' : '' ?>>Terminated User</option>
-        <option value="Reset Password" <?= ($_GET['action'] ?? '') === 'Reset Password' ? 'selected' : '' ?>>Password Change</option>
-        
-        <!-- BHW Patient Actions -->
-        <option value="Added New Patient" <?= ($_GET['action'] ?? '') === 'Added New Patient' ? 'selected' : '' ?>>Added New Patient</option>
-        <option value="Added New Patient and Referred to RHU" <?= ($_GET['action'] ?? '') === 'Added New Patient and Referred to RHU' ? 'selected' : '' ?>>Added New Patient and Referred to RHU</option>
-        <option value="Updated Patient Information" <?= ($_GET['action'] ?? '') === 'Updated Patient Information' ? 'selected' : '' ?>>Updated Patient Information</option>
-        <option value="Dispensed Medicine to Patient">Dispensed Medicine to Patient</option>
-        
-        <!-- BHW Referral Actions -->
-        <option value="Added Referral" <?= ($_GET['action'] ?? '') === 'Added Referral' ? 'selected' : '' ?>>Added Referral</option>
-        <option value="Cancelled Referral" <?= ($_GET['action'] ?? '') === 'Cancelled Referral' ? 'selected' : '' ?>>Cancelled Referral</option>
-        
-        <!-- BHW Report Actions -->
-        <option value="Generated BHS Patient Visit Summary Report" <?= ($_GET['action'] ?? '') === 'Generated BHS Patient Visit Summary Report' ? 'selected' : '' ?>>Generated BHS Patient Visit Summary Report</option>
-        <option value="Generated BHS Referral Summary Report" <?= ($_GET['action'] ?? '') === 'Generated BHS Referral Summary Report' ? 'selected' : '' ?>>Generated BHS Referral Summary Report</option>
-        <option value="Generated BHS Medicine Dispensation Report" <?= ($_GET['action'] ?? '') === 'Generated BHS Medicine Dispensation Report' ? 'selected' : '' ?>>Generated BHS Medicine Dispensation Report</option>
-        <option value="Generated BHS Medical Cases Report" <?= ($_GET['action'] ?? '') === 'Generated BHS Medical Cases Report' ? 'selected' : '' ?>>Generated BHS Medical Cases Report</option>
-
-        <!-- Nurse Actions -->
-        <option value="Forwarded Referral to Physician" <?= ($_GET['action'] ?? '') === 'Forwarded Referral to Physician' ? 'selected' : '' ?>>Forwarded Referral to Physician</option>
-        <option value="Added Patient Assessment Record" <?= ($_GET['action'] ?? '') === 'Added Patient Assessment Record' ? 'selected' : '' ?>>Added Patient Assessment Record</option>
-        <option value="Added Diagnosis/Consultation Record" <?= ($_GET['action'] ?? '') === 'Added Diagnosis/Consultation Record' ? 'selected' : '' ?>>Added Diagnosis/Consultation Record</option>
-        <option value="Dispensed Medicine to Patient (RHU)" <?= ($_GET['action'] ?? '') === 'Dispensed Medicine to Patient (RHU)' ? 'selected' : '' ?>>Dispensed Medicine to Patient (RHU)</option>
-        <option value="Generated Prescription" <?= ($_GET['action'] ?? '') === 'Generated Prescription' ? 'selected' : '' ?>>Generated Prescription</option>
-        <option value="Generated Medical Certificate" <?= ($_GET['action'] ?? '') === 'Generated Medical Certificate' ? 'selected' : '' ?>>Generated Medical Certificate</option>
+                            <option value="Successful Login" <?= ($_GET['action'] ?? '') === 'Successful Login' ? 'selected' : '' ?>>User Login</option>
+                            <option value="User Logged Out" <?= ($_GET['action'] ?? '') === 'User Logged Out' ? 'selected' : '' ?>>User Logout</option>
+                            <option value="Added New User" <?= ($_GET['action'] ?? '') === 'Added New User' ? 'selected' : '' ?>>Added New User</option>
+                            <option value="Terminated User" <?= ($_GET['action'] ?? '') === 'Terminated User' ? 'selected' : '' ?>>Terminated User</option>
+                            <option value="Reset Password" <?= ($_GET['action'] ?? '') === 'Reset Password' ? 'selected' : '' ?>>Password Change</option>
+                            <option value="Added New Patient" <?= ($_GET['action'] ?? '') === 'Added New Patient' ? 'selected' : '' ?>>Added New Patient</option>
+                            <option value="Added New Patient and Referred to RHU" <?= ($_GET['action'] ?? '') === 'Added New Patient and Referred to RHU' ? 'selected' : '' ?>>Added New Patient and Referred to RHU</option>
+                            <option value="Updated Patient Information" <?= ($_GET['action'] ?? '') === 'Updated Patient Information' ? 'selected' : '' ?>>Updated Patient Information</option>
+                            <option value="Dispensed Medicine to Patient">Dispensed Medicine to Patient</option>
+                            <option value="Added Referral" <?= ($_GET['action'] ?? '') === 'Added Referral' ? 'selected' : '' ?>>Added Referral</option>
+                            <option value="Cancelled Referral" <?= ($_GET['action'] ?? '') === 'Cancelled Referral' ? 'selected' : '' ?>>Cancelled Referral</option>
+                            <option value="Generated BHS Patient Visit Summary Report" <?= ($_GET['action'] ?? '') === 'Generated BHS Patient Visit Summary Report' ? 'selected' : '' ?>>Generated BHS Patient Visit Summary Report</option>
+                            <option value="Generated BHS Referral Summary Report" <?= ($_GET['action'] ?? '') === 'Generated BHS Referral Summary Report' ? 'selected' : '' ?>>Generated BHS Referral Summary Report</option>
+                            <option value="Generated BHS Medicine Dispensation Report" <?= ($_GET['action'] ?? '') === 'Generated BHS Medicine Dispensation Report' ? 'selected' : '' ?>>Generated BHS Medicine Dispensation Report</option>
+                            <option value="Generated BHS Medical Cases Report" <?= ($_GET['action'] ?? '') === 'Generated BHS Medical Cases Report' ? 'selected' : '' ?>>Generated BHS Medical Cases Report</option>
+                            <option value="Forwarded Referral to Physician" <?= ($_GET['action'] ?? '') === 'Forwarded Referral to Physician' ? 'selected' : '' ?>>Forwarded Referral to Physician</option>
+                            <option value="Added Patient Assessment Record" <?= ($_GET['action'] ?? '') === 'Added Patient Assessment Record' ? 'selected' : '' ?>>Added Patient Assessment Record</option>
+                            <option value="Added Diagnosis/Consultation Record" <?= ($_GET['action'] ?? '') === 'Added Diagnosis/Consultation Record' ? 'selected' : '' ?>>Added Diagnosis/Consultation Record</option>
+                            <option value="Dispensed Medicine to Patient (RHU)" <?= ($_GET['action'] ?? '') === 'Dispensed Medicine to Patient (RHU)' ? 'selected' : '' ?>>Dispensed Medicine to Patient (RHU)</option>
+                            <option value="Generated Prescription" <?= ($_GET['action'] ?? '') === 'Generated Prescription' ? 'selected' : '' ?>>Generated Prescription</option>
+                            <option value="Generated Medical Certificate" <?= ($_GET['action'] ?? '') === 'Generated Medical Certificate' ? 'selected' : '' ?>>Generated Medical Certificate</option>
                         </select>
                     </div>
 
@@ -206,7 +212,6 @@ $logs = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <input type="text" id="to_date" name="to_date" class="flatpickr" 
                             placeholder="Select a date" value="<?= $_GET['to_date'] ?? '' ?>">
                     </div>
-
 
                     <div class="form-group">
                         <label style="opacity: 0;">Filter</label>
@@ -234,102 +239,104 @@ $logs = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 </table>
                 
                 <div class="pagination-container">
-    <div class="pagination-buttons">
-        <button id="prevBtn" class="pagination-btn prev-btn hidden">
-            <i class="bx bx-chevron-left"></i> Previous
-        </button>
-        <button id="loadMoreBtn" class="pagination-btn load-more-btn">
-            Load More <i class="bx bx-chevron-right"></i>
-        </button>
-    </div>
-            </div>
-
-            <div id="modalOverlay"></div>
-
-            <div id="userModal" class="modal-box">
-            <div class="modal-header">
-                    <h2>User Information and Activity</h2>
-                    <span class="close-btn" onclick="closeModal()">&times;</span>
+                    <div class="pagination-buttons">
+                        <button id="prevBtn" class="pagination-btn prev-btn hidden">
+                            <i class="bx bx-chevron-left"></i> Previous
+                        </button>
+                        <button id="loadMoreBtn" class="pagination-btn load-more-btn">
+                            Load More <i class="bx bx-chevron-right"></i>
+                        </button>
+                    </div>
                 </div>
-    <div class="modal-contents">
-        <div class="user-details">
-            <h3>User Details</h3>
-            <p><strong>Full Name:</strong> <span id="logUserFullName"></span></p>
-            <p><strong>User Name:</strong> <span id="logUserName"></span></p>
-            <p><strong>Status:</strong> <span id="logUserStatus"></span></p>
-            <p><strong>Barangay:</strong> <span id="logUserBarangay"></span></p>
-            <p><strong>Role:</strong> <span id="logUserRole"></span></p>
+
+                <!-- Total Logs Summary -->
+                <div class="logs-summary">
+                    <p>Total Logs: <strong><?= number_format($totalLogs) ?></strong></p>
+                </div>
+
+                <div id="modalOverlay"></div>
+
+                <div id="userModal" class="modal-box">
+                    <div class="modal-header">
+                        <h2>User Information and Activity</h2>
+                        <span class="close-btn" onclick="closeModal()">&times;</span>
+                    </div>
+                    <div class="modal-contents">
+                        <div class="user-details">
+                            <h3>User Details</h3>
+                            <p><strong>Full Name:</strong> <span id="logUserFullName"></span></p>
+                            <p><strong>User Name:</strong> <span id="logUserName"></span></p>
+                            <p><strong>Status:</strong> <span id="logUserStatus"></span></p>
+                            <p><strong>Barangay:</strong> <span id="logUserBarangay"></span></p>
+                            <p><strong>Role:</strong> <span id="logUserRole"></span></p>
+                        </div>
+                        <div class="activity-details">
+                            <h3>Activity Details</h3>
+                            <p><strong>Action:</strong> <span id="logUserAction"></span></p>
+                            <p><strong>Timestamp:</strong> <span id="logUserTimestamp"></span></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="logoutModal" class="logout-modal">
+                    <div class="logout-modal-content">
+                        <div class="logout-modal-header">
+                            <h3>Confirm Logout</h3>
+                        </div>
+                        <div class="logout-modal-body">
+                            <p>Are you sure you want to logout?</p>
+                        </div>
+                        <div class="logout-modal-footer">
+                            <button onclick="closeLogoutModal()" class="logout-cancel-btn">Cancel</button>
+                            <button onclick="proceedLogout()" class="logout-confirm-btn">Yes, Logout</button>
+                        </div>
+                    </div>
+                </div>
+
             </div>
-            
-            <div class="activity-details">
-            <h3>Activity Details</h3>
-            <p><strong>Action:</strong> <span id="logUserAction"></span></p>
-            <p><strong>Timestamp:</strong> <span id="logUserTimestamp"></span></p>
-            </div>
-    </div>
-</div>
-
-
-<div id="logoutModal" class="logout-modal">
-    <div class="logout-modal-content">
-        <div class="logout-modal-header">
-            <h3>Confirm Logout</h3>
-        </div>
-        <div class="logout-modal-body">
-            <p>Are you sure you want to logout?</p>
-        </div>
-<div class="logout-modal-footer">
-    <button onclick="closeLogoutModal()" class="logout-cancel-btn">Cancel</button>
-    <button onclick="proceedLogout()" class="logout-confirm-btn">Yes, Logout</button>
-</div>    </div>
-</div>
-
         </main>
     </section> 
 
     <script src="../js/activity_logs.js"></script>
 
-     <script>
-            function confirmLogout() {
-    document.getElementById('logoutModal').style.display = 'block';
-    return false; // Prevent the default link behavior
-}
- 
-function closeModal() {
-    document.getElementById('userModal').style.display = 'none';
-    document.getElementById('modalOverlay').style.display = 'none';
-}
-
-function proceedLogout() {
-    window.location.href = 'logout.php';
-}
-
-// Close modal when clicking outside
-window.onclick = function(event) {
-    const modal = document.getElementById('logoutModal');
-    if (event.target == modal) {
-        closeModal();
-    }
-};
-
-    </script>
     <script>
-document.addEventListener("DOMContentLoaded", () => {
-  const sidebar = document.getElementById("sidebar");
+        function confirmLogout() {
+            document.getElementById('logoutModal').style.display = 'block';
+            return false;
+        }
+     
+        function closeModal() {
+            document.getElementById('userModal').style.display = 'none';
+            document.getElementById('modalOverlay').style.display = 'none';
+        }
 
-  function applyResponsiveSidebar() {
-    if (window.innerWidth <= 1024) {
-      sidebar.classList.add("hide");   // collapsed on small screens
-    } else {
-      sidebar.classList.remove("hide"); // expanded on larger screens
-    }
-  }
+        function proceedLogout() {
+            window.location.href = 'logout.php';
+        }
 
-  applyResponsiveSidebar();
-  window.addEventListener("resize", applyResponsiveSidebar);
+        window.onclick = function(event) {
+            const modal = document.getElementById('logoutModal');
+            if (event.target == modal) {
+                closeModal();
+            }
+        };
+    </script>
 
-  // keep the rest of your existing code (auth, stats, modals, etc.)
-});
-</script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const sidebar = document.getElementById("sidebar");
+
+            function applyResponsiveSidebar() {
+                if (window.innerWidth <= 1024) {
+                    sidebar.classList.add("hide");
+                } else {
+                    sidebar.classList.remove("hide");
+                }
+            }
+
+            applyResponsiveSidebar();
+            window.addEventListener("resize", applyResponsiveSidebar);
+        });
+    </script>
 </body>
-</html> 
+</html>
