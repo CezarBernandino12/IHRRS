@@ -192,36 +192,34 @@ $physician = intval($physician);
             throw new Exception("Physician fields cannot be empty.");
         }
 
-        $stmt_prescription = $pdo->prepare("
+ $stmt_prescription = $pdo->prepare("
             INSERT INTO prescription 
-            (consultation_id, medicine_name, quantity, instruction, date, physician, patient_id, generated_by) 
-            VALUES (:consultation_id, :medicine_name, :quantity, :instruction, NOW(), :physician, :patient_id, :generated_by)
+            (consultation_id, medicine_name, quantity, instruction, date, physician) 
+            VALUES (?, ?, ?, ?, NOW(), ?)
         ");
 
         foreach ($medicines as $key => $medicine) {
-            if (isset($_POST['quantity_prescription'][$key]) && $_POST['quantity_prescription'][$key] > 0) {
+            if (isset($_POST['quantity_prescription'][$key]) && intval($_POST['quantity_prescription'][$key]) > 0) {
                 $stmt_prescription->execute([
-                    ':consultation_id' => $consultation_id,
-                    ':medicine_name' => $medicine,
-                    ':quantity' => $_POST['quantity_prescription'][$key],
-                    ':instruction' => $_POST['prescription_instruction'][$key] ?? '',
-                    ':physician' => $_POST['physician'],
-                    ':patient_id' => $patient_id,
-                    ':generated_by' => $user_id
+                    $consultation_id,
+                    $medicine,
+                    intval($_POST['quantity_prescription'][$key]),
+                    $_POST['prescription_instruction'][$key] ?? '',
+                    intval($_POST['physician'])
                 ]);
                 $prescriptionSaved = true;
             }
         }
     }
 
-    // ✅ LOG: Generated Prescription (after transaction confirms it was saved)
-    if ($prescriptionSaved) {
+    if ($prescriptionSaved && function_exists('logActivity')) {
         logActivity($pdo, $user_id, "Generated Prescription");
     }
 
     // Commit transaction
     $pdo->commit();
 
+    http_response_code(200);
     echo json_encode([
         'status' => 'success',
         'message' => 'Record saved successfully!',
@@ -231,11 +229,17 @@ $physician = intval($physician);
     exit;
 
 } catch (Exception $e) {
-    if ($pdo->inTransaction()) {
+    if ($pdo && $pdo->inTransaction()) {
         $pdo->rollBack();
     }
-    error_log("Error: " . $e->getMessage());
-    echo json_encode(["status" => "error", "message" => "Error saving record: " . $e->getMessage()]);
+    
+    error_log("Consultation Error: " . $e->getMessage());
+    
+    http_response_code(400);
+    echo json_encode([
+        "status" => "error", 
+        "message" => $e->getMessage()
+    ]);
     exit;
 }
 ?>
