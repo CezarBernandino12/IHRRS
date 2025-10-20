@@ -436,12 +436,27 @@ $bhws = $bhw_stmt->fetchAll();
       <div class="ph-line-1">Province of Camarines Norte</div>
       <div class="ph-line-2">Municipality of Daet</div>
       <div class="ph-line-3"><?php echo htmlspecialchars($barangayName); ?></div>
-      <div class="ph-line-4">MEDICINE DISPENSATION REPORT</div>
+
+    </div>
+    <img src="../../img/RHUlogo.png" alt="Right Logo" class="print-logo">
+  </div>
+  <hr class="print-rule">
+
+
+<div class="report-content">
+<br><br>
+<div class="title">
+          <div class="ph-line-4">MEDICINE DISPENSATION REPORT</div>
       <div class="print-sub">
         (<?php
           $filters = [];
-          if ($from_date) $filters[] = "From <strong>" . htmlspecialchars($from_date) . "</strong>";
-          if ($to_date)   $filters[] = "To <strong>" . htmlspecialchars($to_date) . "</strong>";
+         if ($from_date || $to_date) {
+    $readable_from = $from_date ? date("F j, Y", strtotime($from_date)) : '';
+    $readable_to   = $to_date ? date("F j, Y", strtotime($to_date)) : '';
+
+    // Combine them in a single display
+    $filters[] = "<strong>" . trim($readable_from . ($readable_to ? " — " . $readable_to : '')) . "</strong>";
+} 
           if ($medicine)  { $ml = is_array($medicine)?$medicine:[$medicine]; $filters[] = "Medicine: <strong>".implode(', ', array_map('htmlspecialchars',$ml))."</strong>"; }
           if ($bhw_id)    { $bhw_name=''; foreach ($bhws as $bhw){ if ($bhw['user_id']==$bhw_id){ $bhw_name=$bhw['full_name']; break; } }
                            $filters[] = "Given by: <strong>".htmlspecialchars($bhw_name)."</strong>"; }
@@ -451,35 +466,29 @@ $bhws = $bhw_stmt->fetchAll();
           echo $filters ? implode("&nbsp; | &nbsp;", $filters) : "All Records";
         ?>)
       </div>
-    </div>
-    <img src="../../img/RHUlogo.png" alt="Right Logo" class="print-logo">
-  </div>
-  <hr class="print-rule">
-
-
-<div class="report-content">
+</div>
 <style>
      .print-letterhead { display: none; }
 
   @media print {
     .print-letterhead { display: block; }
   .print-letterhead{
-    display:grid;
-    grid-template-columns:64px auto 64px;
-    align-items:center;
-    justify-content:center;
-    column-gap:14px;
-    margin:0 auto 10px;
-    text-align:center;
-    width:fit-content;
+  display: grid;
+  grid-template-columns: 72px auto 72px;  /* widened logo columns */
+  align-items: center;
+  justify-content: center;
+  column-gap: 60px;                       /* increased space between logos and heading */
+  margin: 0 auto 18px;
+  text-align: center;
+  width: fit-content;
   }
   .print-logo{ width:64px; height:64px; object-fit:contain; }
   .print-heading{ line-height:1.1;   color: #000; }
   .print-heading .ph-line-1{ font-size:12pt; font-weight:500; }
   .print-heading .ph-line-2{ font-size:14pt; font-weight:500; }
-  .print-heading .ph-line-3{ font-size:11pt; font-weight:500; }
+  .print-heading .ph-line-3{ font-size:12pt; font-weight:500; }
   .print-heading .ph-line-4{ font-size:12pt; font-weight:600; margin-top:15px; letter-spacing:.3px; }
-  .print-sub{ font-size:10.5pt; margin-top:4px; }
+  .print-sub{ font-size:12pt;}
   .print-rule{ height:1px; border:0; background:#cfd8e3; margin:8px 0 12px; }
 }
   @media print {
@@ -526,8 +535,14 @@ $bhws = $bhw_stmt->fetchAll();
 </style>
 
 <style>
-    @media print {
 
+     .title { text-align: center; display: none;}
+
+    @media print {
+     
+ .title {
+        display: block;
+    }
         .form-submit { 
            display: none;
         }
@@ -542,7 +557,7 @@ $bhws = $bhw_stmt->fetchAll();
         }
         
     .report-table-container {
-      margin-top: 80px !important;
+      margin-top: 20px !important;
       margin-bottom: 40px !important;
     }
     }
@@ -905,9 +920,9 @@ function printDiv() {
           .print-heading{ line-height:1.1; color:#000; }
           .print-heading .ph-line-1{ font-size:12pt; font-weight:500; }
           .print-heading .ph-line-2{ font-size:14pt; font-weight:800; }
-          .print-heading .ph-line-3{ font-size:11pt; font-weight:500; }
+          .print-heading .ph-line-3{ font-size:12pt; font-weight:500; }
           .print-heading .ph-line-4{ font-size:12pt; font-weight:800; margin-top:4px; letter-spacing:.3px; }
-          .print-sub{ font-size:10.5pt; margin-top:4px; }
+          .print-sub{ font-size:12pt;}
           .print-rule{ height:1px; border:0; background:#cfd8e3; margin:8px 0 12px; }
         </style>
       </head>

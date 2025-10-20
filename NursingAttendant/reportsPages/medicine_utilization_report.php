@@ -26,6 +26,7 @@ $medicine = isset($_GET['medicine']) ? (array)$_GET['medicine'] : [];
 $sex       = $_GET['sex'] ?? '';
 $age_group = $_GET['age_group'] ?? '';
 $barangay  = $_GET['purok'] ?? ''; // Use 'purok' for barangay filter
+$subcategory = $_GET['subcategory'] ?? '';
 
 $params = [];
 
@@ -69,6 +70,54 @@ if (!empty($medicine)) {
 } else {
     // Fetch all distinct medicines (for columns)
     $med_stmt = $pdo->query("SELECT DISTINCT medicine_name FROM rhu_medicine_dispensed ORDER BY medicine_name ASC");
+    $medicine_list = $med_stmt->fetchAll(PDO::FETCH_COLUMN);
+}
+
+
+
+// 🔹 Medicine subcategory filter
+// 🔹 Medicine subcategory filter
+if (!empty($subcategory)) {
+    if (!is_array($subcategory)) {
+        $subcategory = [$subcategory]; // force into array if string
+    }
+
+    $placeholders = [];
+    foreach ($subcategory as $i => $sub) {
+        $ph = ":subcategory_$i";
+        $placeholders[] = $ph;
+        $params["subcategory_$i"] = $sub;
+    }
+
+    // Join to custom_options to get sub_category info
+    $sql .= " AND md.medicine_name IN (
+        SELECT value 
+        FROM custom_options 
+        WHERE sub_category IN (" . implode(',', $placeholders) . ")
+    )";
+
+    $subcategory_list = $subcategory; // only selected subcategories
+} else {
+    // 🔹 Fetch all distinct subcategories from custom_options
+    $sub_stmt = $pdo->query("SELECT DISTINCT sub_category FROM custom_options WHERE category = 'medicine' ORDER BY sub_category ASC");
+    $subcategory_list = $sub_stmt->fetchAll(PDO::FETCH_COLUMN);
+}
+
+// If the user did NOT explicitly select medicines but DID select subcategory(ies),
+// limit the medicine_list to only medicines in those subcategories.
+if (empty($medicine) && !empty($subcategory)) {
+    // Use positional placeholders to fetch medicines for the selected subcategories
+    $ph = implode(',', array_fill(0, count($subcategory), '?'));
+    $med_sql = "
+        SELECT DISTINCT co.value
+        FROM custom_options co
+        JOIN rhu_medicine_dispensed md ON md.medicine_name = co.value
+        WHERE co.category = 'medicine'
+          AND co.sub_category IN ($ph)
+        ORDER BY co.value ASC
+    ";
+    $med_stmt = $pdo->prepare($med_sql);
+    $med_stmt->execute($subcategory);
     $medicine_list = $med_stmt->fetchAll(PDO::FETCH_COLUMN);
 }
 
@@ -408,12 +457,17 @@ if (count($patient_meds) > 0) {
         renderTag('Medicine', 'medicine[]', $med);
     }
 }
+           if (!empty($_GET['subcategory'])) {
+    foreach ((array)$_GET['subcategory'] as $med) {
+        renderTag('Medicine Type', 'subcategory[]', $med);
+    }
+}
 
             if ($barangay) renderTag('Barangay', 'purok', $barangay);
            
             if (
                 !$from_date && !$to_date && !$sex && !$age_group &&
-                !$medicine && !$barangay
+                !$medicine && !$barangay && !$subcategory
             ) {
                 echo '<span style="color:#888;">None</span>';
             }
@@ -504,6 +558,29 @@ if (count($patient_meds) > 0) {
                         <small style="color:#888;">You may select multiple medicines.</small>
                     </div>
 
+                   <div class="form-item">
+                        <label for="subcategory">Medicine Category:</label>
+                        <div id="medicine-checkboxes" style="max-height:150px;overflow-y:auto;border:1px solid #ccc;padding:8px;border-radius:6px;">
+                            <?php
+                            // Fetch subcategory for checkboxes
+                            $subcategory_stmt = $pdo->prepare("SELECT DISTINCT sub_category FROM custom_options WHERE category = 'medicine' ORDER BY sub_category ASC");
+                            $subcategory_stmt->execute();
+                            // Support multiple selection from GET
+                            $selected_subcategory = isset($_GET['subcategory']) ? (array)$_GET['subcategory'] : [];
+                          while ($row = $subcategory_stmt->fetch(PDO::FETCH_ASSOC)) {
+    $value = $row['sub_category'];  // correct column
+    $checked = in_array($value, $selected_subcategory) ? 'checked' : '';
+    echo '<label style="display:block;margin-bottom:4px;text-align:left;font-weight:300;">';
+    echo '<input type="checkbox" name="subcategory[]" value="' . htmlspecialchars($value) . '" ' . $checked . '> ';
+    echo htmlspecialchars($value);
+    echo '</label>';
+}
+
+                            ?>
+                        </div>
+                        <small style="color:#888;">You may select multiple types.</small>
+                    </div>
+
                         </div>
                     </div>
                      <div class="modal-footer" style="text-align:right;">
@@ -588,15 +665,34 @@ if (count($patient_meds) > 0) {
     <div class="ph-line-1">Province of Camarines Norte</div>
     <div class="ph-line-2">Municipality of Daet</div>
     <div class="ph-line-3"><?php echo htmlspecialchars($rhu); ?></div>
-    <div class="ph-line-4">DOH MAINTAINANCE MEDICINE UTILIZATION REPORT</div>
+   
+  </div>
+  <img src="../../img/RHUlogo.png" alt="Right Logo" class="print-logo">
+</div>
+<hr class="print-rule">
+
+
+<div class="report-content">
+
+<div class="title">
+     <h2>DOH MAINTAINANCE MEDICINE UTILIZATION REPORT</h2>
     <div class="print-sub">
       (<?php
         $filters = [];
-        if ($from_date) $filters[] = "From <strong>" . htmlspecialchars($from_date) . "</strong>";
-        if ($to_date)   $filters[] = "To <strong>" . htmlspecialchars($to_date) . "</strong>";
+                         if ($from_date || $to_date) {
+    $readable_from = $from_date ? date("F j, Y", strtotime($from_date)) : '';
+    $readable_to   = $to_date ? date("F j, Y", strtotime($to_date)) : '';
+
+    // Combine them in a single display
+    $filters[] = "<strong>" . trim($readable_from . ($readable_to ? " — " . $readable_to : '')) . "</strong>";
+} 
         if (!empty($_GET['medicine'])) {
           $medicine_list = is_array($_GET['medicine']) ? $_GET['medicine'] : [$_GET['medicine']];
           $filters[] = "Medicine: <strong>" . implode(', ', array_map('htmlspecialchars', $medicine_list)) . "</strong>";
+        }
+        if (!empty($_GET['subcategory'])) {
+          $subcategory_list = is_array($_GET['subcategory']) ? $_GET['subcategory'] : [$_GET['subcategory']];
+          $filters[] = "Medicine Type: <strong>" . implode(', ', array_map('htmlspecialchars', $subcategory_list)) . "</strong>";
         }
         if ($sex) $filters[] = "Sex: <strong>" . htmlspecialchars($sex) . "</strong>";
         if ($age_group) {
@@ -610,36 +706,35 @@ if (count($patient_meds) > 0) {
         echo $filters ? implode("&nbsp; | &nbsp;", $filters) : "All Records";
       ?>)
     </div>
-  </div>
-  <img src="../../img/RHUlogo.png" alt="Right Logo" class="print-logo">
 </div>
-<hr class="print-rule">
 
-
-<div class="report-content">
     <style>
   .print-letterhead { display: none; }
+    .title { text-align: center; display: none;}
 
   @media print {
+     .title {
+        display: block;
+    }
     .print-letterhead { display: block; }
 
     .print-letterhead{
-      display: grid;
-      grid-template-columns: 64px auto 64px;
-      align-items: center;
-      justify-content: center;
-      column-gap: 14px;
-      margin: 0 auto 10px;
-      text-align: center;
-      width: fit-content;
+  display: grid;
+  grid-template-columns: 72px auto 72px;  /* widened logo columns */
+  align-items: center;
+  justify-content: center;
+  column-gap: 60px;                       /* increased space between logos and heading */
+  margin: 0 auto 18px;
+  text-align: center;
+  width: fit-content;
     }
     .print-logo{ width:64px; height:64px; object-fit:contain; }
     .print-heading{ line-height:1.1; color:#000; }
-    .print-heading .ph-line-1{ font-size:12pt; font-weight:500; margin-bottom:3px;}
-    .print-heading .ph-line-2{ font-size:14pt; font-weight:500; margin-bottom:3px;}
-    .print-heading .ph-line-3{ font-size:11pt; font-weight:500; margin-bottom:3px;}
+    .print-heading .ph-line-1{ font-size:12pt; font-weight:500;}
+    .print-heading .ph-line-2{ font-size:12pt; font-weight:500;}
+    .print-heading .ph-line-3{ font-size:12pt; font-weight:600;}
     .print-heading .ph-line-4{ font-size:12pt; font-weight:600; margin-top:15px; letter-spacing:.3px; }
-    .print-sub{ font-size:10.5pt; margin-top:4px; }
+    .print-sub{ font-size:12pt; margin-top:4px; }
     .print-rule{ height:1px; border:0; background:#cfd8e3; margin:8px 0 12px; }
 
     /* keep your existing print hides working */
@@ -695,9 +790,10 @@ if (count($patient_meds) > 0) {
         }
         
     .report-table-container {
-        margin-top: 80px !important;
+        margin-top: -20px !important;
         margin-bottom: 40px !important;
         }
+      
     }
 
    #generated_by {
@@ -712,7 +808,7 @@ if (count($patient_meds) > 0) {
 }
 
 #generated_by .sig-line {
-  width: 200px;           
+  width: 250px;           
   border: 0;
   border-top: 1.5px solid #000;
   margin: 26px 0 6px;       
@@ -731,7 +827,7 @@ if (count($patient_meds) > 0) {
 
 /* Print sizing (optional, nicer on paper) */
 @media print {
-  #generated_by {  margin: 60mm 0 0 10mm;}
+  #generated_by {  margin: 20mm 0 0 0;}
   #generated_by .sig-label { font-size: 12pt; }
   #generated_by .sig-name  { font-size: 12pt; }
   #generated_by .sig-title { font-size: 11pt; }
@@ -1018,7 +1114,7 @@ usort($patient_meds, function($a, $b) {
         <td><?= htmlspecialchars($row['age']) ?></td>
         <td><?= htmlspecialchars($row['date_of_birth']) ?></td>
         <td><?= htmlspecialchars($row['sex']) ?></td>
-        <td><?= htmlspecialchars($row['philhealth_member_no']) ?></td>
+        <td><?= htmlspecialchars(!empty($row['philhealth_member_no']) ? $row['philhealth_member_no'] : 'N/A') ?></td>
         <?php foreach ($medicine_list as $med): ?>
             <td><?= htmlspecialchars($pm['medicines'][$med] ?? '') ?></td>
         <?php endforeach; ?>
@@ -1049,28 +1145,67 @@ usort($patient_meds, function($a, $b) {
           <th>Total Patients in Report</th>
           <td><?= count($rows) ?></td>
         </tr>
-        <tr>
-          <th>By Sex</th>
-          <td>
-            Male — <?= $sex_counts['Male'] ?? 0 ?>,
-            Female — <?= $sex_counts['Female'] ?? 0 ?>
-          </td>
-        </tr>
-        <tr>
-          <th>By Age Group</th>
-          <td>
-            Children (0–12): <?= $age_group_counts['0–12'] ?? 0 ?>,
-            Teens (13–19): <?= $age_group_counts['13–19'] ?? 0 ?>,
-            Adults (20–59): <?= $age_group_counts['20–59'] ?? 0 ?>,
-            Seniors (60+): <?= $age_group_counts['60+'] ?? 0 ?>
-          </td>
-        </tr>
+
       </tbody>
     </table>
 
+   <table style="width:100%; border-collapse:collapse; margin-top:12px;">
+  <thead>
+    <tr>
+      <th colspan="2" style="border:1px solid #d5d7db; padding:10px; background:#f8f9fa;">By Sex</th>
+      <th colspan="2" style="border:1px solid #d5d7db; padding:10px; background:#f8f9fa;">By Age Group</th>
+    </tr>
+    <tr>
+      <th style="border:1px solid #d5d7db; padding:6px;">Sex</th>
+      <th style="border:1px solid #d5d7db; padding:6px;">Count</th>
+      <th style="border:1px solid #d5d7db; padding:6px;">Age Group</th>
+      <th style="border:1px solid #d5d7db; padding:6px;">Count</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="border:1px solid #d5d7db; padding:6px;">Male</td>
+      <td style="border:1px solid #d5d7db; padding:6px; text-align:center;">
+        <?= $sex_counts['Male'] ?? 0 ?>
+      </td>
+      <td style="border:1px solid #d5d7db; padding:6px;">Children (0–12)</td>
+      <td style="border:1px solid #d5d7db; padding:6px; text-align:center;">
+        <?= $age_group_counts['0–12'] ?? 0 ?>
+      </td>
+    </tr>
+    <tr>
+      <td style="border:1px solid #d5d7db; padding:6px;">Female</td>
+      <td style="border:1px solid #d5d7db; padding:6px; text-align:center;">
+        <?= $sex_counts['Female'] ?? 0 ?>
+      </td>
+      <td style="border:1px solid #d5d7db; padding:6px;">Teens (13–19)</td>
+      <td style="border:1px solid #d5d7db; padding:6px; text-align:center;">
+        <?= $age_group_counts['13–19'] ?? 0 ?>
+      </td>
+    </tr>
+    <tr>
+      <td style="border:1px solid #d5d7db; padding:6px;"></td>
+      <td style="border:1px solid #d5d7db; padding:6px;"></td>
+      <td style="border:1px solid #d5d7db; padding:6px;">Adults (20–59)</td>
+      <td style="border:1px solid #d5d7db; padding:6px; text-align:center;">
+        <?= $age_group_counts['20–59'] ?? 0 ?>
+      </td>
+    </tr>
+    <tr>
+      <td style="border:1px solid #d5d7db; padding:6px;"></td>
+      <td style="border:1px solid #d5d7db; padding:6px;"></td>
+      <td style="border:1px solid #d5d7db; padding:6px;">Seniors (60+)</td>
+      <td style="border:1px solid #d5d7db; padding:6px; text-align:center;">
+        <?= $age_group_counts['60+'] ?? 0 ?>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+
     <!-- Keep your “Dispensed Medicines” block just below if you want -->
     <div style="margin-top:12px;">
-      <strong>Dispensed Medicines:</strong>
+      <strong style="font-size: 12pt;">Dispensed Medicines:</strong>
       <?php if (!empty($medicine_list)): ?>
         <table class="summary-table" style="margin-top:8px;">
           <colgroup>
@@ -1296,10 +1431,10 @@ function printDiv() {
           .print-logo{ width:64px; height:64px; object-fit:contain; }
           .print-heading{ line-height:1.1; color:#000; }
           .print-heading .ph-line-1{ font-size:12pt; font-weight:500; }
-          .print-heading .ph-line-2{ font-size:14pt; font-weight:800; }
-          .print-heading .ph-line-3{ font-size:11pt; font-weight:500; }
+          .print-heading .ph-line-2{ font-size:12pt; font-weight:800; }
+          .print-heading .ph-line-3{ font-size:12pt; font-weight:500; }
           .print-heading .ph-line-4{ font-size:12pt; font-weight:800; margin-top:4px; letter-spacing:.3px; }
-          .print-sub{ font-size:10.5pt; margin-top:4px; }
+          .print-sub{ font-size:12pt; margin-top:4px; }
           .print-rule{ height:1px; border:0; background:#cfd8e3; margin:8px 0 12px; }
         </style>
       </head>

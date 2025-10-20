@@ -399,17 +399,7 @@ $total_pending = 0;
       <div class="ph-line-1">Province of Camarines Norte</div>
       <div class="ph-line-2">Municipality of Daet</div>
       <div class="ph-line-3"><?= htmlspecialchars($rhu) ?></div>
-      <div class="ph-line-4">REFERRAL INTAKE SUMMARY REPORT</div>
-      <div class="print-sub">
-        (<?php
-          $filters = [];
-          if (!empty($from_date)) echo "From <strong>" . htmlspecialchars($from_date) . "</strong>";
-          if (!empty($to_date))   echo ($from_date ? " &nbsp;|&nbsp; " : "") . "To <strong>" . htmlspecialchars($to_date) . "</strong>";
-          if (!empty($status))    echo " &nbsp;|&nbsp; Status: <strong>" . htmlspecialchars($status) . "</strong>";
-          if (!empty($barangay))  echo " &nbsp;|&nbsp; Barangay: <strong>" . htmlspecialchars($barangay) . "</strong>";
-          if (empty($from_date) && empty($to_date) && empty($status) && empty($barangay)) echo "All Records";
-        ?>)
-      </div>
+ 
     </div>
     <img src="../../img/RHUlogo.png" alt="Right Logo" class="print-logo">
   </div>
@@ -418,9 +408,47 @@ $total_pending = 0;
 <!-- /PRINT-ONLY LETTERHEAD -->
 
 <div class="report-content">
-<!-- Summary Section -->
+
+
+
+<div class="title">
+         <h2>REFERRAL INTAKE SUMMARY REPORT</h2>
+<div class="print-sub">
+(<?php
+  $filters = [];
+
+  if ($from_date || $to_date) {
+      $readable_from = $from_date ? date("F j, Y", strtotime($from_date)) : '';
+      $readable_to   = $to_date ? date("F j, Y", strtotime($to_date)) : '';
+
+      // Combine into a readable range
+      $filters[] = "<strong>" . trim($readable_from . ($readable_to ? " — " . $readable_to : '')) . "</strong>";
+  }
+
+  // Print the date range if available
+  if (!empty($filters)) {
+      echo implode(" ", $filters);  // ✅ actually outputs the date
+  }
+
+  if (!empty($status)) {
+      echo " &nbsp;|&nbsp; Status: <strong>" . htmlspecialchars($status) . "</strong>";
+  }
+
+  if (!empty($barangay)) {
+      echo " &nbsp;|&nbsp; Barangay: <strong>" . htmlspecialchars($barangay) . "</strong>";
+  }
+
+  if (empty($from_date) && empty($to_date) && empty($status) && empty($barangay)) {
+      echo "All Records";
+  }
+?>)
+</div>
+
+</div>
+
  <style>
 
+  .title { text-align: center; display: none;}
     /* Space above the summary section */
 .summary-container {
   margin-top: 32px;
@@ -459,6 +487,9 @@ $total_pending = 0;
 }
 
     @media print {
+         .title {
+        display: block;
+    }
         .chart-title { 
            display: none;
         }
@@ -467,7 +498,7 @@ $total_pending = 0;
         }
         
  .report-table-container {
-      margin-top: 80px !important;
+      margin-top: 20px !important;
       margin-bottom: 40px !important;
     }
     }
@@ -481,14 +512,14 @@ $total_pending = 0;
     .print-only-letterhead { display: block; }
 
     .print-letterhead{
-      display: grid;
-      grid-template-columns: 64px auto 64px;
-      align-items: center;
-      justify-content: center;
-      column-gap: 14px;
-      margin: 0 auto 10px;
-      text-align: center;
-      width: fit-content;
+  display: grid;
+  grid-template-columns: 72px auto 72px;  /* widened logo columns */
+  align-items: center;
+  justify-content: center;
+  column-gap: 60px;                       /* increased space between logos and heading */
+  margin: 0 auto 18px;
+  text-align: center;
+  width: fit-content;
     }
     .print-logo{ width:64px; height:64px; object-fit:contain; }
     .print-heading{ line-height:1.1; color:#000; }
@@ -496,7 +527,7 @@ $total_pending = 0;
     .print-heading .ph-line-2{ font-size:14pt; font-weight:500; margin-bottom:3px;}
     .print-heading .ph-line-3{ font-size:11pt; font-weight:500; margin-bottom:3px;}
     .print-heading .ph-line-4{ font-size:12pt; font-weight:600; margin-top:15px; letter-spacing:.3px; }
-    .print-sub{ font-size:10.5pt; margin-top:4px; }
+    .print-sub{ font-size:12pt; margin-top:4px; }
     .print-rule{ height:1px; border:0; background:#cfd8e3; margin:8px 0 12px; }
 
     /* keep your existing print hides working */
@@ -701,7 +732,7 @@ document.addEventListener("DOMContentLoaded", () => {
 </script>
 
 <div class="report-table-container">
-<table border="1" cellpadding="8" cellspacing="0" id="reportTable"> 
+<table id="reportTable"> 
     <thead>
         <tr>
             <th>Barangay</th>
@@ -963,7 +994,7 @@ function printDiv() {
           .print-heading .ph-line-2{ font-size:14pt; font-weight:800; }
           .print-heading .ph-line-3{ font-size:11pt; font-weight:500; }
           .print-heading .ph-line-4{ font-size:12pt; font-weight:800; margin-top:4px; letter-spacing:.3px; }
-          .print-sub{ font-size:10.5pt; margin-top:4px; }
+          .print-sub{ font-size:12pt; margin-top:4px; }
           .print-rule{ height:1px; border:0; background:#cfd8e3; margin:8px 0 12px; }
         </style>
       </head>

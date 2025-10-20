@@ -477,12 +477,28 @@ while ($row = $barangay_stmt->fetch(PDO::FETCH_ASSOC)) {
     <div class="ph-line-1">Province of Camarines Norte</div>
     <div class="ph-line-2">Municipality of Daet</div>
     <div class="ph-line-3"><?= htmlspecialchars($barangayName, ENT_QUOTES, 'UTF-8') ?></div>
-    <div class="ph-line-4">BHS PATIENT VISIT SUMMARY REPORT</div>
+  
+  </div>
+  <img src="../../img/RHUlogo.png" alt="Right Logo" class="print-logo">
+</div>
+<hr class="print-rule">
+
+
+
+<div class="report-content">
+
+<div class="title">
+  <div class="ph-line-4">BHS PATIENT VISIT SUMMARY REPORT</div>
     <div class="print-sub">
       (<?php
         $filters = [];
-        if ($from_date)  $filters[] = "From <strong>" . htmlspecialchars($from_date, ENT_QUOTES, 'UTF-8') . "</strong>";
-        if ($to_date)    $filters[] = "To <strong>"   . htmlspecialchars($to_date,   ENT_QUOTES, 'UTF-8') . "</strong>";
+               if ($from_date || $to_date) {
+    $readable_from = $from_date ? date("F j, Y", strtotime($from_date)) : '';
+    $readable_to   = $to_date ? date("F j, Y", strtotime($to_date)) : '';
+
+    // Combine them in a single display
+    $filters[] = "<strong>" . trim($readable_from . ($readable_to ? " — " . $readable_to : '')) . "</strong>";
+} 
         if ($sex)        $filters[] = "Sex: <strong>" . htmlspecialchars($sex,       ENT_QUOTES, 'UTF-8') . "</strong>";
         if ($age_group) {
           $age_labels = [
@@ -513,28 +529,25 @@ while ($row = $barangay_stmt->fetch(PDO::FETCH_ASSOC)) {
         echo $filters ? implode("&nbsp; | &nbsp;", $filters) : "All Records";
       ?>)
     </div>
-  </div>
-  <img src="../../img/RHUlogo.png" alt="Right Logo" class="print-logo">
+
 </div>
-<hr class="print-rule">
-
-
-
-<div class="report-content">
 <style>
      .print-letterhead { display: none; }
-
+     .title { text-align: center; display: none;}
   @media print {
+     .title {
+        display: block;
+    }
     .print-letterhead { display: block; }
   .print-letterhead{
-    display:grid;
-    grid-template-columns:64px auto 64px;
-    align-items:center;
-    justify-content:center;
-    column-gap:14px;
-    margin:0 auto 10px;
-    text-align:center;
-    width:fit-content;
+  display: grid;
+  grid-template-columns: 72px auto 72px;  /* widened logo columns */
+  align-items: center;
+  justify-content: center;
+  column-gap: 60px;                       /* increased space between logos and heading */
+  margin: 0 auto 18px;
+  text-align: center;
+  width: fit-content;
   }
   .print-logo{ width:64px; height:64px; object-fit:contain; }
   .print-heading{ line-height:1.1; color:#000; }
@@ -542,7 +555,7 @@ while ($row = $barangay_stmt->fetch(PDO::FETCH_ASSOC)) {
   .print-heading .ph-line-2{ font-size:14pt; font-weight:500; }
   .print-heading .ph-line-3{ font-size:11pt; font-weight:500; }
   .print-heading .ph-line-4{ font-size:12pt; font-weight:600; margin-top:15px; letter-spacing:.3px; }
-  .print-sub{ font-size:10.5pt; margin-top:4px; }
+  .print-sub{ font-size:12pt; margin-top:4px; }
   .print-rule{ height:1px; border:0; background:#cfd8e3; margin:8px 0 12px; }
   @media print {
     .chart, .form-submit { display:none; }
@@ -1383,7 +1396,7 @@ function printDiv() {
           .print-heading .ph-line-2{ font-size:14pt; font-weight:800; }
           .print-heading .ph-line-3{ font-size:11pt; font-weight:500; }
           .print-heading .ph-line-4{ font-size:12pt; font-weight:800; margin-top:4px; letter-spacing:.3px; }
-          .print-sub{ font-size:10.5pt; margin-top:4px; }
+          .print-sub{ font-size:12pt; margin-top:4px; }
           .print-rule{ height:1px; border:0; background:#cfd8e3; margin:8px 0 12px; }
         </style>
       </head>
