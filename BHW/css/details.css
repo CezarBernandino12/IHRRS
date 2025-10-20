@@ -21,7 +21,7 @@
 }
 
 .referral-header .referral-heading .line-2{
-  font-size: 20px;   
+  font-size: 16x;   
   letter-spacing: .2px;
   margin-top: 2px;
 }
@@ -156,39 +156,54 @@ select {
     padding: 10px;
 }
 
-
-.referral-header{
-  display: grid;                        
-  grid-template-columns: 72px auto 72px; 
+.referral-header {
+  display: grid;
+  grid-template-columns: 80px auto 80px; /* same logo column width */
   align-items: center;
-   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  justify-content: center;               
-  column-gap: 35px;                    
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  justify-content: center;
+  column-gap: 60px; /* space between logos and heading */
   row-gap: 0;
-  width: fit-content;                   
-  margin: 8px auto 25px;                
+  width: fit-content;
+  margin: 8px auto 25px;
   padding: 0;
 }
 
-
-.referral-logo{
+.referral-logo {
   width: 80px;
   height: 80px;
   object-fit: contain;
 }
-.referral-heading{
+
+.referral-heading {
   display: flex;
   flex-direction: column;
   align-items: center;
   line-height: 1.25;
 }
-.referral-heading > *{ margin: 0; }
 
-.referral-heading .line-1{ font-size: 16px; }
-.referral-heading .line-2{ font-size: 16px; letter-spacing: .2px; margin-top: 2px; font-weight: 600; color: #0d2546; }
-.referral-heading .line-3{ font-size: 13px; margin-top: 2px; }
+.referral-heading > * {
+  margin: 0;
+}
 
-.referral-rule{
+.referral-heading .line-1 {
+  font-size: 16px;
+}
+
+.referral-heading .line-2 {
+  font-size: 16px;
+  letter-spacing: 0.2px;
+  margin-top: 2px;
+  font-weight: 600;
+  color: #000;
+}
+
+.referral-heading .line-3 {
+  font-size: 13px;
+  margin-top: 2px;
+}
+
+.referral-rule {
   height: 1px;
   margin: 6px 0 10px;
   background: #cfd8e3;
@@ -196,24 +211,46 @@ select {
   box-shadow: none;
 }
 
-/* Optional: scale gracefully on small screens */
-@media (max-width: 640px){
-  .referral-header{ grid-template-columns: 56px 1fr 56px; gap: 6px; }
-  .referral-logo{ width: 56px; height: 56px; }
-  .referral-heading .line-2{ font-size: 20px; }
+/* ✅ Keep consistent layout on small screens */
+@media (max-width: 640px) {
+  .referral-header {
+    grid-template-columns: 56px 1fr 56px;
+    column-gap: 12px;
+  }
+
+  .referral-logo {
+    width: 56px;
+    height: 56px;
+  }
+
+  .referral-heading .line-2 {
+    font-size: 20px;
+  }
 }
 
-/* Print keeps the same compressed layout */
-@media print{
-  .referral-header{
+/* ✅ Print version: same as on-screen */
+@media print {
+  .referral-header {
     display: grid !important;
-    grid-template-columns: 70px 1fr 70px !important;
-    gap: 6px !important;
-    margin-bottom: 6px !important;
+    grid-template-columns: 80px auto 80px !important;
+    column-gap: 60px !important;
+    margin: 8px auto 25px !important;
     padding: 0 !important;
   }
-  .referral-logo{ width: 70px !important; height: 70px !important; }
+
+  .referral-logo {
+    width: 80px !important;
+    height: 80px !important;
+    object-fit: contain !important;
+  }
+    .referral-logo.right {
+    margin-left: 15px;
+  }
+      .referral-logo.left {
+    margin-right: 15px;
+  }
 }
+
 /* Responsive tweak: smaller logos on narrow screens */
 @media (max-width: 640px){
   .referral-header{ grid-template-columns: 64px 1fr 64px; gap: 8px; }
@@ -332,14 +369,15 @@ select {
 
 /* Meta strip (Referral ID / Date) */
 .referral-meta{
-  display:flex; gap:12px; flex-wrap:wrap; margin:8px 0 18px;
+  display:flex; gap:12px; flex-wrap:wrap; margin:0px 0 18px;
 }
 .badge{
   display:inline-flex; align-items:center; gap:8px;
   background:var(--subtle); border:1px solid var(--line);
-  padding:8px 12px; border-radius:999px; font-size:13px; color:#000000;
+  padding:8px 12px; border-radius:999px; color:#000000;
+  font-size: 16px;
 }
-.badge i{ font-size:18px; opacity:.8; }
+.badge i{ font-size:18px; }
 
 /* Section Cards */
 .section-card{
@@ -349,7 +387,7 @@ select {
 
 /* Section title */
 .section-title{
-  font-weight:700; color:var(--ink); font-size:15px; margin:2px 0 14px;
+  font-weight:700; color:var(--ink); font-size:16px; margin:2px 0 14px;
 }
 
 /* Two-column information grid */
@@ -358,7 +396,7 @@ select {
 }
 .kv{ min-height:44px; }
 .kv .label{
-  display:block; font-size:12px; letter-spacing:.3px; text-transform:uppercase;
+  display:block; font-size:16px; font-weight:600; line-height:1.4; letter-spacing:.3px; text-transform:uppercase;
   color:#8a94a6; margin-bottom:6px;
 }
 .kv .value{
@@ -383,6 +421,9 @@ select {
   border-radius:10px; padding:12px 14px; font-size:14px; outline:none;
 }
 
+ .line{
+  flex:1; border-bottom:0.5px solid #000000; height:32px; width: 250px; margin-bottom: 5px;
+}
 /* Signature line */
 .signature{
   display:flex; align-items:center; gap:16px; margin-top:8px;
@@ -406,10 +447,13 @@ select {
 /* Print: flatten effects, tighter spacing */
 @media print{
   .section-card{ box-shadow:none; border-color:#cfd8e3; }
-  .badge{ background:#fff; color:#000000; }
+  .badge{ background:#fff; color:#000000; margin-left: -25px;}
   .treatment-container textarea{ background:#fff; }
-}
 
+  .signature-container {
+    margin-left: -20px;
+}
+}
 
 /* Action buttons */
 .referral-form-footer {
@@ -588,20 +632,20 @@ select {
 
   /* Header */
   .referral-header { margin-top: 4mm; margin-bottom: 4mm; gap: 6px !important; }
-  .referral-logo { width: 80px !important; height: 80px !important; object-fit: contain; }
+  .referral-logo { width: 65px !important; height: 65px !important; object-fit: contain;}
   .referral-heading .line-1 { font-size: 12pt !important; }
-  .referral-heading .line-2 { font-size: 18pt !important; font-weight: 700; color: #000000; }
+  .referral-heading .line-2 { font-size: 15pt !important; font-weight: 700; color: #000000; }
   .referral-heading .line-3 { font-size: 11pt !important; color: #000000; }
-  .referral-heading .title  { font-size: 16pt !important; margin-top: 4px !important; }
+  .referral-heading .title  { font-size: 14pt !important; margin-top: 4px !important; }
   .referral-rule {
     height: 1px !important; margin: 6px 0 10px !important;
     background: #cfd8e3 !important; border: 0 !important; box-shadow: none !important;
   }
 
   /* Meta badges */
-  .referral-meta { display: flex; gap: 6px; flex-wrap: wrap; margin: 0 0 4mm !important; }
+  .referral-meta { display: flex; gap: 6px; flex-wrap: wrap; margin-left: -25px !important; }
   .badge {
-    padding: 2px 7px !important; font-size: 9.6pt !important;
+    padding: 2px 7px !important; font-size: 11pt !important; margin-left: 5px;
     border: 1px solid #e2e7f1 !important; border-radius: 999px !important; background: #fff !important;
   }
 
@@ -612,7 +656,7 @@ select {
     padding: 0 !important; margin: 0 0 4mm !important;
   }
   .section-title {
-    margin: 0 0 2.5mm !important; font-weight: 700 !important; font-size: 12pt !important; color: #000000 !important;
+    margin: 0 0 2.5mm !important; font-weight: 700 !important; font-size: 11pt !important; color: #000000 !important;
     padding-bottom: 1.5mm !important; border-bottom: 1px solid #e7ecf6 !important;
   }
 
@@ -621,7 +665,7 @@ select {
   .vitals-grid { grid-template-columns: repeat(4, 1fr) !important; gap: 8px 12px !important; }
 
   .kv .label {
-    font-size: 9pt !important; margin-bottom: 2px !important; color: #262627 !important;
+    font-size: 11pt !important; margin-bottom: 2px !important; color: #262627 !important;
     letter-spacing: .15px !important; text-transform: uppercase !important;
   }
   .kv .value { font-size: 11pt !important; font-weight: 600 !important; overflow-wrap: anywhere !important; }
@@ -637,13 +681,13 @@ select {
     resize: none !important; overflow: hidden !important;
     background: #fff !important; border: 1px solid #e3e8f4 !important;
     border-radius: 4px !important; padding: 6px 8px !important; min-height: 60px !important; height: 60px !important;
-    font-size: 10.5pt !important;
+    font-size: 11pt !important;
   }
 
   /* Signature line */
   .signature { display: flex !important; align-items: center !important; gap: 8px !important; margin-top: 4mm !important; }
   .signature .line { flex: 1 !important; border-bottom: 1px dotted #c7cedd !important; height: 14px !important; }
-  .signature .name { font-weight: 700 !important; font-size: 10.5pt !important; min-width: 150px !important; text-align: right !important; }
+  .signature .name { font-weight: 700 !important; font-size: 11pt !important; min-width: 150px !important; text-align: right !important; }
 
   /* Keep these together; avoid ugly splits */
   .referral-header, .referral-meta,
