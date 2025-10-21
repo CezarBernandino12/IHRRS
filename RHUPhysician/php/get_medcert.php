@@ -1,25 +1,17 @@
 <?php
-// Prevent any output before JSON
 ob_start();
-
 session_start();
-
-// Clear any previous output
 ob_end_clean();
 
 header('Content-Type: application/json');
-
-// Disable error display (log errors instead)
 ini_set('display_errors', 0);
 error_reporting(E_ALL);
 
-// Check if user is logged in
 if (!isset($_SESSION['user_id'])) {
     echo json_encode(['success' => false, 'message' => 'Not authenticated']);
     exit;
 }
 
-// Database connection
 try {
     require '../../php/db_connect.php';
 } catch (Exception $e) {
@@ -35,24 +27,40 @@ if (!$medcert_id) {
 }
 
 try {
-    // Get certificate with patient information
-    $sql = "SELECT 
-                mc.*,
-                p.first_name,
-                p.middle_name,
-                p.last_name,
-                p.date_of_birth,
-                p.age,
-                p.sex,
-                p.address,
-                p.civil_status,
-                p.birthplace,
-                pa.visit_date,
-                pa.chief_complaints
-            FROM medical_certificates mc
-            INNER JOIN patients p ON mc.patient_id = p.patient_id
-            LEFT JOIN patient_assessment pa ON mc.visit_id = pa.visit_id
-            WHERE mc.medcert_id = ?";
+    // FIXED: Use 'issued_by' not 'issued_by_user_id'
+    $sql = "SELECT  
+    mc.*,
+    p.first_name,
+    p.middle_name,
+    p.last_name,
+    p.date_of_birth,
+    p.age,
+    p.sex,
+    p.address,
+    p.civil_status,
+    p.birthplace,
+    pa.visit_date,
+    pa.chief_complaints,
+
+    -- Issuing physician details
+    issued_user.full_name AS issued_by,
+    issued_user.license_number AS license_number,
+    issued_user.rhu AS rhu,
+
+    -- Preparer details
+    prepared_user.full_name AS prepared_by
+
+
+FROM medical_certificates mc
+INNER JOIN patients p 
+    ON mc.patient_id = p.patient_id
+LEFT JOIN patient_assessment pa 
+    ON mc.visit_id = pa.visit_id
+LEFT JOIN users AS issued_user 
+    ON mc.issued_by = issued_user.user_id
+LEFT JOIN users AS prepared_user 
+    ON mc.prepared_by = prepared_user.user_id
+WHERE mc.medcert_id = ?";
 
     if (isset($pdo)) {
         // PDO version
@@ -114,11 +122,12 @@ try {
             'rest_period_days' => $row['rest_period_days'],
             'rest_from_date' => $row['rest_from_date'],
             'rest_to_date' => $row['rest_to_date'],
-            'issued_by_name' => $row['issued_by_name'],
-            'license_no' => $row['license_no'],
-            'ptr_no' => $row['ptr_no'],
+            'issued_by' => $row['issued_by'],
+            'license_number' => $row['license_number'],
             'visit_date' => $row['visit_date'] ?? '',
-            'chief_complaints' => $row['chief_complaints'] ?? ''
+            'chief_complaints' => $row['chief_complaints'] ?? '',
+            'control_number' => $row['control_number'],
+            'rhu' => $row['rhu'] ?? ''
         ];
 
         echo json_encode(['success' => true, 'certificate' => $certificate]);

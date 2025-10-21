@@ -11,6 +11,62 @@
 	<title>Issued Records</title> 
 
      <style>
+        @media print {
+            #sidebar,
+            nav,
+            .head-title,
+            .breadcrumb {
+                display: none !important;
+            }
+
+            /* Hide buttons */
+            .buttons {
+                display: none !important;
+            }
+
+            /* Reset body for print */
+            body {
+                background: white !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+
+            /* Full width content section */
+            #content {
+                margin: 0 !important;
+                padding: 0 !important;
+                width: 100% !important;
+            }
+
+            /* Reset main container */
+            main {
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+
+            /* Certificate container adjustments */
+            .history-container {
+                padding: 20px !important;
+                box-shadow: none !important;
+            }
+
+            .container {
+                box-shadow: none !important;
+                padding: 0 !important;
+                max-width: 100% !important;
+            }
+
+            /* Ensure certificate content is visible */
+            .header,
+            .title,
+            .issuance-date,
+            .content,
+            .signature,
+            .signature2 {
+                page-break-inside: avoid;
+            }
+        }
+        
         * {
             margin: 0;
             padding: 0;
@@ -316,10 +372,10 @@
         </div> <br> <br> 
     
 
-    <div class="buttons">
-        <button class="button button-print" onclick="window.print()">Print Certificate</button>
-        <button class="button button-back" onclick="goBack()">Back to Records</button>
-    </div>
+<div class="buttons">
+    <button class="button button-back" onclick="goBack()">Back to Records</button>
+    <button class="button button-print" onclick="window.print()">Print Certificate</button>
+</div>
             </div>
 
 
