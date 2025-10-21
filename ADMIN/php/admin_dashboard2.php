@@ -129,7 +129,7 @@ $unreadCount = 0;
             <li class="active">
                 <a href="admin_dashboard2.php">
                     <i class="bx bxs-dashboard"></i>
-                    <span class="text">Dashboard</span>
+                    <span class="text">dashboard</span>
                 </a>
             </li>
             <li> 

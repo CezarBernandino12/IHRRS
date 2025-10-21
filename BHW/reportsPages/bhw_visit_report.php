@@ -553,7 +553,7 @@ while ($row = $barangay_stmt->fetch(PDO::FETCH_ASSOC)) {
   .print-heading{ line-height:1.1; color:#000; }
   .print-heading .ph-line-1{ font-size:12pt; font-weight:500; }
   .print-heading .ph-line-2{ font-size:14pt; font-weight:500; }
-  .print-heading .ph-line-3{ font-size:11pt; font-weight:500; }
+  .print-heading .ph-line-3{ font-size:12pt; font-weight:500; }
   .print-heading .ph-line-4{ font-size:12pt; font-weight:600; margin-top:15px; letter-spacing:.3px; }
   .print-sub{ font-size:12pt; margin-top:4px; }
   .print-rule{ height:1px; border:0; background:#cfd8e3; margin:8px 0 12px; }
@@ -665,7 +665,7 @@ while ($row = $barangay_stmt->fetch(PDO::FETCH_ASSOC)) {
     .summary-container .kv-table { margin-top: 0 !important; }
     
      .report-table-container {
-      margin-top: 80px !important;
+      margin-top: 20px !important;
       margin-bottom: 40px !important;
     }
   }
@@ -1394,7 +1394,7 @@ function printDiv() {
           .print-heading{ line-height:1.1; color:#000; }
           .print-heading .ph-line-1{ font-size:12pt; font-weight:500; }
           .print-heading .ph-line-2{ font-size:14pt; font-weight:800; }
-          .print-heading .ph-line-3{ font-size:11pt; font-weight:500; }
+          .print-heading .ph-line-3{ font-size:12pt; font-weight:500; }
           .print-heading .ph-line-4{ font-size:12pt; font-weight:800; margin-top:4px; letter-spacing:.3px; }
           .print-sub{ font-size:12pt; margin-top:4px; }
           .print-rule{ height:1px; border:0; background:#cfd8e3; margin:8px 0 12px; }
