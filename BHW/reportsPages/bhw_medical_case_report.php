@@ -236,7 +236,7 @@ if ($to_date) {
 }
 
           if ($diagnosis) {
-                foreach ($diagnosis as $diag) {
+                foreach ($diagnosis as $diag) { 
                     renderTag('Diagnosis', 'diagnosis[]', $diag);
                 }
             }
@@ -445,13 +445,30 @@ while ($row = $barangay_stmt->fetch(PDO::FETCH_ASSOC)) {
     <div class="ph-line-3">Municipality of Daet</div>
     <div class="ph-line-4"><?php echo htmlspecialchars($barangayName); ?></div>
     <hr class="print-rule">
+
+  </div>
+
+  <img src="../../img/RHUlogo.png" alt="RHU Logo" class="print-logo" aria-hidden="true"> <br>
+
+  
+</div>
+
+
+<div class="report-content">
+<div class="title">
     <h2 class="print-title">MEDICAL CASE MONITORING REPORT</h2>
 
     <div class="print-sub">
       (<?php
         $filters = [];
-        if ($from_date) $filters[] = "From <strong>" . htmlspecialchars($from_date) . "</strong>";
-        if ($to_date) $filters[] = "To <strong>" . htmlspecialchars($to_date) . "</strong>";
+if ($from_date || $to_date) {
+    $readable_from = $from_date ? date("F j, Y", strtotime($from_date)) : '';
+    $readable_to   = $to_date ? date("F j, Y", strtotime($to_date)) : '';
+
+    // Combine them in a single display
+    $filters[] = "<strong>" . trim($readable_from . ($readable_to ? " — " . $readable_to : '')) . "</strong>";
+}
+
         if ($diagnosis) {
             $diagnosis_list = is_array($diagnosis) ? $diagnosis : [$diagnosis];
             $filters[] = "Diagnosis: <strong>" . implode(', ', array_map('htmlspecialchars', $diagnosis_list)) . "</strong>";
@@ -469,23 +486,28 @@ while ($row = $barangay_stmt->fetch(PDO::FETCH_ASSOC)) {
         echo $filters ? implode("&nbsp; | &nbsp;", $filters) : "All Records";
       ?>)
     </div>
-  </div>
-
-  <img src="../../img/RHUlogo.png" alt="RHU Logo" class="print-logo" aria-hidden="true">
 </div>
-
-
-<div class="report-content">
+ 
 <style>
   .print-letterhead,
   .print-rule { display: none; }
 
+  .title { text-align: center; display: none;}
+
   @media print {
     .print-letterhead,
     .print-rule { display: block; }
+    .title {
+        display: block;
+    }
+    .report-table-container {
+        font-size: 11pt;
+    }
+
   }
   
     @media print {
+       
         .chart-title { 
            display: none;
         }
@@ -498,6 +520,7 @@ while ($row = $barangay_stmt->fetch(PDO::FETCH_ASSOC)) {
         .generated-by{
             font-size: 16px;
         }
+
     }
 </style>
 <style>
@@ -506,26 +529,74 @@ while ($row = $barangay_stmt->fetch(PDO::FETCH_ASSOC)) {
 
   @media print {
     .print-only-letterhead { display: block; }
-  .print-letterhead{
-    display:grid;
-    grid-template-columns:64px auto 64px;   /* left logo | center text | right logo */
-    align-items:center;
-    justify-content:center;
-    column-gap:14px;
-    margin:0 auto 18px;                     /* center + a bit of breathing room */
-    text-align:center;
-    width:fit-content;
-  }
-  .print-logo{ width:64px; height:64px; object-fit:contain; }
-  .print-heading{ line-height:1.1;  color: #000; }
-  .print-heading > *{ margin:0; }
-  .ph-line-1{ font-size:12pt; font-weight:500; margin-bottom:4px; }
-  .ph-line-2{ font-size:16pt; font-weight:500; margin-bottom:4px;}
-  .ph-line-3{ font-size:11pt; font-weight:500; margin-bottom:4px;}
-  .ph-line-4{ font-size:12pt; font-weight:500; margin-top:4px; }
-  .print-rule{ height:1px; border:0; background:#cfd8e3; margin-top:15px; }
-  .print-title{ font-size:14pt; font-weight:600; letter-spacing:.3px; color:#000; }
-  .print-sub{ font-size:10.5pt; margin-top:4px; }
+ .print-letterhead {
+  display: grid;
+  grid-template-columns: 72px auto 72px;  /* widened logo columns */
+  align-items: center;
+  justify-content: center;
+  column-gap: 60px;                       /* increased space between logos and heading */
+  margin: 0 auto 18px;
+  text-align: center;
+  width: fit-content;
+}
+
+.print-logo {
+  width: 72px;                            /* matched to column width for proportion */
+  height: 72px;
+  object-fit: contain;
+}
+
+.print-heading {
+  line-height: 1.1;
+  color: #000;
+}
+
+.print-heading > * {
+  margin: 0;
+}
+
+.ph-line-1 {
+  font-size: 12pt;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.ph-line-2 {
+  font-size: 14pt;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.ph-line-3 {
+  font-size: 12pt;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.ph-line-4 {
+  font-size: 12pt;
+  font-weight: 500;
+  margin-top: 4px;
+}
+
+.print-rule {
+  height: 1px;
+  border: 0;
+  background: #cfd8e3;
+  margin-top: 15px;
+}
+
+.print-title {
+  font-size: 14pt;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  color: #000;
+}
+
+.print-sub {
+  font-size: 12pt;
+}
+
   @media print {
     .form-submit, .chart-title { display:none !important; } /* keep your existing print hides */
     .print-letterhead{ margin-bottom:12mm; }
@@ -569,7 +640,7 @@ while ($row = $barangay_stmt->fetch(PDO::FETCH_ASSOC)) {
     .summary-container .kv-table { margin-top: 0 !important; }
 
        .report-table-container {
-      margin-top: 80px !important;
+ 
       margin-bottom: 40px !important;
     }
     
@@ -582,7 +653,7 @@ while ($row = $barangay_stmt->fetch(PDO::FETCH_ASSOC)) {
 }
 
 #generated_by .sig-label {
-  font-size: 14px;
+  font-size: 16px;
   margin-bottom: 16px;
 }
 
@@ -600,7 +671,7 @@ while ($row = $barangay_stmt->fetch(PDO::FETCH_ASSOC)) {
 }
 
 #generated_by .sig-title {
-  font-size: 13px;
+  font-size: 16px;
   color: #333;
 }
 
@@ -609,7 +680,7 @@ while ($row = $barangay_stmt->fetch(PDO::FETCH_ASSOC)) {
   #generated_by {  margin: 60mm 0 0 10mm;}
   #generated_by .sig-label { font-size: 12pt; }
   #generated_by .sig-name  { font-size: 12pt; }
-  #generated_by .sig-title { font-size: 11pt; }
+  #generated_by .sig-title { font-size: 12pt; }
   #generated_by .sig-line  { width: 45mm; border-top-width: 1px; margin: 10mm 0 3mm; }
 }
 </style>
@@ -1252,11 +1323,11 @@ function printDiv() {
           .print-heading > *{ margin:0; }
           .ph-line-1{ font-size:12pt; font-weight:500; }
           .ph-line-2{ font-size:16pt; font-weight:500; }
-          .ph-line-3{ font-size:11pt; font-weight:500; }
+          .ph-line-3{ font-size:12pt; font-weight:500; }
           .ph-line-4{ font-size:12pt; font-weight:500; margin-top:2px; }
           .print-rule{ height:1px; border:0; background:#cfd8e3; margin:8px 0 10px; }
           .print-title{ font-size:14pt; font-weight:500; letter-spacing:.3px; color:#000; }
-          .print-sub{ font-size:10.5pt; margin-top:4px; }
+          .print-sub{ font-size:11pt;}
         </style>
       </head>
       <body>

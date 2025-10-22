@@ -116,15 +116,16 @@ $unreadCount = 0;
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <title>Admin Dashboard</title>
-</head>
+</head> 
 <body>
     <!-- Sidebar Section --> 
     <section id="sidebar">
         <a href="#" class="brand">
-            <img src="../../img/logo.png" alt="RHULogo" class="logo"> 
-           <span class="text" id="userGreeting">Hello Admin</span>
+            <img src="../../img/logo.png" alt="RHULogo" class="logo">
+                        <span class="text">Hello Admin</span>
 
-        </a>
+
+        </a> 
         <ul class="side-menu top">
             <li class="active">
                 <a href="admin_dashboard2.php">
@@ -288,6 +289,19 @@ $unreadCount = 0;
 
     <script src="../js/notif.js"></script>
     <script>
+        fetch('getUserName.php')
+            .then(response => response.json())
+            .then(data => {
+                if (data.full_name) {
+                    document.getElementById('userGreeting').textContent = `Hello, ${data.full_name}!`;
+                } else {
+                    document.getElementById('userGreeting').textContent = 'Hello, Admin!';
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching user name:', error);
+                document.getElementById('userGreeting').textContent = 'Hello, Admin!';
+            });
 
         // Chart for daily logins
         const ctx = document.getElementById('dailyLoginsChart').getContext('2d');

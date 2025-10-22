@@ -61,32 +61,32 @@ if (!$consultations) die("No record found.");
 <head>
     <title>Consultation Record</title>
   <style>
-    @page {
-        size: A4;
-        margin: 0;
-    }
+   @page {
+    size: A6; /* default print size */
+    margin: 5mm;
+}
 
-    body {
-        font-family: Arial, sans-serif;
-        font-size: 12px;
-        margin: 0;
-        padding: 0;
-        width: 210mm;
-        height: 297mm;
-        box-sizing: border-box;
-    }
+body {
+    font-family: Arial, sans-serif;
+    font-size: 11px; /* optional, slightly smaller for A6 */
+    margin: 0;
+    padding: 0;
+    width: 105mm;  /* A6 width */
+    height: 148mm; /* A6 height */
+    box-sizing: border-box;
+}
 
-    /* This div is 1/4 of A4 (A6 size) and placed at top-left corner */
-    .quarter-page {
-        width: 105mm;      /* half of A4 width */
-        height: 148mm;     /* half of A4 height */
-        padding: 6mm;
-        box-sizing: border-box;
-        position: relative;
-        border: 1px solid #ccc; /* guide border; remove later */
-        overflow: hidden;
-        page-break-after: always;
-    }
+.quarter-page {
+    width: 100%;   /* fill body */
+    height: 100%;
+    padding: 6mm;
+    box-sizing: border-box;
+    position: relative;
+    border: 1px solid #ccc; /* remove if you don't want border in print */
+    overflow: hidden;
+    page-break-after: always;
+}
+
 
     h2, h3 {
         text-align: center;
@@ -131,17 +131,25 @@ if (!$consultations) die("No record found.");
         width: 35px;
         height: 35px;
     }
+     .signature-line {
+            border-top: 0.5px solid #000;
+            width: 200px;
+            margin-left: 0;
+            margin-bottom: 5px;
+        }
 
-    @media print {
-        body {
-            margin: 0;
-            padding: 0;
-        }
-        .quarter-page {
-            border: none; /* remove border on print */
-            page-break-inside: avoid;
-        }
+   @media print {
+    body {
+        margin: 0;
+        padding: 0;
+        width: 105mm;
+        height: 148mm;
     }
+    .quarter-page {
+        border: none; /* remove border when printing */
+        page-break-inside: avoid;
+    }
+}
 </style>
 
 
@@ -155,11 +163,11 @@ function headerSection($consultation) { ?>
           <img src="../../img/RHUlogo.png" alt="RHU Logo" class="print-logo" style="height: 50px; width: auto;" />
         <h3>Republic of the Philippines</h3>
         <p style="margin-top: -5px;">Province of Camarines Norte</p>
-        <h3 style="margin-top: -5px;">Municipality of Daet</h3>
-        <div class="info">
+        <h3 style="margin-top: -10px;">Municipality of Daet</h3>
+        <div class="info" style="margin-top: -2px;">
            <span class="label"></span> <?= htmlspecialchars($consultation['rhu'] ?? 'N/A') ?>
         </div>
-        <br><br>
+        <br>
     </div>
 <?php } ?>
 
@@ -172,7 +180,11 @@ function headerSection($consultation) { ?>
     <div class="section">
 
         <h3>Instructions (Patient's Copy)</h3><br><br>
-        <div class="info"><span class="label">Consultation Date:</span> <?= htmlspecialchars($consultations[0]['consultation_date']) ?></div><br>
+        <div class="info">
+    <span class="label">Consultation Date:</span> 
+    <?= date("F j, Y", strtotime($consultations[0]['consultation_date'])) ?>
+</div>
+<br>
         <div class="info"><span class="label">Patient:</span> <?= htmlspecialchars($consultations[0]['patient_name']) ?></div>
         <div class="info"><span class="label">Address:</span> <?= htmlspecialchars($consultations[0]['address']) ?></div>
 
@@ -220,13 +232,17 @@ function headerSection($consultation) { ?>
 
    
         <h2>Prescription</h2><br>
-        <img src="../../img/rx.png" alt="Rx" style="width:50px;height:50px;"><br><br>
+        <img src="../../img/rx.png" alt="Rx" style="width:45px;height:45px;"><br><br>
 
         <div class="info"><span class="label">Patient:</span> <?= htmlspecialchars($consultations[0]['patient_name']) ?></div>
         <div class="info"><span class="label">Address:</span> <?= htmlspecialchars($consultations[0]['address']) ?></div>
         <div class="info"><span class="label">Age:</span> <?= htmlspecialchars($consultations[0]['age']) ?> |
         <span class="label">Sex:</span> <?= htmlspecialchars($consultations[0]['sex']) ?></div>
-        <div class="info"><span class="label">Consultation Date:</span> <?= htmlspecialchars($consultations[0]['consultation_date']) ?></div>
+       <div class="info">
+    <span class="label">Consultation Date:</span> 
+    <?= date("F j, Y", strtotime($consultations[0]['consultation_date'])) ?>
+</div> <br>
+
 
         <h3>Prescribed Medicines:</h3>
         <table>
@@ -248,8 +264,19 @@ function headerSection($consultation) { ?>
             </tbody>
         </table><br><br>
 
-        <div class="info"><span class="label">Physician:</span> <?= htmlspecialchars($prescriptions[0]['physician_name']) ?></div>
-        <div class="info"><span class="label">License No.:</span> <?= htmlspecialchars($prescriptions[0]['physician_license']) ?></div>
+             <div class="signature">
+             <div class="signature-title">Signature:</div> <br> <br> <br>
+            <div class="signature-line"></div>
+           <div class="info">
+    <span class="label"></span> 
+    <strong><?= strtoupper(htmlspecialchars($prescriptions[0]['physician_name'])) ?></strong>
+</div>
+             <div class="info"><span class="label" style="font-weight: 500; font-size: 7pt; margin-top: -5px;"><i>Physician</i></div>
+            <div class="info" style="font-weight: 500; font-size: 7pt; margin-top: -5px;">License No.: <?= htmlspecialchars($prescriptions[0]['physician_license']) ?></div>
+        </div> <br>
+
+        
+        
     </div>  </div>
 <?php endif; ?>
 

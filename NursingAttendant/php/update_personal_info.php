@@ -1,5 +1,7 @@
 <?php
+session_start();
 require '../../php/db_connect.php';
+require '../../ADMIN/php/log_functions.php';
 
 ob_start();
 error_reporting(E_ALL);
@@ -11,7 +13,7 @@ $log_file = "../../logs/debug.log";
 // Read and decode input
 $input = json_decode(file_get_contents('php://input'), true);
 
-// Log the raw input to check what data is being sent
+// Log the raw input
 file_put_contents($log_file, "[RAW INPUT] " . print_r($input, true) . "\n", FILE_APPEND);
 
 // === REQUIRED FIELDS VALIDATION ===
@@ -26,25 +28,42 @@ $requiredFields = [
 
 $missingFields = [];
 foreach ($requiredFields as $field) {
-    if (!isset($input[$field]) || trim($input[$field]) === '') {
+    $value = isset($input[$field]) ? trim((string)$input[$field]) : '';
+    if ($value === '' || $value === 'N/A' || $value === null) {  // Allow empty for optional fields
         $missingFields[] = $field;
     }
 }
 
 if (!empty($missingFields)) {
     ob_clean();
+    file_put_contents($log_file, "[ERROR] Missing required fields: " . implode(', ', $missingFields) . " | Input: " . print_r($input, true) . "\n", FILE_APPEND);
     echo json_encode([
         'success' => false,
-        'error' => 'Missing required fields: ' . implode(', ', $missingFields)
+        'error' => 'Missing required fields: ' . implode(', ', $missingFields),
+        'debug' => $input  // Return the input for debugging
     ]);
     exit;
 }
 
-// Sanitize and typecast patient_id
+// Get user_id from session
+$user_id = $_SESSION['user_id'] ?? null;
+
+if (!$user_id) {
+    ob_clean();
+    file_put_contents($log_file, "[ERROR] User not logged in\n", FILE_APPEND);
+    echo json_encode([
+        'success' => false,
+        'error' => 'User not logged in'
+    ]);
+    exit;
+}
+
 $patient_id = (int)$input['patient_id'];
 
+file_put_contents($log_file, "[PATIENT_ID] " . $patient_id . "\n", FILE_APPEND);
+file_put_contents($log_file, "[USER_ID] " . $user_id . "\n", FILE_APPEND);
+
 try {
-    // Start transaction
     $pdo->beginTransaction();
 
     // Check if patient exists
@@ -54,12 +73,15 @@ try {
 
     if (!$patient) {
         ob_clean();
+        file_put_contents($log_file, "[ERROR] Patient ID $patient_id not found\n", FILE_APPEND);
         echo json_encode([
             'success' => false,
             'error' => 'Patient not found'
         ]);
         exit;
     }
+
+    file_put_contents($log_file, "[SUCCESS] Patient found, updating...\n", FILE_APPEND);
 
     // Prepare update query
     $stmt = $pdo->prepare("
@@ -86,13 +108,13 @@ try {
     ");
 
     $patientParams = [
-        'first_name' => $input['first_name'],
-        'last_name' => $input['last_name'],
+        'first_name' => $input['first_name'] ?? null,
+        'last_name' => $input['last_name'] ?? null,
         'middle_name' => $input['middle_name'] ?? null,
         'extension' => $input['extension'] ?? null,
         'birthplace' => $input['birthplace'] ?? null,
-        'date_of_birth' => $input['date_of_birth'],
-        'address' => $input['address'],
+        'date_of_birth' => $input['date_of_birth'] ?? null,
+        'address' => $input['address'] ?? null,
         'civil_status' => $input['civil_status'] ?? null,
         'contact_number' => $input['contact_number'] ?? null,
         'religion' => $input['religion'] ?? null,
@@ -102,46 +124,40 @@ try {
         'philhealth_member_no' => $input['philhealth_member_no'] ?? null,
         'category' => $input['category'] ?? null,
         'family_serial_no' => $input['family_serial_no'] ?? null,
-        'sex' => $input['sex'],
+        'sex' => $input['sex'] ?? null,
         'fourps_status' => $input['fourps_status'] ?? null,
         'patient_id' => $patient_id
     ];
 
+    file_put_contents($log_file, "[PARAMS] " . print_r($patientParams, true) . "\n", FILE_APPEND);
+
     $stmt->execute($patientParams);
+    $rowsAffected = $stmt->rowCount();
 
+    file_put_contents($log_file, "[ROWS_AFFECTED] " . $rowsAffected . "\n", FILE_APPEND);
 
-
-    //ADDED UPDATED PATIENT INFO FOR ACTIVITY LOG
-    $stmt_log2 = $pdo->prepare("INSERT INTO logs (
-        user_id, action, performed_by, user_affected
-    ) VALUES (
-        :user_id, :action, :performed_by, :user_affected
-    )");
-
-    $stmt_log2->execute([
-        ':user_id' => $user_id,
-        ':action' => "Updated Patient Information",
-        ':performed_by' => $user_id,
-        ':user_affected' => $patient_id
-    ]);
-    
-    
+    if (function_exists('logActivity')) {
+        logActivity($pdo, $user_id, "Updated Patient Information for Patient ID: $patient_id");
+    }
 
     $pdo->commit();
 
-    // Send success response
+    file_put_contents($log_file, "[COMMIT] Success!\n", FILE_APPEND);
+
     ob_clean();
-    echo json_encode(['success' => true]);
+    echo json_encode(['success' => true, 'message' => 'Patient updated successfully']);
     exit;
 
 } catch (Exception $e) {
-    $pdo->rollBack();
+    if (isset($pdo)) {
+        $pdo->rollBack();
+    }
     error_log("Update Error: " . $e->getMessage(), 3, "../../logs/error.log");
     file_put_contents($log_file, "[EXCEPTION] " . $e->getMessage() . "\n", FILE_APPEND);
     ob_clean();
     echo json_encode([
         'success' => false,
-        'error' => 'Internal Server Error'
+        'error' => 'Internal Server Error: ' . $e->getMessage()
     ]);
     exit;
 }

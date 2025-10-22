@@ -5,7 +5,7 @@
 	margin: 0;
 	padding: 0;
 	box-sizing: border-box;
-}
+} 
 
 a {
 	text-decoration: none;
@@ -474,7 +474,6 @@ body {
 	pointer-events: unset;
 }
 
-
 /*LOGS*/
 .pending-approvals-container {
     width: 100%;
@@ -490,11 +489,10 @@ body {
 }
 
 .logs-header h2 {
-    margin: 20px 0; /* Adds margin above and below */
-    font-size: 36px; /* Makes the text larger */
-    font-weight: bold; 
-    font-family: Arial, Helvetica, sans-serif;
-}
+    margin: 20px 0; 
+    font-size: 36px; 
+     font-family: var(--poppins);
+} 
 
 
 .logs-subtext {
@@ -545,10 +543,31 @@ body {
     background-color: #eaeaea;
 }
 
+.logs-summary {
+    margin-top: 20px;
+    padding: 15px 0;
+    border-top: 1px solid #e5e7eb;
+    font-size: 14px;
+    color: #374151;
+    font-family: var(--poppins);
+}
+
+.logs-summary p {
+    margin: 0;
+    line-height: 1.6;
+}
+
+.logs-summary strong {
+    font-weight: 600;
+    color: #1f2937;
+}
+
+/* Enhanced Filter Styles - Add these to your existing approval.css */
+
 .logs-filter-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 12px;
+    gap: 16px;
     max-width: 700px;
     margin-left: 0;
     margin-bottom: 20px;
@@ -561,32 +580,90 @@ body {
 
 .form-group label {
     font-size: 13px;
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 6px;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .form-group select,
-.form-group input{
-    padding: 10px;
-    border: 1px solid #ccc;
+.form-group input {
+    padding: 11px 12px;
+    border: 2px solid #e5e7eb;
     border-radius: 6px;
     font-size: 14px;
+    font-family: var(--poppins);
+    background-color: #ffffff;
+    color: #1f2937;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.form-group select {
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231c538a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 18px;
+    padding-right: 36px;
+}
+
+.form-group select:hover,
+.form-group input:hover {
+    border-color: #1c538a;
+    box-shadow: 0 0 0 3px rgba(28, 83, 138, 0.08);
+}
+
+.form-group select:focus,
+.form-group input:focus {
+    outline: none;
+    border-color: #1c538a;
+    box-shadow: 0 0 0 3px rgba(28, 83, 138, 0.12);
+}
+
+.form-group select option {
+    padding: 10px;
+    background-color: #ffffff;
+    color: #1f2937;
+    font-family: var(--poppins);
+}
+
+.form-group select option:checked {
+    background: linear-gradient(#CFE8FF, #CFE8FF);
+    background-color: #CFE8FF;
+    color: #1c538a;
+    font-weight: 600;
+}
+
+.form-group select optgroup {
+    background-color: #f3f4f6;
+    color: #6b7280;
+    font-weight: 600;
 }
 
 .form-group button {
-    background-color: #333;
-    color: #fff;
+    background: linear-gradient(135deg, #1c538a 0%, #154070 100%);
+    color: #ffffff;
     font-weight: 600;
     cursor: pointer;
-	padding: 10px;
-    transition: background-color 0.3s ease;
-	width: 100px;
-	border-radius: 6px;
+    padding: 11px 20px;
+    transition: all 0.3s ease;
+    width: 100px;
+    border-radius: 6px;
+    border: none;
+    box-shadow: 0 4px 12px rgba(28, 83, 138, 0.25);
 }
 
 .form-group button:hover {
-    background-color: #1d1d1d;
+    background: linear-gradient(135deg, #154070 0%, #0d2a4d 100%);
+    box-shadow: 0 6px 16px rgba(28, 83, 138, 0.35);
+    transform: translateY(-1px);
+}
+
+.form-group button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(28, 83, 138, 0.25);
 }
 
 .icon-btn {
@@ -1024,3 +1101,4 @@ td {
     opacity: 0.9;
     transform: scale(1.05);
 }
+

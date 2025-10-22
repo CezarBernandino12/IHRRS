@@ -40,7 +40,7 @@ html {
     margin: 20px 10px; /* Adds margin above and below */
     font-size: 36px; /* Makes the text larger */
     font-weight: bold; 
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: var(--poppins);
 }
 
 body.dark {

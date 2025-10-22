@@ -235,6 +235,7 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     </tbody>
                 </table>
                 
+
 <tfoot>
     <tr>
         <td colspan="5" class="pagination-container" data-total="<?php echo $totalUsers; ?>">
@@ -242,15 +243,20 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 Showing <span id="startRecord">1</span> to <span id="displayedUsers"><?php echo min(count($users), $totalUsers); ?></span> of <span id="totalUsers"><?php echo $totalUsers; ?></span> users
             </div>
             <div class="pagination-controls">
-            
+                <button id="prevBtn" class="pagination-btn prev-btn hidden" style="margin-right: 10px;">
+                    <i class='bx bx-chevron-left'></i> Previous
+                </button>
 
                 <button id="nextBtn" class="pagination-btn next-btn" <?php echo ($totalUsers <= $limit) ? 'disabled' : ''; ?>>
-                    Load More <i class='bx bx-chevron-right'></i>
+                    Next <i class='bx bx-chevron-right'></i>
                 </button>
             </div>
         </td>
     </tr>
-</tfoot>            </div>
+</tfoot>
+
+
+</div>
 
             
 
@@ -501,6 +507,22 @@ document.addEventListener("DOMContentLoaded", () => {
   // keep the rest of your existing code (auth, stats, modals, etc.)
 });
 </script>
+    <script>
+        // Fetch and display user name
+        fetch('getUserName.php')
+            .then(response => response.json())
+            .then(data => {
+                if (data.full_name) {
+                    document.getElementById('userGreeting').textContent = `Hello, ${data.full_name}!`;
+                } else {
+                    document.getElementById('userGreeting').textContent = 'Hello, Admin!';
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching user name:', error);
+                document.getElementById('userGreeting').textContent = 'Hello, Admin!';
+            });
+    </script>
     <script src="../js/admin_user.js"></script>
 </body>
 </html> 

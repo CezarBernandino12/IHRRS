@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="css/logout.css">
     <!-- Flatpickr CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <title>Issue Medical Certificate</title>
 </head>
 <body>
@@ -95,11 +97,11 @@
             </div>
 
             <div class="patient-record-container">
-                <div class="patient-name-container">
+                <div class="patient-name-container" style="box-shadow:#05366e4b 0px 0px 8px; padding: 20px; border-radius: 8px;">
                     <span class="patient-name-label">PATIENT NAME</span>
-                    <div class="patient-name">
+                    <div class="patient-name" style="height: 40px; margin-top: 5px;">
                         <div class="name-part">
-                            <span class="patient-full-name" id="patientName">Loading...</span>
+                            <span class="patient-full-name" id="patientName" style="font-size: 25px;">Loading...</span>
                         </div>
                     </div>
                 </div>
@@ -128,7 +130,7 @@
                         <div class="form-group">
                             <label for="diagnosis">Diagnosis/Condition <span class="required">*</span></label>
                             <textarea id="diagnosis" name="diagnosis" rows="3" required 
-                                placeholder="e.g., Acute Respiratory Infection"></textarea>
+                                placeholder="e.g., Acute Respiratory Infection" readonly></textarea>
                         </div>
 
                         <div class="form-group">
@@ -139,8 +141,24 @@
 
                         <div class="form-group">
                             <label for="purpose">Purpose</label>
-                            <input type="text" id="purpose" name="purpose" 
-                                placeholder="e.g., For work requirement">
+                            <select id="purpose" name="purpose" class="form-control" required>
+                                <option value="" disabled selected hidden>Select purpose...</option>
+                                <option value="For work requirement">For work requirement</option>
+                                <option value="For travel requirement">For travel requirement</option>
+                                <option value="For school requirement">For school requirement</option>
+                                <option value="For insurance claim">For insurance claim</option>
+                                <option value="For employment application">For employment application</option>
+                                <option value="For medical leave">For medical leave</option>
+                                <option value="For fitness to work">For fitness to work</option>
+                                <option value="For sports participation">For sports participation</option>
+                                <option value="For driver's license application">For driver's license application</option>
+                                <option value="For police or court requirement">For police or court requirement</option>
+                                <option value="For visa or immigration requirement">For visa or immigration requirement</option>
+                                <option value="For hospitalization or confinement">For hospitalization or confinement</option>
+                                <option value="For SSS or PhilHealth claim">For SSS or PhilHealth claim</option>
+                                <option value="For barangay clearance requirement">For barangay clearance requirement</option>
+                                <option value="For others">Others (specify)</option>
+                            </select>
                         </div>
                     </div>
 
@@ -149,8 +167,40 @@
                         
                         <div class="form-group">
                             <label for="rest_period_days">Number of Days Rest</label>
-                            <input type="number" id="rest_period_days" name="rest_period_days" 
+                            <select type="number" id="rest_period_days" name="rest_period_days" 
                                 min="0" placeholder="">
+                                <option value="" disabled selected hidden>Select days...</option>
+                                <option value="1">1 day</option>
+                                <option value="2">2 days</option>
+                                <option value="3">3 days</option>
+                                <option value="4">4 days</option>
+                                <option value="5">5 days</option>
+                                <option value="6">6 days</option>
+                                <option value="7">7 days</option>
+                                <option value="8">8 days</option>
+                                <option value="9">9 days</option>
+                                <option value="10">10 days</option>
+                                <option value="11">11 days</option>
+                                <option value="12">12 days</option>
+                                <option value="13">13 days</option>
+                                <option value="14">14 days</option>
+                                <option value="15">15 days</option>
+                                <option value="16">16 days</option>
+                                <option value="17">17 days</option>
+                                <option value="18">18 days</option>
+                                <option value="19">19 days</option>
+                                <option value="20">20 days</option>
+                                <option value="21">21 day</option>
+                                <option value="22">22 days</option>
+                                <option value="23">23 days</option>
+                                <option value="24">24 days</option>
+                                <option value="25">25 days</option>
+                                <option value="26">26 days</option>
+                                <option value="27">27 days</option>
+                                <option value="28">28 days</option>
+                                <option value="29">29 days</option>
+                                <option value="30">30 days</option>
+                            </select>
                         </div>
 
                         <div class="form-row">
@@ -166,22 +216,20 @@
                         </div>
                     </div>
 
+                    <!-- UPDATED PHYSICIAN SECTION -->
                     <div class="form-section">
-                        <h3>Issued By</h3>
+                        <h3>Physician</h3>
                         
                         <div class="form-group">
-                            <label for="issued_by_name">Health Officer Name <span class="required">*</span></label>
-                            <input type="text" id="issued_by_name" name="issued_by_name" required readonly>
-                        </div>
-
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="license_no">License No.</label>
-                                <input type="text" id="license_no" name="license_no" 
-                                    placeholder="">
-                            </div>
+                            <label for="physician_select">Physician Name <span class="required">*</span></label>
+                            <select id="physician_select" name="physician" required>
+                                <option value="" disabled selected hidden>Select a physician...</option>
+                            </select>
+                            <small id="rhu_info" style="color: #666; font-size: 12px; margin-top: 5px; display: block;"></small>
                         </div>
                     </div>
+
+                    <input type="hidden" id="user_id" name="user_id">
 
                     <div class="form-actions">
                         <button type="button" class="button button-secondary" onclick="goBack()">Cancel</button>
@@ -305,28 +353,39 @@
                 })
                 .then(data => {
                     console.log('Received data:', data);
-                    
+
                     const select = document.getElementById('visitSelect');
                     select.innerHTML = '<option value="" disabled selected hidden>Select a visit...</option>';
-                    
+
+                    // Store diagnoses by visit_id
+                    const diagnosisMap = {};
+
                     if (data.error) {
                         console.error('Server error:', data.error);
                         alert('Error: ' + data.error);
                         select.innerHTML = '<option value="">Error loading visits</option>';
                         return;
                     }
-                    
+
                     if (data.visits && data.visits.length > 0) {
                         data.visits.forEach(visit => {
                             const option = document.createElement('option');
                             option.value = visit.visit_id;
-                            
+
                             const visitDate = formatDate(visit.visit_date);
-                            const complaints = visit.chief_complaints || 'No complaints recorded';
-                            const remarks = visit.remarks ? ` - ${visit.remarks}` : '';
-                            
-                            option.textContent = `${visitDate} - ${complaints}${remarks}`;
+                            const diagnosis = visit.diagnosis || 'No diagnosis recorded';
+
+                            option.textContent = `${visitDate} - ${diagnosis}`;
                             select.appendChild(option);
+
+                            // Store diagnosis for this visit
+                            diagnosisMap[visit.visit_id] = visit.diagnosis || '';
+                        });
+
+                        // Listen for changes to update diagnosis field
+                        select.addEventListener('change', function() {
+                            const selectedId = this.value;
+                            document.getElementById('diagnosis').value = diagnosisMap[selectedId] || '';
                         });
                     } else {
                         select.innerHTML = '<option value="">No visits found for this patient</option>';
@@ -341,17 +400,63 @@
                 });
         }
 
+        // UPDATED FUNCTION
         function loadUserInfo() {
+            // Get user's full name for greeting
             fetch('php/getUserName.php')
                 .then(response => response.json())
                 .then(data => {
                     if (data.full_name) {
-                        document.getElementById('issued_by_name').value = data.full_name;
                         document.getElementById('userGreeting').textContent = `Hello, ${data.full_name}!`;
                     }
                 })
                 .catch(error => {
                     console.error('Error loading user info:', error);
+                });
+            
+            // Load doctors from the same RHU
+            loadRHUDoctors();
+        }
+
+        // NEW FUNCTION
+        function loadRHUDoctors() {
+            fetch('php/get_rhu_doctors.php')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        alert('Error loading doctors: ' + data.error);
+                        return;
+                    }
+
+                    const select = document.getElementById('physician_select');
+                    const rhuInfo = document.getElementById('rhu_info');
+                    
+                    select.innerHTML = '<option value="" disabled selected hidden>Select a physician...</option>';
+                    
+                    if (data.doctors && data.doctors.length > 0) {
+                        data.doctors.forEach(doctor => {
+                            const option = document.createElement('option');
+                            option.value = doctor.user_id;
+                            
+                            let displayText = doctor.full_name;
+                            if (doctor.license_number) {
+                                displayText += ` (Lic. #${doctor.license_number})`;
+                            }
+                            
+                            option.textContent = displayText;
+                            select.appendChild(option);
+                        });
+                        
+                        rhuInfo.textContent = `Showing doctors from ${data.user_rhu}`;
+                    } else {
+                        select.innerHTML = '<option value="">No doctors available in your RHU</option>';
+                        rhuInfo.textContent = `No doctors found in ${data.user_rhu}`;
+                        alert(`No doctors are currently available in ${data.user_rhu}. Please contact your administrator.`);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading doctors:', error);
+                    alert('Failed to load doctors list');
                 });
         }
 
@@ -379,12 +484,19 @@
             }
         }
 
+        // UPDATED FORM SUBMISSION
         document.getElementById('medCertForm').addEventListener('submit', function(e) {
             e.preventDefault();
 
             const visitId = document.getElementById('visitSelect').value;
             if (!visitId) {
                 alert('Please select a visit/consultation');
+                return;
+            }
+
+            const physicianId = document.getElementById('physician_select').value;
+            if (!physicianId) {
+                alert('Please select a physician');
                 return;
             }
 
@@ -444,19 +556,6 @@
             }
         }
 
-        // Check if user is logged in
-        fetch('php/getUserId.php')
-            .then(response => response.json())
-            .then(data => {
-                if (data.error) {
-                    window.location.href = '../role.html';
-                }
-            })
-            .catch(error => {
-                console.error('Error checking session:', error);
-                window.location.href = '../role.html';
-            });
-
         document.getElementById("updateReferrals").addEventListener("click", function (event) {
             event.preventDefault();
             fetch("php/update_referrals.php")
@@ -470,6 +569,21 @@
                 window.location.href = "pending.html";
             });
         });
+
+        // Check if user is logged in
+        fetch('php/getUserId.php')
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    window.location.href = '../role.html';
+                } else {
+                    document.getElementById('user_id').value = data.user_id;
+                }
+            })
+            .catch(error => {
+                console.error('Error checking session:', error);
+                window.location.href = '../role.html';
+            });
     </script>
 
     <style>

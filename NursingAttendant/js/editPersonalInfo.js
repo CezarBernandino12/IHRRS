@@ -1,297 +1,276 @@
-
 document.addEventListener("DOMContentLoaded", function () {
     const form = document.querySelector("form");
     const submitBtn = document.getElementById("submitButton");
-    const referralInput = document.querySelector('input[name="referral_status"]');
 
     // Modals
     const modal1 = document.getElementById("myModal");
     const modal2 = document.getElementById("myModal2");
     const modal3 = document.getElementById("myModal3");
 
-
-    // Buttons inside modals
+    // Buttons inside modals - with null checks
     const yesBtn = document.getElementById("yesButton");
-
     const cancelBtn = document.getElementById("cancelBtn");
-
-    const exitBtn = document.getElementById("exitButton");
     const closeBtn = document.getElementById("closeBtn");
     const closeBtn2 = document.getElementById("closeBtn2");
     const closeBtn3 = document.getElementById("closeBtn3");
 
+    // Add event listeners only if elements exist
+    if (closeBtn) {
+        closeBtn.addEventListener("click", () => {
+            if (modal1) modal1.style.display = "none";
+        });
+    }
 
- closeBtn.addEventListener("click", () => {
-        modal1.style.display = "none";
-    });
+    if (closeBtn2) {
+        closeBtn2.addEventListener("click", () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const patientId = urlParams.get('patient_id');
+            window.location.href = `record.html?patient_id=${patientId}`;
+        });
+    }
 
-    closeBtn2.addEventListener("click", () => {
-       window.history.back();
-    });
-
-    closeBtn3.addEventListener("click", () => {
-        modal3.style.display = "none";
-    });
-
-
+    if (closeBtn3) {
+        closeBtn3.addEventListener("click", () => {
+            if (modal3) modal3.style.display = "none";
+        });
+    }
 
     // Show modal1 on submit
-    submitBtn.addEventListener("click", function (e) {
-        e.preventDefault(); // prevent form from submitting
-        modal1.style.display = "block";
-    });
+    if (submitBtn) {
+        submitBtn.addEventListener("click", function (e) {
+            e.preventDefault();
+            if (modal1) modal1.style.display = "block";
+        });
+    }
 
     // Modal1 button actions
-    yesBtn.addEventListener("click", () => {
-     
-        modal1.style.display = "none";
-      
+    if (yesBtn) {
+        yesBtn.addEventListener("click", () => {
+            if (modal1) modal1.style.display = "none";
 
-          // --- Your referral-saving logic starts here ---
-        const urlParams = new URLSearchParams(window.location.search);
-        const patientId = urlParams.get('patient_id');
-        console.log("Patient ID:", patientId);
-    
-        // Set hidden input
-        document.getElementById("patientIdField").value = patientId;
-    
-        const updatedData = {
-            patient_id: document.getElementById("patientIdField").value,
-            first_name: document.querySelector(".patient-first-name")?.value || "",
-            last_name: document.querySelector(".patient-last-name")?.value || "",
-            middle_name: document.querySelector(".patient-middle-name")?.value || "",
-            extension: document.querySelector(".patient-extension")?.value || "",
-            birthplace: document.querySelector(".patient-bh-placeirt")?.value || "",
-            date_of_birth: document.querySelector(".date-of-birth")?.value || "",
-            address: document.querySelector(".address")?.value || "",
-            civil_status: document.querySelector(".civil-status")?.value || "",
-            contact_number: document.querySelector(".contact-number")?.value || "",
-            religion: document.querySelector(".religion")?.value || "",
-            occupation: document.querySelector(".occupation")?.value || "",
-            educational_attainment: document.querySelector(".educational-attainment")?.value || "",
-            birth_weight: document.querySelector(".birth-weight")?.value || "",
-            philhealth_member_no: document.querySelector(".philhealth-member-no")?.value || "",
-            category: document.querySelector(".category")?.value || "",
-            family_serial_no: document.querySelector(".family-serial-no")?.value || "",
-            sex: document.querySelector(".sex")?.value || "",
-            fourps_status: document.querySelector(".fourps-status")?.value || ""
-        };
-    
-        console.log("Sending data:", updatedData);
-    
-        fetch("php/update_personal_info.php", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(updatedData)
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
+            const urlParams = new URLSearchParams(window.location.search);
+            const patientId = urlParams.get('patient_id');
+            console.log("Patient ID:", patientId);
+
+            if (!patientId) {
+                alert("Patient ID not found in URL");
+                return;
             }
-            return response.text();
-        })
-        .then(responseText => {
-            try {
-                const result = JSON.parse(responseText);
+
+            // Set hidden input
+            const patientIdField = document.getElementById("patientIdField");
+            if (patientIdField) {
+                patientIdField.value = patientId;
+            }
+
+            // Get sex value from radio buttons
+            const sexRadio = document.querySelector('input[name="sex"]:checked');
+            const sexValue = sexRadio ? sexRadio.value : "";
+
+            // Get 4ps value from radio buttons
+            const fourpsRadio = document.querySelector('input[name="fourps_status"]:checked');
+            const fourpsValue = fourpsRadio ? fourpsRadio.value : "";
+
+            const updatedData = {
+                patient_id: patientId,
+                first_name: (document.querySelector(".patient-first-name")?.value || "").trim(),
+                last_name: (document.querySelector(".patient-last-name")?.value || "").trim(),
+                middle_name: (document.querySelector(".patient-middle-name")?.value || "").trim(),
+                extension: (document.querySelector(".patient-extension")?.value || "").trim(),
+                birthplace: (document.querySelector(".patient-birth-place")?.value || "").trim(),
+                date_of_birth: (document.querySelector(".date-of-birth")?.value || "").trim(),
+                address: (document.querySelector("#permanent_address_combined")?.value || "").trim(),
+                civil_status: (document.querySelector(".civil-status")?.value || "").trim(),
+                contact_number: (document.querySelector(".contact-number")?.value || "").trim(),
+                religion: (document.querySelector(".religion")?.value || "").trim(),
+                occupation: (document.querySelector(".occupation")?.value || "").trim(),
+                educational_attainment: (document.querySelector(".educational-attainment")?.value || "").trim(),
+                birth_weight: (document.querySelector(".birth-weight")?.value || "").trim(),
+                philhealth_member_no: (document.querySelector(".philhealth-member-no")?.value || "").trim(),
+                category: (document.querySelector(".category")?.value || "").trim(),
+                family_serial_no: (document.querySelector(".family-serial-no")?.value || "").trim(),
+                sex: sexValue,
+                fourps_status: fourpsValue
+            };
+
+            console.log("=== DEBUGGING DATA ===");
+            console.log("All data being sent:", updatedData);
+            console.log("=== END DEBUG ===");
+
+            fetch("php/update_personal_info.php", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(updatedData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(result => {
                 console.log("Update Response:", result);
                 if (result.success) {
-                    alert("Record updated successfully!");
-                    modal2.style.display = "block";
+                    if (modal2) modal2.style.display = "block";
                 } else {
-                    alert("Failed to update record: " + (result.message || "Ensure complete details."));
-                    modal3.style.display = "block";
+                    alert("Failed to update record: " + (result.error || "Ensure complete details."));
+                    if (modal3) modal3.style.display = "block";
                 }
-            } catch (e) {
-                console.error("Error parsing JSON:", e);
-                alert("Response was not valid JSON. See console for details.");
-            }
-        })
-        .catch(error => {
-            console.error("Error updating visit info:", error);
-            alert("An error occurred while updating. Check console for details.");
+            })
+            .catch(error => {
+                console.error("Error updating visit info:", error);
+                alert("An error occurred while updating. Check console for details.");
+                if (modal3) modal3.style.display = "block";
+            });
         });
+    }
 
-    });
-
-    
-
-    cancelBtn.addEventListener("click", () => {
-        modal1.style.display = "none";
-    });
-
-  
-    
-
-    noBtn2.addEventListener("click", () => {
-        modal2.style.display = "none";
-
-    });
-
-    // Modal3 View Details
-    viewDetailsBtn.addEventListener("click", () => {
-        modal3.style.display = "none";
-        // Redirect or show details (customize as needed)
-        alert("Viewing Details...");
-    });
-
-    // Modal5 Exit
-    exitBtn.addEventListener("click", () => {
-        modal5.style.display = "none";
-        // You can reset the form or redirect here
-        form.reset();
-    });
-
-    // Close buttons for all modals
-    closeBtns.forEach(btn => {
-        btn.addEventListener("click", function () {
-            btn.closest(".modal").style.display = "none";
+    if (cancelBtn) {
+        cancelBtn.addEventListener("click", () => {
+            if (modal1) modal1.style.display = "none";
         });
-    });
+    }
 
-    // Optional: Close modals when clicking outside of them
+    // Close modals when clicking outside of them
     window.addEventListener("click", function (e) {
         document.querySelectorAll(".modal").forEach(modal => {
             if (e.target === modal) {
                 modal.style.display = "none";
+                if (modal === modal2) {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const patientId = urlParams.get('patient_id');
+                    window.location.href = `record.html?patient_id=${patientId}`;
+                }
             }
         });
     });
-});
 
+    // Load patient data
+    const urlParams = new URLSearchParams(window.location.search);
+    const patient_id = urlParams.get("patient_id");
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    // Function to get query parameter from URL
-     function getQueryParam(param) {
-        const urlParams = new URLSearchParams(window.location.search);
-        return urlParams.get(param);
-      }
-      
-      
-      
-              
+    if (patient_id) {
+        fetch(`php/patient_details.php?patient_id=${patient_id}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("Received Data:", data);
+
+                if (!data || data.error) {
+                    console.error("Error:", data.error || "No data received.");
+                    return;
+                }
+
+                // Populate Patient Information
+                if (data.patient) {
+                    populateInput(".patient-first-name", data.patient.first_name);
+                    populateInput(".patient-last-name", data.patient.last_name);
+                    populateInput(".patient-middle-name", data.patient.middle_name);
+                    populateInput(".patient-extension", data.patient.extension);
+                    populateInput(".patient-birth-place", data.patient.birthplace);
+                    populateInput(".date-of-birth", data.patient.date_of_birth, "date");
+
+                    const age = calculateAge(data.patient.date_of_birth);
+                    populateInput(".age", age);
+
+                    // Populate address components
+                    populateAddressFromFull(data.patient.address);
+
+                    populateSelect(".civil-status", data.patient.civil_status);
+                    populateInput(".contact-number", data.patient.contact_number);
+                    populateSelect(".religion", data.patient.religion);
+                    populateInput(".occupation", data.patient.occupation);
+                    populateSelect(".educational-attainment", data.patient.educational_attainment);
+                    populateInput(".birth-weight", data.patient.birth_weight);
+                    populateInput(".philhealth-member-no", data.patient.philhealth_member_no);
+                    populateSelect(".category", data.patient.category);
+                    populateInput(".family-serial-no", data.patient.family_serial_no);
+                    
+                    // Set radio buttons
+                    if (data.patient.sex) {
+                        const sexRadio = document.querySelector(`input[name="sex"][value="${data.patient.sex}"]`);
+                        if (sexRadio) sexRadio.checked = true;
+                    }
+
+                    if (data.patient.fourps_status) {
+                        const fourpsRadio = document.querySelector(`input[name="fourps_status"][value="${data.patient.fourps_status}"]`);
+                        if (fourpsRadio) fourpsRadio.checked = true;
+                    }
+                }
+            })
+            .catch(error => {
+                console.error("Error fetching visit info:", error);
+                alert("An error occurred while fetching the visit info.");
+            });
+    }
+
+    function populateInput(selector, value, type = "text") {
+        const element = document.querySelector(selector);
+        if (element) {
+            if (element.tagName === "INPUT" || element.tagName === "TEXTAREA") {
+                if (type === "date" && value) {
+                    element.value = formatDate(value);
+                } else {
+                    element.value = value || "";
+                }
+            }
+        }
+    }
+
+    function populateSelect(selector, value) {
+        const element = document.querySelector(selector);
+        if (element) {
+            const exists = Array.from(element.options).some(opt => opt.value === value);
+            if (exists) {
+                element.value = value;
+            } else if (value) {
+                // Add as new option if it doesn't exist
+                const newOption = new Option(value, value, true, true);
+                element.appendChild(newOption);
+                element.value = value;
+            }
+        }
+    }
+
+    function populateAddressFromFull(fullAddress) {
+        if (!fullAddress) return;
+
+        // Parse the full address (format: "Purok/Street, Barangay, City, Province, Region")
+        const parts = fullAddress.split(",").map(p => p.trim());
         
-      
-      
-          document.addEventListener("DOMContentLoaded", function() {
-            // Get patient_id from the URL
-            const urlParams = new URLSearchParams(window.location.search);
-            const patient_id = urlParams.get("patient_id");
+        if (parts.length >= 1) {
+            document.getElementById("street").value = parts[0];
+        }
+        
+        // Note: The cascading selects will need to be populated via API calls
+        // For now, we'll just set the street and let the user select the rest
+    }
 
-          if (patient_id) {
-          fetch(`php/patient_details.php?patient_id=${patient_id}`)
-              .then(response => {
-                  // Check if the response is OK (status 200-299)
-                  if (!response.ok) {
-                      throw new Error(`HTTP error! Status: ${response.status} - ${response.statusText}`);
-                  }
-                  return response.text(); // Get raw response as text first
-              })
-              .then(responseText => {
-                  console.log("Raw response:", responseText); // Log raw response to debug
-      
-                  try {
-                      // Try parsing the response as JSON
-                      const data = JSON.parse(responseText);
-                      console.log("Received Data:", data); // ✅ Debugging
-      
-                      if (!data || data.error) {
-                          console.error("Error:", data.error || "No data received.");
-                          return;
-                      }
-      
-      
-                      // ✅ Populate Patient Information
-                      if (data.patient) {
-                          populateInput(".patient-first-name", data.patient.first_name);
-                          populateInput(".patient-last-name", data.patient.last_name);
-                          populateInput(".patient-middle-name", data.patient.middle_name);
-                          populateInput(".patient-extension", data.patient.extension);
-                          populateInput(".patient-birth-place", data.patient.birthplace);
-                          populateInput(".date-of-birth", data.patient.date_of_birth, "date");
-      
-                          // Calculate age
-                          const age = calculateAge(data.patient.date_of_birth);
-                          populateInput(".age", age);
-      
-                          populateInput(".address", data.patient.address);
-                          populateInput(".civil-status", data.patient.civil_status);
-                          populateInput(".contact-number", data.patient.contact_number);
-                          populateInput(".religion", data.patient.religion);
-                          populateInput(".occupation", data.patient.occupation);
-                          populateInput(".educational-attainment", data.patient.educational_attainment);
-                          populateInput(".birth-weight", data.patient.birth_weight);
-                          populateInput(".philhealth-member-no", data.patient.philhealth_member_no);
-                          populateInput(".category", data.patient.category);
-                          populateInput(".family-serial-no", data.patient.family_serial_no);
-                          populateInput(".sex", data.patient.sex);
-                          populateInput(".fourps-status", data.patient.fourps_status);
-                      }
-                  } catch (e) {
-                      // Error parsing JSON or unexpected response structure
-                      console.error("Error parsing JSON:", e);
-                      alert("Response was not valid JSON. See console for details.");
-                  }
-              })
-              .catch(error => {
-                  // Catch network errors or other unexpected issues
-                  console.error("Error fetching visit info:", error);
-                  alert("An error occurred while fetching the visit info. See console for details.");
-              });
-      }
-      
-      
-          // ✅ Function to update input values
-          function populateInput(selector, value, type = "text") {
-              const element = document.querySelector(selector);
-              if (element) {
-                  if (element.tagName === "INPUT" || element.tagName === "TEXTAREA") {
-                      if (type === "date" && value) {
-                          element.value = formatDate(value);
-                      } else {
-                          element.value = value || "";
-                      }
-                  }
-              }
-          }
-      
-          function formatDate(dateString) {
-              if (!dateString) return "";
-              const date = new Date(dateString);
-              return isNaN(date) ? "" : date.toISOString().split("T")[0];
-          }
-      
-          function calculateAge(dob) {
-              if (!dob) return "N/A";
-              const birthDate = new Date(dob);
-              if (isNaN(birthDate)) return "N/A";
-      
-              const today = new Date();
-              let age = today.getFullYear() - birthDate.getFullYear();
-              const monthDiff = today.getMonth() - birthDate.getMonth();
-      
-              if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-                  age--;
-              }
-      
-              return age >= 0 ? age : "N/A";
-          }
-      
-        // ✅ Save Button Functionality
+    function formatDate(dateString) {
+        if (!dateString) return "";
+        const date = new Date(dateString);
+        return isNaN(date) ? "" : date.toISOString().split("T")[0];
+    }
 
-      
-      
-      });
-      
-      
+    function calculateAge(dob) {
+        if (!dob) return "";
+        const birthDate = new Date(dob);
+        if (isNaN(birthDate)) return "";
+
+        const today = new Date();
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const monthDiff = today.getMonth() - birthDate.getMonth();
+
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+        }
+
+        return age >= 0 ? age : "";
+    }
+});

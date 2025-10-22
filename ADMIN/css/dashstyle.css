@@ -303,6 +303,15 @@ body {
 	}
  
 }
+
+.welcome-message h2 {
+    font-size: 36px;
+    font-weight: 600;
+	font-weight: bold; 
+    font-family: var(--poppins);
+}
+
+
 /*SIDEBAR*/
 
 /*NAVIGATION*/

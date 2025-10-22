@@ -466,12 +466,27 @@ $visits = $stmt->fetchAll();
     <div class="ph-line-1">Province of Camarines Norte</div>
     <div class="ph-line-2">Municipality of Daet</div>
     <div class="ph-line-3"><?php echo htmlspecialchars($rhu); ?></div>
-    <div class="ph-line-4">MEDICAL CASE MONITORING REPORT</div>
+ 
+  </div>
+  <img src="../../img/RHUlogo.png" alt="Right Logo" class="print-logo">
+</div>
+<hr class="print-rule">
+
+
+<div class="report-content">
+
+<div class="title">
+   <div class="ph-line-4">MEDICAL CASE MONITORING REPORT</div>
     <div class="print-sub">
       (<?php
         $filters = [];
-        if ($from_date) $filters[] = "From <strong>" . htmlspecialchars($from_date) . "</strong>";
-        if ($to_date)   $filters[] = "To <strong>" . htmlspecialchars($to_date) . "</strong>";
+                   if ($from_date || $to_date) {
+    $readable_from = $from_date ? date("F j, Y", strtotime($from_date)) : '';
+    $readable_to   = $to_date ? date("F j, Y", strtotime($to_date)) : '';
+
+    // Combine them in a single display
+    $filters[] = "<strong>" . trim($readable_from . ($readable_to ? " — " . $readable_to : '')) . "</strong>";
+} 
         if ($diagnosis) {
           $diagnosis_list = is_array($diagnosis) ? $diagnosis : [$diagnosis];
           $filters[] = "Diagnosis: <strong>" . implode(', ', array_map('htmlspecialchars', $diagnosis_list)) . "</strong>";
@@ -489,28 +504,26 @@ $visits = $stmt->fetchAll();
         echo $filters ? implode("&nbsp; | &nbsp;", $filters) : "All Records";
       ?>)
     </div>
-  </div>
-  <img src="../../img/RHUlogo.png" alt="Right Logo" class="print-logo">
 </div>
-<hr class="print-rule">
-
-
-<div class="report-content">
 <style>
   .print-letterhead,
   .print-rule { display: none; }
+  .title { text-align: center; display: none;}
 
   @media print {
+     .title {
+        display: block;
+    }
     .print-letterhead { display: block; }
   .print-letterhead{
-    display:grid;
-    grid-template-columns:64px auto 64px;
-    align-items:center;
-    justify-content:center;
-    column-gap:14px;
-    margin:0 auto 10px;
-    text-align:center;
-    width:fit-content;
+   display: grid;
+  grid-template-columns: 72px auto 72px;  /* widened logo columns */
+  align-items: center;
+  justify-content: center;
+  column-gap: 60px;                       /* increased space between logos and heading */
+  margin: 0 auto 18px;
+  text-align: center;
+  width: fit-content;
   }
 
 
@@ -577,22 +590,26 @@ $visits = $stmt->fetchAll();
 }
 
 .case-table,
-.summary-table,
-.report-table-container table {
+.summary-table {
   width: 100%;
   border-collapse: collapse;
-  table-layout: fixed;     
+  table-layout: fixed;
 }
 
 .case-table th, .case-table td,
-.summary-table th, .summary-table td,
-.report-table-container th, .report-table-container td {
+.summary-table th, .summary-table td {
   border: 1px solid #d5d7db;
   padding: 8px 12px;
   vertical-align: middle;
   text-align: center;
-  word-wrap: break-word;    
+  word-wrap: break-word;
 }
+
+
+ .report-table-container {
+        margin-top: 20px !important;
+        margin-bottom: 40px !important;
+        }
 
 .case-table th.tl,
 .case-table td:nth-child(1) {    
@@ -618,7 +635,7 @@ $visits = $stmt->fetchAll();
     break-inside: avoid;
   }
  .report-table-container {
-      margin-top: 80px !important;
+   
       margin-bottom: 40px !important;
     }
 
