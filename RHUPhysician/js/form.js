@@ -162,10 +162,25 @@ document.addEventListener("DOMContentLoaded", function () {
                 toggleBtn.textContent = "HIDE";
             } else {
                 hiddenSection.style.display = "none";
-                toggleBtn.textContent = "View All";
+                toggleBtn.textContent = "SHOW";
             }
         });
     }
+
+        // ✅ Add Med Cert Button
+    const addMedCertBtn = document.getElementById("addMedCertBtn");
+    if (addMedCertBtn) {
+        addMedCertBtn.addEventListener("click", function () {
+            // Get patient_id from the fetched data
+            const patientId = document.getElementById("patient_id")?.value;
+            if (patientId) {
+                window.location.href = `addMedCert.html?patient_id=${patientId}`;
+            } else {
+                alert("Patient ID not found. Please try again.");
+            }
+        });
+    }
+
 
     // ✅ Load Lab File (only if container exists)
     const container = document.getElementById("lab-file-container");

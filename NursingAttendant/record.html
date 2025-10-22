@@ -251,12 +251,7 @@
 
 <button type="button" class="btn-pill btn-pill--sm btn-pill--info" id="editBtn">
   <i class="bx bx-pencil" aria-hidden="true"></i>
-  <span>Edit Info</span>
-</button>
-
-<button type="button" class="btn-pill btn-pill--sm btn-pill--success" id="addMedCertBtn">
-  <i class="bx bx-badge-check" aria-hidden="true"></i>
-  <span>Add Med Cert</span>
+  <span>Edit Personal Information</span>
 </button>
 
 <button type="button" class="btn-pill btn-pill--sm btn-pill--danger" id="addITRBtn">
@@ -285,9 +280,6 @@
       document.getElementById('editBtn').onclick = () => {
       window.location.href = `editPersonalInfo.html?patient_id=${patientId}`;
     };
-    document.getElementById('addMedCertBtn').onclick = () => {
-     window.location.href = `addMedCert.html?patient_id=${patientId}`;
-    };
       document.getElementById('addITRBtn').onclick = () => {
       window.location.href = `ITRRecordedPatient.html?patient_id=${patientId}`;
     };
@@ -297,7 +289,6 @@
    
     document.getElementById('printHistoryBtn').disabled = true;
      document.getElementById('editBtn').disabled = true;
-     document.getElementById('addMedCertBtn').disabled = true;
     document.getElementById('addITRBtn').disabled = true;
     console.warn('No patient_id in URL');
   }

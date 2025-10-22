@@ -359,6 +359,10 @@
                              <i class='bx bxs-capsule' aria-hidden="true"></i>
                               <span>Resume Treatment</span>
                         </button>
+                        <button id="addMedCertBtn" class="footer-btn success-pill" type="button" title="Add Medical Certificate">
+                              <i class='bx bx-badge-check' aria-hidden="true"></i>
+                              <span>Add Med Cert</span>
+                        </button>
 
                     </div>
 
@@ -467,6 +471,7 @@
 
             
                     <input type="hidden" id="visit_id" name="visit_id">
+                    <input type="hidden" id="patient_id" name="patient_id">
                     <input type="hidden" name="doctor_id" id="doctor_id" value="1">
                      <input type="hidden" name="consultation_id" id="consultation_id" value="">
 
@@ -551,14 +556,7 @@
       applyResponsiveSidebar();
       window.addEventListener("resize", applyResponsiveSidebar);
 
-      // Toggle Personal Info
-      document.getElementById("togglePersonalInfo")?.addEventListener("click", () => {
-        const box = document.getElementById("hiddenPersonalInfo");
-        const btn = document.getElementById("togglePersonalInfo");
-        const shown = box.style.display !== "none";
-        box.style.display = shown ? "none" : "block";
-        btn.textContent = shown ? "SHOW" : "HIDE";
-      });
+      // Toggle Personal Info - handled in form.js
 
       // Update Referrals via POST then redirect
       document.getElementById("updateReferrals")?.addEventListener("click", async (e) => {

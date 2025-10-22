@@ -1,17 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="../img/logo.png">
     <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
-    <link rel="stylesheet" href="css/edit.css">
+    <link rel="stylesheet" href="../BHW/css/form.css">
     <link rel="stylesheet" href="css/logout.css">
     <title>Edit Personal Information</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 </head>
 
 <body>
@@ -32,265 +35,331 @@ fetch('php/getUserId.php')
     });
 </script>
 
+<section id="sidebar">
+    <a href="#" class="brand" style="display: flex; align-items: center;">
+        <img src="../img/logo.png" alt="RHULogo" class="logo">
+        <span class="text">Hello Physician</span>
+    </a>
 
-    <section id="sidebar">
-        <a href="#" class="brand">
-            <img src="../img/logo.png" alt="RHULogo" class="logo">
-            <span class="text">Hello Physician</span>
-        </a>
-        <ul class="side-menu top">
-            <li>
-				<a href="dashboard.html">
-					<i class="bx bxs-dashboard"></i>
-					<span class="text">Dashboard</span>
-				</a>
-			</li>
-         
-			<li>
-                <a href="#" id="updateReferrals">
-                    <i class="bx bxs-user"></i>
-                    <span class="text">Pending Referrals</span>
-                </a>
-            </li>
-            
-            <script>
-            document.getElementById("updateReferrals").addEventListener("click", function (event) {
-                event.preventDefault(); // Prevent default navigation
-            
-                fetch("php/update_referrals.php") // Call PHP file
-                .then(response => response.json())
-                .then(data => {
-                    console.log(data.message); // Log success message (optional)
-                    window.location.href = "pending.html"; // Redirect after updating
-                })
-                .catch(error => {
-                    console.error("Error updating referrals:", error);
-                    window.location.href = "pending.html"; // Still redirect even if an error occurs
-                });
-            });
-            </script>
-
-            	<li>
-				<a href="followUpConsultations.html">
-					<i class="bx bxs-user"></i>
-					<span class="text">Follow-Up Visits</span>
-				</a>
-			</li>
-            
-			<li class="active">
-				<a href="searchPatient.html">
-					<i class="bx bxs-notepad"></i>
-					<span class="text">Patient Records</span>
-				</a>
-			</li>
-            <li>
-                <a href="history.html">
-                    <i class="bx bx-history"></i>
-                    <span class="text">Referral History</span>
-                </a>
-            </li>
-            <li>
-				<a href="reports.html">
-					<i class="bx bx-notepad"></i>
-					<span class="text">Reports</span>
-				</a>
-			</li>
-        </ul>
-        <ul class="side-menu">
-            <li>
-               <a href="#" class="logout" onclick="return confirmLogout()">
-               <i class="bx bxs-log-out-circle"></i>
+    <ul class="side-menu top">
+        <li>
+            <a href="dashboard.html">
+                <i class="bx bxs-dashboard"></i>
+                <span class="text">Dashboard</span>
+            </a>
+        </li>
+        <li>
+            <a href="searchPatient.html">
+                <i class="bx bxs-notepad"></i>
+                <span class="text">Patient Records</span>
+            </a>
+        </li>
+        <li>
+            <a href="History.html">
+                <i class="bx bx-history"></i>
+                <span class="text">Referral History</span>
+            </a>
+        </li>
+        <li>
+            <a href="reports.html">
+                <i class="bx bx-notepad"></i>
+                <span class="text">Reports</span>
+            </a>
+        </li>
+    </ul>
+    <ul class="side-menu">
+        <li>
+            <a href="#" class="logout" onclick="return confirmLogout()">
+                <i class="bx bxs-log-out-circle"></i>
                 <span class="text">Logout</span>
-                </a>
-            </li>
-        </ul>
-    </section>
+            </a>
+        </li>
+    </ul>
+</section>
 
-    <section id="content">
-        <nav>
-            <form action="#">
-                <div class="form-input">
-                    <input type="search" id="patientSearch" placeholder="Enter patient name..." name="search" autocomplete="off">
-                    <button type="button" class="search-btn" id="searchButton"><i class='bx bx-search'></i></button>
-                    <div id="resultDropdown" class="dropdown-content"></div>
-                </div>
-            </form>
-            <div class="greeting">
-                <span id="userGreeting">Hello BHW!</span>
+<section id="content">
+    <nav>
+        <form action="#">
+            <div class="form-input">
             </div>
-            <a href="#" class="profile"><img src="../img/bhw.png"></a>
-        </nav>
+        </form>
+        <div class="greeting">
+            <span id="userGreeting">Hello Physician!</span>
+        </div>
+        <a href="#" class="profile"><img src="../img/physician.png"></a>
+    </nav>
 
-        <main>
-           
-            <div class="head-title">
-				<div class="left">
-					<h1>Edit Patient Personal Information</h1>
-					<ul class="breadcrumb">
-						<li><a href="#">Edit Patient Information</a></li>
-						<li><i class="bx bx-chevron-right"></i></li>
-						<a class="active" href="#" onclick="history.back(); return false;">Go back</a>
+    <main>
+        <div class="head-title">
+            <div class="left">
+                <h1>Edit Patient Personal Information</h1>
+                <ul class="breadcrumb">
+                    <li><a href="#">Edit Patient Information</a></li>
+                    <li><i class="bx bx-chevron-right"></i></li>
+                    <a class="active" href="#" onclick="history.back(); return false;">Go back</a>
+                </ul>
+            </div>
+        </div>
+    </main>
+</section>
 
-					</ul>
-				</div>
-			</div>
-        </main>
-    </section>
+<div class="container-header">
+    <h2>PATIENT DETAILS</h2>
+</div>
 
-    <div class="container-header">
-        <h2>PATIENT DETAILS</h2>
-    </div>
+<form id="updateReferralForm" method="POST">
+    <div class="container">
+        <p><b>PERSONAL INFORMATION:</b></p>
 
-    <form id="updateReferralForm" action="php/update_personal_info .php" method="POST">
-        <div class="container">
-            <p style="display: flex; justify-content: space-between; align-items: center;">
-                <b>PERSONAL INFORMATION:</b>
-            </p>
+        <div class="form-container">
+            <!-- Row 1: Last Name, First Name -->
+            <div class="form-group">
+                <label for="lastName" class="required">Last Name:</label>
+                <input type="text" class="patient-last-name form-control" name="last_name" placeholder="Enter Last Name" required>
+            </div>
 
-            <div class="form-container">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>First Name:</label>
-                        <input type="text" class="patient-first-name form-control" name="first_name" value="N/A" required>
+            <div class="form-group">
+                <label for="firstName" class="required">First Name:</label>
+                <input type="text" class="patient-first-name form-control" name="first_name" placeholder="Enter First Name" required>
+            </div>
+
+            <!-- Row 2: Middle Name, Extension -->
+            <div class="form-group">
+                <label for="middleName">Middle Name:</label>
+                <input type="text" class="patient-middle-name form-control" name="middle_name" placeholder="Enter Middle Name">
+            </div>
+
+            <div class="form-group">
+                <label for="extension">Ext:</label>
+                <select class="patient-extension form-control" name="extension">
+                    <option value="">Select</option>
+                    <option value="other">Other (Enter manually)</option>
+                    <option value="Jr.">Jr. (Junior)</option>
+                    <option value="Sr.">Sr. (Senior)</option>
+                    <option value="II">II (the Second)</option>
+                    <option value="III">III (the Third)</option>
+                    <option value="IV">IV (the Fourth)</option>
+                    <option value="V">V (the Fifth)</option>
+                </select>
+            </div>
+
+            <!-- Row 3: Birth Place -->
+            <div class="form-group">
+                <label for="birthPlace" class="required">Birth Place:</label>
+                <input type="text" class="patient-birth-place form-control" name="birthplace" placeholder="Enter Birth Place" required>
+            </div>
+
+            <!-- Row 4: Date of Birth, Age -->
+            <div class="form-group">
+                <label for="dob" class="required">Date of Birth:</label>
+                <input type="text" class="date-of-birth form-control flatpickr-dob" name="date_of_birth" placeholder="Select date of birth" required onchange="calculateAge()">
+            </div>
+
+            <div class="form-group">
+                <label for="age">Age:</label>
+                <input type="text" class="age form-control" name="age" placeholder="Age" readonly>
+            </div>
+
+            <!-- Row 5: Address Section -->
+            <div class="form-group full-width">
+                <fieldset class="address-fieldset">
+                    <legend>ADDRESS</legend>
+                    <div class="address-grid">
+                        <div class="form-item">
+                            <label for="region" class="required">Region:</label>
+                            <select id="region" name="region" class="form-control" required>
+                                <option value="">Select Region</option>
+                            </select>
+                        </div>
+
+                        <div class="form-item">
+                            <label for="province" class="required">Province:</label>
+                            <select id="province" name="province" class="form-control" required disabled>
+                                <option value="">Select Province</option>
+                            </select>
+                        </div>
+
+                        <div class="form-item">
+                            <label for="city" class="required">Municipality/City:</label>
+                            <select id="city" name="city" class="form-control" required disabled>
+                                <option value="">Select Municipality/City</option>
+                            </select>
+                        </div>
+
+                        <div class="form-item">
+                            <label for="barangay" class="required">Barangay:</label>
+                            <select id="barangay" name="barangay" class="form-control" required disabled>
+                                <option value="">Select Barangay</option>
+                            </select>
+                        </div>
+
+                        <div class="form-item">
+                            <label for="street" class="required">Purok / Street:</label>
+                            <input type="text" id="street" name="street" placeholder="e.g., Purok 3, Mabini St." maxlength="120" required>
+                        </div>
                     </div>
-                </div>
+                </fieldset>
+            </div>
 
-                <div class="form-group">
-                    <label>Last Name:</label>
-                    <input type="text" class="patient-last-name form-control" name="last_name" value="N/A" required>
-                </div>
-                <div class="form-group">
-                    <label>Middle Name:</label>
-                    <input type="text" class="patient-middle-name form-control" name="middle_name" value="N/A">
-                </div>
-                <div class="form-group">
-                    <label>Ext:</label>
-                    <input type="text" class="patient-extension form-control" name="extension" value="N/A">
-                </div>
-                
+            <input type="hidden" name="address" id="permanent_address_combined">
 
-                <div class="form-group">
-                    <label>Birth Place:</label>
-                    <input type="text" class="patient-birth-place form-control" name="birthplace" value="N/A">
-                </div>
-                <div class="form-group">
-                    <label>Date of Birth:</label>
-                    <input type="date" class="date-of-birth form-control" name="date_of_birth" required>
-                </div>
-                <div class="form-group">
-                    <label>Age:</label>
-                    <input type="number" class="age form-control" name="age" value="N/A">
-                </div>
+            <!-- Row 6: Civil Status, Mobile Number -->
+            <div class="form-group">
+                <label for="civilStatus" class="required">Civil Status:</label>
+                <select class="civil-status form-control" name="civil_status" required>
+                    <option value="">Select</option>
+                    <option value="Single">Single</option>
+                    <option value="Married">Married</option>
+                    <option value="Widowed">Widowed</option>
+                    <option value="Separated">Separated</option>
+                </select>
+            </div>
 
-                <div class="form-group">
-                    <label>Permanent Address:</label>
-                    <input type="text" class="address form-control" name="address" value="N/A" required>
-                </div>
+            <div class="form-group">
+                <label for="mobile">Mobile Number:</label>
+                <input type="text" class="contact-number form-control" name="contact_number" placeholder="Mobile no.">
+            </div>
 
-                <div class="form-group">
-                    <label>Civil Status:</label>
-                    <input type="text" class="civil-status form-control" name="civil_status" value="N/A">
-                </div>
-                <div class="form-group">
-                    <label>Mobile Number:</label>
-                    <input type="text" class="contact-number form-control" name="contact_number" value="N/A">
-                </div>
+            <!-- Row 7: Religion, Occupation -->
+            <div class="form-group">
+                <label for="religion">Religion:</label>
+                <select class="religion form-control select2" name="religion">
+                    <option value="">Select Religion</option>
+                    <option value="other">Other (Enter manually)</option>
+                    <option value="Roman Catholic">Roman Catholic</option>
+                    <option value="Aglipayan">Aglipayan</option>
+                    <option value="Islam">Islam</option>
+                    <option value="Iglesia ni Cristo">Iglesia ni Cristo</option>
+                    <option value="Assemblies of God">Assemblies of God</option>
+                    <option value="United Methodist Church">United Methodist Church</option>
+                </select>
+            </div>
 
-                <div class="form-group">
-                    <label>Religion:</label>
-                    <input type="text" class="religion form-control" name="religion" value="N/A">
-                </div>
-                <div class="form-group">
-                    <label>Occupation:</label>
-                    <input type="text" class="occupation form-control" name="occupation" value="N/A">
-                </div>
+            <div class="form-group">
+                <label for="occupation">Occupation:</label>
+                <input type="text" class="occupation form-control" name="occupation" placeholder="Enter occupation">
+            </div>
 
-                <div class="form-group">
-                    <label>Educational Attainment:</label>
-                    <input type="text" class="educational-attainment form-control" name="educational_attainment" value="N/A">
-                </div>
-                <div class="form-group">
-                    <label>Birth Weight:</label>
-                    <input type="text" class="birth-weight form-control" name="birth_weight" value="N/A">
-                </div>
-                <div class="form-group">
-                    <label>Philhealth Member Number:</label>
-                    <input type="text" class="philhealth-member-no form-control" name="philhealth_member_no" value="N/A">
-                </div>
-                <div class="form-group">
-                    <label>Category:</label>
-                    <input type="text" class="category form-control" name="category" value="N/A">
-                </div>
+            <!-- Row 8: Educational Attainment, Birth Weight -->
+            <div class="form-group">
+                <label for="education">Educational Attainment:</label>
+                <select class="educational-attainment form-control" name="educational_attainment">
+                    <option value="">Select</option>
+                    <option value="Primary Education">Primary Education</option>
+                    <option value="Secondary Education">Secondary Education</option>
+                    <option value="Tertiary Education">Tertiary Education</option>
+                    <option value="Postgraduate">Postgraduate</option>
+                </select>
+            </div>
 
-                <div class="form-group">
-                    <label>Family Serial Number:</label>
-                    <input type="text" class="family-serial-no form-control" name="family_serial_no" value="N/A">
-                </div>
-                <div class="form-group">
-                    <label>Gender:</label>
-                    <input type="text" class="sex form-control" name="sex" value="N/A">
-                </div>
+            <div class="form-group">
+                <label for="birth_weight">Birth Weight (kg):</label>
+                <input type="number" class="birth-weight form-control" name="birth_weight" placeholder="Enter birth weight">
+            </div>
 
-                <div class="form-group">
-                    <label>4Ps Status:</label>
-                    <input type="text" class="fourps-status form-control" name="fourps_status" value="N/A">
+            <!-- Row 9: Philhealth, Category -->
+            <div class="form-group">
+                <label for="philhealth">Philhealth Member Number:</label>
+                <input type="text" class="philhealth-member-no form-control" name="philhealth_member_no" placeholder="Philhealth Member no.">
+            </div>
+
+            <div class="form-group">
+                <label for="category">Category:</label>
+                <select class="category form-control" name="category">
+                    <option value="">Select</option>
+                    <option value="NHTS">NHTS</option>
+                    <option value="LGU">LGU</option>
+                    <option value="Private">Private</option>
+                    <option value="Self-Employed">Self-Employed</option>
+                </select>
+            </div>
+
+            <!-- Row 10: Family Serial Number -->
+            <div class="form-group">
+                <label for="familySerialNo">Family Serial Number:</label>
+                <input type="text" class="family-serial-no form-control" name="family_serial_no" placeholder="Family Serial no.">
+            </div>
+
+            <!-- Row 11: Gender (Radio Buttons) -->
+            <div class="form-group full-width">
+                <label class="required">Gender:</label>
+                <div class="radio-group">
+                    <label class="radio-option">
+                        <input type="radio" class="sex" name="sex" value="Male" required> Male
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" class="sex" name="sex" value="Female" required> Female
+                    </label>
                 </div>
             </div>
 
-            <input type="hidden" id="patientIdField" name="patient_id">
-            <input type="hidden" id="referralInput" />
-
-            <div class="button-container">
-                
-                <button type="submit" class="submit-btn" id="submitButton">Submit</button>
+            <!-- Row 12: 4Ps Status (Radio Buttons) -->
+            <div class="form-group full-width">
+                <label>4Ps Status:</label>
+                <div class="radio-group">
+                    <label class="radio-option">
+                        <input type="radio" class="fourps-status" name="fourps_status" value="Yes"> Yes
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" class="fourps-status" name="fourps_status" value="No"> No
+                    </label>
+                </div>
             </div>
         </div>
-    </form>
 
-    <div id="myModal" class="modal">
-        <div class="modal-content">
+        <input type="hidden" id="patientIdField" name="patient_id">
+
+        <div class="button-container">
+            <button type="submit" class="submit-btn" id="submitButton">Submit</button>
+        </div>
+    </div>
+</form>
+
+<!-- Modals -->
+<div id="myModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <img src="../img/verify.png" alt="Checkmark" class="checkmark-image">
+            <h3>Confirmation</h3>
+            <span class="close-btn" id="closeBtn">&times;</span>
+        </div>
+        <div class="modal-body">
+            <p>Save changes?</p>
+        </div>
+        <div class="modal-footer">
+            <button id="cancelBtn" class="btn cancel">Cancel</button>
+            <button id="yesButton" class="btn yes" type="button">Save</button>
+        </div>
+    </div>
+</div>
+
+<div id="myModal2" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <img src="../img/check.png" alt="Checkmark" class="checkmark-image">
+            <span class="close-btn" id="closeBtn2">&times;</span>
+        </div>
+        <div class="modal-footer">
             <div class="modal-header">
-                <img src="../img/verify.png" alt="Checkmark" class="checkmark-image">
-                <h3>Confirmation</h3>
-                <span class="close-btn" id="closeBtn">&times;</span>
-            </div>
-            <div class="modal-body">
-                <p>Save changes?</p>
-            </div>
-            <div class="modal-footer">
-                <button id="cancelBtn" class="btn cancel">Cancel</button>
-                <button id="yesButton" class="btn yes" type="button">Save</button>
-            
+                <h4 style="color: #033cad; font-size: large;">Record successfully updated.</h4>
             </div>
         </div>
     </div>
+</div>
 
-    <div id="myModal2" class="modal">
-        <div class="modal-content">
+<div id="myModal3" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <img src="../img/error.jpg" alt="Checkmark" class="checkmark-image">
+            <span class="close-btn" id="closeBtn3">&times;</span>
+        </div>
+        <div class="modal-footer">
             <div class="modal-header">
-                <img src="../img/check.png" alt="Checkmark" class="checkmark-image">
-                <span class="close-btn" id="closeBtn2">&times;</span>
-            </div>
-            <div class="modal-footer">
-                    <div class="modal-header">
-                        <h4 style="color: #033cad; font-size: large;">Record successfully updated.</h4>
-                    </div>
+                <h3 style="color: #960f0f; font-size: large;">Saving failed.</h3>
             </div>
         </div>
     </div>
-        <div id="myModal3" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <img src="../img/error.jpg" alt="Checkmark" class="checkmark-image">
-                <span class="close-btn" id="closeBtn3">&times;</span>
-            </div>
-            <div class="modal-footer">
-                    <div class="modal-header">
-                        <h3 style="color: #960f0f; font-size: large;">Saving failed.</h3>
-                    </div>
-            </div>
-        </div>
-    </div>
+</div>
 
 <div id="logoutModal" class="logout-modal">
     <div class="logout-modal-content">
@@ -305,16 +374,15 @@ fetch('php/getUserId.php')
             <button onclick="proceedLogout()" class="logout-confirm-btn">Yes, Logout</button>
         </div>
     </div>
-</div>    
+</div>
 
-   
-    <script src="js/editPersonalInfo.js"></script>
-    <script src="js/script.js"></script>
+<script src="js/editPersonalInfo.js"></script>
+<script src="js/script.js"></script>
 
-    <script>
+<script>
     function confirmLogout() {
         document.getElementById('logoutModal').style.display = 'block';
-        return false; // Prevent the default link behavior
+        return false;
     }
 
     function closeModal() {
@@ -322,48 +390,204 @@ fetch('php/getUserId.php')
     }
 
     function proceedLogout() {
-		 window.location.href = '../ADMIN/php/logout.php';
+        window.location.href = '../ADMIN/php/logout.php';
     }
 
-    // Close modal when clicking outside
     window.onclick = function(event) {
         const modal = document.getElementById('logoutModal');
         if (event.target == modal) {
             closeModal();
         }
     }
+
     fetch('php/getUserName.php')
-    .then(response => response.json())
-    .then(data => {
-        if (data.full_name) {
-            document.getElementById('userGreeting').textContent = `Hello, ${data.full_name}!`;
-        } else {
-            document.getElementById('userGreeting').textContent = 'Hello, BHW!';
-        }
-    })
-    .catch(error => {
-        console.error('Error fetching user name:', error);
-        document.getElementById('userGreeting').textContent = 'Hello, BHW!';
-    });
-    </script>
-</body>
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  const sidebar = document.getElementById("sidebar");
-
-  function applyResponsiveSidebar() {
-    if (window.innerWidth <= 1024) {
-      sidebar.classList.add("hide");   // collapsed on small screens
-    } else {
-      sidebar.classList.remove("hide"); // expanded on larger screens
-    }
-  }
-
-  applyResponsiveSidebar();
-  window.addEventListener("resize", applyResponsiveSidebar);
-
-  // keep the rest of your existing code (auth, stats, modals, etc.)
-});
+        .then(response => response.json())
+        .then(data => {
+            if (data.full_name) {
+                document.getElementById('userGreeting').textContent = `Hello, ${data.full_name}!`;
+            } else {
+                document.getElementById('userGreeting').textContent = 'Hello, Physician!';
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching user name:', error);
+            document.getElementById('userGreeting').textContent = 'Hello, Physician!';
+        });
 </script>
-</html>
 
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const sidebar = document.getElementById("sidebar");
+
+        function applyResponsiveSidebar() {
+            if (window.innerWidth <= 1024) {
+                sidebar.classList.add("hide");
+            } else {
+                sidebar.classList.remove("hide");
+            }
+        }
+
+        applyResponsiveSidebar();
+        window.addEventListener("resize", applyResponsiveSidebar);
+    });
+</script>
+
+<!-- PSGC Cascading Address Script -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const regionSel = document.getElementById("region");
+        const provinceSel = document.getElementById("province");
+        const citySel = document.getElementById("city");
+        const brgySel = document.getElementById("barangay");
+        const streetSel = document.getElementById("street");
+        const hiddenFull = document.getElementById("permanent_address_combined");
+
+        // Load regions
+        fetch("https://psgc.cloud/api/regions/")
+            .then(r => r.json())
+            .then(regions => {
+                regions.forEach(r => regionSel.appendChild(new Option(r.name, r.code)));
+            });
+
+        function resetSelect(sel, placeholder, disable = true) {
+            sel.innerHTML = "";
+            sel.appendChild(new Option(placeholder, ""));
+            sel.disabled = disable;
+        }
+
+        function composeFullAddress() {
+            const r = regionSel.options[regionSel.selectedIndex]?.text || "";
+            const p = provinceSel.options[provinceSel.selectedIndex]?.text || "";
+            const c = citySel.options[citySel.selectedIndex]?.text || "";
+            const b = brgySel.options[brgySel.selectedIndex]?.text || "";
+            const s = (streetSel?.value || "").trim();
+
+            hiddenFull.value = [s, b, c, p, r].filter(Boolean).join(", ");
+        }
+
+        if (streetSel) {
+            streetSel.addEventListener("input", composeFullAddress);
+        }
+
+        regionSel.addEventListener("change", () => {
+            resetSelect(provinceSel, "Select Province");
+            resetSelect(citySel, "Select Municipality/City");
+            resetSelect(brgySel, "Select Barangay");
+            composeFullAddress();
+
+            if (!regionSel.value) return;
+
+            fetch(`https://psgc.cloud/api/regions/${regionSel.value}/provinces/`)
+                .then(r => r.json())
+                .then(provinces => {
+                    provinces.forEach(p => provinceSel.appendChild(new Option(p.name, p.code)));
+                    provinceSel.disabled = false;
+                });
+        });
+
+        provinceSel.addEventListener("change", () => {
+            resetSelect(citySel, "Select Municipality/City");
+            resetSelect(brgySel, "Select Barangay");
+            composeFullAddress();
+
+            if (!provinceSel.value) return;
+
+            fetch(`https://psgc.cloud/api/provinces/${provinceSel.value}/cities-municipalities/`)
+                .then(r => r.json())
+                .then(cities => {
+                    cities.forEach(c => citySel.appendChild(new Option(c.name, c.code)));
+                    citySel.disabled = false;
+                });
+        });
+
+        citySel.addEventListener("change", () => {
+            resetSelect(brgySel, "Select Barangay");
+            composeFullAddress();
+
+            if (!citySel.value) return;
+
+            fetch(`https://psgc.cloud/api/cities-municipalities/${citySel.value}/barangays/`)
+                .then(r => r.json())
+                .then(brgys => {
+                    brgys.forEach(b => brgySel.appendChild(new Option(b.name, b.code)));
+                    brgySel.disabled = false;
+                });
+        });
+
+        brgySel.addEventListener("change", composeFullAddress);
+    });
+</script>
+
+<!-- Flatpickr Date Picker -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const dob = document.querySelector(".flatpickr-dob");
+        if (dob && window.flatpickr) {
+            flatpickr(dob, {
+                dateFormat: "Y-m-d",
+                altInput: true,
+                altFormat: "F j, Y",
+                maxDate: "today",
+                allowInput: false,
+                clickOpens: true,
+                appendTo: document.body,
+                onChange: function () {
+                    if (typeof calculateAge === "function") {
+                        calculateAge();
+                    }
+                }
+            });
+        }
+    });
+
+    function calculateAge() {
+        const dobInput = document.querySelector(".date-of-birth");
+        const ageInput = document.querySelector(".age");
+        
+        if (!dobInput || !dobInput.value) return;
+
+        const dob = new Date(dobInput.value);
+        const today = new Date();
+        let age = today.getFullYear() - dob.getFullYear();
+        const monthDiff = today.getMonth() - dob.getMonth();
+
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
+            age--;
+        }
+
+        ageInput.value = age >= 0 ? age : "";
+    }
+</script>
+
+<!-- Handle "Other" Selection for Dropdowns -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const extensionSelect = document.querySelector(".patient-extension");
+        const religionSelect = document.querySelector(".religion");
+
+        function handleOtherSelection(selectElement, promptLabel) {
+            selectElement.addEventListener("change", function () {
+                if (this.value === "other") {
+                    const userInput = prompt(`Enter ${promptLabel}:`);
+                    if (userInput) {
+                        const exists = Array.from(this.options).some(opt => opt.value === userInput);
+                        if (!exists) {
+                            const newOption = new Option(userInput, userInput, true, true);
+                            this.appendChild(newOption);
+                        }
+                        this.value = userInput;
+                    } else {
+                        this.value = "";
+                    }
+                }
+            });
+        }
+
+        if (extensionSelect) handleOtherSelection(extensionSelect, 'extension');
+        if (religionSelect) handleOtherSelection(religionSelect, 'religion');
+    });
+</script>
+
+</body>
+
+</html>
