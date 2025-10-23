@@ -524,5 +524,5 @@ document.addEventListener("DOMContentLoaded", () => {
             });
     </script>
     <script src="../js/admin_user.js"></script>
-</body>
+</body> 
 </html> 

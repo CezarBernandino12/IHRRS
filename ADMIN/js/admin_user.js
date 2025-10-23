@@ -511,3 +511,36 @@ function closeModal() {
 function proceedLogout() {
     window.location.href = 'logout.php';
 }
+
+document.addEventListener("DOMContentLoaded", function() {
+    const rhuDropdown = document.getElementById("rhu");
+    const barangayDropdown = document.getElementById("barangay");
+
+    const barangaysByRHU = {
+        "Rural Health Unit I": [
+            "Barangay 2", "Barangay Pamoragon", "Barangay Mancruz", "Barangay Magang", "Barangay Calasgasan", "Barangay Bibirao", "Barangay Camambugan", "Barangay Alawihao", "Barangay Dogongan"
+        ],
+        "Rural Health Unit II": [
+            "Barangay 1", "Barangay 6", "Barangay 7", "Barangay 8", "Barangay Gubat", "Barangay San Isidro", "Barangay Cobangbang", "Barangay Bagasbas", "Barangay Mambalite"
+        ],
+        "Rural Health Unit III": [
+            "Barangay 3", "Barangay 4", "Barangay 5", "Barangay Awitan", "Barangay Gahonon", "Barangay Borabod", "Barangay Lag-On"
+        ]
+    };
+
+    rhuDropdown.addEventListener("change", function() {
+        const selectedRHU = rhuDropdown.value;
+        const barangays = barangaysByRHU[selectedRHU] || [];
+
+        // Clear existing options
+        barangayDropdown.innerHTML = '<option value="" disabled selected>Select Barangay</option>';
+
+        // Populate barangay dropdown
+        barangays.forEach(barangay => {
+            const option = document.createElement("option");
+            option.value = barangay;
+            option.textContent = barangay;
+            barangayDropdown.appendChild(option);
+        });
+    });
+});
