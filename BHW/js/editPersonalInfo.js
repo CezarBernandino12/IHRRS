@@ -64,6 +64,14 @@ document.addEventListener("DOMContentLoaded", function () {
                 patientIdField.value = patientId;
             }
 
+            // Get sex value from radio buttons
+            const sexRadio = document.querySelector('input[name="sex"]:checked');
+            const sexValue = sexRadio ? sexRadio.value : "";
+
+            // Get 4ps value from radio buttons
+            const fourpsRadio = document.querySelector('input[name="fourps_status"]:checked');
+            const fourpsValue = fourpsRadio ? fourpsRadio.value : "";
+
             const updatedData = {
                 patient_id: patientId,
                 first_name: (document.querySelector(".patient-first-name")?.value || "").trim(),
@@ -72,7 +80,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 extension: (document.querySelector(".patient-extension")?.value || "").trim(),
                 birthplace: (document.querySelector(".patient-birth-place")?.value || "").trim(),
                 date_of_birth: (document.querySelector(".date-of-birth")?.value || "").trim(),
-                address: (document.querySelector(".address")?.value || "").trim(),
+                address: (document.querySelector("#permanent_address_combined")?.value || "").trim(),
                 civil_status: (document.querySelector(".civil-status")?.value || "").trim(),
                 contact_number: (document.querySelector(".contact-number")?.value || "").trim(),
                 religion: (document.querySelector(".religion")?.value || "").trim(),
@@ -82,8 +90,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 philhealth_member_no: (document.querySelector(".philhealth-member-no")?.value || "").trim(),
                 category: (document.querySelector(".category")?.value || "").trim(),
                 family_serial_no: (document.querySelector(".family-serial-no")?.value || "").trim(),
-                sex: (document.querySelector(".sex")?.value || "").trim(),
-                fourps_status: (document.querySelector(".fourps-status")?.value || "").trim()
+                sex: sexValue,
+                fourps_status: fourpsValue
             };
 
             // Debug: Check all fields
@@ -177,7 +185,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     const age = calculateAge(data.patient.date_of_birth);
                     populateInput(".age", age);
 
-                    populateInput(".address", data.patient.address);
+                    // Populate address components
+                    populateAddressFromFull(data.patient.address);
                     populateInput(".civil-status", data.patient.civil_status);
                     populateInput(".contact-number", data.patient.contact_number);
                     populateInput(".religion", data.patient.religion);
@@ -187,8 +196,16 @@ document.addEventListener("DOMContentLoaded", function () {
                     populateInput(".philhealth-member-no", data.patient.philhealth_member_no);
                     populateInput(".category", data.patient.category);
                     populateInput(".family-serial-no", data.patient.family_serial_no);
-                    populateInput(".sex", data.patient.sex);
-                    populateInput(".fourps-status", data.patient.fourps_status);
+                    // Set radio buttons
+                    if (data.patient.sex) {
+                        const sexRadio = document.querySelector(`input[name="sex"][value="${data.patient.sex}"]`);
+                        if (sexRadio) sexRadio.checked = true;
+                    }
+
+                    if (data.patient.fourps_status) {
+                        const fourpsRadio = document.querySelector(`input[name="fourps_status"][value="${data.patient.fourps_status}"]`);
+                        if (fourpsRadio) fourpsRadio.checked = true;
+                    }
                 }
             })
             .catch(error => {
@@ -200,13 +217,50 @@ document.addEventListener("DOMContentLoaded", function () {
     function populateInput(selector, value, type = "text") {
         const element = document.querySelector(selector);
         if (element) {
-            if (element.tagName === "INPUT" || element.tagName === "TEXTAREA") {
-                if (type === "date" && value) {
-                    element.value = formatDate(value);
-                } else {
-                    element.value = value || "";
+                if (element.tagName === "INPUT" || element.tagName === "TEXTAREA") {
+                    if (type === "date" && value) {
+                        element.value = formatDate(value);
+                    } else {
+                        element.value = value || "";
+                    }
                 }
             }
+        }
+
+        function populateSelect(selector, value) {
+            const element = document.querySelector(selector);
+            if (element) {
+                const exists = Array.from(element.options).some(opt => opt.value === value);
+                if (exists) {
+                    element.value = value;
+                } else if (value && value.toLowerCase() === "other") {
+                    element.value = "Other";
+                    // Trigger change event to show the "Other" input field if needed
+                    const event = new Event("change");
+                    element.dispatchEvent(event);
+                }
+            }
+        }
+    function populateAddressFromFull(fullAddress) {
+        if (!fullAddress) return;
+
+        // Parse the full address (format: "Purok/Street, Barangay, City, Province, Region")
+        const parts = fullAddress.split(",").map(p => p.trim());
+        
+        // Set the street value
+        if (parts.length >= 1) {
+            const streetInput = document.getElementById("street");
+            if (streetInput) {
+                streetInput.value = parts[0];
+                // Trigger input event to update the hidden field
+                streetInput.dispatchEvent(new Event('input'));
+            }
+        }
+
+        // Set the hidden field directly as well
+        const hiddenField = document.getElementById("permanent_address_combined");
+        if (hiddenField) {
+            hiddenField.value = fullAddress;
         }
     }
 
