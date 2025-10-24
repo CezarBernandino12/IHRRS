@@ -120,13 +120,13 @@ fetch('php/getUserId.php')
         <div class="form-container">
             <!-- Row 1: Last Name, First Name -->
             <div class="form-group">
-                <label for="lastName" class="required">Last Name:</label>
-                <input type="text" class="patient-last-name form-control" name="last_name" placeholder="Enter Last Name" required>
+                <label for="lastName">Last Name:</label>
+                <input type="text" class="patient-last-name form-control" name="last_name" placeholder="Enter Last Name">
             </div>
 
             <div class="form-group">
-                <label for="firstName" class="required">First Name:</label>
-                <input type="text" class="patient-first-name form-control" name="first_name" placeholder="Enter First Name" required>
+                <label for="firstName">First Name:</label>
+                <input type="text" class="patient-first-name form-control" name="first_name" placeholder="Enter First Name">
             </div>
 
             <!-- Row 2: Middle Name, Extension -->
@@ -151,14 +151,14 @@ fetch('php/getUserId.php')
 
             <!-- Row 3: Birth Place -->
             <div class="form-group">
-                <label for="birthPlace" class="required">Birth Place:</label>
-                <input type="text" class="patient-birth-place form-control" name="birthplace" placeholder="Enter Birth Place" required>
+                <label for="birthPlace">Birth Place:</label>
+                <input type="text" class="patient-birth-place form-control" name="birthplace" placeholder="Enter Birth Place">
             </div>
 
             <!-- Row 4: Date of Birth, Age -->
             <div class="form-group">
-                <label for="dob" class="required">Date of Birth:</label>
-                <input type="text" class="date-of-birth form-control flatpickr-dob" name="date_of_birth" placeholder="Select date of birth" required onchange="calculateAge()">
+                <label for="dob">Date of Birth:</label>
+                <input type="text" class="date-of-birth form-control flatpickr-dob" name="date_of_birth" placeholder="Select date of birth" onchange="calculateAge()">
             </div>
 
             <div class="form-group">
@@ -172,36 +172,36 @@ fetch('php/getUserId.php')
                     <legend>ADDRESS</legend>
                     <div class="address-grid">
                         <div class="form-item">
-                            <label for="region" class="required">Region:</label>
-                            <select id="region" name="region" class="form-control" required>
+                            <label for="region">Region:</label>
+                            <select id="region" name="region" class="form-control">
                                 <option value="">Select Region</option>
                             </select>
                         </div>
 
                         <div class="form-item">
-                            <label for="province" class="required">Province:</label>
-                            <select id="province" name="province" class="form-control" required disabled>
+                            <label for="province">Province:</label>
+                            <select id="province" name="province" class="form-control" disabled>
                                 <option value="">Select Province</option>
                             </select>
                         </div>
 
                         <div class="form-item">
-                            <label for="city" class="required">Municipality/City:</label>
-                            <select id="city" name="city" class="form-control" required disabled>
+                            <label for="city">Municipality/City:</label>
+                            <select id="city" name="city" class="form-control" disabled>
                                 <option value="">Select Municipality/City</option>
                             </select>
                         </div>
 
                         <div class="form-item">
-                            <label for="barangay" class="required">Barangay:</label>
-                            <select id="barangay" name="barangay" class="form-control" required disabled>
+                            <label for="barangay">Barangay:</label>
+                            <select id="barangay" name="barangay" class="form-control" disabled>
                                 <option value="">Select Barangay</option>
                             </select>
                         </div>
 
                         <div class="form-item">
-                            <label for="street" class="required">Purok / Street:</label>
-                            <input type="text" id="street" name="street" placeholder="e.g., Purok 3, Mabini St." maxlength="120" required>
+                            <label for="street">Purok / Street:</label>
+                            <input type="text" id="street" name="street" placeholder="e.g., Purok 3, Mabini St." maxlength="120">
                         </div>
                     </div>
                 </fieldset>
@@ -211,8 +211,8 @@ fetch('php/getUserId.php')
 
             <!-- Row 6: Civil Status, Mobile Number -->
             <div class="form-group">
-                <label for="civilStatus" class="required">Civil Status:</label>
-                <select class="civil-status form-control" name="civil_status" required>
+                <label for="civilStatus">Civil Status:</label>
+                <select class="civil-status form-control" name="civil_status">
                     <option value="">Select</option>
                     <option value="Single">Single</option>
                     <option value="Married">Married</option>
@@ -288,13 +288,13 @@ fetch('php/getUserId.php')
 
             <!-- Row 11: Gender (Radio Buttons) -->
             <div class="form-group full-width">
-                <label class="required">Gender:</label>
+                <label class="">Gender:</label>
                 <div class="radio-group">
                     <label class="radio-option">
-                        <input type="radio" class="sex" name="sex" value="Male" required> Male
+                        <input type="radio" class="sex" name="sex" value="Male"> Male
                     </label>
                     <label class="radio-option">
-                        <input type="radio" class="sex" name="sex" value="Female" required> Female
+                        <input type="radio" class="sex" name="sex" value="Female"> Female
                     </label>
                 </div>
             </div>
