@@ -1,0 +1,1113 @@
+[RAW INPUT] Array
+(
+    [patient_id] => 496
+    [first_name] => Ivan Lee
+    [last_name] => Almadrones
+    [middle_name] => A
+    [extension] => 
+    [birthplace] => Lugui
+    [date_of_birth] => 2004-10-21
+    [address] => 7, Santol, Balagtas, Bulacan, Region III (Central Luzon)
+    [civil_status] => Married
+    [contact_number] => 09234567902
+    [religion] => Roman Catholic
+    [occupation] => Vendor
+    [educational_attainment] => Primary Education
+    [birth_weight] => 9
+    [philhealth_member_no] => PH201112
+    [category] => NHTS
+    [family_serial_no] => 202
+    [sex] => Female
+    [fourps_status] => No
+)
+
+[PATIENT_ID] 496
+[USER_ID] 2
+[SUCCESS] Patient found, updating...
+[PARAMS] Array
+(
+    [first_name] => Ivan Lee
+    [last_name] => Almadrones
+    [middle_name] => A
+    [extension] => 
+    [birthplace] => Lugui
+    [date_of_birth] => 2004-10-21
+    [address] => 7, Santol, Balagtas, Bulacan, Region III (Central Luzon)
+    [civil_status] => Married
+    [contact_number] => 09234567902
+    [religion] => Roman Catholic
+    [occupation] => Vendor
+    [educational_attainment] => Primary Education
+    [birth_weight] => 9
+    [philhealth_member_no] => PH201112
+    [category] => NHTS
+    [family_serial_no] => 202
+    [sex] => Female
+    [fourps_status] => No
+    [patient_id] => 496
+)
+
+[ROWS_AFFECTED] 1
+[COMMIT] Success!
+[RAW INPUT] Array
+(
+    [patient_id] => 496
+    [first_name] => Ivan Lee
+    [last_name] => Almadrones
+    [middle_name] => Almaida
+    [extension] => 
+    [birthplace] => Lugui
+    [date_of_birth] => 2004-10-21
+    [address] => 
+    [civil_status] => Married
+    [contact_number] => 09234567902
+    [religion] => Roman Catholic
+    [occupation] => Vendor
+    [educational_attainment] => Primary Education
+    [birth_weight] => 9
+    [philhealth_member_no] => PH201112
+    [category] => NHTS
+    [family_serial_no] => 202
+    [sex] => Female
+    [fourps_status] => No
+)
+
+[ERROR] Missing required fields: address | Input: Array
+(
+    [patient_id] => 496
+    [first_name] => Ivan Lee
+    [last_name] => Almadrones
+    [middle_name] => Almaida
+    [extension] => 
+    [birthplace] => Lugui
+    [date_of_birth] => 2004-10-21
+    [address] => 
+    [civil_status] => Married
+    [contact_number] => 09234567902
+    [religion] => Roman Catholic
+    [occupation] => Vendor
+    [educational_attainment] => Primary Education
+    [birth_weight] => 9
+    [philhealth_member_no] => PH201112
+    [category] => NHTS
+    [family_serial_no] => 202
+    [sex] => Female
+    [fourps_status] => No
+)
+
+[RAW INPUT] Array
+(
+    [patient_id] => 2
+    [first_name] => Josh Maria
+    [last_name] => Mago
+    [middle_name] => S
+    [extension] => 
+    [birthplace] => Labo, Camarines Norte
+    [date_of_birth] => 2005-10-12
+    [address] => 9, Select Barangay, Select Municipality/City, Select Province, Select Region
+    [civil_status] => Separated
+    [contact_number] => 09182345678
+    [religion] => Aglipayan
+    [occupation] => Teacher
+    [educational_attainment] => 
+    [birth_weight] => 3
+    [philhealth_member_no] => PH1234567891
+    [category] => Private
+    [family_serial_no] => 1002
+    [sex] => Female
+    [fourps_status] => Yes
+)
+
+[PATIENT_ID] 2
+[USER_ID] 2
+[SUCCESS] Patient found, updating...
+[PARAMS] Array
+(
+    [first_name] => Josh Maria
+    [last_name] => Mago
+    [middle_name] => S
+    [extension] => 
+    [birthplace] => Labo, Camarines Norte
+    [date_of_birth] => 2005-10-12
+    [address] => 9, Select Barangay, Select Municipality/City, Select Province, Select Region
+    [civil_status] => Separated
+    [contact_number] => 09182345678
+    [religion] => Aglipayan
+    [occupation] => Teacher
+    [educational_attainment] => 
+    [birth_weight] => 3
+    [philhealth_member_no] => PH1234567891
+    [category] => Private
+    [family_serial_no] => 1002
+    [sex] => Female
+    [fourps_status] => Yes
+    [patient_id] => 2
+)
+
+[ROWS_AFFECTED] 1
+[COMMIT] Success!
+[RAW INPUT] Array
+(
+    [patient_id] => 421
+    [first_name] => Marianne
+    [last_name] => Cruz
+    [middle_name] => T
+    [extension] => 
+    [birthplace] => Labo, Camarines Norte
+    [date_of_birth] => 2001-10-17
+    [address] => Purok 3, Balukbahan, Bayog, Zamboanga del Sur, Region IX (Zamboanga Peninsula)
+    [civil_status] => Separated
+    [contact_number] => 09123456003
+    [religion] => Assemblies of God
+    [occupation] => Farmer
+    [educational_attainment] => 
+    [birth_weight] => 3
+    [philhealth_member_no] => PH300203
+    [category] => LGU
+    [family_serial_no] => 9503
+    [sex] => Female
+    [fourps_status] => No
+)
+
+[PATIENT_ID] 421
+[USER_ID] 3
+[SUCCESS] Patient found, updating...
+[PARAMS] Array
+(
+    [first_name] => Marianne
+    [last_name] => Cruz
+    [middle_name] => T
+    [extension] => 
+    [birthplace] => Labo, Camarines Norte
+    [date_of_birth] => 2001-10-17
+    [address] => Purok 3, Balukbahan, Bayog, Zamboanga del Sur, Region IX (Zamboanga Peninsula)
+    [civil_status] => Separated
+    [contact_number] => 09123456003
+    [religion] => Assemblies of God
+    [occupation] => Farmer
+    [educational_attainment] => 
+    [birth_weight] => 3
+    [philhealth_member_no] => PH300203
+    [category] => LGU
+    [family_serial_no] => 9503
+    [sex] => Female
+    [fourps_status] => No
+    [patient_id] => 421
+)
+
+[ROWS_AFFECTED] 1
+[COMMIT] Success!
+[RAW INPUT] Array
+(
+    [patient_id] => 421
+    [first_name] => Marianne
+    [last_name] => Cruz
+    [middle_name] => T
+    [extension] => 
+    [birthplace] => Labo, Camarines Norte
+    [date_of_birth] => 2001-10-17
+    [address] => 
+    [civil_status] => Separated
+    [contact_number] => 09123456003
+    [religion] => Assemblies of God
+    [occupation] => Farmer
+    [educational_attainment] => Tertiary Education
+    [birth_weight] => 3
+    [philhealth_member_no] => PH300203
+    [category] => LGU
+    [family_serial_no] => 9503
+    [sex] => Female
+    [fourps_status] => No
+)
+
+[ERROR] Missing required fields: address | Input: Array
+(
+    [patient_id] => 421
+    [first_name] => Marianne
+    [last_name] => Cruz
+    [middle_name] => T
+    [extension] => 
+    [birthplace] => Labo, Camarines Norte
+    [date_of_birth] => 2001-10-17
+    [address] => 
+    [civil_status] => Separated
+    [contact_number] => 09123456003
+    [religion] => Assemblies of God
+    [occupation] => Farmer
+    [educational_attainment] => Tertiary Education
+    [birth_weight] => 3
+    [philhealth_member_no] => PH300203
+    [category] => LGU
+    [family_serial_no] => 9503
+    [sex] => Female
+    [fourps_status] => No
+)
+
+[RAW INPUT] Array
+(
+    [patient_id] => 421
+    [first_name] => Marianne
+    [last_name] => Cruz
+    [middle_name] => T
+    [extension] => 
+    [birthplace] => Labo, Camarines Norte
+    [date_of_birth] => 2001-10-17
+    [address] => 
+    [civil_status] => Separated
+    [contact_number] => 09123456003
+    [religion] => Assemblies of God
+    [occupation] => Farmer
+    [educational_attainment] => 
+    [birth_weight] => 3
+    [philhealth_member_no] => PH300203
+    [category] => LGU
+    [family_serial_no] => 9503
+    [sex] => Female
+    [fourps_status] => No
+)
+
+[ERROR] Missing required fields: address | Input: Array
+(
+    [patient_id] => 421
+    [first_name] => Marianne
+    [last_name] => Cruz
+    [middle_name] => T
+    [extension] => 
+    [birthplace] => Labo, Camarines Norte
+    [date_of_birth] => 2001-10-17
+    [address] => 
+    [civil_status] => Separated
+    [contact_number] => 09123456003
+    [religion] => Assemblies of God
+    [occupation] => Farmer
+    [educational_attainment] => 
+    [birth_weight] => 3
+    [philhealth_member_no] => PH300203
+    [category] => LGU
+    [family_serial_no] => 9503
+    [sex] => Female
+    [fourps_status] => No
+)
+
+[RAW INPUT] Array
+(
+    [patient_id] => 421
+    [first_name] => Marianne
+    [last_name] => Cruz
+    [middle_name] => T
+    [extension] => 
+    [birthplace] => Labo, Camarines Norte
+    [date_of_birth] => 2001-10-17
+    [address] => 
+    [civil_status] => Separated
+    [contact_number] => 09123456003
+    [religion] => Assemblies of God
+    [occupation] => Farmer
+    [educational_attainment] => 
+    [birth_weight] => 3
+    [philhealth_member_no] => PH300203
+    [category] => LGU
+    [family_serial_no] => 9503
+    [sex] => Female
+    [fourps_status] => No
+)
+
+[ERROR] Missing required fields: address | Input: Array
+(
+    [patient_id] => 421
+    [first_name] => Marianne
+    [last_name] => Cruz
+    [middle_name] => T
+    [extension] => 
+    [birthplace] => Labo, Camarines Norte
+    [date_of_birth] => 2001-10-17
+    [address] => 
+    [civil_status] => Separated
+    [contact_number] => 09123456003
+    [religion] => Assemblies of God
+    [occupation] => Farmer
+    [educational_attainment] => 
+    [birth_weight] => 3
+    [philhealth_member_no] => PH300203
+    [category] => LGU
+    [family_serial_no] => 9503
+    [sex] => Female
+    [fourps_status] => No
+)
+
+[RAW INPUT] Array
+(
+    [patient_id] => 421
+    [first_name] => Marianne
+    [last_name] => Cruz
+    [middle_name] => T
+    [extension] => 
+    [birthplace] => Labo, Camarines Norte
+    [date_of_birth] => 2001-10-17
+    [address] => Purok 3, Bucot, Aliaga, Nueva Ecija, Region III (Central Luzon)
+    [civil_status] => Separated
+    [contact_number] => 09123456003
+    [religion] => Assemblies of God
+    [occupation] => Farmer
+    [educational_attainment] => Postgraduate
+    [birth_weight] => 3
+    [philhealth_member_no] => PH300203
+    [category] => LGU
+    [family_serial_no] => 9503
+    [sex] => Female
+    [fourps_status] => No
+)
+
+[PATIENT_ID] 421
+[USER_ID] 3
+[SUCCESS] Patient found, updating...
+[PARAMS] Array
+(
+    [first_name] => Marianne
+    [last_name] => Cruz
+    [middle_name] => T
+    [extension] => 
+    [birthplace] => Labo, Camarines Norte
+    [date_of_birth] => 2001-10-17
+    [address] => Purok 3, Bucot, Aliaga, Nueva Ecija, Region III (Central Luzon)
+    [civil_status] => Separated
+    [contact_number] => 09123456003
+    [religion] => Assemblies of God
+    [occupation] => Farmer
+    [educational_attainment] => Postgraduate
+    [birth_weight] => 3
+    [philhealth_member_no] => PH300203
+    [category] => LGU
+    [family_serial_no] => 9503
+    [sex] => Female
+    [fourps_status] => No
+    [patient_id] => 421
+)
+
+[ROWS_AFFECTED] 1
+[COMMIT] Success!
+[RAW INPUT] Array
+(
+    [patient_id] => 199
+    [first_name] => Maria
+    [last_name] => Reyes
+    [middle_name] => G
+    [extension] => 
+    [birthplace] => Labo, Camarines Norte
+    [date_of_birth] => 1965-04-22
+    [address] => 
+    [civil_status] => Widowed
+    [contact_number] => 09234567902
+    [religion] => Iglesia ni Cristo
+    [occupation] => Vendor
+    [educational_attainment] => Primary Education
+    [birth_weight] => 10
+    [philhealth_member_no] => PH201112
+    [category] => NHTS
+    [family_serial_no] => 202
+    [sex] => Male
+    [fourps_status] => No
+)
+
+[ERROR] Missing required fields: address | Input: Array
+(
+    [patient_id] => 199
+    [first_name] => Maria
+    [last_name] => Reyes
+    [middle_name] => G
+    [extension] => 
+    [birthplace] => Labo, Camarines Norte
+    [date_of_birth] => 1965-04-22
+    [address] => 
+    [civil_status] => Widowed
+    [contact_number] => 09234567902
+    [religion] => Iglesia ni Cristo
+    [occupation] => Vendor
+    [educational_attainment] => Primary Education
+    [birth_weight] => 10
+    [philhealth_member_no] => PH201112
+    [category] => NHTS
+    [family_serial_no] => 202
+    [sex] => Male
+    [fourps_status] => No
+)
+
+[RAW INPUT] Array
+(
+    [patient_id] => 2
+    [first_name] => Josh Maria
+    [last_name] => Mago
+    [middle_name] => Susana
+    [extension] => 
+    [birthplace] => Labo, Camarines Norte
+    [date_of_birth] => 2004-10-01
+    [address] => 
+    [civil_status] => Widowed
+    [contact_number] => 09182345678
+    [religion] => 
+    [occupation] => Teacher
+    [educational_attainment] => Tertiary Education
+    [birth_weight] => 3
+    [philhealth_member_no] => PH1234567891
+    [category] => Private
+    [family_serial_no] => 1002
+    [sex] => Female
+    [fourps_status] => Yes
+)
+
+[ERROR] Missing required fields: address | Input: Array
+(
+    [patient_id] => 2
+    [first_name] => Josh Maria
+    [last_name] => Mago
+    [middle_name] => Susana
+    [extension] => 
+    [birthplace] => Labo, Camarines Norte
+    [date_of_birth] => 2004-10-01
+    [address] => 
+    [civil_status] => Widowed
+    [contact_number] => 09182345678
+    [religion] => 
+    [occupation] => Teacher
+    [educational_attainment] => Tertiary Education
+    [birth_weight] => 3
+    [philhealth_member_no] => PH1234567891
+    [category] => Private
+    [family_serial_no] => 1002
+    [sex] => Female
+    [fourps_status] => Yes
+)
+
+[RAW INPUT] Array
+(
+    [patient_id] => 2
+    [first_name] => Josh Maria
+    [last_name] => Mago
+    [middle_name] => Susana
+    [extension] => 
+    [birthplace] => Labo, Camarines Norte
+    [date_of_birth] => 2004-10-01
+    [address] => 
+    [civil_status] => Widowed
+    [contact_number] => 09182345678
+    [religion] => 
+    [occupation] => Teacher
+    [educational_attainment] => Tertiary Education
+    [birth_weight] => 3
+    [philhealth_member_no] => PH1234567891
+    [category] => Private
+    [family_serial_no] => 1002
+    [sex] => Female
+    [fourps_status] => Yes
+)
+
+[ERROR] Missing required fields: address | Input: Array
+(
+    [patient_id] => 2
+    [first_name] => Josh Maria
+    [last_name] => Mago
+    [middle_name] => Susana
+    [extension] => 
+    [birthplace] => Labo, Camarines Norte
+    [date_of_birth] => 2004-10-01
+    [address] => 
+    [civil_status] => Widowed
+    [contact_number] => 09182345678
+    [religion] => 
+    [occupation] => Teacher
+    [educational_attainment] => Tertiary Education
+    [birth_weight] => 3
+    [philhealth_member_no] => PH1234567891
+    [category] => Private
+    [family_serial_no] => 1002
+    [sex] => Female
+    [fourps_status] => Yes
+)
+
+[RAW INPUT] Array
+(
+    [patient_id] => 2
+    [first_name] => Josh Maria
+    [last_name] => Mago
+    [middle_name] => Susana
+    [extension] => 
+    [birthplace] => Labo, Camarines Norte
+    [date_of_birth] => 2004-10-01
+    [address] => 
+    [civil_status] => Widowed
+    [contact_number] => 09182345678
+    [religion] => 
+    [occupation] => Teacher
+    [educational_attainment] => Tertiary Education
+    [birth_weight] => 3
+    [philhealth_member_no] => PH1234567891
+    [category] => Private
+    [family_serial_no] => 1002
+    [sex] => Female
+    [fourps_status] => Yes
+)
+
+[ERROR] Missing required fields: address | Input: Array
+(
+    [patient_id] => 2
+    [first_name] => Josh Maria
+    [last_name] => Mago
+    [middle_name] => Susana
+    [extension] => 
+    [birthplace] => Labo, Camarines Norte
+    [date_of_birth] => 2004-10-01
+    [address] => 
+    [civil_status] => Widowed
+    [contact_number] => 09182345678
+    [religion] => 
+    [occupation] => Teacher
+    [educational_attainment] => Tertiary Education
+    [birth_weight] => 3
+    [philhealth_member_no] => PH1234567891
+    [category] => Private
+    [family_serial_no] => 1002
+    [sex] => Female
+    [fourps_status] => Yes
+)
+
+[RAW INPUT] Array
+(
+    [patient_id] => 2
+    [first_name] => Josh Maria
+    [last_name] => Mago
+    [middle_name] => Susana
+    [extension] => 
+    [birthplace] => Labo, Camarines Norte
+    [date_of_birth] => 2004-10-01
+    [address] => 
+    [civil_status] => Widowed
+    [contact_number] => 09182345678
+    [religion] => 
+    [occupation] => Teacher
+    [educational_attainment] => Tertiary Education
+    [birth_weight] => 3
+    [philhealth_member_no] => PH1234567891
+    [category] => Private
+    [family_serial_no] => 1002
+    [sex] => Female
+    [fourps_status] => Yes
+)
+
+[ERROR] Missing required fields: address | Input: Array
+(
+    [patient_id] => 2
+    [first_name] => Josh Maria
+    [last_name] => Mago
+    [middle_name] => Susana
+    [extension] => 
+    [birthplace] => Labo, Camarines Norte
+    [date_of_birth] => 2004-10-01
+    [address] => 
+    [civil_status] => Widowed
+    [contact_number] => 09182345678
+    [religion] => 
+    [occupation] => Teacher
+    [educational_attainment] => Tertiary Education
+    [birth_weight] => 3
+    [philhealth_member_no] => PH1234567891
+    [category] => Private
+    [family_serial_no] => 1002
+    [sex] => Female
+    [fourps_status] => Yes
+)
+
+[RAW INPUT] Array
+(
+    [patient_id] => 2
+    [first_name] => Josh Maria
+    [last_name] => Mago
+    [middle_name] => S
+    [extension] => 
+    [birthplace] => Labo, Camarines Norte
+    [date_of_birth] => 2001-10-11
+    [address] => 9, Select Barangay, Select Municipality/City, Select Province, Select Region
+    [civil_status] => Married
+    [contact_number] => 09182345678
+    [religion] => Islam
+    [occupation] => Teacher
+    [educational_attainment] => Primary Education
+    [birth_weight] => 3
+    [philhealth_member_no] => PH1234567891
+    [category] => NHTS
+    [family_serial_no] => 1002
+    [sex] => Female
+    [fourps_status] => Yes
+)
+
+[PATIENT_ID] 2
+[USER_ID] 5
+[SUCCESS] Patient found, updating...
+[PARAMS] Array
+(
+    [first_name] => Josh Maria
+    [last_name] => Mago
+    [middle_name] => S
+    [extension] => 
+    [birthplace] => Labo, Camarines Norte
+    [date_of_birth] => 2001-10-11
+    [address] => 9, Select Barangay, Select Municipality/City, Select Province, Select Region
+    [civil_status] => Married
+    [contact_number] => 09182345678
+    [religion] => Islam
+    [occupation] => Teacher
+    [educational_attainment] => Primary Education
+    [birth_weight] => 3
+    [philhealth_member_no] => PH1234567891
+    [category] => NHTS
+    [family_serial_no] => 1002
+    [sex] => Female
+    [fourps_status] => Yes
+    [patient_id] => 2
+)
+
+[ROWS_AFFECTED] 1
+[COMMIT] Success!
+[RAW INPUT] Array
+(
+    [patient_id] => 2
+    [first_name] => Joshua
+    [last_name] => Mago
+    [middle_name] => S
+    [extension] => 
+    [birthplace] => Labo, Camarines Norte
+    [date_of_birth] => 2001-10-11
+    [address] => 9, Select Barangay, Select Municipality/City, Select Province, Select Region
+    [civil_status] => 
+    [contact_number] => 09182345678
+    [religion] => 
+    [occupation] => Teacher
+    [educational_attainment] => 
+    [birth_weight] => 3
+    [philhealth_member_no] => PH1234567891
+    [category] => 
+    [family_serial_no] => 1002
+    [sex] => Female
+    [fourps_status] => Yes
+)
+
+[PATIENT_ID] 2
+[USER_ID] 5
+[SUCCESS] Patient found, updating...
+[PARAMS] Array
+(
+    [first_name] => Joshua
+    [last_name] => Mago
+    [middle_name] => S
+    [extension] => 
+    [birthplace] => Labo, Camarines Norte
+    [date_of_birth] => 2001-10-11
+    [address] => 9, Select Barangay, Select Municipality/City, Select Province, Select Region
+    [civil_status] => 
+    [contact_number] => 09182345678
+    [religion] => 
+    [occupation] => Teacher
+    [educational_attainment] => 
+    [birth_weight] => 3
+    [philhealth_member_no] => PH1234567891
+    [category] => 
+    [family_serial_no] => 1002
+    [sex] => Female
+    [fourps_status] => Yes
+    [patient_id] => 2
+)
+
+[ROWS_AFFECTED] 1
+[COMMIT] Success!
+[RAW INPUT] Array
+(
+    [patient_id] => 65
+    [first_name] => Grace
+    [last_name] => Jimenez
+    [middle_name] => Castillo
+    [extension] => 
+    [birthplace] => Daet
+    [date_of_birth] => 2002-07-09
+    [address] => 
+    [civil_status] => Single
+    [contact_number] => 09283645120
+    [religion] => Iglesia ni Cristo
+    [occupation] => Student
+    [educational_attainment] => Tertiary Education
+    [birth_weight] => 3700
+    [philhealth_member_no] => 21-445566778-3
+    [category] => Private
+    [family_serial_no] => 293
+    [sex] => Male
+    [fourps_status] => Yes
+)
+
+[ERROR] Missing required fields: address | Input: Array
+(
+    [patient_id] => 65
+    [first_name] => Grace
+    [last_name] => Jimenez
+    [middle_name] => Castillo
+    [extension] => 
+    [birthplace] => Daet
+    [date_of_birth] => 2002-07-09
+    [address] => 
+    [civil_status] => Single
+    [contact_number] => 09283645120
+    [religion] => Iglesia ni Cristo
+    [occupation] => Student
+    [educational_attainment] => Tertiary Education
+    [birth_weight] => 3700
+    [philhealth_member_no] => 21-445566778-3
+    [category] => Private
+    [family_serial_no] => 293
+    [sex] => Male
+    [fourps_status] => Yes
+)
+
+[RAW INPUT] Array
+(
+    [patient_id] => 78
+    [first_name] => Cynthia
+    [last_name] => Santiago
+    [middle_name] => Villanueva
+    [extension] => 
+    [birthplace] => Talisay, Camarines Norte
+    [date_of_birth] => 1979-02-26
+    [address] => 
+    [civil_status] => Widowed
+    [contact_number] => 09456789012
+    [religion] => Roman Catholic
+    [occupation] => Vendor
+    [educational_attainment] => Secondary Education
+    [birth_weight] => 4
+    [philhealth_member_no] => PH1234567918
+    [category] => NHTS
+    [family_serial_no] => 1029
+    [sex] => Male
+    [fourps_status] => Yes
+)
+
+[ERROR] Missing required fields: address | Input: Array
+(
+    [patient_id] => 78
+    [first_name] => Cynthia
+    [last_name] => Santiago
+    [middle_name] => Villanueva
+    [extension] => 
+    [birthplace] => Talisay, Camarines Norte
+    [date_of_birth] => 1979-02-26
+    [address] => 
+    [civil_status] => Widowed
+    [contact_number] => 09456789012
+    [religion] => Roman Catholic
+    [occupation] => Vendor
+    [educational_attainment] => Secondary Education
+    [birth_weight] => 4
+    [philhealth_member_no] => PH1234567918
+    [category] => NHTS
+    [family_serial_no] => 1029
+    [sex] => Male
+    [fourps_status] => Yes
+)
+
+[RAW INPUT] Array
+(
+    [patient_id] => 65
+    [first_name] => Grace
+    [last_name] => Jimenez
+    [middle_name] => Castillo
+    [extension] => 
+    [birthplace] => Daet
+    [date_of_birth] => 2002-07-09
+    [address] => Purok 4 - Barangay San Isidro Daet, Camarines Norte
+    [civil_status] => Single
+    [contact_number] => 09283645120
+    [religion] => Iglesia ni Cristo
+    [occupation] => Student
+    [educational_attainment] => Tertiary Education
+    [birth_weight] => 3700
+    [philhealth_member_no] => 21-445566778-3
+    [category] => Private
+    [family_serial_no] => 293
+    [sex] => Male
+    [fourps_status] => Yes
+)
+
+[PATIENT_ID] 65
+[USER_ID] 3
+[SUCCESS] Patient found, updating...
+[PARAMS] Array
+(
+    [first_name] => Grace
+    [last_name] => Jimenez
+    [middle_name] => Castillo
+    [extension] => 
+    [birthplace] => Daet
+    [date_of_birth] => 2002-07-09
+    [address] => Purok 4 - Barangay San Isidro Daet, Camarines Norte
+    [civil_status] => Single
+    [contact_number] => 09283645120
+    [religion] => Iglesia ni Cristo
+    [occupation] => Student
+    [educational_attainment] => Tertiary Education
+    [birth_weight] => 3700
+    [philhealth_member_no] => 21-445566778-3
+    [category] => Private
+    [family_serial_no] => 293
+    [sex] => Male
+    [fourps_status] => Yes
+    [patient_id] => 65
+)
+
+[ROWS_AFFECTED] 1
+[COMMIT] Success!
+[RAW INPUT] Array
+(
+    [patient_id] => 78
+    [first_name] => Cynthia
+    [last_name] => Santiago
+    [middle_name] => Villanueva
+    [extension] => 
+    [birthplace] => Talisay, Camarines Norte
+    [date_of_birth] => 1979-02-26
+    [address] => 
+    [civil_status] => Widowed
+    [contact_number] => 09456789012
+    [religion] => Roman Catholic
+    [occupation] => Vendor
+    [educational_attainment] => Secondary Education
+    [birth_weight] => 4
+    [philhealth_member_no] => PH1234567918
+    [category] => NHTS
+    [family_serial_no] => 1029
+    [sex] => Female
+    [fourps_status] => No
+)
+
+[ERROR] Missing required fields: address | Input: Array
+(
+    [patient_id] => 78
+    [first_name] => Cynthia
+    [last_name] => Santiago
+    [middle_name] => Villanueva
+    [extension] => 
+    [birthplace] => Talisay, Camarines Norte
+    [date_of_birth] => 1979-02-26
+    [address] => 
+    [civil_status] => Widowed
+    [contact_number] => 09456789012
+    [religion] => Roman Catholic
+    [occupation] => Vendor
+    [educational_attainment] => Secondary Education
+    [birth_weight] => 4
+    [philhealth_member_no] => PH1234567918
+    [category] => NHTS
+    [family_serial_no] => 1029
+    [sex] => Female
+    [fourps_status] => No
+)
+
+[RAW INPUT] Array
+(
+    [patient_id] => 78
+    [first_name] => Cynthia
+    [last_name] => Santiago
+    [middle_name] => Villanueva
+    [extension] => 
+    [birthplace] => Talisay, Camarines Norte
+    [date_of_birth] => 1997-10-15
+    [address] => Purok 8 - Barangay 1 Daet, Camarines Norte
+    [civil_status] => Widowed
+    [contact_number] => 09456789012
+    [religion] => Roman Catholic
+    [occupation] => Vendor
+    [educational_attainment] => Secondary Education
+    [birth_weight] => 4
+    [philhealth_member_no] => PH1234567918
+    [category] => NHTS
+    [family_serial_no] => 1029
+    [sex] => Male
+    [fourps_status] => No
+)
+
+[PATIENT_ID] 78
+[USER_ID] 2
+[SUCCESS] Patient found, updating...
+[PARAMS] Array
+(
+    [first_name] => Cynthia
+    [last_name] => Santiago
+    [middle_name] => Villanueva
+    [extension] => 
+    [birthplace] => Talisay, Camarines Norte
+    [date_of_birth] => 1997-10-15
+    [address] => Purok 8 - Barangay 1 Daet, Camarines Norte
+    [civil_status] => Widowed
+    [contact_number] => 09456789012
+    [religion] => Roman Catholic
+    [occupation] => Vendor
+    [educational_attainment] => Secondary Education
+    [birth_weight] => 4
+    [philhealth_member_no] => PH1234567918
+    [category] => NHTS
+    [family_serial_no] => 1029
+    [sex] => Male
+    [fourps_status] => No
+    [patient_id] => 78
+)
+
+[ROWS_AFFECTED] 1
+[COMMIT] Success!
+[RAW INPUT] Array
+(
+    [patient_id] => 2
+    [first_name] => Joshua
+    [last_name] => Mago
+    [middle_name] => S
+    [extension] => 
+    [birthplace] => Labo, Camarines Norte
+    [date_of_birth] => 2001-10-11
+    [address] => 9, Capintalan, Carranglan, Nueva Ecija, Region III (Central Luzon)
+    [civil_status] => 
+    [contact_number] => 09182345678
+    [religion] => 
+    [occupation] => Teacher
+    [educational_attainment] => 
+    [birth_weight] => 3
+    [philhealth_member_no] => PH1234567891
+    [category] => 
+    [family_serial_no] => 1002
+    [sex] => Female
+    [fourps_status] => Yes
+)
+
+[PATIENT_ID] 2
+[USER_ID] 5
+[SUCCESS] Patient found, updating...
+[PARAMS] Array
+(
+    [first_name] => Joshua
+    [last_name] => Mago
+    [middle_name] => S
+    [extension] => 
+    [birthplace] => Labo, Camarines Norte
+    [date_of_birth] => 2001-10-11
+    [address] => 9, Capintalan, Carranglan, Nueva Ecija, Region III (Central Luzon)
+    [civil_status] => 
+    [contact_number] => 09182345678
+    [religion] => 
+    [occupation] => Teacher
+    [educational_attainment] => 
+    [birth_weight] => 3
+    [philhealth_member_no] => PH1234567891
+    [category] => 
+    [family_serial_no] => 1002
+    [sex] => Female
+    [fourps_status] => Yes
+    [patient_id] => 2
+)
+
+[ROWS_AFFECTED] 1
+[COMMIT] Success!
+[RAW INPUT] Array
+(
+    [patient_id] => 2
+    [first_name] => Joshua
+    [last_name] => Mago
+    [middle_name] => S
+    [extension] => 
+    [birthplace] => Labo, Camarines Norte
+    [date_of_birth] => 2001-10-11
+    [address] => 9, Capintalan, Carranglan, Nueva Ecija, Region III (Central Luzon)
+    [civil_status] => 
+    [contact_number] => 09182345678
+    [religion] => 
+    [occupation] => Teacher
+    [educational_attainment] => 
+    [birth_weight] => 3
+    [philhealth_member_no] => PH1234567891
+    [category] => Self-Employed
+    [family_serial_no] => 1002
+    [sex] => Female
+    [fourps_status] => Yes
+)
+
+[PATIENT_ID] 2
+[USER_ID] 5
+[SUCCESS] Patient found, updating...
+[PARAMS] Array
+(
+    [first_name] => Joshua
+    [last_name] => Mago
+    [middle_name] => S
+    [extension] => 
+    [birthplace] => Labo, Camarines Norte
+    [date_of_birth] => 2001-10-11
+    [address] => 9, Capintalan, Carranglan, Nueva Ecija, Region III (Central Luzon)
+    [civil_status] => 
+    [contact_number] => 09182345678
+    [religion] => 
+    [occupation] => Teacher
+    [educational_attainment] => 
+    [birth_weight] => 3
+    [philhealth_member_no] => PH1234567891
+    [category] => Self-Employed
+    [family_serial_no] => 1002
+    [sex] => Female
+    [fourps_status] => Yes
+    [patient_id] => 2
+)
+
+[ROWS_AFFECTED] 1
+[COMMIT] Success!
+[RAW INPUT] Array
+(
+    [patient_id] => 2
+    [first_name] => Joshua
+    [last_name] => Mago
+    [middle_name] => S
+    [extension] => 
+    [birthplace] => Labo, Camarines Norte
+    [date_of_birth] => 2001-10-11
+    [address] => 9, Capintalan, Carranglan, Nueva Ecija, Region III (Central Luzon)
+    [civil_status] => 
+    [contact_number] => 09182345678
+    [religion] => United Methodist Church
+    [occupation] => Teacher
+    [educational_attainment] => 
+    [birth_weight] => 3
+    [philhealth_member_no] => PH1234567891
+    [category] => 
+    [family_serial_no] => 1002
+    [sex] => Female
+    [fourps_status] => Yes
+)
+
+[PATIENT_ID] 2
+[USER_ID] 5
+[SUCCESS] Patient found, updating...
+[PARAMS] Array
+(
+    [first_name] => Joshua
+    [last_name] => Mago
+    [middle_name] => S
+    [extension] => 
+    [birthplace] => Labo, Camarines Norte
+    [date_of_birth] => 2001-10-11
+    [address] => 9, Capintalan, Carranglan, Nueva Ecija, Region III (Central Luzon)
+    [civil_status] => 
+    [contact_number] => 09182345678
+    [religion] => United Methodist Church
+    [occupation] => Teacher
+    [educational_attainment] => 
+    [birth_weight] => 3
+    [philhealth_member_no] => PH1234567891
+    [category] => 
+    [family_serial_no] => 1002
+    [sex] => Female
+    [fourps_status] => Yes
+    [patient_id] => 2
+)
+
+[ROWS_AFFECTED] 1
+[COMMIT] Success!

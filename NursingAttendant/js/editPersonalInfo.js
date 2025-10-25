@@ -244,12 +244,37 @@ document.addEventListener("DOMContentLoaded", function () {
         // Parse the full address (format: "Purok/Street, Barangay, City, Province, Region")
         const parts = fullAddress.split(",").map(p => p.trim());
         
+        // Set the street value
         if (parts.length >= 1) {
-            document.getElementById("street").value = parts[0];
+            const streetInput = document.getElementById("street");
+            if (streetInput) {
+                streetInput.value = parts[0];
+                // Trigger input event to update the hidden field
+                streetInput.dispatchEvent(new Event('input'));
+            }
         }
-        
-        // Note: The cascading selects will need to be populated via API calls
-        // For now, we'll just set the street and let the user select the rest
+
+        // Set the hidden field directly as well
+        const hiddenField = document.getElementById("permanent_address_combined");
+        if (hiddenField) {
+            hiddenField.value = fullAddress;
+        }
+
+        // Ensure the address is composed when street is changed
+        const streetEl = document.getElementById("street");
+        if (streetEl) {
+            streetEl.addEventListener("input", function() {
+                const hiddenFull = document.getElementById("permanent_address_combined");
+                if (hiddenFull) {
+                    const r = document.getElementById("region")?.options[document.getElementById("region")?.selectedIndex]?.text || "";
+                    const p = document.getElementById("province")?.options[document.getElementById("province")?.selectedIndex]?.text || "";
+                    const c = document.getElementById("city")?.options[document.getElementById("city")?.selectedIndex]?.text || "";
+                    const b = document.getElementById("barangay")?.options[document.getElementById("barangay")?.selectedIndex]?.text || "";
+                    const s = (this.value || "").trim();
+                    hiddenFull.value = [s, b, c, p, r].filter(Boolean).join(", ");
+                }
+            });
+        }
     }
 
     function formatDate(dateString) {
