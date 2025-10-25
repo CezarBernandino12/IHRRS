@@ -1341,6 +1341,7 @@ body {
 
 
 .deactivate-btn {
+  height: 40px; 
     background-color: #f44336;
     color: #fff;
 }
@@ -1849,6 +1850,11 @@ button.reset-password-btn:hover {
 
 .users-count {
     margin: 0;
+}
+
+
+.view-user-btn:hover {
+  background-color: #7c7c7c;
 }
 
 /* Logout Modal overlay */

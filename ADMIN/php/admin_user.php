@@ -432,7 +432,7 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <input type="text" id="licenseNumber" name="license_number" placeholder="Enter license number" />
                         </div>
             
-            <div class="form-group" id="barangayGroup">
+            <br><div class="form-group" id="barangayGroup">
     <label for="barangay">DESIGNATED BARANGAY</label>
     <select id="barangay" name="barangay" required>
                     <option value="" disabled selected>Select Barangay</option>
