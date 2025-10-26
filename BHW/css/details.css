@@ -27,8 +27,9 @@
 }
 
 .referral-header .referral-heading .line-3{
-  font-size: 13px;   /* Barangay 1 */
+  font-size: 16px;   /* Barangay 1 */
   margin-top: 2px;
+  font-weight: 500;
 }
 
 /* Field groups */
@@ -194,13 +195,13 @@ select {
   font-size: 16px;
   letter-spacing: 0.2px;
   margin-top: 2px;
-  font-weight: 600;
   color: #000;
 }
 
 .referral-heading .line-3 {
-  font-size: 13px;
+  font-size: 16px;
   margin-top: 2px;
+  font-weight: 500;
 }
 
 .referral-rule {
@@ -224,7 +225,7 @@ select {
   }
 
   .referral-heading .line-2 {
-    font-size: 20px;
+    font-size: 16px;
   }
 }
 
@@ -233,7 +234,7 @@ select {
   .referral-header {
     display: grid !important;
     grid-template-columns: 80px auto 80px !important;
-    column-gap: 60px !important;
+    column-gap: 80px !important;
     margin: 8px auto 25px !important;
     padding: 0 !important;
   }
@@ -255,7 +256,7 @@ select {
 @media (max-width: 640px){
   .referral-header{ grid-template-columns: 64px 1fr 64px; gap: 8px; }
   .referral-logo{ width: 64px; height: 64px; }
-  .referral-heading .line-2{ font-size: 20px; }
+  .referral-heading .line-2{ font-size: 16px; }
 }
 
 /* Print: keep same arrangement, slightly smaller logos */
@@ -266,11 +267,12 @@ select {
     gap: 10px !important;
     margin-bottom: 6px !important;
     padding: 0 !important;
+    column-gap: 80px;
   }
   .referral-logo{ width: 80px !important; height: 80px !important; }
   .referral-heading .line-1,
   .referral-heading .line-2,
-  .referral-heading .line-3{ font-size: 12pt !important; }
+  .referral-heading .line-3{ font-size: 12pt !important; font-weight: 500 !important;}
   .referral-heading .title{ font-size: 16pt !important; margin-top: 4px !important; }
   .referral-rule{ height: 1px !important; background: #cfd8e3 !important; box-shadow: none !important; margin: 6px 0 10px !important; }
 }
@@ -312,11 +314,12 @@ select {
   .referral-header{
     grid-template-columns: 80px 1fr 80px;
     gap:10px; margin-bottom:6px; padding:0;
+    column-gap: 80px;
   }
   .referral-logo{ width:80px; height:80px; }
   .referral-heading .line-1,
   .referral-heading .line-2,
-  .referral-heading .line-3{ font-size: 12pt; }
+  .referral-heading .line-3{ font-size: 12pt; font-weight: 500 !important;}
   .referral-heading .title{ font-size: 16pt; margin-top: 4px; }
 
   .referral-rule{ height:1px; background:#cfd8e3; margin:6px 0 10px; }
@@ -359,6 +362,7 @@ select {
 @media print {
   .referral-header {
     margin-bottom: 40pt !important;
+    column-gap: 80px;
   }
 }
 
@@ -396,8 +400,8 @@ select {
 }
 .kv{ min-height:44px; }
 .kv .label{
-  display:block; font-size:16px; font-weight:600; line-height:1.4; letter-spacing:.3px; text-transform:uppercase;
-  color:#8a94a6; margin-bottom:6px;
+  display:block; font-size:16px; font-weight:650; line-height:1.4; letter-spacing:.3px; text-transform:uppercase;
+  color:#000000; margin-bottom:6px;
 }
 .kv .value{
   color:#050505; font-size:16px; font-weight:600; line-height:1.4;
@@ -631,11 +635,11 @@ select {
   }
 
   /* Header */
-  .referral-header { margin-top: 4mm; margin-bottom: 4mm; gap: 6px !important; }
+  .referral-header { margin-top: 4mm; margin-bottom: 4mm; gap: 6px !important; column-gap: 80px !important; }
   .referral-logo { width: 65px !important; height: 65px !important; object-fit: contain;}
   .referral-heading .line-1 { font-size: 12pt !important; }
-  .referral-heading .line-2 { font-size: 15pt !important; font-weight: 700; color: #000000; }
-  .referral-heading .line-3 { font-size: 11pt !important; color: #000000; }
+  .referral-heading .line-2 { font-size: 12pt !important; color: #000000; }
+  .referral-heading .line-3 { font-size: 12pt !important; font-weight: 600 !important; color: #000000; }
   .referral-heading .title  { font-size: 14pt !important; margin-top: 4px !important; }
   .referral-rule {
     height: 1px !important; margin: 6px 0 10px !important;
@@ -665,8 +669,8 @@ select {
   .vitals-grid { grid-template-columns: repeat(4, 1fr) !important; gap: 8px 12px !important; }
 
   .kv .label {
-    font-size: 11pt !important; margin-bottom: 2px !important; color: #262627 !important;
-    letter-spacing: .15px !important; text-transform: uppercase !important;
+    font-size: 11pt !important; margin-bottom: 2px !important; color: #000000 !important;
+    letter-spacing: .15px !important; text-transform: uppercase !important; font-weight: 650 !important; 
   }
   .kv .value { font-size: 11pt !important; font-weight: 600 !important; overflow-wrap: anywhere !important; }
 
