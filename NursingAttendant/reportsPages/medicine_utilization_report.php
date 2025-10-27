@@ -285,7 +285,7 @@ if (count($patient_meds) > 0) {
 	<section id="sidebar">
 		<a href="#" class="brand">
 			<img src="../../img/logo.png" alt="RHULogo" class="logo">
-			<span class="text">IHRRS</span>
+			<span class="text">Nurse</span>
 		</a>
 		<ul class="side-menu top">
 			<li>
