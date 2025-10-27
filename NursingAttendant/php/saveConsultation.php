@@ -63,7 +63,7 @@ $physician = intval($physician);
     if (isset($_FILES['photo']) && $_FILES['photo']['error'] === UPLOAD_ERR_OK) {
         $photoTmp = $_FILES['photo']['tmp_name'];
         $photoName = basename($_FILES['photo']['name']);
-        $uploadDir = '../RHUPhysician/php/uploads';
+        $uploadDir = 'uploads';
         if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
 
         $photoPath = $uploadDir . '/' . time() . '_' . $photoName;

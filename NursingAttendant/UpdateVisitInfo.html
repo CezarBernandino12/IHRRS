@@ -303,23 +303,28 @@
                           <label for="photo">Upload Laboratory Result:</label>
                         <input type="file" id="photo" name="photo" accept="image/*,.pdf" capture="environment"> <br> <br>
 
-                        <div class="form-group">
-                            <label for="diagnosis">Diagnosis:</label>
-                            <select id="diagnosis" name="diagnosis" class="select2">
-                                <option value="">Select diagnosis</option>
-                                <option value="other">Other (Enter manually)</option>
-                            
-                            </select>
-                        </div>
-                          <div id="diagnosis-status-wrapper" style="display: none;">
-                            <label for="status">Diagnosis Status:</label>
-                            <select id="status" name="status" class="select2">
-                                <option value="Ongoing">Ongoing</option>
-                                <option value="Treated">Treated</option>
-                                <option value="Referred">Referred</option>
-                                <option value="Deceased">Deceased</option>
-                            </select>
-                        </div>
+                 <div style="display: flex; gap: 20px; align-items: flex-end;">
+    <div style="flex: 1; display: flex; flex-direction: column;">
+        <label for="diagnosis" style="font-weight: bold; margin-bottom: 5px;">Diagnosis:</label>
+        <select id="diagnosis" name="diagnosis" class="select2"
+                style="padding: 6px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px;" required>
+            <option value="">Select diagnosis</option>
+            <option value="other">Other (Enter manually)</option>
+        </select>
+    </div>
+
+    <div id="diagnosis-status-wrapper" style="flex: 1; display: flex; flex-direction: column; display: none;">
+        <label for="status" style="font-weight: bold; margin-bottom: 5px;">Diagnosis Status:</label>
+        <select id="status" name="status" class="select2"
+                style="padding: 6px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px;">
+            <option value="Ongoing">Ongoing</option>
+            <option value="Treated">Treated</option>
+            <option value="Referred">Referred</option>
+            <option value="Deceased">Deceased</option>
+        </select>
+    </div>
+</div>
+
                         <script>
                         $(document).ready(function () {
                             // Show/hide diagnosis status based on diagnosis selection
@@ -408,20 +413,25 @@ document.addEventListener("click", function(event) {
                         </script>
                     </div>
 
-                   <div class="form-group">
-                            <label for="rhu_remarks">Remarks:</label>
-                            <select id="rhu_remarks" name="rhu_remarks" class="select2">
-                                <option value="">Select</option>
-                                <option value="other">Other (Enter manually)</option>
-                            
-                            </select>
-                        </div> 
-     <div class="form-group">
-        <label for="physician2">Physician:</label>
-        <select id="physician2" name="physician2" class="select2">
+<div style="display: flex; gap: 20px; align-items: flex-end;">
+    <div style="flex: 1; display: flex; flex-direction: column;">
+        <label for="rhu_remarks" style="font-weight: bold; margin-bottom: 5px;">Remarks:</label>
+        <select id="rhu_remarks" name="rhu_remarks" class="select2" 
+                style="padding: 6px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px;">
+            <option value="">Select</option>
+            <option value="other">Other (Enter manually)</option>
+        </select>
+    </div> 
+
+    <div style="flex: 1; display: flex; flex-direction: column;">
+        <label for="physician2" style="font-weight: bold; margin-bottom: 5px;">Physician:</label>
+        <select id="physician2" name="physician2" class="select2" 
+                style="padding: 6px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px;" required>
             <option value="">Select Physician</option>
         </select>
-    </div><br> 
+    </div>
+</div>
+<br> 
 
 
                   <div>
@@ -582,6 +592,26 @@ document.addEventListener("DOMContentLoaded", () => {
             
                 <button type="button" class="submit-btn" id="submitButton">Submit</button>
             </div>
+            <script>
+                   
+
+
+    document.addEventListener("input", function () {
+        const requiredFields = document.querySelectorAll("select[required]");
+        const submitButton = document.getElementById("submitButton");
+
+        let allFilled = true;
+        requiredFields.forEach(field => {
+            if (!field.value || field.value.trim() === "") {
+                allFilled = false;
+            }
+        });
+
+        submitButton.disabled = !allFilled;
+    });
+
+
+            </script>
             
         <div id="myModal" class="modal">
             <div class="modal-content">
@@ -635,8 +665,6 @@ document.addEventListener("DOMContentLoaded", () => {
     <script src="js/form.js"></script>
     
     <script>
-   
-
 
 document.addEventListener('DOMContentLoaded', function() {
     // Get modal elements

@@ -24,12 +24,15 @@ $sql = "SELECT
     v.temperature,
     v.blood_pressure,
     v.chief_complaints,
-    v.visit_id
+    v.visit_id,
+    u.barangay
 FROM referrals r
 JOIN patients p 
     ON p.patient_id = r.patient_id
 JOIN patient_assessment v 
     ON v.visit_id = r.visit_id  -- ✅ Directly link visit_id from referrals
+JOIN users u
+    ON u.user_id = r.referred_by
 WHERE r.referral_id = :referral_id";
 
 $stmt = $pdo->prepare($sql);

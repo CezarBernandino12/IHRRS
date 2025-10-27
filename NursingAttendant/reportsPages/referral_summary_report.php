@@ -393,7 +393,7 @@ $total_pending = 0;
 <!-- PRINT-ONLY LETTERHEAD (shows only when printing) -->
 <div class="print-only-letterhead">
   <div class="print-letterhead">
-    <img src="../../img/Plogo.png" alt="Left Logo" class="print-logo">
+    <img src="../../img/daet_logo.png" alt="Left Logo" class="print-logo">
     <div class="print-heading">
       <div class="ph-line-1">Republic of the Philippines</div>
       <div class="ph-line-1">Province of Camarines Norte</div>
@@ -401,7 +401,7 @@ $total_pending = 0;
       <div class="ph-line-3"><?= htmlspecialchars($rhu) ?></div>
  
     </div>
-    <img src="../../img/RHUlogo.png" alt="Right Logo" class="print-logo">
+    <img src="../../img/mho_logo.png" alt="Right Logo" class="print-logo">
   </div>
   <hr class="print-rule">
 </div>

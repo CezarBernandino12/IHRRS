@@ -160,7 +160,7 @@ body {
 <?php
 function headerSection($consultation) { ?>
     <div class="header" style="text-align: center;">
-          <img src="../../img/RHUlogo.png" alt="RHU Logo" class="print-logo" style="height: 50px; width: auto;" />
+          <img src="../../img/mho_logo.png" alt="RHU Logo" class="print-logo" style="height: 50px; width: auto;" />
         <h3>Republic of the Philippines</h3>
         <p style="margin-top: -5px;">Province of Camarines Norte</p>
         <h3 style="margin-top: -10px;">Municipality of Daet</h3>
