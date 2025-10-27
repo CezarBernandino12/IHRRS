@@ -83,6 +83,15 @@ if (data.consultation.diagnosis_status !== "Ongoing") {
         resumeBtn.style.cursor = "not-allowed";
 
 }
+                      // ✅ Resume Button
+const addMedCertBtn = document.getElementById("addMedCertBtn");
+
+if (data.consultation.diagnosis_status !== "Ongoing") {
+        addMedCertBtn.disabled = true;
+        addMedCertBtn.style.opacity = "0.6";   // make it look disabled
+        addMedCertBtn.style.cursor = "not-allowed";
+
+}
              
                 }
 
@@ -203,18 +212,21 @@ document.getElementById("printMedication").textContent =
     }
 
     // ✅ Add Med Cert Button
-    const addMedCertBtn = document.getElementById("addMedCertBtn");
-    if (addMedCertBtn) {
-        addMedCertBtn.addEventListener("click", function () {
-            // Get patient_id from the fetched data
-            const patientId = document.getElementById("patient_id")?.value;
-            if (patientId) {
-                window.location.href = `addMedCert.html?patient_id=${patientId}`;
-            } else {
-                alert("Patient ID not found. Please try again.");
-            }
-        });
-    }
+const addMedCertBtn = document.getElementById("addMedCertBtn");
+if (addMedCertBtn) {
+    addMedCertBtn.addEventListener("click", function () {
+        const patientId = document.getElementById("patient_id")?.value;
+        const urlParams = new URLSearchParams(window.location.search);
+        const visitId = urlParams.get("visit_id"); // Get the visit_id from current page URL
+
+        if (patientId && visitId) {
+            window.location.href = `addMedCert.html?patient_id=${patientId}&visit_id=${visitId}`;
+        } else {
+            alert("Missing patient or visit information. Please try again.");
+        }
+    });
+}
+
 
     // ✅ Load Lab File
 
