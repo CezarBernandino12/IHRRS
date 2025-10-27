@@ -437,7 +437,7 @@ while ($row = $barangay_stmt->fetch(PDO::FETCH_ASSOC)) {
 <div class="print-area">
 <!-- Two-logo, centered letterhead -->
 <div class="print-letterhead">
-  <img src="../../img/Plogo.png" alt="Municipality / Station Logo" class="print-logo" aria-hidden="true">
+  <img src="../../img/daet_logo.png" alt="Municipality / Station Logo" class="print-logo" aria-hidden="true">
 
   <div class="print-heading">
     <div class="ph-line-1">Republic of the Philippines</div>
@@ -448,7 +448,7 @@ while ($row = $barangay_stmt->fetch(PDO::FETCH_ASSOC)) {
 
   </div>
 
-  <img src="../../img/RHUlogo.png" alt="RHU Logo" class="print-logo" aria-hidden="true"> <br>
+  <img src="../../img/mho_logo.png" alt="RHU Logo" class="print-logo" aria-hidden="true"> <br>
 
   
 </div>

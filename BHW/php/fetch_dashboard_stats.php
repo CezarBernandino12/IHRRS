@@ -25,8 +25,8 @@ try {
     }
 
     // Count visits today
-    $stmt = $pdo->prepare("SELECT COUNT(*) FROM patient_assessment WHERE visit_date = :date");
-    $stmt->execute([':date' => $date]);
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM patient_assessment p INNER JOIN users u ON p.recorded_by = u.user_id WHERE p.visit_date = :date AND u.barangay = :barangay");
+    $stmt->execute([':date' => $date, ':barangay' => $user_barangay]);
     $visits_today = $stmt->fetchColumn();
 
     // Count pending referrals today from users in the same barangay

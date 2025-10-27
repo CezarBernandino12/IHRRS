@@ -104,18 +104,18 @@
     <br>
     
 <div class="referral-header">
-  <img src="../img/mho_logo.png" alt="Barangay / Station Logo" class="referral-logo left" aria-hidden="true">
+  <img src="../img/daet_logo.png" alt="Barangay / Station Logo" class="referral-logo left" aria-hidden="true">
   
   <div class="referral-heading">
     <div class="line-1">Republic of the Philippines</div>
     <div class="line-2">Daet, Camarines Norte</div>
-    <div class="line-3" id="barangay-info">Barangay 1 Health Station</div>
+    <div class="line-3" id="barangay-info">N/A</div>
 
     <hr class="referral-rule">
     <h1 class="title">Referral Slip</h1>
   </div>
 
-  <img src="../img/RHUlogo.png" alt="RHU Logo" class="referral-logo right" aria-hidden="true">
+  <img src="../img/mho_logo.png" alt="RHU Logo" class="referral-logo right" aria-hidden="true">
 </div>
 
 
@@ -266,7 +266,7 @@
                             console.error('No visit_id found in referral data');
                             document.getElementById("viewRecordLink").style.display = 'none'; // Hide link if no visit_id
                         }
-
+                        document.getElementById('barangay-info').textContent = data.barangay + ' Health Station';
                         document.getElementById('referral_id').textContent = data.referral_id || '';
                         document.getElementById('date').textContent = data.referral_date || '';
                         document.getElementById('name').textContent = data.name || '';

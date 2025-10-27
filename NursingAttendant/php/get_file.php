@@ -11,7 +11,7 @@ if ($visit_id) {
     if ($file && !empty($file['lab_result_path'])) {
         echo json_encode([
             "status" => "success",
-            "file" => "../RHUPhysician/php/" . $file['lab_result_path']
+            "file" => "php/" . $file['lab_result_path']
         ]);
     } else {
         echo json_encode([

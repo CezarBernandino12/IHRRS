@@ -682,12 +682,48 @@ function composeFullAddress() {
   const r = regionSel.options[regionSel.selectedIndex]?.text || "";
   const p = provinceSel.options[provinceSel.selectedIndex]?.text || "";
   const c = citySel.options[citySel.selectedIndex]?.text || "";
-  const b = brgySel.options[brgySel.selectedIndex]?.text || "";
+  let b = brgySel.options[brgySel.selectedIndex]?.text || "";
   const s = (streetSel?.value || "").trim();
 
-  // Now Purok/Street is required, so it will always be present
-  hiddenFull.value = [s, b, c, p, r].filter(Boolean).join(", ");
+  // ✅ Convert Roman numerals (I–VIII) to numbers
+  function convertRomanToNumber(str) {
+    const romanMap = {
+      "I": 1,
+      "II": 2,
+      "III": 3,
+      "IV": 4,
+      "V": 5,
+      "VI": 6,
+      "VII": 7,
+      "VIII": 8
+    };
+    return str.replace(/\b(Barangay\s*)?(I{1,3}|IV|V|VI{0,3}|VII{0,2}|VIII)\b/i, (match, prefix, roman) => {
+      const num = romanMap[roman.toUpperCase()] || roman;
+      return `Barangay ${num}`;
+    });
+  }
+
+  // ✅ Add "Barangay" if missing
+  function ensureBarangayPrefix(str) {
+    str = str.trim();
+    if (!/^Barangay\s+/i.test(str) && str !== "") {
+      return `Barangay ${str}`;
+    }
+    return str;
+  }
+
+  // ✅ Convert and format barangay
+  b = convertRomanToNumber(b);
+  b = ensureBarangayPrefix(b);
+
+  // ✅ Build final formatted address
+  if (s && b && c && p && r) {
+    hiddenFull.value = `${s} - ${b}, ${c}, ${p}, ${r}`;
+  } else {
+    hiddenFull.value = "";
+  }
 }
+
 
 if (streetSel) {
   streetSel.addEventListener("input", composeFullAddress);

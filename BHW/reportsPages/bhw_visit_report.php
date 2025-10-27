@@ -471,7 +471,7 @@ while ($row = $barangay_stmt->fetch(PDO::FETCH_ASSOC)) {
 <div class="print-area">
 <!-- Two-logo letterhead -->
 <div class="print-letterhead">
-  <img src="../../img/Plogo.png" alt="Left Logo" class="print-logo">
+  <img src="../../img/daet_logo.png" alt="Left Logo" class="print-logo">
   <div class="print-heading">
     <div class="ph-line-1">Republic of the Philippines</div>
     <div class="ph-line-1">Province of Camarines Norte</div>
@@ -479,7 +479,7 @@ while ($row = $barangay_stmt->fetch(PDO::FETCH_ASSOC)) {
     <div class="ph-line-3"><?= htmlspecialchars($barangayName, ENT_QUOTES, 'UTF-8') ?></div>
   
   </div>
-  <img src="../../img/RHUlogo.png" alt="Right Logo" class="print-logo">
+  <img src="../../img/mho_logo.png" alt="Right Logo" class="print-logo">
 </div>
 <hr class="print-rule">
 

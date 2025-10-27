@@ -430,7 +430,7 @@ $bhws = $bhw_stmt->fetchAll();
 
   <!-- Unified two-logo letterhead -->
   <div class="print-letterhead">
-    <img src="../../img/Plogo.png" alt="Left Logo"  class="print-logo">
+    <img src="../../img/daet_logo.png" alt="Left Logo"  class="print-logo">
     <div class="print-heading">
       <div class="ph-line-1">Republic of the Philippines</div>
       <div class="ph-line-1">Province of Camarines Norte</div>
@@ -438,7 +438,7 @@ $bhws = $bhw_stmt->fetchAll();
       <div class="ph-line-3"><?php echo htmlspecialchars($barangayName); ?></div>
 
     </div>
-    <img src="../../img/RHUlogo.png" alt="Right Logo" class="print-logo">
+    <img src="../../img/mho_logo.png" alt="Right Logo" class="print-logo">
   </div>
   <hr class="print-rule">
 

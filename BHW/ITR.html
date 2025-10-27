@@ -1260,24 +1260,57 @@ fetch('php/getUserName.php')
 </script>
 
 <script>
-(function(){
+(function(){ 
   const regionSel    = document.getElementById('region');
   const provinceSel  = document.getElementById('province');
   const citySel      = document.getElementById('city');
   const barangaySel  = document.getElementById('barangay');
-  const streetInput  = document.getElementById('street'); // NEW
+  const streetInput  = document.getElementById('street');
   const hiddenFull   = document.getElementById('permanent_address_combined');
+
+  // ✅ Convert Roman numerals (I–VIII) to numbers
+  function convertRomanToNumber(str) {
+    const romanMap = {
+      'I': 1,
+      'II': 2,
+      'III': 3,
+      'IV': 4,
+      'V': 5,
+      'VI': 6,
+      'VII': 7,
+      'VIII': 8
+    };
+
+    // Replace Roman numeral if present
+    return str.replace(/\b(Barangay\s*)?(I{1,3}|IV|V|VI{0,3}|VII{0,2}|VIII)\b/i, (match, prefix, roman) => {
+      const num = romanMap[roman.toUpperCase()] || roman;
+      return `Barangay ${num}`;
+    });
+  }
+
+  // ✅ Add "Barangay" if missing
+  function ensureBarangayPrefix(str) {
+    str = str.trim();
+    if (!/^Barangay\s+/i.test(str) && str !== '') {
+      return `Barangay ${str}`;
+    }
+    return str;
+  }
 
   function updateFullAddress() {
     const r = regionSel.options[regionSel.selectedIndex]?.text || '';
     const p = provinceSel.options[provinceSel.selectedIndex]?.text || '';
     const c = citySel.options[citySel.selectedIndex]?.text || '';
-    const b = barangaySel.options[barangaySel.selectedIndex]?.text || '';
+    let b = barangaySel.options[barangaySel.selectedIndex]?.text || '';
     const s = (streetInput?.value || '').trim();
 
-    // Require all parts (including street) before composing
+    // ✅ Convert and format barangay name
+    b = convertRomanToNumber(b);
+    b = ensureBarangayPrefix(b);
+
+    // ✅ Format final address
     if (r && p && c && b && s) {
-      hiddenFull.value = [s, b, c, p, r].join(', ');
+      hiddenFull.value = `${s} - ${b}, ${c}, ${p}, ${r}`;
     } else {
       hiddenFull.value = '';
     }
@@ -1288,12 +1321,13 @@ fetch('php/getUserName.php')
     provinceSel.addEventListener(evt, updateFullAddress);
     citySel.addEventListener(evt, updateFullAddress);
     barangaySel.addEventListener(evt, updateFullAddress);
-    if (streetInput) streetInput.addEventListener('input', updateFullAddress); // NEW
+    if (streetInput) streetInput.addEventListener('input', updateFullAddress);
   });
 
-  // Run once on load in case of edit mode
+  // Run once on load (for edit mode)
   updateFullAddress();
 })();
+
 </script>
 
 <!-- Error Modal -->
