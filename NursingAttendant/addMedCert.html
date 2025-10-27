@@ -110,14 +110,19 @@
                     <input type="hidden" id="patient_id" name="patient_id">
 
                     <div class="form-section">
-                        <h3>Select Visit/Consultation</h3>
-                        <div class="form-group">
-                            <label for="visitSelect">Visit Date <span class="required">*</span></label>
-                            <select id="visitSelect" name="visit_id" required>
-                                 <option value="" disabled selected hidden>Select a visit...</option>
-                            </select>
-                        </div>
+                        <h3>Consultation Date - Diagnosis</h3>
+                       <div class="form-group">
+ 
+    <select id="visitSelect" name="visit_id" required>
+        <option value="">Select a visit...</option>
+    </select>
+
+    <!-- 🔹 This will display the chosen visit as plain text -->
+    <div id="visitDisplay" style="margin-top: 8px; font-weight: 600; font-size: 15px;"></div>
+</div>
+
                     </div>
+                    
 
                     <div class="form-section">
                         <h3>Certificate Details</h3>
@@ -127,7 +132,7 @@
                             <input type="text" id="issuance_date" name="issuance_date" required placeholder="Select date">
                         </div>
 
-                        <div class="form-group">
+                        <div class="form-group" style="display: none;">
                             <label for="diagnosis">Diagnosis/Condition <span class="required">*</span></label>
                             <textarea id="diagnosis" name="diagnosis" rows="3" required 
                                 placeholder="e.g., Acute Respiratory Infection" readonly></textarea>
@@ -335,154 +340,163 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
     <script>
-        // Get patient_id from URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const patientId = urlParams.get('patient_id');
+  // Get patient_id and visit_id from URL
+const urlParams = new URLSearchParams(window.location.search);
+const patientId = urlParams.get('patient_id');
+const visitId = urlParams.get('visit_id'); // NEW: capture visit_id
 
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialize Flatpickr for all date fields
-            initializeDatePickers();
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize Flatpickr for all date fields
+    initializeDatePickers();
 
-            if (patientId) {
-                document.getElementById('patient_id').value = patientId;
-                loadPatientInfo(patientId);
-                loadPatientVisits(patientId);
-                loadUserInfo();
-            } else {
-                alert('No patient ID provided');
-                window.location.href = 'searchPatient.html';
+    if (patientId) {
+        document.getElementById('patient_id').value = patientId;
+        loadPatientInfo(patientId);
+        loadPatientVisits(patientId, visitId); // pass visitId for auto-select
+        loadUserInfo();
+    } else {
+        alert('No patient ID provided');
+        window.location.href = 'searchPatient.html';
+    }
+
+    // Auto-calculate rest dates when days are entered
+    document.getElementById('rest_period_days').addEventListener('change', calculateRestDates);
+    document.getElementById('rest_from_date').addEventListener('change', calculateRestDates);
+});
+
+function initializeDatePickers() {
+    // Initialize Flatpickr for Issuance Date (with default today's date)
+    flatpickr("#issuance_date", {
+        dateFormat: "Y-m-d",
+        defaultDate: new Date(),
+        allowInput: true,
+        disableMobile: true,
+        maxDate: new Date() // Can't select future dates
+    });
+
+    // Initialize Flatpickr for Date of Examination
+    flatpickr("#date_of_examination", {
+        dateFormat: "Y-m-d",
+        allowInput: true,
+        disableMobile: true,
+        maxDate: new Date()
+    });
+
+    // Initialize Flatpickr for Rest From Date
+    flatpickr("#rest_from_date", {
+        dateFormat: "Y-m-d",
+        allowInput: true,
+        disableMobile: true,
+        onChange: function(selectedDates) {
+            const restToFlatpickr = document.getElementById('rest_to_date')._flatpickr;
+            if (restToFlatpickr && selectedDates[0]) {
+                restToFlatpickr.set('minDate', selectedDates[0]);
+            }
+            calculateRestDates();
+        }
+    });
+
+    // Initialize Flatpickr for Rest To Date
+    flatpickr("#rest_to_date", {
+        dateFormat: "Y-m-d",
+        allowInput: true,
+        disableMobile: true
+    });
+}
+
+function loadPatientInfo(patientId) {
+    fetch(`php/patient_details.php?patient_id=${patientId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.patient) {
+                const fullName = `${data.patient.first_name} ${data.patient.middle_name || ''} ${data.patient.last_name}`;
+                document.getElementById('patientName').textContent = fullName;
+            }
+        })
+        .catch(error => {
+            console.error('Error loading patient info:', error);
+            alert('Error loading patient information');
+        });
+}
+
+function loadPatientVisits(patientId, visitId = null) {
+    console.log('Loading visits for patient:', patientId);
+    
+    fetch(`php/get_patient_visits.php?patient_id=${patientId}`)
+        .then(response => {
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            return response.text();
+        })
+        .then(text => {
+            try {
+                return JSON.parse(text);
+            } catch (e) {
+                console.error('JSON parse error:', e);
+                throw new Error('Invalid JSON response from server');
+            }
+        })
+        .then(data => {
+            const select = document.getElementById('visitSelect');
+            const display = document.getElementById('visitDisplay');
+            const diagnosisField = document.getElementById('diagnosis');
+
+            select.innerHTML = '<option value="" disabled selected hidden>Select a visit...</option>';
+            const diagnosisMap = {};
+
+            if (data.error) {
+                alert('Error: ' + data.error);
+                select.innerHTML = '<option value="">Error loading visits</option>';
+                return;
             }
 
-            // Auto-calculate rest dates when days are entered
-            document.getElementById('rest_period_days').addEventListener('change', calculateRestDates);
-            document.getElementById('rest_from_date').addEventListener('change', calculateRestDates);
-        });
+            if (data.visits && data.visits.length > 0) {
+                data.visits.forEach(visit => {
+                    const option = document.createElement('option');
+                    option.value = visit.visit_id;
 
-        function initializeDatePickers() {
-            // Initialize Flatpickr for Issuance Date (with default today's date)
-            flatpickr("#issuance_date", {
-                dateFormat: "Y-m-d",
-                defaultDate: new Date(),
-                allowInput: true,
-                disableMobile: true,
-                maxDate: new Date() // Can't select future dates
-            });
+                    const visitDate = formatDate(visit.visit_date);
+                    const diagnosis = visit.diagnosis || 'No diagnosis recorded';
 
-            // Initialize Flatpickr for Date of Examination
-            flatpickr("#date_of_examination", {
-                dateFormat: "Y-m-d",
-                allowInput: true,
-                disableMobile: true,
-                maxDate: new Date() // Can't select future dates
-            });
+                    option.textContent = `${visitDate} - ${diagnosis}`;
+                    select.appendChild(option);
 
-            // Initialize Flatpickr for Rest From Date
-            flatpickr("#rest_from_date", {
-                dateFormat: "Y-m-d",
-                allowInput: true,
-                disableMobile: true,
-                onChange: function(selectedDates, dateStr, instance) {
-                    // Update Rest To Date minimum date
-                    const restToFlatpickr = document.getElementById('rest_to_date')._flatpickr;
-                    if (restToFlatpickr && selectedDates[0]) {
-                        restToFlatpickr.set('minDate', selectedDates[0]);
+                    // Store diagnosis for this visit
+                    diagnosisMap[visit.visit_id] = diagnosis;
+                });
+
+                // ✅ Auto-select and display visit
+                if (visitId) {
+                    const selectedVisit = data.visits.find(v => v.visit_id == visitId);
+                    if (selectedVisit) {
+                        select.value = visitId;
+                        select.dispatchEvent(new Event('change'));
+
+                        // Hide select and show text
+                        select.style.display = 'none';
+                        display.textContent = `${formatDate(selectedVisit.visit_date)} - ${selectedVisit.diagnosis || 'No diagnosis recorded'}`;
+
+                        // ✅ Auto-fill diagnosis field
+                        diagnosisField.value = selectedVisit.diagnosis || '';
                     }
-                    calculateRestDates();
                 }
-            });
 
-            // Initialize Flatpickr for Rest To Date
-            flatpickr("#rest_to_date", {
-                dateFormat: "Y-m-d",
-                allowInput: true,
-                disableMobile: true
-            });
-        }
-
-        function loadPatientInfo(patientId) {
-            fetch(`php/patient_details.php?patient_id=${patientId}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.patient) {
-                        const fullName = `${data.patient.first_name} ${data.patient.middle_name || ''} ${data.patient.last_name}`;
-                        document.getElementById('patientName').textContent = fullName;
-                    }
-                })
-                .catch(error => {
-                    console.error('Error loading patient info:', error);
-                    alert('Error loading patient information');
+                // ✅ Update diagnosis if user manually changes (fallback case)
+                select.addEventListener('change', function() {
+                    const selectedId = this.value;
+                    diagnosisField.value = diagnosisMap[selectedId] || '';
                 });
-        }
+            } else {
+                select.innerHTML = '<option value="">No visits found for this patient</option>';
+                alert('No visits found for this patient. Please create a patient assessment first.');
+            }
+        })
+        .catch(error => {
+            console.error('Error loading visits:', error);
+            alert('Error loading patient visits. Please check the console for details.');
+            document.getElementById('visitSelect').innerHTML = '<option value="">Error loading visits</option>';
+        });
+}
 
-        function loadPatientVisits(patientId) {
-            console.log('Loading visits for patient:', patientId);
-            
-            fetch(`php/get_patient_visits.php?patient_id=${patientId}`)
-                .then(response => {
-                    console.log('Response status:', response.status);
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    return response.text();
-                })
-                .then(text => {
-                    console.log('Raw response:', text);
-                    try {
-                        return JSON.parse(text);
-                    } catch (e) {
-                        console.error('JSON parse error:', e);
-                        console.error('Response text:', text);
-                        throw new Error('Invalid JSON response from server');
-                    }
-                })
-                .then(data => {
-                    console.log('Received data:', data);
-
-                    const select = document.getElementById('visitSelect');
-                    select.innerHTML = '<option value="" disabled selected hidden>Select a visit...</option>';
-
-                    // Store diagnoses by visit_id
-                    const diagnosisMap = {};
-
-                    if (data.error) {
-                        console.error('Server error:', data.error);
-                        alert('Error: ' + data.error);
-                        select.innerHTML = '<option value="">Error loading visits</option>';
-                        return;
-                    }
-
-                    if (data.visits && data.visits.length > 0) {
-                        data.visits.forEach(visit => {
-                            const option = document.createElement('option');
-                            option.value = visit.visit_id;
-
-                            const visitDate = formatDate(visit.visit_date);
-                            const diagnosis = visit.diagnosis || 'No diagnosis recorded';
-
-                            option.textContent = `${visitDate} - ${diagnosis}`;
-                            select.appendChild(option);
-
-                            // Store diagnosis for this visit
-                            diagnosisMap[visit.visit_id] = visit.diagnosis || '';
-                        });
-
-                        // Listen for changes to update diagnosis field
-                        select.addEventListener('change', function() {
-                            const selectedId = this.value;
-                            document.getElementById('diagnosis').value = diagnosisMap[selectedId] || '';
-                        });
-                    } else {
-                        select.innerHTML = '<option value="">No visits found for this patient</option>';
-                        alert('No visits found for this patient. Please create a patient assessment first.');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error loading visits:', error);
-                    alert('Error loading patient visits. Please check the console for details.');
-                    const select = document.getElementById('visitSelect');
-                    select.innerHTML = '<option value="">Error loading visits</option>';
-                });
-        }
 
         // UPDATED FUNCTION
         function loadUserInfo() {
