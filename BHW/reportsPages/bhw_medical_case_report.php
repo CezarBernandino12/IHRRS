@@ -114,7 +114,7 @@ $visits = $stmt->fetchAll();
 		<a href="#" class="brand" style="display: flex; align-items: center;">
 
 			<img src="../../img/logo.png" alt="RHULogo" class="logo">
-			<span class="text">IHRRS</span>
+			<span class="text">BHW</span>
 		</a>
 		<ul class="side-menu top">
 			<li>

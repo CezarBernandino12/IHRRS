@@ -125,7 +125,7 @@ $total_patients = count(array_unique(array_column($visits, 'patient_id')));
 	<section id="sidebar">
 		<a href="#" class="brand">
 			<img src="../../img/logo.png" alt="RHULogo" class="logo">
-			<span class="text">IHRRS</span>
+			<span class="text">Physician</span>
 		</a>
 		<ul class="side-menu top">
 			<li>
