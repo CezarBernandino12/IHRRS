@@ -7,6 +7,9 @@ header('Content-Type: application/json');
 ini_set('display_errors', 0);
 error_reporting(E_ALL);
 
+// Set content type first to ensure JSON response
+header('Content-Type: application/json; charset=UTF-8');
+
 if (!isset($_SESSION['user_id'])) {
     echo json_encode(['success' => false, 'message' => 'Not authenticated']);
     exit;
@@ -15,7 +18,7 @@ if (!isset($_SESSION['user_id'])) {
 try {
     require '../../php/db_connect.php';
 } catch (Exception $e) {
-    echo json_encode(['success' => false, 'message' => 'Database connection failed']);
+    echo json_encode(['success' => false, 'message' => 'Database connection failed: ' . $e->getMessage()]);
     exit;
 }
 
@@ -29,38 +32,37 @@ if (!$medcert_id) {
 try {
     // FIXED: Use 'issued_by' not 'issued_by_user_id'
     $sql = "SELECT  
-    mc.*,
-    p.first_name,
-    p.middle_name,
-    p.last_name,
-    p.date_of_birth,
-    p.age,
-    p.sex,
-    p.address,
-    p.civil_status,
-    p.birthplace,
-    pa.visit_date,
-    pa.chief_complaints,
+        mc.*,
+        p.first_name,
+        p.middle_name,
+        p.last_name,
+        p.date_of_birth,
+        p.age,
+        p.sex,
+        p.address,
+        p.civil_status,
+        p.birthplace,
+        pa.visit_date,
+        pa.chief_complaints,
 
-    -- Issuing physician details
-    issued_user.full_name AS issued_by,
-    issued_user.license_number AS license_number,
-    issued_user.rhu AS rhu,
+        -- Issuing physician details
+        issued_user.full_name AS issued_by,
+        issued_user.license_number AS license_number,
+        issued_user.rhu AS rhu,
 
-    -- Preparer details
-    prepared_user.full_name AS prepared_by
+        -- Preparer details
+        prepared_user.full_name AS prepared_by
 
-
-FROM medical_certificates mc
-INNER JOIN patients p 
-    ON mc.patient_id = p.patient_id
-LEFT JOIN patient_assessment pa 
-    ON mc.visit_id = pa.visit_id
-LEFT JOIN users AS issued_user 
-    ON mc.issued_by = issued_user.user_id
-LEFT JOIN users AS prepared_user 
-    ON mc.prepared_by = prepared_user.user_id
-WHERE mc.medcert_id = ?";
+    FROM medical_certificates mc
+    INNER JOIN patients p 
+        ON mc.patient_id = p.patient_id
+    LEFT JOIN patient_assessment pa 
+        ON mc.visit_id = pa.visit_id
+    LEFT JOIN users AS issued_user 
+        ON mc.issued_by = issued_user.user_id
+    LEFT JOIN users AS prepared_user 
+        ON mc.prepared_by = prepared_user.user_id
+    WHERE mc.medcert_id = ?";
 
     if (isset($pdo)) {
         // PDO version
@@ -88,8 +90,7 @@ WHERE mc.medcert_id = ?";
         $row = $result->fetch_assoc();
         
         $stmt->close();
-        $conn->close();
-
+        
     } else {
         echo json_encode(['success' => false, 'message' => 'Database connection object not found']);
         exit;
@@ -116,8 +117,11 @@ WHERE mc.medcert_id = ?";
             'birthplace' => $row['birthplace'] ?? '',
             'address' => $row['address'] ?? '',
             'issuance_date' => $row['issuance_date'],
+            'date_of_examination' => $row['date_of_examination'] ?? $row['issuance_date'],
             'diagnosis' => $row['diagnosis'],
             'findings' => $row['findings'] ?? '',
+            'fit_status' => $row['fit_status'] ?? '',
+            'remarks' => $row['remarks'] ?? '',
             'purpose' => $row['purpose'] ?? '',
             'rest_period_days' => $row['rest_period_days'],
             'rest_from_date' => $row['rest_from_date'],
@@ -128,7 +132,15 @@ WHERE mc.medcert_id = ?";
             'visit_date' => $row['visit_date'] ?? '',
             'chief_complaints' => $row['chief_complaints'] ?? '',
             'control_number' => $row['control_number'],
-            'rhu' => $row['rhu'] ?? ''
+            'rhu' => $row['rhu'] ?? '',
+            // New laboratory fields
+            'lab_cbc' => $row['lab_cbc'] ?? '',
+            'lab_urinalysis' => $row['lab_urinalysis'] ?? '',
+            'lab_fecalysis' => $row['lab_fecalysis'] ?? '',
+            'lab_hbsag' => $row['lab_hbsag'] ?? '',
+            'lab_cxr' => $row['lab_cxr'] ?? '',
+            'lab_sputum_afb' => $row['lab_sputum_afb'] ?? '',
+            'lab_other' => $row['lab_other'] ?? ''
         ];
 
         echo json_encode(['success' => true, 'certificate' => $certificate]);
@@ -137,6 +149,12 @@ WHERE mc.medcert_id = ?";
     }
 
 } catch (Exception $e) {
+    // Ensure we return valid JSON even for errors
     echo json_encode(['success' => false, 'message' => 'Database error: ' . $e->getMessage()]);
+}
+
+// Close MySQLi connection if it exists
+if (isset($conn)) {
+    $conn->close();
 }
 ?>
