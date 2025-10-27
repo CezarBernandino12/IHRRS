@@ -30,7 +30,7 @@ try {
     $findings = $_POST['findings'] ?? '';
     $fit_status = $_POST['fit_status'] ?? null;
     $remarks = $_POST['remarks'] ?? '';
-    $purpose = $_POST['purpose'] ?? '';
+    $purpose = $_POST['purpose'] ?? null;
     $rest_period_days = $_POST['rest_period_days'] ?? null;
     $rest_from_date = $_POST['rest_from_date'] ?? null;
     $rest_to_date = $_POST['rest_to_date'] ?? null;

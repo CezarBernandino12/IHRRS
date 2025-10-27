@@ -136,20 +136,20 @@
                         <div class="patient-info">
                             <p class="patient-info-line">
                                 TO WHOM IT MAY CONCERN:
+                             
+                            </p>
+                            <p class="patient-info-line" style="margin-left: 20px;">
+                                This is to certify that
                                 <span class="underline" id="patientName"></span>,
                                 <span class="underline" id="patientAge"></span> years old,
-                                <span class="underline" id="patientSex"></span>.
-                            </p>
-                            <p class="patient-info-line">
-                                This is to certify that
-                                <span class="underline" id="patientName2"></span>,
+                                <span class="underline" id="patientSex"></span>,
                                 <span class="underline" id="civilStatus"></span>,
                                 was examined by the undersigned:
                             </p>
-                            <p class="patient-info-line">
+                            <p class="patient-info-line" style="margin-left: 40px;">
                                 Address: <span class="underline" id="patientAddress"></span>
                             </p>
-                            <p class="patient-info-line">
+                            <p class="patient-info-line" style="margin-left: 40px;">
                                 Date of Examination: <span class="underline" id="examDate"></span>
                             </p>
                         </div>
@@ -158,7 +158,7 @@
                             <p><strong>Diagnosis:</strong> <span id="diagnosis"></span></p>
                         </div>
 
-                        <div class="fit-status">
+                        <div class="fit-status" style="margin-left: 60px;">
                             <div class="checkbox-group">
                                 <div class="checkbox-item">
                                     <span class="checkbox-box" id="fitBox"></span>
@@ -175,7 +175,7 @@
                             <p><strong>Remarks:</strong> <span id="remarks"></span></p>
                         </div>
 
-                        <div class="lab-section">
+                        <div class="lab-section" style="margin-left: 40px;">
                             <p><strong>Laboratory:</strong></p>
                             <div class="lab-grid">
                                 <div class="lab-item">
@@ -209,12 +209,12 @@
                             </div>
                         </div>
 
-                        <div class="footer-note">
+                        <div class="footer-note" style="margin-left: 20px;">
                             <p>This certificate is issued upon the request of the bearer for whatever purposes may it served except for MEDICO-LEGAL case.</p>
                             <p>Issued this <span class="underline" id="issuedDay"></span> day of <span class="underline" id="issuedMonth"></span>, 20<span class="underline" id="issuedYear"></span> at Daet, Camarines Norte.</p>
                         </div>
 
-                        <div class="signature">
+                        <div class="signature-section">
                             <div class="signature-line"></div>
                             <div class="signature-name" id="doctorName"></div>
                             <div class="signature-title">Rural Health Physician</div>
@@ -279,7 +279,6 @@
         function displayCertificate(cert) {
             // Basic patient info
             document.getElementById('patientName').textContent = cert.patient_name.toUpperCase();
-            document.getElementById('patientName2').textContent = cert.patient_name.toUpperCase();
             document.getElementById('patientAge').textContent = cert.age;
             document.getElementById('patientSex').textContent = cert.sex;
             document.getElementById('civilStatus').textContent = cert.civil_status;

@@ -639,31 +639,32 @@ body {
         }
 
         /* Header */
-        .header {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 30px;
-            border-bottom: 3px solid #000;
-            padding-bottom: 20px;
-            margin-bottom: 15px;
-        }
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: center;   /* centers everything as a group */
+    border-bottom: 3px solid #000;
+    padding-bottom: 8px;
+    margin-bottom: 10px;
+    gap: 100px;                 /* small space between items */
+}
 
-        .header .logo {
-            height: 80px;
-            width: auto;
-            object-fit: contain;
-        }
+.header .logo {
+    height: 65px;
+    width: auto;
+    object-fit: contain;
+}
 
-        .header-text {
-            text-align: center;
-            flex: 1;
-        }
+.header-text {
+    text-align: center;
+    flex: 0.75;                   /* prevents it from expanding */
+}
+
 
         .header-text h1 {
             font-size: 14px;
             font-weight: 600;
-            margin: 3px 0;
+            
             color: #000;
         }
 
@@ -677,7 +678,7 @@ body {
         /* Control Number */
         .control-no {
             margin: 15px 0 20px 0;
-            font-size: 13px;
+            font-size: 10px;
             color: #000;
         }
 
@@ -708,10 +709,11 @@ body {
 
         .underline {
             border-bottom: 1px solid #000;
-            padding-bottom: 2px;
+            padding-bottom: 0.1px;
             display: inline-block;
             min-width: 150px;
-            font-weight: 500;
+            font-weight: 600;
+
         }
 
         /* Patient Info Section */
@@ -796,6 +798,11 @@ body {
         }
 
         /* Signature */
+
+        .signature {
+             text-align: left;
+            justify-content: left;
+        }
         .signature-section {
             margin-top: 50px;
             text-align: right;
@@ -805,6 +812,8 @@ body {
             border-top: 2px solid #000;
             width: 300px;
             margin: 0 0 8px auto;
+            text-align: left;
+            justify-content: left;
         }
 
         .signature-name {
@@ -825,10 +834,10 @@ body {
 
         /* Buttons */
         .buttons {
-            text-align: center;
+            text-align: right;
             margin-top: 40px;
             display: flex;
-            justify-content: center;
+            justify-content: right;
             gap: 15px;
         }
 
@@ -883,13 +892,28 @@ body {
                 font-family: 'Times New Roman', serif !important;
             }
 
-            .certificate-container {
-                max-width: 100% !important;
-                width: 100% !important;
-                box-shadow: none !important;
-                padding: 0 !important;
-                margin: 0 !important;
-            }
+
+.certificate-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    box-shadow: none !important;
+    padding: 5pt !important;   /* smaller padding */
+    margin: 0 !important;
+}
+
+.container {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    border: 2pt solid #000 !important;
+    border-radius: 5pt !important;
+    padding: 8pt !important;       /* reduce padding */
+    margin: 0 !important;
+    box-sizing: border-box !important; /* include padding/border in width */
+}
+
+
 
             #content {
                 position: static !important;
@@ -905,32 +929,32 @@ body {
                 max-height: none !important;
             }
 
-            .header {
-                display: flex !important;
-                align-items: center !important;
-                justify-content: space-between !important;
-                border-bottom: 1.5pt solid #000 !important;
-                padding-bottom: 3pt !important;
-                margin-bottom: 3pt !important;
-                gap: 8pt !important;
-            }
+    .header {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important; /* center everything as a group */
+    border-bottom: 1.5pt solid #000 !important;
+    padding-bottom: 3pt !important;
+    margin-bottom: 3pt !important;
+    column-gap: 10pt !important; /* reduced gap for tighter spacing */
+}
 
-            .header .logo {
-                height: 38pt !important;
-                width: 38pt !important;
-                flex-shrink: 0 !important;
-            }
+.header .logo {
+    height: 38pt !important;
+    width: 38pt !important;
+    flex-shrink: 0 !important;
+}
 
-            .header-text {
-                text-align: center !important;
-                flex: 1 !important;
-                line-height: 1.1 !important;
-            }
+.header-text {
+    text-align: center !important;
+    flex: 0.75 !important; /* prevents stretching */
+    line-height: 1.1 !important;
+}
 
             .header-text h1 {
                 font-size: 7.5pt !important;
                 font-weight: 600 !important;
-                margin: 0.3pt 0 !important;
+                
                 font-family: 'Times New Roman', serif !important;
             }
 
@@ -943,13 +967,14 @@ body {
 
             .control-no {
                 margin: 2pt 0 4pt 0 !important;
-                font-size: 8pt !important;
+                font-size: 7pt !important;
                 font-family: 'Times New Roman', serif !important;
             }
 
             .title {
                 text-align: center !important;
                 margin: 5pt 0 !important;
+                margin-bottom: 10pt !important;
             }
 
             .title h1 {
@@ -980,22 +1005,24 @@ body {
                 padding-bottom: 0.3pt !important;
                 display: inline-block !important;
                 min-width: 65pt !important;
-                font-weight: 500 !important;
+                font-weight: 600 !important;
             }
 
             .diagnosis-section,
             .remarks-section {
-                margin: 4pt 0 !important;
+                margin-left: 0 0 !important;
             }
 
             .diagnosis-section p,
             .remarks-section p {
                 text-align: left !important;
-                margin-bottom: 3pt !important;
+                margin-left: 60px !important;
+                margin-top: -12px;
             }
 
             .fit-status {
-                margin: 5pt 0 !important;
+                margin-left: 60px !important;
+                margin-top: -12px;
             }
 
             .checkbox-group {
@@ -1023,7 +1050,8 @@ body {
             }
 
             .lab-section {
-                margin: 5pt 0 !important;
+                margin-left: 60px !important;
+                margin-top: -8px;
             }
 
             .lab-section > p {
@@ -1046,16 +1074,18 @@ body {
             }
 
             .footer-note {
-                margin: 5pt 0 !important;
+               
+                  margin-left: 20px !important;
+                margin-top: -12px;
             }
 
             .footer-note p {
                 text-align: justify !important;
-                margin-bottom: 35pt !important;
+               
             }
 
             .signature-section {
-                margin-top: 30pt !important;
+                margin-top: 10pt !important;
                 text-align: center !important;
                 page-break-inside: avoid !important;
             }
@@ -1107,5 +1137,5 @@ body {
         }
         @page {
             size: A5 landscape;
-            margin: 0.15in 0.25in;
+            margin: 0.05in 0.05in 0.05in 0.05in;
         }
