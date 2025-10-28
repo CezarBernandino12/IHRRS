@@ -149,9 +149,9 @@ function setupViewButtons() {
         button.addEventListener("click", function() {
             const userData = JSON.parse(this.getAttribute("data-user"));
 
-            document.getElementById("modalFullName").textContent = userData.full_name;
-            document.getElementById("modalUsername").textContent = userData.username;
-            document.getElementById("modalRole").textContent = userData.role;
+            document.getElementById("modalFullName").textContent = userData.full_name.toUpperCase();
+            document.getElementById("modalUsername").textContent = userData.username.toUpperCase();
+            document.getElementById("modalRole").textContent = userData.role.toUpperCase();
             document.getElementById("modalStatus").textContent = userData.account_status;
             document.getElementById("modalAddress").textContent = userData.address ?? 'N/A';
             document.getElementById("modalAge").textContent = userData.age;
@@ -164,6 +164,14 @@ function setupViewButtons() {
                 barangayRow.style.display = "block";
             } else {
                 barangayRow.style.display = "none";
+            }
+
+            const rhuRow = document.getElementById("modalRhuRow");
+            if (userData.rhu) {
+                document.getElementById("modalRhu").textContent = userData.rhu;
+                rhuRow.style.display = "block";
+            } else {
+                rhuRow.style.display = "none";
             }
 
             document.getElementById("userModal").style.display = "block";

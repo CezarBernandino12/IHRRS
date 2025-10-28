@@ -210,6 +210,7 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                         'role' => $user['role'],
                                         'account_status' => $user['account_status'],
                                         'barangay' => $user['barangay'],
+                                        'rhu' => $user['rhu'],
                                         'address' => $user['address'] ?? 'N/A',
                                         'age' => $user['age'],
                                         'contact_number' => $user['contact_number'],
@@ -274,6 +275,7 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <p><strong>Role:</strong> <span id="modalRole"></span></p>
                     <p><strong>Account Status:</strong> <span id="modalStatus"></span></p>
                     <p id="modalBarangayRow"><strong>Barangay:</strong> <span id="modalBarangay"></span></p>
+                    <p id="modalRhuRow"><strong>RHU:</strong> <span id="modalRhu"></span></p>
                     <p><strong>Address:</strong> <span id="modalAddress"></span></p>
                     <p><strong>Age:</strong> <span id="modalAge"></span></p>
                     <p><strong>Contact Number:</strong> <span id="modalContact"></span></p>
@@ -425,7 +427,7 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <option value="Rural Health Unit III">Rural Health Unit  III</option>
   </select>
 </div>
- 
+  
                         <!-- License number field for physicians (initially hidden) -->
                         <div id="licenseGroup" style="display: none; margin-top: 10px;">
                             <label for="licenseNumber">Physician License Number</label>

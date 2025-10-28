@@ -10,7 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = $_POST['password'];
     $role = $_POST['role'];
     $barangay = ($role === 'doctor') ? '' : (isset($_POST['barangay']) ? trim($_POST['barangay']) : '');
-    $rhu = ($role === 'doctor') ? (isset($_POST['rhu']) ? trim($_POST['rhu']) : '') : '';
+    $rhu = (in_array($role, ['doctor', 'bhw', 'nursing_attendant'])) ? (isset($_POST['rhu']) ? trim($_POST['rhu']) : '') : '';
     $address = isset($_POST['address']) ? trim($_POST['address']) : '';
     $age = isset($_POST['age']) ? (int)$_POST['age'] : null;
     $contactNumber = isset($_POST['contact_number']) ? trim($_POST['contact_number']) : '';

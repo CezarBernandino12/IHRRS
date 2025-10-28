@@ -37,31 +37,40 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 // Function to handle the increase and decrease of the quantity
-document.getElementById("increase").addEventListener("click", function() {
-    let quantityInput = document.getElementById("quantity");
-    let currentValue = parseInt(quantityInput.value);
-    quantityInput.value = currentValue + 1; // Increment the quantity by 1
-});
+const increaseBtn = document.getElementById("increase");
+const decreaseBtn = document.getElementById("decrease");
+const quantityInput = document.getElementById("quantity");
 
-document.getElementById("decrease").addEventListener("click", function() {
-    let quantityInput = document.getElementById("quantity");
-    let currentValue = parseInt(quantityInput.value);
-    if (currentValue > 1) {
-        quantityInput.value = currentValue - 1; // Decrement the quantity by 1, but prevent going below 1
-    }
-});
+if (increaseBtn) {
+    increaseBtn.addEventListener("click", function() {
+        let currentValue = parseInt(quantityInput.value);
+        quantityInput.value = currentValue + 1; // Increment the quantity by 1
+    });
+}
+
+if (decreaseBtn) {
+    decreaseBtn.addEventListener("click", function() {
+        let currentValue = parseInt(quantityInput.value);
+        if (currentValue > 1) {
+            quantityInput.value = currentValue - 1; // Decrement the quantity by 1, but prevent going below 1
+        }
+    });
+}
 
 // Ensure that if a user types a non-numeric value, the field resets to 1
-document.getElementById("quantity").addEventListener("input", function() {
-    let quantityInput = document.getElementById("quantity");
-    let currentValue = parseInt(quantityInput.value);
-    if (isNaN(currentValue) || currentValue < 1) {
-        quantityInput.value = 1; // Set to 1 if the input is invalid or less than 1
-    }
-});
+if (quantityInput) {
+    quantityInput.addEventListener("input", function() {
+        let currentValue = parseInt(quantityInput.value);
+        if (isNaN(currentValue) || currentValue < 1) {
+            quantityInput.value = 1; // Set to 1 if the input is invalid or less than 1
+        }
+    });
+}
 
 // Function to handle the Print button
-document.querySelector(".print-btn").addEventListener("click", function() {
+const printBtn = document.querySelector(".print-btn");
+if (printBtn) {
+    printBtn.addEventListener("click", function() {
     // Hide the elements you don't want to print
     const sidebar = document.getElementById("sidebar");
     const navigation = document.querySelector("nav");
@@ -158,37 +167,50 @@ const closeBtn1 = document.getElementById('closeBtn');
 const closeBtn2 = document.getElementById('closeBtn3');  // Close button for Modal 2
 const noButton1 = document.getElementById('noButton');
 const yesButton1 = document.getElementById('yesButton');
-const goBackButton = modal2.querySelector('.btn.yes');  // "Go Back" button in modal2
+const goBackButton = modal2 ? modal2.querySelector('.btn.yes') : null;  // "Go Back" button in modal2
 
 // Open modal1 when submitButton is clicked
-submitButton.addEventListener('click', function (event) {
-    event.preventDefault();
-    modal1.style.display = 'block';  // Show modal1
-});
+if (submitButton) {
+    submitButton.addEventListener('click', function (event) {
+        event.preventDefault();
+        if (modal1) modal1.style.display = 'block';  // Show modal1
+    });
+}
 
 // Close modal1 when closeBtn1 is clicked
-closeBtn1.addEventListener('click', function () {
-    modal1.style.display = 'none';  // Hide modal1
-});
+if (closeBtn1) {
+    closeBtn1.addEventListener('click', function () {
+        if (modal1) modal1.style.display = 'none';  // Hide modal1
+    });
+}
 
 // Close modal1 when noButton1 is clicked
-noButton1.addEventListener('click', function () {
-    modal1.style.display = 'none';  // Hide modal1
-});
+if (noButton1) {
+    noButton1.addEventListener('click', function () {
+        if (modal1) modal1.style.display = 'none';  // Hide modal1
+    });
+}
 
 // Open modal2 when yesButton1 is clicked
-yesButton1.addEventListener('click', function () {
-    modal1.style.display = 'none';  // Hide modal1
-    modal2.style.display = 'block';  // Show modal2
-});
+if (yesButton1) {
+    yesButton1.addEventListener('click', function () {
+        if (modal1) modal1.style.display = 'none';  // Hide modal1
+        if (modal2) modal2.style.display = 'block';  // Show modal2
+    });
+}
 
 // Close modal2 when closeBtn2 is clicked
-closeBtn2.addEventListener('click', function () {
-    modal2.style.display = 'none';  // Hide modal2
-});
+if (closeBtn2) {
+    closeBtn2.addEventListener('click', function () {
+        if (modal2) modal2.style.display = 'none';  // Hide modal2
+    });
+}
 
 // Close modal2 when goBackButton is clicked
-goBackButton.addEventListener('click', function () {
-    modal2.style.display = 'none';  // Hide modal2
-});
+if (goBackButton) {
+    goBackButton.addEventListener('click', function () {
+        if (modal2) modal2.style.display = 'none';  // Hide modal2
+    });
+}
+}
 
