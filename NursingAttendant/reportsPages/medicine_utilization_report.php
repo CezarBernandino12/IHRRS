@@ -675,7 +675,7 @@ if (count($patient_meds) > 0) {
 <div class="report-content">
 
 <div class="title">
-     <h2>DOH MAINTAINANCE MEDICINE UTILIZATION REPORT</h2>
+     <h2>MEDICINE UTILIZATION REPORT</h2>
     <div class="print-sub">
       (<?php
         $filters = [];
@@ -751,7 +751,7 @@ if (count($patient_meds) > 0) {
 
 /* Two-column summary table */
 .summary-table {
-  width: 100%;
+  width: auto;
   border-collapse: collapse;
   table-layout: fixed;
   font-size: 16px;
@@ -771,6 +771,13 @@ if (count($patient_meds) > 0) {
   font-weight: 600;
 }
 
+.summary-table2 {
+  width: 100%; 
+  border-collapse:collapse; 
+  margin-top:12px;
+}
+
+
 /* Hide the “Summary” title on print only; keep spacing a bit larger */
 @media print {
   .summary > h3 { 
@@ -779,6 +786,18 @@ if (count($patient_meds) > 0) {
   .summary-container { 
     margin-top: 40px; 
   }
+  .summary-table th,
+.summary-table td {
+  border: 1px solid #000000ff;
+  padding: 8px 12px;
+  vertical-align: top;
+  text-align: left;
+  word-wrap: break-word;
+}
+  .summary-table2 th,
+.summary-table2 td {
+    border: 1px solid #000000ff !important;
+}
 }
 
     @media print {
@@ -808,6 +827,7 @@ if (count($patient_meds) > 0) {
 }
 
 #generated_by .sig-line {
+    display: none;
   width: 250px;           
   border: 0;
   border-top: 1.5px solid #000;
@@ -831,7 +851,7 @@ if (count($patient_meds) > 0) {
   #generated_by .sig-label { font-size: 12pt; }
   #generated_by .sig-name  { font-size: 12pt; }
   #generated_by .sig-title { font-size: 11pt; }
-  #generated_by .sig-line  { width: 45mm; border-top-width: 1px; margin: 10mm 0 3mm; }
+  #generated_by .sig-line  {display: block; width: 45mm; border-top-width: 1px; margin: 10mm 0 3mm; }
 }
 </style>
 
@@ -1149,12 +1169,8 @@ usort($patient_meds, function($a, $b) {
       </tbody>
     </table>
 
-   <table style="width:100%; border-collapse:collapse; margin-top:12px;">
+   <table class="summary-table2">
   <thead>
-    <tr>
-      <th colspan="2" style="border:1px solid #d5d7db; padding:10px; background:#f8f9fa;">By Sex</th>
-      <th colspan="2" style="border:1px solid #d5d7db; padding:10px; background:#f8f9fa;">By Age Group</th>
-    </tr>
     <tr>
       <th style="border:1px solid #d5d7db; padding:6px;">Sex</th>
       <th style="border:1px solid #d5d7db; padding:6px;">Count</th>

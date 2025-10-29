@@ -501,7 +501,16 @@ $total_pending = 0;
       margin-top: 20px !important;
       margin-bottom: 40px !important;
     }
-    }
+    .summary-table th,
+.summary-table td {
+  border: 1px solid #000000ff;
+  padding: 8px 12px;
+  vertical-align: top;
+  text-align: left;
+  word-wrap: break-word;
+}
+
+    } 
 </style>
 
 <style>
@@ -546,6 +555,7 @@ $total_pending = 0;
 }
 
 #generated_by .sig-line {
+    display: none;
   width: 200px;           
   border: 0;
   border-top: 1.5px solid #000;
@@ -569,7 +579,7 @@ $total_pending = 0;
   #generated_by .sig-label { font-size: 12pt; }
   #generated_by .sig-name  { font-size: 12pt; }
   #generated_by .sig-title { font-size: 11pt; }
-  #generated_by .sig-line  { width: 45mm; border-top-width: 1px; margin: 10mm 0 3mm; }
+  #generated_by .sig-line  { display: block; width: 45mm; border-top-width: 1px; margin: 10mm 0 3mm; }
 }
 </style>
 

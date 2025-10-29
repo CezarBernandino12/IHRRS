@@ -546,6 +546,7 @@ $total_patients = count(array_unique(array_column($visits, 'patient_id')));
 }
 
 #generated_by .sig-line {
+    display: none;
   width: 200px;           
   border: 0;
   border-top: 1.5px solid #000;
@@ -569,7 +570,7 @@ $total_patients = count(array_unique(array_column($visits, 'patient_id')));
   #generated_by .sig-label { font-size: 12pt; }
   #generated_by .sig-name  { font-size: 12pt; }
   #generated_by .sig-title { font-size: 11pt; }
-  #generated_by .sig-line  { width: 45mm; border-top-width: 1px; margin: 10mm 0 3mm; }
+  #generated_by .sig-line  {display: block; width: 45mm; border-top-width: 1px; margin: 10mm 0 3mm; }
 }
 </style>
 
@@ -601,6 +602,12 @@ $total_patients = count(array_unique(array_column($visits, 'patient_id')));
   font-weight: 600;
 }
 
+.summary-table2 {
+margin-top:6px;
+ border-collapse: collapse;
+  width: 100%;
+}
+
 /* Print-only: hide the "Summary" title; add a bit more top spacing */
 @media print {
   .summary > h3 { 
@@ -609,6 +616,18 @@ $total_patients = count(array_unique(array_column($visits, 'patient_id')));
   .summary-container { 
     margin-top: 40px;
   }
+  .summary-table th,
+.summary-table td {
+  border: 1px solid #000000ff;
+  padding: 8px 12px;
+  vertical-align: top;
+  text-align: left;
+  word-wrap: break-word;
+}
+.summary-table2 th,
+.summary-table2 td {
+  border: 1px solid #000000ff !important;
+}
 }
 
     @media print {
@@ -1016,7 +1035,7 @@ usort($visits, function($a, $b) {
 
     <div style="margin-top:12px;">
       <strong style="font-size: 12pt;">Patient Counts per Barangay:</strong>
-    <table style="margin-top:6px; border-collapse: collapse; width: 100%;">
+    <table class="summary-table2">
       <thead>
         <tr>
         <th style="border: 1px solid #d5d7db; padding: 8px; text-align: left;">Barangay</th>

@@ -631,7 +631,7 @@ if ($from_date || $to_date) {
 
   @media print {
     .summary-container { margin-top: 80px; }
-    .kv-table, .mini-table, .purok-table { font-size: 12pt; }
+    .kv-table, .mini-table, .purok-table { font-size: 12pt; border: 1px solid #000000ff;}
   }
     @media print {
     .summary-container .summary h3 { 
