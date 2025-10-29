@@ -149,9 +149,9 @@ function setupViewButtons() {
         button.addEventListener("click", function() {
             const userData = JSON.parse(this.getAttribute("data-user"));
 
-            document.getElementById("modalFullName").textContent = userData.full_name;
-            document.getElementById("modalUsername").textContent = userData.username;
-            document.getElementById("modalRole").textContent = userData.role;
+            document.getElementById("modalFullName").textContent = userData.full_name.toUpperCase();
+            document.getElementById("modalUsername").textContent = userData.username.toUpperCase();
+            document.getElementById("modalRole").textContent = userData.role.toUpperCase();
             document.getElementById("modalStatus").textContent = userData.account_status;
             document.getElementById("modalAddress").textContent = userData.address ?? 'N/A';
             document.getElementById("modalAge").textContent = userData.age;
@@ -164,6 +164,14 @@ function setupViewButtons() {
                 barangayRow.style.display = "block";
             } else {
                 barangayRow.style.display = "none";
+            }
+
+            const rhuRow = document.getElementById("modalRhuRow");
+            if (userData.rhu) {
+                document.getElementById("modalRhu").textContent = userData.rhu;
+                rhuRow.style.display = "block";
+            } else {
+                rhuRow.style.display = "none";
             }
 
             document.getElementById("userModal").style.display = "block";
@@ -430,6 +438,32 @@ function showResetPasswordModal(userId) {
     document.getElementById('resetPasswordUserId').value = userId;
     document.getElementById('resetPasswordForm').reset();
     document.getElementById('resetPasswordError').style.display = 'none';
+
+    // Check if this is a pending reset request
+    const resetBtn = document.querySelector(`button[onclick="showResetPasswordModal(${userId})"]`);
+    const isPendingReset = resetBtn && resetBtn.classList.contains('pending-reset');
+
+    const modalTitle = document.getElementById('resetModalTitle');
+    const pendingInfo = document.getElementById('pendingResetInfo');
+
+    if (isPendingReset) {
+        modalTitle.textContent = 'Process Password Reset Request';
+        pendingInfo.style.display = 'block';
+
+        // Fetch user contact number
+        fetch(`get_user_info.php?user_id=${userId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.contact_number) {
+                    document.getElementById('userContactNumber').textContent = data.contact_number;
+                }
+            })
+            .catch(error => console.error('Error fetching user info:', error));
+    } else {
+        modalTitle.textContent = 'Change User Password';
+        pendingInfo.style.display = 'none';
+    }
+
     document.getElementById('resetPasswordModal').style.display = 'block';
 }
 

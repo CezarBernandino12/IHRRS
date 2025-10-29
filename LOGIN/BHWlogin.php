@@ -28,11 +28,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         // Password check
         if (password_verify($password, $user['password_hash'])) {
+            // Check if user has pending password reset request
+            $resetStmt = $pdo->prepare("SELECT request_id FROM forgot_password_requests WHERE user_id = ? AND status = 'pending'");
+            $resetStmt->execute([$user['user_id']]);
+            $hasPendingReset = $resetStmt->fetch();
+
             // Secure session
             session_regenerate_id(true);
             $_SESSION['user_id'] = $user['user_id'];
             $_SESSION['role'] = $user['role'];
             $_SESSION['full_name'] = $user['full_name'];
+
+            if ($hasPendingReset) {
+                $_SESSION['pending_reset'] = true;
+                echo "<script>sessionStorage.setItem('showPendingReset', 'true');</script>";
+            }
 
             // Log successful login
             logActivity($pdo, $user['user_id'], "Successful Login");
@@ -41,8 +51,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             header("Location: ../BHW/dashboard.html");
             exit();
         } else {
-            logActivity($pdo, $user['user_id'], "Failed Login Attempt");
-            header("Location: ../BHWlogin.html?error=Invalid password.");
+            // Check if user has pending password reset request for failed login
+            $resetStmt = $pdo->prepare("SELECT request_id FROM forgot_password_requests WHERE user_id = ? AND status = 'pending'");
+            $resetStmt->execute([$user['user_id']]);
+            $hasPendingReset = $resetStmt->fetch();
+
+            if ($hasPendingReset) {
+                logActivity($pdo, $user['user_id'], "Failed Login Attempt - Pending Reset");
+                header("Location: ../BHWlogin.html?error=Password incorrect. You have a pending password reset request.");
+            } else {
+                logActivity($pdo, $user['user_id'], "Failed Login Attempt");
+                header("Location: ../BHWlogin.html?error=Invalid password.");
+            }
             exit();
         }
     } else {

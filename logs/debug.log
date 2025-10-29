@@ -1111,3 +1111,54 @@
 
 [ROWS_AFFECTED] 1
 [COMMIT] Success!
+[RAW INPUT] Array
+(
+    [patient_id] => 223
+    [first_name] => Maria
+    [last_name] => Villanueva
+    [middle_name] => S
+    [extension] => 
+    [birthplace] => Labo, Camarines Norte
+    [date_of_birth] => 1962-06-20
+    [address] => Purok 2 - Barangay 1 Daet, Maitim, Bay, Laguna, Region IV-A (CALABARZON)
+    [civil_status] => Widowed
+    [contact_number] => 09123450002
+    [religion] => Aglipayan
+    [occupation] => Vendor
+    [educational_attainment] => Tertiary Education
+    [birth_weight] => 0
+    [philhealth_member_no] => PH301002
+    [category] => Self-Employed
+    [family_serial_no] => 302
+    [sex] => Female
+    [fourps_status] => Yes
+)
+
+[PATIENT_ID] 223
+[USER_ID] 5
+[SUCCESS] Patient found, updating...
+[PARAMS] Array
+(
+    [first_name] => Maria
+    [last_name] => Villanueva
+    [middle_name] => S
+    [extension] => 
+    [birthplace] => Labo, Camarines Norte
+    [date_of_birth] => 1962-06-20
+    [address] => Purok 2 - Barangay 1 Daet, Maitim, Bay, Laguna, Region IV-A (CALABARZON)
+    [civil_status] => Widowed
+    [contact_number] => 09123450002
+    [religion] => Aglipayan
+    [occupation] => Vendor
+    [educational_attainment] => Tertiary Education
+    [birth_weight] => 0
+    [philhealth_member_no] => PH301002
+    [category] => Self-Employed
+    [family_serial_no] => 302
+    [sex] => Female
+    [fourps_status] => Yes
+    [patient_id] => 223
+)
+
+[ROWS_AFFECTED] 1
+[COMMIT] Success!

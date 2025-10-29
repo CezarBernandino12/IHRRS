@@ -35,10 +35,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // ✅ Verify the password
     if (password_verify($password, $user['password_hash'])) {
+        // Check if user has pending password reset request
+        $resetStmt = $pdo->prepare("SELECT request_id FROM forgot_password_requests WHERE user_id = ? AND status = 'pending'");
+        $resetStmt->execute([$user['user_id']]);
+        $hasPendingReset = $resetStmt->fetch();
+
         // Store session variables
         $_SESSION['user_id'] = $user['user_id'];
         $_SESSION['role'] = $user['role'];
         $_SESSION['full_name'] = $user['full_name'];
+
+        if ($hasPendingReset) {
+            $_SESSION['pending_reset'] = true;
+            echo "<script>sessionStorage.setItem('showPendingReset', 'true');</script>";
+        }
 
         logActivity($pdo, $user['user_id'], "Successful Login");
 
@@ -52,8 +62,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         header("Location: ../RHU/dashboard.html");
         exit();
     } else {
-        logActivity($pdo, $user['user_id'], "Failed Login (Incorrect Password)");
-        header("Location: ../doctorlogin.html?error=Invalid password.");
+        // Check if user has pending password reset request for failed login
+        $resetStmt = $pdo->prepare("SELECT request_id FROM forgot_password_requests WHERE user_id = ? AND status = 'pending'");
+        $resetStmt->execute([$user['user_id']]);
+        $hasPendingReset = $resetStmt->fetch();
+
+        if ($hasPendingReset) {
+            logActivity($pdo, $user['user_id'], "Failed Login (Incorrect Password) - Pending Reset");
+            header("Location: ../doctorlogin.html?error=Password incorrect. You have a pending password reset request.");
+        } else {
+            logActivity($pdo, $user['user_id'], "Failed Login (Incorrect Password)");
+            header("Location: ../doctorlogin.html?error=Invalid password.");
+        }
         exit();
     }
 }

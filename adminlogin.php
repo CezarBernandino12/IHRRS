@@ -43,6 +43,9 @@
 
                     <button type="submit" class="login-btn">LOGIN</button>
                 </form>
+                <div style="text-align: center; margin-top: 15px;">
+                    <a href="LOGIN/admin_forgot_password.html" style="color: #666; text-decoration: none; font-size: 14px;">Forgot Password?</a>
+                </div>
             </div>
         </div>
     </div>

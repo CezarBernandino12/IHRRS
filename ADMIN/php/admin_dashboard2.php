@@ -177,6 +177,18 @@ $unreadCount = 0;
         </nav>
 
         <main>
+            <?php if (isset($_SESSION['pending_reset']) && $_SESSION['pending_reset']): ?>
+            <div class="info-message" style="background:#fff3cd; border:1px solid #ffeaa7; padding:15px; margin-bottom:20px; border-radius:5px; display:flex; align-items:center; gap:10px;">
+                <i class="bx bx-info-circle" style="color:#856404; font-size:24px;"></i>
+                <div>
+                    <strong style="color:#856404;">Password Reset Request Pending</strong>
+                    <p style="color:#856404; margin:5px 0 0 0;">Your current password still works. An admin will contact you soon to complete the reset.</p>
+                </div>
+                <button onclick="this.parentElement.style.display='none';" style="background:none; border:none; font-size:20px; color:#856404; cursor:pointer; margin-left:auto;">&times;</button>
+            </div>
+            <?php unset($_SESSION['pending_reset']); ?>
+            <?php endif; ?>
+
             <div class="welcome-message">
                 <h2>Welcome, Admin!</h2>
                 <p>Here's an overview of the system's activity.</p>

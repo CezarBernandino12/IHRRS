@@ -59,7 +59,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
 
                 // ✅ Consultation Info
-                if (data.consultation) { 
+                if (data.consultation) {
                     document.getElementById("diagnosis").value = data.consultation.diagnosis || "";
                     updateElement(".diagnosis_status", data.consultation.diagnosis_status);
                     updateElement(".instruction", data.consultation.instruction_prescription);
@@ -74,24 +74,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
 
 
-                      // ✅ Resume Button
-const resumeBtn = document.getElementById("resumeBtn");
-
-if (data.consultation.diagnosis_status !== "Ongoing") {
-        resumeBtn.disabled = true;
-        resumeBtn.style.opacity = "0.6";   // make it look disabled
-        resumeBtn.style.cursor = "not-allowed";
-
-}
-                      // ✅ Resume Button
-const addMedCertBtn = document.getElementById("addMedCertBtn");
-
-if (data.consultation.diagnosis_status !== "Ongoing") {
-        addMedCertBtn.disabled = true;
-        addMedCertBtn.style.opacity = "0.6";   // make it look disabled
-        addMedCertBtn.style.cursor = "not-allowed";
-
-}
              
                 }
 
@@ -137,8 +119,10 @@ if (medicineContainer2) {
 }
 
 
-document.getElementById("printMedication").textContent =
-  document.querySelector(".rhu-medicine-lists")?.textContent || "";
+const printMedicationElement = document.getElementById("printMedication");
+if (printMedicationElement) {
+    printMedicationElement.textContent = document.querySelector(".rhu-medicine-lists")?.textContent || "";
+}
 
 
                 }
@@ -205,6 +189,8 @@ document.getElementById("printMedication").textContent =
 
 
 
+    // ✅ Resume Button
+    const resumeBtn = document.getElementById("resumeBtn");
     if (resumeBtn) {
         resumeBtn.addEventListener("click", function () {
             window.location.href = "resumeTreatment.html?visit_id=" + visit_id;
