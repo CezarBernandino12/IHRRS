@@ -438,6 +438,32 @@ function showResetPasswordModal(userId) {
     document.getElementById('resetPasswordUserId').value = userId;
     document.getElementById('resetPasswordForm').reset();
     document.getElementById('resetPasswordError').style.display = 'none';
+
+    // Check if this is a pending reset request
+    const resetBtn = document.querySelector(`button[onclick="showResetPasswordModal(${userId})"]`);
+    const isPendingReset = resetBtn && resetBtn.classList.contains('pending-reset');
+
+    const modalTitle = document.getElementById('resetModalTitle');
+    const pendingInfo = document.getElementById('pendingResetInfo');
+
+    if (isPendingReset) {
+        modalTitle.textContent = 'Process Password Reset Request';
+        pendingInfo.style.display = 'block';
+
+        // Fetch user contact number
+        fetch(`get_user_info.php?user_id=${userId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.contact_number) {
+                    document.getElementById('userContactNumber').textContent = data.contact_number;
+                }
+            })
+            .catch(error => console.error('Error fetching user info:', error));
+    } else {
+        modalTitle.textContent = 'Change User Password';
+        pendingInfo.style.display = 'none';
+    }
+
     document.getElementById('resetPasswordModal').style.display = 'block';
 }
 

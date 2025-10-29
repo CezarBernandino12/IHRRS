@@ -172,13 +172,13 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
                 <table class="user-table">
                     <thead>
-                        <tr>
-                            <th>Full Name</th>
-                            <th>Username</th>
-                            <th>Role</th>
-                            <th>Account Status</th>
-                            <th>Action</th>
-                        </tr>
+                    <tr>
+                        <th style="color: black;"><strong>FULL NAME</strong></th>
+                        <th style="color: black;"><strong>USERNAME</strong></th>
+                        <th style="color: black;"><strong>ROLE</strong></th>
+                        <th style="color: black;"><strong>ACCOUNT STATUS</strong></th>
+                        <th style="color: black;"><strong>ACTION</strong></th>
+                    </tr>
                     </thead>
                     
                     <tbody id="userTableBody">
@@ -287,10 +287,17 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <!-- Reset/Change Password Modal -->
 <div id="resetPasswordModal" class="modal-box" style="display:none;">
   <div class="modal-header">
-    <h2>Change User Password</h2>
+    <h2 id="resetModalTitle">Change User Password</h2>
     <span class="close-btn" onclick="closeResetPasswordModal()">&times;</span>
   </div>
   <div class="modal-content">
+    <!-- Pending Reset Request Info -->
+    <div id="pendingResetInfo" style="display:none; background:#fff3cd; border:1px solid #ffeaa7; padding:15px; margin-bottom:20px; border-radius:5px;">
+      <h3 style="color:#856404; margin:0 0 10px 0;"><i class="bx bx-info-circle"></i> Pending Password Reset Request</h3>
+      <p style="color:#856404; margin:0 0 10px 0;">This user has requested a password reset. Please contact them at:</p>
+      <p style="font-size:18px; font-weight:bold; color:#856404; margin:0;"><i class="bx bx-phone"></i> <span id="userContactNumber"></span></p>
+    </div>
+
     <form id="resetPasswordForm" method="POST" action="reset_password.php">
       <input type="hidden" name="user_id" id="resetPasswordUserId">
       <div class="form-group">

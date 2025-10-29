@@ -102,6 +102,16 @@
 		</nav>
 
 		<main>
+			<!-- Pending Reset Notification -->
+			<div id="pendingResetNotification" class="info-message" style="background:#fff3cd; border:1px solid #ffeaa7; padding:15px; margin-bottom:20px; border-radius:5px; display:none; align-items:center; gap:10px;">
+				<i class="bx bx-info-circle" style="color:#856404; font-size:24px;"></i>
+				<div>
+					<strong style="color:#856404;">Password Reset Request Pending</strong>
+					<p style="color:#856404; margin:5px 0 0 0;">Your current password still works. An admin will contact you soon to complete the reset.</p>
+				</div>
+				<button onclick="this.parentElement.style.display='none';" style="background:none; border:none; font-size:20px; color:#856404; cursor:pointer; margin-left:auto;">&times;</button>
+			</div>
+
 			<div class="head-title">
 				<div class="left">
 					<h1>Dashboard</h1>
@@ -425,17 +435,23 @@ fetch('php/getUserName.php')
 
 	// Check if user is logged in
 fetch('php/getUserId.php')
-    .then(response => response.json())
-    .then(data => {
-        if (data.error) {
-            // User is not logged in, redirect to role selection page
-            window.location.href = '../role.html';
-        }
-    })
-    .catch(error => {
-        console.error('Error checking session:', error);
-        window.location.href = '../role.html';
-    });
+	   .then(response => response.json())
+	   .then(data => {
+	       if (data.error) {
+	           // User is not logged in, redirect to role selection page
+	           window.location.href = '../role.html';
+	       } else {
+	           // Check for pending reset notification
+	           if (sessionStorage.getItem('showPendingReset')) {
+	               document.getElementById('pendingResetNotification').style.display = 'flex';
+	               sessionStorage.removeItem('showPendingReset');
+	           }
+	       }
+	   })
+	   .catch(error => {
+	       console.error('Error checking session:', error);
+	       window.location.href = '../role.html';
+	   });
 
 
 
