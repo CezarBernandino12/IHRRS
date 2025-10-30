@@ -1024,7 +1024,7 @@ $total_patients = count($unique_patient_ids);
 ?>
 <div class="summary-container">
     <div class="summary">
-        <h3><i class="bx bx-file"></i> Summary:</h3>
+        <h3><i class="bx bx-file"></i> Report Details</h3>
         <ul class="summary-list">
             <li>
     <strong>Case Counts:</strong>

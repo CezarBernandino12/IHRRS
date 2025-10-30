@@ -744,7 +744,7 @@ body {
 
 /* Make the report table wrap nicely */
 #reportTable {
-  table-layout: fixed;           /* consistent column widths + wrapping */
+  table-layout: auto;           /* consistent column widths + wrapping */
   width: 100%;
 }
 #reportTable th,
@@ -766,7 +766,9 @@ body {
 
 /* Collapse rows into “cards” on phones */
 @media (max-width: 768px) {
-  #reportTable thead { display: none; }
+  #reportTable thead {  
+    display: table-header-group;
+  } 
 
   #reportTable,
   #reportTable tbody,
@@ -812,6 +814,14 @@ body {
   text-overflow: ellipsis;    /* truncate if it's REALLY tight */
   overflow: hidden;
   padding: 10px 12px;
+}
+
+/* Sticky header */
+#reportTable thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  border-bottom: 2px solid #ccc;
 }
 
 /* Large tablets / narrow laptops */
@@ -868,6 +878,7 @@ th {
     color: rgb(0, 0, 0);
     padding: 10px;
     text-align: left;
+    
 }
 
 td {
@@ -1274,17 +1285,71 @@ td a:hover {
     letter-spacing: .02em;
   }
 }
-/* scroll the table inside the page instead of overflowing */
+/* Scrollable container */
 .report-table-container {
   max-width: 100%;
-  height: 600px;                          /* ← fixed height */
-  overflow: auto;                         /* ← enables both horizontal and vertical scroll */
-  -webkit-overflow-scrolling: touch;     /* smooth scrolling on touch devices */
-  padding-bottom: 8px;                   /* space for horizontal scrollbar */
-  padding-right: 8px;                    /* space for vertical scrollbar */
+  height: 600px;
+  overflow-y: auto;
+  overflow-x: auto;
   border-radius: 10px;
   box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+  border: 1px solid #ccc;
+  background: #fff;
 }
+
+/* Force table to be block-based for sticky header to work */
+.report-table-container table {
+  width: 100%;
+  border-collapse: collapse;
+  display: block;
+}
+
+/* Make thead and tbody display separately */
+.report-table-container thead,
+.report-table-container tbody {
+  display: block;
+}
+
+/* Make tbody scroll while header stays fixed */
+.report-table-container tbody {
+  height: 550px; /* slightly less than total height */
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Adjust widths so columns align properly */
+.report-table-container thead tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+.report-table-container tbody tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+
+/* Header styling */
+.report-table-container thead th {
+  background: #b3d9ffd2;
+  font-weight: 600;
+  border-bottom: 2px solid #ccc;
+  padding: 10px 12px;
+  text-align: left;
+}
+
+/* Table cells */
+.report-table-container td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+/* Row hover effect */
+.report-table-container tr:hover {
+  background-color: #f4f7ff;
+}
+
+
 
 
 

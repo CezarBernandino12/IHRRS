@@ -672,7 +672,7 @@ const dispensationChart = new Chart(ctx, {
 <?php if ($rows): ?>
     <div class="summary-container">
     <div class="summary">
-        <h4><i class="bx bx-filter-alt"></i>Summary:</h4>
+        <h4><i class="bx bx-file"></i>Report Details</h4>
         <tr>
   <th>Report Generated On</th>
   <td class="summary-mono">

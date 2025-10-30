@@ -777,7 +777,7 @@ document.addEventListener("DOMContentLoaded", () => {
 <br> <br>
 <div class="summary-container">
   <div class="summary">
-    <h3>Summary</h3>
+    <h3>Report Details</h3>
 
     <table class="summary-table">
       <colgroup>

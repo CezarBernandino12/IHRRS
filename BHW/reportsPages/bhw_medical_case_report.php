@@ -1053,7 +1053,7 @@ $most_common_treatment = $treatment_counts ? array_key_first($treatment_counts) 
 
 <div class="summary-container">
   <div class="summary">
-  <h3><i class="bx bx-file"></i> Summary</h3>
+  <h3><i class="bx bx-file"></i>Report Details</h3>
     <!-- Key values -->
     <table class="kv-table">
       <tr>

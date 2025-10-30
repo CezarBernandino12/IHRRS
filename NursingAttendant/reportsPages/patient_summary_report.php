@@ -989,7 +989,7 @@ usort($visits, function($a, $b) {
            <!-- Summary Section -->
 <div class="summary-container">
   <div class="summary">
-    <h3><i class="bx bx-file"></i> Summary</h3>
+    <h3><i class="bx bx-file"></i> Report Details</h3>
 
     <table class="summary-table">
       <colgroup>

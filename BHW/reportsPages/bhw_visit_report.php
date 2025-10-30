@@ -1097,7 +1097,7 @@ if (addressData.length > 0 && addressData.reduce((a, b) => a + b, 0) > 0) {
 <!-- Summary Section -->
 <div class="summary-container">
   <div class="summary">
-    <h3 class="summary-title"><i class="bx bx-file"></i> Summary</h3>
+    <h3 class="summary-title"><i class="bx bx-file"></i>Report Details</h3>
 
     <table class="summary-table">
       <tbody>

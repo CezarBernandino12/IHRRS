@@ -73,7 +73,24 @@ document.addEventListener("DOMContentLoaded", function () {
                         consultationField.value = data.consultation.consultation_id;
                     }
 
+                    // ✅ Resume Button
+const resumeBtn = document.getElementById("resumeBtn");
 
+if (data.consultation.diagnosis_status !== "Ongoing") {
+        resumeBtn.disabled = true;
+        resumeBtn.style.opacity = "0.6";   // make it look disabled
+        resumeBtn.style.cursor = "not-allowed";
+
+}
+                      // ✅ Resume Button
+const addMedCertBtn = document.getElementById("addMedCertBtn");
+
+if (data.consultation.diagnosis_status !== "Ongoing") {
+        addMedCertBtn.disabled = true;
+        addMedCertBtn.style.opacity = "0.6";   // make it look disabled
+        addMedCertBtn.style.cursor = "not-allowed";
+
+}
              
                 }
 

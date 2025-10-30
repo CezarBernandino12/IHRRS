@@ -750,7 +750,7 @@ const statusPieChart = new Chart(statusCtx, {
 
 <div class="summary-container">
   <div class="summary">
-    <h4><i class="bx bx-filter-alt"></i> Summary</h4>
+    <h4><i class="bx bx-file"></i>Report Details</h4>
 
     <table class="kv-table">
       <tr>
