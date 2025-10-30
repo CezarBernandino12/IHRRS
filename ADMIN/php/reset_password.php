@@ -66,8 +66,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $updateStmt->execute([$user_id]);
 
         // ✅ Log the password reset action
-        $logStmt = $pdo->prepare("INSERT INTO logs (performed_by, action, timestamp) VALUES (?, ?, NOW())");
-        $logStmt->execute([$admin_id, "Change password for " . $user['full_name']]);
+        $logStmt = $pdo->prepare("INSERT INTO logs (user_id, performed_by, action, timestamp) VALUES (?, ?, ?, NOW())");
+        $logStmt->execute([$user_id, $admin_id,  "Change password for " . $user['full_name']]);
 
        echo json_encode(["success" => true, "message" => "Password changed successfully!"]); 
     } else {

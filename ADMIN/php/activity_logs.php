@@ -143,14 +143,18 @@ $logs = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </nav>
 
         <main> 
-
+            <div class="head-title">
+                <div class="left">
+                  <h1>System Activity Logs</h1>
+                  <ul class="breadcrumb">
+                    <li><a href="#">System Activity Logs</a></li>
+                    <li><i class="bx bx-chevron-right"></i></li>
+                    <li><a class="active" href="#" onclick="history.back(); return false;">Go back</a></li>
+                  </ul>
+                </div>
+              </div>
 
             <div class="logs-container">
-                <div class="logs-header">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <h2>System Activity Logs</h2>
-                    </div>
-                </div>
 
                 <style>
     h2 {
@@ -262,19 +266,11 @@ $logs = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <span class="close-btn" onclick="closeModal()">&times;</span>
                     </div>
                     <div class="modal-contents">
-                        <div class="user-details">
-                            <h3>User Details</h3>
-                            <p><strong>Full Name:</strong> <span id="logUserFullName"></span></p>
-                            <p><strong>User Name:</strong> <span id="logUserName"></span></p>
-                            <p><strong>Status:</strong> <span id="logUserStatus"></span></p>
-                            <p><strong>Barangay:</strong> <span id="logUserBarangay"></span></p>
-                            <p><strong>Role:</strong> <span id="logUserRole"></span></p>
-                        </div>
-                        <div class="activity-details">
-                            <h3>Activity Details</h3>
-                            <p><strong>Action:</strong> <span id="logUserAction"></span></p>
-                            <p><strong>Timestamp:</strong> <span id="logUserTimestamp"></span></p>
-                        </div>
+                        <p><strong>Full Name:</strong> <span id="logUserFullName"></span></p>
+                        <p><strong>User Name:</strong> <span id="logUserName"></span></p>
+                        <p><strong>Role:</strong> <span id="logUserRole"></span></p>
+                        <p><strong>Action:</strong> <span id="logUserAction"></span></p>
+                        <p><strong>Timestamp:</strong> <span id="logUserTimestamp"></span></p>
                     </div>
                 </div>
 

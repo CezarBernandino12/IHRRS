@@ -77,8 +77,8 @@ $adminId = $_SESSION['user_id'] ?? null;
 
 if ($adminId) {
     $activity = "Added new user: $username";
-    $logStmt = $pdo->prepare("INSERT INTO logs (performed_by, action, timestamp) VALUES (?, ?, NOW())");
-    $logStmt->execute([$adminId, $activity]);
+    $logStmt = $pdo->prepare("INSERT INTO logs (user_id, performed_by, action, timestamp) VALUES (?, ?, ?, NOW())");
+    $logStmt->execute([$newUserId, $adminId, $activity]);
 }
 
         echo "User added successfully!";

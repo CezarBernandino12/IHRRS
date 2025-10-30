@@ -113,8 +113,6 @@ function showLogUserModal(userId, action) {
     .then(data => {
         document.getElementById('logUserFullName').innerText = data.full_name;
         document.getElementById('logUserName').innerText = data.username;
-        document.getElementById('logUserStatus').innerText = data.status;
-        document.getElementById('logUserBarangay').innerText = data.barangay;
         document.getElementById('logUserRole').innerText = data.role;
         
         // Set action information
