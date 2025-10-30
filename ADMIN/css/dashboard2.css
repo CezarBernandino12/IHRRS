@@ -442,6 +442,7 @@ body {
 }
 
 #content main .head-title {
+    margin-bottom: 50px;
 	display: flex;
 	align-items: center;
 	justify-content: space-between;

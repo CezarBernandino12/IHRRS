@@ -143,14 +143,18 @@ $logs = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </nav>
 
         <main> 
-
+            <div class="head-title">
+                <div class="left">
+                  <h1>System Activity Logs</h1>
+                  <ul class="breadcrumb">
+                    <li><a href="#">System Activity Logs</a></li>
+                    <li><i class="bx bx-chevron-right"></i></li>
+                    <li><a class="active" href="#" onclick="history.back(); return false;">Go back</a></li>
+                  </ul>
+                </div>
+              </div>
 
             <div class="logs-container">
-                <div class="logs-header">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <h2>System Activity Logs</h2>
-                    </div>
-                </div>
 
                 <style>
     h2 {

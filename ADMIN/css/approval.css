@@ -445,6 +445,7 @@ body {
 	justify-content: space-between;
 	grid-gap: 16px;
 	flex-wrap: wrap;
+    margin-bottom: 50px;
 }
 
 #content main .head-title .left h1 {
@@ -479,6 +480,7 @@ body {
     width: 100%;
     margin: 50px auto; 
 }
+
 
 .logs-header {
     margin-bottom: 16px;

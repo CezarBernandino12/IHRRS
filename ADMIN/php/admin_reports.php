@@ -264,7 +264,8 @@ $totalActions = array_sum(array_column($commonActions, 'count'));
             <img src="../../img/admin.png">
             </a>
         </nav>
-
+        
+        <main>
             <div class="head-title">
                 <div class="left">
                   <h1>System Activity Logs Report</h1>
@@ -291,7 +292,7 @@ $totalActions = array_sum(array_column($commonActions, 'count'));
     </div>
 </div>
 
-        <main>
+       
             <!-- NEW: Date Range Filter -->
             <div class="filter-container">
     <div class="date-filters">

@@ -448,6 +448,7 @@ body {
 }
 
 #content main .head-title {
+    margin-bottom: 50px;
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -781,7 +782,7 @@ background-color: #f5f5f5;
       display: block !important;
     }
   }
-  
+   
 .date-filters {
 	display: flex;
 	gap: 10px;

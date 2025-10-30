@@ -189,10 +189,14 @@ $unreadCount = 0;
             <?php unset($_SESSION['pending_reset']); ?>
             <?php endif; ?>
 
-            <div class="welcome-message">
-                <h2>Welcome, Admin!</h2>
-                <p>Here's an overview of the system's activity.</p>
-            </div>
+                        <div class="head-title">
+                <div class="left">
+                  <h1>Welcome, Admin!</h1>
+                  <ul class="breadcrumb">
+                    <li><a href="#">Here's an overview of the system's activity.</a></li>
+                    </ul>
+                </div>
+              </div>
 
             <div class="dashboard-container">
                 <a href="today_logins.php" style="text-decoration: none; color: inherit;">
