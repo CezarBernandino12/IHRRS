@@ -21,8 +21,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($stmt->execute(['user_id' => $user_id])) {
 
         // Log the action
-        $log = $pdo->prepare("INSERT INTO logs (performed_by, action, timestamp) VALUES (?, ?, NOW())");
-        $log->execute([$admin_id, "Terminated User {$user['username']}"]);
+        $log = $pdo->prepare("INSERT INTO logs (user_id, performed_by, action, timestamp) VALUES (?, ?, ?, NOW())");
+        $log->execute([$user_id, $admin_id, "Terminated User {$user['username']}"]);
 
         echo "<script>alert('User has been Terminated successfully!'); window.location.href='admin_user.php';</script>";
     } else {

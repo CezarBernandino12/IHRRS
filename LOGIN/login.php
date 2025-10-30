@@ -59,7 +59,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 // ✅ Function to log events
 function logActivity($pdo, $user_id, $action) {
-    $stmt = $pdo->prepare("INSERT INTO logs (performed_by, action, timestamp) VALUES (:user_id, :action, NOW())");
-    $stmt->execute(['user_id' => $user_id, 'action' => $action]);
+    $stmt = $pdo->prepare("INSERT INTO logs (user_id, performed_by, action, timestamp) VALUES (:user_id, :performed_by, :action, NOW())");
+    $stmt->execute(['user_id' => $user_id, 'performed_by' => $user_id, 'action' => $action]);
 }
 ?>

@@ -1,23 +1,22 @@
 <?php
-require 'config.php'; // Ensure your database connection is correctly set up
+require 'config.php';
 session_start();
 
-// Check if user is logged in and has BHW role
+// Check if user is logged in and has admin role
 if (!isset($_SESSION['user_id']) || !isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
-    // Destroy any existing session data
     session_destroy();
-    // Redirect to BHW login page
     header("Location: ../../role.html");
     exit();
 }
+
 // Default to last 7 days if no date range is specified
 $start_date = isset($_GET['start_date']) ? $_GET['start_date'] : date('Y-m-d', strtotime('-7 days'));
 $end_date = isset($_GET['end_date']) ? $_GET['end_date'] : date('Y-m-d');
 
 // Fetch daily active users for the selected date range
-$activeUsersQuery = "SELECT DATE(timestamp) AS log_date, COUNT(DISTINCT user_id) AS active_users 
+$activeUsersQuery = "SELECT DATE(timestamp) AS log_date, COUNT(DISTINCT performed_by) AS active_users 
                      FROM logs 
-                     WHERE action = 'login' AND DATE(timestamp) BETWEEN :start_date AND :end_date
+                     WHERE action = 'Successful Login' AND DATE(timestamp) BETWEEN :start_date AND :end_date
                      GROUP BY log_date 
                      ORDER BY log_date ASC";
 
@@ -27,38 +26,166 @@ $activeUsersStmt->bindParam(':end_date', $end_date);
 $activeUsersStmt->execute();
 $activeUsers = $activeUsersStmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Debugging: Log the query results
-error_log(print_r($activeUsers, true));
-
 // Fetch most common actions
-$commonActionsQuery = "SELECT action, COUNT(action) AS count 
-                       FROM logs 
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$limit = 10;
+$offset = ($page - 1) * $limit;
+
+$commonActionsQuery = "SELECT action, COUNT(action) AS count
+                       FROM logs
                        WHERE DATE(timestamp) BETWEEN :start_date AND :end_date
-                       GROUP BY action 
-                       ORDER BY count DESC 
-                       LIMIT 5";
+                       GROUP BY action
+                       ORDER BY count DESC
+                       LIMIT :limit OFFSET :offset";
+
+$totalCommonActionsQuery = "SELECT COUNT(DISTINCT action) AS total
+                            FROM logs
+                            WHERE DATE(timestamp) BETWEEN :start_date AND :end_date";
 
 $commonActionsStmt = $pdo->prepare($commonActionsQuery);
 $commonActionsStmt->bindParam(':start_date', $start_date);
 $commonActionsStmt->bindParam(':end_date', $end_date);
+$commonActionsStmt->bindParam(':limit', $limit, PDO::PARAM_INT);
+$commonActionsStmt->bindParam(':offset', $offset, PDO::PARAM_INT);
 $commonActionsStmt->execute();
 $commonActions = $commonActionsStmt->fetchAll(PDO::FETCH_ASSOC);
 
+$totalCommonActionsStmt = $pdo->prepare($totalCommonActionsQuery);
+$totalCommonActionsStmt->bindParam(':start_date', $start_date);
+$totalCommonActionsStmt->bindParam(':end_date', $end_date);
+$totalCommonActionsStmt->execute();
+$totalCommonActions = $totalCommonActionsStmt->fetch(PDO::FETCH_ASSOC)['total'];
+$totalPages = ceil($totalCommonActions / $limit);
+
 // Today's Active Users
-$todayUsersQuery = "SELECT COUNT(DISTINCT user_id) AS today_users 
+$todayUsersQuery = "SELECT COUNT(DISTINCT performed_by) AS today_users 
                     FROM logs 
-                    WHERE action = 'login' AND DATE(timestamp) = CURDATE()";
+                    WHERE action = 'Successful Login' AND DATE(timestamp) = CURDATE()";
 $todayUsersStmt = $pdo->prepare($todayUsersQuery); 
 $todayUsersStmt->execute();
 $todayUsers = $todayUsersStmt->fetch(PDO::FETCH_ASSOC)['today_users'];
+
+// FIXED: User Management Actions Report - removed performed_by_name
+$userManagementQuery = "SELECT action, COUNT(*) as count, performed_by
+                        FROM logs
+                        WHERE action IN ('Added New User', 'Terminated User', 'Reset Password', 'Reset User Password')
+                        AND DATE(timestamp) BETWEEN :start_date AND :end_date
+                        GROUP BY action, performed_by
+                        ORDER BY count DESC";
+
+$userManagementStmt = $pdo->prepare($userManagementQuery);
+$userManagementStmt->bindParam(':start_date', $start_date);
+$userManagementStmt->bindParam(':end_date', $end_date);
+$userManagementStmt->execute();
+$userManagementActions = $userManagementStmt->fetchAll(PDO::FETCH_ASSOC);
+
+// FIXED: Security Events Report - added full_name join
+$securityPage = isset($_GET['security_page']) ? (int)$_GET['security_page'] : 1;
+$securityLimit = 10;
+$securityOffset = ($securityPage - 1) * $securityLimit;
+
+$securityQuery = "SELECT l.action, u.full_name, l.timestamp
+                  FROM logs l
+                  LEFT JOIN users u ON u.user_id = l.performed_by
+                  WHERE (l.action LIKE '%Failed%' OR l.action LIKE '%Unauthorized%' OR l.action LIKE '%Error%')
+                  AND DATE(l.timestamp) BETWEEN :start_date AND :end_date
+                  ORDER BY l.timestamp DESC
+                  LIMIT :limit OFFSET :offset";
+
+$totalSecurityQuery = "SELECT COUNT(*) AS total
+                       FROM logs l
+                       WHERE (l.action LIKE '%Failed%' OR l.action LIKE '%Unauthorized%' OR l.action LIKE '%Error%')
+                       AND DATE(l.timestamp) BETWEEN :start_date AND :end_date";
+
+$securityStmt = $pdo->prepare($securityQuery);
+$securityStmt->bindParam(':start_date', $start_date);
+$securityStmt->bindParam(':end_date', $end_date);
+$securityStmt->bindParam(':limit', $securityLimit, PDO::PARAM_INT);
+$securityStmt->bindParam(':offset', $securityOffset, PDO::PARAM_INT);
+$securityStmt->execute();
+$securityEvents = $securityStmt->fetchAll(PDO::FETCH_ASSOC);
+
+$totalSecurityStmt = $pdo->prepare($totalSecurityQuery);
+$totalSecurityStmt->bindParam(':start_date', $start_date);
+$totalSecurityStmt->bindParam(':end_date', $end_date);
+$totalSecurityStmt->execute();
+$totalSecurityEvents = $totalSecurityStmt->fetch(PDO::FETCH_ASSOC)['total'];
+$totalSecurityPages = ceil($totalSecurityEvents / $securityLimit);
+
+// FIXED: Data Modification Report - added full_name join, removed user_affected
+$dataModPage = isset($_GET['data_page']) ? (int)$_GET['data_page'] : 1;
+$dataModLimit = 10;
+$dataModOffset = ($dataModPage - 1) * $dataModLimit;
+
+$dataModQuery = "SELECT l.action, u.full_name, l.timestamp
+                 FROM logs l
+                 LEFT JOIN users u ON u.user_id = l.performed_by
+                 WHERE l.action IN ('Updated Patient Information', 'Added Patient Assessment',
+                                 'Added Diagnosis/Consultation Record', 'Dispensed Medicine to Patient',
+                                 'Updated Patient Information', 'Added Referral', 'Cancelled Referral')
+                 AND DATE(l.timestamp) BETWEEN :start_date AND :end_date
+                 ORDER BY l.timestamp DESC
+                 LIMIT :limit OFFSET :offset";
+
+$totalDataModQuery = "SELECT COUNT(*) AS total
+                      FROM logs l
+                      WHERE l.action IN ('Updated Patient Information', 'Added Patient Assessment',
+                                      'Added Diagnosis/Consultation Record', 'Dispensed Medicine to Patient',
+                                      'Updated Patient Information', 'Added Referral', 'Cancelled Referral')
+                      AND DATE(l.timestamp) BETWEEN :start_date AND :end_date";
+
+$dataModStmt = $pdo->prepare($dataModQuery);
+$dataModStmt->bindParam(':start_date', $start_date);
+$dataModStmt->bindParam(':end_date', $end_date);
+$dataModStmt->bindParam(':limit', $dataModLimit, PDO::PARAM_INT);
+$dataModStmt->bindParam(':offset', $dataModOffset, PDO::PARAM_INT);
+$dataModStmt->execute();
+$dataModifications = $dataModStmt->fetchAll(PDO::FETCH_ASSOC);
+
+$totalDataModStmt = $pdo->prepare($totalDataModQuery);
+$totalDataModStmt->bindParam(':start_date', $start_date);
+$totalDataModStmt->bindParam(':end_date', $end_date);
+$totalDataModStmt->execute();
+$totalDataModifications = $totalDataModStmt->fetch(PDO::FETCH_ASSOC)['total'];
+$totalDataModPages = ceil($totalDataModifications / $dataModLimit);
+
+// FIXED: Admin Activities Report - added full_name join, removed user_affected
+$adminPage = isset($_GET['admin_page']) ? (int)$_GET['admin_page'] : 1;
+$adminLimit = 10;
+$adminOffset = ($adminPage - 1) * $adminLimit;
+
+$adminActivitiesQuery = "SELECT l.action, u.full_name, l.timestamp
+                         FROM logs l
+                         LEFT JOIN users u ON u.user_id = l.performed_by
+                         WHERE l.performed_by LIKE 'admin%' OR l.performed_by IN ('1', 'admin')
+                         AND DATE(l.timestamp) BETWEEN :start_date AND :end_date
+                         ORDER BY l.timestamp DESC
+                         LIMIT :limit OFFSET :offset";
+
+$totalAdminQuery = "SELECT COUNT(*) AS total
+                    FROM logs l
+                    WHERE l.performed_by LIKE 'admin%' OR l.performed_by IN ('1', 'admin')
+                    AND DATE(l.timestamp) BETWEEN :start_date AND :end_date";
+$adminActivitiesStmt = $pdo->prepare($adminActivitiesQuery);
+$adminActivitiesStmt->bindParam(':start_date', $start_date);
+$adminActivitiesStmt->bindParam(':end_date', $end_date);
+$adminActivitiesStmt->bindParam(':limit', $adminLimit, PDO::PARAM_INT);
+$adminActivitiesStmt->bindParam(':offset', $adminOffset, PDO::PARAM_INT);
+$adminActivitiesStmt->execute();
+$adminActivities = $adminActivitiesStmt->fetchAll(PDO::FETCH_ASSOC);
+
+$totalAdminStmt = $pdo->prepare($totalAdminQuery);
+$totalAdminStmt->bindParam(':start_date', $start_date);
+$totalAdminStmt->bindParam(':end_date', $end_date);
+$totalAdminStmt->execute();
+$totalAdminActivities = $totalAdminStmt->fetch(PDO::FETCH_ASSOC)['total'];
+$totalAdminPages = ceil($totalAdminActivities / $adminLimit);
 
 // Calculate summary metrics
 $totalUsers = $todayUsers;
 $avgUsers = !empty($activeUsers) ? round(array_sum(array_column($activeUsers, 'active_users')) / count($activeUsers)) : 0;
 $totalActions = array_sum(array_column($commonActions, 'count'));
 ?> 
-
-
  
 <!DOCTYPE html>
 <html lang="en">
@@ -138,9 +265,16 @@ $totalActions = array_sum(array_column($commonActions, 'count'));
             </a>
         </nav>
 
-        <div class="head-title">
-        <h2 class="management-title">User Activity Report</h2>
-        </div>
+            <div class="head-title">
+                <div class="left">
+                  <h1>System Activity Logs Report</h1>
+                  <ul class="breadcrumb">
+                    <li><a href="#">System Activity Logs Report</a></li>
+                    <li><i class="bx bx-chevron-right"></i></li>
+                    <li><a class="active" href="#" onclick="history.back(); return false;">Go back</a></li>
+                  </ul>
+                </div>
+              </div>
 
 <div id="logoutModal" class="logout-modal">
     <div class="logout-modal-content">
@@ -170,29 +304,7 @@ $totalActions = array_sum(array_column($commonActions, 'count'));
     
             <div id="print-section">
                 <section id="contents">
-                    <div class="metrics">
-                        <div class="metric">
-                            <div class="metric-value"><?php echo $totalUsers; ?></div>
-                            <div class="metric-label">Today's Active Users</div>
-                        </div>
-                        <div class="metric">
-                            <div class="metric-value"><?php echo $avgUsers; ?></div>
-                            <div class="metric-label">Average Daily Users</div>
-                        </div>
-                        <div class="metric">
-                            <div class="metric-value"><?php echo number_format($totalActions); ?></div>
-                            <div class="metric-label">Total Actions (Selected Period)</div>
-                        </div>
-                    </div>
                     
-                    <!-- NEW: Charts Container -->
-                    <div class="charts-container">
-                        
-                        <div class="chart-card">
-                            <div class="chart-title">Login Action</div>
-                            <canvas id="commonActionsChart"></canvas>
-                        </div>
-                    </div>
                     
                     <div class="card">
                         <div class="card-header">
@@ -203,28 +315,33 @@ $totalActions = array_sum(array_column($commonActions, 'count'));
                                 <tr>
                                     <th>Action</th>
                                     <th>Count</th>
-                                    <th>Distribution</th>
+                                    <th>Percentage</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php 
+                                <?php
                                 $maxCount = !empty($commonActions) ? max(array_column($commonActions, 'count')) : 0;
-                                
-                                foreach ($commonActions as $action): 
+
+                                foreach ($commonActions as $action):
                                     $percentage = $maxCount > 0 ? ($action['count'] / $maxCount) * 100 : 0;
                                 ?>
                                     <tr>
                                         <td><?php echo htmlspecialchars($action['action']); ?></td>
                                         <td><?php echo number_format($action['count']); ?></td>
-                                        <td>
-                                            <div class="progress-bar">
-                                                <div class="progress" style="width: <?php echo $percentage; ?>%"></div>
-                                            </div>
-                                        </td>
+                                        <td><?php echo round($percentage, 1); ?>%</td>
                                     </tr>
                                 <?php endforeach; ?>
                             </tbody>
                         </table>
+                        <div class="pagination">
+                            <?php if ($page > 1): ?>
+                                <a href="?start_date=<?php echo $start_date; ?>&end_date=<?php echo $end_date; ?>&page=<?php echo $page - 1; ?>" class="page-link">Back</a>
+                            <?php endif; ?>
+                            <span>Page <?php echo $page; ?> of <?php echo $totalPages; ?></span>
+                            <?php if ($page < $totalPages): ?>
+                                <a href="?start_date=<?php echo $start_date; ?>&end_date=<?php echo $end_date; ?>&page=<?php echo $page + 1; ?>" class="page-link">Next</a>
+                            <?php endif; ?>
+                        </div>
                     </div>
                 </section>
             </div>
@@ -232,6 +349,156 @@ $totalActions = array_sum(array_column($commonActions, 'count'));
                      <!-- Buttons Section -->
 </div> 
 
+<!-- FIXED: User Management Actions Report -->
+<div class="card">
+    <div class="card-header">
+        <h3>User Management Actions</h3>
+        <small>Track all user account modifications</small>
+    </div>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Action</th>
+                <th>Performed By (ID)</th>
+                <th>Count</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($userManagementActions as $action): ?>
+                <tr>
+                    <td><?php echo htmlspecialchars($action['action']); ?></td>
+                    <td><?php echo htmlspecialchars($action['performed_by']); ?></td>
+                    <td><?php echo number_format($action['count']); ?></td>
+                </tr>
+            <?php endforeach; ?>
+            <?php if (empty($userManagementActions)): ?>
+                <tr>
+                    <td colspan="3" style="text-align: center;">No user management actions in selected period</td>
+                </tr>
+            <?php endif; ?>
+        </tbody>
+    </table>
+</div>
+
+<!-- FIXED: Security Events Report -->
+<div class="card">
+    <div class="card-header">
+        <h3>Security Events</h3>
+        <small>Failed attempts and security-related events</small>
+    </div>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Action</th>
+                <th>User</th>
+                <th>Timestamp</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($securityEvents as $event): ?>
+                <tr>
+                    <td><?php echo htmlspecialchars($event['action']); ?></td>
+                    <td><?php echo htmlspecialchars($event['full_name'] ?? 'N/A'); ?></td>
+                    <td><?php echo date('M j, Y g:i A', strtotime($event['timestamp'])); ?></td>
+                </tr>
+            <?php endforeach; ?>
+            <?php if (empty($securityEvents)): ?>
+                <tr>
+                    <td colspan="3" style="text-align: center;">No security events in selected period</td>
+                </tr>
+            <?php endif; ?>
+        </tbody>
+    </table>
+    <div class="pagination">
+        <?php if ($securityPage > 1): ?>
+            <a href="?start_date=<?php echo $start_date; ?>&end_date=<?php echo $end_date; ?>&page=<?php echo $page; ?>&security_page=<?php echo $securityPage - 1; ?>" class="page-link">Back</a>
+        <?php endif; ?>
+        <span>Page <?php echo $securityPage; ?> of <?php echo $totalSecurityPages; ?></span>
+        <?php if ($securityPage < $totalSecurityPages): ?>
+            <a href="?start_date=<?php echo $start_date; ?>&end_date=<?php echo $end_date; ?>&page=<?php echo $page; ?>&security_page=<?php echo $securityPage + 1; ?>" class="page-link">Next</a>
+        <?php endif; ?>
+    </div>
+</div>
+
+<!-- FIXED: Data Modifications Report -->
+<div class="card">
+    <div class="card-header">
+        <h3>Data Modifications</h3>
+        <small>Patient records and medical data changes</small>
+    </div>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Action</th>
+                <th>Performed By</th>
+                <th>Timestamp</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($dataModifications as $mod): ?>
+                <tr>
+                    <td><?php echo htmlspecialchars($mod['action']); ?></td>
+                    <td><?php echo htmlspecialchars($mod['full_name'] ?? 'N/A'); ?></td>
+                    <td><?php echo date('M j, Y g:i A', strtotime($mod['timestamp'])); ?></td>
+                </tr>
+            <?php endforeach; ?>
+            <?php if (empty($dataModifications)): ?>
+                <tr>
+                    <td colspan="3" style="text-align: center;">No data modifications in selected period</td>
+                </tr>
+            <?php endif; ?>
+        </tbody>
+    </table>
+    <div class="pagination">
+        <?php if ($dataModPage > 1): ?>
+            <a href="?start_date=<?php echo $start_date; ?>&end_date=<?php echo $end_date; ?>&page=<?php echo $page; ?>&security_page=<?php echo $securityPage; ?>&data_page=<?php echo $dataModPage - 1; ?>" class="page-link">Back</a>
+        <?php endif; ?>
+        <span>Page <?php echo $dataModPage; ?> of <?php echo $totalDataModPages; ?></span>
+        <?php if ($dataModPage < $totalDataModPages): ?>
+            <a href="?start_date=<?php echo $start_date; ?>&end_date=<?php echo $end_date; ?>&page=<?php echo $page; ?>&security_page=<?php echo $securityPage; ?>&data_page=<?php echo $dataModPage + 1; ?>" class="page-link">Next</a>
+        <?php endif; ?>
+    </div>
+</div>
+
+<!-- FIXED: Admin Activities Report -->
+<div class="card">
+    <div class="card-header">
+        <h3>Admin Activities</h3>
+        <small>All actions performed by administrators</small>
+    </div>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Action</th>
+                <th>Performed By</th>
+                <th>Timestamp</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($adminActivities as $activity): ?>
+                <tr>
+                    <td><?php echo htmlspecialchars($activity['action']); ?></td>
+                    <td><?php echo htmlspecialchars($activity['full_name'] ?? 'N/A'); ?></td>
+                    <td><?php echo date('M j, Y g:i A', strtotime($activity['timestamp'])); ?></td>
+                </tr>
+            <?php endforeach; ?>
+            <?php if (empty($adminActivities)): ?>
+                <tr>
+                    <td colspan="3" style="text-align: center;">No admin activities in selected period</td>
+                </tr>
+            <?php endif; ?>
+        </tbody>
+    </table>
+    <div class="pagination">
+        <?php if ($adminPage > 1): ?>
+            <a href="?start_date=<?php echo $start_date; ?>&end_date=<?php echo $end_date; ?>&page=<?php echo $page; ?>&security_page=<?php echo $securityPage; ?>&data_page=<?php echo $dataModPage; ?>&admin_page=<?php echo $adminPage - 1; ?>" class="page-link">Back</a>
+        <?php endif; ?>
+        <span>Page <?php echo $adminPage; ?> of <?php echo $totalAdminPages; ?></span>
+        <?php if ($adminPage < $totalAdminPages): ?>
+            <a href="?start_date=<?php echo $start_date; ?>&end_date=<?php echo $end_date; ?>&page=<?php echo $page; ?>&security_page=<?php echo $securityPage; ?>&data_page=<?php echo $dataModPage; ?>&admin_page=<?php echo $adminPage + 1; ?>" class="page-link">Next</a>
+        <?php endif; ?>
+    </div>
+</div>
 
         </main>
     </section>
@@ -254,13 +521,11 @@ $totalActions = array_sum(array_column($commonActions, 'count'));
 
         // Initialize date pickers
         flatpickr("#start-date", {
-        dateFormat: "Y-m-d",
-        maxDate: "today"
+        dateFormat: "Y-m-d"
     });
-    
+
     flatpickr("#end-date", {
-        dateFormat: "Y-m-d",
-        maxDate: "today"
+        dateFormat: "Y-m-d"
     });
     
     // Apply date filter
@@ -282,8 +547,9 @@ $totalActions = array_sum(array_column($commonActions, 'count'));
     const actionLabels = commonActionsData.map(entry => entry.action);
     const actionCounts = commonActionsData.map(entry => entry.count);
     
-    const actionsCtx = document.getElementById('commonActionsChart').getContext('2d');
-    const commonActionsChart = new Chart(actionsCtx, {
+    const actionsCtx = document.getElementById('commonActionsChart');
+    if (actionsCtx) {
+        const commonActionsChart = new Chart(actionsCtx.getContext('2d'), {
         type: 'bar',
         data: {
             labels: actionLabels,
@@ -326,8 +592,9 @@ $totalActions = array_sum(array_column($commonActions, 'count'));
             }
         }
     });
-    
-    
+    }
+
+
 function confirmLogout() {
     document.getElementById('logoutModal').style.display = 'block';
     return false; // Prevent the default link behavior
@@ -349,6 +616,7 @@ window.onclick = function(event) {
     }
 };
 </script>
+
 <script>
 document.addEventListener("DOMContentLoaded", () => {
   const sidebar = document.getElementById("sidebar");
@@ -363,11 +631,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   applyResponsiveSidebar();
   window.addEventListener("resize", applyResponsiveSidebar);
-
-  // keep the rest of your existing code (auth, stats, modals, etc.)
-});
+}
+  
 </script>
 
 </body>
 </html>
- 

@@ -262,19 +262,11 @@ $logs = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <span class="close-btn" onclick="closeModal()">&times;</span>
                     </div>
                     <div class="modal-contents">
-                        <div class="user-details">
-                            <h3>User Details</h3>
-                            <p><strong>Full Name:</strong> <span id="logUserFullName"></span></p>
-                            <p><strong>User Name:</strong> <span id="logUserName"></span></p>
-                            <p><strong>Status:</strong> <span id="logUserStatus"></span></p>
-                            <p><strong>Barangay:</strong> <span id="logUserBarangay"></span></p>
-                            <p><strong>Role:</strong> <span id="logUserRole"></span></p>
-                        </div>
-                        <div class="activity-details">
-                            <h3>Activity Details</h3>
-                            <p><strong>Action:</strong> <span id="logUserAction"></span></p>
-                            <p><strong>Timestamp:</strong> <span id="logUserTimestamp"></span></p>
-                        </div>
+                        <p><strong>Full Name:</strong> <span id="logUserFullName"></span></p>
+                        <p><strong>User Name:</strong> <span id="logUserName"></span></p>
+                        <p><strong>Role:</strong> <span id="logUserRole"></span></p>
+                        <p><strong>Action:</strong> <span id="logUserAction"></span></p>
+                        <p><strong>Timestamp:</strong> <span id="logUserTimestamp"></span></p>
                     </div>
                 </div>
 

@@ -921,3 +921,70 @@ background-color: #f5f5f5;
     transform: scale(1.05);
 }
 
+/* Pagination Styles */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
+    padding: 10px;
+}
+
+.page-link {
+    padding: 8px 16px;
+    background-color: #032f55;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+}
+
+.page-link:hover {
+    background-color: #042541;
+    color: white;
+}
+
+.pagination span {
+    font-size: 14px;
+    color: #333;
+    font-weight: 500;
+}
+
+/* Breadcrumb Styles */
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #666;
+}
+
+.breadcrumb li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.breadcrumb li a {
+    color: #666;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.breadcrumb li a:hover {
+    color: #1c538a;
+}
+
+.breadcrumb li a.active {
+    color: #1c538a;
+    font-weight: 600;
+}
+
+.breadcrumb li .bx {
+    font-size: 16px;
+    color: #999;
+}
+
