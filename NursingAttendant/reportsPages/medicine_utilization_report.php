@@ -9,7 +9,7 @@ if (!isset($_SESSION['user_id'])) {
 
 $userId = $_SESSION['user_id'];
 
-
+// Fetch user info
 $stmt = $pdo->prepare("SELECT full_name, rhu FROM users WHERE user_id = ?");
 $stmt->execute([$userId]);
 $user = $stmt->fetch();
@@ -17,20 +17,18 @@ $user = $stmt->fetch();
 $rhu = $user ? $user['rhu'] : 'N/A';
 $username = $user ? $user['full_name'] : 'N/A';
 
-
-
-
-$from_date = $_GET['from_date'] ?? '';
-$to_date   = $_GET['to_date'] ?? '';
-$medicine = isset($_GET['medicine']) ? (array)$_GET['medicine'] : [];
-$sex       = $_GET['sex'] ?? '';
-$age_group = $_GET['age_group'] ?? '';
-$barangay  = $_GET['purok'] ?? ''; // Use 'purok' for barangay filter
+// Initialize filters
+$from_date   = $_GET['from_date'] ?? '';
+$to_date     = $_GET['to_date'] ?? '';
+$medicine    = isset($_GET['medicine']) ? (array)$_GET['medicine'] : [];
+$sex         = $_GET['sex'] ?? '';
+$age_group   = $_GET['age_group'] ?? '';
+$barangay    = $_GET['purok'] ?? ''; // Purok as barangay filter
 $subcategory = $_GET['subcategory'] ?? '';
 
 $params = [];
 
-// Base query: get patients who received medicines (without hardcoding)
+// Base query with RHU filter through dispensed_by
 $sql = "
 SELECT 
     p.patient_id,
@@ -42,10 +40,13 @@ SELECT
     p.philhealth_member_no,
     MIN(md.dispensed_date) AS date_dispensed
 FROM rhu_medicine_dispensed md
+JOIN users u_disp ON md.dispensed_by = u_disp.user_id
 JOIN rhu_consultations c ON md.consultation_id = c.consultation_id
 JOIN patients p ON c.patient_id = p.patient_id
-WHERE 1=1
+WHERE u_disp.rhu = ?
 ";
+
+$params[] = $rhu; // Only show records from the same RHU as current user
 
 // Date filter (index-friendly, no DATE() wrapper)
 if (!empty($from_date) && !empty($to_date)) {

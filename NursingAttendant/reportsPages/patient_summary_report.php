@@ -34,10 +34,11 @@ $medication = $_GET['medication'] ?? '';
 // Build query with filters
 $sql = "SELECT v.*, p.first_name, p.last_name, p.age, p.sex, p.address FROM patient_assessment v 
         JOIN patients p ON v.patient_id = p.patient_id 
-        WHERE 1=1"; 
-        // Always require barangay match
+        JOIN users u_rec ON v.recorded_by = u_rec.user_id
+        WHERE u_rec.rhu = ?";  // Only show consultations from same RHU
 
-$params = [];
+$params = [$rhu]; // First parameter is the current user's RHU
+
 
 
 if (!empty($from_date) && !empty($to_date)) {

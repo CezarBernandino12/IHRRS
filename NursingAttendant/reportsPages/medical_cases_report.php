@@ -8,7 +8,8 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
-$userId = $_SESSION['user_id'];// or however you store the logged-in user's ID
+
+$userId = $_SESSION['user_id']; // logged-in user ID
 
 // Fetch user info
 $stmt = $pdo->prepare("SELECT full_name, rhu FROM users WHERE user_id = ?");
@@ -18,25 +19,25 @@ $user = $stmt->fetch();
 $rhu = $user ? $user['rhu'] : 'N/A';
 $username = $user ? $user['full_name'] : 'N/A';
 
-
-
 // Initialize filters
 $from_date = $_GET['from_date'] ?? '';
 $to_date = $_GET['to_date'] ?? '';
 $sex = $_GET['sex'] ?? '';
 $age_group = $_GET['age_group'] ?? '';
-$purok = $_GET['purok'] ?? ''; // Use 'purok' for address filtering
+$purok = $_GET['purok'] ?? '';
 $diagnosis = isset($_GET['diagnosis']) ? (array)$_GET['diagnosis'] : [];
 $diagnosis_status = $_GET['diagnosis_status'] ?? '';
 $barangay = $_GET['barangay'] ?? '';
 
 // Build query with filters
-$sql = "SELECT r.*, p.first_name, p.last_name, p.age, p.sex, p.address 
-        FROM rhu_consultations r 
-        JOIN patients p ON r.patient_id = p.patient_id 
-        WHERE 1=1"; // Always true, so we can safely append filters
+$sql = "SELECT r.*, p.first_name, p.last_name, p.age, p.sex, p.address
+        FROM rhu_consultations r
+        JOIN patients p ON r.patient_id = p.patient_id
+        JOIN users u_rec ON r.recorded_by = u_rec.user_id
+        WHERE u_rec.rhu = ?";  // Only show consultations from same RHU
 
-$params = [];
+$params = [$rhu]; // First parameter is the current user's RHU
+
 
 if (!empty($from_date) && !empty($to_date)) {
     $sql .= " AND DATE(r.consultation_date) BETWEEN :from_date AND :to_date";
