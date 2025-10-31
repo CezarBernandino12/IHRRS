@@ -19,16 +19,15 @@ $user = $stmt->fetch();
 $rhu = $user ? $user['rhu'] : 'N/A';
 $username = $user ? $user['full_name'] : 'N/A';
 
-
-
 // Filters
 $from_date = $_GET['from_date'] ?? '';
-$to_date = $_GET['to_date'] ?? '';
-$status = $_GET['status'] ?? '';
-$barangay = $_GET['barangay'] ?? '';
+$to_date   = $_GET['to_date'] ?? '';
+$status    = $_GET['status'] ?? '';
+$barangay  = $_GET['barangay'] ?? '';
 
 $params = [];
 
+// Base query – only include users whose RHU matches current user's RHU
 $sql = "
     SELECT 
         u.barangay,
@@ -38,8 +37,12 @@ $sql = "
         SUM(CASE WHEN r.referral_status = 'Pending' THEN 1 ELSE 0 END) AS pending
     FROM referrals r
     LEFT JOIN users u ON r.referred_by = u.user_id
-    WHERE u.barangay IS NOT NULL AND u.barangay != ''
+    WHERE u.rhu = ? 
+      AND u.barangay IS NOT NULL 
+      AND u.barangay != ''
 ";
+$params[] = $rhu; // Filter: same RHU as logged-in user
+
 
 
 // Add date filter if present
