@@ -348,6 +348,11 @@ closeBtn2.addEventListener('click', function () {
     modal2.style.display = 'none';
 });
 
+// Cancel button in modal1 (first confirmation modal)
+document.getElementById('cancelBtn').addEventListener('click', function () {
+    modal1.style.display = 'none';
+});
+
 // No button in modal2: Proceed without referral
 noButton2.addEventListener('click', function () {
     modal2.style.display = 'none';

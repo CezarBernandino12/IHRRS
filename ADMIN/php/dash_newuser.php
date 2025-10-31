@@ -56,6 +56,7 @@ $chartCounts = json_encode($counts);
     <link rel="icon" href="../../img/logo.png">
     <link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../css/dashboard3.css">
+    <link rel="stylesheet" href="../css/logout.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <title>New Users</title>
@@ -98,7 +99,7 @@ $chartCounts = json_encode($counts);
 
         <ul class="side-menu">
             <li>
-                <a href="logout.php" class="logout" onclick="return confirmLogout()">
+                <a href="#" class="logout" onclick="return confirmLogout()">
                     <i class="bx bxs-log-out-circle"></i>
                     <span class="text">Logout</span>
                 </a>
@@ -271,10 +272,42 @@ $chartCounts = json_encode($counts);
 </main>
     </section>
 
+<div id="logoutModal" class="logout-modal">
+    <div class="logout-modal-content">
+        <div class="logout-modal-header">
+            <h3>Confirm Logout</h3>
+        </div>
+        <div class="logout-modal-body">
+            <p>Are you sure you want to logout?</p>
+        </div>
+        <div class="logout-modal-footer">
+            <button onclick="closeModal()" class="logout-cancel-btn">Cancel</button>
+            <button onclick="proceedLogout()" class="logout-confirm-btn">Yes, Logout</button>
+        </div>
+    </div>
+</div>
+
     <script>
         function confirmLogout() {
-            return confirm("Are you sure you want to logout?");
-        }
+    document.getElementById('logoutModal').style.display = 'block';
+    return false; // Prevent the default link behavior
+}
+
+function closeModal() {
+    document.getElementById('logoutModal').style.display = 'none';
+}
+
+function proceedLogout() {
+    window.location.href = 'logout.php';
+}
+
+// Close modal when clicking outside
+window.onclick = function(event) {
+    const modal = document.getElementById('logoutModal');
+    if (event.target == modal) {
+        closeModal();
+    }
+};
 
         let chartType = 'bar';
         const ctx = document.getElementById('newUsersChart').getContext('2d');
