@@ -20,6 +20,18 @@ $stmt = $pdo->prepare("
 ");
 $stmt->execute();
 $inactiveUsers = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Role mapping for display
+$roleDisplay = [
+    'bhw' => 'Barangay Health Worker',
+    'doctor' => 'Physician',
+    'nursing_attendant' => 'Nursing Attendant'
+];
+
+// Process data for display
+foreach ($inactiveUsers as &$user) {
+    $user['role_display'] = $roleDisplay[$user['role']] ?? ucfirst($user['role']);
+}
 ?>
 
 <!DOCTYPE html>
@@ -98,7 +110,19 @@ $inactiveUsers = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <div class="pending-approvals-container">	
 
     <h2>Terminated Accounts</h2>
-    <table>
+
+    <!-- Search/Filter Section -->
+    <div class="search-filter-container" style="margin-bottom: 20px;">
+        <input type="text" id="searchInput" placeholder="Search by name, username, or role..." style="padding: 8px; width: 300px; border: 1px solid #ddd; border-radius: 4px;">
+        <select id="roleFilter" style="padding: 8px; margin-left: 10px; border: 1px solid #ddd; border-radius: 4px;">
+            <option value="">All Roles</option>
+            <option value="bhw">Barangay Health Worker</option>
+            <option value="doctor">Physician</option>
+            <option value="nursing_attendant">Nursing Attendant</option>
+        </select>
+    </div>
+
+    <table id="inactiveUsersTable">
         <thead>
             <tr>
                 <th>Full Name</th>
@@ -113,9 +137,9 @@ $inactiveUsers = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <tr>
                     <td><?php echo htmlspecialchars($user['full_name']); ?></td>
                     <td><?php echo htmlspecialchars($user['username']); ?></td>
-                    <td><?php echo ucfirst($user['role']); ?></td>
-                    <td><?php echo htmlspecialchars($user['barangay']); ?></td>
-                    <td><?php echo htmlspecialchars($user['contact_number']); ?></td>
+                    <td><?php echo $user['role_display']; ?></td>
+                    <td><?php echo htmlspecialchars($user['barangay'] ?? 'N/A'); ?></td>
+                    <td><?php echo htmlspecialchars($user['contact_number'] ?? 'N/A'); ?></td>
                 </tr>
             <?php endforeach; ?>
             <?php if (empty($inactiveUsers)): ?>
@@ -174,6 +198,38 @@ document.addEventListener("DOMContentLoaded", () => {
 
   applyResponsiveSidebar();
   window.addEventListener("resize", applyResponsiveSidebar);
+
+  // Search and filter functionality
+  const searchInput = document.getElementById('searchInput');
+  const roleFilter = document.getElementById('roleFilter');
+  const table = document.getElementById('inactiveUsersTable');
+  const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+
+  function filterTable() {
+    const searchTerm = searchInput.value.toLowerCase();
+    const roleValue = roleFilter.value.toLowerCase();
+
+    for (let i = 0; i < rows.length; i++) {
+      const row = rows[i];
+      if (row.cells.length < 5) continue; // Skip the "no users found" row
+
+      const fullName = row.cells[0].textContent.toLowerCase();
+      const username = row.cells[1].textContent.toLowerCase();
+      const role = row.cells[2].textContent.toLowerCase();
+
+      const matchesSearch = fullName.includes(searchTerm) || username.includes(searchTerm) || role.includes(searchTerm);
+      const matchesRole = !roleValue || role.includes(roleValue);
+
+      if (matchesSearch && matchesRole) {
+        row.style.display = '';
+      } else {
+        row.style.display = 'none';
+      }
+    }
+  }
+
+  searchInput.addEventListener('input', filterTable);
+  roleFilter.addEventListener('change', filterTable);
 
   // keep the rest of your existing code (auth, stats, modals, etc.)
 });

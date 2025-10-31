@@ -73,6 +73,7 @@ $stmt->execute(['today' => $today]);
 $row = $stmt->fetch(PDO::FETCH_ASSOC);
 $loggedInToday = $row['active_today'];
 
+
 // NEW FEATURE 1: Count new users registered this week
 $weekStart = date('Y-m-d', strtotime('monday this week'));
 $weekEnd = date('Y-m-d', strtotime('sunday this week'));
@@ -114,7 +115,6 @@ $unreadCount = 0;
     <link rel="stylesheet" href="../css/dashboard2.css">
      <link rel="stylesheet" href="../css/logout.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <title>Admin Dashboard</title>
 </head> 
 <body>
@@ -209,23 +209,13 @@ $unreadCount = 0;
                         </div>
                     </div>
                 </a>
-                
+
                 <a href="inactive_users.php" style="text-decoration: none; color: inherit;">
                     <div class="card hoverable">
                         <p class="value"><?php echo $inactiveUsers; ?></p>
                         <h3>Terminated Accounts</h3>
                         <div class="subheader">Terminated Accounts</div>
                         <div class="progress-bar leads-progress">
-                            <div class="progress"></div>
-                        </div>
-                    </div>
-                </a>
-                <a href="dash_newuser.php" style="text-decoration: none; color: inherit;">
-                    <div class="card hoverable">
-                        <p class="value"><?php echo $newUsersThisWeek; ?></p>
-                        <h3>New Users</h3>
-                        <div class="subheader">Registered This Week</div>
-                        <div class="progress-bar new-users-progress">
                             <div class="progress"></div>
                         </div>
                     </div>
@@ -280,10 +270,6 @@ $unreadCount = 0;
 
 
          </div>
-            <!-- Daily Logins Chart -->
-            <div class="chart-container">
-                <canvas id="dailyLoginsChart"></canvas>
-            </div>
 
 <div id="logoutModal" class="logout-modal">
     <div class="logout-modal-content">
@@ -319,103 +305,6 @@ $unreadCount = 0;
                 document.getElementById('userGreeting').textContent = 'Hello, Admin!';
             });
 
-        // Chart for daily logins
-        const ctx = document.getElementById('dailyLoginsChart').getContext('2d');
-        const gradient = ctx.createLinearGradient(0, 0, 0, 400);
-        gradient.addColorStop(0, 'rgba(28, 83, 138, 0.8)');
-        gradient.addColorStop(1, 'rgba(28, 83, 138, 0.1)');
-
-        const dailyLoginsChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
-                datasets: [{
-                    label: 'Daily Logins',
-                    data: [12, 19, 3, 5, 2, 3, 7],
-                    borderColor: '#1c538a',
-                    backgroundColor: gradient,
-                    tension: 0.4,
-                    fill: true,
-                    pointBackgroundColor: '#ffffff',
-                    pointBorderColor: '#1c538a',
-                    pointBorderWidth: 2,
-                    pointRadius: 6,
-                    pointHoverRadius: 8,
-                    borderWidth: 3
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: true,
-                        position: 'top',
-                        labels: {
-                            font: {
-                                family: 'Poppins',
-                                size: 14,
-                                weight: '500'
-                            },
-                            color: '#333'
-                        }
-                    },
-                    tooltip: {
-                        backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                        titleColor: '#1c538a',
-                        bodyColor: '#333',
-                        borderColor: '#1c538a',
-                        borderWidth: 1,
-                        padding: 12,
-                        boxPadding: 6,
-                        usePointStyle: true,
-                        callbacks: {
-                            label: function(context) {
-                                return `Logins: ${context.raw}`;
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    x: {
-                        grid: {
-                            display: false
-                        },
-                        ticks: {
-                            font: {
-                                family: 'Poppins',
-                                size: 12
-                            },
-                            color: '#666'
-                        }
-                    },
-                    y: {
-                        beginAtZero: true,
-                        grid: {
-                            color: 'rgba(0, 0, 0, 0.05)'
-                        },
-                        ticks: {
-                            font: {
-                                family: 'Poppins',
-                                size: 12
-                            },
-                            color: '#666',
-                            callback: function(value) {
-                                return value + ' users';
-                            }
-                        }
-                    }
-                },
-                interaction: {
-                    intersect: false,
-                    mode: 'index'
-                },
-                animation: {
-                    duration: 2000,
-                    easing: 'easeInOutQuart'
-                }
-            }
-        });
 
         function confirmLogout() {
     document.getElementById('logoutModal').style.display = 'block';
