@@ -262,6 +262,21 @@ foreach ($medicine_list as $m) {
 </head>
 <body>
 
+<style>
+  #reportTable th {
+    cursor: pointer;
+    position: relative;
+    user-select: none;
+  }
+  #reportTable th .sort-indicator {
+    margin-left: 6px;
+    font-size: 11px;
+    opacity: 0.7;
+  }
+  #reportTable th.is-sorted-asc  .sort-indicator::after { content: "▲"; }
+  #reportTable th.is-sorted-desc .sort-indicator::after { content: "▼"; }
+  #reportTable th.no-sort { cursor: default; }
+</style>
 
 <!-- Sidebar Section -->
 	<section id="sidebar">
@@ -384,9 +399,6 @@ foreach ($medicine_list as $m) {
    
         <div class="form-submit">
         <button type="button" class="btn-export" id="openFilterModal">Filter</button>
-        <button type="button" class="btn-export" onclick="exportTableToExcel('reportTable')">Export to Excel</button>
-        <button type="button" class="btn-export" onclick="exportTableToPDF()">Export to PDF</button>
-        <button type="button" class="btn-print" onclick="printDiv()">Print this page</button>
     </div>
 
     <!-- Modern Filter Tags Display -->
@@ -694,6 +706,9 @@ foreach ($medicine_list as $m) {
 </style>
 
 <style>
+      .form-submit-bottom {
+    justify-content: flex-start !important;
+  }
       .report-table-container { margin-bottom: 26px; }
   .summary-container { margin-top: 22px; }
 
@@ -984,21 +999,22 @@ document.addEventListener("DOMContentLoaded", () => {
  <h3>Detailed Visit Report</h3>
 <!-- Patient Table -->
  <div class="report-table-container">
-<table id="reportTable" border="1" cellpadding="8" cellspacing="0"> 
-<thead>
-        <tr>
-        <th>Patient Name</th>
-            <th>Address</th>
-            <th>Age</th>
-            <th>Date of Birth</th>
-            <th>Gender</th>
-            <th>PhilHealth No.</th>
-            <?php foreach ($medicine_list as $med): ?>
-            <th><?= htmlspecialchars($med) ?></th>
-            <?php endforeach; ?>
-            <th>Signature</th>
-        </tr>
-    </thead>
+<table id="reportTable" border="1" cellpadding="8" cellspacing="0">
+  <thead>
+    <tr>
+      <th data-type="string">Patient Name</th>
+      <th data-type="string">Address</th>
+      <th data-type="number">Age</th>
+      <th data-type="date">Date of Birth</th>
+      <th data-type="string">Gender</th>
+      <th data-type="string">PhilHealth No.</th>
+      <?php foreach ($medicine_list as $med): ?>
+        <th data-type="number"><?= htmlspecialchars($med) ?></th>
+      <?php endforeach; ?>
+      <th class="no-sort">Signature</th>
+    </tr>
+  </thead>
+
     <tbody>
         <?php foreach ($patient_meds as $pm): $row = $pm['row']; ?>
         <tr>
@@ -1094,6 +1110,12 @@ document.addEventListener("DOMContentLoaded", () => {
     </div>
   </div> 
 </div> 
+
+<div class="form-submit form-submit-bottom" style="margin-top: 24px; display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+  <button type="button" class="btn-export" onclick="exportTableToExcel('reportTable')">Export to Excel</button>
+  <button type="button" class="btn-export" onclick="exportTableToPDF()">Export to PDF</button>
+  <button type="button" class="btn-print"  onclick="printDiv()">Print this page</button>
+</div>
 </div> 
 </div> 
 
@@ -1373,6 +1395,105 @@ window.onclick = function(event) {
     }
 }
 
+(function() {
+  const table = document.getElementById('reportTable');
+  if (!table) return;
+
+  const thead = table.tHead || table.querySelector('thead');
+  const tbody = table.tBodies[0];
+
+  // Add arrow placeholders to sortable headers
+  [...thead.querySelectorAll('th')].forEach(th => {
+    if (th.classList.contains('no-sort')) return;
+    const ind = document.createElement('span');
+    ind.className = 'sort-indicator';
+    th.appendChild(ind);
+  });
+
+  function parseDate(v) {
+    const t = (v || '').trim();
+    // Accept YYYY-MM-DD, or anything Date can parse
+    if (/^\d{4}-\d{2}-\d{2}(?:\s+\d{2}:\d{2}(?::\d{2})?)?$/.test(t)) {
+      return new Date(t.replace(' ', 'T'));
+    }
+    const d = new Date(t);
+    return isNaN(d.getTime()) ? null : d;
+  }
+
+  function detectType(colIdx) {
+    const th = thead.querySelectorAll('th')[colIdx];
+    if (th?.dataset?.type) return th.dataset.type;
+    // Fallback sniff (won't usually run because we set data-type)
+    for (const tr of tbody.rows) {
+      const txt = (tr.cells[colIdx]?.textContent || '').trim();
+      if (!txt) continue;
+      const d = parseDate(txt);
+      if (d) return 'date';
+      const n = txt.replace(/,/g, '');
+      if (!isNaN(n) && n !== '') return 'number';
+      return 'string';
+    }
+    return 'string';
+  }
+
+  function cellValue(tr, idx, type) {
+    const raw = (tr.cells[idx]?.textContent || '').trim();
+    if (type === 'number') {
+      const n = parseFloat(raw.replace(/,/g, ''));
+      return isNaN(n) ? Number.NEGATIVE_INFINITY : n;
+    }
+    if (type === 'date') {
+      const d = parseDate(raw);
+      return d ? d.getTime() : Number.NEGATIVE_INFINITY;
+    }
+    return raw.toLowerCase();
+  }
+
+  function clearHeaderStates(exceptIdx) {
+    [...thead.querySelectorAll('th')].forEach((th, i) => {
+      if (i !== exceptIdx) th.classList.remove('is-sorted-asc', 'is-sorted-desc');
+    });
+  }
+
+  function sortBy(idx, dir) {
+    const type = detectType(idx);
+    const rows = [...tbody.rows];
+
+    rows.sort((a, b) => {
+      const va = cellValue(a, idx, type);
+      const vb = cellValue(b, idx, type);
+      if (va < vb) return dir === 'asc' ? -1 : 1;
+      if (va > vb) return dir === 'asc' ?  1 : -1;
+      return 0;
+    });
+
+    const frag = document.createDocumentFragment();
+    rows.forEach(r => frag.appendChild(r));
+    tbody.appendChild(frag);
+  }
+
+  // Click handlers
+  [...thead.querySelectorAll('th')].forEach((th, idx) => {
+    if (th.classList.contains('no-sort')) return;
+    th.addEventListener('click', () => {
+      const isAsc = th.classList.contains('is-sorted-asc');
+      const nextDir = isAsc ? 'desc' : 'asc';
+      clearHeaderStates(idx);
+      th.classList.toggle('is-sorted-asc',  nextDir === 'asc');
+      th.classList.toggle('is-sorted-desc', nextDir === 'desc');
+      sortBy(idx, nextDir);
+    });
+  });
+
+  // Default sort (Patient Name, col 0, ascending)
+  const defaultCol = 0, defaultDir = 'asc';
+  const defaultTh = thead.querySelectorAll('th')[defaultCol];
+  if (defaultTh && !defaultTh.classList.contains('no-sort')) {
+    defaultTh.classList.add(defaultDir === 'asc' ? 'is-sorted-asc' : 'is-sorted-desc');
+    sortBy(defaultCol, defaultDir);
+  }
+})();
+
 	// Check if user is logged in
 fetch('../php/getUserId.php')
     .then(response => response.json())
@@ -1394,17 +1515,29 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function applyResponsiveSidebar() {
     if (window.innerWidth <= 1024) {
-      sidebar.classList.add("hide");   // collapsed on small screens
+      sidebar.classList.add("hide");   
     } else {
-      sidebar.classList.remove("hide"); // expanded on larger screens
+      sidebar.classList.remove("hide");
     }
   }
 
   applyResponsiveSidebar();
   window.addEventListener("resize", applyResponsiveSidebar);
 
-  // keep the rest of your existing code (auth, stats, modals, etc.)
+
 });
+</script>
+<script>
+function resizeTableContainer(){
+  const container = document.querySelector('.report-table-container');
+  if(!container) return;
+  const header = document.querySelector('nav');
+  const padding = 60; // adjust as needed
+  const headerHeight = header ? header.getBoundingClientRect().height : 0;
+  container.style.maxHeight = (window.innerHeight - headerHeight - padding) + 'px';
+}
+window.addEventListener('load', resizeTableContainer);
+window.addEventListener('resize', resizeTableContainer);
 </script>
 </body>
 </html>

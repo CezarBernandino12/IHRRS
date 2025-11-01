@@ -148,6 +148,21 @@ $most_dispensed_quantity = current($medicine_counts);
 </head>
 <body>
 
+<style>
+  #reportTable th {
+    cursor: pointer;
+    position: relative;
+    user-select: none;
+  }
+  #reportTable th .sort-indicator {
+    margin-left: 6px;
+    font-size: 11px;
+    opacity: 0.7;
+  }
+  #reportTable th.is-sorted-asc .sort-indicator::after { content: "▲"; }
+  #reportTable th.is-sorted-desc .sort-indicator::after { content: "▼"; }
+</style>
+
 	<!-- Sidebar Section -->
 <section id="sidebar">
 		<a href="#" class="brand" style="display: flex; align-items: center;">
@@ -460,6 +475,124 @@ while ($row = $barangay_stmt->fetch(PDO::FETCH_ASSOC)) {
             modal.style.display = 'none';
         }
     });
+
+    (function() {
+  const table = document.getElementById('reportTable');
+  if (!table) return;
+
+  const thead = table.tHead || table.querySelector('thead');
+  const tbody = table.tBodies[0];
+
+  // Optional: declare explicit types via header attributes (fallback: auto-detect)
+  // Example: <th data-type="date">Visit Date</th> or data-type="number"|"string"
+  // Below we'll auto-detect if not provided.
+
+  // Add indicators
+  [...thead.querySelectorAll('th')].forEach(th => {
+    const ind = document.createElement('span');
+    ind.className = 'sort-indicator';
+    th.appendChild(ind);
+  });
+
+  function parseDate(v) {
+    // supports YYYY-MM-DD; extend if needed
+    // try native Date for other formats too
+    if (/^\d{4}-\d{2}-\d{2}/.test(v)) return new Date(v + 'T00:00:00');
+    const d = new Date(v);
+    return isNaN(d.getTime()) ? null : d;
+  }
+
+  function detectType(colIdx) {
+    // 1) header hint
+    const th = thead.querySelectorAll('th')[colIdx];
+    const hinted = th && th.dataset && th.dataset.type;
+    if (hinted) return hinted;
+
+    // 2) scan first non-empty cell
+    for (const tr of tbody.rows) {
+      const t = (tr.cells[colIdx]?.textContent || '').trim();
+      if (!t) continue;
+
+      // date?
+      const d = parseDate(t);
+      if (d) return 'date';
+
+      // number?
+      const n = t.replace(/,/g, ''); // allow "1,234"
+      if (!isNaN(n) && n !== '') return 'number';
+
+      // default string
+      return 'string';
+    }
+    return 'string';
+  }
+
+  function getCellValue(tr, idx, type) {
+    const raw = (tr.cells[idx]?.textContent || '').trim();
+
+    if (type === 'number') {
+      const n = parseFloat(raw.replace(/,/g, ''));
+      return isNaN(n) ? Number.NEGATIVE_INFINITY : n;
+    }
+    if (type === 'date') {
+      const d = parseDate(raw);
+      return d ? d.getTime() : Number.NEGATIVE_INFINITY;
+    }
+    return raw.toLowerCase();
+  }
+
+  function clearHeaderStates(exceptIdx) {
+    [...thead.querySelectorAll('th')].forEach((th, i) => {
+      if (i === exceptIdx) return;
+      th.classList.remove('is-sorted-asc', 'is-sorted-desc');
+    });
+  }
+
+  function sortBy(colIdx, dir) {
+    const type = detectType(colIdx);
+
+    const rows = [...tbody.rows];
+    rows.sort((a, b) => {
+      const va = getCellValue(a, colIdx, type);
+      const vb = getCellValue(b, colIdx, type);
+
+      if (va < vb) return dir === 'asc' ? -1 : 1;
+      if (va > vb) return dir === 'asc' ? 1 : -1;
+      return 0; // stable enough for typical usage
+    });
+
+    // Re-append in sorted order
+    const frag = document.createDocumentFragment();
+    rows.forEach(r => frag.appendChild(r));
+    tbody.appendChild(frag);
+  }
+
+  // Attach header click handlers
+  [...thead.querySelectorAll('th')].forEach((th, idx) => {
+    th.addEventListener('click', () => {
+      const isAsc  = th.classList.contains('is-sorted-asc');
+      const isDesc = th.classList.contains('is-sorted-desc');
+      const nextDir = isAsc ? 'desc' : 'asc';
+
+      clearHeaderStates(idx);
+      th.classList.remove('is-sorted-asc', 'is-sorted-desc');
+      th.classList.add(nextDir === 'asc' ? 'is-sorted-asc' : 'is-sorted-desc');
+
+      sortBy(idx, nextDir);
+    });
+  });
+
+  // Optional: set sensible defaults:
+  // Sort by Visit Date (col 0) descending on load
+  const defaultCol = 0; // "Visit Date"
+  const defaultDir = 'desc';
+  const defaultTh = thead.querySelectorAll('th')[defaultCol];
+  if (defaultTh) {
+    defaultTh.classList.add(defaultDir === 'asc' ? 'is-sorted-asc' : 'is-sorted-desc');
+    sortBy(defaultCol, defaultDir);
+  }
+})();
+
     </script>
 
 
@@ -1051,24 +1184,24 @@ if (addressData.length > 0 && addressData.reduce((a, b) => a + b, 0) > 0) {
 <?php if ($visits): ?>
     <div class="report-table-container">
 	<table id="reportTable">
-    <thead>
+        <thead>
         <tr>
-            <th>Visit Date</th>
-            <th>Patient Name</th>
-            <th>Sex</th>
-            <th>Age</th>
-            <th>BMI</th>
-            <th>Weight</th>
-            <th>Height</th>
-            <th>Blood Pressure</th>
-            <th>Temperature</th>
-            <th>Chest Rate</th>
-            <th>Respiratory Rate</th>
-            <th>Chief Complaints</th>
-            <th>Treatment</th>
-            <th>Address</th>
+            <th data-type="date">Visit Date</th>
+            <th data-type="string">Patient Name</th>
+            <th data-type="string">Sex</th>
+            <th data-type="number">Age</th>
+            <th data-type="number">BMI</th>
+            <th data-type="number">Weight</th>
+            <th data-type="number">Height</th>
+            <th data-type="string">Blood Pressure</th>
+            <th data-type="number">Temperature</th>
+            <th data-type="number">Chest Rate</th>
+            <th data-type="number">Respiratory Rate</th>
+            <th data-type="string">Chief Complaints</th>
+            <th data-type="string">Treatment</th>
+            <th data-type="string">Address</th>
         </tr>
-    </thead>
+        </thead>
     <tbody>
 
     <?php foreach ($visits as $visit): ?>

@@ -113,7 +113,22 @@ $bhws = $bhw_stmt->fetchAll();
 	<title>Medicine Dispensation Report</title>
 </head>
 <body>
- 
+
+ <style>
+  #reportTable th {
+    cursor: pointer;
+    position: relative;
+    user-select: none;
+  }
+  #reportTable th .sort-indicator {
+    margin-left: 6px;
+    font-size: 11px;
+    opacity: 0.7;
+  }
+  #reportTable th.is-sorted-asc .sort-indicator::after { content: "▲"; }
+  #reportTable th.is-sorted-desc .sort-indicator::after { content: "▼"; }
+</style>
+
 	<!-- Sidebar Section -->
 <section id="sidebar">
 		<a href="#" class="brand" style="display: flex; align-items: center;">
@@ -637,18 +652,19 @@ const dispensationChart = new Chart(ctx, {
 
  <div class="report-table-container">
     <table id="reportTable">
-  <thead>
-    <tr>
-      <th data-abbr="Dispensed">Dispensed Date</th>
-      <th data-abbr="Name">Patient Name</th>
-      <th data-abbr="Sex">Sex</th>
-      <th data-abbr="Age">Age</th>
-      <th data-abbr="Medicine">Medicine Name</th>
-      <th data-abbr="Qty">Quantity</th>
-      <th data-abbr="Visit">Visit Date</th>
-      <th data-abbr="BHW">Dispensed by</th>
-    </tr>
-  </thead>
+<thead>
+  <tr>
+    <th data-type="date"   data-abbr="Dispensed">Dispensed Date</th>
+    <th data-type="string" data-abbr="Name">Patient Name</th>
+    <th data-type="string" data-abbr="Sex">Sex</th>
+    <th data-type="number" data-abbr="Age">Age</th>
+    <th data-type="string" data-abbr="Medicine">Medicine Name</th>
+    <th data-type="number" data-abbr="Qty">Quantity</th>
+    <th data-type="date"   data-abbr="Visit">Visit Date</th>
+    <th data-type="string" data-abbr="BHW">Dispensed by</th>
+  </tr>
+</thead>
+
   <tbody>
     <?php foreach ($rows as $row): ?>
       <tr>
@@ -1008,6 +1024,108 @@ fetch('../php/getUserId.php')
         console.error('Error checking session:', error);
         window.location.href = '../role.html';
     });
+
+(function() {
+  const table = document.getElementById('reportTable');
+  if (!table) return;
+
+  const thead = table.tHead || table.querySelector('thead');
+  const tbody = table.tBodies[0];
+
+  // Add small arrow indicators
+  [...thead.querySelectorAll('th')].forEach(th => {
+    const ind = document.createElement('span');
+    ind.className = 'sort-indicator';
+    th.appendChild(ind);
+  });
+
+  function parseDate(v) {
+    const t = v.trim();
+    // direct support for YYYY-MM-DD or YYYY-MM-DD HH:MM[:SS]
+    if (/^\d{4}-\d{2}-\d{2}(?:\s+\d{2}:\d{2}(?::\d{2})?)?$/.test(t)) {
+      return new Date(t.replace(' ', 'T'));
+    }
+    const d = new Date(t);
+    return isNaN(d.getTime()) ? null : d;
+  }
+
+  function detectType(colIdx) {
+    const th = thead.querySelectorAll('th')[colIdx];
+    if (th?.dataset?.type) return th.dataset.type;
+
+    // Auto-detect by first non-empty cell
+    for (const tr of tbody.rows) {
+      const txt = (tr.cells[colIdx]?.textContent || '').trim();
+      if (!txt) continue;
+
+      const d = parseDate(txt);
+      if (d) return 'date';
+
+      const n = txt.replace(/,/g, '');
+      if (!isNaN(n) && n !== '') return 'number';
+
+      return 'string';
+    }
+    return 'string';
+  }
+
+  function getCellValue(tr, idx, type) {
+    const raw = (tr.cells[idx]?.textContent || '').trim();
+    if (type === 'number') {
+      const n = parseFloat(raw.replace(/,/g, ''));
+      return isNaN(n) ? Number.NEGATIVE_INFINITY : n;
+    }
+    if (type === 'date') {
+      const d = parseDate(raw);
+      return d ? d.getTime() : Number.NEGATIVE_INFINITY;
+    }
+    return raw.toLowerCase();
+  }
+
+  function clearHeaderStates(exceptIdx) {
+    [...thead.querySelectorAll('th')].forEach((th, i) => {
+      if (i !== exceptIdx) th.classList.remove('is-sorted-asc', 'is-sorted-desc');
+    });
+  }
+
+  function sortBy(colIdx, dir) {
+    const type = detectType(colIdx);
+    const rows = [...tbody.rows];
+
+    rows.sort((a, b) => {
+      const va = getCellValue(a, colIdx, type);
+      const vb = getCellValue(b, colIdx, type);
+      if (va < vb) return dir === 'asc' ? -1 : 1;
+      if (va > vb) return dir === 'asc' ?  1 : -1;
+      return 0;
+    });
+
+    const frag = document.createDocumentFragment();
+    rows.forEach(r => frag.appendChild(r));
+    tbody.appendChild(frag);
+  }
+
+  // Click handlers for headers
+  [...thead.querySelectorAll('th')].forEach((th, idx) => {
+    th.addEventListener('click', () => {
+      const isAsc = th.classList.contains('is-sorted-asc');
+      const nextDir = isAsc ? 'desc' : 'asc';
+      clearHeaderStates(idx);
+      th.classList.toggle('is-sorted-asc', nextDir === 'asc');
+      th.classList.toggle('is-sorted-desc', nextDir === 'desc');
+      sortBy(idx, nextDir);
+    });
+  });
+
+  // Default: sort by Dispensed Date (col 0) descending on load
+  const defaultCol = 0;
+  const defaultDir = 'desc';
+  const defaultTh = thead.querySelectorAll('th')[defaultCol];
+  if (defaultTh) {
+    defaultTh.classList.add(defaultDir === 'asc' ? 'is-sorted-asc' : 'is-sorted-desc');
+    sortBy(defaultCol, defaultDir);
+  }
+})();
 
 </script>
 

@@ -100,6 +100,26 @@ $total_pending = 0;
 </head>
 <body>
     
+<style>
+    .form-submit-bottom {
+    justify-content: flex-start !important;
+  }
+  #reportTable th {
+    cursor: pointer;
+    position: relative;
+    user-select: none;
+  }
+  #reportTable th .sort-indicator {
+    margin-left: 6px;
+    font-size: 11px;
+    opacity: 0.7;
+  }
+  #reportTable th.is-sorted-asc  .sort-indicator::after { content: "▲"; }
+  #reportTable th.is-sorted-desc .sort-indicator::after { content: "▼"; }
+  #reportTable th.no-sort { cursor: default; }
+</style>
+
+
 <!-- Sidebar Section -->
 	<section id="sidebar">
 		<a href="#" class="brand">
@@ -223,9 +243,6 @@ $total_pending = 0;
    
         <div class="form-submit">
                <button type="button" class="btn-export" id="openFilterModal">Filter</button>
-        <button type="button" class="btn-export" onclick="exportTableToExcel('reportTable')">Export to Excel</button>
-        <button type="button" class="btn-export" onclick="exportTableToPDF()">Export to PDF</button>
-        <button type="button" class="btn-print" onclick="printDiv()">Print this page</button>
     </div>
 
     <!-- Modern Filter Tags Display -->
@@ -620,15 +637,17 @@ document.addEventListener("DOMContentLoaded", () => {
 <br>
 <div class="report-table-container">
 <table border="1" cellpadding="8" cellspacing="0" id="reportTable"> 
-    <thead>
+
+        <thead>
         <tr>
-            <th>Barangay</th>
-            <th>Total Referrals Received</th>
-            <th>Completed</th>
-            <th>Uncompleted</th>
-            <th>Pending</th>
+            <th data-type="string">Barangay</th>
+            <th data-type="number">Total Referrals Received</th>
+            <th data-type="number">Completed</th>
+            <th data-type="number">Uncompleted</th>
+            <th data-type="number">Pending</th>
         </tr>
-    </thead>
+        </thead>
+
     <tbody>
         <?php 
         $total_received = 0;
@@ -693,7 +712,11 @@ document.addEventListener("DOMContentLoaded", () => {
     </tbody>
   </table>
 </div>
-
+<div class="form-submit form-submit-bottom" style="margin-top: 24px; display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+  <button type="button" class="btn-export" onclick="exportTableToExcel('reportTable')">Export to Excel</button>
+  <button type="button" class="btn-export" onclick="exportTableToPDF()">Export to PDF</button>
+  <button type="button" class="btn-print"  onclick="printDiv()">Print this page</button>
+</div>
 
 </div> </div>
 <style>
@@ -911,6 +934,103 @@ function printDiv() {
       }
     }
   }
+
+  (function() {
+  const table = document.getElementById('reportTable');
+  if (!table) return;
+
+  const thead = table.tHead || table.querySelector('thead');
+  const tbody = table.tBodies[0];
+
+  // Add arrow placeholders to sortable headers
+  [...thead.querySelectorAll('th')].forEach(th => {
+    if (th.classList.contains('no-sort')) return;
+    const ind = document.createElement('span');
+    ind.className = 'sort-indicator';
+    th.appendChild(ind);
+  });
+
+  function parseDate(v) {
+    const t = (v || '').trim();
+    if (/^\d{4}-\d{2}-\d{2}(?:\s+\d{2}:\d{2}(?::\d{2})?)?$/.test(t)) {
+      return new Date(t.replace(' ', 'T'));
+    }
+    const d = new Date(t);
+    return isNaN(d.getTime()) ? null : d;
+  }
+
+  function detectType(colIdx) {
+    const th = thead.querySelectorAll('th')[colIdx];
+    if (th?.dataset?.type) return th.dataset.type;
+    for (const tr of tbody.rows) {
+      const txt = (tr.cells[colIdx]?.textContent || '').trim();
+      if (!txt) continue;
+      const d = parseDate(txt);
+      if (d) return 'date';
+      const n = txt.replace(/,/g, '');
+      if (!isNaN(n) && n !== '') return 'number';
+      return 'string';
+    }
+    return 'string';
+  }
+
+  function cellValue(tr, idx, type) {
+    const raw = (tr.cells[idx]?.textContent || '').trim();
+    if (type === 'number') {
+      const n = parseFloat(raw.replace(/,/g, ''));
+      return isNaN(n) ? Number.NEGATIVE_INFINITY : n;
+    }
+    if (type === 'date') {
+      const d = parseDate(raw);
+      return d ? d.getTime() : Number.NEGATIVE_INFINITY;
+    }
+    return raw.toLowerCase();
+  }
+
+  function clearHeaderStates(exceptIdx) {
+    [...thead.querySelectorAll('th')].forEach((th, i) => {
+      if (i !== exceptIdx) th.classList.remove('is-sorted-asc', 'is-sorted-desc');
+    });
+  }
+
+  function sortBy(idx, dir) {
+    const type = detectType(idx);
+    const rows = [...tbody.rows];
+
+    rows.sort((a, b) => {
+      const va = cellValue(a, idx, type);
+      const vb = cellValue(b, idx, type);
+      if (va < vb) return dir === 'asc' ? -1 : 1;
+      if (va > vb) return dir === 'asc' ?  1 : -1;
+      return 0;
+    });
+
+    const frag = document.createDocumentFragment();
+    rows.forEach(r => frag.appendChild(r));
+    tbody.appendChild(frag);
+  }
+
+  // Click handlers
+  [...thead.querySelectorAll('th')].forEach((th, idx) => {
+    if (th.classList.contains('no-sort')) return;
+    th.addEventListener('click', () => {
+      const isAsc = th.classList.contains('is-sorted-asc');
+      const nextDir = isAsc ? 'desc' : 'asc';
+      clearHeaderStates(idx);
+      th.classList.toggle('is-sorted-asc',  nextDir === 'asc');
+      th.classList.toggle('is-sorted-desc', nextDir === 'desc');
+      sortBy(idx, nextDir);
+    });
+  });
+
+  // Default sort: column 1 (“Total Referrals Received”) DESC
+  const defaultCol = 1, defaultDir = 'desc';
+  const defaultTh = thead.querySelectorAll('th')[defaultCol];
+  if (defaultTh && !defaultTh.classList.contains('no-sort')) {
+    defaultTh.classList.add(defaultDir === 'asc' ? 'is-sorted-asc' : 'is-sorted-desc');
+    sortBy(defaultCol, defaultDir);
+  }
+})();
 
   // Prefer letterhead block
   const headerSource = document.querySelector(".print-only-letterhead") || document.querySelector(".print-header");
