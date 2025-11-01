@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="../img/logo.png">
     <link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="css/form.css">
+    <link rel="stylesheet" href="css/addmedcert.css">
     <link rel="stylesheet" href="css/logout.css">
     <!-- Flatpickr CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
@@ -232,8 +232,8 @@
                     <input type="hidden" id="user_id" name="user_id">
 
                     <div class="form-actions">
-                        <button type="button" class="button button-secondary" onclick="goBack()">Cancel</button>
-                        <button type="submit" class="button button-primary">Issue Certificate</button>
+                    <button type="button" class="button button-secondary" onclick="goBack()">Cancel</button>
+                    <button type="submit" class="button button-primary">Issue Certificate</button>
                     </div>
                 </form>
             </div>
@@ -586,113 +586,6 @@
             });
     </script>
 
-    <style>
-        .medcert-form {
-            background: white;
-            padding: 30px;
-            border-radius: 8px;
-            margin-top: 20px;
-        }
 
-        .form-section {
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid #e0e0e0;
-        }
-
-        .form-section:last-of-type {
-            border-bottom: none;
-        }
-
-        .form-section h3 {
-            color: #2c3e50;
-            margin-bottom: 20px;
-            font-size: 18px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            color: #2c3e50;
-        }
-
-        .form-group input[type="text"],
-        .form-group input[type="date"],
-        .form-group input[type="number"],
-        .form-group textarea,
-        .form-group select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
-        }
-
-        .form-group textarea {
-            resize: vertical;
-            min-height: 80px;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-
-        .required {
-            color: #e74c3c;
-        }
-
-        .form-actions {
-            display: flex;
-            gap: 10px;
-            justify-content: flex-end;
-            margin-top: 30px;
-        }
-
-        .button {
-            padding: 12px 30px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 500;
-            transition: all 0.3s;
-        }
-
-        .button-primary {
-            background: #05366e;
-            color: white;
-        }
-
-        .button-primary:hover {
-            background: #1e52b3;
-        }
-
-        .button-secondary {
-            background: #616369;
-            color: white;
-        }
-
-        .button-secondary:hover {
-            background: #888888;
-        }
-
-        /* Flatpickr custom styling */
-        .flatpickr-input {
-            cursor: pointer;
-        }
-
-        @media screen and (max-width: 768px) {
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
 </body>
 </html>
