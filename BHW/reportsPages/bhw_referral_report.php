@@ -111,6 +111,20 @@ $rows = $stmt->fetchAll();
 	<title>Referrals Report</title>
 </head>
 <body>
+<style>
+  #reportTable th {
+    cursor: pointer;
+    position: relative;
+    user-select: none;
+  }
+  #reportTable th .sort-indicator {
+    margin-left: 6px;
+    font-size: 11px;
+    opacity: 0.7;
+  }
+  #reportTable th.is-sorted-asc  .sort-indicator::after { content: "▲"; }
+  #reportTable th.is-sorted-desc .sort-indicator::after { content: "▼"; }
+</style>
 
 
  
@@ -672,18 +686,19 @@ const statusPieChart = new Chart(statusCtx, {
 <?php if ($rows): ?>
      <div class="report-table-container">
 <table id="reportTable">
-    <thead>
+        <thead>
         <tr>
-            <th>Referral Date</th>
-            <th>Patient</th>
-            <th>Sex</th>
-            <th>Age</th>
-            <th>Visit Date</th>
-            <th>Chief Complaints</th>
-            <th>Referral Status</th>
-            <th>Referred By</th>
+            <th data-type="date">Referral Date</th>
+            <th data-type="string">Patient</th>
+            <th data-type="string">Sex</th>
+            <th data-type="number">Age</th>
+            <th data-type="date">Visit Date</th>
+            <th data-type="string">Chief Complaints</th>
+            <th data-type="string">Referral Status</th>
+            <th data-type="string">Referred By</th>
         </tr>
-    </thead>
+        </thead>
+
     <tbody>
         <?php foreach ($rows as $row): ?>
         <tr>
@@ -1036,6 +1051,112 @@ fetch('../php/getUserName.php')
       <div class="sig-title">Barangay Health Worker</div>
     `;
   });
+
+
+  (function() {
+  const table = document.getElementById('reportTable');
+  if (!table) return;
+
+  const thead = table.tHead || table.querySelector('thead');
+  const tbody = table.tBodies[0];
+
+  // Add small arrow indicators
+  [...thead.querySelectorAll('th')].forEach(th => {
+    const ind = document.createElement('span');
+    ind.className = 'sort-indicator';
+    th.appendChild(ind);
+  });
+
+  function parseDate(v) {
+    const t = (v || '').trim();
+
+    // Support common formats (your page uses "Mon DD, YYYY")
+    // Try fast paths first
+    if (/^\d{4}-\d{2}-\d{2}(?:\s+\d{2}:\d{2}(?::\d{2})?)?$/.test(t)) {
+      return new Date(t.replace(' ', 'T'));
+    }
+    // Let Date parse "Nov 01, 2025", "F d, Y H:i:s", etc.
+    const d = new Date(t);
+    return isNaN(d.getTime()) ? null : d;
+  }
+
+  function detectType(colIdx) {
+    const th = thead.querySelectorAll('th')[colIdx];
+    if (th?.dataset?.type) return th.dataset.type;
+
+    for (const tr of tbody.rows) {
+      const txt = (tr.cells[colIdx]?.textContent || '').trim();
+      if (!txt) continue;
+
+      const d = parseDate(txt);
+      if (d) return 'date';
+
+      const n = txt.replace(/,/g, '');
+      if (!isNaN(n) && n !== '') return 'number';
+
+      return 'string';
+    }
+    return 'string';
+  }
+
+  function getCellValue(tr, idx, type) {
+    const raw = (tr.cells[idx]?.textContent || '').trim();
+
+    if (type === 'number') {
+      const n = parseFloat(raw.replace(/,/g, ''));
+      return isNaN(n) ? Number.NEGATIVE_INFINITY : n;
+    }
+    if (type === 'date') {
+      const d = parseDate(raw);
+      return d ? d.getTime() : Number.NEGATIVE_INFINITY;
+    }
+    return raw.toLowerCase();
+  }
+
+  function clearHeaderStates(exceptIdx) {
+    [...thead.querySelectorAll('th')].forEach((th, i) => {
+      if (i !== exceptIdx) th.classList.remove('is-sorted-asc', 'is-sorted-desc');
+    });
+  }
+
+  function sortBy(colIdx, dir) {
+    const type = detectType(colIdx);
+    const rows = [...tbody.rows];
+
+    rows.sort((a, b) => {
+      const va = getCellValue(a, colIdx, type);
+      const vb = getCellValue(b, colIdx, type);
+      if (va < vb) return dir === 'asc' ? -1 : 1;
+      if (va > vb) return dir === 'asc' ?  1 : -1;
+      return 0;
+    });
+
+    const frag = document.createDocumentFragment();
+    rows.forEach(r => frag.appendChild(r));
+    tbody.appendChild(frag);
+  }
+
+  // Click handlers
+  [...thead.querySelectorAll('th')].forEach((th, idx) => {
+    th.addEventListener('click', () => {
+      const isAsc = th.classList.contains('is-sorted-asc');
+      const nextDir = isAsc ? 'desc' : 'asc';
+      clearHeaderStates(idx);
+      th.classList.toggle('is-sorted-asc',  nextDir === 'asc');
+      th.classList.toggle('is-sorted-desc', nextDir === 'desc');
+      sortBy(idx, nextDir);
+    });
+  });
+
+  // Default: sort by Referral Date (col 0) descending on load
+  const defaultCol = 0;
+  const defaultDir = 'desc';
+  const defaultTh = thead.querySelectorAll('th')[defaultCol];
+  if (defaultTh) {
+    defaultTh.classList.add(defaultDir === 'asc' ? 'is-sorted-asc' : 'is-sorted-desc');
+    sortBy(defaultCol, defaultDir);
+  }
+})();
 
     function confirmLogout() {
     document.getElementById('logoutModal').style.display = 'block';

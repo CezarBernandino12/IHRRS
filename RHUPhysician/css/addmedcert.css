@@ -2,11 +2,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Poppins:wght@400;500;600;700&display=swap');
 
 * {
-	margin: 0;
-	padding: 0;
-	box-sizing: border-box;
-}
-
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+  }
+  
 a {
 	text-decoration: none;
 }
@@ -14,6 +15,7 @@ a {
 li {
 	list-style: none;
 }
+
 
 :root {
 	--poppins: 'Poppins', sans-serif;
@@ -490,6 +492,7 @@ body {
 	justify-content: space-between;
 	grid-gap: 16px;
 	flex-wrap: wrap;
+    margin-bottom: 50px;
 }
 #content main .head-title .left h1 {
 	font-size: 36px;
@@ -630,497 +633,297 @@ body {
 }
 
 
-/*FORM*/
+/* =========================
+   MEDCERT — Modern Form Skin
+   (No HTML changes needed)
+   ========================= */
 
-.container {
-    width: 50%;
-    align-items: center;
-    margin-left: 35%;
-    margin-bottom: 100px;
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+:root{
+  --mc-bg: #F7FAFC;
+  --mc-surface: #FFFFFF;
+  --mc-surface-2: #F9FBFD;
+  --mc-text: #1F2937;
+  --mc-muted: #6B7280;
+  --mc-border: #E5E7EB;
+
+  --mc-primary: #0B74B5;
+  --mc-primary-600: #095e90;
+
+  --mc-danger: #dc2626;
+  --mc-success: #16a34a;
+
+  --mc-r: 14px;
+  --mc-shadow: 0 6px 18px rgba(2,18,34,.06);
+  --mc-ring: 0 0 0 4px color-mix(in srgb, var(--mc-primary) 20%, transparent);
 }
 
-.container-header {
-    width: 50%;
-    margin-bottom: 5px;
-    background-color: #C4E1F6;
-    padding: 20px;
-    border-radius: 5px;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    font-family: "system-ui" , sans-serif;
-    margin-left: 35%;
+/* Card + section rhythm */
+.medcert-form{
+  max-width: 980px;
+  margin: 20px auto 64px;
+  background: var(--mc-surface);
+  border: 1px solid var(--mc-border);
+  border-radius: 16px;
+  padding: 22px;
+  box-shadow: var(--mc-shadow);
+}
+.form-section{
+  padding: 18px 4px 22px;
+  border-bottom: 1px solid var(--mc-border);
+}
+.form-section:last-of-type{ border-bottom: 0; }
+.form-section h3{
+  display: flex; align-items: center; gap: 10px;
+  font-weight: 700; color: var(--mc-text); letter-spacing: .2px;
+  margin-bottom: 12px;
+}
+.form-section h3::after{
+  content: ''; width: 6px; height: 6px; border-radius: 999px;
+  background: var(--mc-primary);
+  box-shadow: 0 0 0 6px color-mix(in srgb, var(--mc-primary) 16%, transparent);
 }
 
-.container-header h2 {
-    color: rgb(0, 0, 0);
-    font-weight: bold;
-    font-size: 28px;
-    margin: 0;
+/* Labels, hints, validation text */
+.form-group{ margin-bottom: 16px; }
+.form-group label{
+  display: inline-block;
+  margin-bottom: 8px;
+  font-weight: 600; color: var(--mc-text);
+}
+.form-hint{
+  margin-top: 6px; font-size: 12px; color: var(--mc-muted);
+}
+.form-error{
+  margin-top: 6px; font-size: 12px; color: var(--mc-danger);
 }
 
-.container-header p {
-    color: white;
-    font-size: 14px;
-    margin-top: 5px;
+/* Unified input skin (includes Flatpickr) */
+.medcert-form .form-group input[type="text"],
+.medcert-form .form-group input[type="date"],
+.medcert-form .form-group input[type="number"],
+.medcert-form .form-group textarea,
+.medcert-form .form-group select,
+.flatpickr-input{
+  width: 100%;
+  background: var(--mc-surface-2);
+  border: 1px solid var(--mc-border);
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-size: 14px; color: var(--mc-text);
+  transition: border-color .15s ease, box-shadow .15s ease, background .2s ease;
+}
+.medcert-form .form-group input::placeholder,
+.medcert-form .form-group textarea::placeholder{ color: #9aa3ad; }
+.medcert-form .form-group input:focus,
+.medcert-form .form-group textarea:focus,
+.medcert-form .form-group select:focus{
+  outline: none;
+  border-color: var(--mc-primary);
+  box-shadow: var(--mc-ring);
+  background: #fff;
 }
 
-.container-header::before {
-    content: "";
-    position: absolute;
-    bottom: -10px;
-    left: 0;
-    width: 100%;
-    height: 5px;
-    background-color: #C4E1F6; 
-    border-radius: 2px;
+/* Select (options) — modern arrow without HTML changes */
+.medcert-form .form-group select{
+  -webkit-appearance: none; -moz-appearance: none; appearance: none;
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--mc-text) 50%),
+    linear-gradient(135deg, var(--mc-text) 50%, transparent 50%),
+    linear-gradient(to right, transparent, transparent);
+  background-position:
+    calc(100% - 22px) calc(50% - 3px),
+    calc(100% - 16px) calc(50% - 3px),
+    calc(100% - 40px) 0.6em;
+  background-size: 6px 6px, 6px 6px, 1px 1.8em;
+  background-repeat: no-repeat;
+  padding-right: 44px;
+  cursor: pointer;
+}
+.medcert-form .form-group select:disabled{
+  opacity: .7; cursor: not-allowed;
 }
 
-
-p {
-	font-family: "Gill Sans", sans-serif;
-    background-color: #C4E1F6; 
-    color: rgb(71, 71, 71); 
-    padding: 10px 20px; 
-    display: inline-block; 
-    height: 45px;
-    width: 100%;
-    margin-bottom: 20px;
-  }
-  
-  b {
-    font-weight: bold;
-    font-size: 18px; 
-  }
-
-.form-row {
-    display: flex;
-    margin-bottom: 10px;
-    flex-wrap: wrap;
+/* Textareas — tuned for clinical text */
+.medcert-form .form-group textarea{
+  line-height: 1.5;
+  min-height: 140px;
+  resize: vertical;
 }
-
-.form-group {
-    flex: 1 1 48%;
-    flex: 1;
-    margin-right: 15px;
+.medcert-form .form-group textarea:focus{
+  background: #fff;
 }
+.textarea-compact{ min-height: 90px; } /* optional helper */
 
-.form-group label {
-    font-size: 15px;
-    font-weight: bold;
-    color: #333;
-    margin-top: 10px;
-    margin-right: 10px;
-    white-space: nowrap;
-    font-family: 'Trebuchet MS', sans-serif;
-    padding: 5px 10px;
-    display: block;  
+/* Radio “chips” (FIT/UNFIT) */
+.radio-group{ display: flex; flex-wrap: wrap; gap: 10px; }
+.radio-label{
+  display: inline-flex; align-items: center; gap: 8px;
+  border: 1px solid var(--mc-border);
+  background: var(--mc-surface-2);
+  border-radius: 999px;
+  padding: 8px 12px;
+  transition: background .15s, border-color .15s, box-shadow .15s;
 }
-
-.form-group p {
-    background-color: #f5f4f4e0;
-    border-radius: 2px;
-    font-size: 16px;
-    min-height: 35px;
-    padding: 12px;
-	min-height: 35px; 
-    display: block; 
-	height: auto;
-    word-wrap: break-word; 
-	white-space: normal; 
-	overflow: hidden; 
+.radio-label input{ accent-color: var(--mc-primary); }
+.radio-label input:focus-visible{
+  outline: 2px solid var(--mc-primary); outline-offset: 2px; border-radius: 999px;
 }
-.additional-group {
-    border: 2px solid #333;
-    padding: 15px;
-    border-radius: 10px;
-    background-color: #fff; 
-}
-
-.additional-group label {
-    font-size: 15px;
-    font-weight: bold;
-    color: #333;
-	margin-top: 10px;
-    margin-right: 10px; 
-	margin-bottom: 10px;
-    white-space: nowrap;
-    font-family: 'Trebuchet MS', sans-serif;
-    padding: 5px 10px; 
-    display: inline-block; 
-}
-
-.vitals-section {
-    display: flex;
-    flex-wrap: wrap; 
-    gap: 15px; 
-    margin-top: 10px;
-}
-
-.vitals-section .form-group {
-    max-width: max-content;
-    margin-bottom: 10px;
-}
-
-.vitals-section .form-group label {
-    font-weight: bold;
-    white-space: nowrap;
-}
-
-.vitals-section .form-group label {
-    font-weight: bold;
-    white-space:n;
-}
-
-.vitals-section .form-group p {
-    background-color: #f5f4f4e0; 
-    padding: 10px;
-    border-radius: 5px;
-    text-align: center;
-    font-size: 16px;
-    min-height: 35px;
-}
-
-.print-section {
-    display: flex;
-    flex-direction: column; 
-    align-items: flex-start; 
-    gap: 5px; 
-}
-
-button.print-btn {
-    margin-left:15px;
-    color: rgb(0, 0, 0);
-    border: none;
-    padding: 2px 7px;
-    font-size: 15px;
-    font-weight: bold;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    border: 1px solid #ebebebd3;
-}
-
-
-button.print-btn:hover {
-    background-color: #deffe5;
-    transform: translateY(-3px);
-}
-
-.button-container {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px; 
-}
-
-button.print-btn{
-    padding: 10px 20px;
-    font-size: 15px;
-    font-weight: bold;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-
-.view-all-btn {
-    display: flex;
-    align-items: center;
-    padding: 5px 20px;
-    font-size: 13px;
-    font-weight: 600;
-    background-color: #1c538a;
-    color: white;
-    border-radius: 25px;
-    border: 2px solid #1c538a;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-decoration: none;
-}
-
-.view-all-btn:hover {
-    background-color: white;
-    color: #1c538a;
-    border-color: #1c538a;
-    transform: translateY(-3px);
-}
-
-.view-all-btn:active {
-    background-color: #1c538a;
-    color: white;
-    transform: translateY(1px);
-}
-
-
-textarea.tall-input {
-    background-color: #fff;
-    padding: 10px;
-    font-size: 14px;
-    border: 1px solid #cccccc;
-    border-radius: 5px;
-    width: 100%; 
-    height: 170px; 
-    resize: vertical; 
-    box-sizing: border-box;
-}
-
-.confirmation-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: none; 
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
-
-.confirmation-box {
-    background-color: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
-    width: 300px;
-    text-align: left; 
-}
-
-
-.confirmation-box h3 {
-    font-size: 14px;
-    margin-bottom: 20px; 
-}
-
-
-.confirm-btn, .cancel-btn {
-    padding: 8px 15px;
-    font-size: 12px; 
-    margin-left: 10px;
-    cursor: pointer;
-}
-
-
-.confirmation-box {
-    display: flex;
-    flex-direction: column; 
-}
-
-.container .medicine-list {
-    display: flex;
-    flex-wrap: wrap;
-    margin: auto 0;
-}
-
-.container .medicine-list .form-group {
-    flex: 1 1 20%; 
-    box-sizing: border-box;
-}
-
-.container .medicine-list .form-group label {
-    font-weight: bold;
-    display: block;
-    margin-bottom: 5px;
-    margin-top: 20px; 
-    text-align: left; 
-}
-
-
-.container .medicine-list .form-group p {
-    border-radius: 2px;
-    font-size: 16px;
-    padding: 12px;
-    min-height: 35px;
-    word-wrap: break-word;
-    overflow: hidden;
-    white-space: normal;
-}
-
-
-.button-container {
-    display: flex;
-    justify-content: flex-end; 
-    margin-top: 10px; 
-}
-
-.confirm-btn {
-    background-color: #3B778E; 
-    color: white;
-    border: none;
-    border-radius: 5px;
-}
-
-.cancel-btn {
-    background-color: #969696; 
-    color: white;
-    border: none;
-    border-radius: 5px;
-}
-
-.referral-form-footer {
-    text-align: right;
-    margin-top: 20px;
-}
-.footer-btn {
-    padding: 5px 20px;
-    background-color: white;
-    color: #27548A;
-    border: 2px solid #27548A;
-    border-radius: 9999px;  
-    cursor: pointer;
-    font-size: 12px;
-    font-weight: 500;
-    transition: all 0.3s ease;
-    display: inline-flex;
-    align-items: center;
-}
-
-.footer-btn:hover {
-    background-color: rgba(46, 204, 113, 0.1);
-}
-
-#goBackBtn::before {
-    content: "< ";
-    margin-right: 5px;
-    font-size: 18px;
-}
-
-/* Pill-style primary action (matches the screenshot) */
-#printBtn.print-pill{
-   background-color: #162e51;           /* rich blue */
-  color: #fff;
-  border: 0;
-  border-radius: 9999px;
-  padding: 10px 18px;
-  min-height: 36px;
-  font-size: 14px;
+.radio-label.is-checked{
+  border-color: var(--mc-primary);
+  background: color-mix(in srgb, var(--mc-primary) 10%, #fff);
+  box-shadow: var(--mc-ring);
   font-weight: 700;
+}
+
+/* Character counter (if enabled via JS) */
+.input-with-counter{ position: relative; }
+.input-counter{
+  position: absolute; right: 10px; bottom: 8px;
+  font-size: 11px; color: var(--mc-muted);
+}
+.input-counter.is-danger{ color: var(--mc-danger); }
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 14px;
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #e5e7eb;
+}
+
+/* Base button style */
+.button {
+  position: relative;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  box-shadow: 0 4px 12px rgba(31, 94, 168, .35); /* soft glow */
-  transition: transform .06s ease, box-shadow .2s ease, background .2s ease;
+  justify-content: center;
+  padding: 10px 20px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  outline: none;
+  user-select: none;
+  overflow: hidden;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
 }
 
-#printBtn.print-pill i{
-  font-size: 18px; line-height: 0;
-}
-
-#printBtn.print-pill:hover{
- background-color: #15253d;            /* slightly darker on hover */
-  box-shadow: 0 6px 16px rgba(31, 94, 168, .45);
-}
-
-#printBtn.print-pill:active{
-  transform: translateY(1px);
-  box-shadow: 0 3px 10px rgba(31, 94, 168, .35);
-}
-
-#printBtn.print-pill:focus-visible{
-  outline: 3px solid rgba(31, 94, 168, .35);
-  outline-offset: 2px;
-}
-
-#printBtn.print-pill:disabled{
-  background: #a7b7cf;
-  box-shadow: none;
-  cursor: not-allowed;
-}
-
-/* Blue pill style for Resume Treatment */
-#resumeBtn.action-pill{
-  background: #1f5ea8;
+/* Primary (Issue Certificate) */
+.button-primary {
+  background: linear-gradient(135deg, #0066cc 0%, #004c99 100%);
   color: #fff;
-  border: 0;
-  border-radius: 9999px;
-  padding: 10px 18px;
-  min-height: 36px;
-  font-size: 14px;
-  font-weight: 700;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  box-shadow: 0 4px 12px rgba(31, 94, 168, .35);
-  transition: transform .06s ease, box-shadow .2s ease, background .2s ease;
+}
+.button-primary:hover {
+  background: linear-gradient(135deg, #0078e6 0%, #005bb5 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(0, 102, 204, 0.3);
+}
+.button-primary:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(0, 102, 204, 0.25);
+}
+.button-primary::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(255,255,255,0.25), transparent 60%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.button-primary:hover::after {
+  opacity: 0.4;
 }
 
-#resumeBtn.action-pill i{ font-size: 18px; line-height: 0; }
-
-#resumeBtn.action-pill:hover{
-  background: #1a5191;
-  box-shadow: 0 6px 16px rgba(31, 94, 168, .45);
+/* Secondary (Cancel) */
+.button-secondary {
+  background: #f1f3f5;
+  color: #374151;
+  border: 1px solid #d1d5db;
+}
+.button-secondary:hover {
+  background: #e5e7eb;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+.button-secondary:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
-#resumeBtn.action-pill:active{
-  transform: translateY(1px);
-  box-shadow: 0 3px 10px rgba(31, 94, 168, .35);
+/* Focus ring for accessibility */
+.button:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(0, 102, 204, 0.25);
 }
 
-#resumeBtn.action-pill:focus-visible{
-  outline: 3px solid rgba(31, 94, 168, .35);
-  outline-offset: 2px;
+/* Optional subtle animation when loaded */
+@keyframes buttonReveal {
+  0% { opacity: 0; transform: translateY(6px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+.button { animation: buttonReveal 0.3s ease-out; }
+
+/* Patient banner subtle */
+.patient-record-container{
+  width: min(100%, 980px);
+  margin: 0 auto 24px; padding: 14px 16px;
+  background: var(--mc-surface);
+  border: 1px dashed color-mix(in srgb, var(--mc-primary) 24%, #fff);
+  border-radius: 12px;
 }
 
 
-@media (max-width: 1200px) {
-    .container-header, .container {
-        width: 70%;
-    }
-
-    .form-group {
-        flex: 1 1 100%;
-        margin-right: 0;
-    }
-
-    .button-container {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .confirmation-box {
-        width: 80%;
-    }
+/* Print-friendly */
+@media print{
+  body{ background:#fff !important; }
+  #sidebar, nav{ display:none !important; }
+  #content{ width:100% !important; left:0 !important; }
+  .patient-record-container, .medcert-form{
+    box-shadow: none !important; background:#fff !important; border:1px solid #000 !important;
+  }
+  .form-section{ border-color:#000 !important; }
+  .button, .logout-modal{ display:none !important; }
+}
+/* --- Laboratory Results: proper 2-column alignment --- */
+.form-section.lab-results{
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr)); /* robust grid */
+  column-gap: 24px;
+  row-gap: 18px;
+  align-items: start;
 }
 
-@media (max-width: 768px) {
-    .container-header, .container {
-        width: 90%;
-    }
-
-    .form-group {
-        flex: 1 1 100%;
-        margin-right: 0;
-    }
-
-    .button-container {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .confirmation-box {
-        width: 90%;
-    }
+/* Make the section title span full width so fields start on the next row */
+.form-section.lab-results > h3{
+  grid-column: 1 / -1;
+  margin-bottom: 2px; /* compact under-title spacing */
 }
 
-@media (max-width: 480px) {
-    .container-header, .container {
-        width: 100%;
-    }
-
-    .form-group {
-        flex: 1 1 100%;
-        margin-right: 0;
-    }
-
-    .vitals-section {
-        flex-direction: column;
-    }
+/* Each field takes half (6/12) — gives perfect two columns */
+.form-section.lab-results .form-group{
+  grid-column: span 6;
+  margin: 0; /* remove extra vertical gaps from previous styles */
 }
 
+/* Ensure inputs fill their grid cell cleanly */
+.form-section.lab-results .form-group input[type="text"],
+.form-section.lab-results .form-group select,
+.form-section.lab-results .form-group textarea{
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Mobile: stack to one column */
+@media (max-width: 768px){
+  .form-section.lab-results{
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+  .form-section.lab-results .form-group{
+    grid-column: 1 / -1;
+  }
+}

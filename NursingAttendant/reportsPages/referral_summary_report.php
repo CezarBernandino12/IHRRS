@@ -106,7 +106,22 @@ $total_pending = 0;
 	<title>Referral Summary Report</title>
 </head>
 <body>
-    
+
+  <style>
+  #reportTable th {
+    cursor: pointer;
+    position: relative;
+    user-select: none;
+  }
+  #reportTable th .sort-indicator {
+    margin-left: 6px;
+    font-size: 11px;
+    opacity: 0.7;
+  }
+  #reportTable th.is-sorted-asc  .sort-indicator::after { content: "▲"; }
+  #reportTable th.is-sorted-desc .sort-indicator::after { content: "▼"; }
+</style>
+  
 <!-- Sidebar Section -->
 	<section id="sidebar">
 		<a href="#" class="brand">
@@ -746,15 +761,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
 <div class="report-table-container">
 <table id="reportTable"> 
-    <thead>
-        <tr>
-            <th>Barangay</th>
-            <th>Total Referrals Received</th>
-            <th>Completed</th>
-            <th>Uncompleted</th>
-            <th>Pending</th>
-        </tr>
-    </thead>
+  <thead>
+    <tr>
+      <th data-type="string">Barangay</th>
+      <th data-type="number">Total Referrals Received</th>
+      <th data-type="number">Completed</th>
+      <th data-type="number">Uncompleted</th>
+      <th data-type="number">Pending</th>
+    </tr>
+  </thead>
     <tbody>
         <?php 
         $total_received = 0;
@@ -777,6 +792,8 @@ document.addEventListener("DOMContentLoaded", () => {
         <?php endforeach; ?>
     </tbody>
 </table>
+</div>
+
 <br> <br>
 <div class="summary-container">
   <div class="summary">
@@ -815,7 +832,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 <span id="generated_by"></span>
 
-</div> </div>
+</div> 
 
 
 
@@ -964,7 +981,104 @@ async function exportTableToPDF() {
     });
 }
 
+(function() {
+  const table = document.getElementById('reportTable');
+  if (!table) return;
 
+  const thead = table.tHead || table.querySelector('thead');
+  const tbody = table.tBodies[0];
+
+  // Add arrow placeholders
+  [...thead.querySelectorAll('th')].forEach(th => {
+    const ind = document.createElement('span');
+    ind.className = 'sort-indicator';
+    th.appendChild(ind);
+  });
+
+  function parseDate(v) {
+    const t = (v || '').trim();
+    if (/^\d{4}-\d{2}-\d{2}(?:\s+\d{2}:\d{2}(?::\d{2})?)?$/.test(t)) {
+      return new Date(t.replace(' ', 'T'));
+    }
+    const d = new Date(t);
+    return isNaN(d.getTime()) ? null : d;
+  }
+
+  function detectType(colIdx) {
+    const th = thead.querySelectorAll('th')[colIdx];
+    if (th?.dataset?.type) return th.dataset.type;
+
+    for (const tr of tbody.rows) {
+      const txt = (tr.cells[colIdx]?.textContent || '').trim();
+      if (!txt) continue;
+
+      const d = parseDate(txt);
+      if (d) return 'date';
+
+      const n = txt.replace(/,/g, '');
+      if (!isNaN(n) && n !== '') return 'number';
+
+      return 'string';
+    }
+    return 'string';
+  }
+
+  function val(tr, idx, type) {
+    const raw = (tr.cells[idx]?.textContent || '').trim();
+    if (type === 'number') {
+      const n = parseFloat(raw.replace(/,/g, ''));
+      return isNaN(n) ? Number.NEGATIVE_INFINITY : n;
+    }
+    if (type === 'date') {
+      const d = parseDate(raw);
+      return d ? d.getTime() : Number.NEGATIVE_INFINITY;
+    }
+    return raw.toLowerCase();
+  }
+
+  function clearHeaderStates(exceptIdx) {
+    [...thead.querySelectorAll('th')].forEach((th, i) => {
+      if (i !== exceptIdx) th.classList.remove('is-sorted-asc', 'is-sorted-desc');
+    });
+  }
+
+  function sortBy(idx, dir) {
+    const type = detectType(idx);
+    const rows = [...tbody.rows];
+
+    rows.sort((a, b) => {
+      const va = val(a, idx, type);
+      const vb = val(b, idx, type);
+      if (va < vb) return dir === 'asc' ? -1 : 1;
+      if (va > vb) return dir === 'asc' ?  1 : -1;
+      return 0;
+    });
+
+    const frag = document.createDocumentFragment();
+    rows.forEach(r => frag.appendChild(r));
+    tbody.appendChild(frag);
+  }
+
+  // Click to toggle asc/desc
+  [...thead.querySelectorAll('th')].forEach((th, idx) => {
+    th.addEventListener('click', () => {
+      const isAsc = th.classList.contains('is-sorted-asc');
+      const nextDir = isAsc ? 'desc' : 'asc';
+      clearHeaderStates(idx);
+      th.classList.toggle('is-sorted-asc',  nextDir === 'asc');
+      th.classList.toggle('is-sorted-desc', nextDir === 'desc');
+      sortBy(idx, nextDir);
+    });
+  });
+
+  // Default: sort by "Total Referrals Received" (col 1) DESC
+  const defaultCol = 1, defaultDir = 'desc';
+  const defaultTh = thead.querySelectorAll('th')[defaultCol];
+  if (defaultTh) {
+    defaultTh.classList.add(defaultDir === 'asc' ? 'is-sorted-asc' : 'is-sorted-desc');
+    sortBy(defaultCol, defaultDir);
+  }
+})();
 
 //PRINT
 function printDiv() {

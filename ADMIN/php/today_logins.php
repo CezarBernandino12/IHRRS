@@ -2,11 +2,11 @@
 require 'config.php'; // Ensure your database connection is correctly set up
 session_start();
 
-// Check if user is logged in and has BHW role
+// Check if user is logged in and has admin role
 if (!isset($_SESSION['user_id']) || !isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
     // Destroy any existing session data
     session_destroy();
-    // Redirect to BHW login page
+    // Redirect to login page
     header("Location: ../../role.html");
     exit();
 }
@@ -14,24 +14,52 @@ if (!isset($_SESSION['user_id']) || !isset($_SESSION['role']) || $_SESSION['role
 $today = date('Y-m-d');
 
 $stmt = $pdo->prepare("
-    SELECT u.full_name, u.role, u.barangay, ul.log_time
+    SELECT
+        u.full_name,
+        u.role,
+        u.barangay,
+        latest_login.login_time,
+        'Online' as status
     FROM users u
-    INNER JOIN user_logs ul ON u.user_id = ul.user_id
-    WHERE (u.role = 'bhw' OR u.role = 'doctor' OR u.role = 'nursing_attendant') 
-      AND ul.action = 'login'
-      AND DATE(ul.log_time) = :today
-      AND NOT EXISTS (
-          SELECT 1
-          FROM user_logs ul2
-          WHERE ul2.user_id = ul.user_id
-            AND ul2.action = 'logout'
-            AND ul2.log_time > ul.log_time
-      )
-    ORDER BY ul.log_time DESC
+    INNER JOIN (
+        SELECT user_id, MAX(log_time) as login_time
+        FROM user_logs
+        WHERE action = 'login' AND DATE(log_time) = :today
+        GROUP BY user_id
+    ) latest_login ON u.user_id = latest_login.user_id
+    WHERE u.role IN ('bhw', 'doctor', 'nursing_attendant')
+    AND NOT EXISTS (
+        SELECT 1 FROM user_logs ul2
+        WHERE ul2.user_id = latest_login.user_id
+        AND ul2.action = 'logout'
+        AND ul2.log_time > latest_login.login_time
+        AND DATE(ul2.log_time) = :today
+    )
+    ORDER BY latest_login.login_time DESC
 ");
 
 $stmt->execute(['today' => $today]);
 $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Role mapping for display
+$roleDisplay = [
+    'bhw' => 'Barangay Health Worker',
+    'doctor' => 'Physician', 
+    'nursing_attendant' => 'Nursing Attendant'
+];
+
+// Process duration and status badges
+foreach ($users as &$user) {
+    $login_dt = new DateTime($user['login_time']);
+    $end_dt = new DateTime();
+    $interval = $login_dt->diff($end_dt);
+    $hours = $interval->h + ($interval->days * 24);
+    $minutes = $interval->i;
+    
+    $user['duration_formatted'] = "Currently " . $hours . 'h ' . $minutes . 'm';
+    $user['status_badge'] = 'Online';
+    $user['role_display'] = $roleDisplay[$user['role']] ?? ucfirst($user['role']);
+}
 ?>
 
 <!DOCTYPE html>
@@ -107,29 +135,34 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <div class="pending-approvals-container">	
 
     <h2>Users Logged In Today (<?php echo $today; ?>)</h2>
-    <table>
-        <thead>
+<table>
+    <thead>
+        <tr>
+            <th>Full Name</th>
+            <th>Role</th>
+            <th>Designated Barangay</th>
+            <th>Login Time</th>
+            <th>Duration</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php foreach ($users as $user): ?>
             <tr>
-                <th>Full Name</th>
-                <th>Role</th>
-                <th>Designated Barangay</th>
-                <th>Login Time</th>
+                <td><?php echo htmlspecialchars($user['full_name']); ?></td>
+                <td><?php echo $user['role_display']; ?></td>
+                <td><?php echo !empty($user['barangay']) ? htmlspecialchars($user['barangay']) : 'N/A'; ?></td>
+                <td><?php echo date("h:i A", strtotime($user['login_time'])); ?></td>
+                <td><?php echo $user['duration_formatted']; ?></td>
+                <td><?php echo $user['status_badge']; ?></td>
             </tr>
-        </thead>
-        <tbody>
-            <?php foreach ($users as $user): ?>
-                <tr>
-                    <td><?php echo htmlspecialchars($user['full_name']); ?></td>
-                    <td><?php echo ucfirst($user['role']); ?></td>
-                    <td><?php echo htmlspecialchars($user['barangay']); ?></td>
-                    <td><?php echo date("h:i A", strtotime($user['log_time'])); ?></td>
-                </tr>
-            <?php endforeach; ?>
-            <?php if (empty($users)): ?>
-                <tr><td colspan="4">No logins today.</td></tr>
-            <?php endif; ?>
-        </tbody>
-    </table>
+        <?php endforeach; ?>
+        <?php if (empty($users)): ?>
+            <tr><td colspan="6">No users currently online.</td></tr>
+        <?php endif; ?>
+    </tbody>
+</table>
+
 
 <div id="logoutModal" class="logout-modal">
     <div class="logout-modal-content">

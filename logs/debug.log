@@ -1162,3 +1162,54 @@
 
 [ROWS_AFFECTED] 1
 [COMMIT] Success!
+[RAW INPUT] Array
+(
+    [patient_id] => 496
+    [first_name] => Joshua
+    [last_name] => Almadrones
+    [middle_name] => 
+    [extension] => 
+    [birthplace] => Lugui Camarines Norte
+    [date_of_birth] => 2003-11-06
+    [address] => Purok 3 - Barangay Mahayahay, City of Digos, Davao del Sur, Region XI (Davao Region)
+    [civil_status] => Married
+    [contact_number] => 09108987920
+    [religion] => Islam
+    [occupation] => Student
+    [educational_attainment] => Secondary Education
+    [birth_weight] => 4
+    [philhealth_member_no] => 4545454
+    [category] => 
+    [family_serial_no] => 54545454
+    [sex] => Male
+    [fourps_status] => Yes
+)
+
+[PATIENT_ID] 496
+[USER_ID] 5
+[SUCCESS] Patient found, updating...
+[PARAMS] Array
+(
+    [first_name] => Joshua
+    [last_name] => Almadrones
+    [middle_name] => 
+    [extension] => 
+    [birthplace] => Lugui Camarines Norte
+    [date_of_birth] => 2003-11-06
+    [address] => Purok 3 - Barangay Mahayahay, City of Digos, Davao del Sur, Region XI (Davao Region)
+    [civil_status] => Married
+    [contact_number] => 09108987920
+    [religion] => Islam
+    [occupation] => Student
+    [educational_attainment] => Secondary Education
+    [birth_weight] => 4
+    [philhealth_member_no] => 4545454
+    [category] => 
+    [family_serial_no] => 54545454
+    [sex] => Male
+    [fourps_status] => Yes
+    [patient_id] => 496
+)
+
+[ROWS_AFFECTED] 1
+[COMMIT] Success!

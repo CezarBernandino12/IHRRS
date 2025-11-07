@@ -1,5 +1,56 @@
 
 
+/* Make the table area scrollable */
+.report-table-container{
+  max-height: 65vh;          /* adjust as you like */
+  overflow: auto;            /* vertical + horizontal scroll if needed */
+  border: 1px solid #d5d7db;
+  border-radius: 8px;
+  background: #fff;
+}
+
+/* Ensure table lays out well inside a scroller */
+#reportTable{
+  width: 100%;
+  border-collapse: separate;  /* better with sticky headers */
+  border-spacing: 0;
+  min-width: 900px;           /* allow horizontal scroll on small screens */
+}
+
+/* Sticky header */
+#reportTable thead th{
+  position: sticky;
+  top: 0;
+  z-index: 2;                 /* stay above body cells */
+  background: #f7f8fa;        /* header bg so text is readable when stuck */
+  box-shadow: 0 1px 0 #d5d7db inset;
+}
+
+/* Keep sort indicator visible nicely */
+#reportTable th{
+  cursor: pointer;
+  position: sticky; /* inherited from thead th; safe to keep here */
+  top: 0;
+}
+
+/* Optional: nicer scrollbars (WebKit) */
+.report-table-container::-webkit-scrollbar{ height:10px; width:10px; }
+.report-table-container::-webkit-scrollbar-thumb{ background:#c7cbd1; border-radius:8px; }
+.report-table-container::-webkit-scrollbar-track{ background:#eef0f3; }
+
+/* Printing: remove scroll and show full table */
+@media print{
+  .report-table-container{
+    max-height: none !important;
+    overflow: visible !important;
+    border: none;
+  }
+  #reportTable thead th{
+    position: static; /* disable sticky in print */
+    box-shadow: none;
+    background: transparent;
+  }
+}
 
     h2 {
         color: #1e3a8a;

@@ -281,6 +281,20 @@ if (count($patient_meds) > 0) {
 </head>
 <body>
 
+<style>
+  #reportTable th {
+    cursor: pointer;
+    position: relative;
+    user-select: none;
+  }
+  #reportTable th .sort-indicator {
+    margin-left: 6px;
+    font-size: 11px;
+    opacity: 0.7;
+  }
+  #reportTable th.is-sorted-asc  .sort-indicator::after { content: "▲"; }
+  #reportTable th.is-sorted-desc .sort-indicator::after { content: "▼"; }
+</style>
 
 <!-- Sidebar Section -->
 	<section id="sidebar">
@@ -1103,22 +1117,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
 <!-- Patient Table -->
 <div class="report-table-container">
-<table id="reportTable" border="1" cellpadding="8" cellspacing="0"> 
-<thead>
-        <tr>
-            <th>Date Given</th>
-            <th>Patient Name</th>
-            <th>Address</th>
-            <th>Age</th>
-            <th>Date of Birth</th>
-            <th>Gender</th>
-            <th>PhilHealth No.</th>
-            <?php foreach ($medicine_list as $med): ?>
-            <th><?= htmlspecialchars($med) ?></th>
-            <?php endforeach; ?>
-           
-        </tr>
-    </thead>
+<table id="reportTable" border="1" cellpadding="8" cellspacing="0">
+  <thead>
+    <tr>
+      <th data-type="date">Date Given</th>
+      <th data-type="string">Patient Name</th>
+      <th data-type="string">Address</th>
+      <th data-type="number">Age</th>
+      <th data-type="date">Date of Birth</th>
+      <th data-type="string">Gender</th>
+      <th data-type="string">PhilHealth No.</th>
+      <?php foreach ($medicine_list as $med): ?>
+        <th data-type="number"><?= htmlspecialchars($med) ?></th>
+      <?php endforeach; ?>
+    </tr>
+  </thead>
+
 
    <?php
 // Sort visits (patient meds) from latest to oldest by nested date_dispensed
@@ -1403,7 +1417,107 @@ async function exportTableToPDF() {
     });
 }
 
+(function() {
+  const table = document.getElementById('reportTable');
+  if (!table) return;
 
+  const thead = table.tHead || table.querySelector('thead');
+  const tbody = table.tBodies[0];
+
+  // Add arrow placeholders
+  [...thead.querySelectorAll('th')].forEach(th => {
+    const ind = document.createElement('span');
+    ind.className = 'sort-indicator';
+    th.appendChild(ind);
+  });
+
+  function parseDate(v) {
+    const t = (v || '').trim();
+    // Accept "YYYY-MM-DD" and "YYYY-MM-DD HH:MM[:SS]"
+    if (/^\d{4}-\d{2}-\d{2}(?:\s+\d{2}:\d{2}(?::\d{2})?)?$/.test(t)) {
+      return new Date(t.replace(' ', 'T'));
+    }
+    // Also try generic Date parsing for e.g. "Nov 01, 2025"
+    const d = new Date(t);
+    return isNaN(d.getTime()) ? null : d;
+  }
+
+  function detectType(colIdx) {
+    const th = thead.querySelectorAll('th')[colIdx];
+    if (th?.dataset?.type) return th.dataset.type;
+
+    for (const tr of tbody.rows) {
+      const txt = (tr.cells[colIdx]?.textContent || '').trim();
+      if (!txt) continue;
+
+      const d = parseDate(txt);
+      if (d) return 'date';
+
+      const n = txt.replace(/,/g, '');
+      if (!isNaN(n) && n !== '') return 'number';
+
+      return 'string';
+    }
+    return 'string';
+  }
+
+  function getCellValue(tr, idx, type) {
+    const raw = (tr.cells[idx]?.textContent || '').trim();
+
+    if (type === 'number') {
+      const n = parseFloat(raw.replace(/,/g, ''));
+      return isNaN(n) ? Number.NEGATIVE_INFINITY : n;
+    }
+    if (type === 'date') {
+      const d = parseDate(raw);
+      return d ? d.getTime() : Number.NEGATIVE_INFINITY;
+    }
+    return raw.toLowerCase();
+  }
+
+  function clearHeaderStates(exceptIdx) {
+    [...thead.querySelectorAll('th')].forEach((th, i) => {
+      if (i !== exceptIdx) th.classList.remove('is-sorted-asc', 'is-sorted-desc');
+    });
+  }
+
+  function sortBy(colIdx, dir) {
+    const type = detectType(colIdx);
+    const rows = [...tbody.rows];
+
+    rows.sort((a, b) => {
+      const va = getCellValue(a, colIdx, type);
+      const vb = getCellValue(b, colIdx, type);
+      if (va < vb) return dir === 'asc' ? -1 : 1;
+      if (va > vb) return dir === 'asc' ?  1 : -1;
+      return 0;
+    });
+
+    const frag = document.createDocumentFragment();
+    rows.forEach(r => frag.appendChild(r));
+    tbody.appendChild(frag);
+  }
+
+  // Click to toggle asc/desc
+  [...thead.querySelectorAll('th')].forEach((th, idx) => {
+    th.addEventListener('click', () => {
+      const isAsc = th.classList.contains('is-sorted-asc');
+      const nextDir = isAsc ? 'desc' : 'asc';
+      clearHeaderStates(idx);
+      th.classList.toggle('is-sorted-asc',  nextDir === 'asc');
+      th.classList.toggle('is-sorted-desc', nextDir === 'desc');
+      sortBy(idx, nextDir);
+    });
+  });
+
+  // Default: sort by "Date Given" (col 0) DESC on load
+  const defaultCol = 0, defaultDir = 'desc';
+  const defaultTh = thead.querySelectorAll('th')[defaultCol];
+  if (defaultTh) {
+    defaultTh.classList.add(defaultDir === 'asc' ? 'is-sorted-asc' : 'is-sorted-desc');
+    sortBy(defaultCol, defaultDir);
+  }
+})();
 
 //PRINT
 function printDiv() {
