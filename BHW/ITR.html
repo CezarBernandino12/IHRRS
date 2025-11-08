@@ -213,7 +213,52 @@ fetch('php/getUserId.php')
 </div>
   
 
-          
+          <script>
+document.addEventListener("DOMContentLoaded", function () {
+  const regionSelect = document.getElementById("region");
+  const provinceSelect = document.getElementById("province");
+  const citySelect = document.getElementById("city");
+
+  // Wait until regions are loaded
+  const selectDefaults = async () => {
+    // Step 1: Wait for regions to be available in the dropdown
+    await waitForOptions(regionSelect);
+
+    // Step 2: Auto-select Region V
+    regionSelect.value = [...regionSelect.options].find(opt => opt.text.includes("Region V"))?.value || "";
+    regionSelect.dispatchEvent(new Event("change"));
+
+    // Step 3: Wait for provinces to load after selecting Region V
+    await waitForOptions(provinceSelect);
+
+    // Step 4: Auto-select Camarines Norte
+    provinceSelect.value = [...provinceSelect.options].find(opt => opt.text.includes("Camarines Norte"))?.value || "";
+    provinceSelect.dispatchEvent(new Event("change"));
+
+    // Step 5: Wait for municipalities to load after selecting province
+    await waitForOptions(citySelect);
+
+    // Step 6: Auto-select Daet
+    citySelect.value = [...citySelect.options].find(opt => opt.text.includes("Daet"))?.value || "";
+    citySelect.dispatchEvent(new Event("change"));
+  };
+
+  // Helper: wait until dropdown has more than 1 option
+  function waitForOptions(selectElement) {
+    return new Promise(resolve => {
+      const check = setInterval(() => {
+        if (selectElement.options.length > 1) {
+          clearInterval(check);
+          resolve();
+        }
+      }, 100);
+    });
+  }
+
+  selectDefaults();
+});
+</script>
+
     
 
                 <div class="form-group">

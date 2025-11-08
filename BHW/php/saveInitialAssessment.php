@@ -234,6 +234,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $referral_id = $pdo->lastInsertId();
             $referral_created = true; // Mark that referral was created
             error_log("✅ Referral saved with ID: " . $referral_id);
+
+
+               // 🔹 update treatment in patient_assessment to Referred
+
+            if ($referral_id) {
+                   
+
+    $stmt_treatment = $pdo->prepare("
+        UPDATE patient_assessment
+        SET treatment = :treatment
+        WHERE visit_id = :visit_id
+    ");
+
+    $stmt_treatment->execute([
+        ':treatment' => 'Referred',
+        ':visit_id' => $visit_id
+    ]);
+
+
+            }
+
+
         } else {
             error_log("⚠️ Skipping referral: referralNeeded is not 'yes' or missing patient/user ID.");
         }
