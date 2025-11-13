@@ -349,22 +349,23 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
   </div>
 </div>
             <!-- Terminate User Confirmation Modal -->
-<div id="terminateModal" class="modal-box" style="display:none;">
-  <div class="modal-header">
-    <h2>Terminate User</h2>
-    <span class="close-btn" onclick="closeTerminateModal()">&times;</span>
-  </div>
-  <div class="modal-content">
-    <p>Are you sure you want to terminate this user?</p>
-  </div>
-  <div class="modal-footer">
-    <form id="terminateForm" method="POST" action="terminated_user.php" style="display:inline;">
-      <input type="hidden" name="user_id" id="terminateUserId">
-      <button type="button" class="cancel-btn" onclick="closeTerminateModal()">Cancel</button>
-      <button type="submit" class="deactivate-btn">Terminate</button>
-    </form>
-  </div>
-</div>
+            <div id="terminateModal" class="logout-modal" style="display:none;">
+              <div class="logout-modal-content">
+                <div class="logout-modal-header">
+                  <h3>Confirm Termination</h3>
+                </div>
+                <div class="logout-modal-body">
+                  <p>Are you sure you want to terminate this user?</p>
+                </div>
+                <div class="logout-modal-footer">
+                  <form id="terminateForm" method="POST" action="terminated_user.php" style="display:inline;">
+                    <input type="hidden" name="user_id" id="terminateUserId">
+                    <button type="button" onclick="closeTerminateModal()" class="logout-cancel-btn">Cancel</button>
+                    <button type="button" onclick="confirmTerminate()" class="logout-confirm-btn">Yes, Terminate</button>
+                  </form>
+                </div>
+              </div>
+            </div>
 
 <div id="logoutModal" class="logout-modal">
     <div class="logout-modal-content">
