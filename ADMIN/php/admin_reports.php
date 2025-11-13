@@ -66,10 +66,11 @@ $todayUsersStmt->execute();
 $todayUsers = $todayUsersStmt->fetch(PDO::FETCH_ASSOC)['today_users'];
 
 // FIXED: User Management Actions Report - removed performed_by_name
-$userManagementQuery = "SELECT action, COUNT(*) as count, performed_by
-                        FROM logs
-                        WHERE action IN ('Added New User', 'Terminated User', 'Reset Password', 'Reset User Password')
-                        AND DATE(timestamp) BETWEEN :start_date AND :end_date
+$userManagementQuery = "SELECT action, COUNT(*) as count, performed_by, u.full_name as admin_name
+                        FROM logs l
+                        LEFT JOIN users u ON u.user_id = l.performed_by
+                        WHERE (action LIKE 'Added new user: %' OR action LIKE 'Terminated User %' OR action LIKE 'Change password for %')
+                        AND DATE(l.timestamp) BETWEEN :start_date AND :end_date
                         GROUP BY action, performed_by
                         ORDER BY count DESC";
 
@@ -360,7 +361,7 @@ $totalActions = array_sum(array_column($commonActions, 'count'));
         <thead>
             <tr>
                 <th>Action</th>
-                <th>Performed By (ID)</th>
+                <th>Performed By</th>
                 <th>Count</th>
             </tr>
         </thead>
@@ -368,7 +369,7 @@ $totalActions = array_sum(array_column($commonActions, 'count'));
             <?php foreach ($userManagementActions as $action): ?>
                 <tr>
                     <td><?php echo htmlspecialchars($action['action']); ?></td>
-                    <td><?php echo htmlspecialchars($action['performed_by']); ?></td>
+                    <td><?php echo htmlspecialchars($action['admin_name'] ?? 'N/A'); ?></td>
                     <td><?php echo number_format($action['count']); ?></td>
                 </tr>
             <?php endforeach; ?>
