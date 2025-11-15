@@ -422,6 +422,10 @@ function closeTerminateModal() {
     document.getElementById('terminateModal').style.display = 'none';
 }
 
+function confirmTerminate() {
+    document.getElementById('terminateForm').submit();
+}
+
 window.onclick = function(event) {
     const logoutModal = document.getElementById('logoutModal');
     if (logoutModal && event.target == logoutModal) {

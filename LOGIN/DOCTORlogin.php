@@ -32,8 +32,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit();
     }
 
+    // Check if account is locked due to too many failed attempts
+    if ($user['lock_until'] && strtotime($user['lock_until']) > time()) {
+        $remaining_time = strtotime($user['lock_until']) - time();
+        $minutes = ceil($remaining_time / 60);
+        logActivity($pdo, $user['user_id'], "Failed Login (Account Locked)");
+        header("Location: ../doctorlogin.html?error=Account locked due to too many failed attempts. Try again in $minutes minutes.");
+        exit();
+    }
+
     // ✅ Verify the password
     if (password_verify($password, $user['password_hash'])) {
+        // Reset failed attempts on successful login
+        $resetStmt = $pdo->prepare("UPDATE users SET failed_attempts = 0, lock_until = NULL WHERE user_id = ?");
+        $resetStmt->execute([$user['user_id']]);
+
         // Store session variables
         $_SESSION['user_id'] = $user['user_id'];
         $_SESSION['role'] = $user['role'];
@@ -46,8 +59,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         header("Location: ../RHUPhysician/dashboard.html");
         exit();
     } else {
-        logActivity($pdo, $user['user_id'], "Failed Login (Incorrect Password)");
-        header("Location: ../doctorlogin.html?error=Invalid password.");
+        // Increment failed attempts
+        $new_attempts = $user['failed_attempts'] + 1;
+        $lock_until = null;
+
+        // Lock account after 5 failed attempts for 10 minutes
+        if ($new_attempts >= 5) {
+            $lock_until = date('Y-m-d H:i:s', strtotime('+10 minutes'));
+            $updateStmt = $pdo->prepare("UPDATE users SET failed_attempts = ?, lock_until = ? WHERE user_id = ?");
+            $updateStmt->execute([$new_attempts, $lock_until, $user['user_id']]);
+            logActivity($pdo, $user['user_id'], "Account Locked (5 Failed Attempts)");
+            header("Location: ../doctorlogin.html?error=Account locked due to too many failed attempts. Try again in 10 minutes.");
+        } else {
+            $updateStmt = $pdo->prepare("UPDATE users SET failed_attempts = ? WHERE user_id = ?");
+            $updateStmt->execute([$new_attempts, $user['user_id']]);
+            logActivity($pdo, $user['user_id'], "Failed Login (Incorrect Password)");
+            header("Location: ../doctorlogin.html?error=Invalid password.");
+        }
         exit();
     }
 } 

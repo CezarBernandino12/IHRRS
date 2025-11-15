@@ -294,77 +294,80 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 
 <!-- Reset/Change Password Modal -->
-<div id="resetPasswordModal" class="modal-box" style="display:none;">
-  <div class="modal-header">
-    <h2 id="resetModalTitle">Change User Password</h2>
-    <span class="close-btn" onclick="closeResetPasswordModal()">&times;</span>
-  </div>
-  <div class="modal-content">
-    <!-- Pending Reset Request Info -->
-    <div id="pendingResetInfo" style="display:none; background:#fff3cd; border:1px solid #ffeaa7; padding:15px; margin-bottom:20px; border-radius:5px;">
-      <h3 style="color:#856404; margin:0 0 10px 0;"><i class="bx bx-info-circle"></i> Pending Password Reset Request</h3>
-      <p style="color:#856404; margin:0 0 10px 0;">This user has requested a password reset. Please contact them at:</p>
-      <p style="font-size:18px; font-weight:bold; color:#856404; margin:0;"><i class="bx bx-phone"></i> <span id="userContactNumber"></span></p>
+<div id="resetPasswordModal" class="logout-modal" style="display:none;">
+  <div class="logout-modal-content">
+    <div class="logout-modal-header">
+      <h3 id="resetModalTitle">Change User Password</h3>
     </div>
+    <div class="logout-modal-body">
+      <!-- Pending Reset Request Info -->
+      <div id="pendingResetInfo" style="display:none; background:#fff3cd; border:1px solid #ffeaa7; padding:15px; margin-bottom:20px; border-radius:5px;">
+        <h3 style="color:#856404; margin:0 0 10px 0;"><i class="bx bx-info-circle"></i> Pending Password Reset Request</h3>
+        <p style="color:#856404; margin:0 0 10px 0;">This user has requested a password reset. Please contact them at:</p>
+        <p style="font-size:18px; font-weight:bold; color:#856404; margin:0;"><i class="bx bx-phone"></i> <span id="userContactNumber"></span></p>
+      </div>
 
-    <form id="resetPasswordForm" method="POST" action="reset_password.php">
-      <input type="hidden" name="user_id" id="resetPasswordUserId">
-      <div class="form-group">
-        <label for="newPassword">New Password</label>
-        <div class="password-container">
-          <input type="password" name="new_password" id="newPassword" required placeholder="Enter new password">
-          <i class="bx bx-hide password-toggle" id="toggleNewPassword" style="cursor:pointer; position:absolute; right:10px; top:50%; transform:translateY(-50%);"></i>
+      <form id="resetPasswordForm" method="POST" action="reset_password.php">
+        <input type="hidden" name="user_id" id="resetPasswordUserId">
+        <div class="form-group">
+          <label for="newPassword">New Password</label>
+          <div class="password-container">
+            <input type="password" name="new_password" id="newPassword" required placeholder="Enter new password">
+            <i class="bx bx-hide password-toggle" id="toggleNewPassword" style="cursor:pointer; position:absolute; right:10px; top:50%; transform:translateY(-50%);"></i>
+          </div>
+          <small id="passwordHelp" style="display:block; color:#888; margin-top:5px;">
+            Password must be at least 8 characters, contains a number and a capital letter.
+          </small>
         </div>
-        <small id="passwordHelp" style="display:block; color:#888; margin-top:5px;">
-          Password must be at least 8 characters, contains a number and a capital letter.
-        </small>
-      </div>
-      <div class="form-group">
-        <label for="confirmNewPassword">Confirm New Password</label>
-        <div class="password-container">
-          <input type="password" name="confirm_new_password" id="confirmNewPassword" required placeholder="Re-type new password">
-          <i class="bx bx-hide password-toggle" id="toggleConfirmPassword" style="cursor:pointer; position:absolute; right:10px; top:50%; transform:translateY(-50%);"></i>
+        <div class="form-group">
+          <label for="confirmNewPassword">Confirm New Password</label>
+          <div class="password-container">
+            <input type="password" name="confirm_new_password" id="confirmNewPassword" required placeholder="Re-type new password">
+            <i class="bx bx-hide password-toggle" id="toggleConfirmPassword" style="cursor:pointer; position:absolute; right:10px; top:50%; transform:translateY(-50%);"></i>
+          </div>
         </div>
-      </div>
-      <div id="resetPasswordError" style="color:red; margin-bottom:10px; display:none;"></div>
-      <div class="modal-footer">
-        <button type="button" class="cancel-btn" onclick="closeResetPasswordModal()">Cancel</button>
-        <button type="submit" class="save-btn">Change Password</button>
-      </div>
-    </form>
+        <div id="resetPasswordError" style="color:red; margin-bottom:10px; display:none;"></div>
+        <div class="logout-modal-footer">
+          <button type="button" onclick="closeResetPasswordModal()" class="logout-cancel-btn">Cancel</button>
+          <button type="submit" class="logout-confirm-btn">Change Password</button>
+        </div>
+      </form>
+    </div>
   </div>
 </div>
 
 <!-- Success Modal -->
-<div id="resetSuccessModal" class="modal-box" style="display:none;">
-  <div class="modal-header">
-    <h2>Password Reset</h2>
-    <span class="close-btn" onclick="closeResetSuccessModal()">&times;</span>
-  </div>
-  <div class="modal-content">
-    <p style="color:green;">Password Change successfully!</p>
-    <div class="modal-footer">
-      <button type="button" class="save-btn" onclick="closeResetSuccessModal()">OK</button>
+<div id="resetSuccessModal" class="logout-modal" style="display:none;">
+  <div class="logout-modal-content">
+    <div class="logout-modal-header">
+      <h3>Password Reset</h3>
+    </div>
+    <div class="logout-modal-body">
+      <p style="color:green;">Password Change successfully!</p>
+    </div>
+    <div class="logout-modal-footer">
+      <button type="button" onclick="closeResetSuccessModal()" class="logout-confirm-btn">OK</button>
     </div>
   </div>
 </div>
             <!-- Terminate User Confirmation Modal -->
-<div id="terminateModal" class="modal-box" style="display:none;">
-  <div class="modal-header">
-    <h2>Terminate User</h2>
-    <span class="close-btn" onclick="closeTerminateModal()">&times;</span>
-  </div>
-  <div class="modal-content">
-    <p>Are you sure you want to terminate this user?</p>
-  </div>
-  <div class="modal-footer">
-    <form id="terminateForm" method="POST" action="terminated_user.php" style="display:inline;">
-      <input type="hidden" name="user_id" id="terminateUserId">
-      <button type="button" class="cancel-btn" onclick="closeTerminateModal()">Cancel</button>
-      <button type="submit" class="deactivate-btn">Terminate</button>
-    </form>
-  </div>
-</div>
+            <div id="terminateModal" class="logout-modal" style="display:none;">
+              <div class="logout-modal-content">
+                <div class="logout-modal-header">
+                  <h3>Confirm Termination</h3>
+                </div>
+                <div class="logout-modal-body">
+                  <p>Are you sure you want to terminate this user?</p>
+                </div>
+                <div class="logout-modal-footer">
+                  <form id="terminateForm" method="POST" action="terminated_user.php" style="display:inline;">
+                    <input type="hidden" name="user_id" id="terminateUserId">
+                    <button type="button" onclick="closeTerminateModal()" class="logout-cancel-btn">Cancel</button>
+                    <button type="button" onclick="confirmTerminate()" class="logout-confirm-btn">Yes, Terminate</button>
+                  </form>
+                </div>
+              </div>
+            </div>
 
 <div id="logoutModal" class="logout-modal">
     <div class="logout-modal-content">
