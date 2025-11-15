@@ -224,6 +224,7 @@ $physician = intval($physician);
         'status' => 'success',
         'message' => 'Record saved successfully!',
         'consultation_id' => $consultation_id,
+        'hasMedicine' => $medicine_dispensed,
         'hasPrescription' => $prescriptionSaved
     ]);
     exit;

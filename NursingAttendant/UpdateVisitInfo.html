@@ -9,6 +9,7 @@
     <title>Individual Treatment Record</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css/select2-custom.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 </head> 
@@ -301,13 +302,12 @@
                        
 
                           <label for="photo">Upload Laboratory Result:</label>
-                        <input type="file" id="photo" name="photo" accept="image/*,.pdf" capture="environment"> <br> <br>
+                        <input type="file" id="photo" name="photo" accept="image/*,.pdf" capture="environment" style="border-radius: 10px;"> <br> <br>
 
                  <div style="display: flex; gap: 20px; align-items: flex-end;">
     <div style="flex: 1; display: flex; flex-direction: column;">
-        <label for="diagnosis" style="font-weight: bold; margin-bottom: 5px;">Diagnosis:</label>
-        <select id="diagnosis" name="diagnosis" class="select2"
-                style="padding: 6px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px;" required>
+        <label for="diagnosis" class="required" style="font-weight: bold; margin-bottom: 5px;">Diagnosis:</label>
+        <select id="diagnosis" name="diagnosis" class="select2" required>
             <option value="">Select diagnosis</option>
             <option value="other">Other (Enter manually)</option>
         </select>
@@ -315,8 +315,7 @@
 
     <div id="diagnosis-status-wrapper" style="flex: 1; display: flex; flex-direction: column; display: none;">
         <label for="status" style="font-weight: bold; margin-bottom: 5px;">Diagnosis Status:</label>
-        <select id="status" name="status" class="select2"
-                style="padding: 6px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px;">
+        <select id="status" name="status" class="select2" style="border-radius: 10px;">
             <option value="Ongoing">Ongoing</option>
             <option value="Treated">Treated</option>
             <option value="Referred">Referred</option>
@@ -391,6 +390,7 @@
                         </div>
                         
                         <script>
+                            
 // Add remove button handler
 document.addEventListener("click", function(event) {
     if (event.target.classList.contains("btn-remove")) {
@@ -413,34 +413,192 @@ document.addEventListener("click", function(event) {
                         </script>
                     </div>
 
-<div style="display: flex; gap: 20px; align-items: flex-end;">
-    <div style="flex: 1; display: flex; flex-direction: column;">
-        <label for="rhu_remarks" style="font-weight: bold; margin-bottom: 5px;">Remarks:</label>
-        <select id="rhu_remarks" name="rhu_remarks" class="select2" 
-                style="padding: 6px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px;">
-            <option value="">Select</option>
-            <option value="other">Other (Enter manually)</option>
-        </select>
-    </div> 
+<div style="display: flex; gap: 20px; align-items: flex-start;">
+  <!-- Remarks -->
+  <div style="flex: 1; display: flex; flex-direction: column;">
+    <label for="rhu_remarks" style="font-weight: bold; margin-bottom: 5px;">Remarks:</label>
+    <select id="rhu_remarks" name="rhu_remarks" class="select2" 
+            style="padding: 6px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px;">
+      <option value="">Select</option>
+      <option value="other">Other (Enter manually)</option>
+    </select>
+  </div> 
 
-    <div style="flex: 1; display: flex; flex-direction: column;">
-        <label for="physician2" style="font-weight: bold; margin-bottom: 5px;">Physician:</label>
-        <select id="physician2" name="physician2" class="select2" 
-                style="padding: 6px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px;" required>
-            <option value="">Select Physician</option>
-        </select>
-    </div>
+  <!-- Physician -->
+  <div class="form-group" style="flex: 1; display: flex; flex-direction: column;">
+    <label for="physician2" class="required" style="font-weight: bold; margin-bottom: 5px;">Physician:</label>
+    <select id="physician2" name="physician2" class="select2" 
+            style="padding: 6px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px;" required>
+      <option value="">Select Physician</option>
+    </select>
+  </div>
 </div>
+
 <br> 
 
 
                   <div>
                         <label for="followup">Schedule Follow-up Consultation:</label>
-                        <input type="date" id="followup" name="followup" class="tall-input" placeholder="Set follow-up consultation date" min="<?= date('Y-m-d'); ?>">
+                        <input type="date" id="followup" name="followup" class="tall-input" style="border-radius: 10px; background-color: white; width: 49%;" placeholder="Set follow-up consultation date" min="<?= date('Y-m-d'); ?>">
                     </div> <br>
 
    
-  <label>No medicine available?</label>
+  
+<script>
+    document.querySelectorAll('label.required').forEach(function (label) { 
+    const inputId = label.getAttribute('for');
+    const input = document.getElementById(inputId);
+
+    if (input) {
+        const eventType = (input.tagName === "SELECT") ? "change" : "input";
+
+        input.addEventListener(eventType, function () {
+            if (input.value.trim() !== "") {
+                label.classList.remove("required");
+            } else {
+                label.classList.add("required");
+            }
+        });
+    }
+});
+
+$('.select2').select2(); // <-- MUST happen first
+
+// Then attach the event listener
+$('.select2').on('change', function () {
+    const id = $(this).attr('id');
+    const label = document.querySelector('label[for="' + id + '"]');
+
+    if (label) {
+        if ($(this).val()) {
+            label.classList.remove('required');
+        } else {
+            label.classList.add('required');
+        }
+    }
+});
+
+
+
+document.addEventListener("DOMContentLoaded", () => {
+    const medicineContainer2 = document.getElementById("medicine-container2");
+    const addPrescriptionButton = document.getElementById("add-prescription");
+
+    // Initialize Select2 on page load only for the original selects
+    $(medicineContainer2).find("select").select2();
+
+    addPrescriptionButton.addEventListener("click", () => {
+        // Clone the first prescription group
+        const originalGroup = medicineContainer2.firstElementChild;
+
+        // Clone **without the Select2 wrappers**
+        const newGroup = originalGroup.cloneNode(true);
+
+        // Remove old Select2 elements inside the clone
+        newGroup.querySelectorAll("select").forEach(select => {
+            // Remove Select2 container if somehow present
+            $(select).next(".select2").remove(); 
+            $(select).removeClass("select2-hidden-accessible"); 
+            select.style.display = "block"; // Make sure select is visible
+            select.value = ""; // Reset value
+        });
+
+        // Reset number inputs
+        newGroup.querySelectorAll("input[type='number']").forEach(input => {
+            input.value = "0";
+        });
+
+        // Append the new group
+        medicineContainer2.appendChild(newGroup);
+
+        // Initialize Select2 **only on the new group's selects**
+        $(newGroup).find("select").select2();
+    });
+
+    // Remove medicine entry
+    medicineContainer2.addEventListener("click", (event) => {
+        if (event.target.classList.contains("btn-remove")) {
+            const entries = medicineContainer2.querySelectorAll(".prescription-group");
+            if (entries.length > 1) {
+                event.target.closest(".prescription-group").remove();
+            } else {
+                alert("Cannot remove the last medicine entry.");
+            }
+        }
+    });
+
+    // Quantity buttons
+    medicineContainer2.addEventListener("click", (event) => {
+        if (event.target.classList.contains("btn-plus") || event.target.classList.contains("btn-minus")) {
+            const input = event.target.closest(".quantity-container").querySelector("input");
+            let val = parseInt(input.value) || 0;
+            if (event.target.classList.contains("btn-plus")) val++;
+            if (event.target.classList.contains("btn-minus") && val > 0) val--;
+            input.value = val;
+        }
+    });
+
+
+    
+function checkRequiredFields() {
+    const requiredFields = document.querySelectorAll("input[required], select[required], textarea[required]");
+    const submitButton = document.getElementById("submitButton");
+
+    let allFilled = true;
+    requiredFields.forEach(field => {
+        if (!field.value || field.value.trim() === "") {
+            allFilled = false;
+        }
+    });
+
+    submitButton.disabled = !allFilled;
+}
+
+// Listen for input events on text and textarea
+document.addEventListener("input", checkRequiredFields);
+
+// Listen for change events on selects (including normal selects)
+document.addEventListener("change", checkRequiredFields);
+
+// Special listener for Select2 fields
+$('.select2').on('change', checkRequiredFields);
+
+// Run once on page load
+checkRequiredFields();
+
+    
+});
+
+
+
+
+
+</script>
+
+
+
+
+                    <script>
+                        // Set min attribute to today for browsers that don't process PHP
+                        document.addEventListener('DOMContentLoaded', function() {
+                            var today = new Date().toISOString().split('T')[0];
+                            document.getElementById('followup').setAttribute('min', today);
+                        });
+                    </script>
+
+                    <input type="hidden" id="visit_id" name="visit_id">
+                    <input type="hidden" name="user_id" id="user_id" value="">
+
+                    </div> </div>
+
+
+                    <div class="additional-group box-group additional-fields" style="background-color: rgb(255, 255, 255);">
+
+                        <label>
+  <img src="../img/question_icon.png" alt="icon" style="width:25px; height:25px; vertical-align: middle; margin-right: 5px;">
+  No medicine available?
+</label>
+
 <div class="prescription-option">
  
   <input type="checkbox" id="prescriptionCheckbox">
@@ -449,7 +607,7 @@ document.addEventListener("click", function(event) {
 <br>
 <!-- Container --> 
 <div class="prescription-container" id="prescriptionContainer" style="display: none;">
-  <h4>Enter Prescription Details</h4> <br>
+  <h5>Enter Prescription Details  <i><span style="font-weight: 500;">(Ensure to fill out all fields.)</span></i></h5> <br>
 
   <!-- Medicine List -->
   <div id="medicine-container2" style="display: flex; flex-direction: column; gap: 15px;">
@@ -510,108 +668,14 @@ document.addEventListener("click", function(event) {
 
 
 </div>
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-    const medicineContainer2 = document.getElementById("medicine-container2");
-    const addPrescriptionButton = document.getElementById("add-prescription");
-
-    // Initialize Select2 on page load only for the original selects
-    $(medicineContainer2).find("select").select2();
-
-    addPrescriptionButton.addEventListener("click", () => {
-        // Clone the first prescription group
-        const originalGroup = medicineContainer2.firstElementChild;
-
-        // Clone **without the Select2 wrappers**
-        const newGroup = originalGroup.cloneNode(true);
-
-        // Remove old Select2 elements inside the clone
-        newGroup.querySelectorAll("select").forEach(select => {
-            // Remove Select2 container if somehow present
-            $(select).next(".select2").remove(); 
-            $(select).removeClass("select2-hidden-accessible"); 
-            select.style.display = "block"; // Make sure select is visible
-            select.value = ""; // Reset value
-        });
-
-        // Reset number inputs
-        newGroup.querySelectorAll("input[type='number']").forEach(input => {
-            input.value = "0";
-        });
-
-        // Append the new group
-        medicineContainer2.appendChild(newGroup);
-
-        // Initialize Select2 **only on the new group's selects**
-        $(newGroup).find("select").select2();
-    });
-
-    // Remove medicine entry
-    medicineContainer2.addEventListener("click", (event) => {
-        if (event.target.classList.contains("btn-remove")) {
-            const entries = medicineContainer2.querySelectorAll(".prescription-group");
-            if (entries.length > 1) {
-                event.target.closest(".prescription-group").remove();
-            } else {
-                alert("Cannot remove the last medicine entry.");
-            }
-        }
-    });
-
-    // Quantity buttons
-    medicineContainer2.addEventListener("click", (event) => {
-        if (event.target.classList.contains("btn-plus") || event.target.classList.contains("btn-minus")) {
-            const input = event.target.closest(".quantity-container").querySelector("input");
-            let val = parseInt(input.value) || 0;
-            if (event.target.classList.contains("btn-plus")) val++;
-            if (event.target.classList.contains("btn-minus") && val > 0) val--;
-            input.value = val;
-        }
-    });
-});
-</script>
-
-
-
-
-                    <script>
-                        // Set min attribute to today for browsers that don't process PHP
-                        document.addEventListener('DOMContentLoaded', function() {
-                            var today = new Date().toISOString().split('T')[0];
-                            document.getElementById('followup').setAttribute('min', today);
-                        });
-                    </script>
-
-                    <input type="hidden" id="visit_id" name="visit_id">
-                    <input type="hidden" name="user_id" id="user_id" value="">
-
-                    </div> </div>
+                    </div>
             
 
             <div class="button-container">
             
                 <button type="button" class="submit-btn" id="submitButton">Submit</button>
             </div>
-            <script>
-                   
-
-
-    document.addEventListener("input", function () {
-        const requiredFields = document.querySelectorAll("select[required]");
-        const submitButton = document.getElementById("submitButton");
-
-        let allFilled = true;
-        requiredFields.forEach(field => {
-            if (!field.value || field.value.trim() === "") {
-                allFilled = false;
-            }
-        });
-
-        submitButton.disabled = !allFilled;
-    });
-
-
-            </script>
+       
             
         <div id="myModal" class="modal">
             <div class="modal-content">
@@ -691,54 +755,59 @@ document.addEventListener('DOMContentLoaded', function() {
 
     <script>
 $(document).ready(function () {
-    // Initialize Select2 for diagnosis
-   
+    // Initialize Select2 for all selects with common configuration
+    const select2Config = {
+        allowClear: true,
+        minimumResultsForSearch: 0,
+        width: '100%'
+    };
 
-    // Initialize Select2 for treatment
+    // Diagnosis select
     $('#diagnosis').select2({
-        placeholder: "Select or type diagnosis",
-        allowClear: true,
-        minimumResultsForSearch: 0
+        ...select2Config,
+        placeholder: "Select or type diagnosis"
+    }).on('select2:clearing', function(e) {
+        $(this).val('').trigger('change');
     });
-  
-    
 
-        // Initialize Select2 for treatment
+    // Remarks select
     $('#rhu_remarks').select2({
-        placeholder: "Select or type remarks",
-        allowClear: true,
-        minimumResultsForSearch: 0
+        ...select2Config,
+        placeholder: "Select or type remarks"
+    }).on('select2:clearing', function(e) {
+        $(this).val('').trigger('change');
     });
 
-    // Initialize Select2 for all medicine selects
+    // Medicine selects
     $('.medicine-select').select2({
-        placeholder: "Select or type medication",
-        allowClear: true,
-        minimumResultsForSearch: 0
+        ...select2Config,
+        placeholder: "Select or type medication"
+    }).on('select2:clearing', function(e) {
+        $(this).val('').trigger('change');
     });
 
-      $('.medicine-select2').select2({
-        placeholder: "Select or type medication",
-        allowClear: true,
-        minimumResultsForSearch: 0
-    });
-          $('.med-instruction').select2({
-        placeholder: "Select or type instruction",
-        allowClear: true,
-        minimumResultsForSearch: 0
-    });
-    
-
-      $('#physician').select2({
-        placeholder: "Select physician",
-        allowClear: true,
-        minimumResultsForSearch: 0
+    // Medicine selects (prescription)
+    $('.medicine-select2').select2({
+        ...select2Config,
+        placeholder: "Select or type medication"
+    }).on('select2:clearing', function(e) {
+        $(this).val('').trigger('change');
     });
 
-        $('#physician2').select2({
-        placeholder: "Select physician",
-        allowClear: true,
-        minimumResultsForSearch: 0
+    // Instruction selects
+    $('.med-instruction').select2({
+        ...select2Config,
+        placeholder: "Select or type instruction"
+    }).on('select2:clearing', function(e) {
+        $(this).val('').trigger('change');
+    });
+
+    // Physician selects
+    $('#physician, #physician2').select2({
+        ...select2Config,
+        placeholder: "Select physician"
+    }).on('select2:clearing', function(e) {
+        $(this).val('').trigger('change');
     });
 
     // Load custom diagnosis options
@@ -967,48 +1036,60 @@ $('#medicine-container').on('click', '.btn-remove', function () {
     });
 
 
-    // Add form submission handler
-    $('#individualRecordForm').on('submit', function(e) {
-        e.preventDefault(); // Prevent default form submission
-          document.getElementById('myModal').style.display = 'none';
-        // Get form data
-        const formData = new FormData(this);
-        
-        // Submit form via AJAX
-$.ajax({
-    url: 'php/saveConsultation.php',
-    type: 'POST',
-    data: formData,
-    processData: false,
-    contentType: false,
-    dataType: 'json', // ✅ jQuery will parse automatically
-success: function(response) {
-    try {
-        const res = typeof response === 'object' ? response : JSON.parse(response);
+ // Add form submission handler
+$('#individualRecordForm').on('submit', function(e) {
+    e.preventDefault(); // Prevent normal form submit
 
-        if (res.status === 'success') {
+    // Hide confirmation modal (correct ID)
+    $('#confirmationModal').hide();
 
-            // ✅ Store consultation_id in modal for later use by printInstruction() / printPrescription()
-            $('#responseModal').data('consultationId', res.consultation_id);
+    // Create FormData from form
+    const formData = new FormData(this);
 
-            // ✅ Pass `hasPrescription` to the modal
-            showResponseModal('success', res.message || 'Record saved successfully!', res.hasPrescription || false);
-        } else {
-            showResponseModal('error', res.message || 'An unexpected error occurred. Ensure all required fields are filled.');
+    $.ajax({
+        url: 'php/saveConsultation.php',
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        dataType: 'json',
+
+        success: function(response) {
+            try {
+                const res = typeof response === 'object' ? response : JSON.parse(response);
+
+                if (res.status === 'success') {
+
+                    // Store consultation_id for printing buttons
+                    $('#responseModal').data('consultationId', res.consultation_id);
+
+                    // Show modal with correct checkboxes
+                    showResponseModal(
+                        'success',
+                        res.message || 'Record saved successfully!',
+                        res.hasPrescription || false,
+                        res.hasMedicine || false
+                    );
+
+                } else {
+                    showResponseModal(
+                        'error',
+                        res.message || 'An unexpected error occurred.'
+                    );
+                }
+            } catch (err) {
+                showResponseModal('error', 'Invalid server response.');
+                console.error('JSON parse error:', err);
+            }
+        },
+
+        error: function(xhr, status, error) {
+            showResponseModal('error', 'Error saving record. Please try again.');
+            console.error("AJAX error:", status, error, "\nResponse:", xhr.responseText);
         }
-    } catch (e) {
-        showResponseModal('error', 'Invalid server response.');
-    }
-},
-
-    error: function(xhr, status, error) {
-        showResponseModal('error', 'Error saving record. Please try again.');
-        console.error("AJAX error:", status, error, "\nResponse:", xhr.responseText);
-    }
-});
-
-
     });
+
+});
 
     // Add OK button handler for response modal
     $('#okButton').on('click', function() {
@@ -1252,7 +1333,8 @@ fetch('php/getUserName.php')
   });
 
   
-function showResponseModal(type, message, hasPrescription = false) {
+function showResponseModal(type, message, hasPrescription = false, hasMedicine = false) {
+
     const modal = $('#responseModal');
     const icon = $('#responseIcon');
     const title = $('#responseTitle');
@@ -1278,28 +1360,62 @@ function showResponseModal(type, message, hasPrescription = false) {
     const footer = modal.find('.modal-footer');
 
     // Clear previous content
-    body.find('#responseCheckboxes').remove();
+    body.find('.print-option').remove();   // removes all generated checkbox blocks safely
+
     footer.empty();
 
     if (type === 'success') {
         // Move checkboxes to modal-body
-        let checkboxesHTML = `
-            <div id="responseCheckboxes" class="print-option" style="margin: 10px 0;">
-                <label>
-                    <input type="checkbox" id="printInstruction" checked>
-                    Print Instruction Copy
-                </label>
-            </div>
-            ${hasPrescription ? `
-                <div id="responseCheckboxes" class="print-option" style="margin: 10px 0;">
-                    <label>
-                        <input type="checkbox" id="printPrescription" checked>
-                        Print Prescription
-                    </label>
-                </div>
-            ` : ''}
-        `;
-        body.append(checkboxesHTML);
+      let checkboxesHTML = "";
+
+// CASE: Medicine dispensed only
+if (hasMedicine && !hasPrescription) {
+    checkboxesHTML += `
+        <div class="print-option" style="margin: 10px 0;">
+            <label>
+                <input type="checkbox" id="printInstruction" checked>
+                Print Instruction Copy
+            </label>
+        </div>
+    `;
+}
+
+// CASE: Prescription only
+if (hasPrescription && !hasMedicine) {
+    checkboxesHTML += `
+        <div class="print-option" style="margin: 10px 0;">
+            <label>
+                <input type="checkbox" id="printPrescription" checked>
+                Print Prescription
+            </label>
+        </div>
+    `;
+}
+
+// CASE: Both medicine + prescription
+if (hasPrescription && hasMedicine) {
+    checkboxesHTML += `
+        <div class="print-option" style="margin: 10px 0;">
+            <label>
+                <input type="checkbox" id="printInstruction" checked>
+                Print Instruction Copy
+            </label>
+        </div>
+        <div class="print-option" style="margin: 10px 0;">
+            <label>
+                <input type="checkbox" id="printPrescription" checked>
+                Print Prescription
+            </label>
+        </div>
+    `;
+}
+
+// CASE: Neither → NO checkboxes
+if (!hasPrescription && !hasMedicine) {
+    checkboxesHTML = ""; // None displayed
+}
+
+body.append(checkboxesHTML);
 
         // Buttons stay in footer
         footer.append(`
@@ -1311,23 +1427,26 @@ function showResponseModal(type, message, hasPrescription = false) {
         closeBtn.off('click');
 
         // Proceed button click
-        $('#proceedButton').on('click', function() {
-            const consultationId = $('#responseModal').data('consultationId');
-            let types = [];
+$('#proceedButton').on('click', function() {
+    const consultationId = $('#responseModal').data('consultationId');
+    let types = [];
 
-            // Collect which checkboxes are checked
-            if ($('#printInstruction').is(':checked')) types.push('instruction');
-            if ($('#printPrescription').is(':checked')) types.push('prescription');
+    if ($('#printInstruction').is(':checked')) types.push('instruction');
+    if ($('#printPrescription').is(':checked')) types.push('prescription');
 
-            // Only proceed if at least one is selected
-            if (types.length > 0) {
-                const typeParam = types.join(',');
-                window.open(`php/printPrescription.php?consultation_id=${encodeURIComponent(consultationId)}&type=${encodeURIComponent(typeParam)}`, '_blank');
-            }
+    // Only print if there are selected types
+    if (types.length > 0) {
+        const typeParam = types.join(',');
+        window.open(
+            `php/printPrescription.php?consultation_id=${encodeURIComponent(consultationId)}&type=${encodeURIComponent(typeParam)}`,
+            '_blank'
+        );
+    }
 
-            // Redirect to pending.html
-            window.location.href = 'pending.html';
-        });
+    // Redirect only (always)
+    window.location.href = 'pending.html';
+});
+
 
         // FIXED: Close X button - redirects to pending.html
         closeBtn.off('click').on('click', function() {
