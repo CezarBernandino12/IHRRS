@@ -157,7 +157,6 @@
                     </thead>
                     <tbody>
                        
-                        <!-- Dynamic referral data will be inserted here by JavaScript -->
                     </tbody>
                     
                 </table> <br><br>
@@ -184,7 +183,6 @@
                     </thead>
                     <tbody>
                        
-                        <!-- Dynamic referral data will be inserted here by JavaScript -->
                     </tbody>
                     
                 </table>
@@ -278,6 +276,11 @@
                     return;
                 }
 
+                if (data.length === 0) {
+                    tableBody.innerHTML = `<tr><td colspan="6"><br>No follow-up consultations scheduled.<br></td></tr>`;
+                    return;
+                }
+
                 data.forEach(followup => {
                     const row = document.createElement("tr");
                     const isCompleted = followup.followup_status === "Completed";
@@ -342,6 +345,12 @@
                     tableBody.innerHTML = `<tr><td colspan="6">Error fetching data</td></tr>`;
                     return;
                 }
+
+                if (data.length === 0) {
+                    tableBody.innerHTML = `<tr><td colspan="6"><br>No follow-up consultations scheduled for today.<br></td></tr>`;
+                    return;
+                }
+
 
                 data.forEach(followup => {
                     const row = document.createElement("tr");
