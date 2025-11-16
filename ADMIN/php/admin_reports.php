@@ -207,7 +207,78 @@ $totalActions = array_sum(array_column($commonActions, 'count'));
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <title>Reports</title>
-    
+
+<style>
+  .print-letterhead { display: none; }
+    .title { text-align: center; display: none;}
+
+  @media print {
+     .title {
+        display: block;
+     }
+      .print-letterhead { display: block; }
+
+  .print-letterhead{
+  display: grid;
+  grid-template-columns: 72px auto 72px;  /* widened logo columns */
+  align-items: center;
+  justify-content: center;
+  column-gap: 60px;                       /* increased space between logos and heading */
+  margin: 0 auto 18px;
+  text-align: center;
+  width: fit-content;
+  }
+
+  .print-logo{ width:64px; height:64px; object-fit:contain; }
+  .print-heading{ line-height:1.1; color:#000; }
+  .print-heading .ph-line-1{ font-size:12pt; font-weight:500; margin-bottom:3px;}
+  .print-heading .ph-line-2{ font-size:14pt; font-weight:500; margin-bottom:3px;}
+  .print-heading .ph-line-3{ font-size:11pt; font-weight:500; margin-bottom:3px;}
+  .print-heading .ph-line-4{ font-size:12pt; font-weight:600; margin-top:15px; letter-spacing:.3px; }
+  .print-sub{ font-size:11pt; margin-top:4px; }
+  .print-rule{ height:1px; border:0; background:#cfd8e3; margin:8px 0 12px; }
+}
+
+  #generated_by {
+  display: block;
+  margin: 22px 0 0 48px;
+  color: #000;
+}
+
+#generated_by .sig-label {
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+
+#generated_by .sig-line {
+    display: none;
+  width: 200px;
+  border: 0;
+  border-top: 1.5px solid #000;
+  margin: 26px 0 6px;
+}
+
+#generated_by .sig-name {
+  font-weight: 600;
+  font-size: 16px;
+  margin-top: 4px;
+}
+
+#generated_by .sig-title {
+  font-size: 13px;
+  color: #333;
+}
+
+/* Print sizing (optional, nicer on paper) */
+@media print {
+  #generated_by {  margin: 60mm 0 0 10mm;}
+  #generated_by .sig-label { font-size: 12pt; }
+  #generated_by .sig-name  { font-size: 12pt; }
+  #generated_by .sig-title { font-size: 11pt; }
+  #generated_by .sig-line  {display: block; width: 45mm; border-top-width: 1px; margin: 10mm 0 3mm; }
+}
+</style>
+
 </head>
 <body>
     <!-- Sidebar Section -->
@@ -304,10 +375,33 @@ $totalActions = array_sum(array_column($commonActions, 'count'));
         <button id="apply-filter" class="filter-button">Apply Filter</button>
     </div>
     
+            <div class="print-area">
+<!-- Two-logo letterhead -->
+<div class="print-letterhead">
+ <img src="../../img/daet_logo.png" alt="Left Logo" class="print-logo">
+ <div class="print-heading">
+   <div class="ph-line-1">Republic of the Philippines</div>
+   <div class="ph-line-1">Department of Health</div>
+   <div class="ph-line-1">Province of Camarines Norte</div>
+   <div class="ph-line-2">Municipality of Daet</div>
+   <div class="ph-line-3">Admin Reports</div>
+ </div>
+ <img src="../../img/mho_logo.png" alt="Right Logo" class="print-logo">
+</div>
+<hr class="print-rule">
+
+<div class="title">
+ <h2>System Activity Logs Report</h2>
+ <div class="print-sub">
+   (<?php echo htmlspecialchars($start_date . ' to ' . $end_date); ?>)
+ </div>
+</div>
+
+<div class="report-content">
             <div id="print-section">
                 <section id="contents">
-                    
-                    
+
+
                     <div class="card">
                         <div class="card-header">
                             <h3>All Action</h3>
@@ -502,6 +596,20 @@ $totalActions = array_sum(array_column($commonActions, 'count'));
     </div>
 </div>
 
+        </div>
+
+<div id="generated_by"></div>
+
+<!-- Print Button at Bottom -->
+<div class="form-submit">
+    <button type="button" class="btn-print" onclick="printDiv()">
+        <i class='bx bx-printer'></i>
+        Print Report
+    </button>
+</div>
+
+</div>
+
         </main>
     </section>
 
@@ -534,14 +642,47 @@ $totalActions = array_sum(array_column($commonActions, 'count'));
     document.getElementById('apply-filter').addEventListener('click', function() {
     const startDate = document.getElementById('start-date').value;
     const endDate = document.getElementById('end-date').value;
-    
+
     if (startDate && endDate) {
         // Redirect to the correct file (admin_reports.php)
         window.location.href = `admin_reports.php?start_date=${startDate}&end_date=${endDate}`;
     } else {
         alert('Please select both start and end dates');
     }
-});    
+});
+
+// Populate signature block
+document.addEventListener('DOMContentLoaded', () => {
+  fetch('getUserName.php')
+    .then(r => r.json())
+    .then(data => {
+      const fullName = (data && data.full_name) ? data.full_name : '';
+
+      // Greeting (keep current behavior)
+      document.getElementById('userGreeting').textContent =
+        fullName ? `Hello, ${fullName}!` : 'Hello, Admin!';
+
+      // Build the signature block
+      const gb = document.getElementById('generated_by');
+      gb.innerHTML = `
+        <div class="sig-label">Report Generated by:</div>
+        <hr class="sig-line">
+        <div class="sig-name"></div>
+        <div class="sig-title">Administrator</div>
+      `;
+      gb.querySelector('.sig-name').textContent = fullName || '________________';
+    })
+    .catch(() => {
+      document.getElementById('userGreeting').textContent = 'Hello, Admin!';
+      const gb = document.getElementById('generated_by');
+      gb.innerHTML = `
+        <div class="sig-label">Report Generated by:</div>
+        <hr class="sig-line">
+        <div class="sig-name">________________</div>
+        <div class="sig-title">Administrator</div>
+      `;
+    });
+});
 
     // Common Actions Chart
     const commonActionsData = <?php echo json_encode($commonActions); ?>;
@@ -617,6 +758,63 @@ window.onclick = function(event) {
         closeModal();
     }
 };
+
+function printDiv() {
+  const originalArea = document.querySelector(".print-area");
+  const headerEl = document.querySelector(".print-letterhead");
+  if (!originalArea || !headerEl) {
+    alert("Error: Missing .print-area or .print-letterhead on page.");
+    return;
+  }
+
+  const clone = originalArea.cloneNode(true);
+
+  // Remove header duplication in the clone
+  const headerInClone = clone.querySelector('.print-letterhead');
+  if (headerInClone) headerInClone.remove();
+  const ruleInClone = clone.querySelector('.print-rule');
+  if (ruleInClone) ruleInClone.remove();
+
+  const w = window.open('', '', 'height=900,width=1100');
+  w.document.write(`
+    <html>
+      <head>
+        <title>Print Report</title>
+        <meta charset="utf-8" />
+        <style>
+          body { font-family: Arial, sans-serif; font-size: 12px; color: black; }
+          table { width: 100%; border-collapse: collapse; }
+          th, td { border: 1px solid #000; padding: 4px; text-align: left; }
+          thead { background-color: #f0f0f0; }
+          img { display: block; margin: 0 auto; max-width: 100%; height: auto; }
+
+          /* header visuals */
+          .print-letterhead{
+            display:grid; grid-template-columns:64px auto 64px;
+            align-items:center; justify-content:center; column-gap:14px;
+            margin:0 auto 10px; text-align:center; width:fit-content;
+          }
+          .print-logo{ width:64px; height:64px; object-fit:contain; }
+          .print-heading{ line-height:1.1; color:#000; }
+          .print-heading .ph-line-1{ font-size:12pt; font-weight:500; }
+          .print-heading .ph-line-2{ font-size:14pt; font-weight:800; }
+          .print-heading .ph-line-3{ font-size:11pt; font-weight:500; }
+          .print-heading .ph-line-4{ font-size:12pt; font-weight:800; margin-top:4px; letter-spacing:.3px; }
+          .print-sub{ font-size:11pt; margin-top:4px; }
+          .print-rule{ height:1px; border:0; background:#cfd8e3; margin:8px 0 12px; }
+        </style>
+      </head>
+      <body>
+        ${headerEl.outerHTML}
+        <hr class="print-rule">
+        ${clone.innerHTML}
+      </body>
+    </html>
+  `);
+  w.document.close();
+  w.focus();
+  setTimeout(() => { w.print(); w.close(); }, 500);
+}
 </script>
 
 <script>
