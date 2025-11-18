@@ -83,3 +83,88 @@
     border-color: #c82333;
     transform: translateY(-1px);
 }
+
+/* Change Password Modal Styles */
+.change-password-modal {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(2px);
+}
+
+.change-password-modal .change-password-modal-content {
+    background: #fff;
+    margin: 15% auto;
+    padding: 30px 30px;
+    border-radius: 12px;
+    width: 510px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+    text-align: center;
+    font-family: 'Poppins', sans-serif;
+    border: 1px solid #e0e0e0;
+}
+
+.change-password-modal .change-password-modal-header h3 {
+    margin: 0 0 15px 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #333;
+    font-family: 'Poppins', sans-serif;
+}
+
+.change-password-modal .change-password-modal-body p {
+    color: #555 !important;
+    margin: 0 0 25px 0;
+    font-size: 1.1rem;
+    line-height: 1.5;
+    background-color: transparent !important;
+}
+
+.change-password-modal .change-password-modal-footer {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.change-password-modal .change-password-cancel-btn,
+.change-password-modal .change-password-confirm-btn {
+    padding: 10px 25px;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    min-width: 100px;
+}
+
+.change-password-modal .change-password-cancel-btn {
+    background: #6c757d;
+    color: #fff;
+    font-family: 'Poppins', sans-serif;
+    border: 2px solid #6c757d;
+}
+
+.change-password-modal .change-password-confirm-btn {
+    background: #dc3545;
+    color: #fff;
+    font-family: 'Poppins', sans-serif;
+    border: 2px solid #dc3545;
+}
+
+.change-password-modal .change-password-cancel-btn:hover {
+    background: #5a6268;
+    border-color: #5a6268;
+    transform: translateY(-1px);
+}
+
+.change-password-modal .change-password-confirm-btn:hover {
+    background: #c82333;
+    border-color: #c82333;
+    transform: translateY(-1px);
+}

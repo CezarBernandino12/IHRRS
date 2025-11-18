@@ -480,6 +480,37 @@ function closeResetSuccessModal() {
     location.reload();
 }
 
+function closeChangePasswordConfirmModal() {
+    document.getElementById('changePasswordConfirmModal').style.display = 'none';
+    // Show the change password modal back
+    document.getElementById('resetPasswordModal').style.display = 'block';
+}
+
+function confirmChangePassword() {
+    closeChangePasswordConfirmModal();
+    var form = document.getElementById('resetPasswordForm');
+    var formData = new FormData(form);
+    var errorDiv = document.getElementById('resetPasswordError');
+    fetch('reset_password.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            closeResetPasswordModal();
+            document.getElementById('resetSuccessModal').style.display = 'block';
+        } else {
+            errorDiv.textContent = data.error || "An error occurred.";
+            errorDiv.style.display = 'block';
+        }
+    })
+    .catch(() => {
+        errorDiv.textContent = "An error occurred.";
+        errorDiv.style.display = 'block';
+    });
+}
+
 document.getElementById('resetPasswordForm').onsubmit = function(e) {
     var newPass = document.getElementById('newPassword').value;
     var confirmPass = document.getElementById('confirmNewPassword').value;
@@ -501,25 +532,9 @@ document.getElementById('resetPasswordForm').onsubmit = function(e) {
     errorDiv.style.display = 'none';
 
     e.preventDefault();
-    var formData = new FormData(this);
-    fetch('reset_password.php', {
-        method: 'POST',
-        body: formData
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.success) {
-            closeResetPasswordModal();
-            document.getElementById('resetSuccessModal').style.display = 'block';
-        } else {
-            errorDiv.textContent = data.error || "An error occurred.";
-            errorDiv.style.display = 'block';
-        }
-    })
-    .catch(() => {
-        errorDiv.textContent = "An error occurred.";
-        errorDiv.style.display = 'block';
-    });
+    // Hide the change password modal and show confirmation modal
+    document.getElementById('resetPasswordModal').style.display = 'none';
+    document.getElementById('changePasswordConfirmModal').style.display = 'block';
     return false;
 };
 

@@ -113,7 +113,7 @@ $logs = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 </a>
             </li>
             <li>
-                <a href="admin_reports.php">
+                <a href="../reports.html">
                     <i class="bx bxs-report"></i>
                     <span class="text">Reports</span>
                 </a>

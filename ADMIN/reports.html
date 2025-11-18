@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="icon" href="../img/logo.png">
+	<link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="css/dashstyle.css">
+	<link rel="stylesheet" href="css/logout.css">
+	<link rel="stylesheet" href="css/reports_selection.css">
+	<title>Reports</title>
+</head>
+<body>
+
+	<!-- Sidebar Section -->
+	<section id="sidebar">
+		<a href="#" class="brand">
+			<img src="../img/logo.png" alt="RHULogo" class="logo">
+			<span class="text">Hello Admin</span>
+		</a>
+		<ul class="side-menu top">
+			<li>
+				<a href="php/admin_dashboard2.php">
+					<i class="bx bxs-dashboard"></i>
+					<span class="text">Dashboard</span>
+				</a>
+			</li>
+			<li>
+				<a href="php/activity_logs.php">
+					<i class="bx bxs-user"></i>
+					<span class="text">Activity Logs</span>
+				</a>
+			</li>
+			<li>
+				<a href="php/admin_user.php">
+					<i class="bx bxs-notepad"></i>
+					<span class="text">User management</span>
+				</a>
+			</li>
+			<li class="active">
+				<a href="reports.html">
+					<i class="bx bxs-report"></i>
+					<span class="text">Reports</span>
+				</a>
+			</li>
+		</ul>
+		<ul class="side-menu">
+			<li>
+				<a href="#" class="logout" onclick="return confirmLogout()">
+               <i class="bx bxs-log-out-circle"></i>
+                <span class="text">Logout</span>
+                </a>
+			</li>
+		</ul>
+	</section>
+
+	<!-- Main Content Section -->
+	<section id="content">
+		<nav>
+			<form action="#">
+
+			</form>
+			<div class="greeting">
+                <span id="userGreeting">Hello Admin!</span>
+            </div>
+			<a href="#" class="profile">
+				<img src="../img/admin.png">
+			</a>
+		</nav>
+
+		<main>
+			<div class="head-title">
+				<div class="left">
+					<h1>Reports</h1>
+					<ul class="breadcrumb">
+						<li><a href="#">Reports</a></li>
+						<li><i class="bx bx-chevron-right"></i></li>
+						<li><a class="active" href="php/admin_dashboard2.php">Home</a></li>
+					</ul>
+				</div>
+			</div>
+
+
+			<ul class="box-info">
+
+				<a href="reportsPages/admin_reports.php">
+					<li class="mrr">
+						<img src="../img/treatment.png" alt="Admin Reports" class="icon-img">
+					  <div class="text">
+						<h3>Audit Log Reports</h3>
+					  </div>
+					</li>
+				  </a>
+
+		</ul>
+
+
+
+<div id="logoutModal" class="logout-modal">
+    <div class="logout-modal-content">
+        <div class="logout-modal-header">
+            <h3>Confirm Logout</h3>
+        </div>
+        <div class="logout-modal-body">
+            <p>Are you sure you want to logout?</p>
+        </div>
+        <div class="logout-modal-footer">
+            <button onclick="closeModal()" class="logout-cancel-btn">Cancel</button>
+            <button onclick="proceedLogout()" class="logout-confirm-btn">Yes, Logout</button>
+        </div>
+    </div>
+</div>	</main>
+</section>
+<script>
+	function confirmLogout() {
+		document.getElementById('logoutModal').style.display = 'block';
+		return false; // Prevent the default link behavior
+	}
+
+	function closeModal() {
+		document.getElementById('logoutModal').style.display = 'none';
+	}
+
+	function proceedLogout() {
+		window.location.href = 'php/logout.php';
+	}
+
+	// Close modal when clicking outside
+	window.onclick = function(event) {
+		const modal = document.getElementById('logoutModal');
+		if (event.target == modal) {
+			closeModal();
+		}
+	}
+	      // Check if user is logged in
+		  fetch('php/getUserId.php')
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    // User is not logged in, redirect to role selection page
+                    window.location.href = '../role.html';
+                }
+            })
+            .catch(error => {
+                console.error('Error checking session:', error);
+                window.location.href = '../role.html';
+            });
+
+	</script>
+
+	<script>
+	document.addEventListener("DOMContentLoaded", () => {
+	  const sidebar = document.getElementById("sidebar");
+	
+	  function applyResponsiveSidebar() {
+	    if (window.innerWidth <= 1024) {
+	      sidebar.classList.add("hide");   // collapsed on small screens
+	    } else {
+	      sidebar.classList.remove("hide"); // expanded on larger screens
+	    }
+	  }
+	
+	  applyResponsiveSidebar();
+	  window.addEventListener("resize", applyResponsiveSidebar);
+	
+	  // keep the rest of your existing code (auth, stats, modals, etc.)
+	});
+	</script>
+</body>
+</html>

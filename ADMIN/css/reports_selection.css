@@ -1,0 +1,145 @@
+/* Reports Selection Page Styles */
+
+#content main .box-info li .icon-img { width: 60px; height: auto; }
+#content main .box-info li .text h3 { font-size: 18px; text-align: center; }
+
+#content main .box-info li:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 8px 16px rgba(108,110,114,.616);
+}
+
+/* Card color you used */
+#content main .box-info li.mrr { background: #C6E7FF; }
+
+/* Optional: tighten on smaller screens */
+@media (max-width: 480px) {
+  #content main .box-info { gap: 16px; padding: 0 16px 24px; }
+  #content main .box-info li { min-height: 140px; padding: 16px; }
+  #content main .box-info li .icon-img { width: 48px; }
+  #content main .box-info li .text h3 { font-size: 16px; }
+}
+#content main .box-info {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 32px;
+    margin-top: 3%;
+    justify-content: flex-start;
+    text-align: left;
+    margin-left: 30px;
+    animation: fadeIn 1s forwards;
+    overflow-x: auto;
+      overflow: visible;
+}
+
+#content main .box-info li {
+    width: 250px;
+    height: 160px;
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: 0 4px 8px rgba(183, 189, 199, 0.616);
+    display: flex;
+    flex-direction: column;
+      flex: 1 1 220px;
+    align-items: center;
+    justify-content: flex-start;
+    transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+    position: relative;
+    color: var(--dark);
+    background: #fff;
+    overflow: hidden;
+    opacity: 0;
+    animation: fadeIn 1.8s forwards;
+}
+
+#content main .box-info li .icon-img {
+    width: 60px;
+    height: auto;
+    object-fit: contain;
+}
+
+#content main .box-info li .bx {
+    display: none;
+}
+
+#content main .box-info li:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 8px 16px rgba(108, 110, 114, 0.616);
+}
+
+#content main .box-info li .bx {
+    font-size: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 16px;
+}
+
+#content main .box-info li .text {
+    text-align: center;
+}
+
+#content main .box-info li .text h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
+    color: #000;
+    letter-spacing: 0.5px;
+}
+
+#content main .box-info li.mrr {
+    background: #C6E7FF;
+    margin-top: 20px;
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+    #content main .box-info li {
+        width: 95%;
+        height: auto;
+        margin-bottom: 20px;
+    }
+
+    #content main .box-info li .icon-img {
+        width: 50px;
+    }
+
+    #content main .box-info li .text h3 {
+        font-size: 16px;
+    }
+
+    #content main .box-info li .bx {
+        font-size: 36px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    #content main .box-info li {
+        width: 100%;
+        padding: 10px;
+        height: auto;
+    }
+
+    #content main .box-info li .icon-img {
+        width: 45px;
+    }
+
+    #content main .box-info li .text h3 {
+        font-size: 14px;
+    }
+
+    #content main .box-info li .bx {
+        font-size: 30px;
+    }
+}
