@@ -109,11 +109,11 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 </a>
             </li>
             <li>
-				<a href="admin_reports.php">
-					<i class="bx bxs-report"></i>
-					<span class="text">Reports</span>
-				</a>
-			</li>
+    <a href="../reports.html">
+     <i class="bx bxs-report"></i>
+     <span class="text">Reports</span>
+    </a>
+   </li>
         </ul>
         <ul class="side-menu">
         <li>
@@ -294,12 +294,12 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 
 <!-- Reset/Change Password Modal -->
-<div id="resetPasswordModal" class="logout-modal" style="display:none;">
-  <div class="logout-modal-content">
-    <div class="logout-modal-header">
+<div id="resetPasswordModal" class="change-password-modal" style="display:none;">
+  <div class="change-password-modal-content">
+    <div class="change-password-modal-header">
       <h3 id="resetModalTitle">Change User Password</h3>
     </div>
-    <div class="logout-modal-body">
+    <div class="change-password-modal-body">
       <!-- Pending Reset Request Info -->
       <div id="pendingResetInfo" style="display:none; background:#fff3cd; border:1px solid #ffeaa7; padding:15px; margin-bottom:20px; border-radius:5px;">
         <h3 style="color:#856404; margin:0 0 10px 0;"><i class="bx bx-info-circle"></i> Pending Password Reset Request</h3>
@@ -327,9 +327,9 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
           </div>
         </div>
         <div id="resetPasswordError" style="color:red; margin-bottom:10px; display:none;"></div>
-        <div class="logout-modal-footer">
-          <button type="button" onclick="closeResetPasswordModal()" class="logout-cancel-btn">Cancel</button>
-          <button type="submit" class="logout-confirm-btn">Change Password</button>
+        <div class="change-password-modal-footer">
+          <button type="button" onclick="closeResetPasswordModal()" class="change-password-cancel-btn">Cancel</button>
+          <button type="submit" class="change-password-confirm-btn">Change Password</button>
         </div>
       </form>
     </div>
@@ -347,6 +347,22 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
     </div>
     <div class="logout-modal-footer">
       <button type="button" onclick="closeResetSuccessModal()" class="logout-confirm-btn">OK</button>
+    </div>
+  </div>
+</div>
+
+<!-- Change Password Confirmation Modal -->
+<div id="changePasswordConfirmModal" class="change-password-modal" style="display:none;">
+  <div class="change-password-modal-content">
+    <div class="change-password-modal-header">
+      <h3>Confirm Password Change</h3>
+    </div>
+    <div class="change-password-modal-body">
+      <p>Are you sure you want to change this user's password?</p>
+    </div>
+    <div class="change-password-modal-footer">
+      <button type="button" onclick="closeChangePasswordConfirmModal()" class="change-password-cancel-btn">Cancel</button>
+      <button type="button" onclick="confirmChangePassword()" class="change-password-confirm-btn">Yes, Change Password</button>
     </div>
   </div>
 </div>

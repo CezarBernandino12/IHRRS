@@ -1,5 +1,5 @@
 <?php
-require 'config.php';
+require '../php/config.php';
 session_start();
 
 // Check if user is logged in and has admin role
@@ -206,6 +206,7 @@ $totalActions = array_sum(array_column($commonActions, 'count'));
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <title>Reports</title>
 
 <style>
@@ -277,6 +278,45 @@ $totalActions = array_sum(array_column($commonActions, 'count'));
   #generated_by .sig-title { font-size: 11pt; }
   #generated_by .sig-line  {display: block; width: 45mm; border-top-width: 1px; margin: 10mm 0 3mm; }
 }
+
+.form-submit {
+    text-align: center;
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.btn-export, .btn-print {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: background-color 0.3s;
+} 
+
+.btn-export {
+    background-color: rgb(30, 30, 63);
+    color: white;
+}
+
+.btn-export:hover {
+    background-color: #5a6268;
+}
+
+.btn-print {
+    background-color: rgb(30, 30, 63);
+    color: white;
+}
+
+.btn-print:hover {
+    background-color: #5a6268;
+}
 </style>
 
 </head>
@@ -289,25 +329,25 @@ $totalActions = array_sum(array_column($commonActions, 'count'));
         </a>
         <ul class="side-menu top">
             <li>
-                <a href="admin_dashboard2.php">
+                <a href="../php/admin_dashboard2.php">
                     <i class="bx bxs-dashboard"></i>
                     <span class="text">Dashboard</span>
                 </a>
             </li>
             <li>
-                <a href="activity_logs.php">
+                <a href="../php/activity_logs.php">
                     <i class="bx bxs-user"></i>
                     <span class="text">Activity Logs</span>
                 </a>
             </li>
             <li>
-                <a href="admin_user.php">
+                <a href="../php/admin_user.php">
                     <i class="bx bxs-notepad"></i>
                     <span class="text">User management</span>
                 </a>
             </li>
             <li class="active">
-                <a href="admin_reports.php">
+                <a href="../reports.html">
                     <i class="bx bxs-report"></i>
                     <span class="text">Reports</span>
                 </a>
@@ -340,11 +380,11 @@ $totalActions = array_sum(array_column($commonActions, 'count'));
         <main>
             <div class="head-title">
                 <div class="left">
-                  <h1>System Activity Logs Report</h1>
+                  <h1>Admin Reports</h1>
                   <ul class="breadcrumb">
-                    <li><a href="#">System Activity Logs Report</a></li>
+                    <li><a href="#">Admin Reports</a></li>
                     <li><i class="bx bx-chevron-right"></i></li>
-                    <li><a class="active" href="#" onclick="history.back(); return false;">Go back</a></li>
+                    <li><a class="active" href="../reports.html">Go back</a></li>
                   </ul>
                 </div>
               </div>
@@ -360,6 +400,21 @@ $totalActions = array_sum(array_column($commonActions, 'count'));
         <div class="logout-modal-footer">
             <button onclick="closeModal()" class="logout-cancel-btn">Cancel</button>
             <button onclick="proceedLogout()" class="logout-confirm-btn">Yes, Logout</button>
+        </div>
+    </div>
+</div>
+
+<div id="printModal" class="logout-modal">
+    <div class="logout-modal-content">
+        <div class="logout-modal-header">
+            <h3>Confirm Print</h3>
+        </div>
+        <div class="logout-modal-body">
+            <p>Are you sure you want to print this report?</p>
+        </div>
+        <div class="logout-modal-footer">
+            <button onclick="closePrintModal()" class="logout-cancel-btn">Cancel</button>
+            <button onclick="proceedPrint()" class="logout-confirm-btn">Yes, Print</button>
         </div>
     </div>
 </div>
@@ -600,9 +655,17 @@ $totalActions = array_sum(array_column($commonActions, 'count'));
 
 <div id="generated_by"></div>
 
-<!-- Print Button at Bottom -->
+<!-- Export and Print Buttons at Bottom -->
 <div class="form-submit">
-    <button type="button" class="btn-print" onclick="printDiv()">
+    <button type="button" class="btn-export" onclick="exportToExcel()">
+        <i class='bx bx-file'></i>
+        Export to Excel
+    </button>
+    <button type="button" class="btn-export" onclick="exportToPDF()">
+        <i class='bx bx-file-pdf'></i>
+        Export to PDF
+    </button>
+    <button type="button" class="btn-print" onclick="confirmPrint()">
         <i class='bx bx-printer'></i>
         Print Report
     </button>
@@ -615,7 +678,7 @@ $totalActions = array_sum(array_column($commonActions, 'count'));
 
 <script>
     // Fetch and display user name
-    fetch('getUserName.php')
+    fetch('../php/getUserName.php')
         .then(response => response.json())
         .then(data => {
             if (data.full_name) {
@@ -653,7 +716,7 @@ $totalActions = array_sum(array_column($commonActions, 'count'));
 
 // Populate signature block
 document.addEventListener('DOMContentLoaded', () => {
-  fetch('getUserName.php')
+  fetch('../php/getUserName.php')
     .then(r => r.json())
     .then(data => {
       const fullName = (data && data.full_name) ? data.full_name : '';
@@ -751,11 +814,28 @@ function proceedLogout() {
     window.location.href = 'logout.php'; // Adjust path if needed
 }
 
+function confirmPrint() {
+    document.getElementById('printModal').style.display = 'block';
+}
+
+function closePrintModal() {
+    document.getElementById('printModal').style.display = 'none';
+}
+
+function proceedPrint() {
+    closePrintModal();
+    printDiv();
+}
+
 // Close modal when clicking outside
 window.onclick = function(event) {
-    const modal = document.getElementById('logoutModal');
-    if (event.target == modal) {
+    const logoutModal = document.getElementById('logoutModal');
+    const printModal = document.getElementById('printModal');
+    if (event.target == logoutModal) {
         closeModal();
+    }
+    if (event.target == printModal) {
+        closePrintModal();
     }
 };
 
@@ -814,6 +894,79 @@ function printDiv() {
   w.document.close();
   w.focus();
   setTimeout(() => { w.print(); w.close(); }, 500);
+}
+
+function exportToExcel() {
+  const tables = document.querySelectorAll('.data-table');
+  const workbook = XLSX.utils.book_new();
+
+  tables.forEach((table, index) => {
+    const worksheet = XLSX.utils.table_to_sheet(table);
+    const sheetName = table.previousElementSibling ? table.previousElementSibling.textContent.trim() : `Sheet${index + 1}`;
+    XLSX.utils.book_append_sheet(workbook, worksheet, sheetName.substring(0, 31)); // Excel sheet name limit
+  });
+
+  XLSX.writeFile(workbook, 'admin_reports.xlsx');
+}
+
+function exportToPDF() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  const reportContent = document.querySelector('.report-content');
+  if (!reportContent) {
+    alert('Report content not found.');
+    return;
+  }
+
+  // Add title
+  doc.setFontSize(16);
+  doc.text('Admin Reports', 20, 20);
+
+  // Add date range
+  const dateRange = document.querySelector('.print-sub');
+  if (dateRange) {
+    doc.setFontSize(12);
+    doc.text(dateRange.textContent, 20, 30);
+  }
+
+  let yPosition = 50;
+
+  // Process each card
+  const cards = reportContent.querySelectorAll('.card');
+  cards.forEach(card => {
+    const header = card.querySelector('.card-header h3');
+    if (header) {
+      doc.setFontSize(14);
+      doc.text(header.textContent, 20, yPosition);
+      yPosition += 10;
+    }
+
+    const table = card.querySelector('.data-table');
+    if (table) {
+      const rows = table.querySelectorAll('tr');
+      rows.forEach(row => {
+        const cells = row.querySelectorAll('th, td');
+        let xPosition = 20;
+        cells.forEach(cell => {
+          doc.setFontSize(10);
+          const text = cell.textContent.trim();
+          doc.text(text, xPosition, yPosition);
+          xPosition += 40; // Adjust column width
+        });
+        yPosition += 8;
+
+        // Check if new page is needed
+        if (yPosition > 270) {
+          doc.addPage();
+          yPosition = 20;
+        }
+      });
+      yPosition += 10;
+    }
+  });
+
+  doc.save('admin_reports.pdf');
 }
 </script>
 
