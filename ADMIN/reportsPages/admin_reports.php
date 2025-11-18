@@ -380,9 +380,9 @@ $totalActions = array_sum(array_column($commonActions, 'count'));
         <main>
             <div class="head-title">
                 <div class="left">
-                  <h1>Admin Reports</h1>
+                  <h1>Audit Log Reports</h1>
                   <ul class="breadcrumb">
-                    <li><a href="#">Admin Reports</a></li>
+                    <li><a href="#">Audit Log Reports</a></li>
                     <li><i class="bx bx-chevron-right"></i></li>
                     <li><a class="active" href="../reports.html">Go back</a></li>
                   </ul>
