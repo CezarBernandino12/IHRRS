@@ -1022,8 +1022,8 @@ input:focus, select:focus {
 }
 
 .additional-group {
-    margin-bottom: 15px;
-    margin-top: 15px;
+    margin-bottom: 5px;
+    margin-top: 5px;
     padding: 10px;
     border-radius: 5px;
     display: flex;
@@ -1161,13 +1161,20 @@ input[type="radio"], input[type="checkbox"] {
     margin-top: 20px;
 }
 
-
 .vitals-section {
     display: flex;
     flex-wrap: wrap;
-    gap: 15px;  /* Adds space between items */
+    gap: 15px;
     justify-content: space-between;
-    margin-bottom: 15px;
+}
+
+/* BMI takes the entire first row */
+#bmiContainer {
+    flex-basis: 100%;     /* forces full row */
+    display: flex;        /* always flex so label + input stay inline */
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
 }
 
 .print-section {

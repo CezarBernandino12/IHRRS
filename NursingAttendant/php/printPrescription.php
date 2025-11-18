@@ -18,12 +18,11 @@ $stmt = $pdo->prepare("
         c.consultation_date,
         c.instruction_prescription,
         m.medicine_name,
-        u.full_name AS physician_name,
-        u.license_number AS physician_license,
-        u.rhu,
         m.instruction,
         m.dispensed_date,
-        m.quantity_dispensed
+        m.quantity_dispensed,
+        u.full_name AS physician_name,
+        u.license_number AS physician_license
     FROM rhu_consultations c
     JOIN patients p ON c.patient_id = p.patient_id
     LEFT JOIN rhu_medicine_dispensed m ON c.consultation_id = m.consultation_id
@@ -44,7 +43,8 @@ if (!$consultations) die("No record found.");
         pr.instruction, 
         pr.date, 
         u.full_name AS physician_name, 
-        u.license_number AS physician_license
+        u.license_number AS physician_license,
+        u.rhu AS rhu
     FROM prescription pr
     LEFT JOIN users u ON pr.physician = u.user_id
     WHERE pr.consultation_id = :consultation_id
@@ -158,14 +158,14 @@ body {
 
 <!-- ===== HEADER TEMPLATE ===== -->
 <?php
-function headerSection($consultation) { ?>
+function headerSection($prescription) { ?>
     <div class="header" style="text-align: center;">
           <img src="../../img/mho_logo.png" alt="RHU Logo" class="print-logo" style="height: 50px; width: auto;" />
         <h3>Republic of the Philippines</h3>
         <p style="margin-top: -5px;">Province of Camarines Norte</p>
         <h3 style="margin-top: -10px;">Municipality of Daet</h3>
         <div class="info" style="margin-top: -2px;">
-           <span class="label"></span> <?= htmlspecialchars($consultation['rhu'] ?? 'N/A') ?>
+           <span class="label"></span> <?= htmlspecialchars($prescription['rhu'] ?? 'N/A') ?>
         </div>
         <br>
     </div>
@@ -176,7 +176,7 @@ function headerSection($consultation) { ?>
 
 
     <div class="quarter-page">
-    <?php headerSection($consultations[0]); ?>
+    <?php headerSection($prescriptions[0]); ?>
     <div class="section">
 
         <h3>Instructions (Patient's Copy)</h3><br><br>
@@ -227,7 +227,7 @@ function headerSection($consultation) { ?>
 <?php if (!empty($prescriptions) && (in_array('prescription', $types) || in_array('all', $types))): ?>
  
      <div class="quarter-page">
-    <?php headerSection($consultations[0]); ?>
+    <?php headerSection($prescriptions[0]); ?>
     <div class="section">
 
    

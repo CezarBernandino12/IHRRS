@@ -158,6 +158,19 @@ fetch('php/getUserId.php')
                     <label for="birthPlace" class="required">Birth Place:</label>
                     <input type="text" id="birthPlace" name="birthplace" placeholder="Birth place" required>
                 </div>
+                  <div class="form-group">
+                    <label for="sex" class="required">Sex:</label>
+                    <div id="sex" class="radio-group">
+                        <label class="radio-option" id="sex">
+                            <input type="radio" name="sex" value="Male"> 
+                            Male
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="sex" value="Female"> 
+                            Female
+                        </label>
+                    </div>
+                </div> 
                 
 
                 <!-- Column 2 -->
@@ -354,9 +367,9 @@ document.addEventListener("DOMContentLoaded", function () {
                     <label for="familySerialNo">Family Serial number:</label>
                     <input type="number" name="familySerialNo" id="familySerialNo" placeholder="Family Serial no.">
                 </div>
-                <br>
+           
                 <div class="form-group">
-                    <label for="4ps">4Ps Status:</label>
+                    <label for="4ps">4Ps:</label>
                     <div id="4ps" class="radio-group">
                         <label class="radio-option">
                             <input type="radio" name="4ps" value="Yes"> Yes
@@ -366,19 +379,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         </label>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label for="sex" class="required">Sex:</label>
-                    <div id="sex" class="radio-group">
-                        <label class="radio-option" id="sex">
-                            <input type="radio" name="sex" value="Male"> 
-                            Male
-                        </label>
-                        <label class="radio-option">
-                            <input type="radio" name="sex" value="Female"> 
-                            Female
-                        </label>
-                    </div>
-                </div> 
+              
 
 
                
@@ -440,49 +441,48 @@ document.addEventListener("DOMContentLoaded", function () {
                         <textarea type="text" name="chief_complaints" id="chief_complaints" class="tall-input" placeholder="Enter complaints"></textarea>
                     </div>
 
-                    <label for="vitals"><b>Vital Signs:</b></label>
-                    <div class="vitals-section box-group">
-                        <div class="additional-group vitals-item" id="bmiContainer" style="display: none;">
-                            <label for="bmi">BMI:</label>
-                            <input type="number" step="any" name="bmi" id="bmi" placeholder="BMI will appear here" readonly>
-                        </div>
-                        <div class="additional-group" id="bmiSpace" style="display: none;" hidden>
-                            <label for="space"></label>
-                          
-                        </div>
-                        
-                        <div class="additional-group vitals-item">
-                            <label for="height" class="required">Height (cm):</label>
-                            <input type="number" step="any" name="height" id="height" placeholder="Enter height (e.g, 160)" oninput="calculateBMI()" required>
-                        </div>
-                        
-                        <div class="additional-group vitals-item">
-                            <label for="weight" class="required">Weight (kg):</label>
-                            <input type="number" step="any" name="weight" id="weight" placeholder="Enter weight (e.g, 50.2)" oninput="calculateBMI()" required>
-                        </div>
-                        
-                        <div class="additional-group vitals-item">
-                            <label for="temp" class="required">Temperature (°C):</label>
-                            <input type="number" step="any" id="temp" name="temp" placeholder="Enter temperature (e.g, 38.2)" required>
-                        </div>
-                        
-                        <div class="additional-group vitals-item">
-                            <label for="bp" class="required">Blood Pressure (mm Hg):</label>
-                            <input type="text" step="any" id="bp" name="bp" placeholder="Enter BP (e.g., 120/80)" required>
-                        </div>
-                       
-                        
-                        
-                        <div class="additional-group vitals-item">
-                            <label for="pr">Chest Rate (per min.):</label>
-                            <input type="number" step="any" name="pr">
-                        </div>
-                      
-                        <div class="additional-group vitals-item">
-                            <label for="rr">Respiratory Rate (per min.):</label>
-                            <input type="number" step="any" name="rr">
-                        </div>
-                    </div>
+                <label for="vitals"><b>Vital Signs:</b></label>
+
+<div class="vitals-section box-group">
+
+    <div class="additional-group vitals-item" id="bmiContainer">
+        <label for="bmi">BMI:</label>
+        <input type="number" step="any" name="bmi" id="bmi"
+            placeholder="BMI will appear here"
+            style="background-color: #f9f9f9; color: #033cad; font-weight: bolder; border: none;" readonly>
+    </div>
+
+    <div class="additional-group vitals-item">
+        <label for="height" class="required">Height (cm):</label>
+        <input type="number" step="any" name="height" id="height" placeholder="Enter height (e.g, 160)" oninput="calculateBMI()" required>
+    </div>
+
+    <div class="additional-group vitals-item">
+        <label for="weight" class="required">Weight (kg):</label>
+        <input type="number" step="any" name="weight" id="weight" placeholder="Enter weight (e.g, 50.2)" oninput="calculateBMI()" required>
+    </div>
+
+    <div class="additional-group vitals-item">
+        <label for="temp" class="required">Temperature (°C):</label>
+        <input type="number" step="any" id="temp" name="temp" placeholder="Enter temperature (e.g, 38.2)" required>
+    </div>
+
+    <div class="additional-group vitals-item">
+        <label for="bp" class="required">Blood Pressure (mm Hg):</label>
+        <input type="text" step="any" id="bp" name="bp" placeholder="Enter BP (e.g., 120/80)" required>
+    </div>
+
+    <div class="additional-group vitals-item">
+        <label for="pr">Chest Rate (per min.):</label>
+        <input type="number" step="any" name="pr">
+    </div>
+
+    <div class="additional-group vitals-item">
+        <label for="rr">Respiratory Rate (per min.):</label>
+        <input type="number" step="any" name="rr">
+    </div>
+
+</div>
 
                 
                    
@@ -491,7 +491,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             <div class="form-group">
                 <div class="form-group">
-                    <label for="treatment">Treatment:</label>
+                    <label for="treatment">Treatment: <i><span style="font-weight: 400;">(if no referral)</span></i></label>
                     <select id="treatment" name="treatment">
                         <option value="">Select treatment (if no referral)</option>
                         <option value="other">Other (Enter manually)</option>
@@ -738,8 +738,6 @@ document.addEventListener("DOMContentLoaded", function() {
                 const weightInput = document.getElementById('weight').value;
                 const bmiField = document.getElementById('bmi');
 
-                document.getElementById('bmiContainer').style.display = (heightInput && weightInput) ? 'block' : 'none';
-                document.getElementById('bmiSpace').style.display = (heightInput && weightInput) ? 'block' : 'none';
             
                 const height = parseFloat(heightInput);
                 const weight = parseFloat(weightInput);
