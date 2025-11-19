@@ -242,76 +242,120 @@ function noButton1ClickHandler() {
         });
     }
 
-    // Function to save form data (Initial Assessment + Referral)
-    function saveFormData(referralNeeded, callback) {
-        let formElem = $('individualRecordForm');
-        if (!formElem) {
-            alert("Form not found.");
+// Function to save form data (Initial Assessment + Referral)
+function saveFormData(referralNeeded, callback) {
+    const formElem = document.getElementById('individualRecordForm');
+    if (!formElem) {
+        alert("Form not found.");
+        return;
+    }
+
+    let formData = new FormData(formElem);
+    formData.append("referralNeeded", referralNeeded);
+
+    // ---------------------------------------------
+    // Add referral fields ONLY if referral is needed
+    // ---------------------------------------------
+    if (referralNeeded === "yes") {
+        let bhwElem = document.getElementById('user_id');
+        let bhwId = bhwElem ? bhwElem.value : "";
+
+        if (!bhwId) {
+            alert("Error: No user_id (BHW ID) provided.");
+            console.error("❌ Missing BHW ID.");
             return;
         }
-        let formData = new FormData(formElem);
-        formData.append("referralNeeded", referralNeeded);
 
-        if (referralNeeded === "yes") {
-            let bhwElement = $('user_id');
-            let bhwId = bhwElement ? bhwElement.value : "";
-            if (!bhwId) {
-                console.error("❌ Error: No BHW ID provided.");
-                alert("Error: No BHW ID provided.");
-                return;
-            }
-            formData.append("user_id", bhwId);
-            formData.append("referral_status", "pending");
+        formData.append("user_id", bhwId);
+        formData.append("referral_status", "pending");
+    }
+
+    fetch("php/saveInitialAssessment.php", {
+        method: "POST",
+        body: formData
+    })
+    .then(async (response) => {
+        let raw = await response.text();
+
+        // Log raw response for debugging
+        console.log("📥 Raw server response:", raw);
+
+        // Try to parse JSON safely
+        let json;
+        try {
+            json = JSON.parse(raw);
+        } catch (e) {
+            console.error("❌ Invalid JSON received:", raw);
+            alert("⚠ Server returned invalid JSON. Check PHP output in console.");
+            return null;
         }
 
-        fetch('php/saveInitialAssessment.php', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => {
-            // try to parse JSON safely
-            return response.json().catch(() => response.text());
-        })
-        .then(parsed => {
-            // parsed might be object or string
-            let data = (typeof parsed === 'string') ? (() => {
-                try { return JSON.parse(parsed); } catch (e) { return parsed; }
-            })() : parsed;
+        return json;
+    })
+    .then((data) => {
+        if (!data) return;
 
-            dbg("🔹 Server Response (saveFormData):", data);
+        console.log("🔹 Parsed Response:", data);
 
-            if (!data || typeof data !== 'object') {
-                alert("❌ Invalid response from server.");
-                return;
-            }
-
-            if (data.status === 'duplicate' && data.patient_id) {
+        // -------------------------------------------------
+        // CASE 1 — Duplicate Patient
+        // -------------------------------------------------
+        if (data.status === "duplicate") {
+            if (data.patient_id) {
                 showPatientExistsModal(data.patient_id);
-            } else if (data.status === 'success') {
-                savedPatientId = data.patient_id;
-                dbg("✅ Patient record saved successfully. patient_id:", savedPatientId);
-                 modal2.style.display = "none";
-
-                if (data.visit_id) {
-                    localStorage.setItem('visit_id', data.visit_id);
-                    dbg("💾 Saved visit_id:", data.visit_id);
-                } else {
-                    dbg("⚠️ No visit_id returned from server.");
-                    modal4.style.display = "block";
-                }
-
-                if (typeof callback === "function") callback();
             } else {
-                errorModal.style.display = "block";
-                alert('❌ Error: ' + (data.message || "Unknown error."));
+                alert("Duplicate detected, but patient_id missing in response.");
             }
-        })
-        .catch(error => {
-            errorModal.style.display = "block";
-            console.error("❌ Fetch Error (saveFormData):", error);
-            alert("Network error. Please check your connection.");
-        });
-    }
+            return;
+        }
+
+        // -------------------------------------------------
+        // CASE 2 — SUCCESS
+        // -------------------------------------------------
+        if (data.status === "success") {
+            savedPatientId = data.patient_id;
+            console.log("✅ Saved patient_id:", savedPatientId);
+
+            // Save visit_id for referral later
+            if (data.visit_id) {
+                localStorage.setItem("visit_id", data.visit_id);
+                console.log("💾 Saved visit_id:", data.visit_id);
+            } else {
+                console.warn("⚠️ No visit_id returned by backend.");
+                if (window.modal4) modal4.style.display = "block";
+            }
+
+            // Callback function (ex: run saveReferral)
+            if (typeof callback === "function") callback();
+            return;
+        }
+
+        // -------------------------------------------------
+        // CASE 3 — ERROR
+        // -------------------------------------------------
+        if (data.status === "error") {
+            console.error("❌ PHP Error:", data.message);
+
+            let details = data.error_details ? "\n\nDETAILS:\n" + data.error_details : "";
+            alert("❌ ERROR: " + data.message + details);
+
+            if (window.errorModal) errorModal.style.display = "block";
+            return;
+        }
+
+        // -------------------------------------------------
+        // CASE 4 — Unexpected response
+        // -------------------------------------------------
+        console.warn("⚠ Unknown response format:", data);
+        alert("Unexpected server response. Check console output.");
+    })
+    .catch((error) => {
+        console.error("❌ Fetch Error:", error);
+        alert("Network error. Please check your connection.");
+        if (window.errorModal) errorModal.style.display = "block";
+    });
+}
+
 
  // No button: Save Initial Assessment only
     function svButtonClickHandler(event) {
@@ -377,10 +421,19 @@ function noButton1ClickHandler() {
             return;
         }
 
-        dbg("📤 Saving Referral for:", { savedPatientId, bhwId });
+  // ✅ Declare visitId BEFORE using it
+    let visitId = localStorage.getItem("visit_id");
+    if (!visitId) {
+        console.error("❌ Error: No visit ID found in localStorage.");
+        alert("Error: Missing visit ID.");
+        return;
+    }
 
-        // Save referral
-        saveReferral(savedPatientId, bhwId);
+    dbg("📤 Saving Referral for:", { savedPatientId, bhwId, visitId });
+
+    // Save referral
+    saveReferral(savedPatientId, bhwId, visitId);
+
 
         // Move to next modal after successful referral
         if (modal2) modal2.style.display = 'none';
@@ -398,40 +451,95 @@ function noButton1ClickHandler() {
         dbg("saveButton not found in DOM");
     }
 
-    // Function to save referral
-    function saveReferral(patientId, bhwId) {
-        let formData = new FormData();
-        formData.append("patient_id", patientId);
-        formData.append("user_id", bhwId);
+   // Function to save referral
+// Function to save referral
+function saveReferral(patientId, bhwId, visitId) {
+    let formData = new FormData();
+    formData.append("patient_id", patientId);
+    formData.append("user_id", bhwId);
+    formData.append("visit_id", visitId);
 
-        fetch('php/saveReferral.php', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json().catch(() => null))
-        .then(data => {
-            if (!data) {
-                dbg("❌ Invalid response from saveReferral");
-                alert("Invalid response from server.");
-                return;
-            }
+    fetch('php/saveReferral.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(async response => {
+        let text = await response.text();
 
-            if (data.status === "success") {
-                modal3.style.display = 'block';
+        console.log("📥 Raw Referral Response:", text);
+
+        // Attempt to parse JSON safely
+        let json;
+        try {
+            json = JSON.parse(text);
+        } catch (e) {
+            console.error("❌ Failed to parse JSON:", text);
+            alert("⚠ Server returned invalid JSON. Check console for details.");
+            return null;
+        }
+
+        return json;
+    })
+    .then(data => {
+        if (!data) return;
+
+        // ------------------------------------------------
+        // Show PHP warnings/notices (very important)
+        // ------------------------------------------------
+        if (data.error_details) {
+            console.warn("⚠️ PHP Warnings/Notices from saveReferral.php:\n", data.error_details);
+        }
+
+        // ------------------------------------------------
+        // SUCCESS
+        // ------------------------------------------------
+        if (data.status === "success") {
+
+            console.log("📌 Referral saved successfully!");
+            modal3.style.display = 'block';
+
+            if (data.referral_id) {
+                console.log("📌 Referral ID:", data.referral_id);
                 localStorage.setItem("referral_id", data.referral_id);
-                dbg("📌 Referral saved successfully:", data.referral_id);
             } else {
-                errorModal.style.display = "block";
-                console.error("❌ Error saving referral:", data.message);
-                alert("Error: " + (data.message || "Unknown error"));
+                console.warn("⚠ Referral saved but no referral_id returned.");
             }
-        })
-        .catch(error => {
-            errorModal.style.display = "block";
-            console.error("❌ Fetch Error (saveReferral):", error);
-            alert("Network error. Please try again.");
-        });
-    }
+
+            if (window.modal3) modal3.style.display = 'block';
+            return;
+        }
+
+        // ------------------------------------------------
+        // ERROR
+        // ------------------------------------------------
+        if (data.status === "error") {
+            let message = data.message || "Unknown error";
+
+            if (data.error_details) {
+                message += "\n\nDetails:\n" + data.error_details;
+            }
+
+            console.error("❌ Error saving referral:", message);
+
+            if (window.errorModal) errorModal.style.display = "block";
+            alert(message);
+
+            return;
+        }
+
+        // ------------------------------------------------
+        // Unexpected response
+        // ------------------------------------------------
+        console.warn("⚠️ Unexpected response format:", data);
+        alert("Unexpected server response. See console.");
+    })
+    .catch(error => {
+        console.error("❌ Fetch Error (saveReferral):", error);
+        alert("Network error. Please try again.");
+        if (window.errorModal) errorModal.style.display = "block";
+    });
+}
+
 
     // Close modal3
     on(closeBtn3, 'click', function () {

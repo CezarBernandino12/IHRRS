@@ -91,6 +91,15 @@ if (data.consultation.diagnosis_status !== "Ongoing") {
         addMedCertBtn.style.cursor = "not-allowed";
 
 }
+
+
+
+if (data.consultation.diagnosis_status === "") {
+        addMedCertBtn.disabled = false;
+        addMedCertBtn.style.opacity = "1";   
+        addMedCertBtn.style.cursor = "pointer";
+             
+                }
              
                 }
 

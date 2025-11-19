@@ -208,6 +208,20 @@ fetch('php/getUserId.php')
                     <label for="birthPlace" class="required">Birth Place:</label>
                     <input type="text" id="birthPlace" name="birthplace" placeholder="Birth place" required>
                 </div>
+
+                   <div class="form-group">
+                    <label for="sex" class="required">Sex:</label>
+                    <div id="sex" class="radio-group">
+                        <label class="radio-option" id="sex">
+                            <input type="radio" name="sex" value="Male"> 
+                            Male
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="sex" value="Female"> 
+                            Female
+                        </label>
+                    </div>
+                </div> 
                 
 
                 <!-- Column 2 -->
@@ -404,21 +418,9 @@ document.addEventListener("DOMContentLoaded", function () {
                     <label for="familySerialNo">Family Serial number:</label>
                     <input type="number" name="familySerialNo" id="familySerialNo" placeholder="Family Serial no.">
                 </div>
-                <br>
+              
 
-                <div class="form-group">
-                    <label for="sex" class="required">Sex:</label>
-                    <div id="sex" class="radio-group">
-                        <label class="radio-option" id="sex">
-                            <input type="radio" name="sex" value="Male"> 
-                            Male
-                        </label>
-                        <label class="radio-option">
-                            <input type="radio" name="sex" value="Female"> 
-                            Female
-                        </label>
-                    </div>
-                </div> 
+             
 
                 <div class="form-group">
                     <label for="4ps">4Ps Status:</label>
@@ -498,14 +500,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     <label for="vitals"><b>Vital Signs:</b></label>
                     <div class="vitals-section box-group">
-                        <div class="additional-group vitals-item" style="display: none;" id="bmiContainer">
+                        <div class="additional-group vitals-item" id="bmiContainer">
                             <label for="bmi">BMI:</label>
-                            <input type="number" step="any" name="bmi" id="bmi" placeholder="BMI will appear here" readonly>
+                            <input type="number" step="any" name="bmi" id="bmi" placeholder="BMI will appear here" style="background-color: #f9f9f9; color: #033cad; font-weight: bolder; border: none;" readonly>
                         </div>
-                        <div class="additional-group" id="bmiSpace" style="display: none;" hidden>
-                            <label for="space"></label>
-                          
-                        </div>
+                     
                         
                         <div class="additional-group vitals-item">
                             <label for="height" class="required">Height (cm):</label>
@@ -704,8 +703,6 @@ document.addEventListener("click", function(event) {
                 const height = parseFloat(heightInput);
                 const weight = parseFloat(weightInput);
 
-                document.getElementById('bmiContainer').style.display = (heightInput && weightInput) ? 'block' : 'none';
-                document.getElementById('bmiSpace').style.display = (heightInput && weightInput) ? 'block' : 'none';
             
                 if (height > 0 && weight > 0) {
                     // Convert height from cm to meters
