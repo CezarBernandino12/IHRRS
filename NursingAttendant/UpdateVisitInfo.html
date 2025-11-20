@@ -1444,7 +1444,9 @@ $('#proceedButton').on('click', function() {
     }
 
     // Redirect only (always)
-    window.location.href = 'pending.html';
+    visit_id = document.getElementById("visit_id").value;
+    window.location.href = `visitInfo.html?visit_id=${visit_id}`;
+
 });
 
 

@@ -6,62 +6,94 @@
     <link rel="icon" href="../img/logo.png">
     <link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
     <link rel="stylesheet" href="css/dashstyle.css">
-    <link rel="stylesheet" href="css/details.css">
+    <link rel="stylesheet" href="../BHW/css/details.css">
     <link rel="stylesheet" href="css/logout.css">
-    <title>Referral Slip Preview</title>
+    <title>Assessment Slip Preview</title>
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 </head>
-
+ 
 <body>
 
-    <section id="sidebar">
-		<a href="#" class="brand" style="display: flex; align-items: center;">
+   <!-- Sidebar Section -->
+	<section id="sidebar">
+		<a href="#" class="brand">
 			<img src="../img/logo.png" alt="RHULogo" class="logo">
-			<span class="text">Hello BHW</span>
+			<span class="text">Hello Nurse</span>
 		</a>
-        <ul class="side-menu top">
+		<ul class="side-menu top">
+			<li>
+				<a href="dashboard.html">
+					<i class="bx bxs-dashboard"></i>
+					<span class="text">Dashboard</span>
+				</a>
+			</li>
             <li>
-                <a href="dashboard.html">
-                    <i class="bx bxs-dashboard"></i>
-                    <span class="text">Dashboard</span>
-                </a>
-            </li>
-            <li>
-                <a href="ITR.html">
+				<a href= "ITR.html">
+					<i class="bx bxs-user"></i>
+					<span class="text">Add New ITR</span>
+				</a>
+			</li>
+			<li class="active">
+                <a href="#" id="updateReferrals">
                     <i class="bx bxs-user"></i>
-                    <span class="text">Add New ITR</span>
+                    <span class="text">Pending Referrals</span>
                 </a>
             </li>
+            
+            <script>
+            document.getElementById("updateReferrals").addEventListener("click", function (event) {
+                event.preventDefault(); // Prevent default navigation
+            
+                fetch("php/update_referrals.php") // Call PHP file
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data.message); // Log success message (optional)
+                    window.location.href = "pending.html"; // Redirect after updating
+                })
+                .catch(error => {
+                    console.error("Error updating referrals:", error);
+                    window.location.href = "pending.html"; // Still redirect even if an error occurs
+                });
+            });
+            </script>
+
+            	<li>
+				<a href="followUpConsultations.html">
+					<i class="bx bxs-user"></i>
+					<span class="text">Follow-Up Visits</span>
+				</a>
+			</li>
+            
+			<li>
+				<a href="searchPatient.html">
+					<i class="bx bxs-notepad"></i>
+					<span class="text">Patient Records</span>
+				</a>
+			</li>
             <li>
-                <a href="searchPatient.html">
-                    <i class="bx bxs-notepad"></i>
-                    <span class="text">Patient Records</span>
-                </a>
-            </li>
-            <li>
-                <a href="History.html">
+                <a href="history.html">
                     <i class="bx bx-history"></i>
                     <span class="text">Referral History</span>
                 </a>
             </li>
             <li>
-                <a href="reports.html">
-                    <i class="bx bx-notepad"></i>
-                    <span class="text">Reports</span>
-                </a>
-            </li>
-        </ul>
-        <ul class="side-menu">
-            <li>
-                <a href="#" class="logout" onclick="return confirmLogout()">
+				<a href="reports.html">
+					<i class="bx bx-notepad"></i>
+					<span class="text">Reports</span>
+				</a>
+			</li>
+		</ul>
+		<ul class="side-menu">
+			<li>
+				<a href="#" class="logout" onclick="return confirmLogout()">
                <i class="bx bxs-log-out-circle"></i>
                 <span class="text">Logout</span>
                 </a>
-            </li>
-        </ul>
-    </section>
+			</li>
+		</ul>
+	</section>
 
     <section id="content">
         <nav>
@@ -76,19 +108,19 @@
                 </div>
             </form>
             <div class="greeting">
-                <span id="userGreeting">Hello BHW!</span>
+                <span id="userGreeting">Hello Nurse!</span>
             </div>
             <a href="#" class="profile">
-                <img src="../img/bhw.png">
+                <img src="../img/nurse.png">
             </a>
         </nav>
 
         <main>
             <div class="head-title">
                 <div class="left">
-                    <h1>Referral Slip Preview</h1>
+                    <h1>Assessment Slip Preview</h1>
                     <ul class="breadcrumb">
-                        <li><a href="#">Referral Slip Preview</a></li>
+                        <li><a href="#">Slip Preview</a></li>
                         <li><i class="bx bx-chevron-right"></i></li>
                         <a class="active" href="#" onclick="history.back(); return false;">Go back</a>
                     </ul>
@@ -110,9 +142,9 @@
     <div class="line-1">Republic of the Philippines</div>
     <div class="line-2">Daet, Camarines Norte</div>
     <div class="line-3" id="barangay-info">N/A</div>
- 
+
     <hr class="referral-rule">
-    <h1 class="title">Referral Slip</h1>
+    <h1 class="title">Assessment Slip</h1>
   </div>
 
   <img src="../img/mho_logo.png" alt="RHU Logo" class="referral-logo right" aria-hidden="true">
@@ -123,7 +155,8 @@
    
 <!-- Meta strip -->
 <div class="referral-meta">
-  <span class="badge"><i class='bx bx-hash'></i> Referral ID: <span id="referral_id"></span></span>
+  <div hidden><span class="badge"><i class='bx bx-hash'></i> Referral ID: <span id="referral_id"></span></span></div>
+  
   <span class="badge"><i class='bx bx-calendar'></i> Date: <span id="date"></span></span>
 </div>
 
@@ -184,7 +217,7 @@
 
 <!-- Chief Complaints -->
 <div class="section-card">
-  <div class="section-title">Chief Complaints</div>
+  <div class="section-title">Chief Complaints/Reason for Visit</div>
   <div id="complaints" class="textbox"></div>
 </div>
 
@@ -210,8 +243,8 @@
 <div class="signature-container">
   <div style="font-size: 16px; font-weight: bolder;">Signature</div>
       <div class="line"></div>
-    <span class="name" id="bhwName">Barangay Health Worker</span>
-    <div class="section-title">Barangay Health Worker</div>
+    <span class="name" id="bhwName"></span>
+    <div class="section-title">Nursing Attendant</div>
   </div>
 
 
@@ -266,7 +299,7 @@
                             console.error('No visit_id found in referral data');
                             document.getElementById("viewRecordLink").style.display = 'none'; // Hide link if no visit_id
                         }
-                        document.getElementById('barangay-info').textContent = data.barangay + ' Health Station';
+                        document.getElementById('barangay-info').textContent = data.rhu || '';
                         document.getElementById('referral_id').textContent = data.referral_id || '';
                         const raw = data.referral_date;
 document.getElementById('date').textContent = raw
@@ -330,8 +363,10 @@ if (data.date_of_birth) {
             } else {
                 alert("No referral ID provided in URL.");
             }
+
         </script>
     <script>
+      
         function getReferralIdFromURL() {
             let params = new URLSearchParams(window.location.search);
             let referralId = params.get('referral_id');
@@ -456,6 +491,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // keep the rest of your existing code (auth, stats, modals, etc.)
 });
+
 </script>
 
 </body>

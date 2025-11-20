@@ -88,6 +88,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const errorModal = $('errorModal');
     const errorCloseBtn = $('errorCloseBtn');
 
+    const viewDetailsButton = document.getElementById('viewDetailsButton');
+
     dbg("Elements:", {
         submitButton, modal1, closeBtn1, svButton, yesButton1,
         modal2, modal3, modal4, modal5, diagButton, patientExistsModal, closeBtn6
@@ -115,6 +117,23 @@ document.addEventListener("DOMContentLoaded", () => {
     });
  
     
+    // View Details button functionality
+if (viewDetailsButton) {
+    viewDetailsButton.addEventListener('click', function () {
+        let referralId = localStorage.getItem('referral_id') || new URLSearchParams(window.location.search).get('referral_id'); 
+
+        if (!referralId) {
+            alert("❌ Error: No referral ID found. Please submit a referral first.");
+            return;
+        }
+
+        console.log("🔹 Redirecting to: details.html?referral_id=" + encodeURIComponent(referralId));
+        window.location.href = `details.html?referral_id=${encodeURIComponent(referralId)}`;
+    });
+} else {
+    console.warn("⚠️ Warning: viewDetailsButton not found in the DOM.");
+}
+
 
 // No button: Save Initial Assessment only
 function noButton1ClickHandler() {

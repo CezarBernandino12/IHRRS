@@ -209,16 +209,25 @@ fetch('php/getUserId.php')
       </div>
 
             <div class="form-item">
-            <label for="street" class="required">Purok / Street:</label>
-            <input
-                type="text"
-                id="street"
-                name="street"
-                placeholder="e.g., Purok 3, Mabini St."
-                autocomplete="address-line1"
-                maxlength="120"
-                required
-            />
+                <label for="street" class="required">Purok:</label>
+                <select 
+                    id="street" 
+                    name="street" 
+                    required
+                >
+                    <option value="" disabled selected>Select Purok</option>
+                    <option value="Purok 1">Purok 1</option>
+                    <option value="Purok 2">Purok 2</option>
+                    <option value="Purok 3">Purok 3</option>
+                    <option value="Purok 4">Purok 4</option>
+                    <option value="Purok 5">Purok 5</option>
+                    <option value="Purok 6">Purok 6</option>
+                    <option value="Purok 7">Purok 7</option>
+                    <option value="Purok 8">Purok 8</option>
+                    <option value="Purok 9">Purok 9</option>
+                    <option value="Purok 10">Purok 10</option>
+                </select>
+                
             </div>
 
     </div>
@@ -1015,7 +1024,7 @@ updateRemoveButtons();
                     <div class="modal-footer">
                     <button id="viewDetailsButton" class="btn yes" type="button">PRINT REFERRAL SLIP</button>
                 </div>
-            </div>
+            </div> 
             </div>
         
             <div id="myModal4" class="modal">

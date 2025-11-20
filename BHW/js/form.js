@@ -482,7 +482,7 @@ if (viewDetailsButton) {
             alert("❌ Error: No referral ID found. Please submit a referral first.");
             return;
         }
-
+ 
         console.log("🔹 Redirecting to: details.html?referral_id=" + encodeURIComponent(referralId));
         window.location.href = `details.html?referral_id=${encodeURIComponent(referralId)}`;
     });

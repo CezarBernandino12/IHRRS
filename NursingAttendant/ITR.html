@@ -259,16 +259,22 @@ fetch('php/getUserId.php')
                     </div>
 
                     <div class="form-item">
-                        <label for="street" class="required">Purok / Street:</label>
-                        <input
-                            type="text"
-                            id="street"
-                            name="street"
-                            placeholder="e.g., Purok 3, Mabini St."
-                            autocomplete="address-line1"
-                            maxlength="120"
+                        <label for="street" class="required">Purok:</label>
+                        <select 
+                            id="street" 
+                            name="street" 
                             required
-                        />
+                        >
+                            <option value="" disabled selected>Select Purok</option>
+                            <option value="Purok 1">Purok 1</option>
+                            <option value="Purok 2">Purok 2</option>
+                            <option value="Purok 3">Purok 3</option>
+                            <option value="Purok 4">Purok 4</option>
+                            <option value="Purok 5">Purok 5</option>
+                            <option value="Purok 6">Purok 6</option>
+                            <option value="Purok 7">Purok 7</option>
+                        </select>
+                        
                     </div>
 
                     </div>
@@ -423,7 +429,7 @@ document.addEventListener("DOMContentLoaded", function () {
              
 
                 <div class="form-group">
-                    <label for="4ps">4Ps Status:</label>
+                    <label for="4ps">4Ps:</label>
                     <div id="4ps" class="radio-group">
                         <label class="radio-option">
                             <input type="radio" name="4ps" value="Yes"> Yes
@@ -494,7 +500,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
                     <div class="additonal-group">
-                        <label for="chief_complaints" class="required">Chief Complaints:</label>
+                        <label for="chief_complaints" class="required">Chief Complaints/Reason for Visit:</label>
                         <textarea type="text" name="chief_complaints" id="chief_complaints" class="tall-input" placeholder="Enter complaints"></textarea>
                     </div>
 
@@ -1013,8 +1019,9 @@ updateRemoveButtons();
                     </div>
                     
                     <div class="modal-footer">
-                    <button id="doneButton" class="btn yes" type="button">Done</button>
+                    <button id="viewDetailsButton" class="btn yes" type="button">PRINT REFERRAL SLIP</button>
                 </div>
+            </div>
             </div>
             </div>
         
