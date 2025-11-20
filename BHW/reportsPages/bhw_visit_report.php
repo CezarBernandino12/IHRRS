@@ -1587,7 +1587,7 @@ function closeModal() {
 }
 
 function proceedLogout() {
-    wwindow.location.href = '../../ADMIN/php/logout.php'; 
+    window.location.href = '../../ADMIN/php/logout.php'; 
 }
 
 // Close modal when clicking outside
