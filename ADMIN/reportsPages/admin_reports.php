@@ -811,7 +811,7 @@ function closeModal() {
 }
 
 function proceedLogout() {
-    window.location.href = 'logout.php'; // Adjust path if needed
+    window.location.href = '../php/logout.php'; 
 }
 
 function confirmPrint() {

@@ -193,6 +193,17 @@ window.onclick = function(event) {
         window.location.href = "record.html?patient_id=" + patient_id;
 }
 
+    // Add Enter key functionality for search
+    document.addEventListener("DOMContentLoaded", function() {
+        const searchInput = document.getElementById("patientSearch");
+        searchInput.addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                event.preventDefault(); // Prevent form submission
+                searchPatient(); // Trigger the search function
+            }
+        });
+    });
+
 
 
 fetch('php/getUserName.php')
