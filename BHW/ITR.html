@@ -11,6 +11,7 @@
     <title>Individual Treatment Record</title>
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="css/custom-input-modal.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
@@ -802,29 +803,30 @@ function saveCustomOption(category, value) {
     }).then(response => response.json());
 }
 
-// Handler for "Other" input logic
+// Handler for "Other" input logic - uses modal instead of prompt
 function handleOtherSelection(selectElement, category, promptLabel) {
     selectElement.addEventListener("change", function () {
         if (this.value === "other") {
-            const userInput = prompt(`Enter ${promptLabel}:`);
-            if (userInput) {
-                const exists = Array.from(this.options).some(opt => opt.value === userInput);
-                if (!exists) {
-                    const newOption = new Option(userInput, userInput, true, true);
-                    this.appendChild(newOption);
-                }
-                this.value = userInput;
+            showCustomInputModal(promptLabel, (userInput) => {
+                if (userInput) {
+                    const exists = Array.from(this.options).some(opt => opt.value === userInput);
+                    if (!exists) {
+                        const newOption = new Option(userInput, userInput, true, true);
+                        this.appendChild(newOption);
+                    }
+                    this.value = userInput;
 
-                saveCustomOption(category, userInput)
-                    .then(data => {
-                        if (!data.success) {
-                            console.error(`Failed to save ${promptLabel}.`);
-                        }
-                    })
-                    .catch(error => console.error('Error:', error));
-            } else {
-                this.value = "";
-            }
+                    saveCustomOption(category, userInput)
+                        .then(data => {
+                            if (!data.success) {
+                                console.error(`Failed to save ${promptLabel}.`);
+                            }
+                        })
+                        .catch(error => console.error('Error:', error));
+                } else {
+                    this.value = "";
+                }
+            });
         }
     });
 }
@@ -1164,25 +1166,26 @@ function initMedicineSelect(selectEl) {
 function attachOtherHandler(selectEl) {
   selectEl.addEventListener('change', function () {
     if (this.value === 'other') {
-      const userInput = prompt('Enter medicine name (dosage):');
-      if (userInput && userInput.trim()) {
-        // Add to this select immediately
-        const exists = [...this.options].some(o => o.value === userInput);
-        if (!exists) this.appendChild(new Option(userInput, userInput, true, true));
-        this.value = userInput;
+      showCustomInputModal('medicine name (dosage)', (userInput) => {
+        if (userInput && userInput.trim()) {
+          // Add to this select immediately
+          const exists = [...this.options].some(o => o.value === userInput);
+          if (!exists) this.appendChild(new Option(userInput, userInput, true, true));
+          this.value = userInput;
 
-        // Persist to DB (best-effort)
-        fetch('php/save_custom_option.php', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body: `category=medicine&value=${encodeURIComponent(userInput)}`
-        }).then(() => {
-          // update cache in-memory so future rows see it
-          if (!MEDICINE_OPTIONS.includes(userInput)) MEDICINE_OPTIONS.push(userInput);
-        });
-      } else {
-        this.value = '';
-      }
+          // Persist to DB (best-effort)
+          fetch('php/save_custom_option.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `category=medicine&value=${encodeURIComponent(userInput)}`
+          }).then(() => {
+            // update cache in-memory so future rows see it
+            if (!MEDICINE_OPTIONS.includes(userInput)) MEDICINE_OPTIONS.push(userInput);
+          });
+        } else {
+          this.value = '';
+        }
+      });
     }
   });
 }
@@ -1416,6 +1419,90 @@ fetch('php/getUserName.php')
                     <button id="continueBtn" disabled>Agree and Continue</button>
     </div>
 </div>
+
+<!-- Custom Input Modal for "Other (Enter manually)" options -->
+<div id="customInputModal" class="custom-input-modal">
+    <div class="custom-input-modal-content">
+        <div class="custom-input-modal-header">
+            <h3 id="customInputModalTitle">Enter Information</h3>
+        </div>
+        <div class="custom-input-modal-body">
+            <input type="text" id="customInputField" placeholder="Enter value here">
+        </div>
+        <div class="custom-input-modal-footer">
+            <button id="customInputCancel" class="custom-input-cancel-btn">Cancel</button>
+            <button id="customInputConfirm" class="custom-input-confirm-btn">Confirm</button>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript for Custom Input Modal -->
+<script>
+// Global callback for custom input modal
+let customInputCallback = null;
+
+// Function to show custom input modal
+function showCustomInputModal(label, callback) {
+    const modal = document.getElementById('customInputModal');
+    const titleEl = document.getElementById('customInputModalTitle');
+    const inputField = document.getElementById('customInputField');
+    const confirmBtn = document.getElementById('customInputConfirm');
+    const cancelBtn = document.getElementById('customInputCancel');
+
+    // Set title
+    titleEl.textContent = `Enter ${label}`;
+    
+    // Clear input field
+    inputField.value = '';
+    inputField.placeholder = `Enter ${label}...`;
+    
+    // Store callback
+    customInputCallback = callback;
+    
+    // Show modal
+    modal.style.display = 'block';
+    
+    // Focus on input field
+    inputField.focus();
+
+    // Handle confirm button
+    const handleConfirm = () => {
+        const value = inputField.value.trim();
+        modal.style.display = 'none';
+        if (customInputCallback) {
+            customInputCallback(value || null);
+        }
+        // Clean up event listeners
+        confirmBtn.removeEventListener('click', handleConfirm);
+        cancelBtn.removeEventListener('click', handleCancel);
+        document.removeEventListener('keypress', handleEnter);
+    };
+
+    // Handle cancel button
+    const handleCancel = () => {
+        modal.style.display = 'none';
+        if (customInputCallback) {
+            customInputCallback(null);
+        }
+        // Clean up event listeners
+        confirmBtn.removeEventListener('click', handleConfirm);
+        cancelBtn.removeEventListener('click', handleCancel);
+        document.removeEventListener('keypress', handleEnter);
+    };
+
+    // Handle Enter key
+    const handleEnter = (e) => {
+        if (e.key === 'Enter') {
+            handleConfirm();
+        }
+    };
+
+    // Attach event listeners
+    confirmBtn.addEventListener('click', handleConfirm);
+    cancelBtn.addEventListener('click', handleCancel);
+    document.addEventListener('keypress', handleEnter);
+}
+</script>
 
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>     
