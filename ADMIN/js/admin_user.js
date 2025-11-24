@@ -300,6 +300,18 @@ function saveNewUser() {
     });
 }
 
+function showAssignmentFields() {
+    const roleSection = document.getElementById('roleSection');
+    const addressSection = document.getElementById('addressSection');
+    const rhuGroup = document.getElementById('rhu-group');
+
+    if (document.getElementById('role').value) {
+        roleSection.style.display = 'block';
+        addressSection.style.display = 'block';
+        rhuGroup.style.display = 'block'; // Show RHU dropdown when role is selected
+    }
+}
+
 function toggleBarangayField() {
     const role = document.getElementById('role').value;
     const barangayGroup = document.getElementById('barangayGroup');
@@ -326,6 +338,85 @@ function toggleBarangayField() {
     }
 }
 
+function filterBarangaysByRHU() {
+    const selectedRHU = document.getElementById('rhu').value;
+    const barangaySelect = document.getElementById('barangaySelect');
+    const optgroups = barangaySelect.querySelectorAll('optgroup');
+
+    optgroups.forEach(optgroup => {
+        if (selectedRHU === '' || optgroup.label === selectedRHU) {
+            optgroup.style.display = 'block';
+        } else {
+            optgroup.style.display = 'none';
+        }
+    });
+
+    // Reset barangay selection when RHU changes
+    document.getElementById('barangayDisplay').value = '';
+    document.getElementById('barangay').value = '';
+}
+
+function filterBarangayOptions() {
+    const searchInput = document.getElementById('barangaySearch').value.toLowerCase();
+    const barangaySelect = document.getElementById('barangaySelect');
+    const options = barangaySelect.querySelectorAll('option');
+
+    options.forEach(option => {
+        const text = option.textContent.toLowerCase();
+        if (text.includes(searchInput)) {
+            option.style.display = 'block';
+        } else {
+            option.style.display = 'none';
+        }
+    });
+}
+
+function toggleBarangayDropdown() {
+    const dropdown = document.getElementById('barangayDropdown');
+    const isVisible = dropdown.style.display === 'block';
+
+    // Close all other dropdowns first
+    document.querySelectorAll('.combobox-dropdown').forEach(d => {
+        d.style.display = 'none';
+    });
+
+    // Toggle this dropdown
+    dropdown.style.display = isVisible ? 'none' : 'block';
+
+    // Focus search input when opening
+    if (!isVisible) {
+        setTimeout(() => {
+            document.getElementById('barangaySearch').focus();
+        }, 100);
+    }
+}
+
+function selectBarangay(selectElement) {
+    const selectedOption = selectElement.options[selectElement.selectedIndex];
+    const value = selectedOption.value;
+    const text = selectedOption.text;
+
+    // Update display and hidden input
+    document.getElementById('barangayDisplay').value = text;
+    document.getElementById('barangay').value = value;
+
+    // Hide dropdown
+    document.getElementById('barangayDropdown').style.display = 'none';
+
+    // Clear search
+    document.getElementById('barangaySearch').value = '';
+    filterBarangayOptions(); // Reset filter
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', function(e) {
+    if (!e.target.closest('.combobox-container') && !e.target.closest('.combobox-dropdown')) {
+        document.querySelectorAll('.combobox-dropdown').forEach(dropdown => {
+            dropdown.style.display = 'none';
+        });
+    }
+});
+
 document.getElementById('contactNumber').addEventListener('input', function (e) {
     const input = e.target;
     const value = input.value;
@@ -335,7 +426,52 @@ document.getElementById('contactNumber').addEventListener('input', function (e) 
     if (input.value.length > 11) {
         input.value = input.value.slice(0, 11);
     }
-}); 
+});
+
+// Username suggestion based on full name
+document.getElementById('fullName').addEventListener('input', function (e) {
+    const fullName = e.target.value.trim();
+    const usernameField = document.getElementById('username');
+
+    if (fullName && !usernameField.value) {
+        // Generate username suggestion
+        const suggestedUsername = generateUsername(fullName);
+        usernameField.value = suggestedUsername;
+        usernameField.classList.add('username-suggestion');
+
+        // Clear suggestion styling when user starts typing in username field
+        usernameField.addEventListener('input', function() {
+            if (this.value !== suggestedUsername) {
+                usernameField.classList.remove('username-suggestion');
+            }
+        }, { once: true }); // Only trigger once
+    }
+});
+
+function generateUsername(fullName) {
+    // Clean the full name: remove special characters, convert to lowercase
+    const cleanName = fullName.toLowerCase()
+        .replace(/[^a-zA-Z\s]/g, '') // Remove non-alphabetic characters except spaces
+        .replace(/\s+/g, ' ') // Replace multiple spaces with single space
+        .trim();
+
+    const nameParts = cleanName.split(' ');
+
+    if (nameParts.length >= 2) {
+        // First name + first letter of last name + random number
+        const firstName = nameParts[0];
+        const lastNameInitial = nameParts[nameParts.length - 1].charAt(0);
+        const randomNum = Math.floor(Math.random() * 999) + 1;
+        return `${firstName}${lastNameInitial}${randomNum}`;
+    } else if (nameParts.length === 1) {
+        // Just first name + random number
+        const firstName = nameParts[0];
+        const randomNum = Math.floor(Math.random() * 999) + 1;
+        return `${firstName}${randomNum}`;
+    }
+
+    return '';
+}
 
 // PAGINATION IMPLEMENTATION (Similar to activity_logs.js)
 let currentOffset = 0;
@@ -564,36 +700,3 @@ function closeModal() {
 function proceedLogout() {
     window.location.href = 'logout.php';
 }
-
-document.addEventListener("DOMContentLoaded", function() {
-    const rhuDropdown = document.getElementById("rhu");
-    const barangayDropdown = document.getElementById("barangay");
-
-    const barangaysByRHU = {
-        "Rural Health Unit I": [
-            "Barangay 2", "Barangay Pamoragon", "Barangay Mancruz", "Barangay Magang", "Barangay Calasgasan", "Barangay Bibirao", "Barangay Camambugan", "Barangay Alawihao", "Barangay Dogongan"
-        ],
-        "Rural Health Unit II": [
-            "Barangay 1", "Barangay 6", "Barangay 7", "Barangay 8", "Barangay Gubat", "Barangay San Isidro", "Barangay Cobangbang", "Barangay Bagasbas", "Barangay Mambalite"
-        ],
-        "Rural Health Unit III": [
-            "Barangay 3", "Barangay 4", "Barangay 5", "Barangay Awitan", "Barangay Gahonon", "Barangay Borabod", "Barangay Lag-On"
-        ]
-    };
-
-    rhuDropdown.addEventListener("change", function() {
-        const selectedRHU = rhuDropdown.value;
-        const barangays = barangaysByRHU[selectedRHU] || [];
-
-        // Clear existing options
-        barangayDropdown.innerHTML = '<option value="" disabled selected>Select Barangay</option>';
-
-        // Populate barangay dropdown
-        barangays.forEach(barangay => {
-            const option = document.createElement("option");
-            option.value = barangay;
-            option.textContent = barangay;
-            barangayDropdown.appendChild(option);
-        });
-    });
-});

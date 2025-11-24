@@ -408,115 +408,157 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
     </div>
 
     <div class="modal-content">
-        <form id="addUserForm">
-            <div class="form-group">
-                <label for="fullName">FULL NAME</label>
-                <input type="text" id="fullName" name="full_name" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="username">USERNAME</label>
-                <input type="text" id="username" name="username" required>
-            </div>
+       <form id="addUserForm">
+           <!-- Personal Information Section -->
+           <div class="form-section">
+               <h3 class="section-title">Personal Information</h3>
+               <div class="form-group">
+                   <label for="fullName">FULL NAME</label>
+                   <input type="text" id="fullName" name="full_name" required>
+               </div>
 
-            <div class="form-group">
-                <label for="age">AGE</label>
-                <input type="number" id="age" name="age" min="18" max="100">
-            </div>
-            
-            
-            <div class="form-group">
-                <label for="password">PASSWORD</label>
-                <div class="password-container">
-                    <input type="password" id="password" name="password" required placeholder="At least have uppercase number & symbol">
-                    <i class="bx bx-hide password-toggle" id="passwordToggle"></i>
-                </div>
-            </div>
- 
-            <div class="form-group">
-    <label for="confirmPassword">CONFIRM PASSWORD:</label>
-    <div class="password-container">
-        <input type="password" id="confirmPassword" name="confirmPassword" required placeholder="Re-type the password">
-        <i class="bx bx-hide password-toggle" id="confirmPasswordToggle"></i>
-    </div>
-</div>
+               <div class="form-group">
+                   <label for="age">AGE</label>
+                   <input type="number" id="age" name="age" min="18" max="100">
+               </div>
 
-            
-            <div class="form-group">
-                <label for="role">ROLE</label>
-                <select id="role" name="role" required onchange="toggleBarangayField()">
-                <option value="" disabled selected>SELECT ROLE</option>
-    <option value="admin">Admin</option>
-    <option value="doctor">Physician</option>
-    <option value="bhw">BHW</option>
-    <option value="nursing_attendant">Nursing Attendant</option>
-</select>
+               <div class="form-group">
+                   <label for="contactNumber">MOBILE NUMBER</label>
+                   <input type="text" id="contactNumber" name="contact_number"
+                  pattern="\d{11}"
+                  title="Mobile number must be exactly 11 digits"
+                  maxlength="11"
+                  required>
+               </div>
+           </div>
 
-<!-- RHU dropdown (initially hidden) -->
-<div id="rhu-group" style="display: none; margin-top: 10px;">
-  <label for="rhu">Select RHU:</label>
-  <select id="rhu" name="rhu">
-    <option value="" disabled selected>Select RHU</option>
-    <option value="Rural Health Unit I">Rural Health Unit I</option>
-    <option value="Rural Health Unit II">Rural Health Unit  II</option>
-    <option value="Rural Health Unit III">Rural Health Unit  III</option>
-  </select>
-</div>
-  
-                        <!-- License number field for physicians (initially hidden) -->
-                        <div id="licenseGroup" style="display: none; margin-top: 10px;">
-                            <label for="licenseNumber">Physician License Number</label>
-                            <input type="text" id="licenseNumber" name="license_number" placeholder="Enter license number" />
-                        </div>
-            
-            <br><div class="form-group" id="barangayGroup">
-    <label for="barangay">DESIGNATED BARANGAY</label>
-    <select id="barangay" name="barangay" required>
-                    <option value="" disabled selected>Select Barangay</option>
-                    <option value="Barangay 1">Barangay 1</option>
-                    <option value="Barangay 6">Barangay 6</option>
-                    <option value="Barangay 7">Barangay 7</option>
-                    <option value="Barangay 8">Barangay 8</option>
-                    <option value="Barangay Gubat">Barangay Gubat</option>
-                    <option value="Barangay San Isidro">Barangay San Isidro</option>
-                    <option value="Barangay Cobangbang">Barangay Cobangbang</option>
-                    <option value="Barangay Bagasbas">Barangay Bagasbas</option>
-                    <option value="Barangay Manbalite">Barangay Manbalite</option>
-                    <option value="Barangay Alawihao">Barangay Alawihao</option>
-                    <option value="Barangay Awitan">Barangay Awitan</option>
-                    <option value="Barangay II (Pasig)">Barangay 2</option>
-                    <option value="Barangay III (Iraya)">Barangay 3</option>
-                    <option value="Barangay IV (Mantagbac)">Barangay 4</option>
-                    <option value="Barangay V (Pandan)">Barangay 5</option>
-                    <option value="Barangay Bibirao">Barangay Bibirao</option>
-                    <option value="Barangay Borabod">Barangay Borabod</option>
-                    <option value="Barangay Calasgasan">Barangay Calasgasan</option>
-                    <option value="Barangay Camambugan">Barangay Camambugan</option>
-                    <option value="Barangay Dogongan">Barangay Dogongan</option>
-                    <option value="Barangay Gahonon">Barangay Gahonon</option>
-                    <option value="Barangay Lag-on">Barangay Lag-on</option>
-                    <option value="Barangay Magang">Barangay Magang</option>
-                    <option value="Barangay Pamorangon">Barangay Pamorangon</option>
-                    <option value="Barangay Mancruz">Barangay Mancruz</option>
-                    </select>
-                    </div>
-            
-            <div class="form-group">
-                <label for="address">PERMANENT ADDRESS</label>
-                <input type="text" name="address" style="text-transform: uppercase;" required>
-            </div>
-                        
-            <div class="form-group">
-            <label for="contactNumber">MOBILE NUMBER</label>
-            <input type="text" id="contactNumber" name="contact_number" 
-           pattern="\d{11}" 
-           title="Mobile number must be exactly 11 digits" 
-           maxlength="11" 
-           required>
-</div>
+           <!-- Account Details Section -->
+           <div class="form-section">
+               <h3 class="section-title">Account Details</h3>
+               <div class="form-group">
+                   <label for="username">USERNAME</label>
+                   <input type="text" id="username" name="username" required>
+               </div>
 
-        </form> 
-    </div>
+               <div class="form-group">
+                   <label for="role">ROLE</label>
+                   <select id="role" name="role" required onchange="toggleBarangayField(); showAssignmentFields()">
+                   <option value="" disabled selected>SELECT ROLE</option>
+                   <option value="admin">Admin</option>
+                   <option value="doctor">Physician</option>
+                   <option value="bhw">BHW</option>
+                   <option value="nursing_attendant">Nursing Attendant</option>
+                   </select>
+               </div>
+           </div>
+
+           <!-- Role & Assignment Section -->
+           <div class="form-section" id="roleSection" style="display: none;">
+               <h3 class="section-title">Role & Assignment</h3>
+
+               <!-- RHU dropdown -->
+               <div class="form-group" id="rhu-group" style="display: none;">
+                 <label for="rhu">
+                   <i class="bx bx-building-house" style="margin-right: 8px; color: #1c538a;"></i>
+                   SELECT RHU
+                 </label>
+                 <select id="rhu" name="rhu" onchange="filterBarangaysByRHU()">
+                   <option value="" disabled selected>Select RHU</option>
+                   <option value="Rural Health Unit I">Rural Health Unit I</option>
+                   <option value="Rural Health Unit II">Rural Health Unit II</option>
+                   <option value="Rural Health Unit III">Rural Health Unit III</option>
+                 </select>
+               </div>
+
+               <!-- License number field for physicians -->
+               <div class="form-group" id="licenseGroup" style="display: none;">
+                   <label for="licenseNumber">
+                     <i class="bx bx-id-card" style="margin-right: 8px; color: #1c538a;"></i>
+                     PHYSICIAN LICENSE NUMBER
+                   </label>
+                   <input type="text" id="licenseNumber" name="license_number" placeholder="Enter physician license number" />
+               </div>
+
+               <!-- Barangay combobox -->
+               <div class="form-group" id="barangayGroup" style="display: none;">
+                   <label for="barangayDisplay">
+                       <i class="bx bx-map-pin" style="margin-right: 8px; color: #1c538a;"></i>
+                       DESIGNATED BARANGAY
+                   </label>
+                   <div class="combobox-container">
+                       <input type="text" id="barangayDisplay" readonly placeholder="Click to select barangay" onclick="toggleBarangayDropdown()">
+                       <input type="hidden" id="barangay" name="barangay" required>
+                       <i class="bx bx-chevron-down combobox-arrow" onclick="toggleBarangayDropdown()"></i>
+                   </div>
+                   <div class="combobox-dropdown" id="barangayDropdown" style="display: none;">
+                       <input type="text" id="barangaySearch" placeholder="Search barangays..." onkeyup="filterBarangayOptions()">
+                       <select id="barangaySelect" size="6" onchange="selectBarangay(this)">
+                           <optgroup label="Rural Health Unit I">
+                               <option value="Barangay 2">Barangay 2</option>
+                               <option value="Barangay Pamorangon">Barangay Pamorangon</option>
+                               <option value="Barangay Mancruz">Barangay Mancruz</option>
+                               <option value="Barangay Magang">Barangay Magang</option>
+                               <option value="Barangay Calasgasan">Barangay Calasgasan</option>
+                               <option value="Barangay Bibirao">Barangay Bibirao</option>
+                               <option value="Barangay Camambugan">Barangay Camambugan</option>
+                               <option value="Barangay Alawihao">Barangay Alawihao</option>
+                               <option value="Barangay Dogongan">Barangay Dogongan</option>
+                           </optgroup>
+                           <optgroup label="Rural Health Unit II">
+                               <option value="Barangay 1">Barangay 1</option>
+                               <option value="Barangay 6">Barangay 6</option>
+                               <option value="Barangay 7">Barangay 7</option>
+                               <option value="Barangay 8">Barangay 8</option>
+                               <option value="Barangay Gubat">Barangay Gubat</option>
+                               <option value="Barangay San Isidro">Barangay San Isidro</option>
+                               <option value="Barangay Cobangbang">Barangay Cobangbang</option>
+                               <option value="Barangay Bagasbas">Barangay Bagasbas</option>
+                               <option value="Barangay Manbalite">Barangay Manbalite</option>
+                           </optgroup>
+                           <optgroup label="Rural Health Unit III">
+                               <option value="Barangay 3">Barangay 3</option>
+                               <option value="Barangay 4">Barangay 4</option>
+                               <option value="Barangay 5">Barangay 5</option>
+                               <option value="Barangay Awitan">Barangay Awitan</option>
+                               <option value="Barangay Gahonon">Barangay Gahonon</option>
+                               <option value="Barangay Borabod">Barangay Borabod</option>
+                               <option value="Barangay Lag-on">Barangay Lag-on</option>
+                           </optgroup>
+                       </select>
+                   </div>
+               </div>
+           </div>
+
+           <!-- Address Information Section -->
+           <div class="form-section" id="addressSection" style="display: none;">
+               <h3 class="section-title">Address Information</h3>
+               <div class="form-group">
+                   <label for="address">PERMANENT ADDRESS</label>
+                   <input type="text" name="address" style="text-transform: uppercase;" required>
+               </div>
+           </div>
+
+           <!-- Security Information Section -->
+           <div class="form-section">
+               <h3 class="section-title">Security Information</h3>
+               <div class="form-group">
+                   <label for="password">PASSWORD</label>
+                   <div class="password-container">
+                       <input type="password" id="password" name="password" required placeholder="At least 1 uppercase, 1 number, 6+ characters">
+                       <i class="bx bx-hide password-toggle" id="passwordToggle"></i>
+                   </div>
+               </div>
+
+               <div class="form-group">
+                   <label for="confirmPassword">CONFIRM PASSWORD</label>
+                   <div class="password-container">
+                       <input type="password" id="confirmPassword" name="confirmPassword" required placeholder="Re-type the password">
+                       <i class="bx bx-hide password-toggle" id="confirmPasswordToggle"></i>
+                   </div>
+               </div>
+           </div>
+       </form>
+   </div>
     
     <div class="modal-footer">
         <button type="button" class="cancel-btn" onclick="closeAddUserModal()">Cancel</button>
