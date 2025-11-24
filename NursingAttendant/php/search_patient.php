@@ -13,16 +13,27 @@ if (isset($_POST['query'])) {
     
     $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    if ($results) {
+    if ($results) { 
         foreach ($results as $row) {
+    
+            // Format date of birth
+            $dob = date("F j, Y", strtotime($row['date_of_birth']));
+    
             echo '<div class="result-info-section">
                     <div class="search-result" onclick="selectPatient(' . $row['patient_id'] . ')">
-                        <div style="font-size: 17px;"><strong>' . htmlspecialchars($row['last_name'] . ', ' . $row['first_name'] . ' ' . $row['middle_name']) . '</strong></div>
+                        <div style="font-size: 17px;"> 
+                            <span class="icon">
+                                <img src="../img/person_icon.png" alt="person icon" style="width:35px; height:30px; vertical-align:middle; margin-bottom: 8px; margin-right: 10px;">
+                            </span>
+                            <strong>' . htmlspecialchars($row['last_name'] . ', ' . $row['first_name'] . ' ' . $row['middle_name']) . '</strong>
+                        </div>
                         <div>' . htmlspecialchars($row['sex']) . '</div>
-                        <div>' . htmlspecialchars($row['date_of_birth']) . '</div>
+                        <div>' . $dob . '</div>
                     </div>
                   </div><br>';
         }
+    
+    
         
     } else {
         echo '<div class="no-results-container">

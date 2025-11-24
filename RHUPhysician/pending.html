@@ -208,7 +208,7 @@
                         <td style="padding: 18px 10px;">${referral.referral_id}</td>
                         <td>${formatDate(referral.referral_date)}</td>
                         <td>${referral.patient_name}</td>
-                        <td>${referral.referral_from}</td>
+                        <td>${referral.referral_from || 'Nursing Attendant'}</td>
                         <td class="${referral.referral_status.toLowerCase()}">${referral.referral_status}</td>
            
                     `;

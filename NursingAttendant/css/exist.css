@@ -805,7 +805,7 @@ p {
     padding: 15px;
     border-radius: 10px;
     background-color: #fff; 
-	margin-bottom: 20px;
+	margin-bottom: 5px;
 }
 
 .additional-group label {
@@ -831,7 +831,8 @@ p {
 .vitals-section .form-group{
   flex: 1 1 220px;         
   max-width: 100%;        
-  min-width: 0;            
+  min-width: 0; 
+  margin-top: -20px;           
 }
 
 
@@ -1504,7 +1505,7 @@ input, select, textarea {
     padding: 20px;
     border: 2px solid #879AC5;
     border-radius: 5px;
-    margin-top: 20px;
+    margin-top: 5px;
 }
 
 

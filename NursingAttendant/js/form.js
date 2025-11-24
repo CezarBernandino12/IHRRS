@@ -66,6 +66,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     updateElement(".doctor", data.consultation.full_name);
                     updateElement(".licenseNo", data.consultation.license_number);
                     updateElement(".rhu", data.consultation.rhu);
+                   
 
                     // store consultation_id in a hidden field
                     const consultationField = document.getElementById("consultation_id");
@@ -101,6 +102,9 @@ if (data.consultation.diagnosis_status === "") {
              
                 }
              
+
+                document.getElementById("status").value = data.consultation.diagnosis_status || "";
+                
                 }
 
 
