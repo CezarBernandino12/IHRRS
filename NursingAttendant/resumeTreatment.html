@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="css/exist.css">
     <link rel="stylesheet" href="css/print.css">
     <link rel="stylesheet" href="css/logout.css">
+    <link rel="stylesheet" href="css/select2-custom.css">
     <title>Resume Treatment</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
@@ -242,26 +243,28 @@
                         <input type="file" id="photo" name="photo" accept="image/*,.pdf" capture="environment">
 
 
-                         <div class="form-group">
-                        <label for="diagnosis">Diagnosis:</label>
-                         <input type="text" id="diagnosis" name="diagnosis" readonly>
+                        <div style="display: flex; gap: 20px; align-items: flex-end;">
+                            <div style="flex: 1; display: flex; flex-direction: column;">
+                                <label for="diagnosis" class="required" style="font-weight: bold; margin-bottom: 5px;">Diagnosis:</label>
+                                <input type="text" id="diagnosis" name="diagnosis" readonly>
+                            </div>
                         
-                    </div>
-                    
-                        <div class="form-group">
-                            <label for="status">Diagnosis Status:</label>
-                            <select id="status" name="status" class="select2">
-                                <option value="Ongoing">Ongoing</option>
-                                <option value="Treated">Treated</option>
-                                <option value="Referred">Referred</option>
-                                <option value="Deceased">Deceased</option>
-                            </select>
+                            <div id="diagnosis-status-wrapper" style="flex: 1; display: flex; flex-direction: column;">
+                                <label for="status" style="font-weight: bold; margin-bottom: 5px;">Diagnosis Status:</label>
+                                <select id="status" name="status" class="select2" style="border-radius: 10px;">
+                                    <option value="Ongoing">Ongoing</option>
+                                    <option value="Treated">Treated</option>
+                                    <option value="Referred">Referred</option>
+                                    <option value="Deceased">Deceased</option>
+                                </select>
+                            </div>
                         </div>
+                        
                      
-                        <br>
+                        <br>  <br>
 
                           <div class="form-row">
-                        <label for="vitals"><b>Add Vital Signs:</b></label>
+                        <h4>Add Vital Signs</h4>
                         <div class="vitals-section">
                           
                             <div class="form-group" style="font-weight: bold;">
@@ -335,31 +338,50 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
-                        <div id="medicine-container" style="display: flex; flex-direction: column; gap: 15px;">
-                            <div class="medicine-entry" style="display: flex; gap: 10px; align-items: center; padding: 10px; border: 1px solid #ddd; border-radius: 4px; background-color: #f9f9f9;">
-                                <div class="form-group" style="flex: 1;"> 
-                                    <label for="medicine_given[]">Medication Given:</label>
-                                    <select name="medicine_given[]" class="medicine-select select2" style="width: 100%;">
-                                        <option value="">Select</option>
-                                        <option value="other">Other (Enter manually)</option>
-                                    </select>
-                                </div>
-                                
-                                <div class="form-group" style="display: flex; align-items: flex-end; gap: 10px;">
-                                    <div>
-                                        <label for="quantity_given[]">Quantity:</label>
-                                        <div class="quantity-container" style="display: flex; gap: 5px;">
-                                            <button type="button" class="btn-minus">−</button>
-                                            <input type="number" name="quantity_given[]" value="0" min="0" style="height: 17px;">
-                                            <button type="button" class="btn-plus">+</button>
-                                        </div>
-                                    </div>
-                                    <button type="button" class="btn-remove" style="background-color: #e6e6e6; color: rgb(0, 0, 0); border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; height: 35px;">
-                                        Remove
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
+<div id="medicine-container" style="display: flex; flex-direction: column; gap: 15px;"> 
+    <div class="medicine-entry" 
+         style="display: flex; align-items: flex-end; gap: 15px; padding: 10px; border: 1px solid #ddd; border-radius: 4px; background-color: #f9f9f9; flex-wrap: wrap;">
+  
+      <!-- Medication Given -->
+      <div class="form-group" style="flex: 1; min-width: 200px;">
+        <label for="medicine_given[]" style="display: block; margin-bottom: 5px;">Medication Given:</label>
+        <select name="medicine_given[]" class="medicine-select select2" style="width: 100%; height: 35px;">
+          <option value="">Select</option>
+          <option value="other">Other (Enter manually)</option>
+        </select>
+      </div>
+  
+      <!-- Quantity -->
+      <div class="form-group" style="min-width: 160px;">
+        <label for="quantity_given[]" style="display: block; margin-bottom: 5px;">Quantity:</label>
+        <div class="quantity-container" style="display: flex; align-items: center; gap: 5px; height: 30px;">
+          <button type="button" class="btn-minus">−</button>
+          <input type="number" name="quantity_given[]" value="0" min="0" style="height: 35px; width: 60px; text-align: center;">
+          <button type="button" class="btn-plus">+</button>
+        </div>
+      </div>
+  
+      <!-- Instruction -->
+       <div class="form-group" style="flex: 2; min-width: 300px;">
+        <label for="med_instruction" style="display: block; margin-bottom: 5px;">Instruction:</label>
+        <select id="med_instruction[]" name="med_instruction[]" class="med-instruction select2" style="width: 100%; height: 30px; background-color: white; padding: 0px; padding-left: 2px;">
+          <option value="">Select</option>
+          <option value="other">Other (Enter manually)</option>
+        </select>
+      </div>
+  
+  
+      <!-- Remove Button -->
+      <div class="form-group" style="display: flex; align-items: flex-end;">
+        <button type="button" class="btn-remove" 
+                style="background-color: #e6e6e6; color: #000; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; height: 35px;">
+          Remove
+        </button>
+      </div>
+  
+    </div>
+  </div>
+  
                         
                         <div class="add-medicine-container">
                             <button type="button" id="add-medicine" class="add-medicine">+ Add</button>
@@ -403,17 +425,106 @@ document.addEventListener("click", function(event) {
                     </div>
                     
                       <input type="hidden" name="patient_id" id="patient_id">
-                      <input type="hidden" name="doctor_id" id="doctor_id">
+                      <input type="hidden" name="user_id" id="user_id">
                       <input type="hidden" name="visit_id" id="visit_id">
 
-                    </div> </div>
+                    </div> <br> </div>
+            
+
+
+
+<div class="additional-group box-group additional-fields" style="background-color: rgb(255, 255, 255);">
+
+                        <label>
+  <img src="../img/question_icon.png" alt="icon" style="width:25px; height:25px; vertical-align: middle; margin-right: 5px;">
+  No medicine available?
+</label>
+
+<div class="prescription-option">
+ 
+  <input type="checkbox" id="prescriptionCheckbox">
+  <label for="prescriptionCheckbox">Generate Prescription (Rx)</label>
+</div>
+<br>
+<!-- Container --> 
+<div class="prescription-container" id="prescriptionContainer" style="display: none;">
+  <h4>Enter Prescription Details  <i><span style="font-weight: 500;">(Ensure to fill out all fields.)</span></i></h4> <br>
+
+  <!-- Medicine List -->
+  <div id="medicine-container2" style="display: flex; flex-direction: column; gap: 15px;">
+
+      <!-- Group for cloning -->
+      <div class="prescription-group" style="display: flex; flex-direction: column; gap: 10px;">
+
+          <div class="medicine-entry" style="display: flex; gap: 10px; align-items: center; padding: 10px; border: 1px solid #ddd; border-radius: 4px; background-color: #f9f9f9;">
+              <div class="form-group" style="flex: 1;">
+                  <label for="medicine_prescription[]">Medicine Name:</label>
+                  <select name="medicine_prescription[]" class="medicine-select2 select2" style="width: 100%; background-color: white;">
+                      <option value="">Select</option>
+                      <option value="other">Other (Enter manually)</option>
+                  </select>
+                 
+              </div>
+
+              <div class="form-group" style="display: flex; align-items: flex-end; gap: 10px;">
+                  <div>
+                      <label for="quantity_prescription[]">Quantity:</label>
+                      <div class="quantity-container" style="display: flex; gap: 5px;">
+                          <button type="button" class="btn-minus">−</button>
+                          <input type="number" name="quantity_prescription[]" value="0" min="0" style="height: 17px;">
+                          <button type="button" class="btn-plus">+</button>
+                      </div>
+                  </div>
+                  <button type="button" class="btn-remove" style="background-color: #e6e6e6; color: rgb(0, 0, 0); border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; height: 35px;">
+                      Remove
+                  </button>
+              </div>
+
+                  <!-- Instructions -->
+          <div class="form-group instruction-field">
+              <label for="prescription_instruction">Dosage Instruction:</label>
+              <select name="prescription_instruction[]" class="med-instruction select2"  style="background-color: white;">
+                  <option value="other">Other (Enter Manually)</option>
+              </select>
+          </div>
+          </div>
+
+      
+
+      </div>
+     
+
+  </div>
+
+  <!-- Add Medicine Button -->
+  <div class="add-medicine-container">
+      <button type="button" id="add-prescription" class="add-medicine">+ Add</button>
+  </div>
+
+    <div class="form-group">
+        <label for="physician">Prescribed by:</label>
+        <select id="physician" name="physician" class="select2">
+            <option value="">Select Physician</option>
+        </select>
+  
+    </div>
+
+
+</div>
+                    </div>
             
 
             <div class="button-container">
-                
-            
-                <button type="submit" class="submit-btn" id="submitButton" type="button">Submit</button>
+                <button class="submit-btn" id="submitButton" type="button">Submit</button>
             </div>
+
+
+
+
+
+
+
+
             
         <div id="myModal" class="modal">
             <div class="modal-content">
@@ -480,29 +591,71 @@ document.addEventListener("click", function(event) {
     <script src="js/form.js"></script>
     <script src="js/script.js"></script>
     <script>
+
 $(document).ready(function () {
-    // Initialize Select2 for diagnosis
+    // Initialize Select2 for all selects with common configuration
+    const select2Config = {
+        allowClear: true,
+        minimumResultsForSearch: 0,
+        width: '100%'
+    };
+
+  
+    // Remarks select
+    $('#rhu_remarks').select2({
+        ...select2Config,
+        placeholder: "Select or type remarks"
+    }).on('select2:clearing', function(e) {
+        $(this).val('').trigger('change');
+    });
+
+    // Medicine selects
+    $('.medicine-select').select2({
+        ...select2Config,
+        placeholder: "Select or type medication"
+    }).on('select2:clearing', function(e) {
+        $(this).val('').trigger('change');
+    });
+
+    // Medicine selects (prescription)
+    $('.medicine-select2').select2({
+        ...select2Config,
+        placeholder: "Select or type medication"
+    }).on('select2:clearing', function(e) {
+        $(this).val('').trigger('change');
+    });
+
+    // Instruction selects
+    $('.med-instruction').select2({
+        ...select2Config,
+        placeholder: "Select or type instruction"
+    }).on('select2:clearing', function(e) {
+        $(this).val('').trigger('change');
+    });
+
+    // Physician selects
+    $('#physician').select2({
+        ...select2Config,
+        placeholder: "Select physician"
+    }).on('select2:clearing', function(e) {
+        $(this).val('').trigger('change');
+    });
+
+    // Load custom options
+  
+    loadCustomOptions('rhu_remarks', 'rhu_remarks');
+
+
+    // Handle custom entry
    
 
 
 
-     $('#rhu_remarks').select2({
-        placeholder: "Select or type remarks",
-        allowClear: true,
-        minimumResultsForSearch: 0
-    });
-
-    // Initialize Select2 for all medicine selects
-    $('.medicine-select').select2({
-        placeholder: "Select or type medication",
-        allowClear: true,
-        minimumResultsForSearch: 0
-    });
 
         // Handle custom treatment entry
     $('#rhu_remarks').on('change', function () {
         if (this.value === 'other') {
-            const userInput = prompt("Enter remarks:");
+            const userInput = prompt("Enter your remarks:");
             if (userInput) {
                 saveCustomOption('rhu_remarks', userInput)
                     .then(data => {
@@ -524,44 +677,82 @@ $(document).ready(function () {
         }
     });
 
-    // Initialize medicine selects
-    const medicineSelects = document.querySelectorAll('.medicine-select');
-    medicineSelects.forEach(select => loadCustomOptions(select, 'medicine'));
+// === INITIALIZATION ===
+document.querySelectorAll('.medicine-select').forEach(select => loadCustomOptions(select, 'medicine'));
+document.querySelectorAll('.med-instruction').forEach(select => loadCustomOptions(select, 'instruction'));
 
-    // Add medicine button handler
-// Add medicine button handler
+// === ADD MEDICINE HANDLER ===
 $('#add-medicine').on('click', function () {
-    let container = $('#medicine-container');
-    let newEntry = container.children().first().clone();
+    const container = $('#medicine-container');
+    const newEntry = container.children().first().clone();
 
-    // Reset values in the cloned elements
+    // Reset form values
     newEntry.find('select').val('').trigger('change');
     newEntry.find('input[type="number"]').val('0');
 
-    // Replace the existing Select2 container to avoid duplication
-    newEntry.find('.select2-container').remove(); // Remove old Select2 container
-    let newSelect = newEntry.find('.medicine-select');
-    newSelect.removeAttr('data-select2-id').off().empty().append('<option></option>');
-    // Clean select options & events
+    // Remove old Select2 containers
+    newEntry.find('.select2-container').remove();
 
-    // Re-initialize Select2
-    newSelect.select2({
-        placeholder: "Select or type medication",
-        allowClear: true,
-        minimumResultsForSearch: 0
-    });
+    // --- Reinit MEDICINE select ---
+    const newMedicineSelect = newEntry.find('.medicine-select');
+    newMedicineSelect
+        .removeAttr('data-select2-id')
+        .off()
+        .empty()
+        .append('<option></option>')
+        .select2({
+            placeholder: "Select or type medication",
+            allowClear: true,
+            minimumResultsForSearch: 0
+        });
+    loadCustomOptions(newMedicineSelect[0], 'medicine');
+    handleOtherSelection(newMedicineSelect[0], 'medicine', 'medicine name (dosage)');
 
-    // Load custom options for this new select
-    loadCustomOptions(newSelect[0], 'medicine');
+    // --- Reinit INSTRUCTION select ---
+    const newInstructionSelect = newEntry.find('.med-instruction');
+    newInstructionSelect
+        .removeAttr('data-select2-id')
+        .off()
+        .empty()
+        .append('<option></option>')
+        .select2({
+            placeholder: "Select or type instruction",
+            allowClear: true,
+            minimumResultsForSearch: 0
+        });
+    loadCustomOptions(newInstructionSelect[0], 'instruction');
+    handleOtherSelection(newInstructionSelect[0], 'instruction', 'instruction');
 
-    // Re-attach custom "other" entry handler
-    handleOtherSelection(newSelect[0], 'medicine', 'medicine name (dosage)');
-
-    // Append the new entry to the container
+    // Append the new entry
     container.append(newEntry);
 
-    // Scroll the form container to the bottom to prevent overlap
+    // Scroll smoothly
     container[0].scrollIntoView({ behavior: 'smooth', block: 'end' });
+});
+
+// === EVENT DELEGATION FOR BUTTONS ===
+
+// Plus button → increase quantity
+$('#medicine-container').on('click', '.btn-plus', function () {
+    const input = $(this).siblings('input[type="number"]');
+    const current = parseInt(input.val()) || 0;
+    input.val(current + 1);
+});
+
+// Minus button → decrease quantity
+$('#medicine-container').on('click', '.btn-minus', function () {
+    const input = $(this).siblings('input[type="number"]');
+    const current = parseInt(input.val()) || 0;
+    if (current > 0) input.val(current - 1);
+});
+
+// Remove button → remove this medicine entry
+$('#medicine-container').on('click', '.btn-remove', function () {
+    if ($('#medicine-container .medicine-entry').length > 1) {
+        $(this).closest('.medicine-entry').remove();
+    } else {
+        alert('At least one medicine entry is required.');
+    }
 });
 
 
@@ -590,11 +781,76 @@ $('#add-medicine').on('click', function () {
         }
     });
 
-    
-    // Add form submission handler
-$('#individualRecordForm').on('submit', function(e) {
-    e.preventDefault();
 
+    
+    // Handle custom medicine entry for all medicine selects
+    $(document).on('change', '.medicine-select2', function() {
+        if (this.value === 'other') {
+            const userInput = prompt("Enter Medication:");
+            if (userInput) {
+                saveCustomOption('prescription', userInput)
+                    .then(data => {
+                        if (data.success) {
+                            const newOption = new Option(userInput, userInput, true, true);
+                            $(this).append(newOption).trigger('change');
+                        } else {
+                            alert('Failed to save custom medication.');
+                            $(this).val('').trigger('change');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        $(this).val('').trigger('change');
+                    });
+            } else {
+                $(this).val('').trigger('change');
+            }
+        }
+    });
+
+
+        // Handle custom INSTRUCTION entry 
+    $(document).on('change', '.med-instruction', function() {
+        if (this.value === 'other') {
+            const userInput = prompt("Enter instruction:");
+            if (userInput) {
+                saveCustomOption('instruction', userInput)
+                    .then(data => {
+                        if (data.success) {
+                            const newOption = new Option(userInput, userInput, true, true);
+                            $(this).append(newOption).trigger('change');
+                        } else {
+                            alert('Failed to save custom instruction.');
+                            $(this).val('').trigger('change');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        $(this).val('').trigger('change');
+                    });
+            } else {
+                $(this).val('').trigger('change');
+            }
+        }
+    });
+
+    
+    const submitButton = document.getElementById('submitButton');
+
+    submitButton.addEventListener('click', function() {
+        // Show the confirmation modal
+        document.getElementById('myModal').style.display = 'block';
+    });
+
+
+ // Add form submission handler
+$('#individualRecordForm').on('submit', function(e) {
+    e.preventDefault(); // Prevent normal form submit
+
+    // Hide confirmation modal (correct ID)
+    $('#confirmationModal').hide();
+
+    // Create FormData from form
     const formData = new FormData(this);
 
     $.ajax({
@@ -603,53 +859,58 @@ $('#individualRecordForm').on('submit', function(e) {
         data: formData,
         processData: false,
         contentType: false,
-        dataType: 'json', // ✅ expect JSON response
+        dataType: 'json', 
         success: function(response) {
-            $('#responseModal').show();
+            try {
+                const res = typeof response === 'object' ? response : JSON.parse(response);
 
-            if (response.status === 'success') {
-                $('#responseIcon').attr('src', '../img/verify.png');
-                $('#responseTitle').text('Success');
-                $('#responseMessage').text(response.message);
-            } else {
-                $('#responseIcon').attr('src', '../img/error.jpg');
-                $('#responseTitle').text('Error');
-                $('#responseMessage').text(response.message);
+                if (res.status === 'success') {
+
+                    // Store consultation_id for printing buttons
+                    $('#responseModal').data('consultationId', res.consultation_id);
+
+                    // Show modal with correct checkboxes
+                    showResponseModal(
+                        'success',
+                        res.message || 'Record saved successfully!',
+                        res.hasPrescription || false,
+                        res.hasMedicine || false
+                    );
+
+                } else {
+                    showResponseModal(
+                        'error',
+                        res.message || 'An unexpected error occurred.'
+                    );
+                }
+            } catch (err) {
+                showResponseModal('error', 'Invalid server response.');
+                console.error('JSON parse error:', err);
             }
         },
+
         error: function(xhr, status, error) {
-            $('#responseModal').show();
-            $('#responseIcon').attr('src', '../img/error.jpg');
-            $('#responseTitle').text('Error').css;
-            $('#responseMessage').text('Unexpected error.');
+            showResponseModal('error', 'Error saving record. Please try again.');
+            console.error("AJAX error:", status, error, "\nResponse:", xhr.responseText);
         }
     });
+
 });
-
-
-       // Add OK button handler for response modal
-    $('#submitButton').on('click', function() {
-        event.preventDefault();
-        $('#myModal').show();
-       
-    });
 
     // Add OK button handler for response modal
     $('#okButton').on('click', function() {
-    $('#myModal').hide();
-    $('#responseModal').hide();
-     let patient_id = $('#patient_id').val(); 
-    window.location.href = `record.html?patient_id=${patient_id}`;
-});
+        $('#responseModal').hide();
+        window.location.href = 'pending.html';
+    });
 
     // Add close button handler for response modal
     $('#closeResponseModal').on('click', function() {
         $('#responseModal').hide();
-      
+        window.location.href = 'pending.html';
     });
 });
 
-// Function to load custom options
+
 function loadCustomOptions(selectElement, category) {
     fetch(`php/get_custom_options.php?category=${category}`)
         .then(response => response.json())
@@ -672,6 +933,31 @@ function loadCustomOptions(selectElement, category) {
         .catch(error => console.error('Error fetching options:', error));
 }
 
+const userIdInput = document.getElementById('user_id').value;
+// Function to load physician options 
+
+function loadPhysicians(selectElement, userIdInput) {
+    fetch(`php/get_physicians.php?user_id=${encodeURIComponent(userIdInput)}`)
+        .then(response => response.json())
+        .then(physicians => {
+            console.log("Physicians returned:", physicians);
+
+            // Clear and reset
+            selectElement.innerHTML = '<option value="">Select Physician</option>';
+
+            // Add each option
+            physicians.forEach(physician => {
+                const option = new Option(physician.full_name, physician.id);
+                selectElement.appendChild(option);
+            });
+
+            // Refresh Select2
+            $('#physician').trigger('change.select2');
+          
+        })
+        .catch(error => console.error('Error fetching options:', error));
+}
+
 // Function to save custom option
 function saveCustomOption(category, value) {
     return fetch('php/save_custom_option.php', {
@@ -684,6 +970,8 @@ function saveCustomOption(category, value) {
 
 const remarksSelect = document.getElementById('rhu_remarks');
 const medicineSelects = document.querySelectorAll('.medicine-select');
+const medicineSelects2 = document.querySelectorAll('.medicine-select2');
+const medInstruction= document.querySelectorAll('.med-instruction');
 
 // Helper to load options from DB
 function loadCustomOptions(selectElement, category) {
@@ -744,19 +1032,260 @@ function handleOtherSelection(selectElement, category, promptLabel) {
     });
 }
 
+// Apply handlers for each dropdown
 
 handleOtherSelection(remarksSelect, 'rhu_remarks', 'rhu_remarks');
 
 medicineSelects.forEach(select => {
     handleOtherSelection(select, 'medicine', 'medicine name (dosage)');
 });
-
+medicineSelects2.forEach(select => {
+    handleOtherSelection(select, 'prescription', 'medicine name (dosage)');
+});
+medInstruction.forEach(select => {
+    handleOtherSelection(select, 'instruction', 'instruction');
+});
+// Load options on page load
 
 loadCustomOptions(remarksSelect, 'rhu_remarks');
+
+const physicianSelect = document.getElementById('physician');
+loadPhysicians(physicianSelect, document.getElementById('user_id').value);
+
 medicineSelects.forEach(select => {
     loadCustomOptions(select, 'medicine');
 });
+medicineSelects2.forEach(select => {
+    loadCustomOptions(select, 'prescription');
+});
+medInstruction.forEach(select => {
+    loadCustomOptions(select, 'instruction');
+});
 
+
+fetch('php/getUserName.php')
+    .then(response => response.json())
+    .then(data => {
+        if (data.full_name) {
+            document.getElementById('userGreeting').textContent = `Hello, ${data.full_name}!`;
+        } else {
+            document.getElementById('userGreeting').textContent = 'Hello, BHW!';
+        }
+    })
+    .catch(error => {
+        console.error('Error fetching user name:', error);
+        document.getElementById('userGreeting').textContent = 'Hello, BHW!';
+    });
+
+
+			function confirmLogout() {
+				document.getElementById('logoutModal').style.display = 'block';
+				return false; // Prevent the default link behavior
+			}
+			
+			function closeModal() {
+				document.getElementById('logoutModal').style.display = 'none';
+			}
+			
+			function proceedLogout() {
+				window.location.href = '../ADMIN/php/logout.php'; 
+			}
+			
+			// Close modal when clicking outside
+			window.onclick = function(event) {
+				const modal = document.getElementById('logoutModal');
+				if (event.target == modal) {
+					closeModal();
+				}
+			}
+
+   
+
+
+	
+
+  
+function showResponseModal(type, message, hasPrescription = false, hasMedicine = false) {
+
+    const modal = $('#responseModal');
+    const icon = $('#responseIcon');
+    const title = $('#responseTitle');
+    const text = $('#responseMessage');
+    const closeBtn = $('#closeResponseModal');
+
+    // Set icon and title based on type
+    if (type === 'success') {
+        icon.attr('src', '../img/verify.png');
+        title.text('Success');
+    } else if (type === 'error') {
+        icon.attr('src', '../img/error.jpg');
+        title.text('Error');
+    } else {
+        icon.attr('src', '../img/warning.png');
+        title.text('Warning');
+    }
+
+    text.text(message);
+    modal.fadeIn();
+
+    const body = modal.find('.modal-body');
+    const footer = modal.find('.modal-footer');
+
+    // Clear previous content
+    body.find('.print-option').remove();   // removes all generated checkbox blocks safely
+
+    footer.empty();
+
+    if (type === 'success') {
+        // Move checkboxes to modal-body
+      let checkboxesHTML = "";
+
+// CASE: Medicine dispensed only
+if (hasMedicine && !hasPrescription) {
+    checkboxesHTML += `
+        <div class="print-option" style="margin: 10px 0;">
+            <label>
+                <input type="checkbox" id="printInstruction" checked>
+                Print Instruction Copy
+            </label>
+        </div>
+    `;
+}
+
+// CASE: Prescription only
+if (hasPrescription && !hasMedicine) {
+    checkboxesHTML += `
+        <div class="print-option" style="margin: 10px 0;">
+            <label>
+                <input type="checkbox" id="printPrescription" checked>
+                Print Prescription
+            </label>
+        </div>
+    `;
+}
+
+// CASE: Both medicine + prescription
+if (hasPrescription && hasMedicine) {
+    checkboxesHTML += `
+        <div class="print-option" style="margin: 10px 0;">
+            <label>
+                <input type="checkbox" id="printInstruction" checked>
+                Print Instruction Copy
+            </label>
+        </div>
+        <div class="print-option" style="margin: 10px 0;">
+            <label>
+                <input type="checkbox" id="printPrescription" checked>
+                Print Prescription
+            </label>
+        </div>
+    `;
+}
+
+// CASE: Neither → NO checkboxes
+if (!hasPrescription && !hasMedicine) {
+    checkboxesHTML = ""; // None displayed
+}
+
+body.append(checkboxesHTML);
+
+        // Buttons stay in footer
+        footer.append(`
+            <button id="proceedButton" class="btn yes">Proceed</button>
+        `);
+
+        // Remove previous listeners
+        $('#proceedButton').off('click');
+        closeBtn.off('click');
+
+        // Proceed button click
+$('#proceedButton').on('click', function() {
+    const consultationId = $('#responseModal').data('consultationId');
+    let types = [];
+
+    if ($('#printInstruction').is(':checked')) types.push('instruction');
+    if ($('#printPrescription').is(':checked')) types.push('prescription');
+
+    // Only print if there are selected types
+    if (types.length > 0) {
+        const typeParam = types.join(',');
+        window.open(
+            `php/printPrescription.php?consultation_id=${encodeURIComponent(consultationId)}&type=${encodeURIComponent(typeParam)}`,
+            '_blank'
+        );
+    }
+
+    // Redirect only (always)
+    visit_id = document.getElementById("visit_id").value;
+    window.location.href = `visitInfo.html?visit_id=${visit_id}`;
+
+});
+
+
+        // FIXED: Close X button - redirects to pending.html
+        closeBtn.off('click').on('click', function() {
+            window.location.href = 'pending.html';
+        });
+
+    } else {
+        // For error/warning - only OK button
+        footer.append('<button id="okButton" class="btn yes">OK</button>');
+        $('#okButton').off('click').on('click', function() {
+            modal.fadeOut();
+        });
+        closeBtn.off('click').on('click', function() {
+            modal.fadeOut();
+        });
+    }
+}
+
+// FIXED: Close modal when clicking outside (for success modal, redirect to pending.html)
+$(document).on('click', function(event) {
+    const modal = $('#responseModal');
+    if (event.target === modal[0]) {
+        // Clicked outside the modal
+        const title = $('#responseTitle').text();
+        if (title === 'Success') {
+            // If it's a success modal, redirect to pending.html
+            window.location.href = 'pending.html';
+        } else {
+            // Otherwise just close the modal
+            modal.fadeOut();
+        }
+    }
+});
+
+
+
+function printPrescription() {
+    const consultationId = $('#responseModal').data('consultationId');
+
+    window.open(`php/printPrescription.php?consultation_id=${encodeURIComponent(consultationId)}`, '_blank');
+}
+
+
+			
+</script>
+
+<script>
+   
+
+document.addEventListener("DOMContentLoaded", () => {
+  const sidebar = document.getElementById("sidebar");
+
+  function applyResponsiveSidebar() {
+    if (window.innerWidth <= 1024) {
+      sidebar.classList.add("hide");   // collapsed on small screens
+    } else {
+      sidebar.classList.remove("hide"); // expanded on larger screens
+    }
+  }
+
+  applyResponsiveSidebar();
+  window.addEventListener("resize", applyResponsiveSidebar);
+
+  // keep the rest of your existing code (auth, stats, modals, etc.)
+});
 
 
 
@@ -795,19 +1324,40 @@ fetch('php/getUserName.php')
     });
 
     
-     fetch('php/getUserId.php')
+                // Check if user is logged in
+                fetch('php/getUserId.php')
             .then(response => response.json())
             .then(data => {
-                if (data.user_id) {
-                     document.getElementById('doctor_id').value = data.user_id;
+                if (data.error) {
+                    // User is not logged in, redirect to role selection page
+                    window.location.href = '../role.html';
+                }
+                else if (data.user_id) {
+                     document.getElementById('user_id').value = data.user_id;
+                     const userIdInput = document.getElementById('user_id').value;
+                     loadPhysicians(physicianSelect, userIdInput);
                 } else {
-                    console.log('User not logged in.');
+                    console.error('User not logged in.');
                 }
             })
             .catch(error => {
-                console.error('Error fetching user id:', error);
-           
+                console.error('Error checking session:', error);
+                window.location.href = '../role.html';
             });
+
+
+            const checkbox = document.getElementById("prescriptionCheckbox");
+  const container = document.getElementById("prescriptionContainer");
+
+  checkbox.addEventListener("change", function() {
+    if (this.checked) {
+      container.style.display = "block"; // show container
+    } else {
+      container.style.display = "none"; // hide container
+    }
+  });
+
+  
 
 
 
@@ -829,10 +1379,113 @@ document.addEventListener("DOMContentLoaded", () => {
   window.addEventListener("resize", applyResponsiveSidebar);
 
   // keep the rest of your existing code (auth, stats, modals, etc.)
+
+
+
+
+
+  const medicineContainer2 = document.getElementById("medicine-container2");
+    const addPrescriptionButton = document.getElementById("add-prescription");
+
+    // Initialize Select2 on page load only for the original selects
+    $(medicineContainer2).find("select").select2();
+
+    addPrescriptionButton.addEventListener("click", () => {
+        // Clone the first prescription group
+        const originalGroup = medicineContainer2.firstElementChild;
+
+        // Clone **without the Select2 wrappers**
+        const newGroup = originalGroup.cloneNode(true);
+
+        // Remove old Select2 elements inside the clone
+        newGroup.querySelectorAll("select").forEach(select => {
+            // Remove Select2 container if somehow present
+            $(select).next(".select2").remove(); 
+            $(select).removeClass("select2-hidden-accessible"); 
+            select.style.display = "block"; // Make sure select is visible
+            select.value = ""; // Reset value
+        });
+
+        // Reset number inputs
+        newGroup.querySelectorAll("input[type='number']").forEach(input => {
+            input.value = "0";
+        });
+
+        // Append the new group
+        medicineContainer2.appendChild(newGroup);
+
+        // Initialize Select2 **only on the new group's selects**
+        $(newGroup).find("select").select2();
+    });
+
+    // Remove medicine entry
+    medicineContainer2.addEventListener("click", (event) => {
+        if (event.target.classList.contains("btn-remove")) {
+            const entries = medicineContainer2.querySelectorAll(".prescription-group");
+            if (entries.length > 1) {
+                event.target.closest(".prescription-group").remove();
+            } else {
+                alert("Cannot remove the last medicine entry.");
+            }
+        }
+    });
+
+    // Quantity buttons
+    medicineContainer2.addEventListener("click", (event) => {
+        if (event.target.classList.contains("btn-plus") || event.target.classList.contains("btn-minus")) {
+            const input = event.target.closest(".quantity-container").querySelector("input");
+            let val = parseInt(input.value) || 0;
+            if (event.target.classList.contains("btn-plus")) val++;
+            if (event.target.classList.contains("btn-minus") && val > 0) val--;
+            input.value = val;
+        }
+    });
+
+
+    
+function checkRequiredFields() {
+    const requiredFields = document.querySelectorAll("input[required], select[required], textarea[required]");
+    const submitButton = document.getElementById("submitButton");
+
+    let allFilled = true;
+    requiredFields.forEach(field => {
+        if (!field.value || field.value.trim() === "") {
+            allFilled = false;
+        }
+    });
+
+    submitButton.disabled = !allFilled;
+}
+
+// Listen for input events on text and textarea
+document.addEventListener("input", checkRequiredFields);
+
+// Listen for change events on selects (including normal selects)
+document.addEventListener("change", checkRequiredFields);
+
+// Special listener for Select2 fields
+$('.select2').on('change', checkRequiredFields);
+
+// Run once on page load
+checkRequiredFields();
+
+
+const prescriptionSelect = document.querySelector('select[name="medicine_prescription[]"]');
+loadCustomOptions(prescriptionSelect, 'prescription');
+
+const rhu_remarksSelect = document.querySelector('select[name="rhu_remarks"]');
+loadCustomOptions(rhu_remarksSelect, 'rhu_remarks');
+
+
 });
+
+
+
+
+      
+
 </script>
 <script src="js/logout.js"></script>
-
 
 
 </body>

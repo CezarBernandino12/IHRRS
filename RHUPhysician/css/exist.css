@@ -782,6 +782,7 @@ p {
     word-wrap: break-word; 
 	white-space: normal; 
 	overflow: hidden; 
+    font-family: 'Trebuchet MS', sans-serif;
 }
 .form-group2 p {
     background-color: #fff;
@@ -796,6 +797,7 @@ p {
     word-wrap: break-word; 
     white-space: normal; 
     overflow: hidden; 
+    font-family: 'Trebuchet MS', sans-serif;
 }
 
 
