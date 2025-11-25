@@ -137,7 +137,7 @@ $total_pending = 0;
 			</li>
 			<li>
 				<a href= "../ITR.html">
-					<i class="bx bxs-user"></i>
+					<i class="bx bxs-notepad"></i>
 					<span class="text">Add New ITR</span>
 				</a>
 			</li>
@@ -174,7 +174,7 @@ $total_pending = 0;
 			
 			<li>
 				<a href="../searchPatient.html">
-					<i class="bx bxs-notepad"></i>
+					<i class="bx bxs-search"></i>
 					<span class="text">Patient Records</span>
 				</a>
 			</li>

@@ -153,7 +153,7 @@ $total_patients = count(array_unique(array_column($visits, 'patient_id')));
 			</li>
 			<li>
 				<a href= "../ITR.html">
-					<i class="bx bxs-user"></i>
+					<i class="bx bxs-notepad"></i>
 					<span class="text">Add New ITR</span>
 				</a>
 			</li>
@@ -190,7 +190,7 @@ $total_patients = count(array_unique(array_column($visits, 'patient_id')));
 			
 			<li>
 				<a href="../searchPatient.html">
-					<i class="bx bxs-notepad"></i>
+					<i class="bx bxs-search"></i>
 					<span class="text">Patient Records</span>
 				</a>
 			</li>

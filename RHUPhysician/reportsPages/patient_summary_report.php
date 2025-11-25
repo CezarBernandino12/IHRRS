@@ -192,7 +192,7 @@ $total_patients = count(array_unique(array_column($visits, 'patient_id')));
 			
 			<li>
 				<a href="../searchPatient.html">
-					<i class="bx bxs-notepad"></i>
+					<i class="bx bxs-search"></i>
 					<span class="text">Patient Records</span>
 				</a>
 			</li>

@@ -172,7 +172,7 @@ $total_pending = 0;
 			
 			<li>
 				<a href="../searchPatient.html">
-					<i class="bx bxs-notepad"></i>
+					<i class="bx bxs-search"></i>
 					<span class="text">Patient Records</span>
 				</a>
 			</li>
