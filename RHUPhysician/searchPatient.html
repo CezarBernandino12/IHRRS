@@ -255,6 +255,40 @@ document.addEventListener("DOMContentLoaded", () => {
   // keep the rest of your existing code (auth, stats, modals, etc.)
 });
 </script>
+
+
+<script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+    // Retrieve the search query from sessionStorage
+    const searchQuery = sessionStorage.getItem("searchQuery");
+
+    if (searchQuery) {
+        // Display the search query in the search input field
+        document.getElementById("patientSearch").value = searchQuery;
+
+        // Fetch search results from the server
+        fetch("php/search_patient.php", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: `query=${encodeURIComponent(searchQuery)}`,
+        })
+            .then((response) => response.text())
+            .then((data) => {
+                // Display the results in the results container
+                document.getElementById("results").innerHTML = data;
+            })
+            .catch((error) => {
+                console.error("Error fetching search results:", error);
+                document.getElementById("results").innerHTML = "<p>Error fetching search results.</p>";
+            });
+    } else {
+        document.getElementById("results").innerHTML = "<p>No search query provided.</p>";
+    }
+});
+</script>
     <script src="js/logout.js"></script>
 </body>
 </html>
