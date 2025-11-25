@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="css/logout.css">
     <title>Individual Treatment Record</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="css/custom-input-modal.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
@@ -812,29 +813,30 @@ function saveCustomOption(category, value) {
     }).then(response => response.json());
 }
 
-// Handler for "Other" input logic
+// Handler for "Other" input logic - uses modal instead of prompt
 function handleOtherSelection(selectElement, category, promptLabel) {
     selectElement.addEventListener("change", function () {
         if (this.value === "other") {
-            const userInput = prompt(`Enter ${promptLabel}:`);
-            if (userInput) {
-                const exists = Array.from(this.options).some(opt => opt.value === userInput);
-                if (!exists) {
-                    const newOption = new Option(userInput, userInput, true, true);
-                    this.appendChild(newOption);
-                }
-                this.value = userInput;
+            showCustomInputModal(promptLabel, (userInput) => {
+                if (userInput) {
+                    const exists = Array.from(this.options).some(opt => opt.value === userInput);
+                    if (!exists) {
+                        const newOption = new Option(userInput, userInput, true, true);
+                        this.appendChild(newOption);
+                    }
+                    this.value = userInput;
 
-                saveCustomOption(category, userInput)
-                    .then(data => {
-                        if (!data.success) {
-                            console.error(`Failed to save ${promptLabel}.`);
-                        }
-                    })
-                    .catch(error => console.error('Error:', error));
-            } else {
-                this.value = "";
-            }
+                    saveCustomOption(category, userInput)
+                        .then(data => {
+                            if (!data.success) {
+                                console.error(`Failed to save ${promptLabel}.`);
+                            }
+                        })
+                        .catch(error => console.error('Error:', error));
+                } else {
+                    this.value = "";
+                }
+            });
         }
     });
 }
@@ -1119,7 +1121,91 @@ updateRemoveButtons();
             <button onclick="proceedLogout()" class="logout-confirm-btn">Yes, Logout</button>
         </div>
     </div>
-</div>    
+</div>
+
+<!-- Custom Input Modal for "Other (Enter manually)" options -->
+<div id="customInputModal" class="custom-input-modal">
+    <div class="custom-input-modal-content">
+        <div class="custom-input-modal-header">
+            <h3 id="customInputModalTitle">Enter Information</h3>
+        </div>
+        <div class="custom-input-modal-body">
+            <input type="text" id="customInputField" placeholder="Enter value here">
+        </div>
+        <div class="custom-input-modal-footer">
+            <button id="customInputCancel" class="custom-input-cancel-btn">Cancel</button>
+            <button id="customInputConfirm" class="custom-input-confirm-btn">Confirm</button>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript for Custom Input Modal -->
+<script>
+// Global callback for custom input modal
+let customInputCallback = null;
+
+// Function to show custom input modal
+function showCustomInputModal(label, callback) {
+    const modal = document.getElementById('customInputModal');
+    const titleEl = document.getElementById('customInputModalTitle');
+    const inputField = document.getElementById('customInputField');
+    const confirmBtn = document.getElementById('customInputConfirm');
+    const cancelBtn = document.getElementById('customInputCancel');
+
+    // Set title
+    titleEl.textContent = `Enter ${label}`;
+    
+    // Clear input field
+    inputField.value = '';
+    inputField.placeholder = `Enter ${label}...`;
+    
+    // Store callback
+    customInputCallback = callback;
+    
+    // Show modal
+    modal.style.display = 'block';
+    
+    // Focus on input field
+    inputField.focus();
+
+    // Handle confirm button
+    const handleConfirm = () => {
+        const value = inputField.value.trim();
+        modal.style.display = 'none';
+        if (customInputCallback) {
+            customInputCallback(value || null);
+        }
+        // Clean up event listeners
+        confirmBtn.removeEventListener('click', handleConfirm);
+        cancelBtn.removeEventListener('click', handleCancel);
+        document.removeEventListener('keypress', handleEnter);
+    };
+
+    // Handle cancel button
+    const handleCancel = () => {
+        modal.style.display = 'none';
+        if (customInputCallback) {
+            customInputCallback(null);
+        }
+        // Clean up event listeners
+        confirmBtn.removeEventListener('click', handleConfirm);
+        cancelBtn.removeEventListener('click', handleCancel);
+        document.removeEventListener('keypress', handleEnter);
+    };
+
+    // Handle Enter key
+    const handleEnter = (e) => {
+        if (e.key === 'Enter') {
+            handleConfirm();
+        }
+    };
+
+    // Attach event listeners
+    confirmBtn.addEventListener('click', handleConfirm);
+    cancelBtn.addEventListener('click', handleCancel);
+    document.addEventListener('keypress', handleEnter);
+}
+</script>    
 
 
 <script>
