@@ -5,8 +5,9 @@ require '../../ADMIN/php/log_functions.php'; // Include the logging functions
 ob_start(); 
 header('Content-Type: application/json');
 
-error_reporting(E_ALL);
 ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     file_put_contents("logs.txt", json_encode($_POST) . PHP_EOL, FILE_APPEND);
@@ -46,7 +47,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $first_name = clean_input($_POST['firstName']);
         $middle_name = clean_input($_POST['middleName'] ?? '');
         $last_name = clean_input($_POST['lastName']);
-        $extension = clean_input($_POST['extension']);
+        $extension = clean_input($_POST['extension'] ?? '');
         $family_serial_no = clean_input($_POST['familySerialNo'] ?? '');
         $dob = clean_input($_POST['dob']);
         $age = clean_input($_POST['age'] ?? '');

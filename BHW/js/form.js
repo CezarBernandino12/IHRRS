@@ -283,28 +283,27 @@ function saveFormData(referralNeeded, callback) {
         method: 'POST',
         body: formData
     })
-    .then(response => response.json())
-    .then(data => {
-        console.log("🔹 Server Response:", data);
-
+    .then(response => response.text()) // Change to text() to inspect raw response
+    .then(text => {
+        console.log("🔹 Raw Server Response:", text); // Log raw response
+        const data = JSON.parse(text); // Parse JSON after inspecting
+        console.log("🔹 Parsed Server Response:", data);
+    
         if (data.status === 'duplicate' && data.patient_id) {
             showPatientExistsModal(data.patient_id);
-
         } else if (data.status === 'success') {
-            savedPatientId = data.patient_id;  
+            savedPatientId = data.patient_id;
             console.log("✅ Saved Patient ID:", savedPatientId);
-            localStorage.setItem("patient_id", savedPatientId); // Store patient ID in localStorage
+            localStorage.setItem("patient_id", savedPatientId);
             if (modal2 && modal2.style.display === "block") modal2.style.display = "none";
-            
+    
             if (referralNeeded === "yes") {
-                if (modal2) modal2.style.display = 'block'; // Show confirmation modal for referral
+                if (modal2) modal2.style.display = 'block';
             } else {
-                if (modal4) modal4.style.display = 'block'; // Show success modal for saving without referral
+                if (modal4) modal4.style.display = 'block';
             }
-
-            // ✅ FIXED: pass `data` to the callback so the next function gets visit_id and patient_id
+    
             if (typeof callback === "function") callback(data);
-
         } else {
             alert('❌ Error: ' + (data.message || "Unknown error."));
             if (errorModal) errorModal.style.display = 'block';

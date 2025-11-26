@@ -51,6 +51,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION['user_id'] = $user['user_id'];
             $_SESSION['role'] = $user['role'];
             $_SESSION['full_name'] = $user['full_name'];
+            $_SESSION['barangay'] = $user['barangay'];
 
             if ($hasPendingReset) {
                 $_SESSION['pending_reset'] = true;

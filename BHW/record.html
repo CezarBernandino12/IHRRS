@@ -207,7 +207,17 @@ fetch('php/getUserId.php')
             </section>
                   
 
-
+            <div class="print-letterhead" style="display: none;">
+                <img src="../img/daet_logo.png" alt="Barangay Logo" class="print-logo">
+                
+                <div class="print-heading">
+                  <div class="ph-line-1">Republic of the Philippines</div>
+                  <div class="ph-line-2">Daet, Camarines Norte</div>
+                  <div class="ph-line-3"></div>
+                </div>
+                
+                <img src="../img/mho_logo.png" alt="RHU Logo" class="print-logo">
+              </div>
             
             <!-- 🔹 Hidden Table (populated but not visible) -->
 <table id="history-table" class="status" style="display: none;">
@@ -237,7 +247,7 @@ fetch('php/getUserId.php')
 
 <button class="btn-pill btn-pill--sm btn-pill--danger" id="addITRBtn">
   <i class="bx bx-plus" aria-hidden="true"></i>
-  <span>Add</span>
+  <span>Add Record</span>
 </button>
 
     </div>
@@ -283,7 +293,14 @@ fetch('php/getUserId.php')
 
 
 
-
+ fetch('php/getUserBarangay.php')
+    .then(response => response.json())
+    .then(data => {
+        bhsName = data.barangay || 'Barangay Health Station';
+    })
+    .catch(error => {
+        console.error('Error fetching user barangay:', error);
+    });
                 
 // 🔹 Fetch data from PHP file
 fetch(`php/patient_summary.php?patient_id=${patient_id}`) 
@@ -292,7 +309,7 @@ fetch(`php/patient_summary.php?patient_id=${patient_id}`)
         console.log("Patient summary data:", data); // Add this line
         // Display patient info if needed
          // store RHU for use in print window
-        bhsName = data.barangay || 'Barangay Health Station';
+       
 
         const historyTableBody = document.querySelector("#history-table tbody");
         historyTableBody.innerHTML = ""; // Clear existing rows
@@ -456,7 +473,7 @@ if (printBtn) {
       <head>
           
           <title>Individual Treatment Record</title>
-          <style>
+            <style>
             @page { size: A4; margin: 18mm 16mm; }
             * { box-sizing: border-box; }
             body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; line-height: 1.3; color: #000; }
@@ -471,19 +488,7 @@ if (printBtn) {
               border: 1px solid #000; padding: 6px; vertical-align: top; word-wrap: break-word; font-size: 10.5pt;
             }
             .treatment-table th { background: #f2f2f2; text-align: left; font-weight: 700; }
-          </style>
-              <style>
-        /* Print-specific styles */
-        body { 
-            font-family: Arial, Helvetica, sans-serif; 
-            font-size: 11pt; 
-            line-height: 1.3; 
-            color: #000;
-            padding: 20px;
-        }
-
-        /* Header with two logos and centered text */
-        .print-letterhead {
+            .print-letterhead {
             display: flex;
             align-items: flex-start;
             justify-content: space-between;
@@ -491,9 +496,16 @@ if (printBtn) {
             padding: 0 20px;
         }
 
+        /* Header with two logos and centered text */
+        .print-letterhead {
+           display:grid; grid-template-columns:64px auto 64px;
+            align-items:center; justify-content:center; column-gap:50px;
+            margin:0 auto 10px; text-align:center; width:fit-content;
+        }
+
         .print-logo {
-            width: 80px;
-            height: 80px;
+            width: 65px;
+            height: 65px;
             object-fit: contain;
             flex-shrink: 0;
         }
@@ -556,7 +568,7 @@ if (printBtn) {
             width: 100%;
             border-collapse: collapse;
             margin-top: 15px;
-            table-layout: fixed;
+            table-layout: auto;
         }
 
         .treatment-table th,
@@ -574,44 +586,72 @@ if (printBtn) {
             font-weight: 700;
         }
 
-        /* Patient Information Section Styling */
-        .patient-info-section {
-            padding: 15px;
-        }
+/* Patient Information Section Styling */
+.patient-info-section {
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  margin-bottom: 15px;
+  padding: 12px;
+  background-color: #fafafa;
+}
 
-        .section-heading {
-            font-size: 11pt;
-            font-weight: 700;
-            margin: 0 0 12px 0;
-            padding: 0;
-        }
+.section-heading {
+  font-weight: bold;
+  font-size: 16px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 5px;
+}
 
-        .info-row {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: baseline;
-            margin-bottom: 12px;
-            line-height: 1.4;
-        }
+.info-row {
+  display: flex;
+  width: 100%;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
+  gap: 8px 5px; /* controls spacing between label-value pairs */
+}
 
-        .info-label {
-            font-weight: 700;
-            font-size: 10.5pt;
-            margin-right: 8px;
-            min-width: fit-content;
-        }
+.info-label {
+  font-weight: bold;
+  margin-right: 4px; /* brings value closer to label */
+}
 
-        .info-value {
-            font-weight: 400;
-            font-size: 10.5pt;
-            margin-right: 20px;
-            min-width: fit-content;
-        }
+.info-value {
+  margin-right: 16px;
+  word-break: break-word;
+}
 
-        .info-value.full-width {
-            flex: 1;
-            margin-right: 0;
-        }
+.full-width {
+  flex-basis: 100%;
+}
+
+
+  .patient-info-table {
+  width: auto;
+  border-collapse: collapse;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.patient-info-table td {
+  padding: 2px 8px;
+  vertical-align: top;
+  white-space: nowrap;       /* Prevent text from wrapping */
+  overflow: hidden;          /* Hide overflow text */
+  text-overflow: ellipsis;   /* Show ... for long text */
+}
+
+.patient-info-table strong {
+  font-weight: bold;
+  margin-right: 4px;
+}
+
+.patient-info-table tr td[colspan="3"] {
+  padding-top: 4px;
+}
+
 
         /* Demo styling for preview */
         .demo-container {
@@ -628,8 +668,7 @@ if (printBtn) {
                 padding: 0;
             }
         }
-
-    </style>
+          </style>
       </head>
       <body>
   
@@ -647,74 +686,44 @@ if (printBtn) {
 
 <h2 class="print-title">Individual Treatment Record</h2>
  
-<div class="patient-info-section">
-    <h3 class="section-heading">Patient Information</h3>
+  <h3 class="section-heading">Patient Information</h3>
     
-    <div class="info-row">
-        <span class="info-label">Family No.:</span>
-        <span class="info-value">${patientInfo.familyNo}</span>
-    </div>
+    <table class="patient-info-table">
+  <tr>
+    <td><strong>Family Serial No.:</strong> ${patientInfo.familyNo}</td>
+  </tr>
 
-    <div class="info-row">
-        <span class="info-label">Last Name:</span>
-        <span class="info-value">${patientInfo.lastName}</span>
-        <span class="info-label">First Name:</span>
-        <span class="info-value">${patientInfo.firstName}</span>
-        <span class="info-label">Middle Name:</span>
-        <span class="info-value">${patientInfo.middleName}</span>
-        <span class="info-label">Ext:</span>
-        <span class="info-value">${patientInfo.extension}</span>
-    </div>
+  <tr>
+    <td><strong>Last Name:</strong> ${patientInfo.lastName}</td>
+    <td><strong>First Name:</strong> ${patientInfo.firstName}</td>
+    <td><strong>Middle Name:</strong> ${patientInfo.middleName}</td>
+    <td><strong>Ext:</strong> ${patientInfo.extension}</td>
+  </tr>
 
-    <div class="info-row">
-        <span class="info-label">Address:</span>
-        <span class="info-value full-width">${patientInfo.address}</span>
-    </div>
+  <tr>
+    <td><strong>Birthday:</strong> ${patientInfo.dateOfBirth}</td>
+    <td><strong>Sex:</strong> ${patientInfo.gender}</td>
+    <td><strong>Civil Status:</strong> ${patientInfo.civilStatus}</td>
+  </tr>
 
-    <div class="info-row">
-        <span class="info-label">Age:</span>
-        <span class="info-value">${patientInfo.age}</span>
-        <span class="info-label">Gender:</span>
-        <span class="info-value">${patientInfo.gender}</span>
-        <span class="info-label">Date of Birth:</span>
-        <span class="info-value">${patientInfo.dateOfBirth}</span>
-    </div>
+  <tr>
+    <td colspan="3"><strong>Address:</strong> ${patientInfo.address}</td>
+  </tr>
 
-    <div class="info-row">
-        <span class="info-label">Contact:</span>
-        <span class="info-value">${patientInfo.contact}</span>
-        <span class="info-label">Civil Status:</span>
-        <span class="info-value">${patientInfo.civilStatus}</span>
-        <span class="info-label">Birthplace:</span>
-        <span class="info-value">${patientInfo.birthPlace}</span>
-    </div>
+  <tr>
+    <td><strong>Mobile No.:</strong> ${patientInfo.contact}</td>
+    <td><strong>Educational Attainment:</strong> ${patientInfo.education}</td>
+  </tr>
 
-    <div class="info-row">
-        <span class="info-label">Education:</span>
-        <span class="info-value">${patientInfo.education}</span>
-        <span class="info-label">Occupation:</span>
-        <span class="info-value">${patientInfo.occupation}</span>
-        <span class="info-label">Religion:</span>
-        <span class="info-value">${patientInfo.religion}</span>
-    </div>
+  <tr>
+    <td><strong>PhilHealth No.:</strong> ${patientInfo.philhealthNo}</td>
+    <td><strong>Category:</strong> ${patientInfo.category}</td>
+    <td><strong>Birth Weight:</strong> ${patientInfo.birthWeight}</td>
+    <td><strong>4Ps:</strong> ${patientInfo.fourps}</td>
+  </tr>
+</table>
 
-    <div class="info-row">
-        <span class="info-label">Birth Weight:</span>
-        <span class="info-value">${patientInfo.birthWeight}</span>
-        <span class="info-label">PhilHealth No.:</span>
-        <span class="info-value">${patientInfo.philhealthNo}</span>
-        <span class="info-label">Category:</span>
-        <span class="info-value">${patientInfo.category}</span>
-    </div>
-
-    <div class="info-row">
-        <span class="info-label">4Ps:</span>
-        <span class="info-value">${patientInfo.fourps}</span>
-    </div>
-</div>
-
-<br><br>
-
+<br> <br>
 <table id="treatment-table" class="treatment-table">
     <thead>
         <tr>

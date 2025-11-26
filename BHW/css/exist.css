@@ -761,15 +761,17 @@ p {
 
 .vitals-section {
     display: flex;
-    flex-wrap: wrap; 
-    gap: 15px; 
+    flex-wrap: wrap;
+    gap: 15px;
     margin-top: 10px;
 }
 
 .vitals-section .form-group {
-    max-width: max-content;
+    flex: 1;                 /* Makes all items equal width */
+    min-width: 220px;        /* Adjust depending on your layout */
     margin-bottom: 10px;
 }
+
 
 .vitals-section .form-group label {
     font-weight: bold;

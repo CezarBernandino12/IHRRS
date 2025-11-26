@@ -63,7 +63,7 @@
 	<!-- Main Content Section -->
 	<section id="content">
 		<nav>
-			<form action="#">
+		      <form action="#">
                 <div class="form-input">
                     <input type="search" id="patientSearch" placeholder="Enter patient name..." name="search" autocomplete="off">
                     <button type="button" class="search-btn" id="searchButton">
@@ -72,7 +72,6 @@
         
                     <div id="resultDropdown" class="dropdown-content"></div>
                     
-                    <script src="js/script.js"></script>
                 </div>
             </form>
 			
@@ -265,34 +264,6 @@
       updateProgress("progress-ring-2", "progress-text-2", data.pending_referrals, 100);
     })
     .catch(error => console.error("Error loading dashboard data:", error));
-
-
-
-	const searchInput = document.getElementById("patientSearch");
-    const searchButton = document.getElementById("searchButton");
-
-    // Trigger search when Enter key is pressed
-    searchInput.addEventListener("keypress", function (event) {
-        if (event.key === "Enter") {
-            event.preventDefault(); // Prevent form submission
-            searchButton.click(); // Trigger the search button click event
-        }
-    });
-
-    // Trigger search when the search button is clicked
-    searchButton.addEventListener("click", function () {
-        const searchQuery = searchInput.value.trim();
-        if (searchQuery) {
-            // Store the search query in sessionStorage
-            sessionStorage.setItem("searchQuery", searchQuery);
-
-            // Redirect to searchPatient.html
-            window.location.href = "searchPatient.html";
-        } else {
-            alert("Please enter a patient name to search.");
-        }
-    });
-
 });
 
 function updateProgress(ringId, textId, value, max = 100) {
@@ -341,6 +312,7 @@ fetch('php/getUserId.php')
 		      window.location.href = '../role.html';
 		  });
 
+
 		  document.getElementById("searchButton").addEventListener("click", function () {
     const searchQuery = document.getElementById("patientSearch").value.trim();
     if (searchQuery) {
@@ -353,6 +325,7 @@ fetch('php/getUserId.php')
         alert("Please enter a patient name to search.");
     }
 });
+
 </script>
 
 <script>
@@ -370,7 +343,36 @@ document.addEventListener("DOMContentLoaded", () => {
   applyResponsiveSidebar();
   window.addEventListener("resize", applyResponsiveSidebar);
 
-  // keep the rest of your existing code (auth, stats, modals, etc.)
+ 
+  
+
+
+  
+  
+	const searchInput = document.getElementById("patientSearch");
+    const searchButton = document.getElementById("searchButton");
+
+    // Trigger search when Enter key is pressed
+    searchInput.addEventListener("keypress", function (event) {
+        if (event.key === "Enter") {
+            event.preventDefault(); // Prevent form submission
+            searchButton.click(); // Trigger the search button click event
+        }
+    });
+
+    // Trigger search when the search button is clicked
+    searchButton.addEventListener("click", function () {
+        const searchQuery = searchInput.value.trim();
+        if (searchQuery) {
+            // Store the search query in sessionStorage
+            sessionStorage.setItem("searchQuery", searchQuery);
+
+            // Redirect to searchPatient.html
+            window.location.href = "searchPatient.html";
+        } else {
+            alert("Please enter a patient name to search.");
+        }
+    });
 });
 </script>
 
