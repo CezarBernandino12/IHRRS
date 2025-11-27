@@ -67,12 +67,13 @@ document.addEventListener("DOMContentLoaded", function () {
                     updateElement(".licenseNo", data.consultation.license_number);
                     updateElement(".rhu", data.consultation.rhu);
                    
-
+ 
                     // store consultation_id in a hidden field
                     const consultationField = document.getElementById("consultation_id");
                     if (consultationField) {
                         consultationField.value = data.consultation.consultation_id;
                     }
+                
 
                     // ✅ Resume Button
 const resumeBtn = document.getElementById("resumeBtn");
@@ -103,7 +104,7 @@ if (data.consultation.diagnosis_status === "") {
                 }
              
 
-                document.getElementById("status").value = data.consultation.diagnosis_status || "";
+               
                 
                 }
 

@@ -287,10 +287,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     <label for="vitals"><b>Vital Signs:</b></label>
                     <div class="vitals-section box-group">
-                        <div class="additional-group vitals-item">
-                            <label for="bmi">BMI:</label>
-                            <input type="number" step="any" name="bmi" id="bmi" placeholder="BMI will appear here" readonly>
-                        </div>
+        <div class="additional-group vitals-item" id="bmiContainer">
+        <label for="bmi">BMI:</label>
+        <input type="number" step="any" name="bmi" id="bmi"
+            placeholder="BMI will appear here"
+            style="background-color: #f9f9f9; color: #033cad; font-weight: bolder; border: none;" readonly>
+    </div>
+
                         <div class="additional-group" hidden>
                             <label for="space"></label>
                           

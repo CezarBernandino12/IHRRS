@@ -5,210 +5,11 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="icon" href="../img/logo.png">
 	<link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
-	<link rel="stylesheet" href="css/form.css">
+	<link rel="stylesheet" href="css/medcert.css">
     <link rel="stylesheet" href="css/logout.css">
    
 	<title>Issued Records</title> 
 
-     <style>
-        @media print {
-            #sidebar,
-            nav,
-            .head-title,
-            .breadcrumb {
-                display: none !important;
-            }
-
-            /* Hide buttons */
-            .buttons {
-                display: none !important;
-            }
-
-            /* Reset body for print */
-            body {
-                background: white !important;
-                padding: 0 !important;
-                margin: 0 !important;
-            }
-
-            /* Full width content section */
-            #content {
-                margin: 0 !important;
-                padding: 0 !important;
-                width: 100% !important;
-            }
-
-            /* Reset main container */
-            main {
-                padding: 0 !important;
-                margin: 0 !important;
-            }
-
-            /* Certificate container adjustments */
-            .history-container {
-                padding: 20px !important;
-                box-shadow: none !important;
-            }
-
-            .container {
-                box-shadow: none !important;
-                padding: 0 !important;
-                max-width: 100% !important;
-            }
-
-            /* Ensure certificate content is visible */
-            .header,
-            .title,
-            .issuance-date,
-            .content,
-            .signature,
-            .signature2 {
-                page-break-inside: avoid;
-            }
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: white;
-            padding: 40px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-            border-bottom: 2px solid #000;
-            padding-bottom: 20px;
-            color: black;
-            
-        }
-
-        .header h1 {
-            font-size: 14px;
-            font-weight: normal;
-            margin: 5px 0;
-            color: black;
-        }
-
-        .header h2 {
-            font-size: 16px;
-            margin: 5px 0;
-        }
-
-        .title {
-            text-align: center;
-            margin: 40px 0 30px 0;
-        }
-
-        .title h1 {
-            font-size: 24px;
-            font-weight: bold;
-            letter-spacing: 2px;
-        }
-
-        .issuance-date {
-            text-align: left;
-            margin-bottom: 30px;
-            font-size: 14px;
-            color: black;
-        }
-
-        .content {
-            line-height: 2;
-            font-size: 14px;
-            text-align: justify;
-            margin-bottom: 60px;
-        }
-
-        .content p {
-            margin-bottom: 20px;
-            color: black;
-        }
-
-        .signature {
-            margin-top: 80px;
-            text-align: right;
-        }
-        .signature2 {
-            margin-top: 80px;
-            text-align: left;
-        }
-        .signature-line2 {
-            border-top: 1px solid #000;
-            width: 250px;
-            margin-right: auto;
-            margin-bottom: 5px;
-        }
-
-        .signature-line {
-            border-top: 1px solid #000;
-            width: 250px;
-            margin-left: auto;
-            margin-bottom: 5px;
-        }
-
-        .signature-name {
-            font-weight: bold;
-            font-size: 14px;
-        }
-
-        .signature-title {
-            font-size: 12px;
-        }
-
-        .signature-license {
-            font-size: 12px;
-            margin-top: 5px;
-        }
-
-        .buttons {
-            text-align: right;
-            margin-top: 70px;
-        }
-
-        .button { 
-            padding: 10px 30px;
-            margin: 0 10px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-        }
-
-        .button-print {
-            background: #154470;
-            color: white;
-        }
-
-        .button-back {
-            background: #494848;
-            color: white;
-        }
-
-        @media print {
-            body {
-                background: white;
-                padding: 0;
-            }
-
-            .container {
-                box-shadow: none;
-                padding: 0;
-                max-width: 100%;
-            }
-
-            .buttons {
-                display: none;
-            }
-        }
-    </style>
 </head>
 <body>
 
@@ -311,126 +112,145 @@
 			</a>
 		</nav>
 
-		<main>
-            
-            <div class="head-title">
-                <div class="left">
-                  <h1>Issued Records</h1>
-                  <ul class="breadcrumb">
-                    <li><a href="#">Issued Records</a></li>
-                    <li><i class="bx bx-chevron-right"></i></li>
-                    <li><a class="active" href="#">Home</a></li>
-                  </ul>
+	<main>
+            <div class="certificate-container">
+                <div class="container">
+                    <div class="header">
+                        <img src="../img/daet_logo.png" alt="Left Logo" class="logo">
+                        <div class="header-text">
+                            <h1>Republic of the Philippines</h1>
+                            <h2>Municipal Health Office</h2>
+                            <h1>Daet Camarines Norte</h1>
+                            <h1><span id="rhu"></span></h1>
+                        </div>
+                        <img src="../img/mhod.png" alt="Right Logo" class="logo">
+                    </div>
+
+                    <div class="control-no">
+                        Control No.: <span id="controlNo"></span>
+                    </div>
+
+                    <div class="title">
+                        <h1>MEDICAL CERTIFICATE</h1>
+                    </div>
+
+                    <div class="content">
+                        <div class="patient-info">
+                            <p class="patient-info-line">
+                                TO WHOM IT MAY CONCERN:
+                             
+                            </p>
+                            <p class="patient-info-line" style="margin-left: 20px;">
+                                This is to certify that
+                                <span class="underline" id="patientName"></span>,
+                                <span class="underline" id="patientAge"></span> years old,
+                                <span class="underline" id="patientSex"></span>,
+                                <span class="underline" id="civilStatus"></span>,
+                                was examined by the undersigned:
+                            </p>
+                            <p class="patient-info-line" style="margin-left: 40px;">
+                                Address: <span class="underline" id="patientAddress"></span>
+                            </p>
+                            <p class="patient-info-line" style="margin-left: 40px;">
+                                Date of Examination: <span class="underline" id="examDate"></span>
+                            </p>
+                        </div>
+
+                        <div class="diagnosis-section">
+                            <p><strong>Diagnosis:</strong> <span id="diagnosis"></span></p>
+                        </div>
+
+                        <div class="fit-status" style="margin-left: 60px;">
+                            <div class="checkbox-group">
+                                <div class="checkbox-item">
+                                    <span class="checkbox-box" id="fitBox"></span>
+                                    <span>FIT</span>
+                                </div>
+                                <div class="checkbox-item">
+                                    <span class="checkbox-box" id="unfitBox"></span>
+                                    <span>UNFIT at the time of examination</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="remarks-section">
+                            <p><strong>Remarks:</strong> <span id="remarks"></span></p>
+                        </div>
+
+                        <div class="lab-section" style="margin-left: 40px;">
+                            <p><strong>Laboratory:</strong></p>
+                            <div class="lab-grid">
+                                <div class="lab-item">
+                                    <span class="checkbox-box" id="cbcBox"></span>
+                                    <span>CBC:____ <span id="labCbc" hidden></span></span>
+                                </div>
+                                <div class="lab-item">
+                                    <span class="checkbox-box" id="urinalysisBox"></span>
+                                    <span>URINALYSIS:____ <span id="labUrinalysis" hidden></span></span>
+                                </div>
+                                <div class="lab-item">
+                                    <span class="checkbox-box" id="fecalysisBox"></span>
+                                    <span>FECALYSIS:____ <span id="labFecalysis" hidden></span></span>
+                                </div>
+                                <div class="lab-item">
+                                    <span class="checkbox-box" id="hbsagBox"></span>
+                                    <span>HBsAg:____ <span id="labHbsag" hidden></span></span>
+                                </div>
+                                <div class="lab-item">
+                                    <span class="checkbox-box" id="cxrBox"></span>
+                                    <span>CXR:____ <span id="labCxr" hidden></span></span>
+                                </div>
+                                <div class="lab-item">
+                                    <span class="checkbox-box" id="sputumBox"></span>
+                                    <span>SPUTUM AFB:____ <span id="labSputum" hidden></span></span>
+                                </div>
+                                <div class="lab-item">
+                                    <span class="checkbox-box" id="otherBox"></span>
+                                    <span>OTHER: <span id="labOther"></span></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="footer-note" style="margin-left: 20px;">
+                            <p>This certificate is issued upon the request of the bearer for whatever purposes may it served except for MEDICO-LEGAL case.</p>
+                            <p>Issued this <span class="underline" id="issuedDay"></span> day of <span class="underline" id="issuedMonth"></span>, 20<span class="underline" id="issuedYear"></span> at Daet, Camarines Norte.</p>
+                        </div>
+
+                        <div class="signature-section">
+                            <div class="signature-line"></div>
+                            <div class="signature-name" id="doctorName"></div>
+                            <div class="signature-title">Rural Health Physician</div>
+                            <div class="signature-license">
+                                License No.<span id="licenseNumber"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="buttons">
+                        <button class="button button-back" onclick="goBack()">Back to Records</button>
+                        <button class="button button-print" onclick="window.print()">Print Certificate</button>
+                    </div>
                 </div>
-              </div>
-
-<br>
-
-            <div class="history-container" style="padding: 80px; padding-bottom: 40px;">
-             
- 
-        <div class="header">
-            <h1>Republic of the Philippines</h1>
-            <h1>Province of Camarines Norte</h1>
-            <h2>Municipality of Daet</h2>
-            <h1> <span id="rhu"></span></h1>
-        </div>
- <div style="text-align: right; margin-bottom: 11px; font-size: 11px;">
-            <p style="background-color: white;">Control No.: <span id="controlNo"></span></p>
-        </div>
-
-        <div class="title">
-            <h1>MEDICAL CERTIFICATE</h1>
-        </div> <br> <br>
-
-        <div class="issuance-date">
-            <p style="background-color: white;  color: black;">Issuance Date: <strong><span id="issuanceDate"></span></strong></p>
-        </div>
-       
-        
-
-        <div class="content">
-            <p id="certificateText" style="background-color: white;"></p>
-        </div> <br><br> <br>
-
-          <div class="signature2">
-            <div class="signature-title">Prepared by:</div> <br> <br> <br>
-            <div class="signature-line2"></div>
-            <div class="signature-name" id="attendantName"></div>
-            <div class="signature-title">Nursing Attendant</div>
-           
-        </div>
-
-        <div class="signature">
-             <div class="signature-title">Issued by:</div> <br> <br> <br>
-            <div class="signature-line"></div>
-            <div class="signature-name" id="doctorName"></div>
-            <div class="signature-title">Physician</div>
-            <div class="signature-license">
-                <span id="licenseInfo"></span>
             </div>
-        </div> <br> <br> 
-    
-
-<div class="buttons">
-    <button class="button button-back" onclick="goBack()">Back to Records</button>
-    <button class="button button-print" onclick="window.print()">Print Certificate</button>
-</div>
-            </div>
-
-
-   <!-- Confirmation Modal -->
-<div id="confirmModal" class="modal">
-    <div class="modal-content" style="height: 250px;">
-      <div class="modal-header">
-        <h3>Confirmation</h3>
-      </div>
-      <div class="modal-body">
-        <p>Are you sure you want to forward this referral to the physician?</p>
-      </div>
-      <div class="modal-footer">
-        
-        <button id="confirmNo" class="btn no" style="background-color: rgb(211, 67, 67);">No</button>
-        <button id="confirmYes" class="btn yes">Yes</button>
-      </div>
-    </div>
-  </div>
-  
-  <!-- Success Modal -->
-  <div id="successModal" class="modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3>Success</h3>
-      </div>
-      <div class="modal-body">
-        <p>Referral successfully forwarded to physician.</p>
-      </div>
-      <div class="modal-footer">
-        <button id="closeSuccessModal" class="btn maybe" style="background-color: rgb(46, 128, 223);">OK</button>
-      </div>
-    </div>
-  </div>
-  
-<div id="logoutModal" class="logout-modal">
-    <div class="logout-modal-content">
-        <div class="logout-modal-header">
-            <h3>Confirm Logout</h3>
-        </div>
-        <div class="logout-modal-body">
-            <p>Are you sure you want to logout?</p>
-        </div>
-        <div class="logout-modal-footer">
-            <button onclick="closeModal()" class="logout-cancel-btn">Cancel</button>
-            <button onclick="proceedLogout()" class="logout-confirm-btn">Yes, Logout</button>
-        </div>
-    </div>
-</div>  
-
-	   </main>	
-</section>
-
+        </main>
+    </section>
 
     <script>
+        // Load user name when the page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get user's name for greeting
+            fetch('php/getUserName.php')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.full_name) {
+                        document.getElementById('userGreeting').textContent = `Hello, ${data.full_name}!`;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading user info:', error);
+                });
+        });
+
         const urlParams = new URLSearchParams(window.location.search);
         const medcertId = urlParams.get('medcert_id');
 
@@ -458,60 +278,60 @@
                 });
         }
 
-function displayCertificate(cert) {
-    // Format issuance date
-    document.getElementById('issuanceDate').textContent = formatDate(cert.issuance_date);
-    document.getElementById('controlNo').textContent = cert.control_number;
-    document.getElementById('rhu').textContent = cert.rhu;
-
-    // Determine pronouns
-    let pronounSubject = cert.sex.toLowerCase() === 'male' ? 'He' : 'She';
-    let pronounObject = cert.sex.toLowerCase() === 'male' ? 'his' : 'her';
-
-    // Start building the text
-    let text = `This is to certify that <strong style="text-transform: uppercase;">${cert.patient_name}</strong>, ${cert.age} years old, ${cert.sex.toLowerCase()}, `;
-    text += `${cert.civil_status.toLowerCase()}, born on ${formatDate(cert.date_of_birth)} in ${cert.birthplace}, `;
-    text += `presently residing at <strong style="text-transform: uppercase;">${cert.address}</strong>, was examined. `;
-
-    // Check diagnosis
-    if (cert.diagnosis && cert.diagnosis.toLowerCase() !== 'none') {
-        text += `${pronounSubject} is suffering from ${cert.diagnosis}. `;
-
-        if (cert.rest_period_days) {
-            text += `A period of absence from work for at least ${cert.rest_period_days} `;
-            text += `${cert.rest_period_days > 1 ? 'days' : 'day'}`;
-
-            if (cert.rest_from_date && cert.rest_to_date) {
-                text += `, from ${formatDate(cert.rest_from_date)} to ${formatDate(cert.rest_to_date)}`;
+        function displayCertificate(cert) {
+            // Basic patient info
+            document.getElementById('patientName').textContent = cert.patient_name.toUpperCase();
+            document.getElementById('patientAge').textContent = cert.age;
+            document.getElementById('patientSex').textContent = cert.sex;
+            document.getElementById('civilStatus').textContent = cert.civil_status;
+            document.getElementById('patientAddress').textContent = cert.address.toUpperCase();
+            document.getElementById('diagnosis').textContent = cert.diagnosis;
+            document.getElementById('remarks').textContent = cert.remarks || '';
+            
+            // Dates
+            document.getElementById('examDate').textContent = formatDate(cert.date_of_examination || cert.issuance_date);
+            
+            // Fit/Unfit status
+            if (cert.fit_status === 'FIT') {
+                document.getElementById('fitBox').innerHTML = '✓';
+                document.getElementById('unfitBox').innerHTML = '';
+            } else if (cert.fit_status === 'UNFIT') {
+                document.getElementById('fitBox').innerHTML = '';
+                document.getElementById('unfitBox').innerHTML = '✓';
             }
-
-            text += ` is necessary for the restoration of ${pronounObject} health.`;
+            
+            // Laboratory results
+            document.getElementById('labCbc').textContent = cert.lab_cbc || '';
+            document.getElementById('labUrinalysis').textContent = cert.lab_urinalysis || '';
+            document.getElementById('labFecalysis').textContent = cert.lab_fecalysis || '';
+            document.getElementById('labHbsag').textContent = cert.lab_hbsag || '';
+            document.getElementById('labCxr').textContent = cert.lab_cxr || '';
+            document.getElementById('labSputum').textContent = cert.lab_sputum_afb || '';
+            document.getElementById('labOther').textContent = cert.lab_other || '';
+            
+            // Check laboratory boxes that have data
+            if (cert.lab_cbc) document.getElementById('cbcBox').innerHTML = '✓';
+            if (cert.lab_urinalysis) document.getElementById('urinalysisBox').innerHTML = '✓';
+            if (cert.lab_fecalysis) document.getElementById('fecalysisBox').innerHTML = '✓';
+            if (cert.lab_hbsag) document.getElementById('hbsagBox').innerHTML = '✓';
+            if (cert.lab_cxr) document.getElementById('cxrBox').innerHTML = '✓';
+            if (cert.lab_sputum_afb) document.getElementById('sputumBox').innerHTML = '✓';
+            if (cert.lab_other) document.getElementById('otherBox').innerHTML = '✓';
+            
+            // Issuance date breakdown
+            const issuanceDate = new Date(cert.issuance_date);
+            document.getElementById('issuedDay').textContent = issuanceDate.getDate();
+            document.getElementById('issuedMonth').textContent = issuanceDate.toLocaleString('en-US', { month: 'long' });
+            document.getElementById('issuedYear').textContent = issuanceDate.getFullYear().toString().slice(-2);
+            
+            // Control number and RHU
+            document.getElementById('controlNo').textContent = cert.control_number;
+            document.getElementById('rhu').textContent = cert.rhu || 'RURAL HEALTH UNIT II';
+            
+            // Doctor information
+            document.getElementById('doctorName').textContent = cert.issued_by.toUpperCase();
+            document.getElementById('licenseNumber').textContent = cert.license_number || '';
         }
-    } else {
-        // Patient is healthy
-        text += `${pronounSubject} is in good health and shows no signs of illness or medical condition.`;
-    }
-
-    // Include purpose if provided
-    if (cert.purpose) {
-        text += ` Purpose: ${cert.purpose}.`;
-    }
-
-    // Insert into the page using innerHTML so bold/uppercase is rendered
-    document.getElementById('certificateText').innerHTML = text;
-
-    // Display doctor/nurse information
-    document.getElementById('doctorName').textContent = cert.issued_by.toUpperCase();
-    
-    let licenseInfo = '';
-    if (cert.license_number) licenseInfo += `Lic. No. ${cert.license_number}`;
-    if (cert.ptr_no) {
-        if (licenseInfo) licenseInfo += '\n';
-        licenseInfo += `PTR No. ${cert.ptr_no}`;
-    }
-    document.getElementById('licenseInfo').textContent = licenseInfo;
-}
-
 
         function formatDate(dateString) {
             const options = { year: 'numeric', month: 'long', day: 'numeric' };
@@ -521,80 +341,8 @@ function displayCertificate(cert) {
         function goBack() {
             window.history.back();
         }
-   
-
-
-
-fetch('php/getUserName.php')
-    .then(response => response.json())
-    .then(data => {
-        if (data.full_name) {
-            document.getElementById('userGreeting').textContent = `Hello, ${data.full_name}!`;
-        } else {
-            document.getElementById('userGreeting').textContent = 'Hello, BHW!';
-        }
-    })
-    .catch(error => {
-        console.error('Error fetching user name:', error);
-        document.getElementById('userGreeting').textContent = 'Hello, BHW!';
-    }); 
-    function confirmLogout() {
-            document.getElementById('logoutModal').style.display = 'block';
-            return false; // Prevent the default link behavior
-        }
-        
-        function closeModal() {
-            document.getElementById('logoutModal').style.display = 'none';
-        }
-        
-        function proceedLogout() {
-            window.location.href = '../ADMIN/php/logout.php'; 
-        }
-        
-        // Close modal when clicking outside
-        window.onclick = function(event) {
-            const modal = document.getElementById('logoutModal');
-            if (event.target == modal) {
-                closeModal();
-            }
-        } 
-              // Check if user is logged in
-              fetch('php/getUserId.php')
-            .then(response => response.json())
-            .then(data => {
-                if (data.error) {
-                    // User is not logged in, redirect to role selection page
-                    window.location.href = '../role.html';
-                }
-            })
-            .catch(error => {
-                console.error('Error checking session:', error);
-                window.location.href = '../role.html';
-            });
-</script>
-
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  const sidebar = document.getElementById("sidebar");
-
-  function applyResponsiveSidebar() {
-    if (window.innerWidth <= 1024) {
-      sidebar.classList.add("hide");   // collapsed on small screens
-    } else {
-      sidebar.classList.remove("hide"); // expanded on larger screens
-    }
-  }
-
-  applyResponsiveSidebar();
-  window.addEventListener("resize", applyResponsiveSidebar);
-
-  // keep the rest of your existing code (auth, stats, modals, etc.)
-});
-</script>
-	<script src="js/script.js"></script>
-    <script src="js/history.js"></script>
+    </script>
 </body>
 </html>
-
 
 

@@ -68,6 +68,10 @@ document.addEventListener("DOMContentLoaded", function () {
                     updateElement(".diagnosis_status", data.consultation.diagnosis_status);
                     updateElement(".instruction", data.consultation.instruction_prescription);
                     updateElement(".doctor", data.consultation.full_name);
+                    updateElement(".licenseNo", data.consultation.license_number);
+                    updateElement(".rhu", data.consultation.rhu);
+                    
+                      document.getElementById("diagnosis").value = data.consultation.diagnosis || "";
 
                     // Store consultation_id in a hidden field if it exists
                     const consultationField = document.getElementById("consultation_id");
@@ -168,18 +172,22 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
         // ✅ Add Med Cert Button
-    const addMedCertBtn = document.getElementById("addMedCertBtn");
-    if (addMedCertBtn) {
-        addMedCertBtn.addEventListener("click", function () {
-            // Get patient_id from the fetched data
-            const patientId = document.getElementById("patient_id")?.value;
-            if (patientId) {
-                window.location.href = `addMedCert.html?patient_id=${patientId}`;
-            } else {
-                alert("Patient ID not found. Please try again.");
-            }
-        });
-    }
+   // ✅ Add Med Cert Button
+const addMedCertBtn = document.getElementById("addMedCertBtn");
+if (addMedCertBtn) {
+    addMedCertBtn.addEventListener("click", function () {
+        const patientId = document.getElementById("patient_id")?.value;
+        const urlParams = new URLSearchParams(window.location.search);
+        const visitId = urlParams.get("visit_id"); // Get the visit_id from current page URL
+
+        if (patientId && visitId) {
+            window.location.href = `addMedCert.html?patient_id=${patientId}&visit_id=${visitId}`;
+        } else {
+            alert("Missing patient or visit information. Please try again.");
+        }
+    });
+}
+
 
 
     // ✅ Load Lab File (only if container exists)

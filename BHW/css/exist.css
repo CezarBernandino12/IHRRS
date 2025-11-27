@@ -769,7 +769,7 @@ p {
 .vitals-section .form-group {
     flex: 1;                 /* Makes all items equal width */
     min-width: 220px;        /* Adjust depending on your layout */
-    margin-bottom: 10px;
+
 }
 
 

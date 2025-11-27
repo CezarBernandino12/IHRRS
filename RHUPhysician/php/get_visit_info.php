@@ -6,7 +6,7 @@ header('Content-Type: application/json');
 
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
- 
+
 // Validate visit_id
 if (!isset($_GET['visit_id']) || empty($_GET['visit_id'])) {
     echo json_encode(['error' => 'Missing visit_id']);
@@ -73,7 +73,7 @@ try {
     }
 
     // Fetch RHU medicines dispensed for this visit
-    $sql_rhumedicine = "SELECT md.medicine_name, md.quantity_dispensed 
+    $sql_rhumedicine = "SELECT md.medicine_name, md.quantity_dispensed, md.instruction 
                         FROM rhu_medicine_dispensed md
                         JOIN rhu_consultations rc ON md.consultation_id = rc.consultation_id
                         WHERE rc.visit_id = :visit_id";
@@ -90,7 +90,7 @@ try {
     }
 
     // Fetch consultation details
-    $sql_consultation = "SELECT rc.*, u.full_name FROM rhu_consultations rc JOIN users u ON rc.doctor_id = u.user_id WHERE visit_id = :visit_id";
+    $sql_consultation = "SELECT rc.*, u.full_name, u.license_number, u.rhu FROM rhu_consultations rc JOIN users u ON rc.doctor_id = u.user_id WHERE visit_id = :visit_id";
     $stmt_consultation = $pdo->prepare($sql_consultation);
     $stmt_consultation->bindParam(':visit_id', $visit_id, PDO::PARAM_INT);
     $stmt_consultation->execute();
@@ -99,11 +99,6 @@ try {
     // Replace NULL or missing values with "N/A"
     foreach ($consultationInfo as $key => $value) {
         $consultationInfo[$key] = $value ?? "N/A";
-    }
-
-    // Log the physician's action using standardized function
-    if (isset($_SESSION['user_id'])) {
-        logActivity($pdo, $_SESSION['user_id'], "Viewed Patient Assessment Record");
     }
 
     // Return JSON response

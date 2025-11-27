@@ -34,9 +34,9 @@ $sql = "SELECT r.*, p.first_name, p.last_name, p.age, p.sex, p.address
         FROM rhu_consultations r
         JOIN patients p ON r.patient_id = p.patient_id
         JOIN users u_rec ON r.recorded_by = u_rec.user_id
-        WHERE u_rec.rhu = ?";  // Only show consultations from same RHU
+        WHERE u_rec.rhu = :rhu";  // Only show consultations from same RHU
 
-$params = [$rhu]; // First parameter is the current user's RHU
+$params['rhu'] = $rhu;// First parameter is the current user's RHU
 
 
 if (!empty($from_date) && !empty($to_date)) {

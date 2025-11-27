@@ -43,10 +43,11 @@ FROM rhu_medicine_dispensed md
 JOIN users u_disp ON md.dispensed_by = u_disp.user_id
 JOIN rhu_consultations c ON md.consultation_id = c.consultation_id
 JOIN patients p ON c.patient_id = p.patient_id
-WHERE u_disp.rhu = ?
+WHERE u_disp.rhu = :rhu
 ";
 
-$params[] = $rhu; // Only show records from the same RHU as current user
+$params['rhu'] = $rhu;
+ // Only show records from the same RHU as current user
 
 // Date filter (index-friendly, no DATE() wrapper)
 if (!empty($from_date) && !empty($to_date)) {
@@ -156,7 +157,7 @@ if (!empty($barangay) && $barangay !== 'N/A') {
 $sql .= " GROUP BY p.patient_id ORDER BY p.last_name, p.first_name";
 
 $stmt = $pdo->prepare($sql);
-$stmt->execute($params);
+$stmt->execute($params); //THIS IS LINE 159
 $patients = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Ensure $rows is populated with patient data for the charts
@@ -242,7 +243,8 @@ if (count($patient_meds) > 0) {
     ";
 
     $disp_stmt = $pdo->prepare($disp_sql);
-    $disp_stmt->execute(array_merge($ids, $medicine_list));
+$disp_stmt->execute(array_merge($ids, $medicine_list));
+
 
     while ($disp_row = $disp_stmt->fetch(PDO::FETCH_ASSOC)) {
         $pid = $disp_row['patient_id'];

@@ -25,12 +25,25 @@ try {
     $patient_id = $_POST['patient_id'] ?? null;
     $visit_id = $_POST['visit_id'] ?? null;
     $issuance_date = $_POST['issuance_date'] ?? null;
+    $date_of_examination = $_POST['date_of_examination'] ?? null;
     $diagnosis = $_POST['diagnosis'] ?? '';
     $findings = $_POST['findings'] ?? '';
-    $purpose = $_POST['purpose'] ?? '';
+    $fit_status = $_POST['fit_status'] ?? null;
+    $remarks = $_POST['remarks'] ?? '';
+    $purpose = $_POST['purpose'] ?? null;
     $rest_period_days = $_POST['rest_period_days'] ?? null;
     $rest_from_date = $_POST['rest_from_date'] ?? null;
     $rest_to_date = $_POST['rest_to_date'] ?? null;
+    
+    // Laboratory fields
+    $lab_cbc = $_POST['lab_cbc'] ?? '';
+    $lab_urinalysis = $_POST['lab_urinalysis'] ?? '';
+    $lab_fecalysis = $_POST['lab_fecalysis'] ?? '';
+    $lab_hbsag = $_POST['lab_hbsag'] ?? '';
+    $lab_cxr = $_POST['lab_cxr'] ?? '';
+    $lab_sputum_afb = $_POST['lab_sputum_afb'] ?? '';
+    $lab_other = $_POST['lab_other'] ?? '';
+    
     $prepared_by = $_POST['user_id'] ?? '';
     $issued_by = $_POST['physician'] ?? '';
 
@@ -43,7 +56,6 @@ try {
     $rest_period_days = ($rest_period_days !== '' && $rest_period_days !== null) ? intval($rest_period_days) : null;
     $rest_from_date = ($rest_from_date !== '') ? $rest_from_date : null;
     $rest_to_date = ($rest_to_date !== '') ? $rest_to_date : null;
-
 
     if (isset($pdo)) {
         // 🔹 Generate control number (resets every year)
@@ -71,16 +83,22 @@ try {
 
         $control_number = $prefix . $newNum;
 
-        // 🔹 Insert with control number
+        // 🔹 Insert with control number and new fields
         $sql = "INSERT INTO medical_certificates (
-            patient_id, visit_id, control_number, issuance_date, diagnosis, findings, purpose,
-            rest_period_days, rest_from_date, rest_to_date, issued_by, prepared_by
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            patient_id, visit_id, control_number, issuance_date, date_of_examination, 
+            diagnosis, findings, fit_status, remarks, purpose,
+            rest_period_days, rest_from_date, rest_to_date, 
+            lab_cbc, lab_urinalysis, lab_fecalysis, lab_hbsag, lab_cxr, lab_sputum_afb, lab_other,
+            issued_by, prepared_by
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         $stmt = $pdo->prepare($sql);
         $stmt->execute([
-            $patient_id, $visit_id, $control_number, $issuance_date, $diagnosis, $findings, $purpose,
-            $rest_period_days, $rest_from_date, $rest_to_date, $issued_by, $prepared_by
+            $patient_id, $visit_id, $control_number, $issuance_date, $date_of_examination,
+            $diagnosis, $findings, $fit_status, $remarks, $purpose,
+            $rest_period_days, $rest_from_date, $rest_to_date,
+            $lab_cbc, $lab_urinalysis, $lab_fecalysis, $lab_hbsag, $lab_cxr, $lab_sputum_afb, $lab_other,
+            $issued_by, $prepared_by
         ]);
 
         $medcert_id = $pdo->lastInsertId();

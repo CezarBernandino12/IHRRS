@@ -35,9 +35,9 @@ $medication = $_GET['medication'] ?? '';
 $sql = "SELECT v.*, p.first_name, p.last_name, p.age, p.sex, p.address FROM patient_assessment v 
         JOIN patients p ON v.patient_id = p.patient_id 
         JOIN users u_rec ON v.recorded_by = u_rec.user_id
-        WHERE u_rec.rhu = ?";  // Only show consultations from same RHU
+        WHERE u_rec.rhu = :rhu";  // Only show consultations from same RHU
 
-$params = [$rhu]; // First parameter is the current user's RHU
+$params['rhu'] = $rhu; // First parameter is the current user's RHU
 
 
 

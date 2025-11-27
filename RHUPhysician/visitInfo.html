@@ -106,7 +106,7 @@
 			</a>
 		</nav>
 
-        <main>
+       <main>
             <div class="head-title">
             </div>
 
@@ -287,22 +287,22 @@
                 <b>PATIENT'S DIAGNOSIS :</b>  
             </p>
 
-            <div class="additional-group box-group additional-fields" style="background-color: aliceblue;">
+            <div class="additional-group box-group additional-fields" style="background-color: rgb(255, 255, 255);">
                 
                 <div class="additional-options">
                         <div class="assessment-card">
                          <label>Laboratory Test Result:</label>
-                    <div id="lab-file-container">
+                    <div id="lab-file-container" style="font-family: 'Trebuchet MS', sans-serif; border: 1px solid #fff; padding: 10px; border-style: none; background-color: #fff; color: #00000079; font-weight: bolder;">
                        <!-- File preview will load here -->
                   </div>
                     </div>
                        <div class="assessment-card">
                         <label for="diagnosis">Diagnosis:</label>
-                         <input type="text" id="diagnosis" name="diagnosis" class="diagnosis" readonly value="N/A">
+                         <input type="text" id="diagnosis" name="diagnosis" class="diagnosis" style="background-color: #fff; color: #0447ac; border-style: none; font-weight: bolder; font-size: 15px;" readonly value="N/A">
                     </div>
                          <div class="assessment-card">
                         <label for="diagnosis_status">Status:</label>
-                         <p class="diagnosis_status">N/A</p>
+                         <p class="diagnosis_status" style="font-family: 'Trebuchet MS', sans-serif; margin-left: 10px;">N/A</p>
                     </div>
 
                        <div class="assessment-card">
@@ -315,88 +315,102 @@
                         </div>
                        </div>
                 <div class="assessment-card">
-                <label for="instruction">Instructions/Remarks:</label>
-                <p class="instruction">N/A</p>
+                <label for="instruction">Remarks:</label>
+                <p class="instruction" style="margin-left: 10px;">N/A</p>
             </div>
-                <div class="assessment-card">
-                <label for="doctor">Recorded by:</label>
-                <p class="doctor">N/A</p>
-            </div>
+            <div class="assessment-card" 
+     style="display: flex; align-items: center; flex-wrap: wrap; gap: 20px; font-family: 'Trebuchet MS', sans-serif;">
+  
+  <div style="display: flex; align-items: center;">
+    <label for="doctor">Physician:</label>
+    <p style="margin-top: 5px;" class="doctor" >N/A</p>
+  </div>
+
+  <div style="display: flex; align-items: center;">
+    <label for="licenseNo">License Number:</label>
+    <p style="margin-top: 5px;" class="licenseNo" >N/A</p>
+  </div>
+  <div style="display: none;">
+    <label for="rhu">RHU:</label>
+    <p class="rhu">N/A</p>
+  </div>
+
+</div>
+
 
 
           
                                 
         
                             </div>
-                        </div>
+                        </div> <br>
                         
                     
-                        <button id="printBtn" class="footer-btn print-pill" type="button" title="Print">
-                          <i class='bx bxs-printer' aria-hidden="true"></i>
-                          <span>Print</span>
+                      <button id="printBtn" class="footer-btn print-pill" type="button" title="Print">
+                              <i class='bx bxs-printer' aria-hidden="true"></i>
+                              <span>Print</span>
+                          </button>
+                         <button id="resumeBtn" class="footer-btn action-pill" type="button" title="Resume Treatment" style="display: none;">
+                             <i class='bx bxs-capsule' aria-hidden="true"></i>
+                              <span>Resume Treatment</span>
+                        </button>
+                        <button id="addMedCertBtn" class="footer-btn action-pill" type="button" title="Add Medical Certificate">
+                          <i class='bx bx-badge-check' aria-hidden="true"></i>
+                          <span>Issue Medical Certificate</span>
                         </button>
 
-                        <button id="resumeBtn" class="footer-btn action-pill" type="button" title="Resume Treatment" style="display: none;">
-                          <i class='bx bxs-capsule' aria-hidden="true"></i>
-                          <span>Resume Treatment</span>
-                        </button>
-                         <button id="addMedCertBtn" class="footer-btn success-pill" type="button" title="Add Medical Certificate">
-                              <i class='bx bx-badge-check' aria-hidden="true"></i>
-                              <span>Issue Medical Certificate</span>
-                        </button>
-
-
+                    </div>
 
         </main>
     </section>
 
-     <div id="printContent" style="display:none;">
-<!-- Two-logo centered letterhead (print only template) -->
+                        <div id="printContent" style="display:none;">
+<!-- Two-logo centered letterhead (print) -->
 <div class="print-letterhead">
-  <img src="../img/logo.png" alt="Municipality / Station Logo" class="print-logo" aria-hidden="true">
+  <img src="../img/daet_logo.png" alt="Municipality / Station Logo" class="print-logo" aria-hidden="true">
 
   <div class="print-heading">
     <div class="ph-line-1">Republic of the Philippines</div>
     <div class="ph-line-2">Daet, Camarines Norte</div>
-    <div class="ph-line-3" id="printBarangay"></div>
-    <hr class="print-rule">
-    <h3 class="print-title">INDIVIDUAL TREATMENT RECORD</h3>
+    <div class="ph-line-3" id="printRHU"></div>
+    <hr class="print-rule"> 
+    
   </div>
 
-  <img src="../img/RHUlogo.png" alt="RHU Logo" class="print-logo" aria-hidden="true">
+  <img src="../img/mho_logo.png" alt="RHU Logo" class="print-logo" aria-hidden="true">
 </div>
 
-
+<h3 class="print-title">INDIVIDUAL TREATMENT RECORD</h3> <br>
     <p><strong>Family Serial No.:</strong> <span id="printFamilySerial"></span></p>
 
-    <table class="info-table">
-      <tr>
-        <td><strong>Last Name:</strong> <span id="printLastName"></span></td>
-        <td><strong>First Name:</strong> <span id="printFirstName"></span></td>
-        <td><strong>Middle Name:</strong> <span id="printMiddleName"></span></td>
-        <td><strong>Ext:</strong> <span id="printExt"></span></td>
-      </tr>
-      <tr>
-        <td><strong>Age:</strong> <span id="printAge"></span></td>
-        <td><strong>Birthday:</strong> <span id="printBirthday"></span></td>
-        <td><strong>Sex:</strong> <span id="printSex"></span></td>
-        <td><strong>Civil Status:</strong> <span id="printCivilStatus"></span></td>
-      </tr>
-      <tr>
-        <td colspan="2"><strong>Address:</strong> <span id="printAddress"></span></td>
-        <td colspan="2"><strong>Mobile No.:</strong> <span id="printMobileNo"></span></td>
-      </tr>
-      <tr>
-        <td colspan="2"><strong>Educational Attainment:</strong> <span id="printEducationalAttainment"></span></td>
-        <td><strong>PHILHEALTH Member#:</strong> <span id="printPhilhealthNum"></span></td>
-        <td><strong>Category:</strong> <span id="printCategory"></span></td>
-      </tr>
-      <tr>
-        <td><strong>Birth Weight:</strong> <span id="printBirthWeight"></span></td>
-        <td><strong>4Ps:</strong> <span id="print4ps"></span></td>
-        <td colspan="2"></td>
-      </tr>
-    </table>
+  <table class="info-table" style="width:100%; border-collapse:collapse;">
+  <tr>
+    <td><strong>Last Name:</strong> <span id="printLastName"></span></td>
+    <td><strong>First Name:</strong> <span id="printFirstName"></span></td>
+    <td><strong>Middle Name:</strong> <span id="printMiddleName"></span></td>
+    <td><strong>Ext:</strong> <span id="printExt"></span></td>
+  </tr>
+  <tr>
+  
+    <td><strong>Birthday:</strong> <span id="printBirthday"></span></td>
+    <td><strong>Sex:</strong> <span id="printSex"></span></td>
+    <td><strong>Civil Status:</strong> <span id="printCivilStatus"></span></td>
+  </tr>
+  <tr>
+    <td colspan="4"><strong>Address:</strong> <span id="printAddress"></span></td>
+  </tr>
+  <tr>
+    <td colspan="2"><strong>Mobile No.:</strong> <span id="printMobileNo"></span></td>
+    <td colspan="2"><strong>Educational Attainment:</strong> <span id="printEducationalAttainment"></span></td>
+  </tr>
+  <tr>
+    <td><strong>PhilHealth No.:</strong> <span id="printPhilhealthNum"></span></td>
+    <td><strong>Category:</strong> <span id="printCategory"></span></td>
+    <td><strong>Birth Weight:</strong> <span id="printBirthWeight"></span>N/A</td>
+    <td><strong>4Ps:</strong> <span id="print4ps"></span></td>
+  </tr>
+</table>
+
     <br /><br />
 
     <table class="info-table">
@@ -405,15 +419,13 @@
       </tr>
     </table>
 
-    <!-- DATE and AGE are separate columns now -->
+    <!-- DATE & AGE are separate columns -->
     <table class="treatment-table">
       <thead>
         <tr>
           <th width="10%">DATE</th>
           <th width="8%">AGE</th>
-          <th width="27%">
-            CHIEF COMPLAINTS &amp; VITAL SIGNS<br />(BP, Wt, Ht, Temp, CR, RR, BMI)
-          </th>
+          <th width="27%">CHIEF COMPLAINTS &amp; VITAL SIGNS<br />(BP, Wt, Ht, Temp, CR, RR, BMI)</th>
           <th width="30%">DIAGNOSIS / TREATMENT / MEDICATION / INSTRUCTION</th>
           <th width="25%">REMARKS<br />CONSULTED / REFERRED / SIGNATURE</th>
         </tr>
@@ -421,7 +433,7 @@
       <tbody>
         <tr>
           <td><span id="printDate"></span></td>
-          <td><span id="printVisitAge"></span> yrs</td>
+          <td><span id="printVisitAge"></span> yrs old</td>
           <td>
             <div><strong>Chief Complaints:</strong> <span id="printChiefComplaints"></span></div>
             <div>BP: <span id="printBp"></span></div>
@@ -433,13 +445,19 @@
             <div>BMI: <span id="printBmi"></span></div>
           </td>
           <td>
-            <div><strong>Diagnosis:</strong> <span id="printDiagnosis"></span></div>
-            <div><strong>Medication:</strong> <span id="printMedication"></span></div>
-            <div><strong>BHW Remarks:</strong> <span id="printBHWremarks"></span></div>
+            <div><strong>Diagnosis:</strong> <span id="printDiagnosis"></span></div> <br>
+            <div>
+ <strong>Medications:</strong>
+<span id="printMedication" 
+      style="display: block; white-space: pre-line; line-height: 1.0; margin: 0; padding: 0; margin-top: -25px;"></span>
+
+</div>
+            
           </td>
           <td>
-            <div><strong>Instructions/Remarks:</strong> <span id="printInstruction"></span></div>
-            <div style="margin-top:10px;"><strong>Recorded by:</strong> <span id="printUsername"></span></div>
+            <div><strong>Remarks:</strong> <span id="printInstruction"></span></div> <br><br><br><br><br>
+            <div style="margin-top:10px;"><strong>Physician:</strong> <br> <span id="printUsername"></span></div>
+              <div><strong>Lic. No.:</strong> <span id="printLicenseNo"></span></div>
           </td>
         </tr>
       </tbody>
@@ -457,19 +475,15 @@
                     
         
                       </div>
-<style>
+                   <style>
     .referral-form-footer { text-align: right; margin-top: 20px; }
     .footer-btn {
-      padding: 10px 18px;
-      margin-left: 10px;
-      background-color: #162e51;
-      color: white; font-size: 15px; border: none;
-      border-radius: 50px; cursor: pointer;
-      transition: background-color 0.3s ease;
+      padding: 10px 18px; margin-left: 10px; background-color: #162e51;
+      color: #fff; font-size: 15px; border: none; border-radius: 50px;
+      cursor: pointer; transition: background-color .3s ease;
     }
     .footer-btn:hover { background-color: #15253d; }
   </style>
-
                     </div> </div>
 
         
@@ -526,9 +540,9 @@
 
 
     </div>
-   	<script>
+    <script>
     document.addEventListener("DOMContentLoaded", () => {
-      // Responsive sidebar
+      // Sidebar responsiveness
       const sidebar = document.getElementById("sidebar");
       function applyResponsiveSidebar() {
         if (window.innerWidth <= 1024) sidebar.classList.add("hide");
@@ -537,6 +551,7 @@
       applyResponsiveSidebar();
       window.addEventListener("resize", applyResponsiveSidebar);
 
+      // Toggle Personal Info - handled in form.js
 
       // Update Referrals via POST then redirect
       document.getElementById("updateReferrals")?.addEventListener("click", async (e) => {
@@ -584,13 +599,13 @@
         })
         .catch(() => (document.getElementById('userGreeting').textContent = 'Hello, BHW!'));
 
-      // Auth check (no redirect loop on transient errors)
+      // Auth check
       fetch('php/getUserId.php', { credentials: "same-origin" })
         .then(r => r.json())
         .then(data => { if (data?.error) window.location.href = '../role.html'; })
         .catch(err => console.error('Error checking session:', err));
 
-      // Print handler
+      // PRINT HANDLER
       document.getElementById("printBtn")?.addEventListener("click", () => {
         const set = (id, selector, attr = "textContent") => {
           const src = selector ? document.querySelector(selector) : null;
@@ -600,7 +615,7 @@
         };
 
         // Header & personal
-        set("printBarangay", ".bhs");
+        set("printRHU", ".rhu");
         set("printFamilySerial", ".family-serial-no");
         set("printLastName", ".patient-last-name");
         set("printFirstName", ".patient-first-name");
@@ -614,7 +629,7 @@
         set("printMobileNo", ".contact-number");
         set("printEducationalAttainment", ".educational-attainment");
         set("printPhilhealthNum", ".philhealth-member-no");
-        set("printBirthWeight", ".birth-weight"); // may be empty
+        set("printBirthWeight", ".birth-weight");
         set("print4ps", ".fourps-status");
         set("printCategory", ".category");
         set("printPatientAlert", ".patient-alert");
@@ -636,19 +651,19 @@
         document.getElementById("printDiagnosis").textContent = diagInput?.value || "";
         document.getElementById("printMedication").textContent =
           document.querySelector(".rhu-medicine-lists")?.textContent || "";
-        document.getElementById("printBHWremarks").textContent =
-          document.querySelector(".remarks")?.textContent || "";
         document.getElementById("printInstruction").textContent =
           document.querySelector(".instruction")?.textContent || "";
         document.getElementById("printUsername").textContent =
           document.querySelector(".doctor")?.textContent || "";
+         document.getElementById("printLicenseNo").textContent =
+          document.querySelector(".licenseNo")?.textContent || "";
 
-        // Clone content
+        // Clone & prepare
         const printContent = document.getElementById("printContent");
         const contentToPrint = printContent.cloneNode(true);
         contentToPrint.style.display = "block";
 
-        // Print CSS
+        // Print CSS (standardized)
 const css = `
   @page { size: A4; margin: 18mm 16mm; }
   * { box-sizing: border-box; }
@@ -657,16 +672,19 @@ const css = `
 
   /* === Two-logo centered letterhead === */
   .print-letterhead{
-    display: grid;
-    grid-template-columns: 64px auto 64px;    
-    align-items: center;
-    justify-content: center;
-    column-gap: 15px;
-    width: fit-content;
-    margin: 0 auto 10mm;                        
-    text-align: center;
+  display: grid;
+  grid-template-columns: 80px auto 80px; /* same logo column width */
+  align-items: center;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  justify-content: center;
+  column-gap: 50px; /* space between logos and heading */
+  row-gap: 0;
+  width: fit-content;
+  margin: 8px auto 25px;
+  padding: 0;
   }
-        /* remove any margin added directly on the title */
+
+          /* remove any margin added directly on the title */
     .referral-heading .title {
     margin-bottom: 0 !important;
     }
@@ -682,25 +700,23 @@ const css = `
         margin-bottom: 40pt !important;
     }
     }
-  .print-logo{
-    width: 80px; height: 80px; object-fit: contain;
-  }
-  .print-heading{ line-height: 1.1; color: #0d2546; }
+  .print-logo{ width: 65px; height: 65px; object-fit: contain; }
+  .print-heading{ line-height: 1.1; color: #000; }
   .print-heading > *{ margin: 0; }
-  .ph-line-1{ font-size: 12pt; font-weight: 500; }
-  .ph-line-2{ font-size: 16pt; font-weight: 500; }
-  .ph-line-3{ font-size: 11pt; font-weight: 500; margin-top: 2px; }
+  .ph-line-1{ font-size: 12pt; font-weight: 400; text-align: center;}
+  .ph-line-2{ font-size: 14pt; font-weight: 500; text-align: center;}
+  .ph-line-3{ font-size: 12pt; font-weight: 400; margin-top: 2px; text-align: center;}
   .print-rule{ height: 1px; border: 0; background: #cfd8e3; margin: 6px 0 8px; }
-  .print-title{ font-size: 13.5pt; font-weight: 700; letter-spacing: .3px; margin: 0; color:#000; }
+  .print-title{ font-size: 13.5pt; font-weight: 700; letter-spacing: .3px; margin-top: 50px; color:#000; text-align: center; }
 
   /* === Info tables === */
   .info-table { width: 100%; border-collapse: collapse; margin-top: 6px; table-layout: fixed; }
-  .info-table td { padding: 4px 6px; font-size: 10.5pt; vertical-align: top; border: 1px solid #e3e8f4; word-break: break-word; }
+  .info-table td { padding: 4px 6px; font-size: 11pt; vertical-align: top; word-break: break-word; }
 
   /* === Treatment table === */
   .treatment-table { width: 100%; border-collapse: collapse; margin-top: 10px; table-layout: fixed; }
   .treatment-table th, .treatment-table td {
-    border: 1px solid #000; padding: 6px; vertical-align: top; word-wrap: break-word; font-size: 10.5pt;
+    border: 1px solid #000; padding: 6px; vertical-align: top; word-wrap: break-word; font-size: 11pt;
   }
   .treatment-table th { background: #f2f2f2; text-align: left; font-weight: 700; }
 `;
@@ -724,14 +740,8 @@ const css = `
         win.onload = () => { win.focus(); win.print(); win.close(); };
       });
 
-      // Optional: Resume Treatment button (hook to your logic)
-      document.getElementById("resumeBtn")?.addEventListener("click", () => {
-        // TODO: implement resume flow
-        alert("Resume Treatment action goes here.");
-      });
+ 
     });
-		
-
             
 			</script>
     <script>

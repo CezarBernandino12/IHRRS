@@ -1,25 +1,17 @@
 <?php
-// Prevent any output before JSON
 ob_start();
-
 session_start();
-
-// Clear any previous output
 ob_end_clean();
 
 header('Content-Type: application/json');
-
-// Disable error display (log errors instead)
 ini_set('display_errors', 0);
 error_reporting(E_ALL);
 
-// Check if user is logged in
 if (!isset($_SESSION['user_id'])) {
     echo json_encode(['error' => 'Not authenticated']);
     exit;
 }
 
-// Database connection
 try {
     require '../../php/db_connect.php';
 } catch (Exception $e) {
@@ -35,19 +27,18 @@ if (!$patient_id) {
 }
 
 try {
-    // Check if we're using PDO or mysqli based on the connection
+    //  FIXED: Query patient_assessment table (NOT rhu_consultations)
     if (isset($pdo)) {
         // PDO version
         $sql = "SELECT 
-                    v.visit_id,
-                    v.visit_date,
-                    v.chief_complaints,
-                    v.remarks,
-                    u.full_name as recorded_by_name
-                FROM patient_assessment v
-                LEFT JOIN users u ON v.recorded_by = u.user_id
-                WHERE v.patient_id = ?
-                ORDER BY v.visit_date DESC
+                    pa.visit_id,
+                    pa.visit_date,
+                    pa.chief_complaints,
+                    rc.diagnosis
+                FROM patient_assessment pa
+                LEFT JOIN rhu_consultations rc ON pa.visit_id = rc.visit_id
+                WHERE pa.patient_id = ?
+                ORDER BY pa.visit_date DESC
                 LIMIT 50";
 
         $stmt = $pdo->prepare($sql);
@@ -57,15 +48,14 @@ try {
     } elseif (isset($conn)) {
         // MySQLi version
         $sql = "SELECT 
-                    v.visit_id,
-                    v.visit_date,
-                    v.chief_complaints,
-                    v.remarks,
-                    u.full_name as recorded_by_name
-                FROM patient_assessment v
-                LEFT JOIN users u ON v.recorded_by = u.user_id
-                WHERE v.patient_id = ?
-                ORDER BY v.visit_date DESC
+                    pa.visit_id,
+                    pa.visit_date,
+                    pa.chief_complaints,
+                    rc.diagnosis
+                FROM patient_assessment pa
+                LEFT JOIN rhu_consultations rc ON pa.visit_id = rc.visit_id
+                WHERE pa.patient_id = ?
+                ORDER BY pa.visit_date DESC
                 LIMIT 50";
 
         $stmt = $conn->prepare($sql);
@@ -103,8 +93,7 @@ try {
             'visit_id' => $visit['visit_id'],
             'visit_date' => $visit['visit_date'],
             'chief_complaints' => $visit['chief_complaints'] ?? '',
-            'diagnosis' => $visit['diagnosis'] ?? '',
-            'recorded_by_name' => $visit['recorded_by_name'] ?? ''
+            'diagnosis' => $visit['diagnosis'] ?? ''
         ];
     }
 

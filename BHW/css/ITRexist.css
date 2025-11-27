@@ -10,7 +10,7 @@
 a {
 	text-decoration: none;
 }
-
+ 
 li {
 	list-style: none;
 }
@@ -711,9 +711,14 @@ p {
     align-items: center; 
 }
 
+
+
 .form-group {
     display: flex;
     flex-direction: column;
+    margin-top: -10px;
+    margin-bottom: -10px;
+
 }
 
 .form-group.full-width {
@@ -979,8 +984,8 @@ input:focus, select:focus {
 }
 
 .additional-group {
-    margin-bottom: 15px;
-    margin-top: 15px;
+    margin-bottom: 5px;
+    margin-top: 5px;
     padding: 10px;
     border-radius: 5px;
     display: flex;

@@ -105,14 +105,19 @@
                     <input type="hidden" id="patient_id" name="patient_id">
 
                     <div class="form-section">
-                        <h3>Select Visit/Consultation</h3>
-                        <div class="form-group">
-                            <label for="visitSelect">Visit Date <span class="required">*</span></label>
-                            <select id="visitSelect" name="visit_id" required>
-                                 <option value="" disabled selected hidden>Select a visit...</option>
-                            </select>
-                        </div>
+                        <h3>Consultation Date - Diagnosis</h3>
+                       <div class="form-group">
+ 
+    <select id="visitSelect" name="visit_id" required>
+        <option value="">Select a visit...</option>
+    </select>
+
+    <!-- 🔹 This will display the chosen visit as plain text -->
+    <div id="visitDisplay" style="margin-top: 8px; font-weight: 600; font-size: 15px;"></div>
+</div>
+
                     </div>
+                    
 
                     <div class="form-section">
                         <h3>Certificate Details</h3>
@@ -122,21 +127,21 @@
                             <input type="text" id="issuance_date" name="issuance_date" required placeholder="Select date">
                         </div>
 
-                        <div class="form-group">
+                        <div class="form-group" style="display: none;">
                             <label for="diagnosis">Diagnosis/Condition <span class="required">*</span></label>
                             <textarea id="diagnosis" name="diagnosis" rows="3" required 
                                 placeholder="e.g., Acute Respiratory Infection" readonly></textarea>
-                        </div>
+                        </div> 
 
-                        <div class="form-group">
+                        <div class="form-group" style="display: none;">
                             <label for="findings">Findings/Examination Results</label>
                             <textarea id="findings" name="findings" rows="3" 
                                 placeholder=""></textarea>
                         </div>
 
-                        <div class="form-group">
+                        <div class="form-group" style="display: none;">
                             <label for="purpose">Purpose</label>
-                            <select id="purpose" name="purpose" class="form-control" required>
+                            <select id="purpose" name="purpose" class="form-control">
                                 <option value="" disabled selected hidden>Select purpose...</option>
                                 <option value="For work requirement">For work requirement</option>
                                 <option value="For travel requirement">For travel requirement</option>
@@ -157,7 +162,7 @@
                         </div>
                     </div>
 
-                    <div class="form-section">
+                    <div class="form-section" style="display: none;">
                         <h3>Rest Period (if applicable)</h3>
                         
                         <div class="form-group">
@@ -211,6 +216,82 @@
                         </div>
                     </div>
 
+
+                    <!-- Add this new section after the Certificate Details section -->
+<div class="form-section">
+    <h3>Examination Details</h3>
+    
+    <div class="form-group">
+        <label for="date_of_examination">Date of Examination <span class="required">*</span></label>
+        <input type="text" id="date_of_examination" name="date_of_examination" required placeholder="Select date">
+    </div>
+
+    <div class="form-group">
+        <label>Fit Status <span class="required">*</span></label>
+        <div class="radio-group">
+            <label class="radio-label">
+                <input type="radio" name="fit_status" value="FIT" required>
+                <span class="radio-text">FIT</span>
+            </label>
+            <label class="radio-label">
+                <input type="radio" name="fit_status" value="UNFIT" required>
+                <span class="radio-text">UNFIT</span>
+            </label>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="remarks">Remarks</label>
+        <textarea id="remarks" name="remarks" rows="3" placeholder="Additional remarks..."></textarea>
+    </div>
+</div>
+
+<!-- Add this new section after the Examination Details section -->
+<div class="form-section lab-results">
+    <h3>Laboratory Results</h3>
+    
+        <div class="form-group">
+            <input type="checkbox" id="lab_cbc" name="lab_cbc" value="yes">
+            <label for="lab_cbc">CBC</label>
+      
+        </div>
+
+        <div class="form-group">
+            <input type="checkbox" id="lab_urinalysis" name="lab_urinalysis" value="yes">
+            <label for="lab_urinalysis">URINALYSIS</label>
+            
+        </div>
+
+        <div class="form-group">
+             <input type="checkbox" id="lab_fecalysis" name="lab_fecalysis" value="yes">
+            <label for="lab_fecalysis">FECALYSIS</label>
+           
+        </div>
+
+        <div class="form-group">
+             <input type="checkbox" id="lab_hbsag" name="lab_hbsag" value="yes">
+            <label for="lab_hbsag">HBsAg</label>
+           
+        </div>
+
+        <div class="form-group">
+              <input type="checkbox" id="lab_cxr" name="lab_cxr" value="yes">
+            <label for="lab_cxr">CXR</label>
+          
+        </div>
+
+        <div class="form-group">
+                 <input type="checkbox" id="lab_sputum_afb" name="lab_sputum_afb" value="yes">
+            <label for="lab_sputum_afb">SPUTUM AFB</label>
+       
+        </div>
+
+    <div class="form-group">
+        <label for="lab_other">OTHER</label>
+        <input type="text" id="lab_other" name="lab_other" placeholder="Other laboratory results">
+    </div>
+</div>
+
                     <!-- UPDATED PHYSICIAN SECTION -->
                     <div class="form-section">
                         <h3>Physician</h3>
@@ -230,6 +311,7 @@
                     <button type="button" class="button button-secondary" onclick="goBack()">Cancel</button>
                     <button type="submit" class="button button-primary">Issue Certificate</button>
                     </div>
+
                 </form>
             </div>
         </main>
@@ -254,146 +336,195 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
     <script>
-        // Get patient_id from URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const patientId = urlParams.get('patient_id');
+        document.querySelectorAll('.radio-group input[name="fit_status"]').forEach(r=>{
+  r.addEventListener('change', ()=>{
+    document.querySelectorAll('.radio-label').forEach(l=>l.classList.remove('is-checked'));
+    r.closest('.radio-label')?.classList.add('is-checked');
+  });
+});
 
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialize Flatpickr for all date fields
-            initializeDatePickers();
+  // Get patient_id and visit_id from URL
+const urlParams = new URLSearchParams(window.location.search);
+const patientId = urlParams.get('patient_id');
+const visitId = urlParams.get('visit_id'); // NEW: capture visit_id
 
-            if (patientId) {
-                document.getElementById('patient_id').value = patientId;
-                loadPatientInfo(patientId);
-                loadPatientVisits(patientId);
-                loadUserInfo();
-            } else {
-                alert('No patient ID provided');
-                window.location.href = 'searchPatient.html';
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize Flatpickr for all date fields
+    initializeDatePickers();
+
+    if (patientId) {
+        document.getElementById('patient_id').value = patientId;
+        loadPatientInfo(patientId);
+        loadPatientVisits(patientId, visitId); // pass visitId for auto-select
+        loadUserInfo();
+    } else {
+        alert('No patient ID provided');
+        window.location.href = 'searchPatient.html';
+    }
+
+    // Auto-calculate rest dates when days are entered
+    document.getElementById('rest_period_days').addEventListener('change', calculateRestDates);
+    document.getElementById('rest_from_date').addEventListener('change', calculateRestDates);
+});
+
+(function(){
+  const maxLen = 1000; // tweak if you want limits, or set null for no limit
+  document.querySelectorAll('textarea').forEach(t => {
+    // Auto-resize
+    const autoresize = () => { t.style.height = 'auto'; t.style.height = (t.scrollHeight + 2) + 'px'; };
+    t.addEventListener('input', autoresize); autoresize();
+
+    // Counter
+    t.parentElement.classList.add('input-with-counter');
+    const counter = document.createElement('div');
+    counter.className = 'input-counter';
+    t.parentElement.appendChild(counter);
+    const update = () => {
+      const len = t.value.length;
+      if (maxLen){
+        counter.textContent = `${len}/${maxLen}`;
+        counter.classList.toggle('is-danger', len > maxLen);
+      } else {
+        counter.textContent = `${len} chars`;
+      }
+    };
+    t.addEventListener('input', update); update();
+  });
+})();
+
+function initializeDatePickers() {
+    // Initialize Flatpickr for Issuance Date (with default today's date)
+    flatpickr("#issuance_date", {
+        dateFormat: "Y-m-d",
+        defaultDate: new Date(),
+        allowInput: true,
+        disableMobile: true,
+        maxDate: new Date() // Can't select future dates
+    });
+
+    // Initialize Flatpickr for Date of Examination
+    flatpickr("#date_of_examination", {
+        dateFormat: "Y-m-d",
+        allowInput: true,
+        disableMobile: true,
+        maxDate: new Date()
+    });
+
+    // Initialize Flatpickr for Rest From Date
+    flatpickr("#rest_from_date", {
+        dateFormat: "Y-m-d",
+        allowInput: true,
+        disableMobile: true,
+        onChange: function(selectedDates) {
+            const restToFlatpickr = document.getElementById('rest_to_date')._flatpickr;
+            if (restToFlatpickr && selectedDates[0]) {
+                restToFlatpickr.set('minDate', selectedDates[0]);
+            }
+            calculateRestDates();
+        }
+    });
+
+    // Initialize Flatpickr for Rest To Date
+    flatpickr("#rest_to_date", {
+        dateFormat: "Y-m-d",
+        allowInput: true,
+        disableMobile: true
+    });
+}
+
+function loadPatientInfo(patientId) {
+    fetch(`php/patient_details.php?patient_id=${patientId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.patient) {
+                const fullName = `${data.patient.first_name} ${data.patient.middle_name || ''} ${data.patient.last_name}`;
+                document.getElementById('patientName').textContent = fullName;
+            }
+        })
+        .catch(error => {
+            console.error('Error loading patient info:', error);
+            alert('Error loading patient information');
+        });
+}
+
+function loadPatientVisits(patientId, visitId = null) {
+    console.log('Loading visits for patient:', patientId);
+    
+    fetch(`php/get_patient_visits.php?patient_id=${patientId}`)
+        .then(response => {
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            return response.text();
+        })
+        .then(text => {
+            try {
+                return JSON.parse(text);
+            } catch (e) {
+                console.error('JSON parse error:', e);
+                throw new Error('Invalid JSON response from server');
+            }
+        })
+        .then(data => {
+            const select = document.getElementById('visitSelect');
+            const display = document.getElementById('visitDisplay');
+            const diagnosisField = document.getElementById('diagnosis');
+
+            select.innerHTML = '<option value="" disabled selected hidden>Select a visit...</option>';
+            const diagnosisMap = {};
+
+            if (data.error) {
+                alert('Error: ' + data.error);
+                select.innerHTML = '<option value="">Error loading visits</option>';
+                return;
             }
 
-            // Auto-calculate rest dates when days are entered
-            document.getElementById('rest_period_days').addEventListener('change', calculateRestDates);
-            document.getElementById('rest_from_date').addEventListener('change', calculateRestDates);
-        });
+            if (data.visits && data.visits.length > 0) {
+                data.visits.forEach(visit => {
+                    const option = document.createElement('option');
+                    option.value = visit.visit_id;
 
-        function initializeDatePickers() {
-            // Initialize Flatpickr for Issuance Date (with default today's date)
-            flatpickr("#issuance_date", {
-                dateFormat: "Y-m-d",
-                defaultDate: new Date(),
-                allowInput: true,
-                disableMobile: true,
-                maxDate: new Date() // Can't select future dates
-            });
+                    const visitDate = formatDate(visit.visit_date);
+                    const diagnosis = visit.diagnosis || 'No diagnosis recorded';
 
-            // Initialize Flatpickr for Rest From Date
-            flatpickr("#rest_from_date", {
-                dateFormat: "Y-m-d",
-                allowInput: true,
-                disableMobile: true,
-                onChange: function(selectedDates, dateStr, instance) {
-                    // Update Rest To Date minimum date
-                    const restToFlatpickr = document.getElementById('rest_to_date')._flatpickr;
-                    if (restToFlatpickr && selectedDates[0]) {
-                        restToFlatpickr.set('minDate', selectedDates[0]);
+                    option.textContent = `${visitDate} - ${diagnosis}`;
+                    select.appendChild(option);
+
+                    // Store diagnosis for this visit
+                    diagnosisMap[visit.visit_id] = diagnosis;
+                });
+
+                // ✅ Auto-select and display visit
+                if (visitId) {
+                    const selectedVisit = data.visits.find(v => v.visit_id == visitId);
+                    if (selectedVisit) {
+                        select.value = visitId;
+                        select.dispatchEvent(new Event('change'));
+
+                        // Hide select and show text
+                        select.style.display = 'none';
+                        display.textContent = `${formatDate(selectedVisit.visit_date)} - ${selectedVisit.diagnosis || 'No diagnosis recorded'}`;
+
+                        // ✅ Auto-fill diagnosis field
+                        diagnosisField.value = selectedVisit.diagnosis || '';
                     }
-                    calculateRestDates();
                 }
-            });
 
-            // Initialize Flatpickr for Rest To Date
-            flatpickr("#rest_to_date", {
-                dateFormat: "Y-m-d",
-                allowInput: true,
-                disableMobile: true
-            });
-        }
-
-        function loadPatientInfo(patientId) {
-            fetch(`php/patient_details.php?patient_id=${patientId}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.patient) {
-                        const fullName = `${data.patient.first_name} ${data.patient.middle_name || ''} ${data.patient.last_name}`;
-                        document.getElementById('patientName').textContent = fullName;
-                    }
-                })
-                .catch(error => {
-                    console.error('Error loading patient info:', error);
-                    alert('Error loading patient information');
+                // ✅ Update diagnosis if user manually changes (fallback case)
+                select.addEventListener('change', function() {
+                    const selectedId = this.value;
+                    diagnosisField.value = diagnosisMap[selectedId] || '';
                 });
-        }
+            } else {
+                select.innerHTML = '<option value="">No visits found for this patient</option>';
+                alert('No visits found for this patient. Please create a patient assessment first.');
+            }
+        })
+        .catch(error => {
+            console.error('Error loading visits:', error);
+            alert('Error loading patient visits. Please check the console for details.');
+            document.getElementById('visitSelect').innerHTML = '<option value="">Error loading visits</option>';
+        });
+}
 
-        function loadPatientVisits(patientId) {
-            console.log('Loading visits for patient:', patientId);
-            
-            fetch(`php/get_patient_visits.php?patient_id=${patientId}`)
-                .then(response => {
-                    console.log('Response status:', response.status);
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    return response.text();
-                })
-                .then(text => {
-                    console.log('Raw response:', text);
-                    try {
-                        return JSON.parse(text);
-                    } catch (e) {
-                        console.error('JSON parse error:', e);
-                        console.error('Response text:', text);
-                        throw new Error('Invalid JSON response from server');
-                    }
-                })
-                .then(data => {
-                    console.log('Received data:', data);
-
-                    const select = document.getElementById('visitSelect');
-                    select.innerHTML = '<option value="" disabled selected hidden>Select a visit...</option>';
-
-                    // Store diagnoses by visit_id
-                    const diagnosisMap = {};
-
-                    if (data.error) {
-                        console.error('Server error:', data.error);
-                        alert('Error: ' + data.error);
-                        select.innerHTML = '<option value="">Error loading visits</option>';
-                        return;
-                    }
-
-                    if (data.visits && data.visits.length > 0) {
-                        data.visits.forEach(visit => {
-                            const option = document.createElement('option');
-                            option.value = visit.visit_id;
-
-                            const visitDate = formatDate(visit.visit_date);
-                            const diagnosis = visit.diagnosis || 'No diagnosis recorded';
-
-                            option.textContent = `${visitDate} - ${diagnosis}`;
-                            select.appendChild(option);
-
-                            // Store diagnosis for this visit
-                            diagnosisMap[visit.visit_id] = visit.diagnosis || '';
-                        });
-
-                        // Listen for changes to update diagnosis field
-                        select.addEventListener('change', function() {
-                            const selectedId = this.value;
-                            document.getElementById('diagnosis').value = diagnosisMap[selectedId] || '';
-                        });
-                    } else {
-                        select.innerHTML = '<option value="">No visits found for this patient</option>';
-                        alert('No visits found for this patient. Please create a patient assessment first.');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error loading visits:', error);
-                    alert('Error loading patient visits. Please check the console for details.');
-                    const select = document.getElementById('visitSelect');
-                    select.innerHTML = '<option value="">Error loading visits</option>';
-                });
-        }
 
         // UPDATED FUNCTION
         function loadUserInfo() {
@@ -580,7 +711,5 @@
                 window.location.href = '../role.html';
             });
     </script>
-
-
 </body>
 </html>

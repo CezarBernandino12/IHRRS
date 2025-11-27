@@ -354,7 +354,7 @@ fetch(`php/patient_summary.php?patient_id=${patient_id}`)
                 </td>
                 <td>${record.diagnosis} <br><br>${medsHtml}</td>
                 <td>
-                    Remarks: ${record.instruction_prescription || ''} <br><br>
+                    Remarks: ${record.instruction_prescription || ''} <br><br><br><br><br><br>
                     Physician: ${record.doctor_name || 'N/A'} <br>
                     License No.: ${record.doctor_license_number || 'N/A'}
                 </td>

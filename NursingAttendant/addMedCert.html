@@ -136,7 +136,7 @@
                             <label for="diagnosis">Diagnosis/Condition <span class="required">*</span></label>
                             <textarea id="diagnosis" name="diagnosis" rows="3" required 
                                 placeholder="e.g., Acute Respiratory Infection" readonly></textarea>
-                        </div>
+                        </div> 
 
                         <div class="form-group" style="display: none;">
                             <label for="findings">Findings/Examination Results</label>
@@ -256,33 +256,39 @@
     <h3>Laboratory Results</h3>
     
         <div class="form-group">
+            <input type="checkbox" id="lab_cbc" name="lab_cbc" value="yes">
             <label for="lab_cbc">CBC</label>
-            <input type="text" id="lab_cbc" name="lab_cbc" placeholder="CBC results">
+      
         </div>
 
         <div class="form-group">
+            <input type="checkbox" id="lab_urinalysis" name="lab_urinalysis" value="yes">
             <label for="lab_urinalysis">URINALYSIS</label>
-            <input type="text" id="lab_urinalysis" name="lab_urinalysis" placeholder="Urinalysis results">
+            
         </div>
 
         <div class="form-group">
+             <input type="checkbox" id="lab_fecalysis" name="lab_fecalysis" value="yes">
             <label for="lab_fecalysis">FECALYSIS</label>
-            <input type="text" id="lab_fecalysis" name="lab_fecalysis" placeholder="Fecalysis results">
+           
         </div>
 
         <div class="form-group">
+             <input type="checkbox" id="lab_hbsag" name="lab_hbsag" value="yes">
             <label for="lab_hbsag">HBsAg</label>
-            <input type="text" id="lab_hbsag" name="lab_hbsag" placeholder="HBsAg results">
+           
         </div>
 
         <div class="form-group">
+              <input type="checkbox" id="lab_cxr" name="lab_cxr" value="yes">
             <label for="lab_cxr">CXR</label>
-            <input type="text" id="lab_cxr" name="lab_cxr" placeholder="CXR results">
+          
         </div>
 
         <div class="form-group">
+                 <input type="checkbox" id="lab_sputum_afb" name="lab_sputum_afb" value="yes">
             <label for="lab_sputum_afb">SPUTUM AFB</label>
-            <input type="text" id="lab_sputum_afb" name="lab_sputum_afb" placeholder="Sputum AFB results">
+       
         </div>
 
     <div class="form-group">
@@ -290,6 +296,7 @@
         <input type="text" id="lab_other" name="lab_other" placeholder="Other laboratory results">
     </div>
 </div>
+
 
                     <!-- UPDATED PHYSICIAN SECTION -->
                     <div class="form-section">
