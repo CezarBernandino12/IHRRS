@@ -1003,7 +1003,7 @@ body {
                 border-bottom: 0.8pt solid #000 !important;
                 padding-bottom: 0.3pt !important;
                 display: inline-block !important;
-                min-width: 65pt !important;
+                min-width: 65pt !important; 
                 font-weight: 600 !important;
             }
 

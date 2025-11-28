@@ -211,9 +211,9 @@ function headerSection($prescription) { ?>
         </table><br><br>
         
                     <div class="info"><span class="label">Remarks:</span><br> <?= nl2br(htmlspecialchars($consultations[0]['instruction_prescription'])) ?></div>
-        <br><br>
+        <br>
          <div class="info"><span class="label">Physician:</span> <?= htmlspecialchars($consultations[0]['physician_name']) ?></div>
-        <div class="info"><span class="label">License No.:</span> <?= htmlspecialchars($consultations[0]['physician_license']) ?></div>
+      
     </div> </div>
 <?php endif; ?>
 

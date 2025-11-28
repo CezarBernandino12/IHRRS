@@ -1297,7 +1297,7 @@ fetch('php/getUserName.php')
 
     // Only set when all four are selected
     if (r && p && c && b) {
-      hiddenFull.value = `${b}, ${c}, ${p}, ${r}`;
+      hiddenFull.value = `${b} ${c}, ${p}, ${r}`;
     } else {
       hiddenFull.value = '';
     }
@@ -1366,7 +1366,7 @@ fetch('php/getUserName.php')
 
     // ✅ Format final address
     if (r && p && c && b && s) {
-      hiddenFull.value = `${s} - ${b}, ${c}, ${p}, ${r}`;
+      hiddenFull.value = `${s} - ${b} ${c}, ${p}, ${r}`;
     } else {
       hiddenFull.value = '';
     }
