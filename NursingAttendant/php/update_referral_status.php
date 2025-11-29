@@ -1,7 +1,8 @@
 <?php
 session_start(); // ✅ Add session_start
 require_once '../../php/db_connect.php';
-require_once '../../admin/php/log_functions.php'; // ✅ Include logging
+require_once '../../ADMIN/php/log_functions.php'; // ✅ Include logging
+
 
 header('Content-Type: application/json');
 

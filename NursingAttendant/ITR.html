@@ -259,24 +259,23 @@ fetch('php/getUserId.php')
                         </select>
                     </div>
 
-                    <div class="form-item">
-                        <label for="street" class="required">Purok:</label>
-                        <select 
-                            id="street" 
-                            name="street" 
-                            required
-                        >
-                            <option value="" disabled selected>Select Purok</option>
-                            <option value="Purok 1">Purok 1</option>
-                            <option value="Purok 2">Purok 2</option>
-                            <option value="Purok 3">Purok 3</option>
-                            <option value="Purok 4">Purok 4</option>
-                            <option value="Purok 5">Purok 5</option>
-                            <option value="Purok 6">Purok 6</option>
-                            <option value="Purok 7">Purok 7</option>
-                        </select>
-                        
-                    </div>
+                <div class="form-item">
+    <label for="street" class="required">Purok:</label>
+    <input list="purokList" id="street" name="street" required>
+
+    <datalist id="purokList">
+        <option value="Purok 1">
+        <option value="Purok 2">
+        <option value="Purok 3">
+        <option value="Purok 4">
+        <option value="Purok 5">
+        <option value="Purok 6">
+        <option value="Purok 7">
+        <option value="Purok 8">
+        <option value="Purok 9">
+        <option value="Purok 10">
+    </datalist>
+</div>
 
                     </div>
                 </fieldset>
