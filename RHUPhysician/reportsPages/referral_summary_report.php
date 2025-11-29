@@ -12,21 +12,22 @@ if (!isset($_SESSION['user_id'])) {
 $userId = $_SESSION['user_id'];
 
 // Fetch user info
-$stmt = $pdo->prepare("SELECT rhu FROM users WHERE user_id = ?");
+$stmt = $pdo->prepare("SELECT full_name, rhu FROM users WHERE user_id = ?");
 $stmt->execute([$userId]);
 $user = $stmt->fetch();
 
 $rhu = $user ? $user['rhu'] : 'N/A';
-
+$username = $user ? $user['full_name'] : 'N/A';
 
 // Filters
 $from_date = $_GET['from_date'] ?? '';
-$to_date = $_GET['to_date'] ?? '';
-$status = $_GET['status'] ?? '';
-$barangay = $_GET['barangay'] ?? '';
+$to_date   = $_GET['to_date'] ?? '';
+$status    = $_GET['status'] ?? '';
+$barangay  = $_GET['barangay'] ?? '';
 
 $params = [];
 
+// Base query – only include users whose RHU matches current user's RHU
 $sql = "
     SELECT 
         u.barangay,
@@ -36,15 +37,20 @@ $sql = "
         SUM(CASE WHEN r.referral_status = 'Pending' THEN 1 ELSE 0 END) AS pending
     FROM referrals r
     LEFT JOIN users u ON r.referred_by = u.user_id
-    WHERE 1 = 1
+    WHERE u.rhu = :rhu 
+      AND u.barangay IS NOT NULL 
+      AND u.barangay != ''
 ";
+$params['rhu'] = $rhu;// Filter: same RHU as logged-in user
 
+
+
+// Add date filter if present
 if (!empty($from_date) && !empty($to_date)) {
-    $sql .= " AND r.referral_date >= :from_date AND r.referral_date < DATE_ADD(:to_date, INTERVAL 1 DAY)";
-    $params['from_date'] = $from_date;   // e.g., 2025-01-01
-    $params['to_date']   = $to_date;     // e.g., 2025-01-31
+    $sql .= " AND DATE(r.referral_date) BETWEEN :from_date AND :to_date";
+    $params['from_date'] = $from_date;
+    $params['to_date'] = $to_date;
 }
-
 if (!empty($status)) {
     $sql .= " AND r.referral_status = :status";
     $params['status'] = $status;
@@ -69,6 +75,7 @@ $total_received = 0;
 $total_completed = 0;
 $total_uncompleted = 0;
 $total_pending = 0;
+
 
 
         //ADDED GENERATED REPORT FOR ACTIVITY LOG
@@ -99,11 +106,8 @@ $total_pending = 0;
 	<title>Referral Summary Report</title>
 </head>
 <body>
-    
-<style>
-    .form-submit-bottom {
-    justify-content: flex-start !important;
-  }
+
+  <style>
   #reportTable th {
     cursor: pointer;
     position: relative;
@@ -116,15 +120,13 @@ $total_pending = 0;
   }
   #reportTable th.is-sorted-asc  .sort-indicator::after { content: "▲"; }
   #reportTable th.is-sorted-desc .sort-indicator::after { content: "▼"; }
-  #reportTable th.no-sort { cursor: default; }
 </style>
-
-
+  
 <!-- Sidebar Section -->
 	<section id="sidebar">
 		<a href="#" class="brand">
 			<img src="../../img/logo.png" alt="RHULogo" class="logo">
-			<span class="text">Physician</span>
+			<span class="text">Nurse</span>
 		</a>
 		<ul class="side-menu top">
 			<li>
@@ -133,12 +135,7 @@ $total_pending = 0;
 					<span class="text">Dashboard</span>
 				</a>
 			</li>
-			<li>
-				<a href= "../ITR.html">
-					<i class="bx bxs-user"></i>
-					<span class="text">Add New ITR</span>
-				</a>
-			</li>
+		
 			<li>
 				<a href="../pending.html" id="updateReferrals">
 					<i class="bx bxs-user"></i>
@@ -241,8 +238,8 @@ $total_pending = 0;
 
  <!-- Filter Modal Trigger -->
    
-        <div class="form-submit">
-               <button type="button" class="btn-export" id="openFilterModal">Filter</button>
+        <div class="form-submit" style="margin-top: -10px;">
+               <button type="button" class="btn-export" id="openFilterModal">Select Filters</button>
     </div>
 
     <!-- Modern Filter Tags Display -->
@@ -268,11 +265,11 @@ $total_pending = 0;
             if ($status) renderTag('Status', 'status', $status);
             if ($barangay) renderTag('Barangay', 'barangay', $barangay);
 
-            // If no filters, show "All"
+            // If no filters, show "None"
             if (
                 !$from_date && !$to_date && !$status && !$barangay
             ) {
-                echo '<span style="color:#888;">All</span>';
+                echo '<span style="color:#888;">None</span>';
             }
             ?>
         </div>
@@ -409,69 +406,194 @@ $total_pending = 0;
 <!-- PRINT-ONLY LETTERHEAD (shows only when printing) -->
 <div class="print-only-letterhead">
   <div class="print-letterhead">
-    <img src="../../img/Plogo.png" alt="Left Logo" class="print-logo">
+    <img src="../../img/daet_logo.png" alt="Left Logo" class="print-logo">
     <div class="print-heading">
       <div class="ph-line-1">Republic of the Philippines</div>
       <div class="ph-line-1">Province of Camarines Norte</div>
       <div class="ph-line-2">Municipality of Daet</div>
       <div class="ph-line-3"><?= htmlspecialchars($rhu) ?></div>
-      <div class="ph-line-4">REFERRAL INTAKE SUMMARY REPORT</div>
-      <div class="print-sub">
-        (<?php
-          $parts = [];
-          if (!empty($from_date)) $parts[] = "From <strong>" . htmlspecialchars($from_date) . "</strong>";
-          if (!empty($to_date))   $parts[] = "To <strong>" . htmlspecialchars($to_date) . "</strong>";
-          if (!empty($status))    $parts[] = "Status: <strong>" . htmlspecialchars($status) . "</strong>";
-          if (!empty($barangay))  $parts[] = "Barangay: <strong>" . htmlspecialchars($barangay) . "</strong>";
-          echo $parts ? implode(" &nbsp;|&nbsp; ", $parts) : "All Records";
-        ?>)
-      </div>
+ 
     </div>
-    <img src="../../img/RHUlogo.png" alt="Right Logo" class="print-logo">
+    <img src="../../img/mho_logo.png" alt="Right Logo" class="print-logo">
   </div>
   <hr class="print-rule">
 </div>
+<!-- /PRINT-ONLY LETTERHEAD -->
 
 <div class="report-content">
-<!-- Summary Section -->
+
+
+
+<div class="title">
+         <h2>REFERRAL INTAKE SUMMARY REPORT</h2>
+<div class="print-sub">
+(<?php
+  $filters = [];
+
+  if ($from_date || $to_date) {
+      $readable_from = $from_date ? date("F j, Y", strtotime($from_date)) : '';
+      $readable_to   = $to_date ? date("F j, Y", strtotime($to_date)) : '';
+
+      // Combine into a readable range
+      $filters[] = "<strong>" . trim($readable_from . ($readable_to ? " — " . $readable_to : '')) . "</strong>";
+  }
+
+  // Print the date range if available
+  if (!empty($filters)) {
+      echo implode(" ", $filters);  // ✅ actually outputs the date
+  }
+
+  if (!empty($status)) {
+      echo " &nbsp;|&nbsp; Status: <strong>" . htmlspecialchars($status) . "</strong>";
+  }
+
+  if (!empty($barangay)) {
+      echo " &nbsp;|&nbsp; Barangay: <strong>" . htmlspecialchars($barangay) . "</strong>";
+  }
+
+  if (empty($from_date) && empty($to_date) && empty($status) && empty($barangay)) {
+      echo "All Records";
+  }
+?>)
+</div>
+
+</div>
+
  <style>
-@media print {
-  .summary > h3 { display: none !important; }
-  .summary-container { margin-top: 50px; }
+
+  .title { text-align: center; display: none;}
+    /* Space above the summary section */
+.summary-container {
+  margin-top: 32px;
 }
 
-  .print-only-letterhead { display: none; }
-  @media print {
-    .print-only-letterhead { display: block; }
-    .print-header { display: none !important; }
-    .print-letterhead{
-      display: grid;
-      grid-template-columns: 64px auto 64px;
-      align-items: center;
-      justify-content: center;
-      column-gap: 30px;
-      margin: 0 auto 10px;
-      text-align: center;
-      width: fit-content;
-    }
-    .print-logo{ width:64px; height:64px; object-fit:contain; }
-    .print-heading{ line-height:1.1; color:#000; }
-    .print-heading .ph-line-1{ font-size:12pt; font-weight:500; margin-bottom:4px;}
-    .print-heading .ph-line-2{ font-size:14pt; font-weight:500; margin-bottom:4px;}
-    .print-heading .ph-line-3{ font-size:11pt; font-weight:500; margin-bottom:4px;}
-    .print-heading .ph-line-4{ font-size:12pt; font-weight:600; margin-top:15px; letter-spacing:.3px; }
-    .print-sub{ font-size:10.5pt; margin-top:4px; }
-    .print-rule{ height:1px; border:0; background:#cfd8e3; margin:8px 0 12px; }
-    .chart-title, .form-submit { display: none !important; }
-  }
-</style>
+/* Two-column table styling */
+.summary-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 16px;
+}
 
- <style>
+.summary-table th,
+.summary-table td {
+  border: 1px solid #d5d7db;
+  padding: 8px 12px;
+  vertical-align: top;
+  text-align: left;
+  word-wrap: break-word;
+}
+
+.summary-table th {
+  background: #f2f4f7;
+  font-weight: 600;
+}
+
+/* Print-only tweaks: hide the Summary title, add a touch more space */
+@media print {
+  .summary > h3 {
+    display: none !important;
+  }
+  .summary-container {
+    margin-top: 40px;
+  }
+}
+
     @media print {
+         .title {
+        display: block;
+    }
         .chart-title { 
            display: none;
         }
+        .form-submit { 
+           display: none;
+        }
+        
+ .report-table-container {
+      margin-top: 20px !important;
+      margin-bottom: 40px !important;
     }
+    .summary-table th,
+.summary-table td {
+  border: 1px solid #000000ff;
+  padding: 8px 12px;
+  vertical-align: top;
+  text-align: left;
+  word-wrap: break-word;
+}
+
+    } 
+</style>
+
+<style>
+  /* Hide the print letterhead on screen */
+  .print-only-letterhead { display: none; }
+
+  @media print {
+    .print-only-letterhead { display: block; }
+
+    .print-letterhead{
+  display: grid;
+  grid-template-columns: 72px auto 72px;  /* widened logo columns */
+  align-items: center;
+  justify-content: center;
+  column-gap: 60px;                       /* increased space between logos and heading */
+  margin: 0 auto 18px;
+  text-align: center;
+  width: fit-content;
+    }
+    .print-logo{ width:64px; height:64px; object-fit:contain; }
+    .print-heading{ line-height:1.1; color:#000; }
+    .print-heading .ph-line-1{ font-size:12pt; font-weight:500; margin-bottom:3px;}
+    .print-heading .ph-line-2{ font-size:14pt; font-weight:500; margin-bottom:3px;}
+    .print-heading .ph-line-3{ font-size:11pt; font-weight:500; margin-bottom:3px;}
+    .print-heading .ph-line-4{ font-size:12pt; font-weight:600; margin-top:15px; letter-spacing:.3px; }
+    .print-sub{ font-size:12pt; margin-top:4px; }
+    .print-rule{ height:1px; border:0; background:#cfd8e3; margin:8px 0 12px; }
+
+    /* keep your existing print hides working */
+    .chart-title, .form-submit { display: none !important; }
+  }
+
+    #generated_by {
+  display: block;           
+  margin: 22px 0 0 48px;    
+  color: #000;
+}
+
+#generated_by .sig-label {
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+
+#generated_by .sig-line {
+    display: none;
+  width: 200px;           
+  border: 0;
+  border-top: 1.5px solid #000;
+  margin: 26px 0 6px;       
+}
+
+#generated_by .sig-name {
+  font-weight: 600;
+  font-size: 16px;
+  margin-top: 4px;
+}
+
+#generated_by .sig-title {
+  font-size: 13px;
+  color: #333;
+}
+
+/* Print sizing (optional, nicer on paper) */
+@media print {
+  #generated_by {  margin: 60mm 0 0 10mm;}
+  #generated_by .sig-label { font-size: 12pt; }
+  #generated_by .sig-name  { font-size: 12pt; }
+  #generated_by .sig-title { font-size: 11pt; }
+  #generated_by .sig-line  { display: block; width: 45mm; border-top-width: 1px; margin: 10mm 0 3mm; }
+}
 </style>
 
 <!-- Chart Visibility Controls -->
@@ -632,22 +754,17 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 </script>
 
-
-
-<br>
 <div class="report-table-container">
-<table border="1" cellpadding="8" cellspacing="0" id="reportTable"> 
-
-        <thead>
-        <tr>
-            <th data-type="string">Barangay</th>
-            <th data-type="number">Total Referrals Received</th>
-            <th data-type="number">Completed</th>
-            <th data-type="number">Uncompleted</th>
-            <th data-type="number">Pending</th>
-        </tr>
-        </thead>
-
+<table id="reportTable"> 
+  <thead>
+    <tr>
+      <th data-type="string">Barangay</th>
+      <th data-type="number">Total Referrals Received</th>
+      <th data-type="number">Completed</th>
+      <th data-type="number">Uncompleted</th>
+      <th data-type="number">Pending</th>
+    </tr>
+  </thead>
     <tbody>
         <?php 
         $total_received = 0;
@@ -670,96 +787,64 @@ document.addEventListener("DOMContentLoaded", () => {
         <?php endforeach; ?>
     </tbody>
 </table>
- </div>
+</div>
+
 <br> <br>
-<div class="summary">
-  <h3>Summary:</h3>
+<div class="summary-container">
+  <div class="summary">
+    <h3>Report Details</h3>
 
-  <table class="summary-table" id="summaryTable">
-    <thead>
-      <tr>
-        <th>Metric</th>
-        <th>Value</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>Report Generated On</td>
-        <td><?= date('F j, Y g:i:s A') ?></td>
-      </tr>
-      <tr>
-        <td>Total Referrals Received</td>
-        <td class="num"><?= (int)$total_received ?></td>
-      </tr>
-      <tr>
-        <td>Completed Referrals</td>
-        <td class="num"><?= (int)$total_completed ?></td>
-      </tr>
-      <tr>
-        <td>Uncompleted Referrals</td>
-        <td class="num"><?= (int)$total_uncompleted ?></td>
-      </tr>
-      <tr>
-        <td>Pending Referrals</td>
-        <td class="num"><?= (int)$total_pending ?></td>
-      </tr>
-      <?php if (isset($total_cancelled)) : ?>
-      <tr>
-        <td>Cancelled Referrals</td>
-        <td class="num"><?= (int)$total_cancelled ?></td>
-      </tr>
-      <?php endif; ?>
-    </tbody>
-  </table>
-</div>
-<div class="form-submit form-submit-bottom" style="margin-top: 24px; display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
-  <button type="button" class="btn-export" onclick="exportTableToExcel('reportTable')">Export to Excel</button>
-  <button type="button" class="btn-export" onclick="exportTableToPDF()">Export to PDF</button>
-  <button type="button" class="btn-print"  onclick="printDiv()">Print this page</button>
+    <table class="summary-table">
+      <colgroup>
+        <col style="width:40%">
+        <col style="width:60%">
+      </colgroup>
+      <tbody>
+        <tr>
+          <th>Report Generated On</th>
+          <td><?= date('F j, Y g:i:s A') ?></td>
+        </tr>
+        <tr>
+          <th>Total Referrals Received</th>
+          <td><?= $total_received ?></td>
+        </tr>
+        <tr>
+          <th>Completed Referrals</th>
+          <td><?= $total_completed ?></td>
+        </tr>
+        <tr>
+          <th>Uncompleted Referrals</th>
+          <td><?= $total_uncompleted ?></td>
+        </tr>
+        <tr>
+          <th>Pending Referrals</th>
+          <td><?= $total_pending ?></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>
 
-</div> </div>
-<style>
-.summary-table thead th:nth-child(2) {
-  text-align: left;
-}
+<span id="generated_by"></span>
+
+</div> 
 
 
 
-  .summary-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 8px;
-  }
-  .summary-table th, .summary-table td {
-    border: 1px solid #dfe3e8;
-    padding: 8px 10px;
-    font-size: 14px;
-  }
-  .summary-table thead th {
-    background: #f6f8fa;
-    text-align: left;
-    font-weight: 600;
-  }
+<!-- Print Button at Bottom -->
+   <div class="form-submit">
+          <button type="button" class="btn-export" onclick="exportTableToExcel('reportTable')">Export to Excel</button>
+        <button type="button" class="btn-export" onclick="exportTableToPDF()">Export to PDF</button>
+       
+    <button type="button" class="btn-print" onclick="printDiv()">
+        <i class='bx bx-printer'></i>
+        Print Report
+    </button>
+</div>
 
-.summary-table td.num {
-  text-align: left;             
-  font-variant-numeric: tabular-nums;
-  font-feature-settings: "tnum";     
-  white-space: nowrap;           
-  padding-right: 10px;         
-}
 
-  @media print {
-    .summary-table th, .summary-table td { border-color: #000; }
+</div>
 
-     .report-table-container {
-      margin-top: 80px !important;
-      margin-bottom: 40px !important;
-    }
-  }
-  
-</style>
 
 <div id="logoutModal" class="logout-modal">
     <div class="logout-modal-content">
@@ -777,7 +862,6 @@ document.addEventListener("DOMContentLoaded", () => {
 </div>
 
 </div>
-
 <!-- jsPDF and html2canvas libraries -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -791,14 +875,15 @@ function exportTableToExcel(tableID, filename = 'Referral Summary Report') {
         tempDiv.style.left = '-9999px';
         tempDiv.style.top = '-9999px';
         
-// Prefer the print-only letterhead; fallback to .print-header
-const headerBlock = document.querySelector('.print-only-letterhead') || document.querySelector('.print-header');
-if (headerBlock) {
-  const headerClone = headerBlock.cloneNode(true);
-  headerClone.querySelectorAll('script').forEach(s => s.remove());
-  tempDiv.appendChild(headerClone);
-}
-
+        // Clone the print header
+        const printHeader = document.querySelector('.print-header');
+        if (printHeader) {
+            const headerClone = printHeader.cloneNode(true);
+            // Remove any scripts or interactive elements
+            const scripts = headerClone.querySelectorAll('script');
+            scripts.forEach(script => script.remove());
+            tempDiv.appendChild(headerClone);
+        }
         
         // Clone the summary section
         const summary = document.querySelector('.summary-container');
@@ -820,19 +905,7 @@ if (headerBlock) {
         
         // Add signature header if not present
         const headerRow = tableClone.querySelector('thead tr');
-        if (headerRow && !headerRow.querySelector('th:last-child')?.textContent.includes('Signature')) {
-            const signatureHeader = document.createElement('th');
-            signatureHeader.textContent = 'Signature';
-            headerRow.appendChild(signatureHeader);
-            
-            // Add empty signature cells for each row
-            const rows = tableClone.querySelectorAll('tbody tr');
-            rows.forEach(row => {
-                const signatureCell = document.createElement('td');
-                signatureCell.textContent = ''; // Empty for Excel
-                row.appendChild(signatureCell);
-            });
-        }
+       
         
         tempDiv.appendChild(tableClone);
         document.body.appendChild(tempDiv);
@@ -903,48 +976,15 @@ async function exportTableToPDF() {
     });
 }
 
-
-
-function printDiv() {
-  const area = document.querySelector(".print-area");
-  if (!area) { alert("Nothing to print."); return; }
-
-  const clone = area.cloneNode(true);
-
-  // Remove charts/controls from clone
-  clone.querySelectorAll('canvas, .chart-title, #statusChart, #barangayBarChart, #statusPieChart, #noDataMessage, #noBarDataMessage')
-       .forEach(el => el.remove());
-
-  // ✅ Add Signature column ONLY to the main report table
-  const reportTable = clone.querySelector("#reportTable");
-  if (reportTable) {
-    const headerRow = reportTable.querySelector("thead tr");
-    if (headerRow) {
-      const lastTh = headerRow.lastElementChild;
-      const hasSignature = lastTh && /Signature/i.test((lastTh.textContent || '').trim());
-      if (!hasSignature) {
-        const th = document.createElement("th");
-        th.textContent = "Signature";
-        headerRow.appendChild(th);
-        reportTable.querySelectorAll("tbody tr").forEach(tr => {
-          const td = document.createElement("td");
-          td.style.height = "30px";
-          tr.appendChild(td);
-        });
-      }
-    }
-  }
-
-  (function() {
+(function() {
   const table = document.getElementById('reportTable');
   if (!table) return;
 
   const thead = table.tHead || table.querySelector('thead');
   const tbody = table.tBodies[0];
 
-  // Add arrow placeholders to sortable headers
+  // Add arrow placeholders
   [...thead.querySelectorAll('th')].forEach(th => {
-    if (th.classList.contains('no-sort')) return;
     const ind = document.createElement('span');
     ind.className = 'sort-indicator';
     th.appendChild(ind);
@@ -962,19 +1002,23 @@ function printDiv() {
   function detectType(colIdx) {
     const th = thead.querySelectorAll('th')[colIdx];
     if (th?.dataset?.type) return th.dataset.type;
+
     for (const tr of tbody.rows) {
       const txt = (tr.cells[colIdx]?.textContent || '').trim();
       if (!txt) continue;
+
       const d = parseDate(txt);
       if (d) return 'date';
+
       const n = txt.replace(/,/g, '');
       if (!isNaN(n) && n !== '') return 'number';
+
       return 'string';
     }
     return 'string';
   }
 
-  function cellValue(tr, idx, type) {
+  function val(tr, idx, type) {
     const raw = (tr.cells[idx]?.textContent || '').trim();
     if (type === 'number') {
       const n = parseFloat(raw.replace(/,/g, ''));
@@ -998,8 +1042,8 @@ function printDiv() {
     const rows = [...tbody.rows];
 
     rows.sort((a, b) => {
-      const va = cellValue(a, idx, type);
-      const vb = cellValue(b, idx, type);
+      const va = val(a, idx, type);
+      const vb = val(b, idx, type);
       if (va < vb) return dir === 'asc' ? -1 : 1;
       if (va > vb) return dir === 'asc' ?  1 : -1;
       return 0;
@@ -1010,9 +1054,8 @@ function printDiv() {
     tbody.appendChild(frag);
   }
 
-  // Click handlers
+  // Click to toggle asc/desc
   [...thead.querySelectorAll('th')].forEach((th, idx) => {
-    if (th.classList.contains('no-sort')) return;
     th.addEventListener('click', () => {
       const isAsc = th.classList.contains('is-sorted-asc');
       const nextDir = isAsc ? 'desc' : 'asc';
@@ -1023,60 +1066,108 @@ function printDiv() {
     });
   });
 
-  // Default sort: column 1 (“Total Referrals Received”) DESC
+  // Default: sort by "Total Referrals Received" (col 1) DESC
   const defaultCol = 1, defaultDir = 'desc';
   const defaultTh = thead.querySelectorAll('th')[defaultCol];
-  if (defaultTh && !defaultTh.classList.contains('no-sort')) {
+  if (defaultTh) {
     defaultTh.classList.add(defaultDir === 'asc' ? 'is-sorted-asc' : 'is-sorted-desc');
     sortBy(defaultCol, defaultDir);
   }
 })();
 
-  // Prefer letterhead block
-  const headerSource = document.querySelector(".print-only-letterhead") || document.querySelector(".print-header");
-  const headerHTML = headerSource ? headerSource.outerHTML : "";
+//PRINT
+function printDiv() {
+  const originalArea = document.querySelector(".print-area");
+  if (!originalArea) {
+    alert("Error: Missing .print-area on page.");
+    return;
+  }
 
-  // Don’t duplicate header inside body content
-  const headerInClone = clone.querySelector(".print-only-letterhead, .print-header");
-  if (headerInClone) headerInClone.remove();
+  const clone = originalArea.cloneNode(true);
 
-  const w = window.open("", "", "height=900,width=1100");
-  if (!w) { alert("Please enable pop-ups to print."); return; }
+  // Remove all charts/controls in the clone
+  clone.querySelectorAll('canvas').forEach(c => c.remove());
+  clone.querySelectorAll('.chart-title').forEach(el => el.remove());
 
-  w.document.write(`<!doctype html><html><head><title>Print Report</title>
-    <meta charset="utf-8">
-    <style>
-      body { font-family: Arial, sans-serif; font-size: 12px; color:#000; margin: 20px; }
-      table { width: 100%; border-collapse: collapse; }
-      th, td { border: 1px solid #000; padding: 4px; text-align: left; vertical-align: middle; }
-      thead { background:#f0f0f0; }
+  const w = window.open('', '', 'height=900,width=1100');
+  w.document.write(`
+    <html>
+      <head>
+        <title>Print Report</title>
+        <meta charset="utf-8" />
+        <style>
+          body { font-family: Arial, sans-serif; font-size: 12px; color: black; }
+          table { width: 100%; border-collapse: collapse; }
+          th, td { border: 1px solid #000; padding: 4px; text-align: left; }
+          thead { background-color: #f0f0f0; }
+          img { display: block; margin: 0 auto; max-width: 100%; height: auto; }
+          h3 { margin: 10px 0 5px 0; }
 
-      /* 🔒 Keep Summary table tidy and two-column */
-      .summary-table { table-layout: fixed; }
-      .summary-table th:first-child, .summary-table td:first-child { width: 65%; }
-      .summary-table th:nth-child(2), .summary-table td:nth-child(2) { width: 35%; }
-
-      .print-only-letterhead { display:block; }
-      .print-letterhead{
-        display:grid; grid-template-columns:64px auto 64px; align-items:center; justify-content:center;
-        column-gap:14px; margin:0 auto 10px; text-align:center; width:fit-content;
-      }
-      .print-logo{ width:64px; height:64px; object-fit:contain; }
-      .print-heading{ line-height:1.1; color:#000; }
-      .print-heading .ph-line-1{ font-size:12pt; font-weight:500; }
-      .print-heading .ph-line-2{ font-size:14pt; font-weight:800; }
-      .print-heading .ph-line-3{ font-size:11pt; font-weight:500; }
-      .print-heading .ph-line-4{ font-size:12pt; font-weight:800; margin-top:4px; letter-spacing:.3px; }
-      .print-sub{ font-size:10.5pt; margin-top:4px; }
-      .print-rule{ height:1px; border:0; background:#cfd8e3; margin:8px 0 12px; }
-    </style>
-  </head><body>`);
-  w.document.write(headerHTML);
-  w.document.write(clone.innerHTML);
-  w.document.write(`</body></html>`);
+          /* same print-only rules inside the print window */
+          .print-only { display: block; }
+          .print-letterhead{
+            display:grid; grid-template-columns:64px auto 64px;
+            align-items:center; justify-content:center; column-gap:14px;
+            margin:0 auto 10px; text-align:center; width:fit-content;
+          }
+          .print-logo{ width:64px; height:64px; object-fit:contain; }
+          .print-heading{ line-height:1.1; color:#000; }
+          .print-heading .ph-line-1{ font-size:12pt; font-weight:500; }
+          .print-heading .ph-line-2{ font-size:14pt; font-weight:800; }
+          .print-heading .ph-line-3{ font-size:11pt; font-weight:500; }
+          .print-heading .ph-line-4{ font-size:12pt; font-weight:800; margin-top:4px; letter-spacing:.3px; }
+          .print-sub{ font-size:12pt; margin-top:4px; }
+          .print-rule{ height:1px; border:0; background:#cfd8e3; margin:8px 0 12px; }
+        </style>
+      </head>
+      <body>${clone.innerHTML}</body>
+    </html>
+  `);
   w.document.close();
-  w.onload = () => { try { w.focus(); w.print(); } finally { w.close(); } };
+  w.focus();
+  setTimeout(() => { w.print(); w.close(); }, 500);
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+  fetch('../php/getUserName.php')
+    .then(r => r.json())
+    .then(data => {
+      const fullName = (data && data.full_name) ? data.full_name : '';
+
+      // Greeting (keep current behavior)
+      document.getElementById('userGreeting').textContent =
+        fullName ? `Hello, ${fullName}!` : 'Hello, User!';
+
+      // Build the signature block
+      const gb = document.getElementById('generated_by');
+      gb.innerHTML = `
+        <div class="sig-label">Report Generated by:</div>
+        <hr class="sig-line">
+        <div class="sig-name"></div>
+        <div class="sig-title">Nursing Attendant</div>
+      `;
+      gb.querySelector('.sig-name').textContent = fullName || '________________';
+    })
+    .catch(() => {
+      document.getElementById('userGreeting').textContent = 'Hello, User!';
+      const gb = document.getElementById('generated_by');
+      gb.innerHTML = `
+        <div class="sig-label">Report Generated by:</div>
+        <hr class="sig-line">
+        <div class="sig-name">________________</div>
+        <div class="sig-title">Nursing Attendant</div>
+      `;
+    });
+});
+
+// Close modal when clicking outside
+window.onclick = function(event) {
+    const modal = document.getElementById('logoutModal');
+    if (event.target == modal) {
+        closeModal();
+    }
+}
+
     function confirmLogout() {
     document.getElementById('logoutModal').style.display = 'block';
     return false; // Prevent the default link behavior
@@ -1089,6 +1180,15 @@ function closeModal() {
 function proceedLogout() {
     window.location.href = '../../ADMIN/php/logout.php'; 
 }
+
+// Close modal when clicking outside
+window.onclick = function(event) {
+    const modal = document.getElementById('logoutModal');
+    if (event.target == modal) {
+        closeModal();
+    }
+}
+
 
 	// Check if user is logged in
 fetch('../php/getUserId.php')
@@ -1105,23 +1205,7 @@ fetch('../php/getUserId.php')
     });
 
 </script>
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  const sidebar = document.getElementById("sidebar");
 
-  function applyResponsiveSidebar() {
-    if (window.innerWidth <= 1024) {
-      sidebar.classList.add("hide");   // collapsed on small screens
-    } else {
-      sidebar.classList.remove("hide"); // expanded on larger screens
-    }
-  }
 
-  applyResponsiveSidebar();
-  window.addEventListener("resize", applyResponsiveSidebar);
-
-  // keep the rest of your existing code (auth, stats, modals, etc.)
-});
-</script>
 </body>
 </html>

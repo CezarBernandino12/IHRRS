@@ -11,11 +11,13 @@ if (!isset($_SESSION['user_id'])) {
 $userId = $_SESSION['user_id'];// or however you store the logged-in user's ID
 
 // Fetch user info
-$stmt = $pdo->prepare("SELECT rhu FROM users WHERE user_id = ?");
+$stmt = $pdo->prepare("SELECT full_name, rhu FROM users WHERE user_id = ?");
 $stmt->execute([$userId]);
 $user = $stmt->fetch();
 
 $rhu = $user ? $user['rhu'] : 'N/A';
+$username = $user ? $user['full_name'] : 'N/A';
+
 
 
 
@@ -32,10 +34,11 @@ $medication = $_GET['medication'] ?? '';
 // Build query with filters
 $sql = "SELECT v.*, p.first_name, p.last_name, p.age, p.sex, p.address FROM patient_assessment v 
         JOIN patients p ON v.patient_id = p.patient_id 
-        WHERE 1=1"; 
-        // Always require barangay match
+        JOIN users u_rec ON v.recorded_by = u_rec.user_id
+        WHERE u_rec.rhu = :rhu";  // Only show consultations from same RHU
 
-$params = [];
+$params['rhu'] = $rhu; // First parameter is the current user's RHU
+
 
 
 if (!empty($from_date) && !empty($to_date)) {
@@ -90,7 +93,6 @@ $visits = $stmt->fetchAll();
 // Calculate summary data
 $total_patients = count(array_unique(array_column($visits, 'patient_id')));
 
-
         //ADDED GENERATED REPORT FOR ACTIVITY LOG
         $stmt_log = $pdo->prepare("INSERT INTO logs (
             user_id, action, performed_by
@@ -102,6 +104,7 @@ $total_patients = count(array_unique(array_column($visits, 'patient_id')));
             ':action' => "Generated RHU Patient Visit Summary Report",
             ':performed_by' => $_SESSION['user_id']
         ]);
+
 ?>
 
 <!DOCTYPE html>
@@ -121,10 +124,6 @@ $total_patients = count(array_unique(array_column($visits, 'patient_id')));
 <body>
 
 <style>
-      .form-submit-bottom {
-    justify-content: flex-start !important;
-  }
-
   #reportTable th {
     cursor: pointer;
     position: relative;
@@ -137,14 +136,13 @@ $total_patients = count(array_unique(array_column($visits, 'patient_id')));
   }
   #reportTable th.is-sorted-asc  .sort-indicator::after { content: "▲"; }
   #reportTable th.is-sorted-desc .sort-indicator::after { content: "▼"; }
-  #reportTable th.no-sort { cursor: default; }
 </style>
 
 <!-- Sidebar Section -->
 	<section id="sidebar">
 		<a href="#" class="brand">
 			<img src="../../img/logo.png" alt="RHULogo" class="logo">
-			<span class="text">Physician</span>
+			<span class="text">Nurse</span>
 		</a>
 		<ul class="side-menu top">
 			<li>
@@ -153,12 +151,7 @@ $total_patients = count(array_unique(array_column($visits, 'patient_id')));
 					<span class="text">Dashboard</span>
 				</a>
 			</li>
-			<li>
-				<a href= "../ITR.html">
-					<i class="bx bxs-user"></i>
-					<span class="text">Add New ITR</span>
-				</a>
-			</li>
+		
 			<li>
 				<a href="../pending.html" id="updateReferrals">
 					<i class="bx bxs-user"></i>
@@ -261,8 +254,8 @@ $total_patients = count(array_unique(array_column($visits, 'patient_id')));
    
     <!-- Filter Modal Trigger -->
    
-    <div class="form-submit">
-        <button type="button" class="btn-export" id="openFilterModal">Filter</button>
+        <div class="form-submit" style="margin-top: -10px;">
+               <button type="button" class="btn-export" id="openFilterModal">Select Filters</button>
     </div>
 
     <!-- Modern Filter Tags Display -->
@@ -310,7 +303,7 @@ $total_patients = count(array_unique(array_column($visits, 'patient_id')));
                 !$from_date && !$to_date && !$sex && !$age_group &&
                 !$purok && !$bmi && !$medication
             ) {
-                echo '<span style="color:#888;">All</span>';
+                echo '<span style="color:#888;">None</span>';
             }
             ?>
         </div>
@@ -466,87 +459,138 @@ $total_patients = count(array_unique(array_column($visits, 'patient_id')));
 
 
 <div class="print-area">
-<!-- PRINT-ONLY LETTERHEAD (shows only when printing) -->
-<div class="print-only-letterhead">
-  <div class="print-letterhead">
-    <img src="../../img/Plogo.png" alt="Left Logo" class="print-logo">
-    <div class="print-heading">
-      <div class="ph-line-1">Republic of the Philippines</div>
-      <div class="ph-line-1">Province of Camarines Norte</div>
-      <div class="ph-line-2">Municipality of Daet</div>
-      <div class="ph-line-3"><?= htmlspecialchars($rhu) ?></div>
-      <div class="ph-line-4">PATIENTS SUMMARY REPORT</div>
-      <div class="print-sub">
-        (<?php
-          $filters = [];
-          if ($from_date) $filters[] = "From <strong>" . htmlspecialchars($from_date) . "</strong>";
-          if ($to_date)   $filters[] = "To <strong>" . htmlspecialchars($to_date) . "</strong>";
-          if ($sex) $filters[] = "Sex: <strong>" . htmlspecialchars($sex) . "</strong>";
-          if ($age_group) {
-              $age_labels = [
-                  'child' => 'Child (0–12)',
-                  'teen' => 'Teen (13–19)',
-                  'adult' => 'Adult (20–59)',
-                  'senior' => 'Senior (60+)'
-              ];
-              $filters[] = "Age Group: <strong>" . ($age_labels[$age_group] ?? htmlspecialchars($age_group)) . "</strong>";
-          }
-          if ($purok) $filters[] = "Barangay: <strong>" . htmlspecialchars($purok) . "</strong>";
-          if ($bmi) {
-              $bmi_labels = [
-                'underweight'=>'Underweight','normal'=>'Normal','overweight'=>'Overweight',
-                'class1'=>'Class 1','class2'=>'Class 2','class3'=>'Class 3'
-              ];
-              $filters[] = "BMI: <strong>" . ($bmi_labels[$bmi] ?? htmlspecialchars($bmi)) . "</strong>";
-          }
-          echo $filters ? implode(" &nbsp;|&nbsp; ", $filters) : "All Records";
-        ?>)
-      </div>
-    </div>
-    <img src="../../img/RHUlogo.png" alt="Right Logo" class="print-logo">
+<!-- Two-logo letterhead -->
+<div class="print-letterhead">
+  <img src="../../img/daet_logo.png" alt="Left Logo" class="print-logo">
+  <div class="print-heading">
+    <div class="ph-line-1">Republic of the Philippines</div>
+    <div class="ph-line-1">Department of Health</div>
+    <div class="ph-line-1">Province of Camarines Norte</div>
+    <div class="ph-line-2">Municipality of Daet</div>
+    <div class="ph-line-3"><?php echo htmlspecialchars($rhu); ?></div>
+ 
   </div>
-  <hr class="print-rule">
+  <img src="../../img/mho_logo.png" alt="Right Logo" class="print-logo">
 </div>
-<!-- /PRINT-ONLY LETTERHEAD -->
+<hr class="print-rule">
+
 
 <div class="report-content">
+
+
+<div class="title">
+       <h2>Patients Summary Report</h2>
+    <div class="print-sub">
+      (<?php
+        $filters = [];
+                   if ($from_date || $to_date) {
+    $readable_from = $from_date ? date("F j, Y", strtotime($from_date)) : '';
+    $readable_to   = $to_date ? date("F j, Y", strtotime($to_date)) : '';
+
+    // Combine them in a single display
+    $filters[] = "<strong>" . trim($readable_from . ($readable_to ? " — " . $readable_to : '')) . "</strong>";
+} 
+        if ($sex) $filters[] = "Sex: <strong>" . htmlspecialchars($sex) . "</strong>";
+        if ($age_group) {
+          $age_labels = [
+            'child' => 'Child (0–12)',
+            'teen' => 'Teen (13–19)',
+            'adult' => 'Adult (20–59)',
+            'senior' => 'Senior (60+)'
+          ];
+          $filters[] = "Age Group: <strong>" . ($age_labels[$age_group] ?? htmlspecialchars($age_group)) . "</strong>";
+        }
+        if ($purok) $filters[] = "Barangay: <strong>" . htmlspecialchars($purok) . "</strong>";
+        if ($bmi) $filters[] = "BMI: <strong>" . htmlspecialchars($bmi) . "</strong>";
+        echo $filters ? implode("&nbsp; | &nbsp;", $filters) : "All Records";
+      ?>)
+    </div>
+</div>
+
 <style>
-  .print-only-letterhead { display: none; }
+
+  .print-letterhead { display: none; }
+    .title { text-align: center; display: none;}
 
   @media print {
-    .print-only-letterhead { display: block; }
-    .print-header { display: none !important; }
-
-    .print-letterhead{
-      display: grid;
-      grid-template-columns: 64px auto 64px;
-      align-items: center;
-      justify-content: center;
-      column-gap: 14px;
-      margin: 0 auto 10px;
-      text-align: center;
-      width: fit-content;
+     .title {
+        display: block;
     }
-    .print-logo{ width:64px; height:64px; object-fit:contain; }
-    .print-heading{ line-height:1.1; color:#000; }
-    .print-heading .ph-line-1{ font-size:12pt; font-weight:500; margin-bottom:4px;}
-    .print-heading .ph-line-2{ font-size:14pt; font-weight:500; margin-bottom:4px;}
-    .print-heading .ph-line-3{ font-size:11pt; font-weight:500; margin-bottom:4px;}
-    .print-heading .ph-line-4{ font-size:12pt; font-weight:600; margin-top:15px; letter-spacing:.3px; }
-    .print-sub{ font-size:10.5pt; margin-top:4px; }
-    .print-rule{ height:1px; border:0; background:#cfd8e3; margin:8px 0 12px; }
+     .report-table-container {
+        font-size: 11pt;
+      margin-top: -90px !important;
+      margin-bottom: 40px !important;
+    }
+    .print-letterhead { display: block; }    
 
-    .chart-title, .form-submit { display: none !important; }
+  .print-letterhead{
+  display: grid;
+  grid-template-columns: 72px auto 72px;  /* widened logo columns */
+  align-items: center;
+  justify-content: center;
+  column-gap: 60px;                       /* increased space between logos and heading */
+  margin: 0 auto 18px;
+  text-align: center;
+  width: fit-content;
   }
+  
+  .print-logo{ width:64px; height:64px; object-fit:contain; }
+  .print-heading{ line-height:1.1; color:#000; }
+  .print-heading .ph-line-1{ font-size:12pt; font-weight:500; margin-bottom:3px;}
+  .print-heading .ph-line-2{ font-size:14pt; font-weight:500; margin-bottom:3px;}
+  .print-heading .ph-line-3{ font-size:11pt; font-weight:500; margin-bottom:3px;}
+  .print-heading .ph-line-4{ font-size:12pt; font-weight:600; margin-top:15px; letter-spacing:.3px; }
+  .print-sub{ font-size:11pt; margin-top:4px; }
+  .print-rule{ height:1px; border:0; background:#cfd8e3; margin:8px 0 12px; }
+}
+
+  #generated_by {
+  display: block;           
+  margin: 22px 0 0 48px;    
+  color: #000;
+}
+
+#generated_by .sig-label {
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+
+#generated_by .sig-line {
+    display: none;
+  width: 200px;           
+  border: 0;
+  border-top: 1.5px solid #000;
+  margin: 26px 0 6px;       
+}
+
+#generated_by .sig-name {
+  font-weight: 600;
+  font-size: 16px;
+  margin-top: 4px;
+}
+
+#generated_by .sig-title {
+  font-size: 13px;
+  color: #333;
+}
+
+/* Print sizing (optional, nicer on paper) */
+@media print {
+  #generated_by {  margin: 60mm 0 0 10mm;}
+  #generated_by .sig-label { font-size: 12pt; }
+  #generated_by .sig-name  { font-size: 12pt; }
+  #generated_by .sig-title { font-size: 11pt; }
+  #generated_by .sig-line  {display: block; width: 45mm; border-top-width: 1px; margin: 10mm 0 3mm; }
+}
 </style>
 
 <style>
-    /* spacing above the summary */
+/* Add breathing room above the summary */
 .summary-container {
   margin-top: 32px;
 }
 
-/* two-column summary table */
+/* Two-column summary table */
 .summary-table {
   width: 100%;
   border-collapse: collapse;
@@ -568,21 +612,42 @@ $total_patients = count(array_unique(array_column($visits, 'patient_id')));
   font-weight: 600;
 }
 
-/* print-only: hide the Summary title, keep extra spacing */
+.summary-table2 {
+margin-top:6px;
+ border-collapse: collapse;
+  width: 100%;
+}
+
+/* Print-only: hide the "Summary" title; add a bit more top spacing */
 @media print {
-  .summary > h3 { display: none !important; }
-  .summary-container { margin-top: 40px; }
+  .summary > h3 { 
+    display: none !important;
+  }
+  .summary-container { 
+    margin-top: 40px;
+  }
+  .summary-table th,
+.summary-table td {
+  border: 1px solid #000000ff;
+  padding: 8px 12px;
+  vertical-align: top;
+  text-align: left;
+  word-wrap: break-word;
+}
+.summary-table2 th,
+.summary-table2 td {
+  border: 1px solid #000000ff !important;
+}
 }
 
     @media print {
-        .chart-title { 
+       
+         .form-submit { 
            display: none;
         }
+    
     }
 </style>
-
-
-
 
 
 <!-- Chart Visibility Controls -->
@@ -841,7 +906,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!isset($unique_patients_address[$pid])) {
                 // Extract barangay from the address
                 $address_parts = explode(' - ', $visit['address']);
-                $barangay = isset($address_parts[1]) ? explode(' ', $address_parts[1])[1] : 'Unknown';
+                $barangay = isset($address_parts[1]) ? explode(' ', $address_parts[1])[1] : 'Others';
                 $barangay_counts[$barangay] = ($barangay_counts[$barangay] ?? 0) + 1;
                 $unique_patients_address[$pid] = true;
             }
@@ -887,21 +952,29 @@ document.addEventListener("DOMContentLoaded", () => {
 
 <!-- Table with Visit Details -->
 <?php if ($visits): ?>
-      <div class="report-table-container">
+    <div class="report-table-container">
 	<table id="reportTable">
- <thead>
-    <tr>
-      <th data-type="date">Visit Date</th>
-      <th data-type="string">Patient Name</th>
-      <th data-type="string">Sex</th>
-      <th data-type="number">Age</th>
-      <th data-type="number">BMI</th>
-      <th data-type="number">Weight</th>
-      <th data-type="number">Height</th>
-      <th data-type="string">Address</th>
-    </tr>
-  </thead>
-    <tbody>
+<thead>
+  <tr>
+    <th data-type="date">Visit Date</th>
+    <th data-type="string">Patient Name</th>
+    <th data-type="string">Sex</th>
+    <th data-type="number">Age</th>
+    <th data-type="number">BMI</th>
+    <th data-type="number">Weight</th>
+    <th data-type="number">Height</th>
+    <th data-type="string">Address</th>
+  </tr>
+</thead>
+
+    
+<?php
+// Sort visits from latest to oldest by visit_date
+usort($visits, function($a, $b) {
+    return strtotime($b['visit_date']) - strtotime($a['visit_date']);
+});
+?>
+<tbody>
     <?php foreach ($visits as $visit): ?>
         <tr>
             <td><?= date('Y-m-d', strtotime($visit['visit_date'])) ?></td>
@@ -912,29 +985,25 @@ document.addEventListener("DOMContentLoaded", () => {
             <td><?= htmlspecialchars($visit['weight']) ?></td>
             <td><?= htmlspecialchars($visit['height']) ?></td>
             <td><?= htmlspecialchars($visit['address']) ?></td>
-           
-         
         </tr>
     <?php endforeach; ?>
-    </tbody>
-</table>
-           <br>
+</tbody>
 
-    <br> <br>
-     <span id="generated_by"></span>
+</table>
 </div>
-  </div>
 <?php else: ?>
     <p>No visits found for the selected filters.</p>
 <?php endif; ?>
+
+           <!-- Summary Section -->
 <div class="summary-container">
   <div class="summary">
-    <h3><i class="bx bx-file"></i> Summary</h3>
+    <h3><i class="bx bx-file"></i> Report Details</h3>
 
     <table class="summary-table">
       <colgroup>
-        <col style="width:40%">
-        <col style="width:60%">
+        <col style="width:30%">
+        <col style="width:70%">
       </colgroup>
       <tbody>
         <tr>
@@ -942,7 +1011,7 @@ document.addEventListener("DOMContentLoaded", () => {
           <td><?= date('F j, Y g:i:s A') ?></td>
         </tr>
         <tr>
-          <th>Total Unique Patients</th>
+          <th>Total Patients in Report</th>
           <td><?= $total_patients ?></td>
         </tr>
         <tr>
@@ -973,44 +1042,47 @@ document.addEventListener("DOMContentLoaded", () => {
       </tbody>
     </table>
 
-    <div style="margin-top:12px">
-      <strong>Patient Counts per Barangay:</strong>
-      <?php
-      // Rebuild from current $visits to ensure consistency
-      $barangay_counts = [];
-      $unique_patients_address = [];
-      foreach ($visits as $visit) {
-          $pid = $visit['patient_id'];
-          if (!isset($unique_patients_address[$pid])) {
-              $parts = explode(' - ', $visit['address']);
-              $bgy = isset($parts[1]) ? explode(' ', $parts[1])[1] : 'Unknown';
-              $barangay_counts[$bgy] = ($barangay_counts[$bgy] ?? 0) + 1;
-              $unique_patients_address[$pid] = true;
-          }
-      }
-      if (empty($barangay_counts)) {
-          echo '<div style="color:#666;margin-top:4px;">No data</div>';
-      } else {
-          echo '<ul style="margin-top:6px;">';
-          foreach ($barangay_counts as $bgy => $count) {
-              echo '<li>Barangay ' . htmlspecialchars($bgy) . ' — ' . $count . '</li>';
-          }
-          echo '</ul>';
-      }
-      ?>
+    <div style="margin-top:12px;">
+      <strong style="font-size: 12pt;">Patient Counts per Barangay:</strong>
+    <table class="summary-table2">
+      <thead>
+        <tr>
+        <th style="border: 1px solid #d5d7db; padding: 8px; text-align: left;">Barangay</th>
+        <th style="border: 1px solid #d5d7db; padding: 8px; text-align: left;">Patient Count</th>
+        </tr>
+      </thead>
+      <tbody>
+        <?php
+        // reuse the counts you already computed just above
+        foreach ($barangay_counts as $barangay => $count) {
+        echo "<tr>";
+        echo "<td style='border: 1px solid #d5d7db; padding: 8px;'>" . htmlspecialchars($barangay) . "</td>";
+        echo "<td style='border: 1px solid #d5d7db; padding: 8px;'>" . $count . "</td>";
+        echo "</tr>";
+        }
+        ?>
+      </tbody>
+    </table>
     </div>
   </div>
-  
 </div>
 
-<div class="form-submit form-submit-bottom" style="margin-top: 24px; display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
-  <button type="button" class="btn-export" onclick="exportTableToExcel('reportTable')">Export to Excel</button>
-  <button type="button" class="btn-export" onclick="exportTableToPDF()">Export to PDF</button>
-  <button type="button" class="btn-print"  onclick="printDiv()">Print this page</button>
+
+<div id="generated_by"></div>
+</div> 
+
+<!-- Print Button at Bottom -->
+   <div class="form-submit">
+          <button type="button" class="btn-export" onclick="exportTableToExcel('reportTable')">Export to Excel</button>
+        <button type="button" class="btn-export" onclick="exportTableToPDF()">Export to PDF</button>
+       
+    <button type="button" class="btn-print" onclick="printDiv()">
+        <i class='bx bx-printer'></i>
+        Print Report
+    </button>
 </div>
-</div> </div> 
 
-
+</div> 
 
 
 <div id="logoutModal" class="logout-modal">
@@ -1027,6 +1099,9 @@ document.addEventListener("DOMContentLoaded", () => {
         </div>
     </div>
 </div>
+</div>
+
+
 
 </div>
 
@@ -1071,23 +1146,7 @@ function exportTableToExcel(tableID, filename = 'Patient Summary Report') {
             return;
         }
         
-        const tableClone = originalTable.cloneNode(true);
-        
-        // Add signature header if not present
-        const headerRow = tableClone.querySelector('thead tr');
-        if (headerRow && !headerRow.querySelector('th:last-child')?.textContent.includes('Signature')) {
-            const signatureHeader = document.createElement('th');
-            signatureHeader.textContent = 'Signature';
-            headerRow.appendChild(signatureHeader);
-            
-            // Add empty signature cells for each row
-            const rows = tableClone.querySelectorAll('tbody tr');
-            rows.forEach(row => {
-                const signatureCell = document.createElement('td');
-                signatureCell.textContent = ''; // Empty for Excel
-                row.appendChild(signatureCell);
-            });
-        }
+    
         
         tempDiv.appendChild(tableClone);
         document.body.appendChild(tempDiv);
@@ -1157,105 +1216,69 @@ async function exportTableToPDF() {
         doc.save("report.pdf");
     });
 }
-function printDiv() {
-  const area = document.querySelector(".print-area");
-  if (!area) { alert("Nothing to print."); return; }
-  const clone = area.cloneNode(true);
 
-  // Add Signature column if missing
-  const headerRow = clone.querySelector("table thead tr");
-  if (headerRow) {
-    const lastTh = headerRow.querySelector("th:last-child");
-    const hasSig = lastTh && /Signature/i.test((lastTh.textContent || "").trim());
-    if (!hasSig) {
-      const th = document.createElement("th");
-      th.textContent = "Signature";
-      headerRow.appendChild(th);
-      clone.querySelectorAll("table tbody tr").forEach(tr => {
-        const td = document.createElement("td");
-        td.style.height = "30px";
-        tr.appendChild(td);
-      });
-    }
+function printDiv() {
+  const originalArea = document.querySelector(".print-area");
+  const headerEl = document.querySelector(".print-letterhead");
+  if (!originalArea || !headerEl) {
+    alert("Error: Missing .print-area or .print-letterhead on page.");
+    return;
   }
 
-  // Prefer new letterhead; fallback to old header; guard if absent
-  const headerSource =
-    document.querySelector(".print-only-letterhead") ||
-    document.querySelector(".print-header");
-  const headerHTML = headerSource ? headerSource.outerHTML : "";
+  const clone = originalArea.cloneNode(true);
 
-  // Remove header from the clone (avoid duplicate)
-  const headerInClone = clone.querySelector(".print-only-letterhead, .print-header");
+  // Remove header duplication in the clone
+  const headerInClone = clone.querySelector('.print-letterhead');
   if (headerInClone) headerInClone.remove();
+  const ruleInClone = clone.querySelector('.print-rule');
+  if (ruleInClone) ruleInClone.remove();
 
-  // Remove canvases (optional: you could convert to images instead)
-  clone.querySelectorAll("canvas").forEach(c => c.remove());
+  // Remove all charts/controls in the clone
+  clone.querySelectorAll('canvas').forEach(c => c.remove());
+  clone.querySelectorAll('#sexChart, #ageGroupChart, #bmiChart, #barangayBarChart').forEach(el => el.remove());
+  clone.querySelectorAll('.chart-title').forEach(el => el.remove());
+  const chartControls = Array.from(clone.querySelectorAll('div')).find(d => d.textContent?.trim().startsWith('Charts:'));
+  if (chartControls) chartControls.remove();
 
-  const w = window.open("", "", "height=900,width=1100");
-  if (!w) { alert("Please enable pop-ups to print."); return; }
+  const w = window.open('', '', 'height=900,width=1100');
+  w.document.write(`
+    <html>
+      <head>
+        <title>Print Report</title>
+        <meta charset="utf-8" />
+        <style>
+          body { font-family: Arial, sans-serif; font-size: 12px; color: black; }
+          table { width: 100%; border-collapse: collapse; }
+          th, td { border: 1px solid #000; padding: 4px; text-align: left; }
+          thead { background-color: #f0f0f0; }
+          img { display: block; margin: 0 auto; max-width: 100%; height: auto; }
 
-  w.document.write(`<!doctype html><html><head><title>Print Report</title>
-    <meta charset="utf-8">
-    <style>
-      body { font-family: Arial, sans-serif; font-size: 12px; color: #000; }
-      table { width: 100%; border-collapse: collapse; }
-      th, td { border: 1px solid #000; padding: 4px; text-align: left; }
-      thead { background: #f0f0f0; }
-      img { display: block; margin: 0 auto; max-width: 100%; height: auto; }
-      h3 { margin: 10px 0 6px; }
-
-      .print-only-letterhead { display: block; } /* ensure visible in print window */
-      .print-letterhead{
-        display: grid;
-        grid-template-columns: 64px auto 64px;
-        align-items: center;
-        justify-content: center;
-        column-gap: 14px;
-        margin: 0 auto 10px;
-        text-align: center;
-        width: fit-content;
-      }
-      .print-logo{ width:64px; height:64px; object-fit:contain; }
-      .print-heading{ line-height:1.1; color:#000; }
-      .print-heading .ph-line-1{ font-size:12pt; font-weight:500; }
-      .print-heading .ph-line-2{ font-size:14pt; font-weight:500; }
-      .print-heading .ph-line-3{ font-size:11pt; font-weight:500; }
-      .print-heading .ph-line-4{ font-size:12pt; font-weight:600; margin-top:4px; letter-spacing:.3px; }
-      .print-sub{ font-size:10.5pt; margin-top:4px; }
-      .print-rule{ height:1px; border:0; background:#cfd8e3; margin:8px 0 12px; }
-    </style>
-  </head><body>`);
-
-  w.document.write(headerHTML);
-  w.document.write(clone.innerHTML);
-  w.document.write(`</body></html>`);
+          /* header visuals */
+          .print-letterhead{
+            display:grid; grid-template-columns:64px auto 64px;
+            align-items:center; justify-content:center; column-gap:14px;
+            margin:0 auto 10px; text-align:center; width:fit-content;
+          }
+          .print-logo{ width:64px; height:64px; object-fit:contain; }
+          .print-heading{ line-height:1.1; color:#000; }
+          .print-heading .ph-line-1{ font-size:12pt; font-weight:500; }
+          .print-heading .ph-line-2{ font-size:14pt; font-weight:800; }
+          .print-heading .ph-line-3{ font-size:11pt; font-weight:500; }
+          .print-heading .ph-line-4{ font-size:12pt; font-weight:800; margin-top:4px; letter-spacing:.3px; }
+          .print-sub{ font-size:11pt; margin-top:4px; }
+          .print-rule{ height:1px; border:0; background:#cfd8e3; margin:8px 0 12px; }
+        </style>
+      </head>
+      <body>
+        ${headerEl.outerHTML}
+        <hr class="print-rule">
+        ${clone.innerHTML}
+      </body>
+    </html>
+  `);
   w.document.close();
-
-  w.onload = () => {
-    try { w.focus(); w.print(); } finally { w.close(); }
-  };
-}
-
-    function confirmLogout() {
-    document.getElementById('logoutModal').style.display = 'block';
-    return false; // Prevent the default link behavior
-}
-
-function closeModal() {
-    document.getElementById('logoutModal').style.display = 'none';
-}
-
-function proceedLogout() {
-    window.location.href = '../../role.html';
-}
-
-// Close modal when clicking outside
-window.onclick = function(event) {
-    const modal = document.getElementById('logoutModal');
-    if (event.target == modal) {
-        closeModal();
-    }
+  w.focus();
+  setTimeout(() => { w.print(); w.close(); }, 500);
 }
 
 (function() {
@@ -1265,9 +1288,8 @@ window.onclick = function(event) {
   const thead = table.tHead || table.querySelector('thead');
   const tbody = table.tBodies[0];
 
-  // Add arrow placeholders to sortable headers
+  // Add small arrow indicators
   [...thead.querySelectorAll('th')].forEach(th => {
-    if (th.classList.contains('no-sort')) return;
     const ind = document.createElement('span');
     ind.className = 'sort-indicator';
     th.appendChild(ind);
@@ -1275,32 +1297,36 @@ window.onclick = function(event) {
 
   function parseDate(v) {
     const t = (v || '').trim();
-    // Accept YYYY-MM-DD (your output format), or anything Date can parse
+    // ISO-like "YYYY-MM-DD" (with optional time)
     if (/^\d{4}-\d{2}-\d{2}(?:\s+\d{2}:\d{2}(?::\d{2})?)?$/.test(t)) {
       return new Date(t.replace(' ', 'T'));
     }
-    const d = new Date(t);
+    const d = new Date(t); // fallback (e.g., "Nov 01, 2025")
     return isNaN(d.getTime()) ? null : d;
   }
 
   function detectType(colIdx) {
     const th = thead.querySelectorAll('th')[colIdx];
     if (th?.dataset?.type) return th.dataset.type;
-    // Fallback sniff (rarely used since we set data-type explicitly)
+
     for (const tr of tbody.rows) {
       const txt = (tr.cells[colIdx]?.textContent || '').trim();
       if (!txt) continue;
+
       const d = parseDate(txt);
       if (d) return 'date';
+
       const n = txt.replace(/,/g, '');
       if (!isNaN(n) && n !== '') return 'number';
+
       return 'string';
     }
     return 'string';
   }
 
-  function cellValue(tr, idx, type) {
+  function getCellValue(tr, idx, type) {
     const raw = (tr.cells[idx]?.textContent || '').trim();
+
     if (type === 'number') {
       const n = parseFloat(raw.replace(/,/g, ''));
       return isNaN(n) ? Number.NEGATIVE_INFINITY : n;
@@ -1318,13 +1344,13 @@ window.onclick = function(event) {
     });
   }
 
-  function sortBy(idx, dir) {
-    const type = detectType(idx);
+  function sortBy(colIdx, dir) {
+    const type = detectType(colIdx);
     const rows = [...tbody.rows];
 
     rows.sort((a, b) => {
-      const va = cellValue(a, idx, type);
-      const vb = cellValue(b, idx, type);
+      const va = getCellValue(a, colIdx, type);
+      const vb = getCellValue(b, colIdx, type);
       if (va < vb) return dir === 'asc' ? -1 : 1;
       if (va > vb) return dir === 'asc' ?  1 : -1;
       return 0;
@@ -1337,7 +1363,6 @@ window.onclick = function(event) {
 
   // Click handlers
   [...thead.querySelectorAll('th')].forEach((th, idx) => {
-    if (th.classList.contains('no-sort')) return;
     th.addEventListener('click', () => {
       const isAsc = th.classList.contains('is-sorted-asc');
       const nextDir = isAsc ? 'desc' : 'asc';
@@ -1348,31 +1373,15 @@ window.onclick = function(event) {
     });
   });
 
-  // Default sort: Visit Date (col 0), descending (newest first)
+  // Default: sort by Visit Date (col 0) descending on load
   const defaultCol = 0, defaultDir = 'desc';
   const defaultTh = thead.querySelectorAll('th')[defaultCol];
-  if (defaultTh && !defaultTh.classList.contains('no-sort')) {
+  if (defaultTh) {
     defaultTh.classList.add(defaultDir === 'asc' ? 'is-sorted-asc' : 'is-sorted-desc');
     sortBy(defaultCol, defaultDir);
   }
 })();
 
-document.addEventListener('DOMContentLoaded', function() {
-    // Add event listeners to all delete icons
- 	fetch('../php/getUserName.php')
-        .then(response => response.json())
-        .then(data => {
-            if (data.full_name) {
-                document.getElementById('userGreeting').textContent = `Hello, ${data.full_name}!`;
-            } else {
-                document.getElementById('userGreeting').textContent = 'Hello, User!';
-            }
-        })
-        .catch(error => {
-            console.error('Error fetching user name:', error);
-            document.getElementById('userGreeting').textContent = 'Hello, User!';
-        });
-});
 
     function confirmLogout() {
     document.getElementById('logoutModal').style.display = 'block';
@@ -1395,6 +1404,37 @@ window.onclick = function(event) {
     }
 }
 
+document.addEventListener('DOMContentLoaded', () => {
+  fetch('../php/getUserName.php')
+    .then(r => r.json())
+    .then(data => {
+      const fullName = (data && data.full_name) ? data.full_name : '';
+
+      // Greeting (keep current behavior)
+      document.getElementById('userGreeting').textContent =
+        fullName ? `Hello, ${fullName}!` : 'Hello, User!';
+
+      // Build the signature block
+      const gb = document.getElementById('generated_by');
+      gb.innerHTML = `
+        <div class="sig-label">Report Generated by:</div>
+        <hr class="sig-line">
+        <div class="sig-name"></div>
+        <div class="sig-title">Nursing Attendant</div>
+      `;
+      gb.querySelector('.sig-name').textContent = fullName || '________________';
+    })
+    .catch(() => {
+      document.getElementById('userGreeting').textContent = 'Hello, User!';
+      const gb = document.getElementById('generated_by');
+      gb.innerHTML = `
+        <div class="sig-label">Report Generated by:</div>
+        <hr class="sig-line">
+        <div class="sig-name">________________</div>
+        <div class="sig-title">Nursing Attendant</div>
+      `;
+    });
+});
 
 	// Check if user is logged in
 fetch('../php/getUserId.php')
@@ -1411,34 +1451,6 @@ fetch('../php/getUserId.php')
     });
 
 </script>
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  const sidebar = document.getElementById("sidebar");
 
-  function applyResponsiveSidebar() {
-    if (window.innerWidth <= 1024) {
-      sidebar.classList.add("hide");   // collapsed on small screens
-    } else {
-      sidebar.classList.remove("hide"); // expanded on larger screens
-    }
-  }
-
-  applyResponsiveSidebar();
-  window.addEventListener("resize", applyResponsiveSidebar);
-
-});
-
-  function resizeTableContainer(){
-    const header = document.querySelector('nav');
-    const container = document.querySelector('.report-table-container');
-    if(!container) return;
-    const headerH = header ? header.getBoundingClientRect().height : 0;
-    const padding = 40; // bottom spacing
-    container.style.maxHeight = (window.innerHeight - headerH - padding) + 'px';
-  }
-  window.addEventListener('load', resizeTableContainer);
-  window.addEventListener('resize', resizeTableContainer);
-  
-</script>
 </body>
 </html>

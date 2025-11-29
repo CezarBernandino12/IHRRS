@@ -8,24 +8,23 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
-$userId = $_SESSION['user_id'];// or however you store the logged-in user's ID
+
+$userId = $_SESSION['user_id']; // logged-in user ID
 
 // Fetch user info
-$stmt = $pdo->prepare("SELECT rhu FROM users WHERE user_id = ?");
+$stmt = $pdo->prepare("SELECT full_name, rhu FROM users WHERE user_id = ?");
 $stmt->execute([$userId]);
 $user = $stmt->fetch();
 
 $rhu = $user ? $user['rhu'] : 'N/A';
-
-
-
+$username = $user ? $user['full_name'] : 'N/A';
 
 // Initialize filters
 $from_date = $_GET['from_date'] ?? '';
 $to_date = $_GET['to_date'] ?? '';
 $sex = $_GET['sex'] ?? '';
 $age_group = $_GET['age_group'] ?? '';
-$purok = $_GET['purok'] ?? ''; // Use 'purok' for address filtering
+$purok = $_GET['purok'] ?? '';
 $diagnosis = isset($_GET['diagnosis']) ? (array)$_GET['diagnosis'] : [];
 $diagnosis_status = $_GET['diagnosis_status'] ?? '';
 $barangay = $_GET['barangay'] ?? '';
@@ -35,8 +34,10 @@ $sql = "SELECT r.*, p.first_name, p.last_name, p.age, p.sex, p.address
         FROM rhu_consultations r
         JOIN patients p ON r.patient_id = p.patient_id
         JOIN users u_rec ON r.recorded_by = u_rec.user_id
-        WHERE u_rec.rhu = :rhu";   
-$params = [ 'rhu' => $rhu ];  
+        WHERE u_rec.rhu = :rhu";  // Only show consultations from same RHU
+
+$params['rhu'] = $rhu;// First parameter is the current user's RHU
+
 
 if (!empty($from_date) && !empty($to_date)) {
     $sql .= " AND DATE(r.consultation_date) BETWEEN :from_date AND :to_date";
@@ -77,7 +78,6 @@ if (!empty($purok)) {
     $params['purok'] = '%' . $purok . '%';
 }
 
-
 if (!empty($barangay) && $barangay !== 'N/A') {
     $sql .= " AND p.address LIKE :barangay";
     $params['barangay'] = '%' . $barangay . '%';
@@ -88,6 +88,7 @@ $sql .= " ORDER BY r.consultation_date DESC";
 $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $visits = $stmt->fetchAll();
+
 
         //ADDED GENERATED REPORT FOR ACTIVITY LOG
         $stmt_log = $pdo->prepare("INSERT INTO logs (
@@ -133,11 +134,12 @@ $visits = $stmt->fetchAll();
   #reportTable th.is-sorted-desc .sort-indicator::after { content: "▼"; }
 </style>
 
+
 <!-- Sidebar Section -->
 	<section id="sidebar">
 		<a href="#" class="brand">
 			<img src="../../img/logo.png" alt="RHULogo" class="logo">
-			<span class="text">Physician</span>
+			<span class="text">Nurse</span>
 		</a>
 		<ul class="side-menu top">
 			<li>
@@ -146,12 +148,7 @@ $visits = $stmt->fetchAll();
 					<span class="text">Dashboard</span>
 				</a>
 			</li>
-			<li>
-				<a href= "../ITR.html">
-					<i class="bx bxs-user"></i>
-					<span class="text">Add New ITR</span>
-				</a>
-			</li>
+		
 			<li>
 				<a href="../pending.html" id="updateReferrals">
 					<i class="bx bxs-user"></i>
@@ -255,8 +252,8 @@ $visits = $stmt->fetchAll();
     
     <!-- Filter Modal Trigger -->
    
-    <div class="form-submit">
-        <button type="button" class="btn-export" id="openFilterModal">Filter</button>
+        <div class="form-submit" style="margin-top: -10px;">
+               <button type="button" class="btn-export" id="openFilterModal">Select Filters</button>
     </div>
 
     <!-- Modern Filter Tags Display -->
@@ -300,7 +297,7 @@ $visits = $stmt->fetchAll();
                 !$from_date && !$to_date && !$sex && !$age_group &&
                 !$purok && !$diagnosis_status && !$diagnosis
             ) {
-                echo '<span style="color:#888;">All</span>';
+                echo '<span style="color:#888;">None</span>';
             }
             ?>
         </div>
@@ -473,98 +470,199 @@ $visits = $stmt->fetchAll();
 
 
 <div class="print-area">
-<!-- PRINT-ONLY LETTERHEAD (shows only when printing) -->
-<div class="print-only-letterhead">
-  <div class="print-letterhead">
-    <img src="../../img/Plogo.png" alt="Left Logo" class="print-logo">
-    <div class="print-heading">
-      <div class="ph-line-1">Republic of the Philippines</div>
-      <div class="ph-line-1">Province of Camarines Norte</div>
-      <div class="ph-line-2">Municipality of Daet</div>
-      <div class="ph-line-3"><?= htmlspecialchars($rhu) ?></div>
-      <div class="ph-line-4">MEDICAL CASE MONITORING REPORT</div>
-      <div class="print-sub">
-        (<?php
-          $parts = [];
-          if (!empty($from_date)) $parts[] = "From <strong>" . htmlspecialchars($from_date) . "</strong>";
-          if (!empty($to_date))   $parts[] = "To <strong>" . htmlspecialchars($to_date) . "</strong>";
-          if (!empty($diagnosis)) {
-            $dlist = is_array($diagnosis) ? $diagnosis : [$diagnosis];
-            $parts[] = "Diagnosis: <strong>" . implode(', ', array_map('htmlspecialchars', $dlist)) . "</strong>";
-          }
-          if (!empty($diagnosis_status)) $parts[] = "Status: <strong>" . htmlspecialchars($diagnosis_status) . "</strong>";
-          if (!empty($sex)) $parts[] = "Sex: <strong>" . htmlspecialchars($sex) . "</strong>";
-          if (!empty($age_group)) {
-            $age_labels = ['child'=>'Child (0–12)','teen'=>'Teen (13–19)','adult'=>'Adult (20–59)','senior'=>'Senior (60+)'];
-            $parts[] = "Age Group: <strong>" . ($age_labels[$age_group] ?? htmlspecialchars($age_group)) . "</strong>";
-          }
-          if (!empty($purok)) $parts[] = "Barangay: <strong>" . htmlspecialchars($purok) . "</strong>";
-          echo $parts ? implode(" &nbsp;|&nbsp; ", $parts) : "All Records";
-        ?>)
-      </div>
-    </div>
-    <img src="../../img/RHUlogo.png" alt="Right Logo" class="print-logo">
+<!-- Two-logo letterhead -->
+<div class="print-letterhead">
+  <img src="../../img/daet_logo.png" alt="Left Logo" class="print-logo">
+  <div class="print-heading">
+    <div class="ph-line-1">Republic of the Philippines</div>
+    <div class="ph-line-1">Province of Camarines Norte</div>
+    <div class="ph-line-2">Municipality of Daet</div>
+    <div class="ph-line-3"><?php echo htmlspecialchars($rhu); ?></div>
+ 
   </div>
-  <hr class="print-rule">
+  <img src="../../img/mho_logo.png" alt="Right Logo" class="print-logo">
 </div>
-<!-- /PRINT-ONLY LETTERHEAD -->
+<hr class="print-rule">
 
 
 <div class="report-content">
+
+<div class="title">
+   <div class="ph-line-4">MEDICAL CASE MONITORING REPORT</div>
+    <div class="print-sub">
+      (<?php
+        $filters = [];
+                   if ($from_date || $to_date) {
+    $readable_from = $from_date ? date("F j, Y", strtotime($from_date)) : '';
+    $readable_to   = $to_date ? date("F j, Y", strtotime($to_date)) : '';
+
+    // Combine them in a single display
+    $filters[] = "<strong>" . trim($readable_from . ($readable_to ? " — " . $readable_to : '')) . "</strong>";
+} 
+        if ($diagnosis) {
+          $diagnosis_list = is_array($diagnosis) ? $diagnosis : [$diagnosis];
+          $filters[] = "Diagnosis: <strong>" . implode(', ', array_map('htmlspecialchars', $diagnosis_list)) . "</strong>";
+        }
+        if ($diagnosis_status) $filters[] = "Status: <strong>" . htmlspecialchars($diagnosis_status) . "</strong>";
+        if ($sex) $filters[] = "Sex: <strong>" . htmlspecialchars($sex) . "</strong>";
+        if ($age_group) {
+          $age_labels = [
+            'child' => 'Child (0–12)', 'teen' => 'Teen (13–19)',
+            'adult' => 'Adult (20–59)', 'senior' => 'Senior (60+)'
+          ];
+          $filters[] = "Age Group: <strong>" . ($age_labels[$age_group] ?? htmlspecialchars($age_group)) . "</strong>";
+        }
+        if ($purok) $filters[] = "Barangay: <strong>" . htmlspecialchars($purok) . "</strong>";
+        echo $filters ? implode("&nbsp; | &nbsp;", $filters) : "All Records";
+      ?>)
+    </div>
+</div>
 <style>
-  /* Hidden on screen; visible only when printing */
-  .print-only-letterhead { display: none; }
+  .print-letterhead,
+  .print-rule { display: none; }
+  .title { text-align: center; display: none;}
 
   @media print {
-    /* Show the new letterhead, hide the old header */
-    .print-only-letterhead { display: block; }
-    .print-header { display: none !important; }
-
-    .print-letterhead{
-      display: grid;
-      grid-template-columns: 64px auto 64px;
-      align-items: center;
-      justify-content: center;
-      column-gap: 14px;
-      margin: 0 auto 10px;
-      text-align: center;
-      width: fit-content;
+     .title {
+        display: block;
     }
-    .print-logo{ width:64px; height:64px; object-fit:contain; }
-    .print-heading{ line-height:1.1; color:#000; }
-    .print-heading .ph-line-1{ font-size:12pt; font-weight:500; margin-bottom:4px;}
-    .print-heading .ph-line-2{ font-size:14pt; font-weight:500; margin-bottom:4px;}
-    .print-heading .ph-line-3{ font-size:11pt; font-weight:500; margin-bottom:4px;}
-    .print-heading .ph-line-4{ font-size:12pt; font-weight:600; margin-top:15px; letter-spacing:.3px; }
-    .print-sub{ font-size:10.5pt; margin-top:4px; }
-    .print-rule{ height:1px; border:0; background:#cfd8e3; margin:8px 0 12px; }
-
-    /* keep your existing print-hides working if you want */
-    .chart-title, .form-submit { display: none !important; }
-    
-     .report-table-container {
-      margin-top: 80px !important;
-      margin-bottom: 40px !important;
-    }
+    .print-letterhead { display: block; }
+  .print-letterhead{
+   display: grid;
+  grid-template-columns: 72px auto 72px;  /* widened logo columns */
+  align-items: center;
+  justify-content: center;
+  column-gap: 60px;                       /* increased space between logos and heading */
+  margin: 0 auto 18px;
+  text-align: center;
+  width: fit-content;
   }
+
+
+  .print-logo{ width:64px; height:64px; object-fit:contain; }
+  .print-heading{ line-height:1.1; color:#000; }
+  .print-heading .ph-line-1{ font-size:12pt; font-weight:500; margin-bottom:4px; }
+  .print-heading .ph-line-2{ font-size:14pt; font-weight:500; margin-bottom:4px;}
+  .print-heading .ph-line-3{ font-size:11pt; font-weight:500; margin-bottom:4px;}
+  .print-heading .ph-line-4{ font-size:12pt; font-weight:600; margin-top:15px; letter-spacing:.3px; }
+  .print-sub{ font-size:10.5pt; margin-top:4px; }
+  .print-rule{ height:1px; border:0; background:#cfd8e3; margin:8px 0 12px; }
+}
+
+   #generated_by {
+  display: block;           
+  margin: 22px 0 0 48px;    
+  color: #000;
+}
+
+#generated_by .sig-label {
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+
+#generated_by .sig-line {
+    display: none;
+  width: 200px;           
+  border: 0;
+  border-top: 1.5px solid #000;
+  margin: 26px 0 6px;       
+}
+
+#generated_by .sig-name {
+  font-weight: 600;
+  font-size: 16px;
+  margin-top: 4px;
+}
+
+#generated_by .sig-title {
+  font-size: 13px;
+  color: #333;
+}
+
+/* Print sizing (optional, nicer on paper) */
+@media print {
+  #generated_by {  margin: 60mm 0 0 10mm;}
+  #generated_by .sig-label { font-size: 12pt; }
+  #generated_by .sig-name  { font-size: 12pt; }
+  #generated_by .sig-title { font-size: 11pt; }
+  #generated_by .sig-line  {display: block; width: 45mm; border-top-width: 1px; margin: 10mm 0 3mm; }
+}
 </style>
 
 <style>
 
-  .form-submit-bottom {
-    justify-content: flex-start !important;
-  }
-  
-.summary-container {
-  margin-top: 32px;
+.summary-container { 
+  margin-top: 32px;          
 }
 
-/* two-column summary table */
+/* Summary table styling */
+.summary-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 16px;
+}
+
+.case-table,
 .summary-table {
   width: 100%;
   border-collapse: collapse;
   table-layout: fixed;
-  font-size: 16px;
+}
+
+.case-table th, .case-table td,
+.summary-table th, .summary-table td {
+  border: 1px solid #d5d7db;
+  padding: 8px 12px;
+  vertical-align: middle;
+  text-align: center;
+  word-wrap: break-word;
+}
+
+
+ .report-table-container {
+        margin-top: 20px !important;
+        margin-bottom: 40px !important;
+        }
+
+.case-table th.tl,
+.case-table td:nth-child(1) {    
+  text-align: left;
+}
+
+.case-table thead th {
+  white-space: nowrap;
+}
+
+.summary-list,
+.summary-list li {
+  list-style: none;
+  padding-left: 0;
+  margin-left: 0;
+}
+
+
+@media print {
+  .case-table thead { display: table-header-group; }
+  .case-table tr, .summary-table tr, #reportTable tr {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+ .report-table-container {
+   
+      margin-bottom: 40px !important;
+    }
+
+    .summary-table th,
+.summary-table td {
+  border: 1px solid #000000ff !important;
+  padding: 8px 12px;
+  vertical-align: top;
+  text-align: left;
+}
+.case-table th, .case-table td {
+    border: 1px solid #000000ff;
+}
+
 }
 
 .summary-table th,
@@ -573,25 +671,39 @@ $visits = $stmt->fetchAll();
   padding: 8px 12px;
   vertical-align: top;
   text-align: left;
-  word-wrap: break-word;
 }
 
 .summary-table th {
+  width: 260px;
   background: #f2f4f7;
   font-weight: 600;
 }
 
-/* print-only: hide the Summary title, add a touch more space */
+
 @media print {
-  .summary > h3 { display: none !important; }
-  .summary-container { margin-top: 40px; }
+  .summary-container { margin-top: 40px; } /* a bit more space when printing */
 }
 
     @media print {
         .chart-title { 
            display: none;
         }
+         .form-submit { 
+           display: none;
+        }
+        .summary-list{
+            font-size: 16px;
+        }
+        .generated-by{
+            font-size: 16px;
+        }
     }
+    @media print {
+  .summary > h3 { 
+    display: none !important;
+  }
+}
+
 </style>
 
 <!-- Chart Visibility Controls -->
@@ -850,38 +962,44 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-<!-- Summary Section -->
-<?php
-// Calculate total unique patients
-$unique_patient_ids = [];
-foreach ($visits as $visit) {
-    $unique_patient_ids[$visit['patient_id']] = true;
-}
-$total_patients = count($unique_patient_ids);
-?>
-
-
-
 <br>
 
-<h3>Detailed Report</h3>
 <!-- Table with Visit Details -->
 <?php if ($visits && count($visits) > 0): ?>
-    <div class="report-table-container">
-    <table id="reportTable">
-            <thead>
-                <tr>
-                <th data-type="date">Date Diagnosed</th>
-                <th data-type="string">Diagnosis</th>
-                <th data-type="string">Status</th>
-                <th data-type="string">Patient Name</th>
-                <th data-type="string">Sex</th>
-                <th data-type="number">Age</th>
-                <th data-type="string">Address</th>
-                </tr>
-            </thead>
-        <tbody>
-        <?php foreach ($visits as $visit): ?>
+         <div class="report-table-container">
+<table id="reportTable">
+  <thead>
+    <tr>
+      <th data-type="date">Date Diagnosed</th>
+      <th data-type="string">Diagnosis</th>
+      <th data-type="string">Status</th>
+      <th data-type="string">Patient Name</th>
+      <th data-type="string">Sex</th>
+      <th data-type="number">Age</th>
+      <th data-type="string">Address</th>
+    </tr>
+  </thead>
+<?php
+// Sort visits from latest to oldest by consultation_date
+usort($visits, function($a, $b) {
+    return strtotime($b['consultation_date']) - strtotime($a['consultation_date']);
+});
+
+// Track unique combinations of patient name + diagnosis
+$seen = [];
+$unique_visits = [];
+
+foreach ($visits as $visit) {
+    $key = strtolower(trim($visit['first_name'] . ' ' . $visit['last_name'] . '|' . $visit['diagnosis']));
+    if (!isset($seen[$key])) {
+        $seen[$key] = true;
+        $unique_visits[] = $visit;
+    }
+}
+?>
+<tbody>
+    <?php if (!empty($unique_visits)): ?>
+        <?php foreach ($unique_visits as $visit): ?>
             <tr>
                 <td><?= date('Y-m-d', strtotime($visit['consultation_date'])) ?></td>
                 <td><?= htmlspecialchars($visit['diagnosis']) ?></td>
@@ -892,52 +1010,36 @@ $total_patients = count($unique_patient_ids);
                 <td><?= htmlspecialchars($visit['address']) ?></td>
             </tr>
         <?php endforeach; ?>
-        </tbody>
+    <?php else: ?>
+        <tr><td colspan="7" style="text-align:center;">No unique records found</td></tr>
+    <?php endif; ?>
+</tbody>
+
     </table>
-    </div>
+</div>
 <?php else: ?>
     <p>No visits found for the selected filters.</p>
 <?php endif; ?>
            
-  <div class="summary-container">
-  <div class="summary">
-    <h3><i class="bx bx-file"></i> Summary</h3>
+  
+</div>
 
-    <table class="summary-table">
-      <colgroup>
-        <col style="width:40%">
-        <col style="width:60%">
-      </colgroup>
-      <tbody>
-        <tr>
-          <th>Report Generated On</th>
-          <td><?= date('F j, Y g:i:s A') ?></td>
-        </tr>
-        <tr>
-          <th>Total Unique Patients in Report</th>
-          <td><?= $total_patients ?? 0 ?></td>
-        </tr>
-        <tr>
-          <th>By Sex</th>
-          <td>
-            Male — <?= isset($sex_counts['Male']) ? $sex_counts['Male'] : 0 ?>,
-            Female — <?= isset($sex_counts['Female']) ? $sex_counts['Female'] : 0 ?>
-          </td>
-        </tr>
-        <tr>
-          <th>By Age Group</th>
-          <td>
-            Young Children: <?= $age_group_counts['0–5'] ?? 0 ?>,
-            Children: <?= $age_group_counts['6–17'] ?? 0 ?>,
-            Adults: <?= $age_group_counts['18–59'] ?? 0 ?>,
-            Seniors: <?= $age_group_counts['60+'] ?? 0 ?>
-          </td>
-        </tr>
-      </tbody>
-    </table>
 
-<div class="print-keep" id="caseCountsBlock" style="margin-top:12px">
-  <strong>Case Counts:</strong>
+<!-- Summary Section -->
+<?php
+// Calculate total unique patients
+$unique_patient_ids = [];
+foreach ($visits as $visit) {
+    $unique_patient_ids[$visit['patient_id']] = true;
+}
+$total_patients = count($unique_patient_ids);
+?>
+<div class="summary-container">
+    <div class="summary">
+        <h3><i class="bx bx-file"></i> Report Details</h3>
+        <ul class="summary-list">
+            <li>
+    <strong>Case Counts:</strong>
     <?php
     // Prepare disease breakdown by sex and age group (unique patients only)
     $disease_summary = [];
@@ -988,19 +1090,29 @@ $total_patients = count($unique_patient_ids);
     if (count($disease_summary) === 0) {
         echo "<p style='color:#888;'>No disease cases found for the selected filters.</p>";
     } else {
-        echo "<table border='1' cellpadding='6' cellspacing='0' style='border-collapse:collapse; margin-top:8px; width:100%; text-align:center;'>";
-        echo "<thead style='background:#f2f2f2;'>";
-        echo "<tr>
-                <th>Disease</th>
-                <th>Total Cases</th>
-                <th>Male</th>
-                <th>Female</th>
-                <th>0–5 yrs. old</th>
-                <th>6–17 yrs. old</th>
-                <th>18–59 yrs. old</th>
-                <th>60+ yrs. old</th>
-              </tr>";
-        echo "</thead><tbody>";
+echo "<table class='case-table'>
+  <colgroup>
+    <col style='width:28%'>    <!-- Case -->
+    <col style='width:12%'>    <!-- Total -->
+    <col style='width:10%'>    <!-- Male -->
+    <col style='width:10%'>    <!-- Female -->
+    <col style='width:10%'>    <!-- 0–5 -->
+    <col style='width:10%'>    <!-- 6–17 -->
+    <col style='width:10%'>    <!-- 18–59 -->
+    <col style='width:10%'>    <!-- 60+ -->
+  </colgroup>
+  <thead>
+    <tr>
+      <th class='tl'>Case</th>
+      <th>Total</th>
+      <th>Male</th>
+      <th>Female</th>
+      <th>0–5</th>
+      <th>6–17</th>
+      <th>18–59</th>
+      <th>60+</th>
+    </tr>
+  </thead><tbody>";
 
         foreach ($disease_summary as $disease => $info) {
             echo "<tr>";
@@ -1018,22 +1130,62 @@ $total_patients = count($unique_patient_ids);
         echo "</tbody></table>";
     }
     ?>
+</li>
+<br>
+<table class="summary-table">
+  <colgroup>
+    <col style="width:30%">
+    <col style="width:70%">
+  </colgroup>
+  <tbody>
+    <tr>
+      <th>Report Generated On</th>
+      <td><?= date('F j, Y g:i:s A') ?></td>
+    </tr>
+    <tr>
+      <th>Total Unique Patients</th>
+      <td><?= $total_patients ?? 0 ?></td>
+    </tr>
+    <tr>
+      <th>By Sex</th>
+      <td>Male — <?= $sex_counts['Male'] ?? 0 ?>, Female — <?= $sex_counts['Female'] ?? 0 ?></td>
+    </tr>
+    <tr>
+      <th>By Age Group</th>
+      <td>
+        Young Children: <?= $age_group_counts['0–5'] ?? 0 ?>,
+        Children: <?= $age_group_counts['6–17'] ?? 0 ?>,
+        Adults: <?= $age_group_counts['18–59'] ?? 0 ?>,
+        Seniors: <?= $age_group_counts['60+'] ?? 0 ?>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
-    </div>
-  </div>
-</div>
-
-<div class="form-submit form-submit-bottom" style="margin-top: 24px; display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
-  <button type="button" class="btn-export" onclick="exportTableToExcel('reportTable')">Export to Excel</button>
-  <button type="button" class="btn-export" onclick="exportTableToPDF()">Export to PDF</button>
-  <button type="button" class="btn-print"  onclick="printDiv()">Print this page</button>
-</div>
 
         </ul>
     </div>
+
+<span id="generated_by"></span>
+
 </div>
+
+
+
+<!-- Print Button at Bottom -->
+   <div class="form-submit">
+          <button type="button" class="btn-export" onclick="exportTableToExcel('reportTable')">Export to Excel</button>
+        <button type="button" class="btn-export" onclick="exportTableToPDF()">Export to PDF</button>
+       
+    <button type="button" class="btn-print" onclick="printDiv()">
+        <i class='bx bx-printer'></i>
+        Print Report
+    </button>
+</div>
+
 </div> 
-</div> 
+
+
 
 
 <div id="logoutModal" class="logout-modal">
@@ -1050,67 +1202,7 @@ $total_patients = count($unique_patient_ids);
         </div>
     </div>
 </div>
-
 </div>
-<script>
-function printDiv() {
-  const area = document.querySelector(".print-area");
-  if (!area) { alert("Nothing to print."); return; }
-
-  // open window early to avoid popup blockers
-  const w = window.open("", "", "height=900,width=1100");
-  if (!w) { alert("Please enable pop-ups to print."); return; }
-
-  const clone = area.cloneNode(true);
-
-  // remove canvases and chart controls
-  clone.querySelectorAll('canvas, .chart-title').forEach(el => el.remove());
-
-  // ✅ Add Signature column only to #reportTable (detail rows), not summary/case counts
-  const reportTable = clone.querySelector("#reportTable");
-  if (reportTable) {
-    const headerRow = reportTable.querySelector("thead tr");
-    const hasSignature = headerRow && /Signature/i.test((headerRow.lastElementChild?.textContent||"").trim());
-    if (!hasSignature) {
-      const th = document.createElement("th");
-      th.textContent = "Signature";
-      headerRow.appendChild(th);
-      reportTable.querySelectorAll("tbody tr").forEach(tr => {
-        const td = document.createElement("td");
-        td.style.height = "28px";
-        tr.appendChild(td);
-      });
-    }
-  }
-
-  // Prefer print-only letterhead
-  const headerSource = document.querySelector(".print-only-letterhead") || document.querySelector(".print-header");
-  const headerHTML = headerSource ? headerSource.outerHTML : "";
-
-  // Remove any header inside clone to avoid duplicates
-  const headerInClone = clone.querySelector(".print-only-letterhead, .print-header");
-  if (headerInClone) headerInClone.remove();
-
-  w.document.write(`<!doctype html><html><head><title>Print Report</title>
-    <meta charset="utf-8">
-    <style>
-      * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-      body { font-family: Arial, sans-serif; font-size: 12px; color:#000; margin: 20px; }
-      table { width: 100%; border-collapse: collapse; }
-      th, td { border: 1px solid #000; padding: 4px; text-align: left; vertical-align: middle; }
-      thead { background:#f0f0f0; }
-      .case-counts-table th, .case-counts-table td { text-align: center; }
-      @media print { .form-submit, .chart-title { display: none !important; } }
-    </style>
-  </head><body>`);
-  if (headerHTML) w.document.write(headerHTML);
-  w.document.write(clone.innerHTML);
-  w.document.write(`</body></html>`);
-  w.document.close();
-  w.onload = () => { try { w.focus(); w.print(); } finally { w.close(); } };
-}
-</script>
-
 
 <!-- jsPDF and html2canvas libraries -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -1118,103 +1210,7 @@ function printDiv() {
 <script src="../js/reports.js"></script>
 <script>
 
- (function() {
-  const table = document.getElementById('reportTable');
-  if (!table) return;
-
-  const thead = table.tHead || table.querySelector('thead');
-  const tbody = table.tBodies[0];
-
-  // Add arrow placeholders
-  [...thead.querySelectorAll('th')].forEach(th => {
-    const ind = document.createElement('span');
-    ind.className = 'sort-indicator';
-    th.appendChild(ind);
-  });
-
-  function parseDate(v) {
-    const t = (v || '').trim();
-    // Accept YYYY-MM-DD or anything Date can parse
-    if (/^\d{4}-\d{2}-\d{2}(?:\s+\d{2}:\d{2}(?::\d{2})?)?$/.test(t)) {
-      return new Date(t.replace(' ', 'T'));
-    }
-    const d = new Date(t);
-    return isNaN(d.getTime()) ? null : d;
-  }
-
-  function detectType(colIdx) {
-    const th = thead.querySelectorAll('th')[colIdx];
-    if (th?.dataset?.type) return th.dataset.type;
-
-    for (const tr of tbody.rows) {
-      const txt = (tr.cells[colIdx]?.textContent || '').trim();
-      if (!txt) continue;
-      const d = parseDate(txt);
-      if (d) return 'date';
-      const n = txt.replace(/,/g, '');
-      if (!isNaN(n) && n !== '') return 'number';
-      return 'string';
-    }
-    return 'string';
-  }
-
-  function val(tr, idx, type) {
-    const raw = (tr.cells[idx]?.textContent || '').trim();
-    if (type === 'number') {
-      const n = parseFloat(raw.replace(/,/g, ''));
-      return isNaN(n) ? Number.NEGATIVE_INFINITY : n;
-    }
-    if (type === 'date') {
-      const d = parseDate(raw);
-      return d ? d.getTime() : Number.NEGATIVE_INFINITY;
-    }
-    return raw.toLowerCase();
-  }
-
-  function clearHeaderStates(exceptIdx) {
-    [...thead.querySelectorAll('th')].forEach((th, i) => {
-      if (i !== exceptIdx) th.classList.remove('is-sorted-asc', 'is-sorted-desc');
-    });
-  }
-
-  function sortBy(idx, dir) {
-    const type = detectType(idx);
-    const rows = [...tbody.rows];
-
-    rows.sort((a, b) => {
-      const va = val(a, idx, type);
-      const vb = val(b, idx, type);
-      if (va < vb) return dir === 'asc' ? -1 : 1;
-      if (va > vb) return dir === 'asc' ?  1 : -1;
-      return 0;
-    });
-
-    const frag = document.createDocumentFragment();
-    rows.forEach(r => frag.appendChild(r));
-    tbody.appendChild(frag);
-  }
-
-  // Click to toggle asc/desc
-  [...thead.querySelectorAll('th')].forEach((th, idx) => {
-    th.addEventListener('click', () => {
-      const isAsc = th.classList.contains('is-sorted-asc');
-      const nextDir = isAsc ? 'desc' : 'asc';
-      clearHeaderStates(idx);
-      th.classList.toggle('is-sorted-asc',  nextDir === 'asc');
-      th.classList.toggle('is-sorted-desc', nextDir === 'desc');
-      sortBy(idx, nextDir);
-    });
-  });
-
-  // Default: sort by "Date Diagnosed" (col 0) DESC to match your SQL
-  const defaultCol = 0, defaultDir = 'desc';
-  const defaultTh = thead.querySelectorAll('th')[defaultCol];
-  if (defaultTh) {
-    defaultTh.classList.add(defaultDir === 'asc' ? 'is-sorted-asc' : 'is-sorted-desc');
-    sortBy(defaultCol, defaultDir);
-  }
-})();
-   
+    
 function exportTableToExcel(tableID, filename = 'Medical Cases Report') {
     try {
         // Create a temporary div with the same content as print
@@ -1224,7 +1220,7 @@ function exportTableToExcel(tableID, filename = 'Medical Cases Report') {
         tempDiv.style.top = '-9999px';
         
         // Clone the print header
-        const printHeader = document.querySelector('.print-only-letterhead');
+        const printHeader = document.querySelector('.print-header');
         if (printHeader) {
             const headerClone = printHeader.cloneNode(true);
             // Remove any scripts or interactive elements
@@ -1253,19 +1249,7 @@ function exportTableToExcel(tableID, filename = 'Medical Cases Report') {
         
         // Add signature header if not present
         const headerRow = tableClone.querySelector('thead tr');
-        if (headerRow && !headerRow.querySelector('th:last-child')?.textContent.includes('Signature')) {
-            const signatureHeader = document.createElement('th');
-            signatureHeader.textContent = 'Signature';
-            headerRow.appendChild(signatureHeader);
-            
-            // Add empty signature cells for each row
-            const rows = tableClone.querySelectorAll('tbody tr');
-            rows.forEach(row => {
-                const signatureCell = document.createElement('td');
-                signatureCell.textContent = ''; // Empty for Excel
-                row.appendChild(signatureCell);
-            });
-        }
+        
         
         tempDiv.appendChild(tableClone);
         document.body.appendChild(tempDiv);
@@ -1320,23 +1304,222 @@ function exportTableToExcel(tableID, filename = 'Medical Cases Report') {
     }
 }
 
+async function exportTableToPDF() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    const table = document.getElementById('reportTable');
 
-document.addEventListener('DOMContentLoaded', function() {
-    // Add event listeners to all delete icons
- 	fetch('../php/getUserName.php')
-        .then(response => response.json())
-        .then(data => {
-            if (data.full_name) {
-                document.getElementById('userGreeting').textContent = `Hello, ${data.full_name}!`;
-            } else {
-                document.getElementById('userGreeting').textContent = 'Hello, User!';
-            }
-        })
-        .catch(error => {
-            console.error('Error fetching user name:', error);
-            document.getElementById('userGreeting').textContent = 'Hello, User!';
-        });
+    await html2canvas(table).then(canvas => {
+        const imgData = canvas.toDataURL('image/png');
+        const imgProps = doc.getImageProperties(imgData);
+        const pdfWidth = doc.internal.pageSize.getWidth();
+        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+        doc.addImage(imgData, 'PNG', 10, 10, pdfWidth - 20, pdfHeight);
+        doc.save("report.pdf");
+    });
+}
+
+
+function printDiv() {
+  // 1) Use the new header
+  const headerEl = document.querySelector('.print-letterhead');
+  const printHeader = headerEl ? headerEl.outerHTML : '';
+
+  // 2) Clone the area you already print
+  const area = document.querySelector('.print-area');
+  if (!area) return;
+  const clone = area.cloneNode(true);
+
+  // 3) Remove duplicate header inside the clone (if any)
+  const headerInClone = clone.querySelector('.print-letterhead');
+  if (headerInClone) headerInClone.remove();
+
+  // 4) *** REMOVE ALL CHARTS FROM THE CLONE ***
+  // hide the chart title block
+  clone.querySelectorAll('.chart-title').forEach(n => n.remove());
+  // whole “Patients by Sex” and “Age Groups” sections
+  clone.querySelectorAll('#sexChart, #ageGroupChart').forEach(n => n.remove());
+  // the line chart (canvas lives inside a wrapper div)
+  const lineCanvas = clone.querySelector('#casesLineChart');
+  if (lineCanvas) {
+    const wrapper = lineCanvas.closest('div');
+    if (wrapper) wrapper.remove(); else lineCanvas.remove();
+  }
+  // safety: remove any remaining canvases
+  clone.querySelectorAll('canvas').forEach(n => n.remove());
+
+  // 5) Print
+  const w = window.open('', '', 'height=900,width=1100');
+  if (!w) { alert('Please allow pop-ups to print this report.'); return; }
+  w.document.write(`
+    <html>
+      <head>
+        <title>Print Report</title>
+        <meta charset="utf-8" />
+        <style>
+          body { font-family: Arial, sans-serif; font-size: 16px; color:#000; }
+          table { width:100%; border-collapse:collapse; }
+          th, td { border:1px solid #000; padding:4px; text-align:left; }
+          thead { background:#f0f0f0; }
+
+          .print-letterhead{
+            display:grid; grid-template-columns:64px auto 64px;
+            align-items:center; justify-content:center; column-gap:14px;
+            margin:0 auto 10px; text-align:center; width:fit-content;
+          }
+          .print-logo{ width:64px; height:64px; object-fit:contain; }
+          .print-heading{ line-height:1.1; color:#000; }
+          .print-heading .ph-line-1{ font-size:12pt; font-weight:500; }
+          .print-heading .ph-line-2{ font-size:14pt; font-weight:800; }
+          .print-heading .ph-line-3{ font-size:11pt; font-weight:500; }
+          .print-heading .ph-line-4{ font-size:12pt; font-weight:800; margin-top:4px; letter-spacing:.3px; }
+          .print-sub{ font-size:10.5pt; margin-top:4px; }
+          .print-rule{ height:1px; border:0; background:#cfd8e3; margin:8px 0 12px; }
+        </style>
+      </head>
+      <body>
+        ${printHeader}
+        ${clone.innerHTML}
+      </body>
+    </html>
+  `);
+  w.document.close();
+  w.focus();
+  setTimeout(() => { w.print(); w.close(); }, 300);
+}
+document.addEventListener('DOMContentLoaded', () => {
+  fetch('../php/getUserName.php')
+    .then(r => r.json())
+    .then(data => {
+      const fullName = (data && data.full_name) ? data.full_name : '';
+
+      // Greeting (keep current behavior)
+      document.getElementById('userGreeting').textContent =
+        fullName ? `Hello, ${fullName}!` : 'Hello, User!';
+
+      // Build the signature block
+      const gb = document.getElementById('generated_by');
+      gb.innerHTML = `
+        <div class="sig-label">Report Generated by:</div>
+        <hr class="sig-line">
+        <div class="sig-name"></div>
+        <div class="sig-title">Nursing Attendant</div>
+      `;
+      gb.querySelector('.sig-name').textContent = fullName || '________________';
+    })
+    .catch(() => {
+      document.getElementById('userGreeting').textContent = 'Hello, User!';
+      const gb = document.getElementById('generated_by');
+      gb.innerHTML = `
+        <div class="sig-label">Report Generated by:</div>
+        <hr class="sig-line">
+        <div class="sig-name">________________</div>
+        <div class="sig-title">Nursing Attendant</div>
+      `;
+    });
 });
+
+(function() {
+  const table = document.getElementById('reportTable');
+  if (!table) return;
+
+  const thead = table.tHead || table.querySelector('thead');
+  const tbody = table.tBodies[0];
+
+  // Add arrow placeholders to headers
+  [...thead.querySelectorAll('th')].forEach(th => {
+    const ind = document.createElement('span');
+    ind.className = 'sort-indicator';
+    th.appendChild(ind);
+  });
+
+  function parseDate(v) {
+    const t = (v || '').trim();
+    // Support "YYYY-MM-DD" and "YYYY-MM-DD HH:MM[:SS]"
+    if (/^\d{4}-\d{2}-\d{2}(?:\s+\d{2}:\d{2}(?::\d{2})?)?$/.test(t)) {
+      return new Date(t.replace(' ', 'T'));
+    }
+    const d = new Date(t);
+    return isNaN(d.getTime()) ? null : d;
+  }
+
+  function detectType(colIdx) {
+    const th = thead.querySelectorAll('th')[colIdx];
+    if (th?.dataset?.type) return th.dataset.type;
+
+    for (const tr of tbody.rows) {
+      const txt = (tr.cells[colIdx]?.textContent || '').trim();
+      if (!txt) continue;
+
+      const d = parseDate(txt);
+      if (d) return 'date';
+
+      const n = txt.replace(/,/g, '');
+      if (!isNaN(n) && n !== '') return 'number';
+
+      return 'string';
+    }
+    return 'string';
+  }
+
+  function getCellValue(tr, idx, type) {
+    const raw = (tr.cells[idx]?.textContent || '').trim();
+
+    if (type === 'number') {
+      const n = parseFloat(raw.replace(/,/g, ''));
+      return isNaN(n) ? Number.NEGATIVE_INFINITY : n;
+    }
+    if (type === 'date') {
+      const d = parseDate(raw);
+      return d ? d.getTime() : Number.NEGATIVE_INFINITY;
+    }
+    return raw.toLowerCase();
+  }
+
+  function clearHeaderStates(exceptIdx) {
+    [...thead.querySelectorAll('th')].forEach((th, i) => {
+      if (i !== exceptIdx) th.classList.remove('is-sorted-asc', 'is-sorted-desc');
+    });
+  }
+
+  function sortBy(colIdx, dir) {
+    const type = detectType(colIdx);
+    const rows = [...tbody.rows];
+
+    rows.sort((a, b) => {
+      const va = getCellValue(a, colIdx, type);
+      const vb = getCellValue(b, colIdx, type);
+      if (va < vb) return dir === 'asc' ? -1 : 1;
+      if (va > vb) return dir === 'asc' ?  1 : -1;
+      return 0;
+    });
+
+    const frag = document.createDocumentFragment();
+    rows.forEach(r => frag.appendChild(r));
+    tbody.appendChild(frag);
+  }
+
+  // Click to toggle asc/desc
+  [...thead.querySelectorAll('th')].forEach((th, idx) => {
+    th.addEventListener('click', () => {
+      const isAsc = th.classList.contains('is-sorted-asc');
+      const nextDir = isAsc ? 'desc' : 'asc';
+      clearHeaderStates(idx);
+      th.classList.toggle('is-sorted-asc',  nextDir === 'asc');
+      th.classList.toggle('is-sorted-desc', nextDir === 'desc');
+      sortBy(idx, nextDir);
+    });
+  });
+
+  // Default sort: Date Diagnosed (col 0) DESC
+  const defaultCol = 0, defaultDir = 'desc';
+  const defaultTh = thead.querySelectorAll('th')[defaultCol];
+  if (defaultTh) {
+    defaultTh.classList.add(defaultDir === 'asc' ? 'is-sorted-asc' : 'is-sorted-desc');
+    sortBy(defaultCol, defaultDir);
+  }
+})();
 
     function confirmLogout() {
     document.getElementById('logoutModal').style.display = 'block';
@@ -1359,6 +1542,14 @@ window.onclick = function(event) {
     }
 }
 
+// Close modal when clicking outside
+window.onclick = function(event) {
+    const modal = document.getElementById('logoutModal');
+    if (event.target == modal) {
+        closeModal();
+    }
+}
+
     function confirmLogout() {
     document.getElementById('logoutModal').style.display = 'block';
     return false; // Prevent the default link behavior
@@ -1369,7 +1560,7 @@ function closeModal() {
 }
 
 function proceedLogout() {
-    window.location.href = '../../role.html';
+    window.location.href = '../../ADMIN/php/logout.php'; 
 }
 
 // Close modal when clicking outside
@@ -1392,27 +1583,10 @@ fetch('../php/getUserId.php')
     })
     .catch(error => {
         console.error('Error checking session:', error);
-        window.location.href = '../../ADMIN/php/logout.php'; 
+        window.location.href = '../role.html';
     });
 
 </script>
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  const sidebar = document.getElementById("sidebar");
 
-  function applyResponsiveSidebar() {
-    if (window.innerWidth <= 1024) {
-      sidebar.classList.add("hide");   // collapsed on small screens
-    } else {
-      sidebar.classList.remove("hide"); // expanded on larger screens
-    }
-  }
-
-  applyResponsiveSidebar();
-  window.addEventListener("resize", applyResponsiveSidebar);
-
-
-});
-</script>
 </body>
 </html>

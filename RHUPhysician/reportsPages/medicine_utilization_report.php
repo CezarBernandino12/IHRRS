@@ -9,25 +9,26 @@ if (!isset($_SESSION['user_id'])) {
 
 $userId = $_SESSION['user_id'];
 
-
-$stmt = $pdo->prepare("SELECT rhu FROM users WHERE user_id = ?");
+// Fetch user info
+$stmt = $pdo->prepare("SELECT full_name, rhu FROM users WHERE user_id = ?");
 $stmt->execute([$userId]);
 $user = $stmt->fetch();
 
 $rhu = $user ? $user['rhu'] : 'N/A';
+$username = $user ? $user['full_name'] : 'N/A';
 
-
-
-$from_date = $_GET['from_date'] ?? '';
-$to_date   = $_GET['to_date'] ?? '';
-$medicine = isset($_GET['medicine']) ? (array)$_GET['medicine'] : [];
-$sex       = $_GET['sex'] ?? '';
-$age_group = $_GET['age_group'] ?? '';
-$barangay  = $_GET['purok'] ?? ''; // Use 'purok' for barangay filter
+// Initialize filters
+$from_date   = $_GET['from_date'] ?? '';
+$to_date     = $_GET['to_date'] ?? '';
+$medicine    = isset($_GET['medicine']) ? (array)$_GET['medicine'] : [];
+$sex         = $_GET['sex'] ?? '';
+$age_group   = $_GET['age_group'] ?? '';
+$barangay    = $_GET['purok'] ?? ''; // Purok as barangay filter
+$subcategory = $_GET['subcategory'] ?? '';
 
 $params = [];
 
-// Base query: get patients who received medicines (without hardcoding)
+// Base query with RHU filter through dispensed_by
 $sql = "
 SELECT 
     p.patient_id,
@@ -36,12 +37,17 @@ SELECT
     p.date_of_birth,
     p.age,
     p.sex,
-    p.philhealth_member_no
+    p.philhealth_member_no,
+    MIN(md.dispensed_date) AS date_dispensed
 FROM rhu_medicine_dispensed md
+JOIN users u_disp ON md.dispensed_by = u_disp.user_id
 JOIN rhu_consultations c ON md.consultation_id = c.consultation_id
 JOIN patients p ON c.patient_id = p.patient_id
-WHERE 1=1
+WHERE u_disp.rhu = :rhu
 ";
+
+$params['rhu'] = $rhu;
+ // Only show records from the same RHU as current user
 
 // Date filter (index-friendly, no DATE() wrapper)
 if (!empty($from_date) && !empty($to_date)) {
@@ -66,6 +72,54 @@ if (!empty($medicine)) {
 } else {
     // Fetch all distinct medicines (for columns)
     $med_stmt = $pdo->query("SELECT DISTINCT medicine_name FROM rhu_medicine_dispensed ORDER BY medicine_name ASC");
+    $medicine_list = $med_stmt->fetchAll(PDO::FETCH_COLUMN);
+}
+
+
+
+// 🔹 Medicine subcategory filter
+// 🔹 Medicine subcategory filter
+if (!empty($subcategory)) {
+    if (!is_array($subcategory)) {
+        $subcategory = [$subcategory]; // force into array if string
+    }
+
+    $placeholders = [];
+    foreach ($subcategory as $i => $sub) {
+        $ph = ":subcategory_$i";
+        $placeholders[] = $ph;
+        $params["subcategory_$i"] = $sub;
+    }
+
+    // Join to custom_options to get sub_category info
+    $sql .= " AND md.medicine_name IN (
+        SELECT value 
+        FROM custom_options 
+        WHERE sub_category IN (" . implode(',', $placeholders) . ")
+    )";
+
+    $subcategory_list = $subcategory; // only selected subcategories
+} else {
+    // 🔹 Fetch all distinct subcategories from custom_options
+    $sub_stmt = $pdo->query("SELECT DISTINCT sub_category FROM custom_options WHERE category = 'medicine' ORDER BY sub_category ASC");
+    $subcategory_list = $sub_stmt->fetchAll(PDO::FETCH_COLUMN);
+}
+
+// If the user did NOT explicitly select medicines but DID select subcategory(ies),
+// limit the medicine_list to only medicines in those subcategories.
+if (empty($medicine) && !empty($subcategory)) {
+    // Use positional placeholders to fetch medicines for the selected subcategories
+    $ph = implode(',', array_fill(0, count($subcategory), '?'));
+    $med_sql = "
+        SELECT DISTINCT co.value
+        FROM custom_options co
+        JOIN rhu_medicine_dispensed md ON md.medicine_name = co.value
+        WHERE co.category = 'medicine'
+          AND co.sub_category IN ($ph)
+        ORDER BY co.value ASC
+    ";
+    $med_stmt = $pdo->prepare($med_sql);
+    $med_stmt->execute($subcategory);
     $medicine_list = $med_stmt->fetchAll(PDO::FETCH_COLUMN);
 }
 
@@ -103,7 +157,7 @@ if (!empty($barangay) && $barangay !== 'N/A') {
 $sql .= " GROUP BY p.patient_id ORDER BY p.last_name, p.first_name";
 
 $stmt = $pdo->prepare($sql);
-$stmt->execute($params);
+$stmt->execute($params); //THIS IS LINE 159
 $patients = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Ensure $rows is populated with patient data for the charts
@@ -179,7 +233,7 @@ if (count($patient_meds) > 0) {
     $med_placeholders = implode(',', array_fill(0, count($medicine_list), '?'));
 
     $disp_sql = "
-        SELECT p.patient_id, dm.medicine_name, SUM(dm.quantity_dispensed) AS qty
+        SELECT p.patient_id, dm.medicine_name, dm.dispensed_date, SUM(dm.quantity_dispensed) AS qty
         FROM rhu_medicine_dispensed dm
         JOIN rhu_consultations c ON dm.consultation_id = c.consultation_id
         JOIN patients p ON c.patient_id = p.patient_id
@@ -189,7 +243,8 @@ if (count($patient_meds) > 0) {
     ";
 
     $disp_stmt = $pdo->prepare($disp_sql);
-    $disp_stmt->execute(array_merge($ids, $medicine_list));
+$disp_stmt->execute(array_merge($ids, $medicine_list));
+
 
     while ($disp_row = $disp_stmt->fetch(PDO::FETCH_ASSOC)) {
         $pid = $disp_row['patient_id'];
@@ -197,40 +252,6 @@ if (count($patient_meds) > 0) {
             $patient_meds[$pid]['medicines'][$disp_row['medicine_name']] = $disp_row['qty'];
         }
     }
-    // ---------- SUMMARY PRECOMPUTE ----------
-$num_patients = count($rows);
-
-// Sex counts were computed below for the pie; compute here for reuse (safe if repeated)
-$sex_counts = ['Male' => 0, 'Female' => 0];
-foreach ($rows as $r) {
-    if (isset($sex_counts[$r['sex']])) $sex_counts[$r['sex']]++;
-}
-
-// Age group buckets (same logic as your chart, but reusable here)
-$age_group_counts = [
-    '0–12' => 0,
-    '13–19' => 0,
-    '20–59' => 0,
-    '60+'   => 0
-];
-foreach ($rows as $r) {
-    $age = (int)$r['age'];
-    if ($age >= 0 && $age <= 12) $age_group_counts['0–12']++;
-    elseif ($age >= 13 && $age <= 19) $age_group_counts['13–19']++;
-    elseif ($age >= 20 && $age <= 59) $age_group_counts['20–59']++;
-    elseif ($age >= 60) $age_group_counts['60+']++;
-}
-
-// Totals per medicine (for the table)
-$dispensed_totals = [];
-foreach ($medicine_list as $m) {
-    $sum = 0;
-    foreach ($patient_meds as $pm) {
-        $sum += (int)($pm['medicines'][$m] ?? 0);
-    }
-    $dispensed_totals[$m] = $sum;
-}
-
 }
 
         //ADDED GENERATED REPORT FOR ACTIVITY LOG
@@ -275,14 +296,13 @@ foreach ($medicine_list as $m) {
   }
   #reportTable th.is-sorted-asc  .sort-indicator::after { content: "▲"; }
   #reportTable th.is-sorted-desc .sort-indicator::after { content: "▼"; }
-  #reportTable th.no-sort { cursor: default; }
 </style>
 
 <!-- Sidebar Section -->
 	<section id="sidebar">
 		<a href="#" class="brand">
 			<img src="../../img/logo.png" alt="RHULogo" class="logo">
-			<span class="text">Physician</span>
+			<span class="text">Nurse</span>
 		</a>
 		<ul class="side-menu top">
 			<li>
@@ -291,12 +311,7 @@ foreach ($medicine_list as $m) {
 					<span class="text">Dashboard</span>
 				</a>
 			</li>
-			<li>
-				<a href= "../ITR.html">
-					<i class="bx bxs-user"></i>
-					<span class="text">Add New ITR</span>
-				</a>
-			</li>
+		
 			<li>
 				<a href="../pending.html" id="updateReferrals">
 					<i class="bx bxs-user"></i>
@@ -384,6 +399,8 @@ foreach ($medicine_list as $m) {
                   </ul>
                 </div>
               </div>
+
+      <br> <br>
             </div>
 
 <div class="history-container">
@@ -397,8 +414,8 @@ foreach ($medicine_list as $m) {
 
     <!-- Filter Modal Trigger -->
    
-        <div class="form-submit">
-        <button type="button" class="btn-export" id="openFilterModal">Filter</button>
+        <div class="form-submit" style="margin-top: -10px;">
+        <button type="button" class="btn-export" id="openFilterModal">Select Filters</button>
     </div>
 
     <!-- Modern Filter Tags Display -->
@@ -452,14 +469,19 @@ foreach ($medicine_list as $m) {
         renderTag('Medicine', 'medicine[]', $med);
     }
 }
+           if (!empty($_GET['subcategory'])) {
+    foreach ((array)$_GET['subcategory'] as $med) {
+        renderTag('Medicine Type', 'subcategory[]', $med);
+    }
+}
 
             if ($barangay) renderTag('Barangay', 'purok', $barangay);
            
             if (
                 !$from_date && !$to_date && !$sex && !$age_group &&
-                !$medicine && !$barangay
+                !$medicine && !$barangay && !$subcategory
             ) {
-                echo '<span style="color:#888;">All</span>';
+                echo '<span style="color:#888;">None</span>';
             }
             ?>
         </div>
@@ -548,6 +570,29 @@ foreach ($medicine_list as $m) {
                         <small style="color:#888;">You may select multiple medicines.</small>
                     </div>
 
+                   <div class="form-item">
+                        <label for="subcategory">Medicine Category:</label>
+                        <div id="medicine-checkboxes" style="max-height:150px;overflow-y:auto;border:1px solid #ccc;padding:8px;border-radius:6px;">
+                            <?php
+                            // Fetch subcategory for checkboxes
+                            $subcategory_stmt = $pdo->prepare("SELECT DISTINCT sub_category FROM custom_options WHERE category = 'medicine' ORDER BY sub_category ASC");
+                            $subcategory_stmt->execute();
+                            // Support multiple selection from GET
+                            $selected_subcategory = isset($_GET['subcategory']) ? (array)$_GET['subcategory'] : [];
+                          while ($row = $subcategory_stmt->fetch(PDO::FETCH_ASSOC)) {
+    $value = $row['sub_category'];  // correct column
+    $checked = in_array($value, $selected_subcategory) ? 'checked' : '';
+    echo '<label style="display:block;margin-bottom:4px;text-align:left;font-weight:300;">';
+    echo '<input type="checkbox" name="subcategory[]" value="' . htmlspecialchars($value) . '" ' . $checked . '> ';
+    echo htmlspecialchars($value);
+    echo '</label>';
+}
+
+                            ?>
+                        </div>
+                        <small style="color:#888;">You may select multiple types.</small>
+                    </div>
+
                         </div>
                     </div>
                      <div class="modal-footer" style="text-align:right;">
@@ -623,135 +668,213 @@ foreach ($medicine_list as $m) {
 
 
 <div class="print-area">
-<!-- PRINT-ONLY LETTERHEAD (shows only when printing) -->
-<div class="print-only-letterhead">
-  <div class="print-letterhead">
-    <img src="../../img/Plogo.png" alt="Left Logo" class="print-logo">
-    <div class="print-heading">
-      <div class="ph-line-1">Republic of the Philippines</div>
-      <div class="ph-line-1">Province of Camarines Norte</div>
-      <div class="ph-line-2">Municipality of Daet</div>
-      <div class="ph-line-3"><?= htmlspecialchars($rhu) ?></div>
-      <div class="ph-line-4">DOH MAINTENANCE MEDICINE UTILIZATION REPORT</div>
-      <div class="print-sub">
-        (<?php
-          $parts = [];
-          if (!empty($from_date)) $parts[] = "From <strong>" . htmlspecialchars($from_date) . "</strong>";
-          if (!empty($to_date))   $parts[] = "To <strong>" . htmlspecialchars($to_date) . "</strong>";
-
-          // Medicine list from GET for summary (don’t rely on $medicine_list being redefined later)
-          if (!empty($_GET['medicine'])) {
-              $meds = is_array($_GET['medicine']) ? $_GET['medicine'] : [$_GET['medicine']];
-              $parts[] = "Medicine: <strong>" . implode(', ', array_map('htmlspecialchars', $meds)) . "</strong>";
-          }
-
-          if (!empty($sex)) $parts[] = "Sex: <strong>" . htmlspecialchars($sex) . "</strong>";
-
-          if (!empty($age_group)) {
-              $age_labels = [
-                  'child'  => 'Child (0–12)',
-                  'teen'   => 'Teen (13–19)',
-                  'adult'  => 'Adult (20–59)',
-                  'senior' => 'Senior (60+)'
-              ];
-              $parts[] = "Age Group: <strong>" . ($age_labels[$age_group] ?? htmlspecialchars($age_group)) . "</strong>";
-          }
-
-          // NOTE: your filter uses ?purok= for barangay; we keep that here
-          if (!empty($barangay)) $parts[] = "Barangay: <strong>" . htmlspecialchars($barangay) . "</strong>";
-
-          echo $parts ? implode(" &nbsp;|&nbsp; ", $parts) : "All Records";
-        ?>)
-      </div>
-    </div>
-    <img src="../../img/RHUlogo.png" alt="Right Logo" class="print-logo">
+<!-- Two-logo letterhead -->
+<div class="print-letterhead">
+  <img src="../../img/daet_logo.png" alt="Left Logo" class="print-logo">
+  <div class="print-heading">
+    <div class="ph-line-1">Republic of the Philippines</div>
+    <div class="ph-line-1">Department of Health</div>
+    <div class="ph-line-1">Province of Camarines Norte</div>
+    <div class="ph-line-2">Municipality of Daet</div>
+    <div class="ph-line-3"><?php echo htmlspecialchars($rhu); ?></div>
+   
   </div>
-  <hr class="print-rule">
+  <img src="../../img/mho_logo.png" alt="Right Logo" class="print-logo">
 </div>
-<!-- /PRINT-ONLY LETTERHEAD -->
+<hr class="print-rule">
 
 
 <div class="report-content">
+
+<div class="title">
+     <h2>MEDICINE UTILIZATION REPORT</h2>
+    <div class="print-sub">
+      (<?php
+        $filters = [];
+                         if ($from_date || $to_date) {
+    $readable_from = $from_date ? date("F j, Y", strtotime($from_date)) : '';
+    $readable_to   = $to_date ? date("F j, Y", strtotime($to_date)) : '';
+
+    // Combine them in a single display
+    $filters[] = "<strong>" . trim($readable_from . ($readable_to ? " — " . $readable_to : '')) . "</strong>";
+} 
+        if (!empty($_GET['medicine'])) {
+          $medicine_list = is_array($_GET['medicine']) ? $_GET['medicine'] : [$_GET['medicine']];
+          $filters[] = "Medicine: <strong>" . implode(', ', array_map('htmlspecialchars', $medicine_list)) . "</strong>";
+        }
+        if (!empty($_GET['subcategory'])) {
+          $subcategory_list = is_array($_GET['subcategory']) ? $_GET['subcategory'] : [$_GET['subcategory']];
+          $filters[] = "Medicine Type: <strong>" . implode(', ', array_map('htmlspecialchars', $subcategory_list)) . "</strong>";
+        }
+        if ($sex) $filters[] = "Sex: <strong>" . htmlspecialchars($sex) . "</strong>";
+        if ($age_group) {
+          $age_labels = [
+            'child' => 'Child (0–12)', 'teen' => 'Teen (13–19)',
+            'adult' => 'Adult (20–59)', 'senior' => 'Senior (60+)'
+          ];
+          $filters[] = "Age Group: <strong>" . ($age_labels[$age_group] ?? htmlspecialchars($age_group)) . "</strong>";
+        }
+        if ($barangay) $filters[] = "Barangay: <strong>" . htmlspecialchars($barangay) . "</strong>";
+        echo $filters ? implode("&nbsp; | &nbsp;", $filters) : "All Records";
+      ?>)
+    </div>
+</div>
+
     <style>
-  /* Hidden on screen; visible only when printing */
-  .print-only-letterhead { display: none; }
+  .print-letterhead { display: none; }
+    .title { text-align: center; display: none;}
 
   @media print {
-    /* Show the new letterhead, hide any old header blocks if present */
-    .print-only-letterhead { display: block; }
-    .print-header { display: none !important; }
+     .title {
+        display: block;
+    }
+    .print-letterhead { display: block; }
 
     .print-letterhead{
-      display: grid;
-      grid-template-columns: 64px auto 64px;
-      align-items: center;
-      justify-content: center;
-      column-gap: 14px;
-      margin: 0 auto 10px;
-      text-align: center;
-      width: fit-content;
+  display: grid;
+  grid-template-columns: 72px auto 72px;  /* widened logo columns */
+  align-items: center;
+  justify-content: center;
+  column-gap: 60px;                       /* increased space between logos and heading */
+  margin: 0 auto 18px;
+  text-align: center;
+  width: fit-content;
     }
     .print-logo{ width:64px; height:64px; object-fit:contain; }
     .print-heading{ line-height:1.1; color:#000; }
-    .print-heading .ph-line-1{ font-size:12pt; font-weight:500; margin-bottom:4px;}
-    .print-heading .ph-line-2{ font-size:14pt; font-weight:500; margin-bottom:4px;}
-    .print-heading .ph-line-3{ font-size:11pt; font-weight:500; margin-bottom:4px; }
+    .print-heading .ph-line-1{ font-size:12pt; font-weight:500;}
+    .print-heading .ph-line-2{ font-size:12pt; font-weight:500;}
+    .print-heading .ph-line-3{ font-size:12pt; font-weight:600;}
     .print-heading .ph-line-4{ font-size:12pt; font-weight:600; margin-top:15px; letter-spacing:.3px; }
-    .print-sub{ font-size:10.5pt; margin-top:4px; }
+    .print-sub{ font-size:12pt; margin-top:4px; }
     .print-rule{ height:1px; border:0; background:#cfd8e3; margin:8px 0 12px; }
 
-    /* Optional: hide UI controls in print */
+    /* keep your existing print hides working */
     .chart-title, .form-submit { display: none !important; }
   }
 </style>
 
 <style>
-      .form-submit-bottom {
-    justify-content: flex-start !important;
+
+    /* Add breathing room above the summary */
+.summary-container {
+  margin-top: 32px;
+}
+
+/* Two-column summary table */
+.summary-table {
+  width: auto;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 16px;
+}
+
+.summary-table th,
+.summary-table td {
+  border: 1px solid #d5d7db;
+  padding: 8px 12px;
+  vertical-align: top;
+  text-align: left;
+  word-wrap: break-word;
+}
+
+.summary-table th {
+  background: #f2f4f7;
+  font-weight: 600;
+}
+
+.summary-table2 {
+  width: 100%; 
+  border-collapse:collapse; 
+  margin-top:12px;
+}
+
+
+/* Hide the “Summary” title on print only; keep spacing a bit larger */
+@media print {
+  .summary > h3 { 
+    display: none !important;
   }
-      .report-table-container { margin-bottom: 26px; }
-  .summary-container { margin-top: 22px; }
-
-  @media print {
-    /* bring content closer to the page edge */
-    @page { margin: 10mm 10mm; }   /* adjust to taste */
-    body { margin: 0; }
-
- .report-table-container {
-      margin-top: 80px !important;
-      margin-bottom: 40px !important;
-    }
-
-    .summary-container { margin-top: 26px !important; }
-
-    /* keep headings snug */
-    .summary h3 { margin: 0 0 6px !important; }
-    .summary strong { display: block; margin-top: 26px !important; }
-
-    /* just in case stray <br> sneak back in */
-    .report-table-container + br,
-    .report-table-container + br + br { display: none !important; }
-
-    /* remove any inherited top padding/margins above the summary block */
-    .history-container, .report-content { margin-top: 0 !important; padding-top: 0 !important; }
+  .summary-container { 
+    margin-top: 40px; 
   }
-    .table { width: 100%; border-collapse: collapse; table-layout: fixed; }
-  .table th, .table td { border: 1px solid #d5d7db; padding: 8px 12px; vertical-align: top; text-align: left; word-wrap: break-word; }
-  .table th { background: #f2f4f7; font-weight: 600; }
+  .summary-table th,
+.summary-table td {
+  border: 1px solid #000000ff;
+  padding: 8px 12px;
+  vertical-align: top;
+  text-align: left;
+  word-wrap: break-word;
+}
+  .summary-table2 th,
+.summary-table2 td {
+    border: 1px solid #000000ff !important;
+}
+}
 
-  /* Keep blocks together when printing */
-  .print-keep { break-inside: avoid; page-break-inside: avoid; }
-
-  /* Stronger borders in print */
-  @media print {
-    .table th, .table td { border-color: #000; }
-  }
     @media print {
         .chart-title { 
            display: none;
         }
+         .form-submit { 
+           display: none;
+        }
+        
+    .report-table-container {
+        margin-top: -20px !important;
+        margin-bottom: 40px !important;
+        }
+      
     }
+
+   #generated_by {
+  display: block;           
+  margin: 22px 0 0 48px;    
+  color: #000;
+}
+
+#generated_by .sig-label {
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+
+#generated_by .sig-line {
+    display: none;
+  width: 250px;           
+  border: 0;
+  border-top: 1.5px solid #000;
+  margin: 26px 0 6px;       
+}
+
+#generated_by .sig-name {
+  font-weight: 600;
+  font-size: 16px;
+  margin-top: 4px;
+}
+
+#generated_by .sig-title {
+  font-size: 13px;
+  color: #333;
+}
+
+/* Print sizing (optional, nicer on paper) */
+@media print {
+  #generated_by {  margin: 20mm 0 0 0;}
+  #generated_by .sig-label { font-size: 12pt; }
+  #generated_by .sig-name  { font-size: 12pt; }
+  #generated_by .sig-title { font-size: 11pt; }
+  #generated_by .sig-line  {display: block; width: 45mm; border-top-width: 1px; margin: 10mm 0 3mm; }
+}
 </style>
+
+
+<!-- Chart Visibility Controls 
+<div style="margin: 20px;" class="chart-title">
+    <h3>Charts:</h3>
+    <label><input type="checkbox" id="toggleSexChart"> Show Patients by Sex</label> <br>
+    <label><input type="checkbox" id="toggleAgeGroupChart"> Show Age Group</label> <br>
+    <label><input type="checkbox" id="toggleBarangayChart"> Show Barangays</label> <br> -->
+
 
 </div>
 <script>
@@ -820,6 +943,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     </script>
 
+    <br><br>
     <!-- Age Group Distribution Bar Chart -->
     <div id="ageGroupChart" style="max-width: 500px; margin: 30px auto 0 auto; text-align:center; display: none;">
         <h3 class="chart-title">Age Groups</h3>
@@ -882,6 +1006,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     </script>
 
+    <br><br>
     <!-- Address Distribution Bar Chart -->
     <div id="barangayChart" style="max-width: 500px; margin: 30px auto 0 auto; text-align:center; display: none;">
       <h3 class="chart-title">Patient Counts per Barangay</h3>
@@ -940,7 +1065,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     </script>
     <!-- Line Graph: Quantity of Dispensed Medicines Over Time -->
-<div style="max-width: 900px; margin: 30px auto 0 auto; text-align:center;">
+<div style="max-width: 700px; margin: 30px auto 0 auto; text-align:center;">
    <h3 class="chart-title">Quantity of Dispensed Medicines Over Time</h3>
     <canvas id="medicineLineChart"></canvas>
 </div>
@@ -987,21 +1112,12 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 </script>
 
-<style>
-.summary-container { margin-top: 32px; }
-.summary-table { width:100%; border-collapse:collapse; table-layout:fixed; font-size:16px; margin-bottom: 26px; }
-.summary-table th, .summary-table td { border:1px solid #d5d7db; padding:8px 12px; vertical-align:top; text-align:left; word-wrap:break-word; }
-.summary-table th { background:#f2f4f7; font-weight:600; }
-@media print { .summary > h3 { display:none !important; } .summary-container { margin-top:40px; } }
-</style>
-
-
- <h3>Detailed Visit Report</h3>
 <!-- Patient Table -->
- <div class="report-table-container">
+<div class="report-table-container">
 <table id="reportTable" border="1" cellpadding="8" cellspacing="0">
   <thead>
     <tr>
+      <th data-type="date">Date Given</th>
       <th data-type="string">Patient Name</th>
       <th data-type="string">Address</th>
       <th data-type="number">Age</th>
@@ -1011,38 +1127,46 @@ document.addEventListener("DOMContentLoaded", () => {
       <?php foreach ($medicine_list as $med): ?>
         <th data-type="number"><?= htmlspecialchars($med) ?></th>
       <?php endforeach; ?>
-      <th class="no-sort">Signature</th>
     </tr>
   </thead>
 
-    <tbody>
-        <?php foreach ($patient_meds as $pm): $row = $pm['row']; ?>
-        <tr>
+
+   <?php
+// Sort visits (patient meds) from latest to oldest by nested date_dispensed
+usort($patient_meds, function($a, $b) {
+    return strtotime($b['row']['date_dispensed']) - strtotime($a['row']['date_dispensed']);
+});
+?>
+<tbody>
+    <?php foreach ($patient_meds as $pm): $row = $pm['row']; ?>
+    <tr>
+        <td><?= htmlspecialchars($row['date_dispensed']) ?></td>
         <td><?= htmlspecialchars($row['full_name']) ?></td>
-            <td><?= htmlspecialchars($row['address']) ?></td>
-            <td><?= htmlspecialchars($row['age']) ?></td>
-            <td><?= htmlspecialchars($row['date_of_birth']) ?></td>
-            <td><?= htmlspecialchars($row['sex']) ?></td>
-            <td><?= htmlspecialchars($row['philhealth_member_no']) ?></td>
-            <?php foreach ($medicine_list as $med): ?>
-            <td><?= $pm['medicines'][$med] ?></td>
-            <?php endforeach; ?>
-            <td></td>
-        </tr>
+        <td><?= htmlspecialchars($row['address']) ?></td>
+        <td><?= htmlspecialchars($row['age']) ?></td>
+        <td><?= htmlspecialchars($row['date_of_birth']) ?></td>
+        <td><?= htmlspecialchars($row['sex']) ?></td>
+        <td><?= htmlspecialchars(!empty($row['philhealth_member_no']) ? $row['philhealth_member_no'] : 'N/A') ?></td>
+        <?php foreach ($medicine_list as $med): ?>
+            <td><?= htmlspecialchars($pm['medicines'][$med] ?? '') ?></td>
         <?php endforeach; ?>
-    </tbody>
+       
+    </tr>
+    <?php endforeach; ?>
+</tbody>
+
 </table>
-</div>
+<br> <br>
+</div> 
 
-<div class="summary-container print-keep">
+<div class="summary-container">
   <div class="summary">
-    <h3><i class="bx bx-file"></i> Summary</h3>
+    <h3><i class="bx bx-file"></i> Report Details</h3>
 
-    <table class="table summary-table">
+    <table class="summary-table">
       <colgroup>
-        <!-- Match widths with Dispensed Medicines below so columns align -->
-        <col style="width:65%">
-        <col style="width:35%">
+        <col style="width:30%">
+        <col style="width:70%">
       </colgroup>
       <tbody>
         <tr>
@@ -1051,38 +1175,70 @@ document.addEventListener("DOMContentLoaded", () => {
         </tr>
         <tr>
           <th>Total Patients in Report</th>
-          <td><?= $num_patients ?></td>
+          <td><?= count($rows) ?></td>
         </tr>
-        <tr>
-          <th>By Sex</th>
-          <td>
-            Male — <?= $sex_counts['Male'] ?? 0 ?> &nbsp; | &nbsp;
-            Female — <?= $sex_counts['Female'] ?? 0 ?>
-          </td>
-        </tr>
-        <tr>
-          <th>By Age Group</th>
-          <td>
-            0–12 — <?= $age_group_counts['0–12'] ?? 0 ?>,
-            13–19 — <?= $age_group_counts['13–19'] ?? 0 ?>,
-            20–59 — <?= $age_group_counts['20–59'] ?? 0 ?>,
-            60+ — <?= $age_group_counts['60+'] ?? 0 ?>
-          </td>
-        </tr>
+
       </tbody>
     </table>
 
+   <table class="summary-table2">
+  <thead>
+    <tr>
+      <th style="border:1px solid #d5d7db; padding:6px;">Sex</th>
+      <th style="border:1px solid #d5d7db; padding:6px;">Count</th>
+      <th style="border:1px solid #d5d7db; padding:6px;">Age Group</th>
+      <th style="border:1px solid #d5d7db; padding:6px;">Count</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="border:1px solid #d5d7db; padding:6px;">Male</td>
+      <td style="border:1px solid #d5d7db; padding:6px; text-align:center;">
+        <?= $sex_counts['Male'] ?? 0 ?>
+      </td>
+      <td style="border:1px solid #d5d7db; padding:6px;">Children (0–12)</td>
+      <td style="border:1px solid #d5d7db; padding:6px; text-align:center;">
+        <?= $age_group_counts['0–12'] ?? 0 ?>
+      </td>
+    </tr>
+    <tr>
+      <td style="border:1px solid #d5d7db; padding:6px;">Female</td>
+      <td style="border:1px solid #d5d7db; padding:6px; text-align:center;">
+        <?= $sex_counts['Female'] ?? 0 ?>
+      </td>
+      <td style="border:1px solid #d5d7db; padding:6px;">Teens (13–19)</td>
+      <td style="border:1px solid #d5d7db; padding:6px; text-align:center;">
+        <?= $age_group_counts['13–19'] ?? 0 ?>
+      </td>
+    </tr>
+    <tr>
+      <td style="border:1px solid #d5d7db; padding:6px;"></td>
+      <td style="border:1px solid #d5d7db; padding:6px;"></td>
+      <td style="border:1px solid #d5d7db; padding:6px;">Adults (20–59)</td>
+      <td style="border:1px solid #d5d7db; padding:6px; text-align:center;">
+        <?= $age_group_counts['20–59'] ?? 0 ?>
+      </td>
+    </tr>
+    <tr>
+      <td style="border:1px solid #d5d7db; padding:6px;"></td>
+      <td style="border:1px solid #d5d7db; padding:6px;"></td>
+      <td style="border:1px solid #d5d7db; padding:6px;">Seniors (60+)</td>
+      <td style="border:1px solid #d5d7db; padding:6px; text-align:center;">
+        <?= $age_group_counts['60+'] ?? 0 ?>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 
-    <div class="print-keep" style="margin-top:12px;">
-      <strong>Dispensed Medicines:</strong>
-
+    <!-- Keep your “Dispensed Medicines” block just below if you want -->
+    <div style="margin-top:12px;">
+      <strong style="font-size: 12pt;">Dispensed Medicines:</strong>
       <?php if (!empty($medicine_list)): ?>
-        <table class="table" style="margin-top:6px;">
+        <table class="summary-table" style="margin-top:8px;">
           <colgroup>
-            <!-- Same widths as Summary above to align columns -->
-            <col style="width:65%">
-            <col style="width:35%">
+            <col style="width:70%">
+            <col style="width:30%">
           </colgroup>
           <thead>
             <tr>
@@ -1091,7 +1247,7 @@ document.addEventListener("DOMContentLoaded", () => {
             </tr>
           </thead>
           <tbody>
-            <?php foreach ($medicine_list as $medicine): 
+            <?php foreach ($medicine_list as $medicine):
               $total_dispensed = 0;
               foreach ($patient_meds as $pm) {
                 $total_dispensed += $pm['medicines'][$medicine] ?? 0;
@@ -1105,20 +1261,29 @@ document.addEventListener("DOMContentLoaded", () => {
           </tbody>
         </table>
       <?php else: ?>
-        <div style="color:#666; margin-top:6px;">All medicines</div>
+        All Medicines
       <?php endif; ?>
     </div>
-  </div> 
-</div> 
-
-<div class="form-submit form-submit-bottom" style="margin-top: 24px; display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
-  <button type="button" class="btn-export" onclick="exportTableToExcel('reportTable')">Export to Excel</button>
-  <button type="button" class="btn-export" onclick="exportTableToPDF()">Export to PDF</button>
-  <button type="button" class="btn-print"  onclick="printDiv()">Print this page</button>
+  </div>
+  
+<span id="generated_by"></span>
 </div>
-</div> 
-</div> 
 
+
+<!-- Print Button at Bottom -->
+   <div class="form-submit">
+          <button type="button" class="btn-export" onclick="exportTableToExcel('reportTable')">Export to Excel</button>
+        <button type="button" class="btn-export" onclick="exportTableToPDF()">Export to PDF</button>
+       
+    <button type="button" class="btn-print" onclick="printDiv()">
+        <i class='bx bx-printer'></i>
+        Print Report
+    </button>
+</div>
+
+
+</div> 
+</div>
 <div id="logoutModal" class="logout-modal">
     <div class="logout-modal-content">
         <div class="logout-modal-header">
@@ -1135,7 +1300,6 @@ document.addEventListener("DOMContentLoaded", () => {
 </div>
 
 </div>
-
 <!-- jsPDF and html2canvas libraries -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -1161,7 +1325,7 @@ function exportTableToExcel(tableID, filename = 'Medicine Utilization Report') {
         
         // Clone the summary section
         const summary = document.querySelector('.summary-container');
-        if (summary) {
+        if ($summary) {
             const summaryClone = summary.cloneNode(true);
             const summaryScripts = summaryClone.querySelectorAll('script');
             summaryScripts.forEach(script => script.remove());
@@ -1179,19 +1343,7 @@ function exportTableToExcel(tableID, filename = 'Medicine Utilization Report') {
         
         // Add signature header if not present
         const headerRow = tableClone.querySelector('thead tr');
-        if (headerRow && !headerRow.querySelector('th:last-child')?.textContent.includes('Signature')) {
-            const signatureHeader = document.createElement('th');
-            signatureHeader.textContent = 'Signature';
-            headerRow.appendChild(signatureHeader);
-            
-            // Add empty signature cells for each row
-            const rows = tableClone.querySelectorAll('tbody tr');
-            rows.forEach(row => {
-                const signatureCell = document.createElement('td');
-                signatureCell.textContent = ''; // Empty for Excel
-                row.appendChild(signatureCell);
-            });
-        }
+    
         
         tempDiv.appendChild(tableClone);
         document.body.appendChild(tempDiv);
@@ -1262,139 +1414,6 @@ async function exportTableToPDF() {
     });
 }
 
-
-
-//PRINT
-function printDiv() {
-  // Clone the printable area
-  const area = document.querySelector(".print-area");
-  if (!area) { alert("Nothing to print."); return; }
-  const clone = area.cloneNode(true);
-
-  // Add Signature column if missing
-  const headerRow = clone.querySelector("table thead tr");
-  if (headerRow) {
-    const lastTh = headerRow.querySelector("th:last-child");
-    const hasSig = lastTh && /Signature/i.test(lastTh.textContent || "");
-    if (!hasSig) {
-      const th = document.createElement("th");
-      th.textContent = "Signature";
-      headerRow.appendChild(th);
-      clone.querySelectorAll("table tbody tr").forEach(tr => {
-        const td = document.createElement("td");
-        td.style.height = "30px";
-        tr.appendChild(td);
-      });
-    }
-  }
-
-  // Prefer new letterhead; fallback to old header; guard if absent
-  const headerSource =
-    document.querySelector(".print-only-letterhead") ||
-    document.querySelector(".print-header");
-  const headerHTML = headerSource ? headerSource.outerHTML : "";
-
-  // Remove header from the clone (avoid duplicate in the print doc)
-  const headerInClone = clone.querySelector(".print-only-letterhead, .print-header");
-  if (headerInClone) headerInClone.remove();
-
-  // Remove canvases inside clone (we're not printing live canvases)
-  clone.querySelectorAll("canvas").forEach(c => c.remove());
-
-  // Open print window and write content
-  const w = window.open("", "", "height=900,width=1100");
-  if (!w) { alert("Please enable pop-ups to print."); return; }
-
-  w.document.write(`<!doctype html><html><head><title>Print Report</title>
-    <meta charset="utf-8">
-    <style>
-      body { font-family: Arial, sans-serif; font-size: 12px; color: #000; }
-      table { width: 100%; border-collapse: collapse; }
-      th, td { border: 1px solid #000; padding: 4px; text-align: left; }
-      thead { background: #f0f0f0; }
-      img { display: block; margin: 0 auto; max-width: 100%; height: auto; }
-      h3 { margin: 10px 0 6px; }
-
-      /* ensure the print-only letterhead is visible in print window */
-      .print-only-letterhead { display: block; }
-      .print-header { display: none !important; }
-
-      /* match your other page’s letterhead styles */
-      .print-letterhead{
-        display: grid;
-        grid-template-columns: 64px auto 64px;
-        align-items: center;
-        justify-content: center;
-        column-gap: 14px;
-        margin: 0 auto 10px;
-        text-align: center;
-        width: fit-content;
-      }
-      .print-logo{ width:64px; height:64px; object-fit:contain; }
-      .print-heading{ line-height:1.1; color:#000; }
-      .print-heading .ph-line-1{ font-size:12pt; font-weight:500; }
-      .print-heading .ph-line-2{ font-size:14pt; font-weight:500; }
-      .print-heading .ph-line-3{ font-size:11pt; font-weight:500; }
-      .print-heading .ph-line-4{ font-size:12pt; font-weight:600; margin-top:4px; letter-spacing:.3px; }
-      .print-sub{ font-size:10.5pt; margin-top:4px; }
-      .print-rule{ height:1px; border:0; background:#cfd8e3; margin:8px 0 12px; }
-
-      /* hide UI bits */
-      .chart-title, .form-submit { display: none !important; }
-    </style>
-  </head><body>`);
-
-  w.document.write(headerHTML);        // header first
-  w.document.write(clone.innerHTML);   // report contents
-  w.document.write(`</body></html>`);
-  w.document.close();
-
-  // Print when ready (no setTimeout needed)
-  w.onload = () => {
-    try { w.focus(); w.print(); } finally { w.close(); }
-  };
-}
-
-
-document.addEventListener('DOMContentLoaded', function() {
-    // Add event listeners to all delete icons
- 	fetch('../php/getUserName.php')
-        .then(response => response.json())
-        .then(data => {
-            if (data.full_name) {
-                document.getElementById('userGreeting').textContent = `Hello, ${data.full_name}!`;
-            } else {
-                document.getElementById('userGreeting').textContent = 'Hello, User!';
-            }
-        })
-        .catch(error => {
-            console.error('Error fetching user name:', error);
-            document.getElementById('userGreeting').textContent = 'Hello, User!';
-        });
-});
-
-
-    function confirmLogout() {
-    document.getElementById('logoutModal').style.display = 'block';
-    return false; // Prevent the default link behavior
-}
-
-function closeModal() {
-    document.getElementById('logoutModal').style.display = 'none';
-}
-
-function proceedLogout() {
-    window.location.href = '../../ADMIN/php/logout.php'; 
-}
-
-// Close modal when clicking outside
-window.onclick = function(event) {
-    const modal = document.getElementById('logoutModal');
-    if (event.target == modal) {
-        closeModal();
-    }
-}
-
 (function() {
   const table = document.getElementById('reportTable');
   if (!table) return;
@@ -1402,9 +1421,8 @@ window.onclick = function(event) {
   const thead = table.tHead || table.querySelector('thead');
   const tbody = table.tBodies[0];
 
-  // Add arrow placeholders to sortable headers
+  // Add arrow placeholders
   [...thead.querySelectorAll('th')].forEach(th => {
-    if (th.classList.contains('no-sort')) return;
     const ind = document.createElement('span');
     ind.className = 'sort-indicator';
     th.appendChild(ind);
@@ -1412,10 +1430,11 @@ window.onclick = function(event) {
 
   function parseDate(v) {
     const t = (v || '').trim();
-    // Accept YYYY-MM-DD, or anything Date can parse
+    // Accept "YYYY-MM-DD" and "YYYY-MM-DD HH:MM[:SS]"
     if (/^\d{4}-\d{2}-\d{2}(?:\s+\d{2}:\d{2}(?::\d{2})?)?$/.test(t)) {
       return new Date(t.replace(' ', 'T'));
     }
+    // Also try generic Date parsing for e.g. "Nov 01, 2025"
     const d = new Date(t);
     return isNaN(d.getTime()) ? null : d;
   }
@@ -1423,21 +1442,25 @@ window.onclick = function(event) {
   function detectType(colIdx) {
     const th = thead.querySelectorAll('th')[colIdx];
     if (th?.dataset?.type) return th.dataset.type;
-    // Fallback sniff (won't usually run because we set data-type)
+
     for (const tr of tbody.rows) {
       const txt = (tr.cells[colIdx]?.textContent || '').trim();
       if (!txt) continue;
+
       const d = parseDate(txt);
       if (d) return 'date';
+
       const n = txt.replace(/,/g, '');
       if (!isNaN(n) && n !== '') return 'number';
+
       return 'string';
     }
     return 'string';
   }
 
-  function cellValue(tr, idx, type) {
+  function getCellValue(tr, idx, type) {
     const raw = (tr.cells[idx]?.textContent || '').trim();
+
     if (type === 'number') {
       const n = parseFloat(raw.replace(/,/g, ''));
       return isNaN(n) ? Number.NEGATIVE_INFINITY : n;
@@ -1455,13 +1478,13 @@ window.onclick = function(event) {
     });
   }
 
-  function sortBy(idx, dir) {
-    const type = detectType(idx);
+  function sortBy(colIdx, dir) {
+    const type = detectType(colIdx);
     const rows = [...tbody.rows];
 
     rows.sort((a, b) => {
-      const va = cellValue(a, idx, type);
-      const vb = cellValue(b, idx, type);
+      const va = getCellValue(a, colIdx, type);
+      const vb = getCellValue(b, colIdx, type);
       if (va < vb) return dir === 'asc' ? -1 : 1;
       if (va > vb) return dir === 'asc' ?  1 : -1;
       return 0;
@@ -1472,9 +1495,8 @@ window.onclick = function(event) {
     tbody.appendChild(frag);
   }
 
-  // Click handlers
+  // Click to toggle asc/desc
   [...thead.querySelectorAll('th')].forEach((th, idx) => {
-    if (th.classList.contains('no-sort')) return;
     th.addEventListener('click', () => {
       const isAsc = th.classList.contains('is-sorted-asc');
       const nextDir = isAsc ? 'desc' : 'asc';
@@ -1485,14 +1507,138 @@ window.onclick = function(event) {
     });
   });
 
-  // Default sort (Patient Name, col 0, ascending)
-  const defaultCol = 0, defaultDir = 'asc';
+  // Default: sort by "Date Given" (col 0) DESC on load
+  const defaultCol = 0, defaultDir = 'desc';
   const defaultTh = thead.querySelectorAll('th')[defaultCol];
-  if (defaultTh && !defaultTh.classList.contains('no-sort')) {
+  if (defaultTh) {
     defaultTh.classList.add(defaultDir === 'asc' ? 'is-sorted-asc' : 'is-sorted-desc');
     sortBy(defaultCol, defaultDir);
   }
 })();
+
+//PRINT
+function printDiv() {
+  // Use the new header
+  const headerEl = document.querySelector('.print-letterhead');
+  const printHeader = headerEl ? headerEl.outerHTML : '';
+
+  // Clone the print area
+  const originalArea = document.querySelector(".print-area");
+  if (!originalArea) return;
+  const clone = originalArea.cloneNode(true);
+
+  // Remove duplicate header inside the clone
+  const headerInClone = clone.querySelector('.print-letterhead');
+  if (headerInClone) headerInClone.remove();
+
+  // Remove canvases from the clone
+  clone.querySelectorAll('canvas').forEach(c => c.remove());
+
+  // Open print window
+  const w = window.open('', '', 'height=900,width=1100');
+  w.document.write(`
+    <html>
+ <head>
+        <title>Print Report</title>
+        <meta charset="utf-8" />
+        <style>
+          body { font-family: Arial, sans-serif; font-size: 12px; color: black; }
+          table { width: 100%; border-collapse: collapse; }
+          th, td { border: 1px solid #000; padding: 4px; text-align: left; }
+          thead { background-color: #f0f0f0; }
+          img { display: block; margin: 0 auto; max-width: 100%; height: auto; }
+          h3 { margin: 10px 0 5px 0; }
+
+          /* same print-only rules inside the print window */
+          .print-only { display: block; }
+          .print-letterhead{
+            display:grid; grid-template-columns:64px auto 64px;
+            align-items:center; justify-content:center; column-gap:14px;
+            margin:0 auto 10px; text-align:center; width:fit-content;
+          }
+          .print-logo{ width:64px; height:64px; object-fit:contain; }
+          .print-heading{ line-height:1.1; color:#000; }
+          .print-heading .ph-line-1{ font-size:12pt; font-weight:500; }
+          .print-heading .ph-line-2{ font-size:12pt; font-weight:800; }
+          .print-heading .ph-line-3{ font-size:12pt; font-weight:500; }
+          .print-heading .ph-line-4{ font-size:12pt; font-weight:800; margin-top:4px; letter-spacing:.3px; }
+          .print-sub{ font-size:12pt; margin-top:4px; }
+          .print-rule{ height:1px; border:0; background:#cfd8e3; margin:8px 0 12px; }
+        </style>
+      </head>
+      <body>
+        ${printHeader}
+        ${clone.innerHTML}
+      </body>
+    </html>
+  `);
+  w.document.close();
+  w.focus();
+  setTimeout(() => { w.print(); w.close(); }, 500);
+}
+
+
+
+document.addEventListener('DOMContentLoaded', () => {
+  fetch('../php/getUserName.php')
+    .then(r => r.json())
+    .then(data => {
+      const fullName = (data && data.full_name) ? data.full_name : '';
+
+      // Greeting (keep current behavior)
+      document.getElementById('userGreeting').textContent =
+        fullName ? `Hello, ${fullName}!` : 'Hello, User!';
+
+      // Build the signature block
+      const gb = document.getElementById('generated_by');
+      gb.innerHTML = `
+        <div class="sig-label">Report Generated by:</div>
+        <hr class="sig-line">
+        <div class="sig-name"></div>
+        <div class="sig-title">Nursing Attendant</div>
+      `;
+      gb.querySelector('.sig-name').textContent = fullName || '________________';
+    })
+    .catch(() => {
+      document.getElementById('userGreeting').textContent = 'Hello, User!';
+      const gb = document.getElementById('generated_by');
+      gb.innerHTML = `
+        <div class="sig-label">Report Generated by:</div>
+        <hr class="sig-line">
+        <div class="sig-name">________________</div>
+        <div class="sig-title">Nursing Attendant</div>
+      `;
+    });
+});
+// Close modal when clicking outside
+window.onclick = function(event) {
+    const modal = document.getElementById('logoutModal');
+    if (event.target == modal) {
+        closeModal();
+    }
+}
+
+    function confirmLogout() {
+    document.getElementById('logoutModal').style.display = 'block';
+    return false; // Prevent the default link behavior
+}
+
+function closeModal() {
+    document.getElementById('logoutModal').style.display = 'none';
+}
+
+function proceedLogout() {
+   window.location.href = '../../ADMIN/php/logout.php'; 
+}
+
+// Close modal when clicking outside
+window.onclick = function(event) {
+    const modal = document.getElementById('logoutModal');
+    if (event.target == modal) {
+        closeModal();
+    }
+}
+
 
 	// Check if user is logged in
 fetch('../php/getUserId.php')
@@ -1509,35 +1655,9 @@ fetch('../php/getUserId.php')
     });
 
 </script>
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  const sidebar = document.getElementById("sidebar");
-
-  function applyResponsiveSidebar() {
-    if (window.innerWidth <= 1024) {
-      sidebar.classList.add("hide");   
-    } else {
-      sidebar.classList.remove("hide");
-    }
-  }
-
-  applyResponsiveSidebar();
-  window.addEventListener("resize", applyResponsiveSidebar);
 
 
-});
-</script>
-<script>
-function resizeTableContainer(){
-  const container = document.querySelector('.report-table-container');
-  if(!container) return;
-  const header = document.querySelector('nav');
-  const padding = 60; // adjust as needed
-  const headerHeight = header ? header.getBoundingClientRect().height : 0;
-  container.style.maxHeight = (window.innerHeight - headerHeight - padding) + 'px';
-}
-window.addEventListener('load', resizeTableContainer);
-window.addEventListener('resize', resizeTableContainer);
-</script>
+
+
 </body>
 </html>
