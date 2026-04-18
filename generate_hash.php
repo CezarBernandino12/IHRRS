@@ -5,7 +5,7 @@ $hashed_password = password_hash($admin_password, PASSWORD_DEFAULT);
 
 // Database connection details
 $host = "localhost";
-$dbname = "ihrrs";
+$dbname = "ihrrs_dbase";
 $db_user = "root"; // Corrected variable name
 $db_pass = "";     // Corrected variable name
 
