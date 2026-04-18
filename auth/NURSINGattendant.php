@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Nurse Attendant Login</title>
-    <link rel="stylesheet" href="css/login.css" />
+    <link rel="stylesheet" href="../css/login.css" />
     <link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet" />
 </head>
 <body>
@@ -14,9 +14,9 @@
              <a href="role.html" class="back-btn">
         <i class="bx bx-arrow-back"></i> <!-- Back arrow icon -->
       </a>
-                <img src="img/logo.png" class="Img" alt="Admin Logo">
+                <img src="../img/logo.png" class="Img" alt="Admin Logo">
                 <h2>Nursing Attendant</h2>
-                <form action="LOGIN/NursingAttendant.php" method="POST">
+                <form action="../LOGIN/NursingAttendant.php" method="POST">
                     <!-- Error message display -->
                     <div id="error-message" style="color: red; text-align: center;">
                         <?php if (isset($_GET['error'])) echo htmlspecialchars($_GET['error']); ?>
@@ -45,7 +45,7 @@
                 </form>
 
                         <div style="text-align: center; margin-top: 15px;">
-          <a href="LOGIN/nursing_attendant_forgot_password.html" style="color: #666; text-decoration: none; font-size: 14px;">Forgot Password?</a>
+          <a href="../LOGIN/nursing_attendant_forgot_password.html" style="color: #666; text-decoration: none; font-size: 14px;">Forgot Password?</a>
         </div>
 
             </div>

@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Admin Login</title>
-    <link rel="stylesheet" href="css/login.css" />
+    <link rel="stylesheet" href="../css/login.css" />
     <link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet" />
 </head>
 <body>
@@ -15,9 +15,9 @@
         <i class="bx bx-arrow-back"></i> <!-- Back arrow icon -->
       </a>
             
-                <img src="img/logo.png" class="Img" alt="Admin Logo">
+                <img src="../img/logo.png" class="Img" alt="Admin Logo">
                 <h2>Admin</h2>
-                <form action="LOGIN/admin_login.php" method="POST">
+                <form action="../LOGIN/admin_login.php" method="POST">
                 <label for="username">Username</label>
 <div class="input-box">
     <span class="icon"><i class="bx bx-user"></i></span>
@@ -44,7 +44,7 @@
                     <button type="submit" class="login-btn">LOGIN</button>
                 </form>
                 <div style="text-align: center; margin-top: 15px;">
-                    <a href="LOGIN/admin_forgot_password.html" style="color: #666; text-decoration: none; font-size: 14px;">Forgot Password?</a>
+                    <a href="../LOGIN/admin_forgot_password.html" style="color: #666; text-decoration: none; font-size: 14px;">Forgot Password?</a>
                 </div>
             </div>
         </div>
