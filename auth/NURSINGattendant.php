@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="../img/logo.png">
     <title>Nurse Attendant Login</title>
     <link rel="stylesheet" href="../css/login.css" />
     <link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet" />
@@ -14,7 +15,7 @@
              <a href="role.html" class="back-btn">
         <i class="bx bx-arrow-back"></i> <!-- Back arrow icon -->
       </a>
-                <img src="../img/logo.png" class="Img" alt="Admin Logo">
+                <img src="img/logo.png" class="Img" alt="Admin Logo">
                 <h2>Nursing Attendant</h2>
                 <form action="../LOGIN/NursingAttendant.php" method="POST">
                     <!-- Error message display -->
