@@ -3,7 +3,7 @@ require '../../php/db_connect.php';
 session_start();
 
 if (!isset($_SESSION['user_id'])) {
-    header("Location: ../../role.html");
+    header("Location: ../../role");
     exit;
 }
 
@@ -306,14 +306,14 @@ $disp_stmt->execute(array_merge($ids, $medicine_list));
 		</a>
 		<ul class="side-menu top">
 			<li>
-				<a href="../dashboard.html">
+				<a href="../dashboard">
 					<i class="bx bxs-dashboard"></i>
 					<span class="text">Dashboard</span>
 				</a>
 			</li>
 		
 			<li>
-				<a href="../pending.html" id="updateReferrals">
+				<a href="../pending" id="updateReferrals">
 					<i class="bx bxs-user"></i>
 					<span class="text">Pending Referrals</span>
 				</a>
@@ -327,36 +327,36 @@ $disp_stmt->execute(array_merge($ids, $medicine_list));
 				.then(response => response.json())
 				.then(data => {
 					console.log(data.message); // Log success message (optional)
-					window.location.href = "../pending.html"; // Redirect after updating
+					window.location.href="../pending"; // Redirect after updating
 				})
 				.catch(error => {
 					console.error("Error updating referrals:", error);
-					window.location.href = "../pending.html"; // Still redirect even if an error occurs
+					window.location.href="../pending"; // Still redirect even if an error occurs
 				});
 			});
 			</script>
 
 				<li>
-				<a href="../followUpConsultations.html">
+				<a href="../followUpConsultations">
 					<i class="bx bxs-user"></i>
 					<span class="text">Follow-Up Visits</span>
 				</a>
 			</li>
 			
 			<li>
-				<a href="../searchPatient.html">
+				<a href="../searchPatient">
 					<i class="bx bxs-search"></i>
 					<span class="text">Patient Records</span>
 				</a>
 			</li>
 			<li>
-                <a href="../history.html">
+                <a href="../history">
                     <i class="bx bx-history"></i>
                     <span class="text">Referral History</span>
                 </a>
             </li>
 			<li class="active">
-				<a href="../reports.html">
+				<a href="../reports">
 					<i class="bx bx-notepad"></i>
 					<span class="text">Reports</span>
 				</a>	
@@ -1628,7 +1628,7 @@ function closeModal() {
 }
 
 function proceedLogout() {
-   window.location.href = '../../ADMIN/php/logout.php'; 
+   window.location.href='../../ADMIN/php/logout'; 
 }
 
 // Close modal when clicking outside
@@ -1646,12 +1646,12 @@ fetch('../php/getUserId.php')
     .then(data => {
         if (data.error) {
             // User is not logged in, redirect to role selection page
-            window.location.href = '../role.html';
+            window.location.href='../auth/role';
         }
     })
     .catch(error => {
         console.error('Error checking session:', error);
-        window.location.href = '../role.html';
+        window.location.href='../auth/role';
     });
 
 </script>

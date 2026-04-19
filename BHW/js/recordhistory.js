@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 `;
                 tr.style.cursor = 'pointer';
                 tr.addEventListener('click', () => {
-                    window.location.href = `visitInfo.html?visit_id=${row.visit_id}`;
+                    window.location.href = `visitInfo?visit_id=${row.visit_id}`;
                 });
                 tableBody.appendChild(tr);
             });
@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', function () {
         paginationContainer.innerHTML = ''; // Clear existing pagination
 
         const prevButton = document.createElement('a');
-        prevButton.href = '#';
+        prevButton.href='#';
         prevButton.classList.add('prev');
         prevButton.textContent = 'Previous';
         prevButton.addEventListener('click', () => {
@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         for (let i = 1; i <= totalPages; i++) {
             const pageButton = document.createElement('a');
-            pageButton.href = '#';
+            pageButton.href='#';
             pageButton.classList.add('page-number');
             if (i === currentPage) pageButton.classList.add('active');
             pageButton.textContent = i;
@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         const nextButton = document.createElement('a');
-        nextButton.href = '#';
+        nextButton.href='#';
         nextButton.classList.add('next');
         nextButton.textContent = 'Next';
         nextButton.addEventListener('click', () => {

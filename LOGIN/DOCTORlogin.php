@@ -14,21 +14,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (!$user) {
         // Log failed login (user not found)
         logActivity($pdo, null, "Failed Login (Username Not Found): $username");
-        header("Location: ../doctorlogin.html?error=Invalid credentials");
+        header("Location: ../doctorlogin?error=Invalid credentials");
         exit();
     }
 
     // ✅ Check if the account is inactive
     if ($user['account_status'] === 'inactive') {
         logActivity($pdo, $user['user_id'], "Failed Login (Inactive Account)");
-        header("Location: ../doctorlogin.html?error=Your account is deactivated.");
+        header("Location: ../doctorlogin?error=Your account is deactivated.");
         exit();
     }
 
     // ✅ Ensure only doctors can log in
     if ($user['role'] !== 'doctor') {
         logActivity($pdo, $user['user_id'], "Failed Login (Unauthorized Role)");
-        header("Location: ../doctorlogin.html?error=You are not authorized to access this page.");
+        header("Location: ../doctorlogin?error=You are not authorized to access this page.");
         exit();
     }
 
@@ -37,7 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $remaining_time = strtotime($user['lock_until']) - time();
         $minutes = ceil($remaining_time / 60);
         logActivity($pdo, $user['user_id'], "Failed Login (Account Locked)");
-        header("Location: ../doctorlogin.html?error=Account locked due to too many failed attempts. Try again in $minutes minutes.");
+        header("Location: ../doctorlogin?error=Account locked due to too many failed attempts. Try again in $minutes minutes.");
         exit();
     }
 
@@ -56,7 +56,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         logUserLogin($pdo, $user['user_id']);
 
         // Redirect to doctor dashboard
-        header("Location: ../RHUPhysician/dashboard.html");
+        header("Location: ../RHUPhysician/dashboard");
         exit();
     } else {
         // Increment failed attempts
@@ -69,12 +69,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $updateStmt = $pdo->prepare("UPDATE users SET failed_attempts = ?, lock_until = ? WHERE user_id = ?");
             $updateStmt->execute([$new_attempts, $lock_until, $user['user_id']]);
             logActivity($pdo, $user['user_id'], "Account Locked (5 Failed Attempts)");
-            header("Location: ../doctorlogin.html?error=Account locked due to too many failed attempts. Try again in 10 minutes.");
+            header("Location: ../doctorlogin?error=Account locked due to too many failed attempts. Try again in 10 minutes.");
         } else {
             $updateStmt = $pdo->prepare("UPDATE users SET failed_attempts = ? WHERE user_id = ?");
             $updateStmt->execute([$new_attempts, $user['user_id']]);
             logActivity($pdo, $user['user_id'], "Failed Login (Incorrect Password)");
-            header("Location: ../doctorlogin.html?error=Invalid password.");
+            header("Location: ../doctorlogin?error=Invalid password.");
         }
         exit();
     }

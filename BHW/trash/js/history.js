@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function () {
         paginationContainer.innerHTML = '';
 
         const prevLink = document.createElement('a');
-        prevLink.href = '#';
+        prevLink.href='#';
         prevLink.classList.add('prev');
         prevLink.innerText = 'Previous';
         prevLink.addEventListener('click', (e) => {
@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         for (let i = 1; i <= numPages; i++) {
             const pageLink = document.createElement('a');
-            pageLink.href = '#';
+            pageLink.href='#';
             pageLink.classList.add('page-number');
             pageLink.innerText = i;
             if (i === currentPage) {
@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         const nextLink = document.createElement('a');
-        nextLink.href = '#';
+        nextLink.href='#';
         nextLink.classList.add('next');
         nextLink.innerText = 'Next';
         nextLink.addEventListener('click', (e) => {

@@ -21,13 +21,13 @@
         </a>
         <ul class="side-menu top">
             <li>
-                <a href="dashboard.html">
+                <a href="dashboard">
                     <i class="bx bxs-dashboard"></i>
                     <span class="text">Dashboard</span>
                 </a>
             </li>
             <li>
-                <a href="ITR.html">
+                <a href="ITR">
                     <i class="bx bxs-notepad"></i>
                     <span class="text">Add New ITR</span>
                 </a>
@@ -39,25 +39,25 @@
                 </a>
             </li>
             <li>
-                <a href="followUpConsultations.html">
+                <a href="followUpConsultations">
                     <i class="bx bxs-user"></i>
                     <span class="text">Follow-Up Visits</span>
                 </a>
             </li>
             <li class="active">
-                <a href="searchPatient.html">
+                <a href="searchPatient">
                     <i class="bx bxs-search"></i>
                     <span class="text">Patient Records</span>
                 </a>
             </li>
             <li>
-                <a href="history.html">
+                <a href="history">
                     <i class="bx bx-history"></i>
                     <span class="text">Referral History</span>
                 </a>
             </li>
             <li>
-                <a href="reports.html">
+                <a href="reports">
                     <i class="bx bx-notepad"></i>
                     <span class="text">Reports</span>
                 </a>
@@ -89,7 +89,7 @@
                 <div class="left">
                     <h1>Issue Medical Certificate</h1>
                     <ul class="breadcrumb">
-                        <li><a href="searchPatient.html">Patient Records</a></li>
+                        <li><a href="searchPatient">Patient Records</a></li>
                         <li><i class="bx bx-chevron-right"></i></li>
                         <li><a class="active" href="#">Medical Certificate</a></li>
                     </ul>
@@ -365,7 +365,7 @@ document.addEventListener('DOMContentLoaded', function() {
         loadUserInfo();
     } else {
         alert('No patient ID provided');
-        window.location.href = 'searchPatient.html';
+        window.location.href='searchPatient';
     }
 
     // Auto-calculate rest dates when days are entered
@@ -648,7 +648,7 @@ function loadPatientVisits(patientId, visitId = null) {
                 console.log('Response:', data);
                 if (data.success) {
                     alert('Medical certificate issued successfully!');
-                    window.location.href = `viewMedCert.html?medcert_id=${data.medcert_id}`;
+                    window.location.href = `viewMedCert?medcert_id=${data.medcert_id}`;
                 } else {
                     alert('Error: ' + (data.message || 'Failed to issue certificate'));
                 }
@@ -678,7 +678,7 @@ function loadPatientVisits(patientId, visitId = null) {
         }
 
         function proceedLogout() {
-            window.location.href = '../ADMIN/php/logout.php';
+            window.location.href='../ADMIN/php/logout';
         }
 
         window.onclick = function(event) {
@@ -694,11 +694,11 @@ function loadPatientVisits(patientId, visitId = null) {
             .then(response => response.json())
             .then(data => {
                 console.log(data.message);
-                window.location.href = "pending.html";
+                window.location.href="pending";
             })
             .catch(error => {
                 console.error("Error updating referrals:", error);
-                window.location.href = "pending.html";
+                window.location.href="pending";
             });
         });
 
@@ -707,14 +707,14 @@ function loadPatientVisits(patientId, visitId = null) {
             .then(response => response.json())
             .then(data => {
                 if (data.error) {
-                    window.location.href = '../role.html';
+                    window.location.href='../auth/role';
                 } else {
                     document.getElementById('user_id').value = data.user_id;
                 }
             })
             .catch(error => {
                 console.error('Error checking session:', error);
-                window.location.href = '../role.html';
+                window.location.href='../auth/role';
             });
     </script>
 </body>

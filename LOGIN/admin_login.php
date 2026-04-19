@@ -13,19 +13,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if (!$admin) {
         logActivity($pdo, null, "Failed Login (Username Not Found): $username");
-        header("Location: ../adminlogin.php?error=Invalid credentials.");
+        header("Location: ../adminlogin?error=Invalid credentials.");
         exit();
     }
 
     if ($admin['role'] !== 'admin') {
         logActivity($pdo, $admin['user_id'], "Failed Login (Unauthorized Role)");
-        header("Location: ../adminlogin.php?error=Unauthorized access.");
+        header("Location: ../adminlogin?error=Unauthorized access.");
         exit();
     }
 
     if ($admin['account_status'] !== 'active') {
         logActivity($pdo, $admin['user_id'], "Failed Login (Inactive Account)");
-        header("Location: ../adminlogin.php?error=Your account is not approved.");
+        header("Location: ../adminlogin?error=Your account is not approved.");
         exit();
     }
 
@@ -34,7 +34,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $remaining_time = strtotime($admin['lock_until']) - time();
         $minutes = ceil($remaining_time / 60);
         logActivity($pdo, $admin['user_id'], "Failed Login (Account Locked)");
-        header("Location: ../adminlogin.php?error=Account locked due to too many failed attempts. Try again in $minutes minutes.");
+        header("Location: ../adminlogin?error=Account locked due to too many failed attempts. Try again in $minutes minutes.");
         exit();
     }
 
@@ -59,7 +59,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         logActivity($pdo, $admin['user_id'], "Successful Login");
 
-        header("Location: ../ADMIN/php/admin_dashboard2.php");
+        header("Location: ../ADMIN/php/admin_dashboard2");
         exit();
     } else {
         // Increment failed attempts
@@ -72,7 +72,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $updateStmt = $pdo->prepare("UPDATE users SET failed_attempts = ?, lock_until = ? WHERE user_id = ?");
             $updateStmt->execute([$new_attempts, $lock_until, $admin['user_id']]);
             logActivity($pdo, $admin['user_id'], "Account Locked (5 Failed Attempts)");
-            header("Location: ../adminlogin.php?error=Account locked due to too many failed attempts. Try again in 10 minutes.");
+            header("Location: ../adminlogin?error=Account locked due to too many failed attempts. Try again in 10 minutes.");
         } else {
             $updateStmt = $pdo->prepare("UPDATE users SET failed_attempts = ? WHERE user_id = ?");
             $updateStmt->execute([$new_attempts, $admin['user_id']]);
@@ -84,10 +84,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             if ($hasPendingReset) {
                 logActivity($pdo, $admin['user_id'], "Failed Login (Incorrect Password) - Pending Reset");
-                header("Location: ../adminlogin.php?error=Password incorrect. You have a pending password reset request.");
+                header("Location: ../adminlogin?error=Password incorrect. You have a pending password reset request.");
             } else {
                 logActivity($pdo, $admin['user_id'], "Failed Login (Incorrect Password)");
-                header("Location: ../adminlogin.php?error=Invalid password.");
+                header("Location: ../adminlogin?error=Invalid password.");
             }
         }
         exit();

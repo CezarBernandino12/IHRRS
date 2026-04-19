@@ -23,13 +23,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($user) {
         // Check if account is inactive
         if ($user['account_status'] === 'inactive') {
-            header("Location: ../NURSINGattendant.php?error=Your account is deactivated.");
+            header("Location: ../NURSINGattendant?error=Your account is deactivated.");
             exit();
         }
 
         // Check if account is still pending
         if ($user['account_status'] !== 'active') {
-            header("Location: ../NURSINGattendant.php?error=Your account is pending approval.");
+            header("Location: ../NURSINGattendant?error=Your account is pending approval.");
             exit();
         }
 
@@ -38,7 +38,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $remaining_time = strtotime($user['lock_until']) - time();
             $minutes = ceil($remaining_time / 60);
             logActivity($pdo, $user['user_id'], "Failed Login (Account Locked)");
-            header("Location: ../NURSINGattendant.php?error=Account locked due to too many failed attempts. Try again in $minutes minutes.");
+            header("Location: ../NURSINGattendant?error=Account locked due to too many failed attempts. Try again in $minutes minutes.");
             exit();
         }
 
@@ -69,7 +69,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             logUserLogin($pdo, $user['user_id']); // ✅ Track online activity
 
             // Redirect to Nursing Attendant dashboard
-            header("Location: ../NursingAttendant/dashboard.html");
+            header("Location: ../NursingAttendant/dashboard");
             exit();
         } else {
             // Increment failed attempts
@@ -82,7 +82,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $updateStmt = $pdo->prepare("UPDATE users SET failed_attempts = ?, lock_until = ? WHERE user_id = ?");
                 $updateStmt->execute([$new_attempts, $lock_until, $user['user_id']]);
                 logActivity($pdo, $user['user_id'], "Account Locked (5 Failed Attempts)");
-                header("Location: ../NURSINGattendant.php?error=Account locked due to too many failed attempts. Try again in 10 minutes.");
+                header("Location: ../NURSINGattendant?error=Account locked due to too many failed attempts. Try again in 10 minutes.");
             } else {
                 $updateStmt = $pdo->prepare("UPDATE users SET failed_attempts = ? WHERE user_id = ?");
                 $updateStmt->execute([$new_attempts, $user['user_id']]);
@@ -94,16 +94,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                 if ($hasPendingReset) {
                     logActivity($pdo, $user['user_id'], "Failed Login Attempt - Pending Reset");
-                    header("Location: ../NURSINGattendant.php?error=Password incorrect. You have a pending password reset request.");
+                    header("Location: ../NURSINGattendant?error=Password incorrect. You have a pending password reset request.");
                 } else {
                     logActivity($pdo, $user['user_id'], "Failed Login Attempt");
-                    header("Location: ../NURSINGattendant.php?error=Invalid password.");
+                    header("Location: ../NURSINGattendant?error=Invalid password.");
                 }
             }
             exit();
         }
     } else {
-        header("Location: ../NURSINGattendant.php?error=Invalid credentials.");
+        header("Location: ../NURSINGattendant?error=Invalid credentials.");
         exit();
     }
 }

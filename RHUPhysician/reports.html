@@ -19,7 +19,7 @@
 		</a>
 		<ul class="side-menu top">
 			<li>
-				<a href="dashboard.html">
+				<a href="dashboard">
 					<i class="bx bxs-dashboard"></i>
 					<span class="text">Dashboard</span>
 				</a>
@@ -40,36 +40,36 @@
 				.then(response => response.json())
 				.then(data => {
 					console.log(data.message); // Log success message (optional)
-					window.location.href = "pending.html"; // Redirect after updating
+					window.location.href="pending"; // Redirect after updating
 				})
 				.catch(error => {
 					console.error("Error updating referrals:", error);
-					window.location.href = "pending.html"; // Still redirect even if an error occurs
+					window.location.href="pending"; // Still redirect even if an error occurs
 				});
 			});
 			</script>
 
 				<li>
-				<a href="followUpConsultations.html">
+				<a href="followUpConsultations">
 					<i class="bx bxs-user"></i>
 					<span class="text">Follow-Up Visits</span>
 				</a>
 			</li>
 			
 			<li>
-				<a href="searchPatient.html">
+				<a href="searchPatient">
 					<i class="bx bxs-search"></i>
 					<span class="text">Patient Records</span>
 				</a>
 			</li>
 			<li>
-                <a href="history.html">
+                <a href="history">
                     <i class="bx bx-history"></i>
                     <span class="text">Referral History</span>
                 </a>
             </li>
 			<li class="active">
-				<a href="reports.html">
+				<a href="reports">
 					<i class="bx bx-notepad"></i>
 					<span class="text">Reports</span>
 				</a>
@@ -98,7 +98,7 @@ function closeModal() {
 }
 
 function proceedLogout() {
-    window.location.href = '../role.html';
+    window.location.href='../auth/role';
 }
 
 // Close modal when clicking outside
@@ -132,7 +132,7 @@ window.onclick = function(event) {
 					<ul class="breadcrumb">
 						<li><a href="#">Reports</a></li>
 						<li><i class="bx bx-chevron-right"></i></li>
-						<li><a class="active" href="dashboard.html">Home</a></li>
+						<li><a class="active" href="dashboard">Home</a></li>
 					</ul>
 				</div>
 			</div>
@@ -141,7 +141,7 @@ window.onclick = function(event) {
    
 		<ul class="box-info">
 					  
-				<a href="reportsPages/patient_summary_report.php">
+				<a href="reportsPages/patient_summary_report">
 					<li class="mrr">
 					  <div class="">
 						<img src="../img/treatment.png" alt="Referrals" class="icon-img">
@@ -151,7 +151,7 @@ window.onclick = function(event) {
 					  </div>
 					</li>
 				  </a>
-				<a href="reportsPages/medicine_utilization_report.php">
+				<a href="reportsPages/medicine_utilization_report">
 					<li class="mrr">
 					  <div class="icon-container">
 						<img src="../img/meds.png" alt="Medicines" class="icon-img">
@@ -163,7 +163,7 @@ window.onclick = function(event) {
 				  </a>
 			
 
-				<a href="reportsPages/referral_summary_report.php">
+				<a href="reportsPages/referral_summary_report">
 				  <li class="mrr">
 					<div class="icon-container">
 					  <img src="../img/referred.png" alt="Visit Report" class="icon-img">
@@ -174,7 +174,7 @@ window.onclick = function(event) {
 				  </li>
 				</a>
 			
-				<a href="reportsPages/medical_cases_report.php">
+				<a href="reportsPages/medical_cases_report">
 				  <li class="mrr">
 					<div class="icon-container">
 					  <img src="../img/survey.png" alt="Referrals" class="icon-img">
@@ -230,12 +230,12 @@ fetch('php/getUserId.php')
     .then(data => {
         if (data.error) {
             // User is not logged in, redirect to role selection page
-            window.location.href = '../role.html';
+            window.location.href='../auth/role';
         }
     })
     .catch(error => {
         console.error('Error checking session:', error);
-        window.location.href = '../role.html';
+        window.location.href='../auth/role';
     });
 
 	</script>

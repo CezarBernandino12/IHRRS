@@ -266,22 +266,6 @@
     }
     .forgot-link:hover { color: var(--admin-accent); }
 
-    /* ── DIVIDER ── */
-    .divider { display: flex; align-items: center; gap: 12px; margin: 24px 0; }
-    .divider-line { flex: 1; height: 1px; background: var(--border); }
-    .divider-text { font-size: 0.7rem; color: var(--light); font-family: 'Space Mono', monospace; letter-spacing: 0.1em; }
-
-    /* ── ADMIN SECURITY NOTE ── */
-    .security-note {
-      display: flex; align-items: flex-start; gap: 10px;
-      background: var(--admin-dim);
-      border: 1px solid rgba(124,58,237,0.12);
-      border-radius: 10px; padding: 12px 14px;
-    }
-    .security-note svg { width: 15px; height: 15px; fill: none; stroke: var(--admin-accent); stroke-width: 2; stroke-linecap: round; flex-shrink: 0; margin-top: 1px; }
-    .security-note span { font-size: 0.72rem; color: var(--muted); line-height: 1.5; }
-    .security-note strong { color: var(--admin-accent); }
-
     /* ── SUCCESS MODAL ── */
     .modal-overlay {
       display: none; position: fixed; inset: 0; z-index: 200;
@@ -351,13 +335,13 @@
 
     <!-- NAV -->
     <nav>
-      <a href="../index.html" class="nav-brand">
+      <a href="../index" class="nav-brand">
         <div class="nav-icon">
           <svg viewBox="0 0 24 24"><path d="M12 3v18M3 12h18"/></svg>
         </div>
         <span class="nav-wordmark">IHRRS</span>
       </a>
-      <a href="role.html" class="nav-back">
+      <a href="role" class="nav-back">
         <svg viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
         Back
       </a>
@@ -398,7 +382,7 @@
         <?php endif; ?>
 
         <!-- Form -->
-        <form action="../LOGIN/admin_login.php" method="POST">
+        <form action="../LOGIN/admin_login" method="POST">
 
           <!-- Username -->
           <div class="form-group">
@@ -441,30 +425,13 @@
           <button type="submit" class="submit-btn">Sign In</button>
         </form>
 
-        <a href="../LOGIN/admin_forgot_password.html" class="forgot-link">Forgot your password?</a>
-
-        <div class="divider">
-          <div class="divider-line"></div>
-          <span class="divider-text">admin access</span>
-          <div class="divider-line"></div>
-        </div>
-
-        <div class="security-note">
-          <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg>
-          <span><strong>Restricted access.</strong> This portal is for authorized administrators only. Unauthorized access attempts are logged and monitored.</span>
-        </div>
-
+        <a href="../LOGIN/admin_forgot_password" class="forgot-link">Forgot your password?</a>
       </div>
     </main>
 
     <!-- FOOTER -->
     <footer>
       <span class="footer-copy">© 2025 IHRRS — Integrated Health Records & Reporting System</span>
-      <div class="footer-links">
-        <a href="#">Privacy</a>
-        <a href="#">Security</a>
-        <a href="#">Support</a>
-      </div>
     </footer>
   </div>
 

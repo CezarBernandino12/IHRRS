@@ -26,12 +26,12 @@ fetch('php/getUserId.php')
     .then(data => {
         if (data.error) {
             // User is not logged in, redirect to role selection page
-            window.location.href = '../role.html';
+            window.location.href='../auth/role';
         }
     })
     .catch(error => {
         console.error('Error checking session:', error);
-        window.location.href = '../role.html';
+        window.location.href='../auth/role';
     });
 </script>
 
@@ -43,31 +43,31 @@ fetch('php/getUserId.php')
 
     <ul class="side-menu top">
         <li>
-            <a href="dashboard.html">
+            <a href="dashboard">
                 <i class="bx bxs-dashboard"></i>
                 <span class="text">Dashboard</span>
             </a>
         </li>
         <li>
-            <a href= "ITR.html">
+            <a href="ITR">
                 <i class="bx bxs-user"></i>
                 <span class="text">Add New ITR</span>
             </a>
         </li>
         <li>
-            <a href="searchPatient.html">
+            <a href="searchPatient">
                 <i class="bx bxs-notepad"></i>
                 <span class="text">Patient Records</span>
             </a>
         </li>
         <li>
-            <a href="History.html">
+            <a href="History">
                 <i class="bx bx-history"></i>
                 <span class="text">Referral History</span>
             </a>
         </li>
         <li>
-            <a href="reports.html">
+            <a href="reports">
                 <i class="bx bx-notepad"></i>
                 <span class="text">Reports</span>
             </a>
@@ -396,7 +396,7 @@ fetch('php/getUserId.php')
     }
 
     function proceedLogout() {
-        window.location.href = '../ADMIN/php/logout.php';
+        window.location.href='../ADMIN/php/logout';
     }
 
     window.onclick = function(event) {

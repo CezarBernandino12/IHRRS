@@ -20,25 +20,25 @@
 		</a>
 		<ul class="side-menu top">
 			<li>
-				<a href="php/admin_dashboard2.php">
+				<a href="php/admin_dashboard2">
 					<i class="bx bxs-dashboard"></i>
 					<span class="text">Dashboard</span>
 				</a>
 			</li>
 			<li>
-				<a href="php/activity_logs.php">
+				<a href="php/activity_logs">
 					<i class="bx bxs-user"></i>
 					<span class="text">Activity Logs</span>
 				</a>
 			</li>
 			<li>
-				<a href="php/admin_user.php">
+				<a href="php/admin_user">
 					<i class="bx bxs-notepad"></i>
 					<span class="text">User management</span>
 				</a>
 			</li>
 			<li class="active">
-				<a href="reports.html">
+				<a href="reports">
 					<i class="bx bxs-report"></i>
 					<span class="text">Reports</span>
 				</a>
@@ -75,7 +75,7 @@
 					<ul class="breadcrumb">
 						<li><a href="#">Reports</a></li>
 						<li><i class="bx bx-chevron-right"></i></li>
-						<li><a class="active" href="php/admin_dashboard2.php">Home</a></li>
+						<li><a class="active" href="php/admin_dashboard2">Home</a></li>
 					</ul>
 				</div>
 			</div>
@@ -83,7 +83,7 @@
 
 			<ul class="box-info">
 
-				<a href="reportsPages/admin_reports.php">
+				<a href="reportsPages/admin_reports">
 					<li class="mrr">
 						<img src="../img/treatment.png" alt="Admin Reports" class="icon-img">
 					  <div class="text">
@@ -122,7 +122,7 @@
 	}
 
 	function proceedLogout() {
-		window.location.href = 'php/logout.php';
+		window.location.href='php/logout';
 	}
 
 	// Close modal when clicking outside
@@ -138,12 +138,12 @@
             .then(data => {
                 if (data.error) {
                     // User is not logged in, redirect to role selection page
-                    window.location.href = '../role.html';
+                    window.location.href='../auth/role';
                 }
             })
             .catch(error => {
                 console.error('Error checking session:', error);
-                window.location.href = '../role.html';
+                window.location.href='../auth/role';
             });
 
 	</script>

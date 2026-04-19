@@ -22,7 +22,7 @@ $stmt->execute([$userId]);
         $log_stmt->execute(['user_id' => $user_id, 'admin_id' => $admin_id]);
 
         echo "User approved successfully!";
-        header("Location: admin_approve.php");
+        header("Location: admin_approve");
         exit();
     } else {
         echo "Error approving user.";

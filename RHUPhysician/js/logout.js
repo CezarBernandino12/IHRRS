@@ -8,7 +8,7 @@ function closeModal() {
 }
 
 function proceedLogout() {
-    window.location.href = '../ADMIN/php/logout.php'; 
+    window.location.href='../ADMIN/php/logout'; 
 }
 
 // Close modal when clicking outside

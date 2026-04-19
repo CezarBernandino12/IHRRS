@@ -149,25 +149,25 @@ try {
         </a>
         <ul class="side-menu top">
             <li>
-                <a href="admin_dashboard2.php">
+                <a href="admin_dashboard2">
                     <i class="bx bxs-dashboard"></i>
                     <span class="text">Dashboard</span>
                 </a>
             </li>
             <li>
-                <a href="admin_approval.php">
+                <a href="admin_approval">
                     <i class="bx bxs-user"></i>
                     <span class="text">Approval & Logs</span>
                 </a>
             </li>
             <li>
-                <a href="admin_user.php">
+                <a href="admin_user">
                     <i class="bx bxs-notepad"></i>
                     <span class="text">User management</span>
                 </a>
             </li>
             <li class="active">
-                <a href="admin_reports.php">
+                <a href="admin_reports">
                     <i class="bx bxs-report"></i>
                     <span class="text">Reports</span>
                 </a>
@@ -175,7 +175,7 @@ try {
         </ul>
         <ul class="side-menu">
             <li>
-                <a href="../../role.html" class="logout" onclick="return confirmLogout()">
+                <a href="../../role" class="logout" onclick="return confirmLogout()">
                     <i class="bx bxs-log-out-circle"></i>
                     <span class="text">Logout</span>
                 </a>
@@ -189,7 +189,7 @@ try {
             <form action="#">
             </form>
 
-            <a href="notif.php" class="notification">
+            <a href="notif" class="notification">
                 <i class="bx bxs-bell"></i>
                 <?php if ($unreadCount > 0): ?>
                     <span class="badge"><?php echo $unreadCount; ?></span>

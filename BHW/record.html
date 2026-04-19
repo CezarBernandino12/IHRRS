@@ -23,12 +23,12 @@ fetch('php/getUserId.php')
     .then(data => {
         if (data.error) {
             // User is not logged in, redirect to role selection page
-            window.location.href = '../role.html';
+            window.location.href='../auth/role';
         }
     })
     .catch(error => {
         console.error('Error checking session:', error);
-        window.location.href = '../role.html';
+        window.location.href='../auth/role';
     });
 </script>
 
@@ -39,31 +39,31 @@ fetch('php/getUserId.php')
 		</a>
         <ul class="side-menu top">
             <li>
-                <a href="dashboard.html">
+                <a href="dashboard">
                     <i class="bx bxs-dashboard"></i>
                     <span class="text">Dashboard</span>
                 </a>
             </li>
             <li>
-                <a href="ITR.html">
+                <a href="ITR">
                     <i class="bx bxs-notepad"></i>
                     <span class="text">Add New ITR</span>
                 </a>
             </li>
             <li class="active">
-                <a href="searchPatient.html">
+                <a href="searchPatient">
                     <i class="bx bxs-search"></i>
                     <span class="text">Patient Records</span>
                 </a>
             </li>
             <li>
-                <a href="History.html">
+                <a href="History">
                     <i class="bx bx-history"></i>
                     <span class="text">Referral History</span>
                 </a>
             </li>
             <li>
-				<a href="reports.html">
+				<a href="reports">
 					<i class="bx bx-notepad"></i>
 					<span class="text">Reports</span>
 				</a>
@@ -262,11 +262,11 @@ fetch('php/getUserId.php')
   // Build URLs with the patient_id
   if (patientId) {
     document.getElementById('editBtn').onclick = () => {
-      window.location.href = `editPersonalInfo.html?patient_id=${patientId}`;
+      window.location.href = `editPersonalInfo?patient_id=${patientId}`;
     };
 
     document.getElementById('addITRBtn').onclick = () => {
-      window.location.href = `existingPatientITR.html?patient_id=${patientId}`;
+      window.location.href = `existingPatientITR?patient_id=${patientId}`;
     };
   } else {
     // Optionally disable buttons if patient_id is not found
@@ -403,7 +403,7 @@ details[14].textContent = displayOrNA(data.patient.fourps_status);
                             recordDiv.innerHTML = `
 <div class="record-header">
     <p><strong>${formatDate(visit.visit_date)}</strong></p>
-    <a href="visitInfo.html?visit_id=${visit.visit_id}" class="view-link">
+    <a href="visitInfo?visit_id=${visit.visit_id}" class="view-link">
         <i class="bx bx-show"></i> View <!-- Boxicon with text for 'View' -->
     </a>
 
@@ -758,7 +758,7 @@ if (printBtn) {
 
     function viewRecord(visitId) {
     // Redirect to visitInfo.html with visitId as a query parameter
-    window.location.href = `visitInfo.html?visit_id=${visitId}`;
+    window.location.href = `visitInfo?visit_id=${visitId}`;
 }
 
 
@@ -822,7 +822,7 @@ function closeModal() {
 }
 
 function proceedLogout() {
-		 window.location.href = '../ADMIN/php/logout.php';
+		 window.location.href='../ADMIN/php/logout';
 }
 
 // Close modal when clicking outside

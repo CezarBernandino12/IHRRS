@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const urlParams = new URLSearchParams(window.location.search);
             const patientId = urlParams.get('patient_id');
             // Redirect to record.html with patient_id
-            window.location.href = `record.html?patient_id=${patientId}`;
+            window.location.href = `record?patient_id=${patientId}`;
         });
     }
 
@@ -147,7 +147,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (modal === modal2) {
                     const urlParams = new URLSearchParams(window.location.search);
                     const patientId = urlParams.get('patient_id');
-                    window.location.href = `record.html?patient_id=${patientId}`;
+                    window.location.href = `record?patient_id=${patientId}`;
                 }
             }
         });

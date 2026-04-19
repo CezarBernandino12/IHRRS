@@ -79,7 +79,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $pdo->commit();
         
         // Redirect with success message
-        header("Location: ../BHWlogin.html?success=Registration successful. Waiting for admin approval.");
+        header("Location: ../BHWlogin?success=Registration successful. Waiting for admin approval.");
         exit();
         
     } catch (PDOException $e) {

@@ -22,12 +22,12 @@ fetch('php/getUserId.php')
     .then(data => {
         if (data.error) {
             // User is not logged in, redirect to role selection page
-            window.location.href = '../role.html';
+            window.location.href='../auth/role';
         }
     })
     .catch(error => {
         console.error('Error checking session:', error);
-        window.location.href = '../role.html';
+        window.location.href='../auth/role';
     });
 </script>
 
@@ -39,32 +39,32 @@ fetch('php/getUserId.php')
 		</a>
 		<ul class="side-menu top">
 			<li>
-				<a href="dashboard.html">
+				<a href="dashboard">
 					<i class="bx bxs-dashboard"></i>
 					<span class="text">Dashboard</span>
 				</a>
 			</li>
 			<li>
-				<a href= "ITR.html">
+				<a href="ITR">
 					<i class="bx bxs-notepad"></i>
 					<span class="text">Add New ITR</span>
 				</a>
 			</li>
 			<li>
-				<a href="searchPatient.html">
+				<a href="searchPatient">
 					<i class="bx bxs-search"></i>
 					<span class="text">Patient Records</span>
 				</a>
 			</li>
 
 			<li class="active">
-				<a href="History.html">
+				<a href="History">
 					<i class="bx bx-history"></i>
 					<span class="text">Referral History</span>
 				</a>
 			</li>
             <li>
-				<a href="reports.html">
+				<a href="reports">
 					<i class="bx bx-notepad"></i>
 					<span class="text">Reports</span>
 				</a>
@@ -106,7 +106,7 @@ fetch('php/getUserId.php')
                   <ul class="breadcrumb">
                     <li><a href="#">Referral History</a></li>
                     <li><i class="bx bx-chevron-right"></i></li>
-                    <li><a class="active" href="dashboard.html">Home</a></li>
+                    <li><a class="active" href="dashboard">Home</a></li>
                   </ul>
                 </div>
               </div>
@@ -279,7 +279,7 @@ row.style.cursor = 'pointer';
 row.addEventListener('click', function (event) {
     const isAction = event.target.closest('.edit-action, .cancel-action');
     if (!isAction) {
-        window.location.href = `details.html?referral_id=${referral.referral_id}`;
+        window.location.href = `details?referral_id=${referral.referral_id}`;
     }
 });
 
@@ -300,7 +300,7 @@ row.addEventListener('click', function (event) {
                         e.preventDefault();
                         const referralId = this.getAttribute("data-id");
                         showModal("Confirm Edit", "Are you sure you want to edit this referral?", () => {
-                            window.location.href = `editReferral.html?visit_id=${referralId}`;
+                            window.location.href = `editReferral?visit_id=${referralId}`;
                         });
                     });
                 }
@@ -403,7 +403,7 @@ function closeModal() {
 }
 
 function proceedLogout() {
-		 window.location.href = '../ADMIN/php/logout.php';
+		 window.location.href='../ADMIN/php/logout';
 }
 
 // Close modal when clicking outside

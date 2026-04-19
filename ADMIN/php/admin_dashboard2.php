@@ -7,7 +7,7 @@ if (!isset($_SESSION['user_id']) || !isset($_SESSION['role']) || $_SESSION['role
     // Destroy any existing session data
     session_destroy();
     // Redirect to BHW login page
-    header("Location: ../../role.html");
+    header("Location: ../../role");
     exit();
 }
 
@@ -59,13 +59,13 @@ $stmt = $pdo->prepare("
     FROM users u
     JOIN user_logs ul ON u.user_id = ul.user_id
     WHERE (u.role = 'bhw' OR u.role = 'doctor' OR u.role = 'nursing_attendant') -- Include nursing_attendant role
-      AND ul.action = 'login'
+      AND ul.action='login'
       AND DATE(ul.log_time) = :today
       AND NOT EXISTS (
           SELECT 1
           FROM user_logs ul2
           WHERE ul2.user_id = ul.user_id
-            AND ul2.action = 'logout'
+            AND ul2.action='logout'
             AND ul2.log_time > ul.log_time
       )
 ");
@@ -92,7 +92,7 @@ $stmt = $pdo->prepare("
     SELECT u.username, u.role, COUNT(ul.log_id) AS login_count
     FROM users u
     JOIN user_logs ul ON u.user_id = ul.user_id
-    WHERE ul.action = 'login'
+    WHERE ul.action='login'
     AND DATE(ul.log_time) >= DATE_SUB(CURRENT_DATE(), INTERVAL 7 DAY) -- Only last 7 days
     GROUP BY u.user_id
     ORDER BY login_count DESC
@@ -128,25 +128,25 @@ $unreadCount = 0;
         </a> 
         <ul class="side-menu top">
             <li class="active">
-                <a href="admin_dashboard2.php">
+                <a href="admin_dashboard2">
                     <i class="bx bxs-dashboard"></i>
                     <span class="text">Dashboard</span>
                 </a>
             </li>
             <li> 
-                <a href="activity_logs.php">
+                <a href="activity_logs">
                     <i class="bx bxs-user"></i>
                     <span class="text">Activity Logs</span>
                 </a>
             </li>
             <li>
-                <a href="admin_user.php">
+                <a href="admin_user">
                     <i class="bx bxs-notepad"></i>
                     <span class="text">User management</span>
                 </a>
             </li>
             <li>
-                <a href="../reports.html">
+                <a href="../reports">
                     <i class="bx bxs-report"></i>
                     <span class="text">Reports</span>
                 </a>
@@ -199,7 +199,7 @@ $unreadCount = 0;
               </div>
 
             <div class="dashboard-container">
-                <a href="today_logins.php" style="text-decoration: none; color: inherit;">
+                <a href="today_logins" style="text-decoration: none; color: inherit;">
                     <div class="card hoverable">
                         <p class="value"><?php echo $loggedInToday; ?></p>
                         <h3>Today's Logins</h3>
@@ -210,7 +210,7 @@ $unreadCount = 0;
                     </div>
                 </a>
 
-                <a href="inactive_users.php" style="text-decoration: none; color: inherit;">
+                <a href="inactive_users" style="text-decoration: none; color: inherit;">
                     <div class="card hoverable">
                         <p class="value"><?php echo $inactiveUsers; ?></p>
                         <h3>Terminated Accounts</h3>
@@ -316,7 +316,7 @@ function closeModal() {
 }
 
 function proceedLogout() {
-    window.location.href = 'logout.php';
+    window.location.href='logout';
 }
 
 // Close modal when clicking outside

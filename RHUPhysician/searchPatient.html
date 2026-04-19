@@ -21,7 +21,7 @@
         </a>
         <ul class="side-menu top">
             <li>
-				<a href="dashboard.html">
+				<a href="dashboard">
 					<i class="bx bxs-dashboard"></i>
 					<span class="text">Dashboard</span>
 				</a>
@@ -42,36 +42,36 @@
                 .then(response => response.json())
                 .then(data => {
                     console.log(data.message); // Log success message (optional)
-                    window.location.href = "pending.html"; // Redirect after updating
+                    window.location.href="pending"; // Redirect after updating
                 })
                 .catch(error => {
                     console.error("Error updating referrals:", error);
-                    window.location.href = "pending.html"; // Still redirect even if an error occurs
+                    window.location.href="pending"; // Still redirect even if an error occurs
                 });
             });
             </script>
 
             	<li>
-				<a href="followUpConsultations.html">
+				<a href="followUpConsultations">
 					<i class="bx bxs-user"></i>
 					<span class="text">Follow-Up Visits</span>
 				</a>
 			</li>
             
 			<li class="active">
-				<a href="searchPatient.html">
+				<a href="searchPatient">
 					<i class="bx bxs-search"></i>
 					<span class="text">Patient Records</span>
 				</a>
 			</li>
             <li>
-                <a href="history.html">
+                <a href="history">
                     <i class="bx bx-history"></i>
                     <span class="text">Referral History</span>
                 </a>
             </li>
             <li>
-				<a href="reports.html">
+				<a href="reports">
 					<i class="bx bx-notepad"></i>
 					<span class="text">Reports</span>
 				</a>
@@ -100,7 +100,7 @@ function closeModal() {
 }
 
 function proceedLogout() {
-    window.location.href = '../role.html';
+    window.location.href='../auth/role';
 }
 
 // Close modal when clicking outside
@@ -190,7 +190,7 @@ window.onclick = function(event) {
         xhr.send("query=" + encodeURIComponent(query));
     }
     function selectPatient(patient_id) {
-        window.location.href = "record.html?patient_id=" + patient_id;
+        window.location.href="record?patient_id=" + patient_id;
 }
 
     // Add Enter key functionality for search
@@ -226,12 +226,12 @@ fetch('php/getUserId.php')
     .then(data => {
         if (data.error) {
             // User is not logged in, redirect to role selection page
-            window.location.href = '../role.html';
+            window.location.href='../auth/role';
         }
     })
     .catch(error => {
         console.error('Error checking session:', error);
-        window.location.href = '../role.html';
+        window.location.href='../auth/role';
     });
 
 

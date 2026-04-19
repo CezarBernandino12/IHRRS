@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", function () {
         closeBtn2.addEventListener("click", () => {
             const urlParams = new URLSearchParams(window.location.search);
             const patientId = urlParams.get('patient_id');
-            window.location.href = `record.html?patient_id=${patientId}`;
+            window.location.href = `record?patient_id=${patientId}`;
         });
     }
 
@@ -141,7 +141,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (modal === modal2) {
                     const urlParams = new URLSearchParams(window.location.search);
                     const patientId = urlParams.get('patient_id');
-                    window.location.href = `record.html?patient_id=${patientId}`;
+                    window.location.href = `record?patient_id=${patientId}`;
                 }
             }
         });

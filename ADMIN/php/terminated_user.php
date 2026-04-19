@@ -12,7 +12,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$user) {
-        echo "<script>alert('User not found!'); window.location.href='admin_user.php';</script>";
+        echo "<script>alert('User not found!'); window.location.href='admin_user';</script>";
         exit;
     } 
 
@@ -24,9 +24,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $log = $pdo->prepare("INSERT INTO logs (user_id, performed_by, action, timestamp) VALUES (?, ?, ?, NOW())");
         $log->execute([$user_id, $admin_id, "Terminated User {$user['username']}"]);
 
-        echo "<script>alert('User has been Terminated successfully!'); window.location.href='admin_user.php';</script>";
+        echo "<script>alert('User has been Terminated successfully!'); window.location.href='admin_user';</script>";
     } else {
-        echo "<script>alert('Error deactivating user!'); window.location.href='admin_user.php';</script>";
+        echo "<script>alert('Error deactivating user!'); window.location.href='admin_user';</script>";
     }
 }
 ?>

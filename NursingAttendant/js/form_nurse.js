@@ -111,7 +111,7 @@ document.addEventListener("DOMContentLoaded", () => {
     on(doneButton, 'click', function () {
         if (modal3) modal1.style.display = 'none';
         try {
-             window.location.href = `pending.html`;
+             window.location.href = `pending`;
 
          } catch (e) {}
     });
@@ -128,7 +128,7 @@ if (viewDetailsButton) {
         }
 
         console.log("🔹 Redirecting to: details.html?referral_id=" + encodeURIComponent(referralId));
-        window.location.href = `details.html?referral_id=${encodeURIComponent(referralId)}`;
+        window.location.href = `details?referral_id=${encodeURIComponent(referralId)}`;
     });
 } else {
     console.warn("⚠️ Warning: viewDetailsButton not found in the DOM.");
@@ -584,14 +584,14 @@ function saveReferral(patientId, bhwId, visitId) {
         }
 
         dbg("🔹 Redirecting to: UpdateVisitInfo.html?visit_id=" + encodeURIComponent(visitId));
-        window.location.href = `UpdateVisitInfo.html?visit_id=${encodeURIComponent(visitId)}`;
+        window.location.href = `UpdateVisitInfo?visit_id=${encodeURIComponent(visitId)}`;
     });
 
 // Close modal4 (X)
 on(closeBtn4, 'click', function () {
     if (modal4) modal4.style.display = 'none';
     if (savedPatientId) {
-        window.location.href = `record.html?patient_id=${encodeURIComponent(savedPatientId)}`;
+        window.location.href = `record?patient_id=${encodeURIComponent(savedPatientId)}`;
     } else {
         console.warn("⚠️ No patient ID found, staying on page.");
     }

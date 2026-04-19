@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt = $pdo->prepare("UPDATE users SET full_name = ?, contact_number = ?, age = ?, barangay = ? WHERE user_id = ?");
     $stmt->execute([$fullName, $contact, $age, $barangay, $userId]);
 
-    header("Location: profile.php");
+    header("Location: profile");
     exit;
 }
 ?>
@@ -44,25 +44,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </a>
         <ul class="side-menu top">
             <li>
-                <a href="admin_dashboard2.php">
+                <a href="admin_dashboard2">
                     <i class="bx bxs-dashboard"></i>
                     <span class="text">Dashboard</span>
                 </a>
             </li>
             <li>
-                <a href="admin_approval.php">
+                <a href="admin_approval">
                     <i class="bx bxs-user"></i>
                     <span class="text">Approval & Logs</span>
                 </a>
             </li>
             <li>
-                <a href="admin_user.php">
+                <a href="admin_user">
                     <i class="bx bxs-notepad"></i>
                     <span class="text">User management</span>
                 </a>
             </li>
             <li>
-                <a href="admin_reports.php">
+                <a href="admin_reports">
                     <i class="bx bxs-report"></i>
                     <span class="text">Reports</span>
                 </a>
@@ -70,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </ul>
         <ul class="side-menu">
             <li>
-                <a href="../../role.html" class="logout" onclick="return confirmLogout()">
+                <a href="../../role" class="logout" onclick="return confirmLogout()">
                     <i class="bx bxs-log-out-circle"></i>
                     <span class="text">Logout</span>
                 </a>
@@ -83,7 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <nav>
             <form action="#"></form>
 
-            <a href="profile.php" class="profile">
+            <a href="profile" class="profile">
                 <img src="../../img/profile.jpg" alt="Profile Picture">
             </a>
         </nav>
@@ -124,7 +124,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
 
                     <button type="submit" class="btn btn-success">Save Changes</button>
-                    <a href="profile.php" class="btn btn-secondary cancel-btn">Cancel</a>
+                    <a href="profile" class="btn btn-secondary cancel-btn">Cancel</a>
                 </form>
             </div>
         </main>

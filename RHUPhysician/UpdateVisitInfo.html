@@ -24,7 +24,7 @@
         </a>
         <ul class="side-menu top">
             <li>
-				<a href="dashboard.html">
+				<a href="dashboard">
 					<i class="bx bxs-dashboard"></i>
 					<span class="text">Dashboard</span>
 				</a>
@@ -45,36 +45,36 @@
 				.then(response => response.json())
 				.then(data => {
 					console.log(data.message); // Log success message (optional)
-					window.location.href = "pending.html"; // Redirect after updating
+					window.location.href="pending"; // Redirect after updating
 				})
 				.catch(error => {
 					console.error("Error updating referrals:", error);
-					window.location.href = "pending.html"; // Still redirect even if an error occurs
+					window.location.href="pending"; // Still redirect even if an error occurs
 				});
 			});
 			</script>
 
             	<li>
-				<a href="followUpConsultations.html">
+				<a href="followUpConsultations">
 					<i class="bx bxs-user"></i>
 					<span class="text">Follow-Up Visits</span>
 				</a>
 			</li>
 			
 			<li>
-				<a href="searchPatient.html">
+				<a href="searchPatient">
 					<i class="bx bxs-search"></i>
 					<span class="text">Patient Records</span>
 				</a>
 			</li>
 			<li>
-                <a href="history.html">
+                <a href="history">
                     <i class="bx bx-history"></i>
                     <span class="text">Referral History</span>
                 </a>
             </li>
             <li>
-				<a href="reports.html">
+				<a href="reports">
 					<i class="bx bx-notepad"></i>
 					<span class="text">Reports</span>
 				</a>
@@ -372,7 +372,7 @@ const urlParams = new URLSearchParams(window.location.search);
 const visitId = urlParams.get('visit_id');
 
 document.getElementById("dashButton").onclick = function() {
-    window.location.href = 'dashboard.html';
+    window.location.href='dashboard';
 }
 
 document.getElementById("confirmBtn").onclick = function() {
@@ -425,12 +425,12 @@ document.getElementById("okButton").onclick = function() {
 
 document.getElementById("closeSuccessModal").onclick = function() {
     document.getElementById("myModal").style.display = "none";
-      window.location.href = 'dashboard.html';
+      window.location.href='dashboard';
 }
 
 document.getElementById("backToDashboardButton").onclick = function() {
     document.getElementById("myModal").style.display = "none";
-    window.location.href = 'dashboard.html';
+    window.location.href='dashboard';
 }
 
 

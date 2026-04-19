@@ -26,7 +26,7 @@ function checkSuspiciousLoginTime($pdo, $user_id) {
 
 function checkFailedLogins($pdo, $user_id) {
     // Fetch failed login attempts in the last 15 minutes
-    $stmt = $pdo->prepare("SELECT COUNT(*) FROM logs WHERE performed_by = ? AND action = 'Failed login attempt' AND timestamp >= NOW() - INTERVAL 15 MINUTE");
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM logs WHERE performed_by = ? AND action='Failed login attempt' AND timestamp >= NOW() - INTERVAL 15 MINUTE");
     $stmt->execute([$user_id]);
     $failed_attempts = $stmt->fetchColumn();
 

@@ -50,7 +50,7 @@ foreach ($users as $user) {
             <td>
                 <button class='view-user-btn' data-user='" . json_encode($user) . "'>View</button>
                 " . ($user['account_status'] === 'active' ? "
-                <form method='POST' action='terminated_user.php'>
+                <form method='POST' action='terminated_user'>
                     <input type='hidden' name='user_id' value='" . $user['user_id'] . "'>
                     <button type='submit' class='deactivate-btn'>Terminate</button>
                 </form>

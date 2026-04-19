@@ -4,7 +4,7 @@ require '../../php/db_connect.php';
 session_start();
 
 if (!isset($_SESSION['user_id'])) {
-    header("Location: ../../role.html");
+    header("Location: ../../role");
     exit;
 } 
 
@@ -172,32 +172,32 @@ $most_dispensed_quantity = current($medicine_counts);
 		</a>
 		<ul class="side-menu top">
 			<li>
-				<a href="../dashboard.html">
+				<a href="../dashboard">
 					<i class="bx bxs-dashboard"></i>
 					<span class="text">Dashboard</span>
 				</a>
 			</li>
 			<li>
-				<a href= "../ITR.html">
+				<a href="../ITR">
 					<i class="bx bxs-notepad"></i>
 					<span class="text">Add ITR</span>
 				</a>
 			</li>
 			<li>
-				<a href="../searchPatient.html">
+				<a href="../searchPatient">
 					<i class="bx bxs-search"></i>
 					<span class="text">Patient Records</span>
 				</a>
 			</li>
 
 			<li>
-				<a href="../History.html">
+				<a href="../History">
 					<i class="bx bx-history"></i>
 					<span class="text">Referral History</span>
 				</a>
 			</li>
             <li class="active">
-				<a href="../reports.html">
+				<a href="../reports">
 					<i class="bx bx-notepad"></i>
 					<span class="text">Reports</span>
 				</a>
@@ -205,7 +205,7 @@ $most_dispensed_quantity = current($medicine_counts);
 		</ul>
 		<ul class="side-menu">
 			<li>
-				<a href="../../role.html" class="logout" onclick="return confirmLogout()">
+				<a href="../../role" class="logout" onclick="return confirmLogout()">
 					<i class="bx bxs-log-out-circle"></i>
 					<span class="text">Logout</span>
 				</a>
@@ -1587,7 +1587,7 @@ function closeModal() {
 }
 
 function proceedLogout() {
-    window.location.href = '../../ADMIN/php/logout.php'; 
+    window.location.href='../../ADMIN/php/logout'; 
 }
 
 // Close modal when clicking outside

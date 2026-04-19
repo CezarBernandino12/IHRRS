@@ -5,7 +5,7 @@ session_start();
 // Check if user is logged in and has admin role
 if (!isset($_SESSION['user_id']) || !isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
     session_destroy();
-    header("Location: ../../role.html");
+    header("Location: ../../role");
     exit();
 }
 
@@ -16,7 +16,7 @@ $end_date = isset($_GET['end_date']) ? $_GET['end_date'] : date('Y-m-d');
 // Fetch daily active users for the selected date range
 $activeUsersQuery = "SELECT DATE(timestamp) AS log_date, COUNT(DISTINCT performed_by) AS active_users 
                      FROM logs 
-                     WHERE action = 'Successful Login' AND DATE(timestamp) BETWEEN :start_date AND :end_date
+                     WHERE action='Successful Login' AND DATE(timestamp) BETWEEN :start_date AND :end_date
                      GROUP BY log_date 
                      ORDER BY log_date ASC";
 
@@ -60,7 +60,7 @@ $totalPages = ceil($totalCommonActions / $limit);
 // Today's Active Users
 $todayUsersQuery = "SELECT COUNT(DISTINCT performed_by) AS today_users 
                     FROM logs 
-                    WHERE action = 'Successful Login' AND DATE(timestamp) = CURDATE()";
+                    WHERE action='Successful Login' AND DATE(timestamp) = CURDATE()";
 $todayUsersStmt = $pdo->prepare($todayUsersQuery); 
 $todayUsersStmt->execute();
 $todayUsers = $todayUsersStmt->fetch(PDO::FETCH_ASSOC)['today_users'];
@@ -329,25 +329,25 @@ $totalActions = array_sum(array_column($commonActions, 'count'));
         </a>
         <ul class="side-menu top">
             <li>
-                <a href="../php/admin_dashboard2.php">
+                <a href="../php/admin_dashboard2">
                     <i class="bx bxs-dashboard"></i>
                     <span class="text">Dashboard</span>
                 </a>
             </li>
             <li>
-                <a href="../php/activity_logs.php">
+                <a href="../php/activity_logs">
                     <i class="bx bxs-user"></i>
                     <span class="text">Activity Logs</span>
                 </a>
             </li>
             <li>
-                <a href="../php/admin_user.php">
+                <a href="../php/admin_user">
                     <i class="bx bxs-notepad"></i>
                     <span class="text">User management</span>
                 </a>
             </li>
             <li class="active">
-                <a href="../reports.html">
+                <a href="../reports">
                     <i class="bx bxs-report"></i>
                     <span class="text">Reports</span>
                 </a>
@@ -384,7 +384,7 @@ $totalActions = array_sum(array_column($commonActions, 'count'));
                   <ul class="breadcrumb">
                     <li><a href="#">Audit Log Reports</a></li>
                     <li><i class="bx bx-chevron-right"></i></li>
-                    <li><a class="active" href="../reports.html">Go back</a></li>
+                    <li><a class="active" href="../reports">Go back</a></li>
                   </ul>
                 </div>
               </div>
@@ -708,7 +708,7 @@ $totalActions = array_sum(array_column($commonActions, 'count'));
 
     if (startDate && endDate) {
         // Redirect to the correct file (admin_reports.php)
-        window.location.href = `admin_reports.php?start_date=${startDate}&end_date=${endDate}`;
+        window.location.href = `admin_reports?start_date=${startDate}&end_date=${endDate}`;
     } else {
         alert('Please select both start and end dates');
     }
@@ -811,7 +811,7 @@ function closeModal() {
 }
 
 function proceedLogout() {
-    window.location.href = '../php/logout.php'; 
+    window.location.href='../php/logout'; 
 }
 
 function confirmPrint() {

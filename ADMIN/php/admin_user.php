@@ -7,7 +7,7 @@ if (!isset($_SESSION['user_id']) || !isset($_SESSION['role']) || $_SESSION['role
     // Destroy any existing session data
     session_destroy();
     // Redirect to BHW login page
-    header("Location: ../../role.html");
+    header("Location: ../../role");
     exit();
 }
 
@@ -92,25 +92,25 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </a>
         <ul class="side-menu top">
             <li>
-                <a href="admin_dashboard2.php">
+                <a href="admin_dashboard2">
                     <i class="bx bxs-dashboard"></i>
                     <span class="text">Dashboard</span>
                 </a>
             </li>
             <li>
-                <a href="activity_logs.php">
+                <a href="activity_logs">
                     <i class="bx bxs-user"></i>
                     <span class="text">Activity Logs</span>
                 </a>
             </li>
             <li class="active">
-                <a href="admin_user.php">
+                <a href="admin_user">
                     <i class="bx bxs-notepad"></i>
                     <span class="text">User management</span>
                 </a>
             </li>
             <li>
-    <a href="../reports.html">
+    <a href="../reports">
      <i class="bx bxs-report"></i>
      <span class="text">Reports</span>
     </a>
@@ -229,7 +229,7 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
                                                             <!-- Only show if active -->
     <?php if ($user['account_status'] === 'active'): ?>
-        <form method="POST" action="terminated_user.php">
+        <form method="POST" action="terminated_user">
             <input type="hidden" name="user_id" value="<?php echo $user['user_id']; ?>">
 <button type="button" class="deactivate-btn" onclick="showTerminateModal(<?php echo $user['user_id']; ?>)">Terminate</button>
         </form>
@@ -308,7 +308,7 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <p style="font-size:18px; font-weight:bold; color:#856404; margin:0;"><i class="bx bx-phone"></i> <span id="userContactNumber"></span></p>
       </div>
 
-      <form id="resetPasswordForm" method="POST" action="reset_password.php">
+      <form id="resetPasswordForm" method="POST" action="reset_password">
         <input type="hidden" name="user_id" id="resetPasswordUserId">
         <div class="form-group">
           <label for="newPassword">New Password</label>
@@ -377,7 +377,7 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
                   <p>Are you sure you want to terminate this user?</p>
                 </div>
                 <div class="logout-modal-footer">
-                  <form id="terminateForm" method="POST" action="terminated_user.php" style="display:inline;">
+                  <form id="terminateForm" method="POST" action="terminated_user" style="display:inline;">
                     <input type="hidden" name="user_id" id="terminateUserId">
                     <button type="button" onclick="closeTerminateModal()" class="logout-cancel-btn">Cancel</button>
                     <button type="button" onclick="confirmTerminate()" class="logout-confirm-btn">Yes, Terminate</button>

@@ -13,7 +13,7 @@ document.getElementById('consentCheckbox').addEventListener('change', function (
   
   document.getElementById('declineBtn').addEventListener('click', function () {
 
-    window.location.href = "dashboard.html"; // or use history.back()
+    window.location.href="dashboard"; // or use history.back()
   });
   
 
@@ -332,7 +332,7 @@ if (viewDetailsButton) {
         }
 
         console.log("🔹 Redirecting to: details.html?referral_id=" + encodeURIComponent(referralId));
-        window.location.href = `details.html?referral_id=${encodeURIComponent(referralId)}`;
+        window.location.href = `details?referral_id=${encodeURIComponent(referralId)}`;
     });
 } else {
     console.warn("⚠️ Warning: viewDetailsButton not found in the DOM.");

@@ -5,7 +5,7 @@ require 'config.php';
 // Fetch daily active users for the last 7 days
 $activeUsersQuery = "SELECT DATE(timestamp) AS log_date, COUNT(DISTINCT user_id) AS active_users 
                      FROM logs 
-                     WHERE action = 'login' AND timestamp >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+                     WHERE action='login' AND timestamp >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
                      GROUP BY log_date 
                      ORDER BY log_date ASC";
 
@@ -29,7 +29,7 @@ $commonActions = $commonActionsStmt->fetchAll(PDO::FETCH_ASSOC);
 // Today's Active Users
 $todayUsersQuery = "SELECT COUNT(DISTINCT user_id) AS today_users 
                     FROM logs 
-                    WHERE action = 'login' AND DATE(timestamp) = CURDATE()";
+                    WHERE action='login' AND DATE(timestamp) = CURDATE()";
 $todayUsersStmt = $pdo->prepare($todayUsersQuery);
 $todayUsersStmt->execute();
 $todayUsers = $todayUsersStmt->fetch(PDO::FETCH_ASSOC)['today_users'];
@@ -64,25 +64,25 @@ $totalActions = array_sum(array_column($commonActions, 'count'));
         </a>
         <ul class="side-menu top">
             <li>
-                <a href="admin_dashboard2.php">
+                <a href="admin_dashboard2">
                     <i class="bx bxs-dashboard"></i>
                     <span class="text">Dashboard</span>
                 </a>
             </li>
             <li>
-                <a href="admin_approval.php">
+                <a href="admin_approval">
                     <i class="bx bxs-user"></i>
                     <span class="text">Approval & Logs</span>
                 </a>
             </li>
             <li>
-                <a href="admin_user.php">
+                <a href="admin_user">
                     <i class="bx bxs-notepad"></i>
                     <span class="text">User management</span>
                 </a>
             </li>
             <li class="active">
-                <a href="admin_reports.php">
+                <a href="admin_reports">
                     <i class="bx bxs-report"></i>
                     <span class="text">Reports</span>
                 </a>
@@ -90,7 +90,7 @@ $totalActions = array_sum(array_column($commonActions, 'count'));
         </ul>
         <ul class="side-menu">
             <li>
-                <a href="../../role.html" class="logout" onclick="return confirmLogout()">
+                <a href="../../role" class="logout" onclick="return confirmLogout()">
                     <i class="bx bxs-log-out-circle"></i>
                     <span class="text">Logout</span>
                 </a>

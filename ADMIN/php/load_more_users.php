@@ -96,7 +96,7 @@ foreach ($users as $user) {
                 ]) . '\'>View</button>';
     
     if ($user['account_status'] === 'active') {
-        $html .= '<form method="POST" action="terminated_user.php">
+        $html .= '<form method="POST" action="terminated_user">
                 <input type="hidden" name="user_id" value="' . $user['user_id'] . '">
                 <button type="submit" class="deactivate-btn" onclick="return confirm(\'Are you sure you want to terminate the account of this user?\')">Terminated</button>
             </form>

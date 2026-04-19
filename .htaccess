@@ -1,0 +1,28 @@
+Options -MultiViews
+DirectoryIndex index.html index.php
+RewriteEngine On
+RewriteBase /IHRRS/
+
+# Clean root aliases for auth pages
+RewriteRule ^role/?$ auth/role [L]
+RewriteRule ^adminlogin/?$ auth/adminlogin [L]
+RewriteRule ^doctorlogin/?$ auth/doctorlogin [L]
+RewriteRule ^BHWlogin/?$ auth/BHWlogin [L]
+RewriteRule ^NURSINGattendant/?$ auth/NURSINGattendant [L]
+
+# Redirect explicit .php or .html requests to clean URLs
+RewriteCond %{THE_REQUEST} \s/+IHRRS/(.+?)\.(php|html)([?\s]|$) [NC]
+RewriteRule ^ %1 [R=302,L,NE]
+
+# Do not rewrite real files or directories
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Extensionless -> existing .php file
+RewriteCond %{REQUEST_FILENAME}.php -f
+RewriteRule ^(.+?)/?$ $1.php [L]
+
+# Extensionless -> existing .html file
+RewriteCond %{REQUEST_FILENAME}.html -f
+RewriteRule ^(.+?)/?$ $1.html [L]

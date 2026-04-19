@@ -483,7 +483,7 @@ if (viewDetailsButton) {
         }
  
         console.log("🔹 Redirecting to: details.html?referral_id=" + encodeURIComponent(referralId));
-        window.location.href = `details.html?referral_id=${encodeURIComponent(referralId)}`;
+        window.location.href = `details?referral_id=${encodeURIComponent(referralId)}`;
     });
 } else {
     console.warn("⚠️ Warning: viewDetailsButton not found in the DOM.");
@@ -492,7 +492,7 @@ if (viewDetailsButton) {
 // Close modal4
 closeBtn4.addEventListener('click', function () {
     modal4.style.display = 'none';
-    window.location.href = `record.html?patient_id=${localStorage.getItem('patient_id')}`; // Redirect to patient records
+    window.location.href = `record?patient_id=${localStorage.getItem('patient_id')}`; // Redirect to patient records
   
 });
 

@@ -698,5 +698,5 @@ function closeModal() {
 }
 
 function proceedLogout() {
-    window.location.href = 'logout.php';
+    window.location.href='logout';
 }

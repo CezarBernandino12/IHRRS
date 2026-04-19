@@ -150,7 +150,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const editBtn = document.getElementById("editRecord");
     if (editBtn) {
         editBtn.onclick = () => {
-            window.location.href = `editRecord.html?visit_id=${visit_id}`;
+            window.location.href = `editRecord?visit_id=${visit_id}`;
         };
     }
 
@@ -181,7 +181,7 @@ if (addMedCertBtn) {
         const visitId = urlParams.get("visit_id"); // Get the visit_id from current page URL
 
         if (patientId && visitId) {
-            window.location.href = `addMedCert.html?patient_id=${patientId}&visit_id=${visitId}`;
+            window.location.href = `addMedCert?patient_id=${patientId}&visit_id=${visitId}`;
         } else {
             alert("Missing patient or visit information. Please try again.");
         }

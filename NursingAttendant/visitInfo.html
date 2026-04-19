@@ -26,13 +26,13 @@
         </a>
         <ul class="side-menu top">
             <li>
-				<a href="dashboard.html">
+				<a href="dashboard">
 					<i class="bx bxs-dashboard"></i>
 					<span class="text">Dashboard</span>
 				</a>
 			</li>
             <li>
-				<a href= "ITR.html">
+				<a href="ITR">
 					<i class="bx bxs-notepad"></i>
 					<span class="text">Add New ITR</span>
 				</a>
@@ -52,36 +52,36 @@
 				.then(response => response.json())
 				.then(data => {
 					console.log(data.message); // Log success message (optional)
-					window.location.href = "pending.html"; // Redirect after updating
+					window.location.href="pending"; // Redirect after updating
 				})
 				.catch(error => {
 					console.error("Error updating referrals:", error);
-					window.location.href = "pending.html"; // Still redirect even if an error occurs
+					window.location.href="pending"; // Still redirect even if an error occurs
 				});
 			});
 			</script>
 
             	<li>
-				<a href="followUpConsultations.html">
+				<a href="followUpConsultations">
 					<i class="bx bxs-user"></i>
 					<span class="text">Follow-Up Visits</span>
 				</a>
 			</li>
 			
 			<li  class="active">
-				<a href="searchPatient.html">
+				<a href="searchPatient">
 					<i class="bx bxs-search"></i>
 					<span class="text">Patient Records</span>
 				</a>
 			</li>
 			<li>
-                <a href="history.html">
+                <a href="history">
                     <i class="bx bx-history"></i>
                     <span class="text">Referral History</span>
                 </a>
             </li>
             <li>
-				<a href="reports.html">
+				<a href="reports">
 					<i class="bx bx-notepad"></i>
 					<span class="text">Reports</span>
 				</a>
@@ -572,7 +572,7 @@
         } catch (err) {
           console.error("Error updating referrals:", err);
         } finally {
-          window.location.href = "pending.html";
+          window.location.href="pending";
         }
       });
 
@@ -585,7 +585,7 @@
         document.getElementById('logoutModal').style.display = 'none';
       };
       window.proceedLogout = function () {
-        window.location.href = '../ADMIN/php/logout.php';
+        window.location.href='../ADMIN/php/logout';
       };
       window.addEventListener("click", (event) => {
         const modal = document.getElementById('logoutModal');
@@ -607,7 +607,7 @@
       // Auth check
       fetch('php/getUserId.php', { credentials: "same-origin" })
         .then(r => r.json())
-        .then(data => { if (data?.error) window.location.href = '../role.html'; })
+        .then(data => { if (data?.error) window.location.href='../auth/role'; })
         .catch(err => console.error('Error checking session:', err));
 
       // PRINT HANDLER

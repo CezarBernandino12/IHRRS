@@ -393,7 +393,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         dbg("🔹 Redirecting to: UpdateVisitInfo.html?visit_id=" + encodeURIComponent(visitId));
-        window.location.href = `UpdateVisitInfo.html?visit_id=${encodeURIComponent(visitId)}`;
+        window.location.href = `UpdateVisitInfo?visit_id=${encodeURIComponent(visitId)}`;
     });
 
     // Close modal4 (X)

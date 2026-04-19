@@ -7,7 +7,7 @@ if (!isset($_SESSION['user_id']) || !isset($_SESSION['role']) || $_SESSION['role
     // Destroy any existing session data
     session_destroy();
     // Redirect to login page
-    header("Location: ../../role.html");
+    header("Location: ../../role");
     exit();
 }
 
@@ -24,14 +24,14 @@ $stmt = $pdo->prepare("
     INNER JOIN (
         SELECT user_id, MAX(log_time) as login_time
         FROM user_logs
-        WHERE action = 'login' AND DATE(log_time) = :today
+        WHERE action='login' AND DATE(log_time) = :today
         GROUP BY user_id
     ) latest_login ON u.user_id = latest_login.user_id
     WHERE u.role IN ('bhw', 'doctor', 'nursing_attendant')
     AND NOT EXISTS (
         SELECT 1 FROM user_logs ul2
         WHERE ul2.user_id = latest_login.user_id
-        AND ul2.action = 'logout'
+        AND ul2.action='logout'
         AND ul2.log_time > latest_login.login_time
         AND DATE(ul2.log_time) = :today
     )
@@ -85,25 +85,25 @@ foreach ($users as &$user) {
         </a>
         <ul class="side-menu top">
             <li class="active">
-                <a href="admin_dashboard2.php">
+                <a href="admin_dashboard2">
                     <i class="bx bxs-dashboard"></i>
                     <span class="text">Dashboard</span>
                 </a>
             </li>
             <li> 
-                <a href="activity_logs.php">
+                <a href="activity_logs">
                     <i class="bx bxs-user"></i>
                     <span class="text">Activity Logs</span>
                 </a>
             </li>
             <li>
-                <a href="admin_user.php">
+                <a href="admin_user">
                     <i class="bx bxs-notepad"></i>
                     <span class="text">User management</span>
                 </a>
             </li>
             <li>
-                <a href="admin_reports.php">
+                <a href="admin_reports">
                     <i class="bx bxs-report"></i>
                     <span class="text">Reports</span>
                 </a>
@@ -128,7 +128,7 @@ foreach ($users as &$user) {
             <div class="greeting">
             </div>
 
-            <a href="profile.php" class="profile">
+            <a href="profile" class="profile">
             </a>
         </nav>
         <main>		
@@ -190,7 +190,7 @@ function closeModal() {
 }
 
 function proceedLogout() {
-    window.location.href = 'logout.php';
+    window.location.href='logout';
 }
 
 // Close modal when clicking outside

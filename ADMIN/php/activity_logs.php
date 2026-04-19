@@ -5,7 +5,7 @@ session_start();
 // Check if user is logged in and has admin role
 if (!isset($_SESSION['user_id']) || !isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
     session_destroy();
-    header("Location: ../../role.html");
+    header("Location: ../../role");
     exit();
 }
 
@@ -95,25 +95,25 @@ $logs = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </a>
         <ul class="side-menu top">
             <li>
-                <a href="admin_dashboard2.php">
+                <a href="admin_dashboard2">
                     <i class="bx bxs-dashboard"></i>
                     <span class="text">Dashboard</span>
                 </a>
             </li>
             <li class="active"> 
-                <a href="activity_logs.php">
+                <a href="activity_logs">
                     <i class="bx bxs-user"></i>
                     <span class="text">Activity Logs</span>
                 </a>
             </li>
             <li>
-                <a href="admin_user.php">
+                <a href="admin_user">
                     <i class="bx bxs-notepad"></i>
                     <span class="text">User management</span>
                 </a>
             </li>
             <li>
-                <a href="../reports.html">
+                <a href="../reports">
                     <i class="bx bxs-report"></i>
                     <span class="text">Reports</span>
                 </a>
@@ -322,7 +322,7 @@ $logs = $stmt->fetchAll(PDO::FETCH_ASSOC);
         }
 
         function proceedLogout() {
-            window.location.href = 'logout.php';
+            window.location.href='logout';
         }
 
         window.onclick = function(event) {

@@ -1,0 +1,15 @@
+Options -MultiViews
+DirectoryIndex index.html index.php
+RewriteEngine On
+
+# Redirect explicit .php or .html in this directory to extensionless URL
+RewriteCond %{THE_REQUEST} \s/+(.*/)?([^./\s]+)\.(php|html)([?\s]|$) [NC]
+RewriteRule ^([^./]+)\.(php|html)$ $1 [R=302,L,NE]
+
+# Extensionless -> existing local .php or .html file
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}.php -f
+RewriteRule ^([^./]+)/?$ $1.php [L]
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}.html -f
+RewriteRule ^([^./]+)/?$ $1.html [L]

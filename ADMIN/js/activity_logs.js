@@ -151,7 +151,7 @@ function closeLogoutModal() {
 }
 
 function proceedLogout() {
-    window.location.href = 'logout.php'; 
+    window.location.href='logout'; 
 }
 
 // Close modal when clicking outside
