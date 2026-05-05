@@ -1,21 +1,15 @@
- // THIS FILE IS FOR UPDATING BOTH PERSONAL AND VISIT INFORMATION
-
-
-
 document.addEventListener("DOMContentLoaded", function () {
     const form = document.querySelector("form");
     const submitBtn = document.getElementById("submitButton");
 
     const referralInput = document.querySelector('input[name="referral_status"]');
 
-    // Modals
     const modal1 = document.getElementById("myModal");
     const modal2 = document.getElementById("myModal2");
     const modal3 = document.getElementById("myModal3");
     const modal4 = document.getElementById("myModal4");
     const modal5 = document.getElementById("myModal5");
 
-    // Buttons inside modals
     const yesBtn = document.getElementById("yesButton");
     const noBtn = document.getElementById("noButton");
     const cancelBtn = document.getElementById("cancelBtn");
@@ -24,12 +18,10 @@ document.addEventListener("DOMContentLoaded", function () {
     const viewDetailsBtn = document.getElementById("viewDetailsButton");
     const exitBtn = document.getElementById("exitButton");
 
-    // Close buttons
     const closeBtns = document.querySelectorAll(".close-btn");
 
-    // Show modal1 on submit
     submitBtn.addEventListener("click", function (e) {
-        e.preventDefault(); // prevent form from submitting
+        e.preventDefault(); 
         modal2.style.display = "block";
     });
  
@@ -39,12 +31,11 @@ document.addEventListener("DOMContentLoaded", function () {
         referralInput.value = "not_referred";
         modal2.style.display = "none";
         modal5.style.display = "block";
-          // --- Your referral-saving logic starts here ---
+        
         const urlParams = new URLSearchParams(window.location.search);
         const visitId = urlParams.get('visit_id');
         console.log("Visit ID:", visitId);
     
-        // Set hidden input
         document.getElementById("visitIdField").value = visitId;
     
         const updatedData = {
@@ -126,22 +117,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
     });
 
-    // Modal3 View Details
     viewDetailsBtn.addEventListener("click", () => {
         modal3.style.display = "none";
-        // Redirect or show details (customize as needed)
         alert("Viewing Details...");
     });
 
 
-    // Close buttons for all modals
     closeBtns.forEach(btn => {
         btn.addEventListener("click", function () {
             btn.closest(".modal").style.display = "none";
         });
     });
 
-    // Optional: Close modals when clicking outside of them
     window.addEventListener("click", function (e) {
         document.querySelectorAll(".modal").forEach(modal => {
             if (e.target === modal) {
@@ -152,28 +139,12 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    // Function to get query parameter from URL
      function getQueryParam(param) {
         const urlParams = new URLSearchParams(window.location.search);
         return urlParams.get(param);
       }
       
-      
-      
-              
-        
-           
+
       
               document.getElementById("togglePersonalInfo").addEventListener("click", function () {
               const hiddenSection = document.getElementById("hiddenPersonalInfo");
@@ -195,26 +166,23 @@ document.addEventListener("DOMContentLoaded", function () {
           if (visit_id) {
           fetch(`php/get_visit_info.php?visit_id=${visit_id}`)
               .then(response => {
-                  // Check if the response is OK (status 200-299)
                   if (!response.ok) {
                       throw new Error(`HTTP error! Status: ${response.status} - ${response.statusText}`);
                   }
-                  return response.text(); // Get raw response as text first
+                  return response.text();
               })
               .then(responseText => {
-                  console.log("Raw response:", responseText); // Log raw response to debug
+                  console.log("Raw response:", responseText); 
       
                   try {
-                      // Try parsing the response as JSON
                       const data = JSON.parse(responseText);
-                      console.log("Received Data:", data); // ✅ Debugging
+                      console.log("Received Data:", data); 
       
                       if (!data || data.error) {
                           console.error("Error:", data.error || "No data received.");
                           return;
                       }
       
-                      // ✅ Populate Visit Information
                       if (data.visit) {
                           populateInput(".visit-date", data.visit.visit_date, "date");
                           populateInput(".patient-alert", data.visit.patient_alert);
@@ -228,7 +196,6 @@ document.addEventListener("DOMContentLoaded", function () {
                           populateInput(".remarks", data.visit.remarks);
                       }
       
-                      // ✅ Populate Patient Information
                       if (data.patient) {
                           populateInput(".patient-first-name", data.patient.first_name);
                           populateInput(".patient-last-name", data.patient.last_name);
@@ -237,7 +204,6 @@ document.addEventListener("DOMContentLoaded", function () {
                           populateInput(".patient-birth-place", data.patient.birthplace);
                           populateInput(".date-of-birth", data.patient.date_of_birth, "date");
       
-                          // Calculate age
                           const age = calculateAge(data.patient.date_of_birth);
                           populateInput(".age", age);
       
@@ -255,20 +221,16 @@ document.addEventListener("DOMContentLoaded", function () {
                           populateInput(".fourps-status", data.patient.fourps_status);
                       }
                   } catch (e) {
-                      // Error parsing JSON or unexpected response structure
                       console.error("Error parsing JSON:", e);
                       alert("Response was not valid JSON. See console for details.");
                   }
               })
               .catch(error => {
-                  // Catch network errors or other unexpected issues
                   console.error("Error fetching visit info:", error);
                   alert("An error occurred while fetching the visit info. See console for details.");
               });
       }
       
-      
-          // ✅ Function to update input values
           function populateInput(selector, value, type = "text") {
               const element = document.querySelector(selector);
               if (element) {
@@ -303,10 +265,6 @@ document.addEventListener("DOMContentLoaded", function () {
       
               return age >= 0 ? age : "N/A";
           }
-      
-        // ✅ Save Button Functionality
-
-      
       
       });
       

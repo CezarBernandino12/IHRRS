@@ -1,6 +1,6 @@
 <?php 
-require '../../php/db_connect.php'; // Ensure this file correctly initializes $pdo
-require '../../ADMIN/php/log_functions.php'; // Include the logging functions
+require '../../php/db_connect.php'; 
+require '../../ADMIN/php/log_functions.php'; 
 
 ob_start(); 
 header('Content-Type: application/json');
@@ -77,17 +77,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             exit;
         }
         
-        // Determine patient ID
         $patient_id = null;
-        $is_new_patient = false; // Track if this is a new patient
+        $is_new_patient = false;
 
         if (!empty($_POST['existing_patient_id'])) {
             $patient_id = clean_input($_POST['existing_patient_id']);
             error_log("✅ Using existing patient ID: " . $patient_id);
         } else {
-            // Insert a new patient
             error_log("🆕 Creating a new patient...");
-            $is_new_patient = true; // Mark as new patient
+            $is_new_patient = true; 
 
             $stmt_patient = $pdo->prepare("INSERT INTO patients (
                 first_name, middle_name, last_name, extension, family_serial_no, date_of_birth, age, 
@@ -125,7 +123,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             error_log("🆕 New patient ID assigned: " . $patient_id);
         }
 
-        // Ensure patient_id is set
         if (empty($patient_id)) {
             error_log("❌ Error: Patient ID is missing.");
             echo json_encode(["status" => "error", "message" => "Error: Patient ID is missing. Unable to proceed."]);
@@ -188,7 +185,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             ':visit_id' => $visit_id,
         ]);
 
-        // Track if medicine was dispensed
         $medicine_dispensed = false;
 
         if (!empty($_POST['medicine_given']) && is_array($_POST['medicine_given'])) {
@@ -209,13 +205,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         ':quantity_dispensed' => $quantity_dispensed,
                         ':dispensed_by' => $user_id
                     ]);
-                    $medicine_dispensed = true; // Mark that medicine was dispensed
+                    $medicine_dispensed = true;
                 }
             }
         }
 
         $referral_id = null;
-        $referral_created = false; // Track if referral was created
+        $referral_created = false; 
         error_log("Referral Needed Value: " . $referralNeeded);
 
         if ($referralNeeded === "yes" && !empty($patient_id) && !empty($user_id)) {
@@ -233,11 +229,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             ]);
     
             $referral_id = $pdo->lastInsertId();
-            $referral_created = true; // Mark that referral was created
+            $referral_created = true; 
             error_log("✅ Referral saved with ID: " . $referral_id);
 
-
-               // 🔹 update treatment in patient_assessment to Referred
 
             if ($referral_id) {
                    
@@ -261,7 +255,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             error_log("⚠️ Skipping referral: referralNeeded is not 'yes' or missing patient/user ID.");
         }
 
-        // 📝 LOG ACTIVITY: Added New Patient (only if new)
         if ($is_new_patient) {
             if ($referralNeeded === "yes" && !empty($referral_id)) {
                 logActivity($pdo, $user_id, "Added New Patient Records with Referral to the RHU");
@@ -270,7 +263,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
         }
 
-        // 📝 LOG ACTIVITY: Dispensed Medicine
         if ($medicine_dispensed) {
             logActivity($pdo, $user_id, "Dispensed Medicine to Patient");
         }

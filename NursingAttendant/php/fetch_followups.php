@@ -15,9 +15,6 @@ try {
     ORDER BY f.date DESC
 ");
 
-
-
-    
     $stmt->execute();
     $followups = $stmt->fetchAll(PDO::FETCH_ASSOC);
 

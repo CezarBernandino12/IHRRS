@@ -2,7 +2,6 @@
 require '../../php/db_connect.php';
 
 try {
-    // Get patient_id from URL parameter
     $patient_id = isset($_GET['patient_id']) ? $_GET['patient_id'] : null;
 
     if (!$patient_id) {
@@ -10,7 +9,7 @@ try {
         exit;
     }
 
-    // --- Query 1: Medical Certificates ---
+    // 1: Medical Certificates ---
     $stmt1 = $pdo->prepare("
         SELECT 
             mc.medcert_id,
@@ -29,7 +28,7 @@ try {
     $stmt1->execute([':patient_id' => $patient_id]);
     $medical_certificates = $stmt1->fetchAll(PDO::FETCH_ASSOC);
 
-    // --- Query 2: Prescriptions ---
+    //2: Prescriptions ---
     $stmt2 = $pdo->prepare("
   SELECT 
     r.consultation_id,
@@ -53,7 +52,7 @@ ORDER BY issuance_date DESC;
     $stmt2->execute([':patient_id' => $patient_id]);
     $prescriptions = $stmt2->fetchAll(PDO::FETCH_ASSOC);
 
-    // Return both sets in one JSON object
+
     echo json_encode([
         'medical_certificates' => $medical_certificates,
         'prescriptions' => $prescriptions

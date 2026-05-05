@@ -1,9 +1,8 @@
 <?php
 session_start();
-require '../../php/db_connect.php'; // Adjust path as needed
+require '../../php/db_connect.php'; 
 header('Content-Type: application/json');
 
-// Check if value and category are set
 if (!isset($_POST['category']) || !isset($_POST['value'])) {
     echo json_encode(['success' => false, 'message' => 'Invalid input']);
     exit;
@@ -12,7 +11,6 @@ if (!isset($_POST['category']) || !isset($_POST['value'])) {
 $category = $_POST['category'];
 $value = trim($_POST['value']);
 
-// If category is "address", replace it with the user's barangay
 if ($category === 'address') {
     if (!isset($_SESSION['user_id'])) {
         echo json_encode(['success' => false, 'message' => 'Not logged in']);
@@ -29,10 +27,9 @@ if ($category === 'address') {
         exit;
     }
 
-    $category = $row['barangay']; // Use barangay as category for address
+    $category = $row['barangay'];
 }
 
-// Check for duplicates
 $stmt = $pdo->prepare("SELECT COUNT(*) FROM custom_options WHERE category = ? AND value = ?");
 $stmt->execute([$category, $value]);
 $count = $stmt->fetchColumn();

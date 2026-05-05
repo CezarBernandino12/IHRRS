@@ -27,9 +27,7 @@ if (!$patient_id) {
 }
 
 try {
-    //  FIXED: Query patient_assessment table (NOT rhu_consultations)
     if (isset($pdo)) {
-        // PDO version
         $sql = "SELECT 
                     pa.visit_id,
                     pa.visit_date,
@@ -46,7 +44,6 @@ try {
         $visits = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     } elseif (isset($conn)) {
-        // MySQLi version
         $sql = "SELECT 
                     pa.visit_id,
                     pa.visit_date,
@@ -86,7 +83,6 @@ try {
         exit;
     }
 
-    // Format the response
     $formatted_visits = [];
     foreach ($visits as $visit) {
         $formatted_visits[] = [

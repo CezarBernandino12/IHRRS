@@ -9,9 +9,8 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 
-$userId = $_SESSION['user_id']; // logged-in user ID
+$userId = $_SESSION['user_id']; 
 
-// Fetch user info
 $stmt = $pdo->prepare("SELECT full_name, rhu FROM users WHERE user_id = ?");
 $stmt->execute([$userId]);
 $user = $stmt->fetch();
@@ -19,7 +18,6 @@ $user = $stmt->fetch();
 $rhu = $user ? $user['rhu'] : 'N/A';
 $username = $user ? $user['full_name'] : 'N/A';
 
-// Initialize filters
 $from_date = $_GET['from_date'] ?? '';
 $to_date = $_GET['to_date'] ?? '';
 $sex = $_GET['sex'] ?? '';
@@ -29,14 +27,13 @@ $diagnosis = isset($_GET['diagnosis']) ? (array)$_GET['diagnosis'] : [];
 $diagnosis_status = $_GET['diagnosis_status'] ?? '';
 $barangay = $_GET['barangay'] ?? '';
 
-// Build query with filters
 $sql = "SELECT r.*, p.first_name, p.last_name, p.age, p.sex, p.address
         FROM rhu_consultations r
         JOIN patients p ON r.patient_id = p.patient_id
         JOIN users u_rec ON r.recorded_by = u_rec.user_id
-        WHERE u_rec.rhu = :rhu";  // Only show consultations from same RHU
+        WHERE u_rec.rhu = :rhu"; 
 
-$params['rhu'] = $rhu;// First parameter is the current user's RHU
+$params['rhu'] = $rhu;
 
 
 if (!empty($from_date) && !empty($to_date)) {
@@ -66,7 +63,6 @@ if (!empty($diagnosis)) {
         $placeholders[] = "r.diagnosis LIKE $ph";
         $params["diagnosis_$i"] = '%' . $diag . '%';
     }
-    // Join with OR so it matches any selected diagnosis
     $sql .= " AND (" . implode(" OR ", $placeholders) . ")";
 }
 if (!empty($diagnosis_status)) {
@@ -89,8 +85,6 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $visits = $stmt->fetchAll();
 
-
-        //ADDED GENERATED REPORT FOR ACTIVITY LOG
         $stmt_log = $pdo->prepare("INSERT INTO logs (
             user_id, action, performed_by
         ) VALUES (
@@ -163,17 +157,17 @@ $visits = $stmt->fetchAll();
 			
 			<script>
 			document.getElementById("updateReferrals").addEventListener("click", function (event) {
-				event.preventDefault(); // Prevent default navigation
+				event.preventDefault(); 
 			
-				fetch("../php/update_referrals.php") // Call PHP file
+				fetch("../php/update_referrals.php")
 				.then(response => response.json())
 				.then(data => {
-					console.log(data.message); // Log success message (optional)
-					window.location.href="../pending"; // Redirect after updating
+					console.log(data.message); 
+					window.location.href="../pending"; 
 				})
 				.catch(error => {
 					console.error("Error updating referrals:", error);
-					window.location.href="../pending"; // Still redirect even if an error occurs
+					window.location.href="../pending"; 
 				});
 			});
 			</script>
@@ -266,7 +260,6 @@ $visits = $stmt->fetchAll();
         <h3 style="margin-bottom: 10px;"><i class="bx bx-filter-alt"></i> Selected Filters:</h3>
         <div id="filterTags" style="display: flex; flex-wrap: wrap; gap: 8px;">
             <?php
-            // Helper for tag rendering
             function renderTag($label, $param, $value) {
                 $display = htmlspecialchars($label . ': ' . $value);
                 $url = $_GET;
@@ -278,7 +271,6 @@ $visits = $stmt->fetchAll();
                 echo '</span>';
             }
 
-            // Render tags for each filter if set
             if ($from_date) renderTag('From', 'from_date', $from_date);
             if ($to_date) renderTag('To', 'to_date', $to_date);
           if ($diagnosis) {
@@ -297,7 +289,7 @@ $visits = $stmt->fetchAll();
             if ($purok) renderTag('Barangay', 'purok', $purok);
             if ($diagnosis_status) renderTag('Status', 'diagnosis_status', $diagnosis_status);
      
-            // If no filters, show "All"
+          
             if (
                 !$from_date && !$to_date && !$sex && !$age_group &&
                 !$purok && !$diagnosis_status && !$diagnosis
@@ -354,7 +346,6 @@ $visits = $stmt->fetchAll();
                             <select name="purok" id="purok" class="form-control">
                                 <option value="">All</option>
                                 <?php
-                                // Fetch distinct barangay names from custom_options
                                 $barangay_stmt = $pdo->prepare("SELECT DISTINCT category FROM custom_options WHERE category LIKE 'Barangay%' ORDER BY category");
                                 $barangay_stmt->execute();
                                 $selected_purok = $_GET['purok'] ?? '';

@@ -1,14 +1,13 @@
 <?php
-session_start(); // Add session_start at the top
+session_start(); 
 require '../../php/db_connect.php';
-require '../../ADMIN/php/log_functions.php'; // Include logging functions
+require '../../ADMIN/php/log_functions.php'; 
 header('Content-Type: application/json');
 
 try {
     if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["referral_id"])) {
         $referral_id = $_POST["referral_id"];
         
-        // Get user_id from session
         $user_id = $_SESSION['user_id'] ?? null;
         
         if (!$user_id) {
@@ -16,7 +15,6 @@ try {
             exit;
         }
 
-        // Get patient_id from referral
         $stmt_get = $pdo->prepare("SELECT patient_id FROM referrals WHERE referral_id = :referral_id");
         $stmt_get->bindParam(":referral_id", $referral_id, PDO::PARAM_INT);
         $stmt_get->execute();
@@ -29,12 +27,10 @@ try {
         
         $patient_id = $referral['patient_id'];
 
-        // Update referral status
         $stmt = $pdo->prepare("UPDATE referrals SET referral_status = 'Canceled' WHERE referral_id = :referral_id");
         $stmt->bindParam(":referral_id", $referral_id, PDO::PARAM_INT);
 
         if ($stmt->execute()) {
-            // 🔹 LOG ACTIVITY: Cancelled Referral
             logActivity($pdo, $user_id, "Cancelled Referral");
             
             echo json_encode(["success" => true]);

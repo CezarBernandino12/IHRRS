@@ -15,8 +15,6 @@ try {
     ORDER BY r.referral_date DESC
 ");
 
-
-    
     $stmt->execute();
     $referrals = $stmt->fetchAll(PDO::FETCH_ASSOC);
 

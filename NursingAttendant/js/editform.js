@@ -1,7 +1,5 @@
  // THIS FILE IS FOR UPDATING BOTH PERSONAL AND VISIT INFORMATION
 
-
-
 document.addEventListener("DOMContentLoaded", function () {
 
     let user_id = null;
@@ -173,15 +171,7 @@ fetch('php/getUserId.php')
 });
 
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
     
     
     // Function to get query parameter from URL
@@ -191,13 +181,7 @@ fetch('php/getUserId.php')
       }
       
       
-      
-              
-        
-           
-      
- 
-      
+    
          document.addEventListener("DOMContentLoaded", function () {  
           const urlParams = new URLSearchParams(window.location.search);
           const visit_id = urlParams.get("visit_id");
@@ -222,7 +206,7 @@ fetch('php/getUserId.php')
                   return;
                 }
           
-                // ✅ Populate Visit Info
+              
                 if (data.visit) {
                   populateInput(".visit-date", data.visit.visit_date, "date");
                   populateInput(".patient-alert", data.visit.patient_alert);
@@ -236,33 +220,33 @@ fetch('php/getUserId.php')
                   populateInput(".remarks", data.visit.remarks);
                 }
           
-                // ✅ Populate Consultation Info
+                
                 if (data.consultation) {
                   populateInput(".diagnosis", data.consultation.diagnosis);
                   populateInput(".instructions", data.consultation.instruction_prescription);
                   populateInput(".follow-up-date", data.consultation.follow_up_date, "date");
                 }
           
-                // ✅ Populate RHU Medicines
+           
                 const container = document.getElementById("medicine-container");
                 const originalEntry = container.querySelector(".medicine-entry");
           
-                // Clear all but one template
+            
                 container.innerHTML = "";
           
                 if (Array.isArray(data.rhumedicine)) {
                   data.rhumedicine.forEach((med, index) => {
-                    // Clone the template structure
+                    
                     const entry = originalEntry.cloneNode(true);
                     entry.style.display = "flex";
           
-                    // Set medicine value
+               
                     const select = entry.querySelector(".medicine-given");
                     if (select) {
                       select.value = med.medicine_name || "";
                     }
           
-                    // Set quantity value
+                  
                     const qtyInput = entry.querySelector(".quantity-given");
                     if (qtyInput) {
                       qtyInput.value = med.quantity_dispensed || 0;
@@ -285,7 +269,6 @@ fetch('php/getUserId.php')
       }
       
       
-          // ✅ Function to update input values
           function populateInput(selector, value, type = "text") {
               const element = document.querySelector(selector);
               if (element) {
@@ -320,8 +303,6 @@ fetch('php/getUserId.php')
       
               return age >= 0 ? age : "N/A";
           }
-      
-        // ✅ Save Button Functionality
 
       
       

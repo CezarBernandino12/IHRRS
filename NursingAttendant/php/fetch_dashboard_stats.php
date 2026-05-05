@@ -6,7 +6,7 @@ header('Content-Type: application/json');
 $pdo->exec("SET time_zone = '+08:00'");
 
 try {
-    // Get current MySQL server date (now correctly in Manila time)
+    
     $date_stmt = $pdo->query("SELECT CURDATE()");
     $date = $date_stmt->fetchColumn();
 

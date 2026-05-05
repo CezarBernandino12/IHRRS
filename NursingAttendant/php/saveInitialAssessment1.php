@@ -5,7 +5,7 @@ ob_start();
 header('Content-Type: application/json');
 
 error_reporting(E_ALL);
-ini_set('display_errors', 0); // Set to 0 to prevent HTML error output
+ini_set('display_errors', 0); 
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     file_put_contents("logs.txt", json_encode($_POST) . PHP_EOL, FILE_APPEND);
@@ -83,7 +83,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         
         if ($visit_id) {
-            //ADDED PATIENT ASSESSMENT RECORD FOR ACTIVITY LOG
     $stmt_log2 = $pdo->prepare("INSERT INTO logs (
         user_id, action, performed_by, user_affected
     ) VALUES (
@@ -95,8 +94,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         ':performed_by' => $user_id,
         ':user_affected' => $patient_id
     ]);
-
-
 
         }
 

@@ -26,7 +26,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             return clean_input($data);
         }
 
-        // ✅ Required fields
         if (empty($_POST['user_id']) || empty($_POST['diagnosis']) || empty($_POST['visit_id'])) {
             echo json_encode(["status" => "error", "message" => "Missing required fields."]);
             exit;
@@ -40,7 +39,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $respiratory_rate = clean_input($_POST['respiratory_rate'] ?? '');
         $bmi = clean_input($_POST['bmi'] ?? '');
 
-        $old_visit_id = clean_input($_POST['visit_id']); // old ID (reference)
+        $old_visit_id = clean_input($_POST['visit_id']); 
         $user_id = clean_input($_POST['user_id']);
         $diagnosis = clean_input($_POST['diagnosis']);
         $status = clean_input($_POST['status']);
@@ -49,7 +48,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $followup = clean_input($_POST['followup']);
         $physician = clean_input($_POST['physician'] ?? '');
 
-        // 🔹 Get patient_id using old visit_id
+        
         $stmt_patient = $pdo->prepare("SELECT patient_id FROM rhu_consultations WHERE visit_id = :visit_id");
         $stmt_patient->execute([':visit_id' => $old_visit_id]);
         $patient = $stmt_patient->fetch(PDO::FETCH_ASSOC);
@@ -60,7 +59,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         $patient_id = $patient['patient_id'];
 
-        // 🔹 Step 1: Always create a NEW visit record in patient_assessment
         $stmt_assessment = $pdo->prepare("
             INSERT INTO patient_assessment 
             (patient_id, recorded_by, bmi, temperature, height, weight, blood_pressure, chest_rate, respiratory_rate, visit_date) 
@@ -78,10 +76,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             ':respiratory_rate' => $respiratory_rate
         ]);
  
-        // 🔹 This is the NEW visit_id you should use everywhere
         $new_visit_id = $pdo->lastInsertId();
 
-        // 🔹 Handle photo upload
         $photoPath = null;
         if (isset($_FILES['photo']) && $_FILES['photo']['error'] === UPLOAD_ERR_OK) {
             $photoTmp = $_FILES['photo']['tmp_name'];
@@ -116,9 +112,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $consultation_id = $pdo->lastInsertId();
 
-
-    //Update all related consultations for same patient & diagnosis
-
         $stmt_update_status = $pdo->prepare("
             UPDATE rhu_consultations
             SET diagnosis_status = :new_status
@@ -131,9 +124,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             ':diagnosis' => $diagnosis
         ]);
 
-
-
-        // 🔹 Insert follow-up
         if (!empty($followup)) {
             $stmt_followup = $pdo->prepare("
                 INSERT INTO follow_ups (consultation_id, date, set_by, followup_status, patient_id) 
@@ -147,15 +137,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 ':patient_id' => $patient_id
             ]);
         }
-
-        // 🔹 Update referral_status for OLD visit_id (not the new one)
         $stmt_update_referral = $pdo->prepare("
             UPDATE referrals SET referral_status = 'Completed' WHERE visit_id = :visit_id
         ");
         $stmt_update_referral->execute([':visit_id' => $old_visit_id]);
 
-
-        // ✅ IMPROVED: Track if medicines were dispensed
     $medicine_dispensed = false;
     if (!empty($_POST['medicine_given']) && is_array($_POST['medicine_given'])) {
         $_POST['medicine_given'] = clean_input_recursive($_POST['medicine_given']);
@@ -183,7 +169,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 
-    // Insert follow-up
     if (!empty($followup)) {
         $stmt_followup = $pdo->prepare("
             INSERT INTO follow_ups 
@@ -199,14 +184,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         ]);
     }
 
-   
 
-    // ✅ LOG: Dispensed Medicine (after transaction confirms it was saved)
     if ($medicine_dispensed) {
         logActivity($pdo, $user_id, "Dispensed Medicine to Patient (RHU)");
     }
 
-    // ✅ IMPROVED: Track if prescriptions were generated
     $prescriptionSaved = false;
     $medicines = array_filter($_POST['medicine_prescription'] ?? [], fn($m) => trim($m) !== '');
 

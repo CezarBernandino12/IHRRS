@@ -6,13 +6,13 @@ header('Content-Type: application/json');
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-// Validate visit_id
+
 if (!isset($_GET['visit_id']) || empty($_GET['visit_id'])) {
     echo json_encode(['error' => 'Missing visit_id']);
     exit;
 }
 
-$visit_id = (int) $_GET['visit_id']; // Ensure it's a valid integer
+$visit_id = (int) $_GET['visit_id']; 
 
 try { 
     // Fetch visit details
@@ -72,7 +72,6 @@ try {
         $rhumedicine['quantity_dispensed'] = $rhumedicine['quantity_dispensed'] ?? "0";
     }
 
-    // Final JSON output
     echo json_encode([
         'visit' => $visitInfo,
         'medicine' => $medicineInfo,

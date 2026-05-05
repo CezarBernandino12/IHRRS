@@ -1,5 +1,5 @@
 <?php 
-require '../../php/db_connect.php'; // Ensure this file correctly initializes $pdo
+require '../../php/db_connect.php'; 
 
 ob_start(); 
 header('Content-Type: application/json');
@@ -38,7 +38,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $family_serial_no = clean_input($_POST['familySerialNo'] ?? '');
         $dob = clean_input($_POST['dob']);
         $age = clean_input($_POST['age'] ?? '');
-        $sex = in_array($_POST['sex'], ['Male', 'Female']) ? $_POST['sex'] : null; // Ensure valid values
+        $sex = in_array($_POST['sex'], ['Male', 'Female']) ? $_POST['sex'] : null; 
         $civil_status = clean_input($_POST['civilStatus']);
         $address = clean_input($_POST['permanent_address']);
         $birthplace = clean_input($_POST['birthplace'] ?? '');
@@ -56,7 +56,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $existing_patient = $check_stmt->fetch(PDO::FETCH_ASSOC);
         
         if ($is_new_patient === 'true' || !$existing_patient) {
-            // Always insert a new patient when "is_new_patient" is true
             $stmt_patient = $pdo->prepare("INSERT INTO patients (
                 first_name, middle_name, last_name, family_serial_no, date_of_birth, age, 
                 sex, civil_status, address, birthplace, contact_number, 
@@ -88,7 +87,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         
             $patient_id = $pdo->lastInsertId();
         } else {
-            // If the patient exists and "is_new_patient" is NOT true, use the existing one
             $patient_id = $existing_patient['patient_id'];
         }
         

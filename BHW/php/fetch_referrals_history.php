@@ -6,7 +6,6 @@ try {
     $date = $_GET['date'] ?? '';
     $status = $_GET['status'] ?? 'All';
 
-    // Start session and get user ID
     session_start();
     $user_id = $_SESSION['user_id'] ?? null;
 
@@ -14,7 +13,6 @@ try {
         throw new Exception('User not logged in');
     }
 
-    // Get user's barangay
     $stmt_user = $pdo->prepare("SELECT barangay FROM users WHERE user_id = :user_id");
     $stmt_user->execute([':user_id' => $user_id]);
     $user_barangay = $stmt_user->fetchColumn();
@@ -23,7 +21,6 @@ try {
         throw new Exception('User barangay not found');
     }
 
-    // ✅ Base query (no WHERE yet)
     $query = "
         SELECT 
             r.visit_id,
@@ -44,7 +41,6 @@ try {
         WHERE u.barangay = :barangay
     ";
 
-    // ✅ Add dynamic filters
     $params = [':barangay' => $user_barangay];
     $conditions = [];
 
@@ -58,7 +54,6 @@ try {
         $params[':date'] = $date;
     }
 
-    // ✅ Append conditions properly using AND
     if (!empty($conditions)) {
         $query .= " AND " . implode(" AND ", $conditions);
     }
@@ -70,7 +65,6 @@ try {
 
     $referrals = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // Debugging: Fill missing visit_id
     foreach ($referrals as &$ref) {
         if (!isset($ref['visit_id'])) {
             $ref['visit_id'] = 'MISSING';

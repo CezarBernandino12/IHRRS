@@ -21,7 +21,6 @@ try {
 }
 
 try {
-    // Get form data
     $patient_id = $_POST['patient_id'] ?? null;
     $visit_id = $_POST['visit_id'] ?? null;
     $issuance_date = $_POST['issuance_date'] ?? null;
@@ -47,7 +46,7 @@ try {
     $prepared_by = $_POST['user_id'] ?? '';
     $issued_by = $_POST['physician'] ?? '';
 
-    // Validate required fields
+   
     if ($patient_id === 0 || $visit_id === 0 || empty($issuance_date) || empty($diagnosis)) {
         echo json_encode(['success' => false, 'message' => 'Missing required fields']);
         exit;
@@ -58,11 +57,9 @@ try {
     $rest_to_date = ($rest_to_date !== '') ? $rest_to_date : null;
 
     if (isset($pdo)) {
-        // 🔹 Generate control number (resets every year)
         $year = date('Y');
         $prefix = "MC-" . $year . "-";
 
-        // Find the latest number for this year only
         $stmt = $pdo->prepare("
             SELECT control_number 
             FROM medical_certificates 
@@ -77,13 +74,11 @@ try {
             $lastNum = intval(substr($lastControl, -6));
             $newNum = str_pad($lastNum + 1, 6, '0', STR_PAD_LEFT);
         } else {
-            // First certificate of the year
             $newNum = "000001";
         }
 
         $control_number = $prefix . $newNum;
 
-        // 🔹 Insert with control number and new fields
         $sql = "INSERT INTO medical_certificates (
             patient_id, visit_id, control_number, issuance_date, date_of_examination, 
             diagnosis, findings, fit_status, remarks, purpose,
@@ -103,7 +98,6 @@ try {
 
         $medcert_id = $pdo->lastInsertId();
 
-        //ADDED GENERATED MED CERT FOR ACTIVITY LOG
         if ($medcert_id) {
             $stmt_log = $pdo->prepare("
                 INSERT INTO logs (user_id, action, performed_by, user_affected)

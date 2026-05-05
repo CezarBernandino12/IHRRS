@@ -2,13 +2,11 @@
 session_start();
 header('Content-Type: application/json');
 
-// Check if user is logged in
 if (!isset($_SESSION['user_id'])) {
     echo json_encode(['error' => 'Not authenticated']);
     exit;
 }
 
-// Database connection
 require '../../php/db_connect.php';
 
 $patient_id = $_GET['patient_id'] ?? null;
@@ -19,7 +17,7 @@ if (!$patient_id) {
 }
 
 try {
-    // Get all medical certificates for this patient
+    // Get all medical certificates for the patient
     $sql = "SELECT 
                 mc.medcert_id,
                 mc.issuance_date,

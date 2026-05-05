@@ -10,13 +10,10 @@ header('Content-Type: application/json');
 
 $log_file = "../../logs/debug.log";
 
-// Read and decode input
 $input = json_decode(file_get_contents('php://input'), true);
 
-// Log the raw input
 file_put_contents($log_file, "[RAW INPUT] " . print_r($input, true) . "\n", FILE_APPEND);
 
-// === REQUIRED FIELDS VALIDATION ===
 $requiredFields = [
     'patient_id',
     'first_name',
@@ -29,7 +26,7 @@ $requiredFields = [
 $missingFields = [];
 foreach ($requiredFields as $field) {
     $value = isset($input[$field]) ? trim((string)$input[$field]) : '';
-    if ($value === '' || $value === 'N/A' || $value === null) {  // Allow empty for optional fields
+    if ($value === '' || $value === 'N/A' || $value === null) {  
         $missingFields[] = $field;
     }
 }
@@ -40,12 +37,11 @@ if (!empty($missingFields)) {
     echo json_encode([
         'success' => false,
         'error' => 'Missing required fields: ' . implode(', ', $missingFields),
-        'debug' => $input  // Return the input for debugging
+        'debug' => $input  
     ]);
     exit;
 }
 
-// Get user_id from session
 $user_id = $_SESSION['user_id'] ?? null;
 
 if (!$user_id) {
@@ -66,7 +62,6 @@ file_put_contents($log_file, "[USER_ID] " . $user_id . "\n", FILE_APPEND);
 try {
     $pdo->beginTransaction();
 
-    // Check if patient exists
     $stmt = $pdo->prepare("SELECT patient_id FROM patients WHERE patient_id = :patient_id");
     $stmt->execute(['patient_id' => $patient_id]);
     $patient = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -83,7 +78,6 @@ try {
 
     file_put_contents($log_file, "[SUCCESS] Patient found, updating...\n", FILE_APPEND);
 
-    // Prepare update query
     $stmt = $pdo->prepare("
         UPDATE patients SET 
             first_name = :first_name,

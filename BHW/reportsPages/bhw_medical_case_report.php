@@ -1,5 +1,4 @@
 <?php
-// Connect to DB
 require '../../php/db_connect.php';
 session_start();
 
@@ -8,9 +7,8 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 } 
 
-$userId = $_SESSION['user_id'];// or however you store the logged-in user's ID
+$userId = $_SESSION['user_id'];
 
-// Fetch user info
 $stmt = $pdo->prepare("SELECT barangay FROM users WHERE user_id = ?");
 $stmt->execute([$userId]);
 $user = $stmt->fetch();
@@ -18,24 +16,21 @@ $user = $stmt->fetch();
 $barangayName = $user ? $user['barangay'] : 'N/A';
 
 
-
-// Initialize filters
 $from_date = $_GET['from_date'] ?? '';
 $to_date = $_GET['to_date'] ?? '';
 $sex = $_GET['sex'] ?? '';
 $age_group = $_GET['age_group'] ?? '';
-$purok = $_GET['purok'] ?? ''; // Use 'purok' for address filtering
+$purok = $_GET['purok'] ?? ''; 
 $diagnosis = $_GET['diagnosis'] ?? '';
 $diagnosis_status = $_GET['diagnosis_status'] ?? '';
 
 
-// Build query with filters
 $sql = "SELECT r.*, p.first_name, p.last_name, p.age, p.sex, p.address FROM rhu_consultations r 
         JOIN patients p ON r.patient_id = p.patient_id 
-        WHERE p.address LIKE :barangay"; // Always require barangay match
+        WHERE p.address LIKE :barangay"; 
 
 $params = [];
-$params['barangay'] = '%' . $barangayName . '%'; // Always set this param
+$params['barangay'] = '%' . $barangayName . '%'; 
 
 if (!empty($from_date) && !empty($to_date)) {
     $sql .= " AND DATE(r.consultation_date) BETWEEN :from_date AND :to_date";
@@ -75,12 +70,11 @@ if (!empty($diagnosis_status)) {
     $params['diagnosis_status'] = $diagnosis_status;
 }
 if (!empty($purok)) {
-    // Use 'purok' for address filtering
+  
     $sql .= " AND p.address LIKE :purok";
     $params['purok'] = '%' . $purok . '%';
 }
 
-// Add this condition to filter by barangay in address
 if (!empty($barangayName) && $barangayName !== 'N/A') {
     $sql .= " AND p.address LIKE :barangay";
     $params['barangay'] = '%' . $barangayName . '%';
@@ -212,7 +206,6 @@ $visits = $stmt->fetchAll();
         <h3 style="margin-bottom: 10px;"><i class="bx bx-filter-alt"></i> Selected Filters:</h3>
         <div id="filterTags" style="display: flex; flex-wrap: wrap; gap: 8px;">
             <?php
-            // Helper for tag rendering
             function renderTag($label, $param, $value) {
                 $display = htmlspecialchars($label . ': ' . $value);
                 $url = $_GET;
@@ -224,14 +217,13 @@ $visits = $stmt->fetchAll();
                 echo '</span>';
             }
 
-            // Render tags for each filter if set
 if ($from_date) {
-    $readable_from = date("F j, Y", strtotime($from_date)); // → "December 12, 2025"
+    $readable_from = date("F j, Y", strtotime($from_date)); 
     renderTag('From', 'from_date', $readable_from);
 }
 
 if ($to_date) {
-    $readable_to = date("F j, Y", strtotime($to_date)); // → "December 12, 2025"
+    $readable_to = date("F j, Y", strtotime($to_date)); 
     renderTag('To', 'to_date', $readable_to);
 }
 
@@ -251,7 +243,6 @@ if ($to_date) {
             if ($purok) renderTag('Barangay', 'purok', $purok);
             if ($diagnosis_status) renderTag('Status', 'diagnosis_status', $diagnosis_status);
      
-            // If no filters, show "All"
             if (
                 !$from_date && !$to_date && !$sex && !$age_group &&
                 !$purok && !$diagnosis_status && !$diagnosis
@@ -307,7 +298,7 @@ if ($to_date) {
                             <select name="purok" id="purok" class="form-control">
                                 <option value="">All</option>
                                <?php
-// Fetch distinct barangay addresses from patients
+
 $barangay_stmt = $pdo->prepare("
     SELECT DISTINCT address 
     FROM patients 
@@ -319,7 +310,7 @@ $barangay_stmt->execute([':barangayName' => "%$barangayName%"]);
 $selected_purok = $_GET['purok'] ?? '';
 
 while ($row = $barangay_stmt->fetch(PDO::FETCH_ASSOC)) {
-    $value = $row['address']; // ✅ use 'address' since that's what you selected
+    $value = $row['address']; 
     $selected = ($selected_purok === $value) ? 'selected' : '';
     echo "<option value=\"" . htmlspecialchars($value) . "\" $selected>" 
          . htmlspecialchars($value) . "</option>";
@@ -342,10 +333,8 @@ while ($row = $barangay_stmt->fetch(PDO::FETCH_ASSOC)) {
                         <label for="diagnosis">Diagnoses:</label>
                         <div id="medicine-checkboxes" style="max-height:150px;overflow-y:auto;border:1px solid #ccc;padding:8px;border-radius:6px;">
                             <?php
-                            // Fetch medicines for checkboxes
                             $diagnosis_stmt = $pdo->prepare("SELECT value FROM custom_options WHERE category = 'diagnosis' ");
                             $diagnosis_stmt->execute();
-                            // Support multiple selection from GET
                             $selected_diagnosis = isset($_GET['diagnosis']) ? (array)$_GET['diagnosis'] : [];
                             while ($row = $diagnosis_stmt->fetch()) {
                                 $value = $row['value'];
@@ -378,15 +367,11 @@ while ($row = $barangay_stmt->fetch(PDO::FETCH_ASSOC)) {
     </div>
 
     <script>
-    // Modal logic for filter
     document.getElementById('openFilterModal').onclick = function() {
         document.getElementById('filterModal').style.display = 'block';
     };
 
-    
-      // Initialize Flatpickr AFTER the modal is visible
     setTimeout(() => {
-        // Check if Flatpickr instances already exist, destroy them first
         const fromDateInput = document.getElementById('from_date');
         const toDateInput = document.getElementById('to_date');
         
@@ -397,7 +382,6 @@ while ($row = $barangay_stmt->fetch(PDO::FETCH_ASSOC)) {
             toDateInput._flatpickr.destroy();
         }
         
-        // Initialize Flatpickr on visible elements
         flatpickr("#from_date", {
             dateFormat: "Y-m-d",
             allowInput: true,
@@ -409,17 +393,16 @@ while ($row = $barangay_stmt->fetch(PDO::FETCH_ASSOC)) {
             allowInput: true,
             disableMobile: true
         });
-    }, 100); // Small delay to ensure modal is fully visible
+    }, 100);
 
     document.getElementById('closeFilterModal').onclick = function() {
         document.getElementById('filterModal').style.display = 'none';
     };
-    // Submit modal form
     document.getElementById('filterForm').onsubmit = function() {
         document.getElementById('filterModal').style.display = 'none';
-        return true; // allow form submit
+        return true; 
     };
-    // Close modal when clicking outside
+
     window.addEventListener('click', function(event) {
         var modal = document.getElementById('filterModal');
         if (event.target == modal) {
@@ -465,7 +448,7 @@ if ($from_date || $to_date) {
     $readable_from = $from_date ? date("F j, Y", strtotime($from_date)) : '';
     $readable_to   = $to_date ? date("F j, Y", strtotime($to_date)) : '';
 
-    // Combine them in a single display
+  
     $filters[] = "<strong>" . trim($readable_from . ($readable_to ? " — " . $readable_to : '')) . "</strong>";
 }
 
@@ -708,7 +691,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 chartElement.style.display = checkbox.checked ? "block" : "none";
             });
 
-            // Initialize state
             chartElement.style.display = checkbox.checked ? "block" : "none";
         }
     });
@@ -724,9 +706,9 @@ document.addEventListener("DOMContentLoaded", () => {
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     <?php
-    // Prepare disease frequency with unique patients across all dates
+
     $disease_dates = [];
-    $seen = []; // Track diagnosis+patient globally
+    $seen = [];
 
     foreach ($visits as $visit) {
         $diag = $visit['diagnosis'] ?? '';
@@ -734,26 +716,25 @@ document.addEventListener("DOMContentLoaded", () => {
         $patient = $visit['patient_id'] ?? null;
 
         if ($diag && $date && $patient) {
-            // Create unique key for this diagnosis+patient
             $key = "{$diag}_{$patient}";
 
-            // Skip if already counted (ensures deduplication across all dates)
+        
             if (isset($seen[$key])) {
                 continue;
             }
 
             $seen[$key] = true;
 
-            // Ensure structure
+           
             if (!isset($disease_dates[$diag])) $disease_dates[$diag] = [];
             if (!isset($disease_dates[$diag][$date])) $disease_dates[$diag][$date] = 0;
 
-            // Count unique patient on their first appearance only
+            
             $disease_dates[$diag][$date]++;
         }
     }
 
-    // Collect all unique dates
+   
     $all_dates = [];
     foreach ($disease_dates as $diag => $dates) {
         foreach ($dates as $date => $count) {

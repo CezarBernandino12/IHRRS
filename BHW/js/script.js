@@ -37,7 +37,7 @@ function calculateAge() {
 
     if (days < 0) {
         months--;
-        days += new Date(today.getFullYear(), today.getMonth(), 0).getDate(); // Days in previous month
+        days += new Date(today.getFullYear(), today.getMonth(), 0).getDate(); 
     }
 
     if (months < 0) {
@@ -49,7 +49,7 @@ function calculateAge() {
 
     if (years === 0) {
         ageText = `Age: ${months} month${months !== 1 ? 's' : ''} old`;
-        ageInput.value = `0.${months}`; // e.g., 0.6 for 6 months
+        ageInput.value = `0.${months}`;
     } else {
         ageText = `Age: ${years} year${years !== 1 ? 's' : ''} old`;
         ageInput.value = years;
@@ -58,11 +58,8 @@ function calculateAge() {
     ageDisplay.textContent = ageText;
 }
 
-//FOR SEARCHING PATIENT
 
 
-
-// COUNTING VALUE
 window.onload = function() {
     countToTarget(); 
     countProgressText(); 
@@ -84,7 +81,7 @@ function countToTarget() {
 function countProgressText() {
     const progressTextElements = document.querySelectorAll('.progress-text');
     progressTextElements.forEach(progressElement => {
-        let currentProgress = 0; // Start from 0
+        let currentProgress = 0; 
         const targetProgress = parseInt(progressElement.textContent); 
 
         function count() {
@@ -95,14 +92,11 @@ function countProgressText() {
             }
         }
 
-        count(); // Start counting for each progress text element
+        count(); 
     });
 }
 
 
-
-
-//MODAL
 var modal = document.getElementById("myModal");
 var btn = document.getElementById("openModal");
 var closeBtn = document.getElementById("closeBtn");

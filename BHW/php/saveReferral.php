@@ -33,9 +33,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             throw new Exception("Missing visit ID for this referral.");
         }
 
-
-        // 🔹 update treatment in patient_assessment to Referred
-
         if ($visit_id) {
     $stmt_treatment = $pdo->prepare("
         UPDATE patient_assessment
@@ -50,8 +47,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 
 
-
-        // 🔹 Insert into referrals with visit_id
         $stmt_referral = $pdo->prepare("
             INSERT INTO referrals (patient_id, visit_id, referred_by, referral_status, referral_date) 
             VALUES (:patient_id, :visit_id, :user_id, 'pending', NOW())
@@ -68,7 +63,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
         if ($referral_id) {
-            //ADDED REFERRAL FOR ACTIVITY LOG
     $stmt_log = $pdo->prepare("INSERT INTO logs (
         user_id, action, performed_by, user_affected
     ) VALUES (

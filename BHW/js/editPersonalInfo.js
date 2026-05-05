@@ -2,19 +2,16 @@ document.addEventListener("DOMContentLoaded", function () {
     const form = document.querySelector("form");
     const submitBtn = document.getElementById("submitButton");
 
-    // Modals
     const modal1 = document.getElementById("myModal");
     const modal2 = document.getElementById("myModal2");
     const modal3 = document.getElementById("myModal3");
 
-    // Buttons inside modals - with null checks
     const yesBtn = document.getElementById("yesButton");
     const cancelBtn = document.getElementById("cancelBtn");
     const closeBtn = document.getElementById("closeBtn");
     const closeBtn2 = document.getElementById("closeBtn2");
     const closeBtn3 = document.getElementById("closeBtn3");
 
-    // Add event listeners only if elements exist
     if (closeBtn) {
         closeBtn.addEventListener("click", () => {
             if (modal1) modal1.style.display = "none";
@@ -25,7 +22,7 @@ document.addEventListener("DOMContentLoaded", function () {
         closeBtn2.addEventListener("click", () => {
             const urlParams = new URLSearchParams(window.location.search);
             const patientId = urlParams.get('patient_id');
-            // Redirect to record.html with patient_id
+           
             window.location.href = `record?patient_id=${patientId}`;
         });
     }
@@ -36,7 +33,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // Show modal1 on submit
     if (submitBtn) {
         submitBtn.addEventListener("click", function (e) {
             e.preventDefault();
@@ -44,7 +40,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // Modal1 button actions
     if (yesBtn) {
         yesBtn.addEventListener("click", () => {
             if (modal1) modal1.style.display = "none";
@@ -58,17 +53,14 @@ document.addEventListener("DOMContentLoaded", function () {
                 return;
             }
 
-            // Set hidden input
             const patientIdField = document.getElementById("patientIdField");
             if (patientIdField) {
                 patientIdField.value = patientId;
             }
 
-            // Get sex value from radio buttons
             const sexRadio = document.querySelector('input[name="sex"]:checked');
             const sexValue = sexRadio ? sexRadio.value : "";
 
-            // Get 4ps value from radio buttons
             const fourpsRadio = document.querySelector('input[name="fourps_status"]:checked');
             const fourpsValue = fourpsRadio ? fourpsRadio.value : "";
 
@@ -94,7 +86,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 fourps_status: fourpsValue
             };
 
-            // Debug: Check all fields
             console.log("=== DEBUGGING DATA ===");
             console.log("Sex field value:", document.querySelector(".sex")?.value);
             console.log("Sex field element:", document.querySelector(".sex"));
@@ -118,7 +109,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 console.log("Update Response:", result);
                 if (result.success) {
                     if (modal2) modal2.style.display = "block";
-                    // Don't auto-refresh - let user close modal first
                 } else {
                     alert("Failed to update record: " + (result.error || "Ensure complete details."));
                     if (modal3) modal3.style.display = "block";
@@ -138,12 +128,10 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // Close modals when clicking outside of them
     window.addEventListener("click", function (e) {
         document.querySelectorAll(".modal").forEach(modal => {
             if (e.target === modal) {
                 modal.style.display = "none";
-                // If closing the success modal (modal2), redirect to record.html
                 if (modal === modal2) {
                     const urlParams = new URLSearchParams(window.location.search);
                     const patientId = urlParams.get('patient_id');
@@ -153,7 +141,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
-    // Load patient data
     const urlParams = new URLSearchParams(window.location.search);
     const patient_id = urlParams.get("patient_id");
 
@@ -173,7 +160,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     return;
                 }
 
-                // Populate Patient Information
                 if (data.patient) {
                     populateInput(".patient-first-name", data.patient.first_name);
                     populateInput(".patient-last-name", data.patient.last_name);
@@ -185,7 +171,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     const age = calculateAge(data.patient.date_of_birth);
                     populateInput(".age", age);
 
-                    // Populate address components
                     populateAddressFromFull(data.patient.address);
                     populateInput(".civil-status", data.patient.civil_status);
                     populateInput(".contact-number", data.patient.contact_number);
@@ -196,7 +181,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     populateInput(".philhealth-member-no", data.patient.philhealth_member_no);
                     populateInput(".category", data.patient.category);
                     populateInput(".family-serial-no", data.patient.family_serial_no);
-                    // Set radio buttons
+               
                     if (data.patient.sex) {
                         const sexRadio = document.querySelector(`input[name="sex"][value="${data.patient.sex}"]`);
                         if (sexRadio) sexRadio.checked = true;
@@ -235,7 +220,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     element.value = value;
                 } else if (value && value.toLowerCase() === "other") {
                     element.value = "Other";
-                    // Trigger change event to show the "Other" input field if needed
                     const event = new Event("change");
                     element.dispatchEvent(event);
                 }
@@ -244,20 +228,16 @@ document.addEventListener("DOMContentLoaded", function () {
     function populateAddressFromFull(fullAddress) {
         if (!fullAddress) return;
 
-        // Parse the full address (format: "Purok/Street, Barangay, City, Province, Region")
         const parts = fullAddress.split(",").map(p => p.trim());
         
-        // Set the street value
         if (parts.length >= 1) {
             const streetInput = document.getElementById("street");
             if (streetInput) {
                 streetInput.value = parts[0];
-                // Trigger input event to update the hidden field
                 streetInput.dispatchEvent(new Event('input'));
             }
         }
 
-        // Set the hidden field directly as well
         const hiddenField = document.getElementById("permanent_address_combined");
         if (hiddenField) {
             hiddenField.value = fullAddress;

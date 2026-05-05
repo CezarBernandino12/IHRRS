@@ -31,7 +31,6 @@ $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
 if ($results) { 
     foreach ($results as $row) {
 
-        // Format date of birth
         $dob = date("F j, Y", strtotime($row['date_of_birth']));
 
         echo '<div class="result-info-section">

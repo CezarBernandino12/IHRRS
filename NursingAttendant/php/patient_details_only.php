@@ -11,7 +11,6 @@ if (!$patient_id) {
 }
 
 try {
-    // ✅ Patient Info
     $stmt = $pdo->prepare("SELECT * FROM patients WHERE patient_id = ?");
     $stmt->execute([$patient_id]);
     $patient = $stmt->fetch(PDO::FETCH_ASSOC);

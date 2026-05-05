@@ -22,7 +22,6 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 });
 
-// Function to calculate age from date of birth
 function calculateAge(dob) {
     let birthDate = new Date(dob);
     let today = new Date();

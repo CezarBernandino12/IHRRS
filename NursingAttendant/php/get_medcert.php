@@ -7,7 +7,7 @@ header('Content-Type: application/json');
 ini_set('display_errors', 0);
 error_reporting(E_ALL);
 
-// Set content type first to ensure JSON response
+
 header('Content-Type: application/json; charset=UTF-8');
 
 if (!isset($_SESSION['user_id'])) {
@@ -30,7 +30,7 @@ if (!$medcert_id) {
 }
 
 try {
-    // FIXED: Use 'issued_by' not 'issued_by_user_id'
+  
     $sql = "SELECT  
         mc.*,
         p.first_name,
@@ -45,12 +45,12 @@ try {
         pa.visit_date,
         pa.chief_complaints,
 
-        -- Issuing physician details
+     
         issued_user.full_name AS issued_by,
         issued_user.license_number AS license_number,
         issued_user.rhu AS rhu,
 
-        -- Preparer details
+     
         prepared_user.full_name AS prepared_by
 
     FROM medical_certificates mc
@@ -65,13 +65,13 @@ try {
     WHERE mc.medcert_id = ?";
 
     if (isset($pdo)) {
-        // PDO version
+        
         $stmt = $pdo->prepare($sql);
         $stmt->execute([$medcert_id]);
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
     } elseif (isset($conn)) {
-        // MySQLi version
+      
         $stmt = $conn->prepare($sql);
         
         if (!$stmt) {
@@ -97,10 +97,10 @@ try {
     }
 
     if ($row) {
-        // Format patient name
+  
         $patient_name = trim($row['first_name'] . ' ' . ($row['middle_name'] ?? '') . ' ' . $row['last_name']);
         
-        // Calculate age if not set
+        
         if (!$row['age'] && $row['date_of_birth']) {
             $dob = new DateTime($row['date_of_birth']);
             $now = new DateTime();
@@ -149,11 +149,9 @@ try {
     }
 
 } catch (Exception $e) {
-    // Ensure we return valid JSON even for errors
     echo json_encode(['success' => false, 'message' => 'Database error: ' . $e->getMessage()]);
 }
 
-// Close MySQLi connection if it exists
 if (isset($conn)) {
     $conn->close();
 }

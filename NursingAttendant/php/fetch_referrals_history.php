@@ -7,7 +7,6 @@ try {
     $date = $_GET['date'] ?? '';
     $status = $_GET['status'] ?? '';
 
-    // Base SQL query
     $query = "
         SELECT r.referral_date, r.visit_id, 
                CONCAT(p.last_name, ', ', p.first_name, ' ', COALESCE(p.middle_name, '')) AS patient_name,
@@ -19,7 +18,6 @@ try {
         WHERE (r.referral_status = 'Completed' OR r.referral_status = 'Uncompleted')
     ";
 
-    // Parameters array
     $params = [];
 
     // Apply Date Filter

@@ -47,7 +47,6 @@ $physician = intval($physician);
     $consultation_date = date("Y-m-d");
     $followup = isset($_POST['followup']) ? clean_input($_POST['followup']) : null;
 
-    // Get patient_id
     $stmt_patient = $pdo->prepare("SELECT patient_id FROM patient_assessment WHERE visit_id = :visit_id");
     $stmt_patient->execute([':visit_id' => $visit_id]);
     $patient = $stmt_patient->fetch(PDO::FETCH_ASSOC);
@@ -57,8 +56,6 @@ $physician = intval($physician);
     }
 
     $patient_id = $patient['patient_id'];
-
-    // Handle photo upload
     $photoPath = null;
     if (isset($_FILES['photo']) && $_FILES['photo']['error'] === UPLOAD_ERR_OK) {
         $photoTmp = $_FILES['photo']['tmp_name'];
@@ -73,7 +70,6 @@ $physician = intval($physician);
         }
     }
 
-    // Insert into rhu_consultations
     $stmt_consultation = $pdo->prepare("
         INSERT INTO rhu_consultations 
         (patient_id, doctor_id, recorded_by, consultation_date, diagnosis, instruction_prescription, visit_id, lab_result_path, diagnosis_status, follow_up_date) 
@@ -100,7 +96,6 @@ $physician = intval($physician);
         logActivity($pdo, $user_id, "Added Diagnosis/Consultation Record");
     }
 
-    // Update related consultations if status not "Ongoing"
     if ($status !== 'Ongoing') {
         $stmt_update_status = $pdo->prepare("
             UPDATE rhu_consultations
@@ -116,7 +111,6 @@ $physician = intval($physician);
         ]);
     }
 
-    // ✅ IMPROVED: Track if medicines were dispensed
     $medicine_dispensed = false;
     if (!empty($_POST['medicine_given']) && is_array($_POST['medicine_given'])) {
         $_POST['medicine_given'] = clean_input_recursive($_POST['medicine_given']);
@@ -144,7 +138,6 @@ $physician = intval($physician);
         }
     }
 
-    // Insert follow-up
     if (!empty($followup)) {
         $stmt_followup = $pdo->prepare("
             INSERT INTO follow_ups 
@@ -160,7 +153,6 @@ $physician = intval($physician);
         ]);
     }
 
-    // Update referral status
     $stmt_update_referral = $pdo->prepare("
         UPDATE referrals 
         SET referral_status = 'Completed'
@@ -168,12 +160,10 @@ $physician = intval($physician);
     ");
     $stmt_update_referral->execute([':visit_id' => $visit_id]);
 
-    // ✅ LOG: Dispensed Medicine (after transaction confirms it was saved)
     if ($medicine_dispensed) {
         logActivity($pdo, $user_id, "Dispensed Medicine to Patient (RHU)");
     }
 
-    // ✅ IMPROVED: Track if prescriptions were generated
     $prescriptionSaved = false;
     $medicines = array_filter($_POST['medicine_prescription'] ?? [], fn($m) => trim($m) !== '');
 
@@ -216,7 +206,6 @@ $physician = intval($physician);
         logActivity($pdo, $user_id, "Generated Prescription");
     }
 
-    // Commit transaction
     $pdo->commit();
 
     http_response_code(200);

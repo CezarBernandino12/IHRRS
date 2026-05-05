@@ -14,9 +14,6 @@ try {
     AND DATE(f.date) = CURDATE()
     ORDER BY f.date DESC
 ");
-
-
-
     
     $stmt->execute();
     $followups = $stmt->fetchAll(PDO::FETCH_ASSOC);

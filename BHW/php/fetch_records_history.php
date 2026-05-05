@@ -4,7 +4,6 @@ header('Content-Type: application/json');
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
-// Get the current user's ID from the session
 session_start();
 if (!isset($_SESSION['user_id'])) {
     echo json_encode(['error' => 'User not logged in']);
@@ -15,7 +14,6 @@ $current_user_id = $_SESSION['user_id'];
 $search = isset($_GET['search']) ? $_GET['search'] : '';
 
 try {
-    // First get the barangay of the current user
     $stmt = $pdo->prepare("
         SELECT barangay 
         FROM users 
@@ -29,7 +27,6 @@ try {
         exit;
     }
 
-    // Now get the records filtered by barangay and search term
     $stmt = $pdo->prepare("
         SELECT 
             b.visit_date, b.visit_id,

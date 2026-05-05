@@ -8,30 +8,23 @@ header('Content-Type: application/json');
 
 $log_file = "../../logs/debug.log";
 
-// Read and decode input
 $input = json_decode(file_get_contents('php://input'), true);
 
-// Log the raw input to check what data is being sent
 file_put_contents($log_file, "[RAW INPUT] " . print_r($input, true) . "\n", FILE_APPEND);
 
-// Check if visit_id is provided and valid
-$visit_id = (int)$input['visit_id'];  // Ensure it's an integer
+$visit_id = (int)$input['visit_id'];  
 
 try {
-    // Start the transaction
     $pdo->beginTransaction();
 
-    // Check if the visit exists
     $stmt = $pdo->prepare("SELECT patient_id FROM patient_assessment WHERE visit_id = :visit_id");
     $stmt->execute(['visit_id' => $visit_id]);
     $visit = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    // If the visit doesn't exist, return an error
     if (!$visit) {
         throw new Exception('Visit not found');
     }
 
-    // Update visit info
     $stmt = $pdo->prepare("
         UPDATE patient_assessment SET 
             visit_date = :visit_date,
@@ -65,7 +58,6 @@ try {
 
     $patient_id = $visit['patient_id'];
 
-    // Update patient info
     $stmt = $pdo->prepare("
       UPDATE patients SET 
             first_name = :first_name,
@@ -112,15 +104,11 @@ try {
 
     $stmt->execute($patientParams);
 
-    // Insert referral info into referrals table
-// Check if referral already exists for the given visit
-// Check if referral already exists for the given visit
 $stmt = $pdo->prepare("SELECT COUNT(*) FROM referrals WHERE visit_id = :visit_id");
 $stmt->execute(['visit_id' => $visit_id]);
 $referralExists = $stmt->fetchColumn();
 
 if (!$referralExists) {
-    // Insert referral info into referrals table
     $stmt = $pdo->prepare("
         INSERT INTO referrals (patient_id, visit_id, referred_by, referral_status, referral_date)
         VALUES (:patient_id, :visit_id, :referred_by, 'pending', NOW())
@@ -134,11 +122,8 @@ if (!$referralExists) {
 }
 
 
-
-    // Commit the transaction
     $pdo->commit();
 
-    // Send success response
     ob_clean();
     echo json_encode([
         'success' => true,
@@ -148,7 +133,6 @@ if (!$referralExists) {
     exit;
 
 } catch (Exception $e) {
-    // Roll back the transaction if an error occurs
     $pdo->rollBack();
     error_log("Update Error: " . $e->getMessage(), 3, "../../logs/error.log");
     file_put_contents($log_file, "[EXCEPTION] " . $e->getMessage() . "\n", FILE_APPEND);

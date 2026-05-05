@@ -10,7 +10,6 @@ if (!isset($_SESSION['user_id'])) {
 
 $user_id = $_SESSION['user_id'];
 
-// Get user's barangay
 $stmt = $pdo->prepare("SELECT barangay FROM users WHERE user_id = ?");
 $stmt->execute([$user_id]);
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -22,12 +21,10 @@ if (!$user) {
 
 $barangay = ucwords(strtolower($user['barangay']));
 
-// Get puroks from custom_options
 $stmt = $pdo->prepare("SELECT value FROM custom_options WHERE category = ?");
 $stmt->execute([$barangay]);
 $puroks = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
-// Format to full address
 $addresses = array_map(function($purok) use ($barangay) {
     return "$purok";
 }, $puroks);

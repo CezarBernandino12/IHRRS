@@ -1,14 +1,13 @@
 <?php
-require 'db_connect.php'; // Ensure this file has the $pdo connection
+require 'db_connect.php'; // Ensure this file
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     try {
         // Start Transaction
         $pdo->beginTransaction();
 
-        // 1️⃣ Insert into `patients` table
-
-        //TEMPORARILY REMOVED AGE
+        // Insert into `patients` table
+        
         $stmt_patient = $pdo->prepare("INSERT INTO patients (
             first_name, middle_name, last_name, family_serial_no, date_of_birth, age, 
             sex, civil_status, address, birthplace, contact_number, 
@@ -41,7 +40,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Get the last inserted patient_id
         $patient_id = $pdo->lastInsertId();
 
-        // 2️⃣ Insert into `patient_assessment` table
+        // Insert into `patient_assessment` table
         $stmt_visit = $pdo->prepare("INSERT INTO patient_assessment (
             patient_id, recorded_by, visit_date, blood_pressure, temperature, weight, height, 
             pulse_rate, respiratory_rate, chief_complaints, remarks
@@ -67,7 +66,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Get the last inserted visit_id
         $visit_id = $pdo->lastInsertId();
 
-        // 3️⃣ Insert into `bhs_medicine_dispensed` table
+        // Insert into `bhs_medicine_dispensed` table
         if (!empty($_POST['medicine_given']) && !empty($_POST['quantity_given'])) {
             $stmt_medicine = $pdo->prepare("INSERT INTO bhs_medicine_dispensed (
                 visit_id, medicine_name, quantity_dispensed, dispensed_by, dispensed_date
@@ -83,12 +82,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             ]);
         }
 
-        // Commit the transaction
+        
         $pdo->commit();
 
         echo "Patient information, visit details, and medicines dispensed successfully saved!";
     } catch (PDOException $e) {
-        // Rollback if there's an error
+        
         $pdo->rollBack();
         echo "Error saving data: " . $e->getMessage();
     }

@@ -16,7 +16,6 @@ try {
     exit();
 }
 
-// Check if user is logged in
 if (!isset($_SESSION['user_id'])) {
     echo json_encode(['error' => 'Not logged in']);
     exit();
@@ -24,7 +23,6 @@ if (!isset($_SESSION['user_id'])) {
 
 $user_id = $_SESSION['user_id'];
 
-// Get the logged-in user's RHU
 $sql = "SELECT rhu FROM users WHERE user_id = ?";
 $stmt = $pdo->prepare($sql);
 $stmt->execute([$user_id]);
@@ -37,7 +35,6 @@ if (!$user) {
 
 $user_rhu = $user['rhu'];
 
-// Get all doctors from the same RHU
 $sql = "SELECT user_id, full_name, license_number 
         FROM users 
         WHERE role = 'doctor' 

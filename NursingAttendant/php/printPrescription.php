@@ -8,7 +8,6 @@ $typeParam = $_GET['type'] ?? 'all';
 $types = explode(',', $typeParam);
 
 try {
-    // ===== FETCH CONSULTATION + PATIENT INFO =====
 $stmt = $pdo->prepare("
     SELECT 
         CONCAT(p.first_name, ' ', p.last_name) AS patient_name,
@@ -33,9 +32,6 @@ $stmt = $pdo->prepare("
     $stmt->execute([':consultation_id' => $consultation_id]);
 $consultations = $stmt->fetchAll(PDO::FETCH_ASSOC);
 if (!$consultations) die("No record found.");
-
-
-    // ===== FETCH PRESCRIPTION DATA =====
   $stmt2 = $pdo->prepare("
     SELECT 
         pr.medicine_name, 
@@ -62,27 +58,27 @@ if (!$consultations) die("No record found.");
     <title>Consultation Record</title>
   <style>
    @page {
-    size: A6; /* default print size */
+    size: A6;
     margin: 5mm;
 }
 
 body {
     font-family: Arial, sans-serif;
-    font-size: 11px; /* optional, slightly smaller for A6 */
+    font-size: 11px; 
     margin: 0;
     padding: 0;
-    width: 105mm;  /* A6 width */
-    height: 148mm; /* A6 height */
+    width: 105mm; 
+    height: 148mm;
     box-sizing: border-box;
 }
 
 .quarter-page {
-    width: 100%;   /* fill body */
+    width: 100%;  
     height: 100%;
     padding: 6mm;
     box-sizing: border-box;
     position: relative;
-    border: 1px solid #ccc; /* remove if you don't want border in print */
+    border: 1px solid #ccc;
     overflow: hidden;
     page-break-after: always;
 }
@@ -146,7 +142,7 @@ body {
         height: 148mm;
     }
     .quarter-page {
-        border: none; /* remove border when printing */
+        border: none; 
         page-break-inside: avoid;
     }
 }
@@ -156,7 +152,6 @@ body {
 </head>
 <body onload="window.print()">
 
-<!-- ===== HEADER TEMPLATE ===== -->
 <?php
 function headerSection($prescription) { ?>
     <div class="header" style="text-align: center;">
@@ -171,7 +166,6 @@ function headerSection($prescription) { ?>
     </div>
 <?php } ?>
 
-<!-- ===== INSTRUCTION COPY (IF ALLOWED) ===== -->
 <?php if (in_array('instruction', $types) || in_array('all', $types)): ?>
 
 
@@ -223,7 +217,6 @@ function headerSection($prescription) { ?>
 <?php endif; ?>
 
 
-<!-- ===== PRESCRIPTION COPY (IF ALLOWED) ===== -->
 <?php if (!empty($prescriptions) && (in_array('prescription', $types) || in_array('all', $types))): ?>
  
      <div class="quarter-page">

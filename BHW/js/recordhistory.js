@@ -4,32 +4,29 @@ document.addEventListener('DOMContentLoaded', function () {
     let currentPage = 1;
     const recordsPerPage = 15;
 
-    // Fetch all records and store in memory
     fetch('php/fetch_records_history.php')
         .then(response => response.json())
         .then(data => {
             allData = data;
-            displayTable(data); // Initial display
-            setupPagination(data); // Setup pagination
+            displayTable(data);
+            setupPagination(data); 
         })
         .catch(error => {
             console.error('Error fetching visit data:', error);
         });
 
-    // Display records in table
     function displayTable(data) {
-        tableBody.innerHTML = ''; // Clear old data
+        tableBody.innerHTML = ''; 
         const startIndex = (currentPage - 1) * recordsPerPage;
         const endIndex = startIndex + recordsPerPage;
-        const paginatedData = data.slice(startIndex, endIndex); // Slice the data based on the current page
+        const paginatedData = data.slice(startIndex, endIndex); 
 
         if (paginatedData.length === 0) {
-            // Show "No record found." message if no records
             const tr = document.createElement('tr');
             const td = document.createElement('td');
-            td.colSpan = 3;  // Span across all columns
+            td.colSpan = 3; 
             td.textContent = 'No record found.';
-            td.style.textAlign = 'center';  // Center the message
+            td.style.textAlign = 'center';
             tableBody.appendChild(tr);
             tr.appendChild(td);
         } else {
@@ -49,11 +46,10 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // Set up pagination buttons
     function setupPagination(data) {
         const totalPages = Math.ceil(data.length / recordsPerPage);
         const paginationContainer = document.getElementById('pagination');
-        paginationContainer.innerHTML = ''; // Clear existing pagination
+        paginationContainer.innerHTML = ''; 
 
         const prevButton = document.createElement('a');
         prevButton.href='#';
@@ -96,7 +92,6 @@ document.addEventListener('DOMContentLoaded', function () {
         paginationContainer.appendChild(nextButton);
     }
 
-    // Update the active page in the pagination
     function updatePagination() {
         const pageButtons = document.querySelectorAll('.page-number');
         pageButtons.forEach(button => {
@@ -108,12 +103,10 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Filter button logic
     document.getElementById('applyFilter').addEventListener('click', () => {
         const selectedDate = document.getElementById('date').value;
         if (!selectedDate) return;
 
-        // Remove the time part from the stored visit_date (e.g., '2025-04-19 14:25:31' -> '2025-04-19')
         const filtered = allData.filter(row => row.visit_date.split(' ')[0] === selectedDate);
         
         displayTable(filtered);

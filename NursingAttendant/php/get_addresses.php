@@ -8,7 +8,6 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
-
 // Get puroks from custom_options
 $stmt = $pdo->prepare("SELECT value FROM custom_options WHERE category LIKE 'Barangay%'");
 $stmt->execute([]);

@@ -16,9 +16,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         $pdo->beginTransaction();
 
-        /* -----------------------------------------------------
-           Helpers
-        ----------------------------------------------------- */
         function clean($v) {
             return htmlspecialchars(trim($v), ENT_QUOTES, 'UTF-8');
         }
@@ -32,20 +29,16 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             }
         }
 
-        /* -----------------------------------------------------
-           Retrieve & Validate Basic POST Data
-        ----------------------------------------------------- */
+
         $referralNeeded = clean($_POST['referralNeeded'] ?? 'no');
 
-        // SET USER ID FIRST — VERY IMPORTANT
+    
         $user_id = isset($_POST['user_id']) ? intval($_POST['user_id']) : null;
 
-        // Required fields for patient record
+      
         required($_POST, ['firstName', 'lastName', 'dob', 'sex', 'civilStatus', 'permanent_address']);
 
-        /* -----------------------------------------------------
-           Collect Patient Fields
-        ----------------------------------------------------- */
+
         $first_name = clean($_POST['firstName']);
         $middle_name = clean($_POST['middleName'] ?? '');
         $last_name = clean($_POST['lastName']);
@@ -67,9 +60,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $four_ps = clean($_POST['4ps'] ?? '');
         $category = clean($_POST['category'] ?? '');
 
-        /* -----------------------------------------------------
-           Check for existing patient
-        ----------------------------------------------------- */
+
         $stmt = $pdo->prepare("SELECT patient_id 
                                FROM patients 
                                WHERE first_name = :fn AND last_name = :ln AND date_of_birth = :dob");
@@ -90,16 +81,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             exit;
         }
 
-        /* -----------------------------------------------------
-           Determine Patient ID (existing or new)
-        ----------------------------------------------------- */
         if (!empty($_POST['existing_patient_id'])) {
 
             $patient_id = intval($_POST['existing_patient_id']);
 
         } else {
 
-            // Insert new patient
             $stmt = $pdo->prepare("
                 INSERT INTO patients (
                     first_name, middle_name, last_name, extension, family_serial_no,
@@ -138,7 +125,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
             $patient_id = $pdo->lastInsertId();
 
-            // LOG: New Patient Record
             if ($patient_id && $user_id) {
                 $stmt = $pdo->prepare("INSERT INTO logs (user_id, action, performed_by, user_affected)
                                        VALUES (:uid, :action, :pb, :ua)");
@@ -156,14 +142,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             exit;
         }
 
-        /* -----------------------------------------------------
-           Validate Visit Assessment Required Fields
-        ----------------------------------------------------- */
         required($_POST, ['bp', 'temp', 'weight', 'height', 'bmi']);
 
-        /* -----------------------------------------------------
-           Insert Patient Assessment (Visit)
-        ----------------------------------------------------- */
         $stmt = $pdo->prepare("
             INSERT INTO patient_assessment (
                 patient_id, recorded_by, visit_date, blood_pressure, temperature,
@@ -206,9 +186,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             ]);
         }
 
-        /* -----------------------------------------------------
-           Referral (only existing patients)
-        ----------------------------------------------------- */
         $referral_id = null;
 
         if ($referralNeeded === "yes" && !empty($_POST['existing_patient_id']) && $user_id) {
@@ -230,9 +207,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $referral_id = $pdo->lastInsertId();
         }
 
-        /* -----------------------------------------------------
-           Done
-        ----------------------------------------------------- */
         $pdo->commit();
 
         echo json_encode([

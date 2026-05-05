@@ -11,7 +11,6 @@ $typeParam = $_GET['type'] ?? 'all';
 $types = explode(',', $typeParam);
 
 try {
-    // ===== FETCH CONSULTATION + PATIENT INFO =====
     $stmt = $pdo->prepare("
         SELECT 
             CONCAT(p.first_name, ' ', p.last_name) AS patient_name,
@@ -41,7 +40,6 @@ try {
         exit;
     }
 
-    // ===== FETCH PRESCRIPTION DATA =====
     $stmt2 = $pdo->prepare("
         SELECT 
             pr.medicine_name, 

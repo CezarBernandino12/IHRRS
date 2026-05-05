@@ -3,17 +3,17 @@ document.getElementById('consentCheckbox').addEventListener('change', function (
   });
   
   document.getElementById('continueBtn').addEventListener('click', function () {
-    // Fill hidden fields
+    
     document.getElementById('consentModal').style.display = 'none';
     document.getElementById('consentGiven').value = "1";
-    document.getElementById('consentMethod').value = "verbal"; // change if needed
-    document.getElementById('consentDate').value = new Date().toISOString(); // timestamp
+    document.getElementById('consentMethod').value = "verbal";
+    document.getElementById('consentDate').value = new Date().toISOString(); 
 
   });
   
   document.getElementById('declineBtn').addEventListener('click', function () {
 
-    window.location.href="dashboard"; // or use history.back()
+    window.location.href="dashboard"; 
   });
   
 
@@ -37,10 +37,10 @@ function calculateAge() {
     let months = today.getMonth() - dob.getMonth();
     let days = today.getDate() - dob.getDate();
 
-    // Adjust if birthday hasn't occurred yet this year
+    
     if (months < 0 || (months === 0 && days < 0)) {
         years--;
-        months += 12; // Adjust months
+        months += 12; 
     }
 
     let ageText = `Age: ${years} years old`;
@@ -75,7 +75,7 @@ function calculateAgeAndDisplaySections() {
     }
     }
     }
-/// Declare global variable for saved patient ID
+
 let savedPatientId = null;
 
 const submitButton = document.getElementById('submitButton');
@@ -104,14 +104,11 @@ const viewDetailsButton = document.getElementById('viewDetailsButton');
 
 
 
-
-// Show first modal when submit button is clicked
 submitButton.addEventListener('click', function (event) {
     event.preventDefault();
     modal1.style.display = 'block';
 });
 
-// Close first modal
 closeBtn1.addEventListener('click', function () {
     modal1.style.display = 'none';
 });
@@ -119,43 +116,6 @@ closeBtn1.addEventListener('click', function () {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// Function to save form data (Initial Assessment + Referral)
-/// Declare global variable for saved patient ID
-
-
-
-
-
-
-
-
-
-// No button: Save Initial Assessment only
 function noButton1ClickHandler() {
     modal1.style.display = 'none';
    
@@ -163,7 +123,6 @@ function noButton1ClickHandler() {
 const patientId = urlParams.get('patient_id');
 console.log("Patient ID:", patientId);
 
-// Set hidden input
 document.getElementById("patient_id").value = patientId;
     
     if (patientId) {
@@ -173,11 +132,9 @@ document.getElementById("patient_id").value = patientId;
         return;
     }
 
-    // Now submit the form directly from the yesButton1 click
-    const form = document.getElementById("individualRecordForm"); // Change selector if needed
+    const form = document.getElementById("individualRecordForm"); 
     const formData = new FormData(form);
 
-    // Append the patient ID again just in case
     formData.append("patient_id", patientId);
 
  
@@ -185,12 +142,12 @@ document.getElementById("patient_id").value = patientId;
         method: "POST",
         body: formData
     })
-    .then(response => response.text()) // <-- parse as text first
+    .then(response => response.text()) 
     .then(text => {
         console.log("📄 Raw response from server:", text);
     
         try {
-            const data = JSON.parse(text); // attempt to parse JSON
+            const data = JSON.parse(text); 
             if (data.status === "success") {
                 modal4.style.display = 'block';
                 alert("✔ Visit summary saved successfully!");
@@ -211,35 +168,28 @@ document.getElementById("patient_id").value = patientId;
    
 }
 
-
-// Remove and re-add event listener to avoid duplication
 noButton1.removeEventListener('click', noButton1ClickHandler);
 noButton1.addEventListener('click', noButton1ClickHandler);
 
 
 
-
-// Hide modal1 and show modal2 on yesButton1 click
 yesButton1.addEventListener('click', function (event) { 
-    event.preventDefault(); // Prevent default behavior
+    event.preventDefault(); 
 
-    modal1.style.display = 'none'; // Hide modal1
-    modal2.style.display = 'block'; // Show modal2
+    modal1.style.display = 'none'; 
+    modal2.style.display = 'block'; 
 
 });
 
-// Close modal2
 closeBtn2.addEventListener('click', function () {
     modal2.style.display = 'none';
 });
 
-// No button in modal2: Proceed without referral
 noButton2.addEventListener('click', function () {
     modal2.style.display = 'none';
     modal4.style.display = 'block';
 });
 
-// Yes button in modal2: Confirm referral 
 yesButton2.addEventListener('click', function () {
     modal2.style.display = 'none';
 
@@ -252,18 +202,15 @@ yesButton2.addEventListener('click', function () {
         return;
     }
 
-    // Set hidden inputs
     document.getElementById("patient_id").value = patientId;
     document.getElementById("referral_needed").value = "yes";
 
     const form = document.getElementById("individualRecordForm");
     const formData = new FormData(form);
 
-    // Just in case
     formData.append("patient_id", patientId);
     formData.append("referral_needed", "yes");
 
-    // Save initial assessment first
     fetch("php/saveInitialAssessment1.php", {
         method: "POST",
         body: formData
@@ -275,7 +222,6 @@ yesButton2.addEventListener('click', function () {
         if (data.status === "success") {
             alert("✔ Visit summary saved successfully!");
 
-            // Now that we have the visit_id, call saveReferral()
             let bhwId = document.getElementById('user_id')?.value;
             let visitId = data.visit_id;
 
@@ -301,15 +247,12 @@ yesButton2.addEventListener('click', function () {
 });
 
 
-
-// Function to save referral
 function saveReferral(patientId, bhwId, visitId) {
     let formData = new FormData();
     formData.append("patient_id", patientId);
     formData.append("user_id", bhwId);
-    formData.append("visit_id", visitId); // ✅ include visit_id
+    formData.append("visit_id", visitId); 
 
-    // Always include referral_date if available in the form
     let referralDateField = document.getElementById("referral_date");
     if (referralDateField) {
         formData.append("referral_date", referralDateField.value);
@@ -329,7 +272,7 @@ function saveReferral(patientId, bhwId, visitId) {
                 modal4.style.display = "none";
             }
             if (typeof modal3 !== "undefined") {
-                modal3.style.display = "block"; // Show referral saved modal
+                modal3.style.display = "block";
             }
         } else {
             console.error("❌ Error saving referral:", data.message);
@@ -347,13 +290,11 @@ function saveReferral(patientId, bhwId, visitId) {
 
 
 
-
-// Close modal3
 closeBtn3.addEventListener('click', function () {
     modal3.style.display = 'none';
 });
 
-// View Details button functionality
+
 if (viewDetailsButton) {
     viewDetailsButton.addEventListener('click', function () {
         let referralId = localStorage.getItem('referral_id') || new URLSearchParams(window.location.search).get('referral_id'); 
@@ -370,40 +311,34 @@ if (viewDetailsButton) {
     console.warn("⚠️ Warning: viewDetailsButton not found in the DOM.");
 }
 
-// Close modal4
 closeBtn4.addEventListener("click", () => {
 const urlParams = new URLSearchParams(window.location.search);
 const patientId = urlParams.get('patient_id');
 
-        // redirect with patient_id in URL
+
         window.location.href = `record?patient_id=${encodeURIComponent(patientId)}`;
   
 });
 
 
-// Cancel button in modal4
 cancelButton.addEventListener('click', function () {
     modal4.style.display = 'none';
 });
 
-// Proceed button in modal4
 proceedButton.addEventListener('click', function () {
     modal4.style.display = 'none';
     modal5.style.display = 'block';
 });
 
-// Close modal5
 closeBtn5.addEventListener('click', function () {
     modal5.style.display = 'none';
 
 });
 
-// Exit button in modal5
 exitButton.addEventListener('click', function () {
     modal5.style.display = 'none';
 });
 
-// Close modals if user clicks outside
 window.addEventListener('click', function (event) {
     [modal1, modal2, modal3, modal4, modal5].forEach(modal => {
         if (event.target === modal) {

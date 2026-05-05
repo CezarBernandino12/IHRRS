@@ -1,13 +1,11 @@
 <?php
-session_start(); // Add this line
+session_start(); 
 require '../../php/db_connect.php';
-require '../../ADMIN/php/log_functions.php'; // Add this line
+require '../../ADMIN/php/log_functions.php'; 
 
 header('Content-Type: application/json');
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
-
-
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     try {
@@ -28,7 +26,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             return clean_input($data);
         }
 
-        // ✅ Required fields
         if (empty($_POST['user_id'])) {
             echo json_encode(["status" => "error", "message" => "Submission unsuccessful."]);
             exit;
@@ -42,12 +39,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $respiratory_rate = clean_input($_POST['respiratory_rate'] ?? '');
         $bmi = clean_input($_POST['bmi'] ?? '');
 
-        $patient_id = clean_input($_POST['patient_id']); // old ID (reference)
+        $patient_id = clean_input($_POST['patient_id']); 
         $user_id = clean_input($_POST['user_id']);
         $instructions = clean_input($_POST['rhu_remarks'] ?? '');
        
 
-        // 🔹 Step 1: Always create a NEW visit record in patient_assessment
         $stmt_assessment = $pdo->prepare("
             INSERT INTO patient_assessment 
             (patient_id, recorded_by, chief_complaints, bmi, temperature, height, weight, blood_pressure, chest_rate, respiratory_rate, visit_date, remarks) 
@@ -67,18 +63,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             ':remarks' => $instructions
         ]);
 
-        // 🔹 This is the NEW visit_id you should use everywhere
         $new_visit_id = $pdo->lastInsertId();
 
-    
-
 if ($new_visit_id) {
-    // ✅ LOG ACTIVITY: Added Patient Assessment Record
     logActivity($pdo, $user_id, "Added Patient Assessment Record");
 }
-
-
-
         $pdo->commit();
 
         echo json_encode([

@@ -8,7 +8,6 @@ header('Content-Type: application/json');
 
 $log_file = "../../logs/debug.log";
 
-// Log raw input
 $input = json_decode(file_get_contents('php://input'), true);
 file_put_contents($log_file, "[RAW INPUT] " . print_r($input, true) . "\n", FILE_APPEND);
 
@@ -23,7 +22,6 @@ $dispensed_by = isset($input['dispensed_by']) ? (int)$input['dispensed_by'] : nu
 try {
     $pdo->beginTransaction();
 
-    // 1. Update patient_assessment
     $stmt = $pdo->prepare("
         UPDATE patient_assessment SET 
             visit_date = :visit_date,
@@ -52,7 +50,6 @@ try {
         'visit_id' => $visit_id
     ]);
 
-    // 2. Get consultation_id
     $stmt = $pdo->prepare("SELECT consultation_id FROM rhu_consultations WHERE visit_id = :visit_id");
     $stmt->execute(['visit_id' => $visit_id]);
     $consultation = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -63,7 +60,6 @@ try {
 
     $consultation_id = $consultation['consultation_id'];
 
-    // 3. Update rhu_consultations
     $stmt = $pdo->prepare("
         UPDATE rhu_consultations SET
             diagnosis = :diagnosis,
@@ -76,15 +72,12 @@ try {
         'consultation_id' => $consultation_id
     ]);
 
-    // 4. Update rhu_medicine_dispensed
     $medicine_names = $input['medicine_name'] ?? [];
     $quantities = $input['quantity_dispensed'] ?? [];
 
-    // Delete old
     $stmt = $pdo->prepare("DELETE FROM rhu_medicine_dispensed WHERE consultation_id = :consultation_id");
     $stmt->execute(['consultation_id' => $consultation_id]);
 
-    // Add new if any
     if ($dispensed_by === null) {
         throw new Exception("dispensed_by (user_id) is missing or invalid.");
     }
