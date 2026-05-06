@@ -41,17 +41,17 @@
             
             <script>
             document.getElementById("updateReferrals").addEventListener("click", function (event) {
-                event.preventDefault(); // Prevent default navigation
+                event.preventDefault(); 
             
-                fetch("php/update_referrals.php") // Call PHP file
+                fetch("php/update_referrals.php") 
                 .then(response => response.json())
                 .then(data => {
-                    console.log(data.message); // Log success message (optional)
-                    window.location.href="pending"; // Redirect after updating
+                    console.log(data.message); 
+                    window.location.href="pending";
                 })
                 .catch(error => {
                     console.error("Error updating referrals:", error);
-                    window.location.href="pending"; // Still redirect even if an error occurs
+                    window.location.href="pending"; 
                 });
             });
             </script>
