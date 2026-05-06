@@ -4,6 +4,11 @@ require '../../php/db_connect.php';
 require '../../ADMIN/php/log_functions.php'; 
 header('Content-Type: application/json');
 
+if (!isset($_SESSION['user_id'])) {
+    http_response_code(401);
+    exit("Unauthorized");
+}
+
 try {
     if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["referral_id"])) {
         $referral_id = $_POST["referral_id"];

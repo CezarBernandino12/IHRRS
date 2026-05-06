@@ -3,6 +3,14 @@ session_start();
 require '../../php/db_connect.php';
 require '../../ADMIN/php/log_functions.php';
 
+session_start();
+
+if (!isset($_SESSION['user_id'])) {
+    http_response_code(401);
+    exit("Unauthorized");
+}
+
+
 ob_start();
 error_reporting(E_ALL);
 ini_set('display_errors', 1);

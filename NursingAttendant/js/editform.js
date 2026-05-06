@@ -160,7 +160,7 @@ fetch('php/getUserId.php')
         });
     });
 
-    // Optional: Close modals when clicking outside of them
+    // Close modals when clicking outside of them
     window.addEventListener("click", function (e) {
         document.querySelectorAll(".modal").forEach(modal => {
             if (e.target === modal) {

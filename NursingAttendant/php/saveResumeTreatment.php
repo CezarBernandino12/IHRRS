@@ -5,6 +5,12 @@ require '../../ADMIN/php/log_functions.php';
 header('Content-Type: application/json');
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
+session_start();
+
+if (!isset($_SESSION['user_id'])) {
+    http_response_code(401);
+    exit("Unauthorized");
+}
 
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {

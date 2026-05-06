@@ -3,6 +3,14 @@ require '../../php/db_connect.php';
 
 header('Content-Type: application/json');
 
+session_start();
+
+if (!isset($_SESSION['user_id'])) {
+    http_response_code(401);
+    exit("Unauthorized");
+}
+
+
 try {
     $date = $_GET['date'] ?? '';
     $status = $_GET['status'] ?? '';

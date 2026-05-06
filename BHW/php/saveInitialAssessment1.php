@@ -7,6 +7,14 @@ header('Content-Type: application/json');
 error_reporting(E_ALL);
 ini_set('display_errors', 0);
 
+session_start();
+
+if (!isset($_SESSION['user_id'])) {
+    http_response_code(401);
+    exit("Unauthorized");
+}
+
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     file_put_contents("logs.txt", json_encode($_POST) . PHP_EOL, FILE_APPEND);
     error_log("\ud83d\udccc Received data: " . json_encode($_POST));

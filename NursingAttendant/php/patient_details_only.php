@@ -2,6 +2,12 @@
 require '../../php/db_connect.php'; // adjust path
 
 header('Content-Type: application/json');
+session_start();
+
+if (!isset($_SESSION['user_id'])) {
+    http_response_code(401);
+    exit("Unauthorized");
+}
 
 $patient_id = $_GET['patient_id'] ?? null;
 

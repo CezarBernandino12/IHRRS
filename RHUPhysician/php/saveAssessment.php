@@ -17,10 +17,14 @@ if ($DEBUG) {
 
 header('Content-Type: application/json; charset=utf-8');
 
-/**
- * Send a structured JSON error for debugging.
- * Includes exception details when available and extra diagnostic info.
- */
+session_start();
+
+if (!isset($_SESSION['user_id'])) {
+    http_response_code(401);
+    exit("Unauthorized");
+}
+
+
 function sendErrorJson($message, $exception = null, $extra = [], $http_code = 500) {
     if (!headers_sent()) {
         http_response_code($http_code);

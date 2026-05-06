@@ -1,6 +1,12 @@
 <?php
 require '../../php/db_connect.php';
 header('Content-Type: application/json');
+session_start();
+
+if (!isset($_SESSION['user_id'])) {
+    http_response_code(401);
+    exit("Unauthorized");
+}
 
 if (isset($_GET['user_id']) && is_numeric($_GET['user_id'])) {
     $user_id = intval($_GET['user_id']);

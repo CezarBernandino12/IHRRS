@@ -10,6 +10,13 @@ if (!isset($_GET['visit_id']) || empty($_GET['visit_id'])) {
     echo json_encode(['error' => 'Missing visit_id']);
     exit;
 }
+session_start();
+
+if (!isset($_SESSION['user_id'])) {
+    http_response_code(401);
+    exit("Unauthorized");
+}
+
 
 $visit_id = (int) $_GET['visit_id']; 
 

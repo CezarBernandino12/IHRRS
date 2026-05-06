@@ -3,10 +3,15 @@ require '../../php/db_connect.php';
 
 header('Content-Type: application/json');
 
-
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
+session_start();
+
+if (!isset($_SESSION['user_id'])) {
+    http_response_code(401);
+    exit("Unauthorized");
+}
 
 
 if (!isset($_GET['visit_id']) || empty($_GET['visit_id'])) {

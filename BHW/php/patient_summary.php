@@ -8,6 +8,14 @@ require '../../php/db_connect.php';
 
 header('Content-Type: application/json');
 
+session_start();
+
+if (!isset($_SESSION['user_id'])) {
+    http_response_code(401);
+    exit("Unauthorized");
+}
+
+
 if (!isset($_GET['patient_id']) || !is_numeric($_GET['patient_id'])) {
     http_response_code(400);
     echo json_encode(["error" => "Missing or invalid patient_id"]);

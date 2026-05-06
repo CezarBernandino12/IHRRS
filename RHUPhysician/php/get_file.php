@@ -2,6 +2,13 @@
 include '../../php/db_connect.php';
 
 $visit_id = $_GET['visit_id'] ?? null;
+session_start();
+
+if (!isset($_SESSION['user_id'])) {
+    http_response_code(401);
+    exit("Unauthorized");
+}
+
 
 if ($visit_id) {
     $stmt = $pdo->prepare("SELECT rc.lab_result_path FROM rhu_consultations rc JOIN patient_assessment p ON rc.visit_id = p.visit_id WHERE rc.visit_id = ?");

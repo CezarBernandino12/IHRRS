@@ -2,6 +2,12 @@
 require_once '../../php/db_connect.php';
 
 header('Content-Type: application/json'); // Important
+session_start();
+
+if (!isset($_SESSION['user_id'])) {
+    http_response_code(401);
+    exit("Unauthorized");
+}
 
 $data = json_decode(file_get_contents("php://input"), true);
 $visit_id = $data['visit_id'] ?? null;

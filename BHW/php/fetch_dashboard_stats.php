@@ -2,6 +2,14 @@
 require '../../php/db_connect.php';
 header('Content-Type: application/json');
 
+session_start();
+
+if (!isset($_SESSION['user_id'])) {
+    http_response_code(401);
+    exit("Unauthorized");
+}
+
+
 try {
     $date_stmt = $pdo->query("SELECT CURDATE()");
     $date = $date_stmt->fetchColumn();

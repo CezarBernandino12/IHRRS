@@ -1,5 +1,12 @@
 <?php
 require '../../php/db_connect.php';
+session_start();
+
+if (!isset($_SESSION['user_id'])) {
+    http_response_code(401);
+    exit("Unauthorized");
+}
+
 
 try {
     $stmt = $pdo->prepare("

@@ -9,6 +9,14 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
+session_start();
+
+if (!isset($_SESSION['user_id'])) {
+    http_response_code(401);
+    exit("Unauthorized");
+}
+
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     file_put_contents("logs.txt", json_encode($_POST) . PHP_EOL, FILE_APPEND);
     error_log("📌 Received data: " . json_encode($_POST));

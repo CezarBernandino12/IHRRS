@@ -1,6 +1,14 @@
 <?php
 require '../../php/db_connect.php';
 
+session_start();
+
+if (!isset($_SESSION['user_id'])) {
+    http_response_code(401);
+    exit("Unauthorized");
+}
+
+
 if (isset($_GET['patient_id'])) {
     header('Content-Type: application/json');
     $patient_id = $_GET['patient_id'];

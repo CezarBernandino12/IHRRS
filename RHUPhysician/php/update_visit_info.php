@@ -8,6 +8,13 @@ header('Content-Type: application/json');
 
 $log_file = "../../logs/debug.log";
 
+session_start();
+
+if (!isset($_SESSION['user_id'])) {
+    http_response_code(401);
+    exit("Unauthorized");
+}
+
 // Log raw input
 $input = json_decode(file_get_contents('php://input'), true);
 file_put_contents($log_file, "[RAW INPUT] " . print_r($input, true) . "\n", FILE_APPEND);

@@ -1,5 +1,12 @@
 <?php
 require '../../php/db_connect.php';
+session_start();
+
+if (!isset($_SESSION['user_id'])) {
+    http_response_code(401);
+    exit("Unauthorized");
+}
+
 
 $referralId = isset($_GET['referral_id']) ? (int) $_GET['referral_id'] : 0;
 if ($referralId <= 0) {

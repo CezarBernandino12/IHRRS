@@ -9,6 +9,12 @@ error_reporting(E_ALL);
 
 // Set content type first to ensure JSON response
 header('Content-Type: application/json; charset=UTF-8');
+session_start();
+
+if (!isset($_SESSION['user_id'])) {
+    http_response_code(401);
+    exit("Unauthorized");
+}
 
 if (!isset($_SESSION['user_id'])) {
     echo json_encode(['success' => false, 'message' => 'Not authenticated']);

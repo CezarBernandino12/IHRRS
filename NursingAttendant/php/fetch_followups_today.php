@@ -1,6 +1,13 @@
 <?php
 require '../../php/db_connect.php';
 
+session_start();
+
+if (!isset($_SESSION['user_id'])) {
+    http_response_code(401);
+    exit("Unauthorized");
+}
+
 try {
     $stmt = $pdo->prepare("
     SELECT f.followup_id, f.patient_id, f.date, f.set_by, f.followup_status,
