@@ -167,27 +167,32 @@ $rows = $patients;
 $periods = [];
 $medicine_series = [];
 
-// Only fetch dispensed data for selected medicines
-if (!empty($medicine_list)) {
-    // Prepare placeholders for selected medicines
-    $med_placeholders = implode(',', array_fill(0, count($medicine_list), '?'));
-    $dispensed_data_stmt = $pdo->prepare("
-        SELECT DATE(dm.dispensed_date) AS period, dm.medicine_name, SUM(dm.quantity_dispensed) AS qty
-        FROM rhu_medicine_dispensed dm
-        WHERE dm.medicine_name IN ($med_placeholders)
-        GROUP BY DATE(dm.dispensed_date), dm.medicine_name
-        ORDER BY DATE(dm.dispensed_date)
-    ");
-    $dispensed_data_stmt->execute($medicine_list);
-} else {
-    // No filter, show all medicines
-    $dispensed_data_stmt = $pdo->query("
-        SELECT DATE(dm.dispensed_date) AS period, dm.medicine_name, SUM(dm.quantity_dispensed) AS qty
-        FROM rhu_medicine_dispensed dm
-        GROUP BY DATE(dm.dispensed_date), dm.medicine_name
-        ORDER BY DATE(dm.dispensed_date)
-    ");
+// Fetch dispensed data for graph, respecting date and medicine filters
+$graph_sql = "
+    SELECT DATE(dm.dispensed_date) AS period, dm.medicine_name, SUM(dm.quantity_dispensed) AS qty
+    FROM rhu_medicine_dispensed dm
+    WHERE 1=1
+";
+$graph_params = [];
+
+// Apply date filter to graph
+if (!empty($from_date) && !empty($to_date)) {
+    $graph_sql .= " AND dm.dispensed_date BETWEEN ? AND ?";
+    $graph_params[] = $from_date . " 00:00:00";
+    $graph_params[] = $to_date . " 23:59:59";
 }
+
+// Apply medicine filter to graph
+if (!empty($medicine_list)) {
+    $med_placeholders = implode(',', array_fill(0, count($medicine_list), '?'));
+    $graph_sql .= " AND dm.medicine_name IN ($med_placeholders)";
+    $graph_params = array_merge($graph_params, $medicine_list);
+}
+
+$graph_sql .= " GROUP BY DATE(dm.dispensed_date), dm.medicine_name ORDER BY DATE(dm.dispensed_date)";
+
+$dispensed_data_stmt = $pdo->prepare($graph_sql);
+$dispensed_data_stmt->execute($graph_params);
 
 while ($row = $dispensed_data_stmt->fetch(PDO::FETCH_ASSOC)) {
     $period = $row['period'];
