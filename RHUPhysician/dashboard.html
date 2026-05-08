@@ -7,109 +7,101 @@
 	<link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
 	<link rel="stylesheet" href="css/dashstyle.css">
 	<link rel="stylesheet" href="css/referral.css">
-	<link rel="stylesheet" href="css/logout.css">
 	<link rel="stylesheet" href="css/sidebar.css">
+	<link rel="stylesheet" href="css/logout.css">
 	<title>RHU Dashboard</title>
 </head>
 <body>
 
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
 	<!-- Sidebar Section -->
 	<section id="sidebar">
-		<a href="#" class="brand">
-			<img src="../img/logo.png" alt="RHULogo" class="logo">
-			<span class="text">Hello Physician</span>
+		<a href="#" class="sidebar-brand">
+			<img src="../img/logo.png" alt="RHU Logo" class="brand-logo">
+			<div class="brand-text">
+				<span class="brand-name">Hello Physician</span>
+			</div>
 		</a>
-		<ul class="side-menu top">
-			<li class="active">
-				<a href="dashboard">
-					<i class="bx bxs-dashboard"></i>
-					<span class="text">Dashboard</span>
-				</a>
-			</li>
-		
-			<li>
-				<a href="#" id="updateReferrals">
-					<i class="bx bxs-user"></i>
-					<span class="text">Pending Referrals</span>
-				</a>
-			</li>
-			
-			<script>
-			document.getElementById("updateReferrals").addEventListener("click", function (event) {
-				event.preventDefault(); // Prevent default navigation
-			
-				fetch("php/update_referrals.php") // Call PHP file
-				.then(response => response.json())
-				.then(data => {
-					console.log(data.message); // Log success message (optional)
-					window.location.href="pending"; // Redirect after updating
-				})
-				.catch(error => {
-					console.error("Error updating referrals:", error);
-					window.location.href="pending"; // Still redirect even if an error occurs
-				});
-			});
-			</script>
+
+		<div class="sidebar-scroll">
+			<p class="sidebar-section-label">Main Menu</p>
+			<ul class="side-menu top">
+				<li class="active">
+					<a href="dashboard" data-tooltip="Dashboard">
+						<i class="bx bxs-dashboard nav-icon"></i>
+						<span class="nav-label">Dashboard</span>
+					</a>
+				</li>
 				<li>
-				<a href="followUpConsultations">
-					<i class="bx bxs-user"></i>
-					<span class="text">Follow-Up Visits</span>
-				</a>
-			</li>
-			
-			<li> 
-				<a href="searchPatient">
-					<i class="bx bxs-search"></i>
-					<span class="text">Patient Records</span>
-				</a>
-			</li>
-			<li>
-                <a href="history">
-                    <i class="bx bx-history"></i>
-                    <span class="text">Referral History</span>
-                </a>
-            </li>
-			<li>
-				<a href="reports">
-					<i class="bx bx-notepad"></i>
-					<span class="text">Reports</span>
-				</a>
-			</li>
-		</ul>
-		<ul class="side-menu">
-			<li>
-				<a href="#" class="logout" onclick="return confirmLogout()">
-               <i class="bx bxs-log-out-circle"></i>
-                <span class="text">Logout</span>
-                </a>
-					
-		
-			</li>
-		</ul>
+					<a href="#" id="updateReferrals" data-tooltip="Pending Referrals">
+						<i class="bx bxs-user nav-icon"></i>
+						<span class="nav-label">Pending Referrals</span>
+					</a>
+				</li>
+				<li>
+					<a href="followUpConsultations" data-tooltip="Follow-Up Visits">
+						<i class="bx bxs-user nav-icon"></i>
+						<span class="nav-label">Follow-Up Visits</span>
+					</a>
+				</li>
+				<li>
+					<a href="searchPatient" data-tooltip="Patient Records">
+						<i class="bx bxs-search nav-icon"></i>
+						<span class="nav-label">Patient Records</span>
+					</a>
+				</li>
+				<li>
+					<a href="history" data-tooltip="Referral History">
+						<i class="bx bx-history nav-icon"></i>
+						<span class="nav-label">Referral History</span>
+					</a>
+				</li>
+				<li>
+					<a href="reports" data-tooltip="Reports">
+						<i class="bx bx-notepad nav-icon"></i>
+						<span class="nav-label">Reports</span>
+					</a>
+				</li>
+			</ul>
+
+			<div class="sidebar-divider"></div>
+
+			<ul class="side-menu">
+				<li>
+					<a href="#" class="logout" data-tooltip="Logout" onclick="return confirmLogout()">
+						<i class="bx bxs-log-out-circle nav-icon"></i>
+						<span class="nav-label">Logout</span>
+					</a>
+				</li>
+			</ul>
+		</div>
+
+		<div class="sidebar-footer">
+			<div class="sidebar-user">
+				<img src="../img/doctor.png" alt="Physician User">
+				<div class="sidebar-user-info">
+					<div class="user-name" id="sidebarUserName">Physician User</div>
+					<div class="user-role">RHU Physician</div>
+				</div>
+			</div>
+		</div>
 	</section>
 
 	<!-- Main Content Section -->
 	<section id="content">
 		<nav>
-			<form action="#">
-                <div class="form-input">
-                    <input type="search" id="patientSearch" placeholder="Enter patient name..." name="search" autocomplete="off">
-                    <button type="button" class="search-btn" id="searchButton">
-                        <i class="bx bx-search"></i>
-                    </button>
-        
-                    <div id="resultDropdown" class="dropdown-content"></div>
-                    
-                    <script src="js/script.js"></script>
-                </div>
-            </form>
-			
-			<div class="greeting">
-                <span id="userGreeting">Hello RHU Physician!</span>
-            </div>
-			<a href="#" class="profile">
-				<img src="../img/doctor.png">
-			</a>
+			<button class="nav-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+				<i class="bx bx-menu"></i>
+			</button>
+
+			<div class="nav-search" style="position: relative;">
+				<input type="search" id="patientSearch" placeholder="Enter patient name..." name="search" autocomplete="off">
+				<button type="button" id="searchButton" aria-label="Search">
+					<i class="bx bx-search"></i>
+				</button>
+				<div id="resultDropdown" class="dropdown-content"></div>
+			</div>
 		</nav>
 
 		<main>
@@ -262,15 +254,15 @@
     </div>
 </div>
 
-</main>	
-</section>
+</main>
+	</section>
+
 <script>
-	document.addEventListener("DOMContentLoaded", () => {
-  const today = new Date().toISOString().split("T")[0];
+document.addEventListener("DOMContentLoaded", () => {
+  const today = getLocalDateString();
   const url = `php/fetch_dashboard_stats.php?date=${today}`;
 
-  // Show today's date in both containers
-  const formattedDate = new Date(today).toLocaleDateString('en-US', {
+  const formattedDate = new Date().toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
     day: 'numeric'
@@ -278,254 +270,293 @@
 
   document.querySelectorAll(".date").forEach(el => el.textContent = formattedDate);
 
+  const currentDateEl = document.getElementById("currentDate");
+  if (currentDateEl) {
+    currentDateEl.textContent = formattedDate;
+  }
+
   fetch(url)
     .then(response => response.json())
     .then(data => {
       console.log("Dashboard Data:", data);
-
-      // Update values
       updateProgress("progress-ring-1", "progress-text-1", data.pending_referrals, 100);
       updateProgress("progress-ring-2", "progress-text-2", data.consultations, 100);
     })
     .catch(error => console.error("Error loading dashboard data:", error));
+
+  const updateReferrals = document.getElementById("updateReferrals");
+  if (updateReferrals) {
+    updateReferrals.addEventListener("click", function (event) {
+      event.preventDefault();
+
+      fetch("php/update_referrals.php")
+        .then(response => response.json())
+        .then(data => {
+          console.log(data.message);
+          window.location.href = "pending";
+        })
+        .catch(error => {
+          console.error("Error updating referrals:", error);
+          window.location.href = "pending";
+        });
+    });
+  }
+
+  const referralSearch = document.getElementById('referralSearch');
+  const statusFilter = document.getElementById('statusFilter');
+
+  if (referralSearch) {
+    referralSearch.addEventListener('input', filterReferrals);
+  }
+
+  if (statusFilter) {
+    statusFilter.addEventListener('change', filterReferrals);
+  }
+
+  fetchReferrals();
+
+  fetch('php/getUserName.php')
+    .then(response => response.json())
+    .then(data => {
+      const sidebarUserName = document.getElementById('sidebarUserName');
+
+      if (sidebarUserName) {
+        sidebarUserName.textContent = data.full_name || 'Physician User';
+      }
+    })
+    .catch(error => {
+      console.error('Error fetching user name:', error);
+
+      const sidebarUserName = document.getElementById('sidebarUserName');
+      if (sidebarUserName) {
+        sidebarUserName.textContent = 'Physician User';
+      }
+    });
+
+  fetch('php/getUserId.php')
+    .then(response => response.json())
+    .then(data => {
+      if (data.error) {
+        window.location.href = '../auth/role';
+      } else if (sessionStorage.getItem('showPendingReset')) {
+        const pendingResetNotification = document.getElementById('pendingResetNotification');
+        if (pendingResetNotification) {
+          pendingResetNotification.style.display = 'flex';
+        }
+        sessionStorage.removeItem('showPendingReset');
+      }
+    })
+    .catch(error => {
+      console.error('Error checking session:', error);
+      window.location.href = '../auth/role';
+    });
 });
 
-function updateProgress(ringId, textId, value, max = 100) {
-  const radius = 67;
-  const circumference = 2 * Math.PI * radius;
-  const percent = Math.min(value / max, 1);
-  const offset = circumference * (1 - percent);
+function getLocalDateString() {
+  const now = new Date();
+  return now.getFullYear() + '-' +
+    String(now.getMonth() + 1).padStart(2, '0') + '-' +
+    String(now.getDate()).padStart(2, '0');
+}
 
+function updateProgress(ringId, textId, value, max = 100) {
   const ring = document.getElementById(ringId);
   const text = document.getElementById(textId);
 
+  if (!ring || !text) return;
+
+  const numericValue = Number(value) || 0;
+  const radius = 67;
+  const circumference = 2 * Math.PI * radius;
+  const percent = Math.min(numericValue / max, 1);
+  const offset = circumference * (1 - percent);
+
   ring.style.strokeDasharray = `${circumference}`;
   ring.style.strokeDashoffset = `${offset}`;
-  text.textContent = value;
+  text.textContent = numericValue;
 }
 
-// Get the current date
-const today = new Date();
-const options = { year: 'numeric', month: 'long', day: 'numeric' };
-const formattedDate = today.toLocaleDateString('en-US', options);
-document.getElementById("currentDate").textContent = formattedDate;
-
-// Initialize statistics
 let referrals = [];
 
 function updateStatistics() {
-    const total = referrals.length;
-    const pending = referrals.filter(r => r.referral_status.toLowerCase() === 'pending').length;
-    const completed = referrals.filter(r => r.referral_status.toLowerCase() === 'completed').length;
+  const total = referrals.length;
+  const pending = referrals.filter(r => r.referral_status?.toLowerCase() === 'pending').length;
+  const completed = referrals.filter(r => r.referral_status?.toLowerCase() === 'completed').length;
 
-    document.getElementById('totalReferrals').textContent = total;
-    document.getElementById('pendingReferrals').textContent = pending;
-    document.getElementById('completedReferrals').textContent = completed;
+  document.getElementById('totalReferrals').textContent = total;
+  document.getElementById('pendingReferrals').textContent = pending;
+  document.getElementById('completedReferrals').textContent = completed;
 }
 
 function filterReferrals() {
-    const searchTerm = document.getElementById('referralSearch').value.toLowerCase();
-    const statusFilter = document.getElementById('statusFilter').value.toLowerCase();
-    
-    const filteredReferrals = referrals.filter(referral => {
-        const matchesSearch = 
-            referral.referral_id.toLowerCase().includes(searchTerm) ||
-            referral.patient_name.toLowerCase().includes(searchTerm) ||
-            referral.referral_from.toLowerCase().includes(searchTerm);
-        
-        const matchesStatus = statusFilter === 'all' || 
-            referral.referral_status.toLowerCase() === statusFilter;
-        
-        return matchesSearch && matchesStatus;
-    });
+  const searchTerm = document.getElementById('referralSearch').value.toLowerCase();
+  const statusFilter = document.getElementById('statusFilter').value.toLowerCase();
 
-    renderReferrals(filteredReferrals);
+  const filteredReferrals = referrals.filter(referral => {
+    const matchesSearch =
+      String(referral.referral_id || '').toLowerCase().includes(searchTerm) ||
+      String(referral.patient_name || '').toLowerCase().includes(searchTerm) ||
+      String(referral.referred_by || referral.referral_from || '').toLowerCase().includes(searchTerm);
+
+    const matchesStatus = statusFilter === 'all' ||
+      String(referral.referral_status || '').toLowerCase() === statusFilter;
+
+    return matchesSearch && matchesStatus;
+  });
+
+  renderReferrals(filteredReferrals);
 }
 
 function renderReferrals(data) {
-    const tableBody = document.querySelector("#history-table tbody");
-    tableBody.innerHTML = "";
+  const tableBody = document.querySelector("#history-table tbody");
+  tableBody.innerHTML = "";
 
-    if (data.length === 0) {
-        tableBody.innerHTML = `
-            <tr>
-                <td colspan="6" style="text-align: center; padding: 20px;">
-                    No referrals found matching your criteria.
-                </td>
-            </tr>
-        `;
+  if (data.length === 0) {
+    tableBody.innerHTML = `
+      <tr>
+        <td colspan="6" style="text-align: center; padding: 20px;">
+          No referrals found matching your criteria.
+        </td>
+      </tr>
+    `;
+    return;
+  }
+
+  data.forEach(referral => {
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td>${referral.referral_id}</td>
+      <td>${formatDate(referral.referral_date)}</td>
+      <td>${referral.patient_name}</td>
+      <td>${referral.referred_by} <br> <span style="opacity: 0.6;">Nursing Attendant</span></td>
+      <td class="${String(referral.referral_status || '').toLowerCase()}">${referral.referral_status}</td>
+      <td>
+        <a href="UpdateVisitInfo?visit_id=${referral.visit_id}" class="view-icon">
+          <i class="bx bx-show"></i>
+        </a>
+      </td>
+    `;
+    tableBody.appendChild(row);
+  });
+}
+
+function fetchReferrals() {
+  fetch("php/fetch_referrals1.php")
+    .then(response => response.json())
+    .then(data => {
+      if (data.error) {
+        console.error(data.error);
         return;
-    }
-
-    data.forEach(referral => {
-        const row = document.createElement("tr");
-        row.innerHTML = `
-            <td>${referral.referral_id}</td>
-            <td>${formatDate(referral.referral_date)}</td>
-            <td>${referral.patient_name}</td>
-            <td>${referral.referred_by} <br> <span style="opacity: 0.6;">Nursing Attendant</span></td>
-            <td class="${referral.referral_status.toLowerCase()}">${referral.referral_status}</td>
-            <td>
-                <a href="UpdateVisitInfo?visit_id=${referral.visit_id}" class="view-icon">
-                    <i class="bx bx-show"></i>
-                </a>
-            </td>
-        `;
-        tableBody.appendChild(row);
+      }
+      referrals = data;
+      updateStatistics();
+      renderReferrals(data);
+    })
+    .catch(error => {
+      console.error("Error fetching referrals:", error);
     });
 }
 
-// Event Listeners
-document.getElementById('referralSearch').addEventListener('input', filterReferrals);
-document.getElementById('statusFilter').addEventListener('change', filterReferrals);
-
-// Fetch referrals
-function fetchReferrals() {
-    fetch("php/fetch_referrals1.php")
-        .then(response => response.json())
-        .then(data => {
-            if (data.error) {
-                console.error(data.error);
-                return;
-            }
-            referrals = data;
-            updateStatistics();
-            renderReferrals(data);
-        })
-        .catch(error => {
-            console.error("Error fetching referrals:", error);
-        });
-}
-
-// Initial fetch
-fetchReferrals();
-
 function formatDate(dateString) {
-    if (!dateString) return "N/A";
-    const date = new Date(dateString);
-    if (isNaN(date.getTime())) return "Invalid Date";
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    return `${date.toLocaleDateString('en-US', options)} <br><span class="time">${date.toLocaleTimeString()}</span>`;
+  if (!dateString) return "N/A";
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) return "Invalid Date";
+  const options = { year: 'numeric', month: 'long', day: 'numeric' };
+  return `${date.toLocaleDateString('en-US', options)} <br><span class="time">${date.toLocaleTimeString()}</span>`;
 }
-
 
 function confirmLogout() {
-    document.getElementById('logoutModal').style.display = 'block';
-    return false; // Prevent the default link behavior
+  const modal = document.getElementById('logoutModal');
+  modal.classList.add('open');
+  return false;
 }
 
 function closeModal() {
-    document.getElementById('logoutModal').style.display = 'none';
+  const modal = document.getElementById('logoutModal');
+  modal.classList.remove('open');
 }
 
 function proceedLogout() {
-    window.location.href='../auth/role';
+  window.location.href = '../auth/role';
 }
 
-// Close modal when clicking outside
-window.onclick = function(event) {
-    const modal = document.getElementById('logoutModal');
-    if (event.target == modal) {
-        closeModal();
-    }
-}
-fetch('php/getUserName.php')
-    .then(response => response.json())
-    .then(data => {
-        if (data.full_name) {
-            document.getElementById('userGreeting').textContent = `Hello, ${data.full_name}!`;
-        } else {
-            document.getElementById('userGreeting').textContent = 'Hello, BHW!';
-        }
-    })
-    .catch(error => {
-        console.error('Error fetching user name:', error);
-        document.getElementById('userGreeting').textContent = 'Hello, BHW!';
-    });
-
-
-	// Check if user is logged in
-fetch('php/getUserId.php')
-	   .then(response => response.json())
-	   .then(data => {
-	       if (data.error) {
-	           // User is not logged in, redirect to role selection page
-	           window.location.href='../auth/role';
-	       } else {
-	           // Check for pending reset notification
-	           if (sessionStorage.getItem('showPendingReset')) {
-	               document.getElementById('pendingResetNotification').style.display = 'flex';
-	               sessionStorage.removeItem('showPendingReset');
-	           }
-	       }
-	   })
-	   .catch(error => {
-	       console.error('Error checking session:', error);
-	       window.location.href='../auth/role';
-	   });
-
-
-	   document.getElementById("searchButton").addEventListener("click", function () {
-    const searchQuery = document.getElementById("patientSearch").value.trim();
-    if (searchQuery) {
-        // Store the search query in sessionStorage
-        sessionStorage.setItem("searchQuery", searchQuery);
-
-        // Redirect to searchPatient.html
-        window.location.href="searchPatient";
-    } else {
-        alert("Please enter a patient name to search.");
-    }
+window.addEventListener('click', function(event) {
+  const modal = document.getElementById('logoutModal');
+  if (event.target === modal) {
+    closeModal();
+  }
 });
-	
-
 </script>
 
 <script>
-document.addEventListener("DOMContentLoaded", () => {
-  const sidebar = document.getElementById("sidebar");
+(function () {
+  const sidebar = document.getElementById('sidebar');
+  const toggle = document.getElementById('sidebarToggle');
+  const overlay = document.getElementById('sidebarOverlay');
+  const MOBILE_BP = 768;
 
-  function applyResponsiveSidebar() {
-    if (window.innerWidth <= 1024) {
-      sidebar.classList.add("hide");   // collapsed on small screens
-    } else {
-      sidebar.classList.remove("hide"); // expanded on larger screens
-    }
+  function isMobile() {
+    return window.innerWidth <= MOBILE_BP;
   }
 
-  applyResponsiveSidebar();
-  window.addEventListener("resize", applyResponsiveSidebar);
+  function setDesktopState() {
+    sidebar.classList.remove('mobile-open');
+    overlay.classList.remove('active');
+    document.body.style.overflow = '';
+  }
 
+  if (toggle) {
+    toggle.addEventListener('click', function () {
+      if (isMobile()) {
+        const open = sidebar.classList.toggle('mobile-open');
+        overlay.classList.toggle('active', open);
+        document.body.style.overflow = open ? 'hidden' : '';
+      } else {
+        sidebar.classList.toggle('collapsed');
+      }
+    });
+  }
 
-  
-  
-	const searchInput = document.getElementById("patientSearch");
-    const searchButton = document.getElementById("searchButton");
+  if (overlay) {
+    overlay.addEventListener('click', function () {
+      sidebar.classList.remove('mobile-open');
+      overlay.classList.remove('active');
+      document.body.style.overflow = '';
+    });
+  }
 
-    // Trigger search when Enter key is pressed
+  window.addEventListener('resize', function () {
+    if (!isMobile()) {
+      setDesktopState();
+    }
+  });
+})();
+
+document.addEventListener("DOMContentLoaded", () => {
+  const searchInput = document.getElementById("patientSearch");
+  const searchButton = document.getElementById("searchButton");
+
+  if (searchInput && searchButton) {
     searchInput.addEventListener("keypress", function (event) {
-        if (event.key === "Enter") {
-            event.preventDefault(); // Prevent form submission
-            searchButton.click(); // Trigger the search button click event
-        }
+      if (event.key === "Enter") {
+        event.preventDefault();
+        searchButton.click();
+      }
     });
 
-    // Trigger search when the search button is clicked
     searchButton.addEventListener("click", function () {
-        const searchQuery = searchInput.value.trim();
-        if (searchQuery) {
-            // Store the search query in sessionStorage
-            sessionStorage.setItem("searchQuery", searchQuery);
-
-            // Redirect to searchPatient.html
-            window.location.href="searchPatient";
-        } else {
-            alert("Please enter a patient name to search.");
-        }
+      const searchQuery = searchInput.value.trim();
+      if (searchQuery) {
+        sessionStorage.setItem("searchQuery", searchQuery);
+        window.location.href = "searchPatient";
+      } else {
+        alert("Please enter a patient name to search.");
+      }
     });
+  }
 });
 </script>
+
 	<script src="js/script.js"></script>
-	<script src="js/logout.js"></script>
 </body>
 </html>

@@ -15,6 +15,35 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <style>
+        /* Keep BHW-style sidebar/nav isolated from broad form.css rules */
+        #sidebar .sidebar-section-label {
+            background: transparent !important;
+            color: var(--text-muted, #a0abc0) !important;
+            padding: 0 22px 8px !important;
+            margin: 0 !important;
+            height: auto !important;
+            width: auto !important;
+            display: block !important;
+            font-family: var(--font-main, 'Plus Jakarta Sans', sans-serif) !important;
+        }
+
+        #sidebar p {
+            background: transparent !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            height: auto !important;
+            width: auto !important;
+        }
+
+        #sidebar .nav-label,
+        #sidebar .brand-name,
+        #sidebar .user-name,
+        #sidebar .user-role {
+            background: transparent !important;
+        }
+    </style>
 </head>
 
 <body>
@@ -47,7 +76,7 @@ fetch('php/getUserId.php')
 		</a>
 
 		<div class="sidebar-scroll">
-			<p class="sidebar-section-label">Main Menu</p>
+			<div class="sidebar-section-label">Main Menu</div>
 			<ul class="side-menu top">
 				<li>
 					<a href="dashboard" data-tooltip="Dashboard">
@@ -1073,7 +1102,7 @@ updateRemoveButtons();
                 </div>
             </div>
 
-        <<div id="patientExistsModal" class="modal">
+        <div id="patientExistsModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
             <h2>Patient Already Exists</h2>
@@ -1239,60 +1268,39 @@ document.getElementById('add-medicine').addEventListener('click', function() {
 
 
 <script>
-document.addEventListener("DOMContentLoaded", () => {
-  const sidebar = document.getElementById("sidebar");
-
-  function applyResponsiveSidebar() {
-    if (window.innerWidth <= 1024) {
-      sidebar.classList.add("hide");   // collapsed on small screens
-    } else {
-      sidebar.classList.remove("hide"); // expanded on larger screens
-    }
-  }
-
-  applyResponsiveSidebar();
-  window.addEventListener("resize", applyResponsiveSidebar);
-
-  // keep the rest of your existing code (auth, stats, modals, etc.)
-});
-</script>
-
-
-<script>
 function confirmLogout() {
-    document.getElementById('logoutModal').style.display = 'block';
-    return false; // Prevent the default link behavior
+    const logoutModal = document.getElementById('logoutModal');
+    if (logoutModal) {
+        logoutModal.classList.add('open');
+        logoutModal.style.display = '';
+    }
+    return false;
 }
 
 function closeModal() {
-    document.getElementById('logoutModal').style.display = 'none';
-    document.getElementById('errorModal').style.display = 'none';
+    const logoutModal = document.getElementById('logoutModal');
+    const errorModal = document.getElementById('errorModal');
+
+    if (logoutModal) {
+        logoutModal.classList.remove('open');
+        logoutModal.style.display = '';
+    }
+
+    if (errorModal) {
+        errorModal.style.display = 'none';
+    }
 }
 
 function proceedLogout() {
-		 window.location.href='../ADMIN/php/logout';
+    window.location.href = '../ADMIN/php/logout';
 }
 
-// Close modal when clicking outside
-window.onclick = function(event) {
-    const modal = document.getElementById('logoutModal');
-    if (event.target == modal) {
+window.addEventListener('click', function(event) {
+    const logoutModal = document.getElementById('logoutModal');
+    if (event.target === logoutModal) {
         closeModal();
     }
-}
-fetch('php/getUserName.php')
-    .then(response => response.json())
-    .then(data => {
-        if (data.full_name) {
-            document.getElementById('userGreeting').textContent = `Hello, ${data.full_name}!`;
-        } else {
-            document.getElementById('userGreeting').textContent = 'Hello, BHW!';
-        }
-    })
-    .catch(error => {
-        console.error('Error fetching user name:', error);
-        document.getElementById('userGreeting').textContent = 'Hello, BHW!';
-    });
+});
 </script>
 <script>
 (function(){
@@ -1519,95 +1527,24 @@ function showCustomInputModal(label, callback) {
 </script>
 
 <script>
-document.addEventListener("DOMContentLoaded", () => {
-  const sidebar = document.getElementById("sidebar");
-  const sidebarToggle = document.getElementById("sidebarToggle");
-  const sidebarOverlay = document.getElementById("sidebarOverlay");
-
-  function applyResponsiveSidebar() {
-    if (window.innerWidth <= 1024) {
-      sidebar.classList.add("hide");
-    } else {
-      sidebar.classList.remove("hide");
-    }
-  }
-
-  function toggleSidebar() {
-    sidebar.classList.toggle("hide");
-    if (!sidebar.classList.contains("hide")) {
-      sidebarOverlay.style.display = "block";
-    } else {
-      sidebarOverlay.style.display = "none";
-    }
-  }
-
-  applyResponsiveSidebar();
-  window.addEventListener("resize", applyResponsiveSidebar);
-
-  if (sidebarToggle) {
-    sidebarToggle.addEventListener("click", toggleSidebar);
-  }
-
-  if (sidebarOverlay) {
-    sidebarOverlay.addEventListener("click", toggleSidebar);
-  }
-
-  const searchInput = document.getElementById("patientSearch");
-  const searchButton = document.getElementById("searchButton");
-
-  if (searchInput) {
-    searchInput.addEventListener("keypress", function (event) {
-      if (event.key === "Enter") {
-        event.preventDefault();
-        searchButton.click();
-      }
-    });
-  }
-
-  if (searchButton) {
-    searchButton.addEventListener("click", function () {
-      const searchQuery = searchInput.value.trim();
-      if (searchQuery) {
-        sessionStorage.setItem("searchQuery", searchQuery);
-        window.location.href = "searchPatient";
-      } else {
-        alert("Please enter a patient name to search.");
-      }
-    });
-  }
-
-  // Fetch user name for sidebar
-  fetch('php/getUserName.php')
-    .then(response => response.json())
-    .then(data => {
-        if (data.full_name) {
-            document.getElementById('sidebarUserName').textContent = data.full_name;
-        } else {
-            document.getElementById('sidebarUserName').textContent = 'BHW User';
-        }
-    })
-    .catch(error => {
-        console.error('Error fetching user name:', error);
-        document.getElementById('sidebarUserName').textContent = 'BHW User';
-    });
-});
-
 (function () {
-  const sidebar   = document.getElementById('sidebar');
-  const toggle    = document.getElementById('sidebarToggle');
-  const overlay   = document.getElementById('sidebarOverlay');
+  const sidebar = document.getElementById('sidebar');
+  const toggle = document.getElementById('sidebarToggle');
+  const overlay = document.getElementById('sidebarOverlay');
   const MOBILE_BP = 768;
-  const LARGE_BP  = 1280;
- 
-  function isMobile() { return window.innerWidth <= MOBILE_BP; }
- 
-  function setDesktopState() {
+
+  if (!sidebar || !toggle || !overlay) return;
+
+  function isMobile() {
+    return window.innerWidth <= MOBILE_BP;
+  }
+
+  function closeMobileSidebar() {
     sidebar.classList.remove('mobile-open');
     overlay.classList.remove('active');
     document.body.style.overflow = '';
-    // Let CSS handle collapsed via media query
   }
- 
+
   toggle.addEventListener('click', function () {
     if (isMobile()) {
       const open = sidebar.classList.toggle('mobile-open');
@@ -1617,18 +1554,55 @@ document.addEventListener("DOMContentLoaded", () => {
       sidebar.classList.toggle('collapsed');
     }
   });
- 
-  overlay.addEventListener('click', function () {
-    sidebar.classList.remove('mobile-open');
-    overlay.classList.remove('active');
-    document.body.style.overflow = '';
-  });
- 
+
+  overlay.addEventListener('click', closeMobileSidebar);
+
   window.addEventListener('resize', function () {
-    if (!isMobile()) { setDesktopState(); }
+    if (!isMobile()) {
+      closeMobileSidebar();
+    }
   });
 })();
 
+document.addEventListener("DOMContentLoaded", () => {
+  const searchInput = document.getElementById("patientSearch");
+  const searchButton = document.getElementById("searchButton");
+  const sidebarUserName = document.getElementById("sidebarUserName");
+
+  if (searchInput && searchButton) {
+    searchInput.addEventListener("keypress", function (event) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        searchButton.click();
+      }
+    });
+
+    searchButton.addEventListener("click", function () {
+      const searchQuery = searchInput.value.trim();
+
+      if (searchQuery) {
+        sessionStorage.setItem("searchQuery", searchQuery);
+        window.location.href = "searchPatient";
+      } else {
+        alert("Please enter a patient name to search.");
+      }
+    });
+  }
+
+  fetch('php/getUserName.php')
+    .then(response => response.json())
+    .then(data => {
+      if (sidebarUserName) {
+        sidebarUserName.textContent = data.full_name || 'BHW User';
+      }
+    })
+    .catch(error => {
+      console.error('Error fetching user name:', error);
+      if (sidebarUserName) {
+        sidebarUserName.textContent = 'BHW User';
+      }
+    });
+});
 </script>
 
 
