@@ -113,6 +113,7 @@ $unreadCount = 0;
     <link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../css/dashstyle.css"> 
     <link rel="stylesheet" href="../css/dashboard2.css">
+    <link rel="stylesheet" href="../css/sidebar.css">
      <link rel="stylesheet" href="../css/logout.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <title>Admin Dashboard</title>

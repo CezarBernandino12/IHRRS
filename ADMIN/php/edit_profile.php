@@ -31,6 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="icon" href="../../img/logo.png">
     <link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../css/Profile.css">
+    <link rel="stylesheet" href="../css/sidebar.css">   
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <title>Personal Information</title>
 </head>

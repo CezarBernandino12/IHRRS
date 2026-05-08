@@ -77,7 +77,7 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <link rel="stylesheet" href="../css/usermanagement.css">
     <link rel="stylesheet" href="../css/logout.css">
     <link rel="stylesheet" href="../css/pending_reset_password.css">
-     
+    <link rel="stylesheet" href="../css/sidebar.css">    
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <title>User Management</title>
     

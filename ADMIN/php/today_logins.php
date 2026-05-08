@@ -72,6 +72,7 @@ foreach ($users as &$user) {
     <link rel="stylesheet" href="../css/dashstyle.css">
     <link rel="stylesheet" href="../css/approval.css">
     <link rel="stylesheet" href="../css/logout.css">
+    <link rel="stylesheet" href="../css/sidebar.css">   
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <title>Log In Today</title>
 </head>
