@@ -1,0 +1,1433 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Poppins:wght@400;500;600;700&display=swap');
+
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+ 
+a {
+	text-decoration: none;
+}
+
+li {
+	list-style: none;
+}
+
+:root {
+	--poppins: 'Poppins', sans-serif;
+	--lato: 'Lato', sans-serif;
+
+	--light: #fafcff;
+	--blue: #1c538a;
+	--light-blue: #CFE8FF;
+	--grey: #eee;
+	--dark-grey: #AAAAAA;
+	--dark: #342E37;
+	--red: #DB504A;
+	--yellow: #FFCE26;
+	--light-yellow: #FFF2C6;
+	--orange: #FD7238;
+	--light-orange: #FFE0D3;
+}
+
+html {
+  overflow-x: hidden;
+} 
+
+
+body.dark {
+	--light: #0C0C1E;
+	--grey: #060714;
+	--dark: #FBFBFB;
+}
+
+body {
+	background: url(img/body.png);
+	overflow-x: hidden;
+	background-size: cover;
+}
+
+#content main {
+	width: 100%;
+	padding: 36px 24px;
+	font-family: var(--poppins);
+	max-height: calc(100vh - 56px);
+	overflow-y: auto;
+}
+
+#content main .head-title {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	grid-gap: 16px;
+	flex-wrap: wrap;
+}
+
+#content main .head-title .left h1 {
+	font-size: 36px;
+	font-weight: 600;
+	margin-bottom: 10px;
+	color: var(--dark);
+}
+
+#content main .head-title .left .breadcrumb {
+	display: flex;
+	align-items: center;
+	grid-gap: 16px;
+}
+
+#content main .head-title .left .breadcrumb li {
+	color: var(--dark);
+}
+
+#content main .head-title .left .breadcrumb li a {
+	color: var(--dark-grey);
+	pointer-events: none;
+}
+
+#content main .head-title .left .breadcrumb li a.active {
+	color: var(--blue);
+	pointer-events: unset;
+}
+
+#content main .box-info li .icon-img { width: 60px; height: auto; }
+#content main .box-info li .text h3 { font-size: 18px; text-align: center; }
+
+#content main .box-info li:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 8px 16px rgba(108,110,114,.616);
+}
+
+/* Card color you used */
+#content main .box-info li.mrr { background: #C6E7FF; }
+
+/* Optional: tighten on smaller screens */
+@media (max-width: 480px) {
+  #content main .box-info { gap: 16px; padding: 0 16px 24px; }
+  #content main .box-info li { min-height: 140px; padding: 16px; }
+  #content main .box-info li .icon-img { width: 48px; }
+  #content main .box-info li .text h3 { font-size: 16px; }
+}
+#content main .box-info {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;    
+    gap: 32px;
+    margin-top: 3%;
+    justify-content: flex-start;
+    text-align: left;
+    margin-left: 30px;
+    animation: fadeIn 1s forwards;
+    overflow-x: auto;
+      overflow: visible;  
+}
+
+#content main .box-info li {
+    width: 250px;
+    height: 160px;
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: 0 4px 8px rgba(183, 189, 199, 0.616);
+    display: flex;
+    flex-direction: column; 
+      flex: 1 1 220px;   
+    align-items: center; 
+    justify-content: flex-start; 
+    transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+    position: relative;
+    color: var(--dark);
+    background: #fff;
+    overflow: hidden; 
+    opacity: 0; 
+    animation: fadeIn 1.8s forwards; 
+}
+
+#content main .box-info li .icon-img {
+    width: 60px; 
+    height: auto;
+    object-fit: contain; 
+}
+
+#content main .box-info li .bx {
+    display: none; 
+}
+
+#content main .box-info li:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 8px 16px rgba(108, 110, 114, 0.616);
+}
+
+#content main .box-info li .bx {
+    font-size: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 16px;
+}
+
+#content main .box-info li .text {
+    text-align: center; 
+}
+
+#content main .box-info li .text h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
+    color: #000;
+    letter-spacing: 0.5px; 
+}
+
+#content main .box-info li.mrr {
+    background: #C6E7FF;
+    margin-top: 20px;
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+    #content main .box-info li {
+        width: 95%; 
+        height: auto;
+        margin-bottom: 20px;
+    }
+
+    #content main .box-info li .icon-img {
+        width: 50px; 
+    }
+
+    #content main .box-info li .text h3 {
+        font-size: 16px; 
+    }
+    
+    #content main .box-info li .bx {
+        font-size: 36px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    #content main .box-info li {
+        width: 100%; 
+        padding: 10px; 
+        height: auto;
+    }
+
+    #content main .box-info li .icon-img {
+        width: 45px; 
+    }
+
+    #content main .box-info li .text h3 {
+        font-size: 14px; 
+    }
+    
+    #content main .box-info li .bx {
+        font-size: 30px; 
+    }
+}
+
+.dashboard-layout {
+    display: flex; 
+    flex-wrap: wrap; 
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+@media screen and (max-width: 768px) {
+    .dashboard-layout {
+        flex-direction: column;
+        gap: 20px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+	#content main .box-info {
+		grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+	}
+}
+
+/*VISITOR*/
+.progress-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f0f4f8;
+    border-radius: 5px;
+    padding: 30px;
+    width: 350px;
+    height: 290px;
+    margin-top: 50px;
+    margin-left: 20px;
+}
+
+.progress-circle {
+    margin-top: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    flex-shrink: 0;
+    animation: rotateCircle 5s linear infinite;
+}
+
+.circle-background {
+    fill: none;
+    stroke: #e6e6e6;
+}
+
+.progress-ring {
+    fill: none;
+    stroke: #3D3BF3;
+    stroke-width: 16; 
+    stroke-dasharray: 452.4; 
+    stroke-dashoffset: 113.1; 
+    transition: stroke-dashoffset 1s ease-out;
+    animation: drawRing 2s ease-out forwards;
+}
+
+.progress-text {
+    position: absolute;
+    font-size: 28px;
+    font-weight: bold;
+    color: #333;
+    animation: countText 2s forwards; 
+}
+
+.title {
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.date {
+    font-size: 14px;
+    color: #777;
+    margin-top: 5px;
+    text-align: center;
+}
+
+.percentage {
+    color: #5c5c5c;
+    margin-right: 20px; 
+    width: 25px;
+    height: 25px;
+    display: flex;
+    justify-content: center;
+    align-items: center; 
+    text-align: center;
+}
+
+
+.channel-details .channel-list:nth-child(1) {
+    border-right: 2px solid #949494be; 
+    padding-right: 10px; 
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(10px); 
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0); 
+    }
+}
+
+
+.channel-list li {
+    opacity: 0;
+    animation: fadeIn 0.5s forwards; 
+}
+
+.channel-list li:nth-child(1) {
+    animation-delay: 0.2s; 
+}
+
+.channel-list li:nth-child(2) {
+    animation-delay: 0.4s; 
+}
+
+.channel-list li:nth-child(3) {
+    animation-delay: 0.6s; 
+}
+
+.channel-list li:nth-child(4) {
+    animation-delay: 0.8s; 
+}
+
+.channel-list li:nth-child(5) {
+    animation-delay: 1s; 
+}
+
+@keyframes bounceIn {
+    0% {
+        transform: translateY(-20px);
+    }
+    50% {
+        transform: translateY(10px);
+    }
+    100% {
+        transform: translateY(0);
+    }
+}
+
+.channel-details {
+    animation: bounceIn 1s ease; 
+}
+
+.channel-list li:hover {
+    background-color: rgba(0, 110, 255, 0.1); 
+}
+
+@keyframes drawRing {
+    0% {
+        stroke-dashoffset: 452.4;
+    }
+    100% {
+        stroke-dashoffset: 1; 
+    }
+}
+
+@keyframes countText {
+    0% {
+        content: '1%';
+    }
+    100% {
+        content: '75%';
+    }
+}
+
+@media screen and (max-width: 1200px) {
+    .progress-container {
+        width: 60%; 
+        margin-left: 10px;
+    }
+
+    .channel-details {
+        margin-top: 5%;
+        max-width: 400px;
+    }
+}
+
+@media screen and (max-width: 900px) {
+    .progress-container {
+        width: 100%; 
+        margin-left: 0;
+        padding: 20px; 
+    }
+
+    .channel-details {
+        margin-top: 5%;
+        display: block; 
+        max-width: 100%;
+    }
+
+    .channel-list {
+        margin-bottom: 20px; 
+    }
+
+    .title {
+        font-size: 18px; 
+    }
+
+    .progress-text {
+        font-size: 24px; 
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .progress-container {
+        padding: 15px; 
+        width: 100%; 
+    }
+
+    .progress-circle {
+        margin-top: 10px;
+        width: 150px; 
+        height: 150px; 
+    }
+
+    .progress-text {
+        font-size: 22px; 
+    }
+
+    .channel-list li {
+        font-size: 14px;
+    }
+
+    .channel-details {
+        margin-top: 3%;
+        display: block; 
+    }
+
+    .title {
+        font-size: 16px; 
+    }
+}
+
+/*VISITOR*/
+
+/*MODAL*/
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    overflow: auto;
+    transition: opacity 0.3s ease;
+}
+
+.modal-content {
+    background-color: #fff;
+    margin: 10% auto;
+    padding: 30px;
+    border-radius: 12px;
+    width: 80%;
+    max-width: 450px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.modal-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}
+
+.modal-header .checkmark-image {
+    width: 100px; 
+    height: auto;
+    border-radius: 50%;  
+}
+
+
+.modal-header h3 {
+    font-size: 22px;
+    color: #333;
+    margin-top: 5px;
+	font-family: Arial, Helvetica, sans-serif;
+}
+
+.modal-body {
+    font-size: 18px;
+    color: #555;
+    margin-top: 15px;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    gap: 10px;
+}
+
+.modal-footer .btn {
+    padding: 10px 20px;
+    margin: 0;
+    border: none;
+    cursor: pointer;
+    border-radius: 25px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    color: white;
+    white-space: nowrap;
+}
+
+.modal-footer .no {
+    background-color: #fa4141;
+}
+
+.modal-footer .no:hover {
+    background-color: #f51818;
+}
+
+.modal-footer .yes {
+    background-color: #018dff;
+}
+
+.modal-footer .yes:hover {
+    background-color: #0562ad;
+}
+
+.modal-footer .btn:hover {
+    opacity: 0.9;
+    transform: scale(1.05);
+}
+
+
+.close-btn {
+    position: absolute;
+	top: -10px;
+	right: -5px;
+    font-size: 30px;
+    color: #333;
+    cursor: pointer;
+}
+
+.close-btn:hover {
+    color: #fa4141;
+}
+
+.referral-container {
+    max-width: 60%; 
+    margin-left: 25%;
+    padding: 30px;
+    background-color: #fff;
+    border: 2px solid #ADD8E6;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    transition: all 0.3s ease;
+    margin-bottom: 20px;
+}
+
+.referral-form-section {
+    margin-bottom: 20px;
+}
+
+.referral-form-container {
+    border: 3px solid #ADD8E6; 
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    background-color: #f4f9fd;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+}
+
+label {
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 8px;
+    font-size: 15px;
+    margin-right: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.referral-text {
+    width: 100%;
+    padding: 12px;
+    margin: 5px 0;
+    border: 2px solid #ADD8E6;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    color: #333;
+    font-size: 15px;
+    transition: border-color 0.3s ease, background-color 0.3s ease;
+}
+
+.referral-text:focus {
+    border-color: #007bff; 
+    background-color: #eaf4ff; 
+    outline: none;
+}
+
+
+.view-record-link {
+    color: #007bff;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.view-record-link:hover {
+    text-decoration: underline;
+    color: #0056b3;
+    transition: color 0.3s ease;
+}
+
+.referral-form-section > .referral-text {
+    display: inline-block;
+    width: 32%;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin-right: 2%;
+    transition: all 0.3s ease;
+}
+
+.referral-form-section > .referral-text:last-child {
+    margin-right: 0;
+}
+
+input[type="radio"] {
+    margin-right: 8px;
+    margin-top: 5px;
+}
+
+input[type="radio"]:last-child {
+    margin-right: 0;
+}
+
+.referral-form-section label {
+    font-size: 15px;
+}
+
+.referral-form-section input[type="radio"], 
+.referral-form-section input[type="text"] {
+    font-size: 15px;
+    line-height: 22px;
+}
+
+@media (max-width: 768px) {
+    .referral-container {
+        width: 90%; 
+        padding: 20px; 
+    }
+
+    .referral-form-section > .referral-text {
+        width: 100%; 
+        margin-right: 0;
+    }
+
+    .referral-form-container {
+        padding: 15px; 
+    }
+
+    label {
+        font-size: 16px;
+    }
+
+    .referral-text {
+        font-size: 16px;
+    }
+}
+
+
+.referral-form-footer {
+    text-align: right;
+    margin-top: 20px;
+}
+.footer-btn {
+    padding: 10px 18px;
+    margin-left: 10px;
+    background-color: #162e51;
+    color: white;
+    font-size: 15px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.footer-btn:hover {
+    background-color: #15253d;
+}
+
+.referral-container {
+    max-width: 60%;
+    margin-left: 25%;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+.referral-container {
+  --ink:#000000; --muted:#667085; --line:#e6e9f2; --subtle:#f7f9fc;
+  --brand:#232324; --accent:#17B26A; --radius:14px; --shadow:0 6px 28px rgba(16,40,87,.08);
+}
+
+.referral-header .referral-heading{
+  line-height: 1.25;
+}
+
+.referral-header .referral-heading .line-1{
+  font-size: 16px;   /* Republic of the Philippines */
+}
+
+.referral-header .referral-heading .line-2{
+  font-size: 16x;   
+  letter-spacing: .2px;
+  margin-top: 2px;
+}
+
+.referral-header .referral-heading .line-3{
+  font-size: 16px;   /* Barangay 1 */
+  margin-top: 2px;
+  font-weight: 500;
+}
+
+/* Field groups */
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-group-title {
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 8px;
+    font-size: 16px;
+}
+
+/* Two-column layout for name fields */
+.name-fields {
+    display: flex;
+    gap: 20px;
+}
+
+.name-field {
+    flex: 1;
+}
+
+/* Form field styling */
+.field-container {
+    margin-bottom: 20px;
+}
+
+.field-label {
+    display: block;
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+input[type="text"], 
+select,
+textarea {
+    width: 100%;
+    padding: 8px 0;
+    border: none;
+    border-bottom: 1px solid #ddd;
+    font-size: 16px;
+    transition: border-color 0.3s;
+    background-color: transparent;
+}
+
+input[type="text"]:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    border-bottom: 2px solid #4a90e2;
+}
+
+/* Address fields */
+.address-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.address-row {
+    display: flex;
+    gap: 20px;
+}
+
+.address-field {
+    flex: 1;
+}
+
+/* Select dropdown styling */
+select {
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0 center;
+    background-size: 16px;
+    padding-right: 20px;
+}
+
+/* Patient information section */
+.patient-info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.patient-field {
+    flex: 1;
+    min-width: 200px;
+}
+
+/* Vital signs section */
+.vitals {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.vital-field {
+    flex: 1;
+    min-width: 120px;
+}
+
+/* Chief complaints textarea */
+.complaints-container textarea {
+    min-height: 100px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 10px;
+}
+
+/* Diagnosis and treatment sections */
+.diagnosis-container,
+.treatment-container {
+    margin-top: 25px;
+}
+
+.diagnosis-container textarea,
+.treatment-container textarea {
+    min-height: 120px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 10px;
+}
+
+.referral-header {
+  display: grid;
+  grid-template-columns: 80px auto 80px; /* same logo column width */
+  align-items: center;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  justify-content: center;
+  column-gap: 60px; /* space between logos and heading */
+  row-gap: 0;
+  width: fit-content;
+  margin: 8px auto 25px;
+  padding: 0;
+}
+
+.referral-logo {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+}
+
+.referral-heading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.25;
+}
+
+.referral-heading > * {
+  margin: 0;
+}
+
+.referral-heading .line-1 {
+  font-size: 16px;
+}
+
+.referral-heading .line-2 {
+  font-size: 16px;
+  letter-spacing: 0.2px;
+  margin-top: 2px;
+  color: #000;
+}
+
+.referral-heading .line-3 {
+  font-size: 16px;
+  margin-top: 2px;
+  font-weight: 500;
+}
+
+.referral-rule {
+  height: 1px;
+  margin: 6px 0 10px;
+  background: #cfd8e3;
+  border: 0;
+  box-shadow: none;
+}
+
+/* ✅ Keep consistent layout on small screens */
+@media (max-width: 640px) {
+  .referral-header {
+    grid-template-columns: 56px 1fr 56px;
+    column-gap: 12px;
+  }
+
+  .referral-logo {
+    width: 56px;
+    height: 56px;
+  }
+
+  .referral-heading .line-2 {
+    font-size: 16px;
+  }
+}
+
+/* ✅ Print version: same as on-screen */
+@media print {
+  .referral-header {
+    display: grid !important;
+    grid-template-columns: 80px auto 80px !important;
+    column-gap: 80px !important;
+    margin: 8px auto 25px !important;
+    padding: 0 !important;
+  }
+
+  .referral-logo {
+    width: 80px !important;
+    height: 80px !important;
+    object-fit: contain !important;
+  }
+    .referral-logo.right {
+    margin-left: 15px;
+  }
+      .referral-logo.left {
+    margin-right: 15px;
+  }
+}
+
+/* Responsive tweak: smaller logos on narrow screens */
+@media (max-width: 640px){
+  .referral-header{ grid-template-columns: 64px 1fr 64px; gap: 8px; }
+  .referral-logo{ width: 64px; height: 64px; }
+  .referral-heading .line-2{ font-size: 16px; }
+}
+
+/* Print: keep same arrangement, slightly smaller logos */
+@media print{
+  .referral-header{
+    display: grid !important;
+    grid-template-columns: 80px 1fr 80px !important;
+    gap: 10px !important;
+    margin-bottom: 6px !important;
+    padding: 0 !important;
+    column-gap: 80px;
+  }
+  .referral-logo{ width: 80px !important; height: 80px !important; }
+  .referral-heading .line-1,
+  .referral-heading .line-2,
+  .referral-heading .line-3{ font-size: 12pt !important; font-weight: 500 !important;}
+  .referral-heading .title{ font-size: 16pt !important; margin-top: 4px !important; }
+  .referral-rule{ height: 1px !important; background: #cfd8e3 !important; box-shadow: none !important; margin: 6px 0 10px !important; }
+}
+
+/* Tighten the card to suit the new header */
+.referral-container{
+  width:100%;
+  max-width:900px;
+  margin:24px auto;
+  padding:24px 28px;
+  background:#fff;
+  border:1px solid #dde3ee;
+  border-radius:10px;
+  box-shadow: 0 2px 12px rgba(16,40,87,.06);
+}
+
+/* Section headings a bit heavier to match letterhead */
+.form-group-title{
+  font-weight: 700;
+  color:#030303;
+  font-size: 15.5px;
+}
+
+/* ===== Print (A4) ===== */
+@media print{
+  @page{ size:A4; margin:10mm; }
+  html,body{ -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+  /* hide chrome */
+  #sidebar, nav, .view-record-link, .referral-form-footer{ display:none !important; }
+
+  .referral-container{
+    margin:0; padding:10mm;
+    border:none; box-shadow:none; max-width:100%;
+    font-size: 11pt;
+  }
+
+  /* letterhead */
+  .referral-header{
+    grid-template-columns: 80px 1fr 80px;
+    gap:10px; margin-bottom:6px; padding:0;
+    column-gap: 80px;
+  }
+  .referral-logo{ width:80px; height:80px; }
+  .referral-heading .line-1,
+  .referral-heading .line-2,
+  .referral-heading .line-3{ font-size: 12pt; font-weight: 500 !important;}
+  .referral-heading .title{ font-size: 16pt; margin-top: 4px; }
+
+  .referral-rule{ height:1px; background:#cfd8e3; margin:6px 0 10px; }
+
+  /* space & page-fit */
+  .form-group{ margin-bottom: 12px; }
+  .field-container{ margin-bottom: 8px; }
+  .name-fields, .patient-info, .vitals{ gap:8px; }
+  .diagnosis-container, .treatment-container{ margin-top:8px; }
+  .diagnosis-container textarea, .treatment-container textarea{ min-height:70px !important; }
+  .complaints-container textarea{ min-height: 50px !important; }
+
+  /* avoid awkward splits */
+  .referral-header, .referral-rule,
+  .complaints-container, .diagnosis-container, .treatment-container{
+    page-break-inside: avoid;
+  }
+}
+
+.referral-heading .title{
+  margin:10px 0 0;
+  font-weight:bold;
+  font-size:22px;
+  letter-spacing:.4px;
+  text-transform:uppercase;
+  color:#000;
+}
+
+/* remove any margin added directly on the title */
+.referral-heading .title {
+  margin-bottom: 0 !important;
+}
+
+/* add spacing below the whole header block */
+.referral-header {
+  margin-bottom: 40px; 
+}
+
+/* print version */
+@media print {
+  .referral-header {
+    margin-bottom: 40pt !important;
+    column-gap: 80px;
+  }
+}
+
+.referral-container {
+  --ink:#000000; --muted:#667085; --line:#e6e9f2; --subtle:#f7f9fc;
+  --brand:#272727; --accent:#17B26A; --radius:14px; --shadow:0 6px 28px rgba(16,40,87,.08);
+}
+
+/* Meta strip (Referral ID / Date) */
+.referral-meta{
+  display:flex; gap:12px; flex-wrap:wrap; margin:0px 0 18px;
+}
+.badge{
+  display:inline-flex; align-items:center; gap:8px;
+  background:var(--subtle); border:1px solid var(--line);
+  padding:8px 12px; border-radius:999px; color:#000000;
+  font-size: 16px;
+}
+.badge i{ font-size:18px; }
+
+/* Section Cards */
+.section-card{
+  background:white; border:1px solid var(--line); border-radius:var(--radius);
+  padding:16px 18px 18px; box-shadow:var(--shadow); margin-bottom:18px;
+}
+
+/* Section title */
+.section-title{
+  font-weight:700; color:var(--ink); font-size:16px; margin:2px 0 14px;
+}
+
+/* Two-column information grid */
+.info-grid{
+  display:grid; grid-template-columns: 1fr 1fr; gap:14px 24px;
+}
+.kv{ min-height:44px; }
+.kv .label{
+  display:block; font-size:16px; font-weight:650; line-height:1.4; letter-spacing:.3px; text-transform:uppercase;
+  color:#000000; margin-bottom:6px;
+}
+.kv .value{
+  color:#050505; font-size:16px; font-weight:600; line-height:1.4;
+}
+
+/* Vital signs: compact 4-up when space allows */
+.vitals-grid{ grid-template-columns: repeat(4, minmax(160px,1fr)); }
+
+/* Rich text containers */
+.textbox{
+  background:var(--subtle); border:1px dashed #d7deea;
+  padding:12px 14px; border-radius:10px; min-height:64px; white-space:pre-wrap;
+}
+
+/* Doctor-only areas */
+.lock-note{ font-style:italic; color:#242424d2; font-weight:500; }
+
+/* Readonly textarea restyle */
+.treatment-container textarea{
+  width:100%; background:var(--subtle); border:1px dashed #d7deea;
+  border-radius:10px; padding:12px 14px; font-size:14px; outline:none;
+}
+
+ .line{
+  flex:1; border-bottom:0.5px solid #000000; height:32px; width: 250px; margin-bottom: 5px;
+}
+/* Signature line */
+.signature{
+  display:flex; align-items:center; gap:16px; margin-top:8px;
+}
+.signature .line{
+  flex:1; border-bottom:2px dotted #c7cedd; height:32px;
+}
+.signature .name{
+  min-width:180px; text-align:right; font-weight:600; color:#020202;
+}
+
+/* Meta spacing for the footer (keeps your current buttons) */
+.referral-form-footer{ margin-top:22px; }
+
+/* Responsive */
+@media (max-width: 840px){
+  .info-grid{ grid-template-columns: 1fr; }
+  .vitals-grid{ grid-template-columns: repeat(2, 1fr); }
+}
+
+/* Print: flatten effects, tighter spacing */
+@media print{
+  .section-card{ box-shadow:none; border-color:#cfd8e3; }
+  .badge{ background:#fff; color:#000000; margin-left: -25px;}
+  .treatment-container textarea{ background:#fff; }
+
+  .signature-container {
+    margin-left: -20px;
+}
+}
+
+/* Action buttons */
+.referral-form-footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+/* Add this to your existing CSS file */
+
+.back-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    color: #2ecc71; /* Bright green color */
+    border: 2px solid #2ecc71;
+    border-radius: 50px;
+    padding: 12px 40px;
+    font-size: 18px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    width: 200px;
+    margin: 20px 0;
+}
+
+.back-button:hover {
+    background-color: rgba(46, 204, 113, 0.1);
+}
+
+.back-button i {
+    margin-right: 10px;
+    font-size: 20px;
+}
+
+/* Update the styles for the existing buttons in the footer */
+.referral-form-footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+.footer-btn {
+    padding: 5px 20px;
+    background-color: white;
+    color: #27548A;
+    border: 2px solid #27548A;
+    border-radius: 50px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+}
+
+.footer-btn:hover {
+    background-color: rgba(46, 204, 113, 0.1);
+}
+
+#goBackBtn::before {
+    content: "< ";
+    margin-right: 5px;
+    font-size: 18px;
+}
+
+/* Pill-style primary action (matches the screenshot) */
+#printBtn.print-pill{
+   background-color: #162e51;           /* rich blue */
+  color: #fff;
+  border: 0;
+  border-radius: 9999px;
+  padding: 10px 18px;
+  min-height: 36px;
+  font-size: 14px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 12px rgba(31, 94, 168, .35); /* soft glow */
+  transition: transform .06s ease, box-shadow .2s ease, background .2s ease;
+}
+
+#printBtn.print-pill i{
+  font-size: 18px; line-height: 0;
+}
+
+#printBtn.print-pill:hover{
+ background-color: #15253d;            /* slightly darker on hover */
+  box-shadow: 0 6px 16px rgba(31, 94, 168, .45);
+}
+
+#printBtn.print-pill:active{
+  transform: translateY(1px);
+  box-shadow: 0 3px 10px rgba(31, 94, 168, .35);
+}
+
+#printBtn.print-pill:focus-visible{
+  outline: 3px solid rgba(31, 94, 168, .35);
+  outline-offset: 2px;
+}
+
+#printBtn.print-pill:disabled{
+  background: #a7b7cf;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+/* View record link */
+.view-record-link {
+    color: #4a90e2;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: color 0.3s;
+}
+
+.view-record-link:hover {
+    color: #3a7bc8;
+    text-decoration: underline;
+}
+
+
+
+/* =========================
+   UNIFIED PRINT (A4, 10mm)
+   ========================= */
+@media print {
+  /* Page setup */
+  @page { size: A4; margin: 10mm; }
+  html, body {
+    background: #fff !important;
+    -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+  }
+
+  /* Show ONLY the referral card; no visibility hacks */
+  /* Hide app chrome / everything outside the card */
+  body > :not(.referral-container) { display: none !important; }
+  /* In case the card lives deeper in the DOM */
+  #sidebar, nav, .referral-form-footer, .view-record-link { display: none !important; }
+
+  /* Lock the card to the printable width (A4 width 210mm − 2×10mm margins = 190mm) */
+  .referral-container {
+    position: static !important;
+    box-shadow: none !important;
+    border: 0 !important;
+    background: #fff !important;
+
+    width: 190mm !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;   /* we’ll pad inside */
+    font-size: 11pt !important;
+    line-height: 1.3 !important;
+    color: #000000 !important;
+
+    /* Avoid accidental scaling from leftover transforms */
+    transform: none !important;
+    transform-origin: initial !important;
+
+    /* Some engines break if overflow is auto during print */
+    overflow: visible !important;
+  }
+
+  /* Inner padding to feel like margins inside the card */
+  .referral-container > * {
+    padding-left: 6mm;
+    padding-right: 6mm;
+  }
+
+  /* Header */
+  .referral-header { margin-top: 4mm; margin-bottom: 4mm; gap: 6px !important; column-gap: 80px !important; }
+  .referral-logo { width: 65px !important; height: 65px !important; object-fit: contain;}
+  .referral-heading .line-1 { font-size: 12pt !important; }
+  .referral-heading .line-2 { font-size: 12pt !important; color: #000000; }
+  .referral-heading .line-3 { font-size: 12pt !important; font-weight: 600 !important; color: #000000; }
+  .referral-heading .title  { font-size: 14pt !important; margin-top: 4px !important; }
+  .referral-rule {
+    height: 1px !important; margin: 6px 0 10px !important;
+    background: #cfd8e3 !important; border: 0 !important; box-shadow: none !important;
+  }
+
+  /* Meta badges */
+  .referral-meta { display: flex; gap: 6px; flex-wrap: wrap; margin-left: -25px !important; }
+  .badge {
+    padding: 2px 7px !important; font-size: 11pt !important; margin-left: 5px;
+    border: 1px solid #e2e7f1 !important; border-radius: 999px !important; background: #fff !important;
+  }
+
+  /* Sections flattened */
+  .section-card {
+    background: transparent !important;
+    border: 0 !important; border-radius: 0 !important; box-shadow: none !important;
+    padding: 0 !important; margin: 0 0 4mm !important;
+  }
+  .section-title {
+    margin: 0 0 2.5mm !important; font-weight: 700 !important; font-size: 11pt !important; color: #000000 !important;
+    padding-bottom: 1.5mm !important; border-bottom: 1px solid #e7ecf6 !important;
+  }
+
+  /* Tight grids */
+  .info-grid { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 8px 16px !important; }
+  .vitals-grid { grid-template-columns: repeat(4, 1fr) !important; gap: 8px 12px !important; }
+
+  .kv .label {
+    font-size: 11pt !important; margin-bottom: 2px !important; color: #000000 !important;
+    letter-spacing: .15px !important; text-transform: uppercase !important; font-weight: 650 !important; 
+  }
+  .kv .value { font-size: 11pt !important; font-weight: 600 !important; overflow-wrap: anywhere !important; }
+
+  /* Text boxes */
+  .textbox {
+    background: #fff !important; border: 1px solid #e3e8f4 !important;
+    border-radius: 4px !important; padding: 6px 8px !important; min-height: 24px !important;
+  }
+
+  /* Textareas: no resize borders, fixed short height for print */
+  textarea {
+    resize: none !important; overflow: hidden !important;
+    background: #fff !important; border: 1px solid #e3e8f4 !important;
+    border-radius: 4px !important; padding: 6px 8px !important; min-height: 60px !important; height: 60px !important;
+    font-size: 11pt !important;
+  }
+
+  /* Signature line */
+  .signature { display: flex !important; align-items: center !important; gap: 8px !important; margin-top: 4mm !important; }
+  .signature .line { flex: 1 !important; border-bottom: 1px dotted #c7cedd !important; height: 14px !important; }
+  .signature .name { font-weight: 700 !important; font-size: 11pt !important; min-width: 150px !important; text-align: right !important; }
+
+  /* Keep these together; avoid ugly splits */
+  .referral-header, .referral-meta,
+  .complaints-container, .diagnosis-container, .treatment-container { page-break-inside: avoid !important; }
+}
