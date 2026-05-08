@@ -7,109 +7,108 @@
 	<link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
 	<link rel="stylesheet" href="css/medcert.css">
     <link rel="stylesheet" href="css/logout.css">
+    <link rel="stylesheet" href="css/sidebar.css">
    
 	<title>Issued Records</title> 
 
 </head>
 <body>
 
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
 	<!-- Sidebar Section -->
 	<section id="sidebar">
-		<a href="#" class="brand">
-			<img src="../img/logo.png" alt="RHULogo" class="logo">
-			<span class="text">Hello Physician</span>
+		<a href="#" class="sidebar-brand">
+			<img src="../img/logo.png" alt="RHU Logo" class="brand-logo">
+			<div class="brand-text">
+				<span class="brand-name">Hello Physician</span>
+			</div>
 		</a>
-		<ul class="side-menu top">
-			<li>
-				<a href="dashboard">
-					<i class="bx bxs-dashboard"></i>
-					<span class="text">Dashboard</span>
-				</a>
-			</li>
-            <li>
-				<a href="ITR">
-					<i class="bx bxs-user"></i>
-					<span class="text">Add New ITR</span>
-				</a>
-			</li>
-			<li class="active">
-                <a href="#" id="updateReferrals">
-                    <i class="bx bxs-user"></i>
-                    <span class="text">Pending Referrals</span>
-                </a>
-            </li>
-            
-            <script>
-            document.getElementById("updateReferrals").addEventListener("click", function (event) {
-                event.preventDefault(); 
-            
-                fetch("php/update_referrals.php") 
-                .then(response => response.json())
-                .then(data => {
-                    console.log(data.message); 
-                    window.location.href="pending";
-                })
-                .catch(error => {
-                    console.error("Error updating referrals:", error);
-                    window.location.href="pending"; 
-                });
-            });
-            </script>
 
-            	<li>
-				<a href="followUpConsultations">
-					<i class="bx bxs-user"></i>
-					<span class="text">Follow-Up Visits</span>
-				</a>
-			</li>
-            
-			<li>
-				<a href="searchPatient">
-					<i class="bx bxs-search"></i>
-					<span class="text">Patient Records</span>
-				</a>
-			</li>
-            <li>
-                <a href="history">
-                    <i class="bx bx-history"></i>
-                    <span class="text">Referral History</span>
-                </a>
-            </li>
-            <li>
-				<a href="reports">
-					<i class="bx bx-notepad"></i>
-					<span class="text">Reports</span>
-				</a>
-			</li>
-		</ul>
-		<ul class="side-menu">
-			<li>
-				<a href="#" class="logout" onclick="return confirmLogout()">
-               <i class="bx bxs-log-out-circle"></i>
-                <span class="text">Logout</span>
-                </a>
-			</li>
-		</ul>
+		<div class="sidebar-scroll">
+			<div class="sidebar-section-label">Main Menu</div>
+			<ul class="side-menu top">
+				<li>
+					<a href="dashboard" data-tooltip="Dashboard">
+						<i class="bx bxs-dashboard nav-icon"></i>
+						<span class="nav-label">Dashboard</span>
+					</a>
+				</li>
+				<li>
+					<a href="ITR" data-tooltip="Add New ITR">
+						<i class="bx bxs-notepad nav-icon"></i>
+						<span class="nav-label">Add New ITR</span>
+					</a>
+				</li>
+				<li class="active">
+					<a href="#" id="updateReferrals" data-tooltip="Pending Referrals">
+						<i class="bx bxs-user nav-icon"></i>
+						<span class="nav-label">Pending Referrals</span>
+					</a>
+				</li>
+				<li>
+					<a href="followUpConsultations" data-tooltip="Follow-Up Visits">
+						<i class="bx bxs-user nav-icon"></i>
+						<span class="nav-label">Follow-Up Visits</span>
+					</a>
+				</li>
+				<li>
+					<a href="searchPatient" data-tooltip="Patient Records">
+						<i class="bx bxs-search nav-icon"></i>
+						<span class="nav-label">Patient Records</span>
+					</a>
+				</li>
+				<li>
+					<a href="history" data-tooltip="Referral History">
+						<i class="bx bx-history nav-icon"></i>
+						<span class="nav-label">Referral History</span>
+					</a>
+				</li>
+				<li>
+					<a href="reports" data-tooltip="Reports">
+						<i class="bx bx-notepad nav-icon"></i>
+						<span class="nav-label">Reports</span>
+					</a>
+				</li>
+			</ul>
+
+			<div class="sidebar-divider"></div>
+
+			<ul class="side-menu">
+				<li>
+					<a href="#" class="logout" data-tooltip="Logout" onclick="return confirmLogout()">
+						<i class="bx bxs-log-out-circle nav-icon"></i>
+						<span class="nav-label">Logout</span>
+					</a>
+				</li>
+			</ul>
+		</div>
+
+		<div class="sidebar-footer">
+			<div class="sidebar-user">
+				<img src="../img/doctor.png" alt="Physician User">
+				<div class="sidebar-user-info">
+					<div class="user-name" id="sidebarUserName">Physician User</div>
+					<div class="user-role">RHU Physician</div>
+				</div>
+			</div>
+		</div>
 	</section>
 
 	<!-- Main Content Section -->
 	<section id="content">
 		<nav>
-			<form action="#" id="searchForm">
-				<div class="form-input">
-					<input type="search" id="searchInput" placeholder="Search by Referral ID or Patient Name...">
-					<button type="submit" class="search-btn">
-						<i class="bx bx-search"></i>
-					</button>
-				</div>
+			<button class="nav-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+				<i class="bx bx-menu"></i>
+			</button>
+
+			<form action="#" id="searchForm" class="nav-search" style="position: relative;">
+				<input type="search" id="searchInput" placeholder="Search by Referral ID or Patient Name..." autocomplete="off">
+				<button type="submit" aria-label="Search">
+					<i class="bx bx-search"></i>
+				</button>
+				<div id="resultDropdown" class="dropdown-content"></div>
 			</form>
-			
-			<div class="greeting">
-                <span id="userGreeting">Hello Physician</span>
-            </div>
-			<a href="#" class="profile">
-				<img src="../img/nurse.png">
-			</a>
 		</nav>
 
 	<main>
@@ -232,22 +231,44 @@
                     </div>
                 </div>
             </div>
+
+
+<div id="logoutModal" class="logout-modal">
+    <div class="logout-modal-content">
+        <div class="logout-modal-header">
+            <h3>Confirm Logout</h3>
+        </div>
+        <div class="logout-modal-body">
+            <p>Are you sure you want to logout?</p>
+        </div>
+        <div class="logout-modal-footer">
+            <button onclick="closeModal()" class="logout-cancel-btn">Cancel</button>
+            <button onclick="proceedLogout()" class="logout-confirm-btn">Yes, Logout</button>
+        </div>
+    </div>
+</div>
+
         </main>
     </section>
 
     <script>
         // Load user name when the page loads
         document.addEventListener('DOMContentLoaded', function() {
-            // Get user's name for greeting
+            // Get user's name for sidebar user card
             fetch('php/getUserName.php')
                 .then(response => response.json())
                 .then(data => {
-                    if (data.full_name) {
-                        document.getElementById('userGreeting').textContent = `Hello, ${data.full_name}!`;
+                    const sidebarUserName = document.getElementById('sidebarUserName');
+                    if (sidebarUserName) {
+                        sidebarUserName.textContent = data.full_name || 'Physician User';
                     }
                 })
                 .catch(error => {
                     console.error('Error loading user info:', error);
+                    const sidebarUserName = document.getElementById('sidebarUserName');
+                    if (sidebarUserName) {
+                        sidebarUserName.textContent = 'Physician User';
+                    }
                 });
         });
 
@@ -342,7 +363,95 @@
             window.history.back();
         }
     </script>
+
+
+<script>
+function confirmLogout() {
+    const logoutModal = document.getElementById('logoutModal');
+    if (logoutModal) {
+        logoutModal.classList.add('open');
+        logoutModal.style.display = '';
+    }
+    return false;
+}
+
+function closeModal() {
+    const logoutModal = document.getElementById('logoutModal');
+    if (logoutModal) {
+        logoutModal.classList.remove('open');
+        logoutModal.style.display = '';
+    }
+}
+
+function proceedLogout() {
+    window.location.href = '../auth/role';
+}
+
+window.addEventListener('click', function(event) {
+    const logoutModal = document.getElementById('logoutModal');
+    if (event.target === logoutModal) {
+        closeModal();
+    }
+});
+
+(function () {
+  const sidebar = document.getElementById('sidebar');
+  const toggle = document.getElementById('sidebarToggle');
+  const overlay = document.getElementById('sidebarOverlay');
+  const MOBILE_BP = 768;
+
+  if (!sidebar || !toggle || !overlay) return;
+
+  function isMobile() {
+    return window.innerWidth <= MOBILE_BP;
+  }
+
+  function closeMobileSidebar() {
+    sidebar.classList.remove('mobile-open');
+    overlay.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  toggle.addEventListener('click', function () {
+    if (isMobile()) {
+      const open = sidebar.classList.toggle('mobile-open');
+      overlay.classList.toggle('active', open);
+      document.body.style.overflow = open ? 'hidden' : '';
+    } else {
+      sidebar.classList.toggle('collapsed');
+    }
+  });
+
+  overlay.addEventListener('click', closeMobileSidebar);
+
+  window.addEventListener('resize', function () {
+    if (!isMobile()) {
+      closeMobileSidebar();
+    }
+  });
+})();
+
+document.addEventListener('DOMContentLoaded', function () {
+  const updateReferrals = document.getElementById('updateReferrals');
+
+  if (updateReferrals) {
+    updateReferrals.addEventListener('click', function (event) {
+      event.preventDefault();
+
+      fetch('php/update_referrals.php')
+        .then(response => response.json())
+        .then(data => {
+          console.log(data.message);
+          window.location.href = 'pending';
+        })
+        .catch(error => {
+          console.error('Error updating referrals:', error);
+          window.location.href = 'pending';
+        });
+    });
+  }
+});
+</script>
 </body>
 </html>
-
 

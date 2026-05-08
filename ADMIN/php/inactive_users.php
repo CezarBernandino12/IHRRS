@@ -42,6 +42,7 @@ foreach ($inactiveUsers as &$user) {
     <link rel="icon" href="../../img/logo.png">
     <link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../css/dashstyle.css">
+    <link rel="stylesheet" href="../css/sidebar.css">
     <link rel="stylesheet" href="../css/approval.css">
     <link rel="stylesheet" href="../css/logout.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -49,62 +50,84 @@ foreach ($inactiveUsers as &$user) {
 </head>
 
 <body>
-    
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
     <!-- Sidebar Section -->
     <section id="sidebar">
-        <a href="#" class="brand">
-            <img src="../../img/logo.png" alt="RHULogo" class="logo"> 
-            <span class="text">Hello Admin</span>
+        <a href="#" class="sidebar-brand">
+            <img src="../../img/logo.png" alt="Admin Logo" class="brand-logo">
+            <div class="brand-text">
+                <span class="brand-name">Hello Admin</span>
+            </div>
         </a>
-        <ul class="side-menu top">
-            <li class="active">
-                <a href="admin_dashboard2">
-                    <i class="bx bxs-dashboard"></i>
-                    <span class="text">Dashboard</span>
-                </a>
-            </li>
-            <li > 
-                <a href="activity_logs">
-                    <i class="bx bxs-user"></i>
-                    <span class="text">Activity Logs</span>
-                </a>
-            </li>
-            <li>
-                <a href="admin_user">
-                    <i class="bx bxs-notepad"></i>
-                    <span class="text">User management</span>
-                </a>
-            </li>
-            <li>
-				<a href="admin_reports">
-					<i class="bx bxs-report"></i>
-					<span class="text">Reports</span>
-				</a>
-			</li>
-        </ul>
 
-        <ul class="side-menu">
-        <li>
-             <a href="#" class="logout" onclick="return confirmLogout()">
-             <i class="bx bxs-log-out-circle"></i>
-            <span class="text">Logout</span>
-            </a>
-         </li>
+        <div class="sidebar-scroll">
+            <div class="sidebar-section-label">Main Menu</div>
+            <ul class="side-menu top">
+                <li class="active">
+                    <a href="admin_dashboard2" data-tooltip="Dashboard">
+                        <i class="bx bxs-dashboard nav-icon"></i>
+                        <span class="nav-label">Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="activity_logs" data-tooltip="Activity Logs">
+                        <i class="bx bxs-user nav-icon"></i>
+                        <span class="nav-label">Activity Logs</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="admin_user" data-tooltip="User Management">
+                        <i class="bx bxs-notepad nav-icon"></i>
+                        <span class="nav-label">User management</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="admin_reports" data-tooltip="Reports">
+                        <i class="bx bxs-report nav-icon"></i>
+                        <span class="nav-label">Reports</span>
+                    </a>
+                </li>
+            </ul>
 
-        </ul>
+            <div class="sidebar-divider"></div>
+
+            <ul class="side-menu">
+                <li>
+                    <a href="#" class="logout" data-tooltip="Logout" onclick="return confirmLogout()">
+                        <i class="bx bxs-log-out-circle nav-icon"></i>
+                        <span class="nav-label">Logout</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="sidebar-footer">
+            <div class="sidebar-user">
+                <img src="../../img/admin.png" alt="Admin User">
+                <div class="sidebar-user-info">
+                    <div class="user-name" id="sidebarUserName">Admin User</div>
+                    <div class="user-role">Administrator</div>
+                </div>
+            </div>
+        </div>
     </section>
 
 
     <!-- Main Content Section -->
     <section id="content">
         <nav>
-            <form action="#">
-            </form> 
+            <button class="nav-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+                <i class="bx bx-menu"></i>
+            </button>
 
-            <div class="greeting">
+            <div class="nav-search" style="position: relative;">
+                <input type="search" id="patientSearch" placeholder="Search terminated accounts..." name="search" autocomplete="off">
+                <button type="button" id="searchButton" aria-label="Search">
+                    <i class="bx bx-search"></i>
+                </button>
+                <div id="resultDropdown" class="dropdown-content"></div>
             </div>
-            <a href="profile" class="profile">
-            </a>
         </nav>
         <main>		
         <div class="pending-approvals-container">	
@@ -164,9 +187,9 @@ foreach ($inactiveUsers as &$user) {
 </div>
 
     <script>
-        function confirmLogout() {
+function confirmLogout() {
     document.getElementById('logoutModal').style.display = 'block';
-    return false; // Prevent the default link behavior
+    return false;
 }
 
 function closeModal() {
@@ -177,61 +200,110 @@ function proceedLogout() {
     window.location.href='logout';
 }
 
-// Close modal when clicking outside
-window.onclick = function(event) {
+window.addEventListener('click', function(event) {
     const modal = document.getElementById('logoutModal');
-    if (event.target == modal) {
+    if (event.target === modal) {
         closeModal();
     }
-};
+});
 
-document.addEventListener("DOMContentLoaded", () => {
-  const sidebar = document.getElementById("sidebar");
+(function () {
+  const sidebar = document.getElementById('sidebar');
+  const toggle = document.getElementById('sidebarToggle');
+  const overlay = document.getElementById('sidebarOverlay');
+  const MOBILE_BP = 768;
 
-  function applyResponsiveSidebar() {
-    if (window.innerWidth <= 1024) {
-      sidebar.classList.add("hide");   // collapsed on small screens
-    } else {
-      sidebar.classList.remove("hide"); // expanded on larger screens
-    }
+  if (!sidebar || !toggle || !overlay) return;
+
+  function isMobile() {
+    return window.innerWidth <= MOBILE_BP;
   }
 
-  applyResponsiveSidebar();
-  window.addEventListener("resize", applyResponsiveSidebar);
+  function closeMobileSidebar() {
+    sidebar.classList.remove('mobile-open');
+    overlay.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  toggle.addEventListener('click', function () {
+    if (isMobile()) {
+      const open = sidebar.classList.toggle('mobile-open');
+      overlay.classList.toggle('active', open);
+      document.body.style.overflow = open ? 'hidden' : '';
+    } else {
+      sidebar.classList.toggle('collapsed');
+    }
+  });
+
+  overlay.addEventListener('click', closeMobileSidebar);
+
+  window.addEventListener('resize', function () {
+    if (!isMobile()) {
+      closeMobileSidebar();
+    }
+  });
+})();
+
+document.addEventListener("DOMContentLoaded", () => {
+  fetch('getUserName.php')
+    .then(response => response.json())
+    .then(data => {
+      const sidebarNameEl = document.getElementById('sidebarUserName');
+      if (sidebarNameEl) {
+        sidebarNameEl.textContent = data.full_name || 'Admin User';
+      }
+    })
+    .catch(error => {
+      console.error('Error fetching user name:', error);
+      const sidebarNameEl = document.getElementById('sidebarUserName');
+      if (sidebarNameEl) {
+        sidebarNameEl.textContent = 'Admin User';
+      }
+    });
 
   // Search and filter functionality
   const searchInput = document.getElementById('searchInput');
+  const navbarSearch = document.getElementById('patientSearch');
+  const searchButton = document.getElementById('searchButton');
   const roleFilter = document.getElementById('roleFilter');
   const table = document.getElementById('inactiveUsersTable');
   const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
 
   function filterTable() {
-    const searchTerm = searchInput.value.toLowerCase();
+    const searchTerm = (searchInput.value + ' ' + (navbarSearch?.value || '')).toLowerCase().trim();
     const roleValue = roleFilter.value.toLowerCase();
 
     for (let i = 0; i < rows.length; i++) {
       const row = rows[i];
-      if (row.cells.length < 5) continue; // Skip the "no users found" row
+      if (row.cells.length < 5) continue;
 
       const fullName = row.cells[0].textContent.toLowerCase();
       const username = row.cells[1].textContent.toLowerCase();
       const role = row.cells[2].textContent.toLowerCase();
+      const barangay = row.cells[3].textContent.toLowerCase();
+      const contact = row.cells[4].textContent.toLowerCase();
 
-      const matchesSearch = fullName.includes(searchTerm) || username.includes(searchTerm) || role.includes(searchTerm);
+      const rowText = `${fullName} ${username} ${role} ${barangay} ${contact}`;
+      const matchesSearch = !searchTerm || rowText.includes(searchTerm);
       const matchesRole = !roleValue || role.includes(roleValue);
 
-      if (matchesSearch && matchesRole) {
-        row.style.display = '';
-      } else {
-        row.style.display = 'none';
-      }
+      row.style.display = matchesSearch && matchesRole ? '' : 'none';
     }
   }
 
   searchInput.addEventListener('input', filterTable);
   roleFilter.addEventListener('change', filterTable);
 
-  // keep the rest of your existing code (auth, stats, modals, etc.)
+  if (navbarSearch && searchButton) {
+    navbarSearch.addEventListener('input', filterTable);
+    navbarSearch.addEventListener('keypress', function (event) {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        filterTable();
+      }
+    });
+    searchButton.addEventListener('click', filterTable);
+  }
 });
 </script>
 </body>

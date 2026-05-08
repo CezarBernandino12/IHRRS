@@ -116,6 +116,7 @@ $total_patients = count(array_unique(array_column($visits, 'patient_id')));
 	<link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../css/reportsDesign.css">
     <link rel="stylesheet" href="../css/logout.css">
+    <link rel="stylesheet" href="../css/sidebar.css">
 	
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
@@ -139,97 +140,101 @@ $total_patients = count(array_unique(array_column($visits, 'patient_id')));
 </style>
 
 <!-- Sidebar Section -->
-	<section id="sidebar">
-		<a href="#" class="brand">
-			<img src="../../img/logo.png" alt="RHULogo" class="logo">
-			<span class="text">Nurse</span>
-		</a>
-		<ul class="side-menu top">
-			<li>
-				<a href="../dashboard">
-					<i class="bx bxs-dashboard"></i>
-					<span class="text">Dashboard</span>
-				</a>
-			</li>
-			<li>
-				<a href="../ITR">
-					<i class="bx bxs-notepad"></i>
-					<span class="text">Add New ITR</span>
-				</a>
-			</li>
-			<li>
-				<a href="../pending" id="updateReferrals">
-					<i class="bx bxs-user"></i>
-					<span class="text">Pending Referrals</span>
-				</a>
-			</li>
-			
-			<script>
-			document.getElementById("updateReferrals").addEventListener("click", function (event) {
-				event.preventDefault(); // Prevent default navigation
-			
-				fetch("../php/update_referrals.php") // Call PHP file
-				.then(response => response.json())
-				.then(data => {
-					console.log(data.message); // Log success message (optional)
-					window.location.href="../pending"; // Redirect after updating
-				})
-				.catch(error => {
-					console.error("Error updating referrals:", error);
-					window.location.href="../pending"; // Still redirect even if an error occurs
-				});
-			});
-			</script>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
 
+	<section id="sidebar">
+		<a href="#" class="sidebar-brand">
+			<img src="../../img/logo.png" alt="RHU Logo" class="brand-logo">
+			<div class="brand-text">
+				<span class="brand-name">Nurse</span>
+			</div>
+		</a>
+
+		<div class="sidebar-scroll">
+			<div class="sidebar-section-label">Main Menu</div>
+			<ul class="side-menu top">
 				<li>
-				<a href="../followUpConsultations">
-					<i class="bx bxs-user"></i>
-					<span class="text">Follow-Up Visits</span>
-				</a>
-			</li>
-			
-			<li>
-				<a href="../searchPatient">
-					<i class="bx bxs-search"></i>
-					<span class="text">Patient Records</span>
-				</a>
-			</li>
-			<li>
-                <a href="../history">
-                    <i class="bx bx-history"></i>
-                    <span class="text">Referral History</span>
-                </a>
-            </li>
-			<li class="active">
-				<a href="../reports">
-					<i class="bx bx-notepad"></i>
-					<span class="text">Reports</span>
-				</a>	
-			</li>
-		</ul>
-		<ul class="side-menu">
-			<li>
-				<a href="#" class="logout" onclick="return confirmLogout()">
-               <i class="bx bxs-log-out-circle"></i>
-                <span class="text">Logout</span>
-                </a>			
-			</li>
-		</ul>
+					<a href="../dashboard" data-tooltip="Dashboard">
+						<i class="bx bxs-dashboard nav-icon"></i>
+						<span class="nav-label">Dashboard</span>
+					</a>
+				</li>
+				<li>
+					<a href="../ITR" data-tooltip="Add New ITR">
+						<i class="bx bxs-notepad nav-icon"></i>
+						<span class="nav-label">Add New ITR</span>
+					</a>
+				</li>
+				<li>
+					<a href="../pending" id="updateReferrals" data-tooltip="Pending Referrals">
+						<i class="bx bxs-user nav-icon"></i>
+						<span class="nav-label">Pending Referrals</span>
+					</a>
+				</li>
+				<li>
+					<a href="../followUpConsultations" data-tooltip="Follow-Up Visits">
+						<i class="bx bxs-user nav-icon"></i>
+						<span class="nav-label">Follow-Up Visits</span>
+					</a>
+				</li>
+				<li>
+					<a href="../searchPatient" data-tooltip="Patient Records">
+						<i class="bx bxs-search nav-icon"></i>
+						<span class="nav-label">Patient Records</span>
+					</a>
+				</li>
+				<li>
+					<a href="../history" data-tooltip="Referral History">
+						<i class="bx bx-history nav-icon"></i>
+						<span class="nav-label">Referral History</span>
+					</a>
+				</li>
+				<li class="active">
+					<a href="../reports" data-tooltip="Reports">
+						<i class="bx bx-notepad nav-icon"></i>
+						<span class="nav-label">Reports</span>
+					</a>
+				</li>
+			</ul>
+
+			<div class="sidebar-divider"></div>
+
+			<ul class="side-menu">
+				<li>
+					<a href="#" class="logout" data-tooltip="Logout" onclick="return confirmLogout()">
+						<i class="bx bxs-log-out-circle nav-icon"></i>
+						<span class="nav-label">Logout</span>
+					</a>
+				</li>
+			</ul>
+		</div>
+
+		<div class="sidebar-footer">
+			<div class="sidebar-user">
+				<img src="../../img/nurse.png" alt="Nurse User">
+				<div class="sidebar-user-info">
+					<div class="user-name" id="sidebarUserName">Nurse</div>
+					<div class="user-role">Nursing Attendant</div>
+				</div>
+			</div>
+		</div>
 	</section>
 
 	<!-- Main Content Section -->
 	<section id="content">
     <nav>
-			<form action="#">
-				
-			</form>
-			<div class="greeting">
-                <span id="userGreeting">Hello Nurse!</span>
-            </div>
-			<a href="#" class="profile">
-				<img src="../../img/nurse.png">
-			</a>
-		</nav>
+        <button class="nav-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+            <i class="bx bx-menu"></i>
+        </button>
+
+        <div class="nav-search" style="position: relative;">
+            <input type="search" id="patientSearch" placeholder="Enter patient name..." name="search" autocomplete="off">
+            <button type="button" id="searchButton" aria-label="Search">
+                <i class="bx bx-search"></i>
+            </button>
+            <div id="resultDropdown" class="dropdown-content"></div>
+        </div>
+    </nav>
 
 
 		<main>
@@ -1178,7 +1183,89 @@ function exportTableToExcel(tableID, filename = 'Patient Summary Report') {
             </head>
             <body>
                 ${tempDiv.innerHTML}
-            </body>
+            
+
+<script>
+(function () {
+  const sidebar = document.getElementById('sidebar');
+  const toggle = document.getElementById('sidebarToggle');
+  const overlay = document.getElementById('sidebarOverlay');
+  const MOBILE_BP = 768;
+
+  if (!sidebar || !toggle || !overlay) return;
+
+  function isMobile() {
+    return window.innerWidth <= MOBILE_BP;
+  }
+
+  function closeMobileSidebar() {
+    sidebar.classList.remove('mobile-open');
+    overlay.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  toggle.addEventListener('click', function () {
+    if (isMobile()) {
+      const open = sidebar.classList.toggle('mobile-open');
+      overlay.classList.toggle('active', open);
+      document.body.style.overflow = open ? 'hidden' : '';
+    } else {
+      sidebar.classList.toggle('collapsed');
+    }
+  });
+
+  overlay.addEventListener('click', closeMobileSidebar);
+
+  window.addEventListener('resize', function () {
+    if (!isMobile()) {
+      closeMobileSidebar();
+    }
+  });
+})();
+
+document.addEventListener("DOMContentLoaded", () => {
+  const updateReferrals = document.getElementById("updateReferrals");
+  const searchInput = document.getElementById("patientSearch");
+  const searchButton = document.getElementById("searchButton");
+
+  if (updateReferrals) {
+    updateReferrals.addEventListener("click", function (event) {
+      event.preventDefault();
+
+      fetch("../php/update_referrals.php")
+        .then(response => response.json())
+        .then(data => {
+          console.log(data.message);
+          window.location.href = "../pending";
+        })
+        .catch(error => {
+          console.error("Error updating referrals:", error);
+          window.location.href = "../pending";
+        });
+    });
+  }
+
+  if (searchInput && searchButton) {
+    searchInput.addEventListener("keypress", function (event) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        searchButton.click();
+      }
+    });
+
+    searchButton.addEventListener("click", function () {
+      const searchQuery = searchInput.value.trim();
+      if (searchQuery) {
+        sessionStorage.setItem("searchQuery", searchQuery);
+        window.location.href = "../searchPatient";
+      } else {
+        alert("Please enter a patient name to search.");
+      }
+    });
+  }
+});
+</script>
+</body>
             </html>
         `;
         
@@ -1416,8 +1503,15 @@ document.addEventListener('DOMContentLoaded', () => {
       const fullName = (data && data.full_name) ? data.full_name : '';
 
       // Greeting (keep current behavior)
-      document.getElementById('userGreeting').textContent =
-        fullName ? `Hello, ${fullName}!` : 'Hello, User!';
+      const greetingEl = document.getElementById('userGreeting');
+      if (greetingEl) {
+        greetingEl.textContent = fullName ? `Hello, ${fullName}!` : 'Hello, User!';
+      }
+
+      const sidebarNameEl = document.getElementById('sidebarUserName');
+      if (sidebarNameEl) {
+        sidebarNameEl.textContent = fullName || 'Nurse';
+      }
 
       // Build the signature block
       const gb = document.getElementById('generated_by');
@@ -1430,7 +1524,14 @@ document.addEventListener('DOMContentLoaded', () => {
       gb.querySelector('.sig-name').textContent = fullName || '________________';
     })
     .catch(() => {
-      document.getElementById('userGreeting').textContent = 'Hello, User!';
+      const greetingEl = document.getElementById('userGreeting');
+      if (greetingEl) {
+        greetingEl.textContent = 'Hello, User!';
+      }
+      const sidebarNameEl = document.getElementById('sidebarUserName');
+      if (sidebarNameEl) {
+        sidebarNameEl.textContent = 'Nurse';
+      }
       const gb = document.getElementById('generated_by');
       gb.innerHTML = `
         <div class="sig-label">Report Generated by:</div>

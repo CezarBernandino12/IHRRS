@@ -107,6 +107,7 @@ $bhws = $bhw_stmt->fetchAll();
 	<link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../css/reportsDesign.css">
     <link rel="stylesheet" href="../css/logout.css">
+    <link rel="stylesheet" href="../css/sidebar.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
@@ -129,69 +130,84 @@ $bhws = $bhw_stmt->fetchAll();
   #reportTable th.is-sorted-desc .sort-indicator::after { content: "▼"; }
 </style>
 
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
 	<!-- Sidebar Section -->
 <section id="sidebar">
-		<a href="#" class="brand" style="display: flex; align-items: center;">
-			<img src="../../img/logo.png" alt="RHULogo" class="logo">
-			<span class="text">BHW</span>
-		</a>
-		<ul class="side-menu top">
-			<li>
-				<a href="../dashboard">
-					<i class="bx bxs-dashboard"></i>
-					<span class="text">Dashboard</span>
-				</a>
-			</li>
-			<li>
-				<a href="../ITR">
-					<i class="bx bxs-notepad"></i>
-					<span class="text">Add ITR</span>
-				</a>
-			</li>
-			<li>
-				<a href="../searchPatient">
-					<i class="bx bxs-search"></i>
-					<span class="text">Patient Records</span>
-				</a>
-			</li>
+    <a href="#" class="sidebar-brand">
+        <img src="../../img/logo.png" alt="RHU Logo" class="brand-logo">
+        <div class="brand-text">
+            <span class="brand-name">Hello BHW</span>
+        </div>
+    </a>
 
-			<li>
-				<a href="../History">
-					<i class="bx bx-history"></i>
-					<span class="text">Referral History</span>
-				</a>
-			</li>
+    <div class="sidebar-scroll">
+        <p class="sidebar-section-label">Main Menu</p>
+        <ul class="side-menu top">
+            <li>
+                <a href="../dashboard" data-tooltip="Dashboard">
+                    <i class="bx bxs-dashboard nav-icon"></i>
+                    <span class="nav-label">Dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a href="../ITR" data-tooltip="Add New ITR">
+                    <i class="bx bxs-notepad nav-icon"></i>
+                    <span class="nav-label">Add New ITR</span>
+                </a>
+            </li>
+            <li>
+                <a href="../searchPatient" data-tooltip="Patient Records">
+                    <i class="bx bxs-search nav-icon"></i>
+                    <span class="nav-label">Patient Records</span>
+                </a>
+            </li>
+            <li>
+                <a href="../History" data-tooltip="Referral History">
+                    <i class="bx bx-history nav-icon"></i>
+                    <span class="nav-label">Referral History</span>
+                </a>
+            </li>
             <li class="active">
-				<a href="../reports">
-					<i class="bx bx-notepad"></i>
-					<span class="text">Reports</span>
-				</a>
-			</li>
+                <a href="../reports" data-tooltip="Reports">
+                    <i class="bx bx-notepad nav-icon"></i>
+                    <span class="nav-label">Reports</span>
+                </a>
+            </li>
         </ul>
-		</ul>
-		<ul class="side-menu">
-        <li>
-				<a href="../../role" class="logout" onclick="return confirmLogout()">
-					<i class="bx bxs-log-out-circle"></i>
-					<span class="text">Logout</span>
-				</a>
-			</li>
-		</ul>
-	</section>
+
+        <div class="sidebar-divider"></div>
+
+        <ul class="side-menu">
+            <li>
+                <a href="#" class="logout" data-tooltip="Logout" onclick="return confirmLogout()">
+                    <i class="bx bxs-log-out-circle nav-icon"></i>
+                    <span class="nav-label">Logout</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="sidebar-footer">
+        <div class="sidebar-user">
+            <img src="../../img/bhw.png" alt="BHW User">
+            <div class="sidebar-user-info">
+                <div class="user-name" id="sidebarUserName">BHW User</div>
+                <div class="user-role">Barangay Health Worker</div>
+            </div>
+        </div>
+    </div>
+</section>
+
 
 	<!-- Main Content Section -->
 	<section id="content">
     <nav>
-			<form action="#">
-				
-			</form>
-			<div class="greeting">
-                <span id="userGreeting">Hello BHW!</span>
-            </div>
-			<a href="#" class="profile">
-				<img src="../../img/bhw.png">
-			</a>
-		</nav>
+            <button class="nav-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+                <i class="bx bx-menu"></i>
+            </button>
+
+        </nav>
 
 		<main>
             
@@ -966,6 +982,11 @@ fetch('../php/getUserName.php')
     document.getElementById('userGreeting').textContent =
       fullName ? `Hello, ${fullName}!` : 'Hello, BHW!';
 
+    const sidebarUserName = document.getElementById('sidebarUserName');
+    if (sidebarUserName) {
+      sidebarUserName.textContent = fullName || 'BHW User';
+    }
+
     // Build the signature block content
     const gb = document.getElementById('generated_by');
     gb.innerHTML = `
@@ -980,6 +1001,10 @@ fetch('../php/getUserName.php')
   })
   .catch(() => {
     document.getElementById('userGreeting').textContent = 'Hello, BHW!';
+    const sidebarUserName = document.getElementById('sidebarUserName');
+    if (sidebarUserName) {
+      sidebarUserName.textContent = 'BHW User';
+    }
     const gb = document.getElementById('generated_by');
     gb.innerHTML = `
       <div class="sig-label">Report Generated by:</div>
@@ -990,13 +1015,13 @@ fetch('../php/getUserName.php')
   });
 
 
-    function confirmLogout() {
-    document.getElementById('logoutModal').style.display = 'block';
-    return false; // Prevent the default link behavior
+function confirmLogout() {
+    document.getElementById('logoutModal').classList.add('open');
+    return false;
 }
 
 function closeModal() {
-    document.getElementById('logoutModal').style.display = 'none';
+    document.getElementById('logoutModal').classList.remove('open');
 }
 
 function proceedLogout() {
@@ -1004,12 +1029,12 @@ function proceedLogout() {
 }
 
 // Close modal when clicking outside
-window.onclick = function(event) {
+window.addEventListener('click', function(event) {
     const modal = document.getElementById('logoutModal');
     if (event.target == modal) {
         closeModal();
     }
-}
+});
 
 	// Check if user is logged in
 fetch('../php/getUserId.php')
@@ -1130,22 +1155,41 @@ fetch('../php/getUserId.php')
 </script>
 
 <script>
-document.addEventListener("DOMContentLoaded", () => {
-  const sidebar = document.getElementById("sidebar");
+(function () {
+  const sidebar = document.getElementById('sidebar');
+  const toggle = document.getElementById('sidebarToggle');
+  const overlay = document.getElementById('sidebarOverlay');
 
-  function applyResponsiveSidebar() {
-    if (window.innerWidth <= 1024) {
-      sidebar.classList.add("hide");   // collapsed on small screens
-    } else {
-      sidebar.classList.remove("hide"); // expanded on larger screens
-    }
+  function isMobile() {
+    return window.innerWidth <= 768;
   }
 
-  applyResponsiveSidebar();
-  window.addEventListener("resize", applyResponsiveSidebar);
+  if (toggle && sidebar && overlay) {
+    toggle.addEventListener('click', function () {
+      if (isMobile()) {
+        const open = sidebar.classList.toggle('mobile-open');
+        overlay.classList.toggle('active', open);
+        document.body.style.overflow = open ? 'hidden' : '';
+      } else {
+        sidebar.classList.toggle('collapsed');
+      }
+    });
 
-  // keep the rest of your existing code (auth, stats, modals, etc.)
-});
+    overlay.addEventListener('click', function () {
+      sidebar.classList.remove('mobile-open');
+      overlay.classList.remove('active');
+      document.body.style.overflow = '';
+    });
+
+    window.addEventListener('resize', function () {
+      if (!isMobile()) {
+        sidebar.classList.remove('mobile-open');
+        overlay.classList.remove('active');
+        document.body.style.overflow = '';
+      }
+    });
+  }
+})();
 </script>
 
 </body>
