@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="css/exist.css">
     <link rel="stylesheet" href="css/logout.css">
     <link rel="stylesheet" href="css/sidebar.css">
-
     <title>Visit Information</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
@@ -17,68 +16,100 @@
 </head>
 
 <body>
+<style>
+#sidebar .sidebar-section-label {
+    display: block;
+    background: transparent !important;
+    margin: 14px 20px 8px !important;
+    padding: 0 !important;
+    border: 0 !important;
+    box-shadow: none !important;
+}
+</style>
+
 
     <section id="sidebar">
-        <a href="#" class="brand">
-            <img src="../img/logo.png" alt="RHULogo" class="logo">
-            <span class="text">Hello Nurse</span>
+        <a href="#" class="sidebar-brand">
+            <img src="../img/logo.png" alt="RHU Logo" class="brand-logo">
+            <div class="brand-text">
+                <span class="brand-name">Hello Nurse</span>
+            </div>
         </a>
-        <ul class="side-menu top">
-            <li>
-                <a href="dashboard">
-                    <i class="bx bxs-dashboard"></i>
-                    <span class="text">Dashboard</span>
-                </a>
-            </li>
-            <li>
-                <a href="ITR">
-                    <i class="bx bxs-user"></i>
-                    <span class="text">Add New ITR</span>
-                </a>
-            </li>
-            <li>
-                <a href="searchPatient">
-                    <i class="bx bxs-notepad"></i>
-                    <span class="text">Patient Records</span>
-                </a>
-            </li>
-            <li>
-                <a href="history">
-                    <i class="bx bx-history"></i>
-                    <span class="text">Referral History</span>
-                </a>
-            </li>
-            <li>
-				<a href="reports">
-					<i class="bx bx-notepad"></i>
-					<span class="text">Reports</span>
-				</a>
-			</li>
-        </ul>
-        <ul class="side-menu">
-            <li>
-				
-				<a href="#" class="logout" onclick="return confirmLogout()">
-               <i class="bx bxs-log-out-circle"></i>
-                <span class="text">Logout</span>
-                </a>
-			</li>
-		</ul>
-	
-    </section> 
+
+        <div class="sidebar-scroll">
+            <div class="sidebar-section-label">Main Menu</div>
+            <ul class="side-menu top">
+                <li>
+                    <a href="dashboard" data-tooltip="Dashboard">
+                        <i class="bx bxs-dashboard nav-icon"></i>
+                        <span class="nav-label">Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="ITR" data-tooltip="Add New ITR">
+                        <i class="bx bxs-user nav-icon"></i>
+                        <span class="nav-label">Add New ITR</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="searchPatient" data-tooltip="Patient Records">
+                        <i class="bx bxs-notepad nav-icon"></i>
+                        <span class="nav-label">Patient Records</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="history" data-tooltip="Referral History">
+                        <i class="bx bx-history nav-icon"></i>
+                        <span class="nav-label">Referral History</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="reports" data-tooltip="Reports">
+                        <i class="bx bx-notepad nav-icon"></i>
+                        <span class="nav-label">Reports</span>
+                    </a>
+                </li>
+            </ul>
+
+            <div class="sidebar-divider"></div>
+
+            <ul class="side-menu">
+                <li>
+                    <a href="#" class="logout" data-tooltip="Logout" onclick="return confirmLogout()">
+                        <i class="bx bxs-log-out-circle nav-icon"></i>
+                        <span class="nav-label">Logout</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="sidebar-footer">
+            <div class="sidebar-user">
+                <img src="../img/nurse.png" alt="Nurse User">
+                <div class="sidebar-user-info">
+                    <div class="user-name" id="sidebarUserName">Nurse User</div>
+                    <div class="user-role">RHU Nurse</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
     <section id="content">
         <nav>
-			<form action="#">
-				
-			</form>
-			<div class="greeting">
-                <span id="userGreeting">Hello Nurse!</span>
+            <button class="nav-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+                <i class="bx bx-menu"></i>
+            </button>
+
+            <div class="nav-search" style="position: relative;">
+                <input type="search" id="patientSearch" placeholder="Enter patient name..." name="search" autocomplete="off">
+                <button type="button" id="searchButton" aria-label="Search">
+                    <i class="bx bx-search"></i>
+                </button>
+                <div id="resultDropdown" class="dropdown-content"></div>
             </div>
-			<a href="#" class="profile">
-				<img src="../img/nurse.png">
-			</a>
-		</nav>
+        </nav>
 
         <main>
             <div class="head-title">
@@ -88,10 +119,6 @@
     <div class="container-header">
         <h2>VISIT DETAILS</h2>
     </div>
-    
-
-
-        
     <div class="container">
      
         
@@ -163,14 +190,14 @@
     <div class="additional-group box-group additional-fields" style="background-color: rgb(255, 255, 255);">
         
         <div class="additional-options">
-
+    
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
-<div class="form-group" style="width: 700px;">
+<div class="form-group">
 <label for="diagnosis">Diagnosis:</label>
 <input name="diagnosis" id="diagnosis" class="diagnosis">
 
@@ -180,21 +207,23 @@
 <div class="form-group">
 
     <div id="medicine-container">
-        <div class="medicine-entry" style="display: flex; gap: 10px; align-items: center;">
-            <div class="form-group" style="flex: 1;"> 
+        <div class="medicine-entry">
+            <div class="form-group"> 
                 <label for="medicine_given[]">Medicine Given:</label>
-                <input name="medicine_given[]" style="width: 200px;" class="medicine-given"> 
+                <input name="medicine_given[]" class="medicine-given"> 
             </div>
 
-            <div class="form-group">
-                <label for="quantity_given[]">Quantity:</label>
-                <div class="quantity-container" style="display: flex; gap: 5px;">
-                    <button type="button" class="btn-minus">−</button>
-                    <input type="number" name="quantity_given[]" value="0" min="0" style="height: 17px;" class="quantity-given">
-                    <button type="button" class="btn-plus">+</button>
+            <div class="quantity-section">
+                <div class="form-group">
+                    <label for="quantity_given[]">Quantity:</label>
+                    <div class="quantity-container">
+                        <button type="button" class="btn-minus">−</button>
+                        <input type="number" name="quantity_given[]" value="0" min="0" class="quantity-given">
+                        <button type="button" class="btn-plus">+</button>
+                    </div>
                 </div>
+                <button type="button" class="remove-medicine">Remove</button>
             </div>
-            <button type="button" class="remove-medicine" style="height: 30px;">Remove</button>
         </div>
     </div>
 
@@ -202,24 +231,24 @@
         <button type="button" id="add-medicine" class="add-medicine">+ Add</button>
     </div>
 
-
     <div id="medicine-template" style="display: none;">
-        <div class="medicine-entry" style="display: flex; gap: 10px; align-items: center;">
-            <div class="form-group" style="flex: 1;"> 
+        <div class="medicine-entry">
+            <div class="form-group"> 
                 <label>Medicine Given:</label>
-                <input name="medicine_given[]" style="width: 200px;" class="medicine-given"> 
+                <input name="medicine_given[]" class="medicine-given"> 
             </div>
     
-            <div class="form-group">
-                <label>Quantity:</label>
-                <div class="quantity-container" style="display: flex; gap: 5px;">
-                    <button type="button" class="btn-minus">−</button>
-                    <input type="number" name="quantity_given[]" value="0" min="0" style="height: 17px;" class="quantity-given">
-                    <button type="button" class="btn-plus">+</button>
+            <div class="quantity-section">
+                <div class="form-group">
+                    <label>Quantity:</label>
+                    <div class="quantity-container">
+                        <button type="button" class="btn-minus">−</button>
+                        <input type="number" name="quantity_given[]" value="0" min="0" class="quantity-given">
+                        <button type="button" class="btn-plus">+</button>
+                    </div>
                 </div>
+                <button type="button" class="remove-medicine">Remove</button>
             </div>
-    
-            <button type="button" class="remove-medicine">🗑 Remove</button>
         </div>
     </div>
     
@@ -252,7 +281,6 @@
                 entry.remove();
             }
         });
-        
     </script>
     
 </div>
@@ -429,8 +457,6 @@
     </div>
 </div>
 
-
-
             <div class="form-container">
                 <div class="print-section">
                     <button class="print-btn" id="printButton">Print</button>
@@ -440,20 +466,6 @@
     </div>
 
     <script>
-            fetch('php/getUserName.php')
-    .then(response => response.json())
-    .then(data => {
-        if (data.full_name) {
-            document.getElementById('userGreeting').textContent = `Hello, ${data.full_name}!`;
-        } else {
-            document.getElementById('userGreeting').textContent = 'Hello, BHW!';
-        }
-    })
-    .catch(error => {
-        console.error('Error fetching user name:', error);
-        document.getElementById('userGreeting').textContent = 'Hello, BHW!';
-    });
-
         function confirmLogout() {
             document.getElementById('logoutModal').style.display = 'block';
             return false; // Prevent the default link behavior
@@ -464,7 +476,7 @@
         }
         
         function proceedLogout() {
-           window.location.href='../ADMIN/php/logout'; 
+            window.location.href='../ADMIN/php/logout';
         }
         
         // Close modal when clicking outside
@@ -474,7 +486,23 @@
                 closeModal();
             }
         }
-        // Check if user is logged in
+        fetch('php/getUserName.php')
+    .then(response => response.json())
+    .then(data => {
+        const sidebarUserName = document.getElementById('sidebarUserName');
+        if (sidebarUserName) {
+            sidebarUserName.textContent = data.full_name || 'Nurse User';
+        }
+    })
+    .catch(error => {
+        console.error('Error fetching user name:', error);
+        const sidebarUserName = document.getElementById('sidebarUserName');
+        if (sidebarUserName) {
+            sidebarUserName.textContent = 'Nurse User';
+        }
+    });
+
+            	// Check if user is logged in
 fetch('php/getUserId.php')
     .then(response => response.json())
     .then(data => {
@@ -487,28 +515,72 @@ fetch('php/getUserId.php')
         console.error('Error checking session:', error);
         window.location.href='../auth/role';
     });
-    
+
         </script>
-
-        <script>
-document.addEventListener("DOMContentLoaded", () => {
-  const sidebar = document.getElementById("sidebar");
-
-  function applyResponsiveSidebar() {
-    if (window.innerWidth <= 1024) {
-      sidebar.classList.add("hide");   // collapsed on small screens
-    } else {
-      sidebar.classList.remove("hide"); // expanded on larger screens
-    }
-  }
-
-  applyResponsiveSidebar();
-  window.addEventListener("resize", applyResponsiveSidebar);
-
-  // keep the rest of your existing code (auth, stats, modals, etc.)
-});
-</script>
+    
     <script src="js/editform.js"></script>
     <script src="js/script.js"></script>
+    <script>
+(function () {
+  const sidebar = document.getElementById('sidebar');
+  const toggle = document.getElementById('sidebarToggle');
+  const overlay = document.getElementById('sidebarOverlay');
+  const MOBILE_BP = 768;
+
+  if (!sidebar || !toggle || !overlay) return;
+
+  function isMobile() {
+    return window.innerWidth <= MOBILE_BP;
+  }
+
+  function closeMobileSidebar() {
+    sidebar.classList.remove('mobile-open');
+    overlay.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  toggle.addEventListener('click', function () {
+    if (isMobile()) {
+      const open = sidebar.classList.toggle('mobile-open');
+      overlay.classList.toggle('active', open);
+      document.body.style.overflow = open ? 'hidden' : '';
+    } else {
+      sidebar.classList.toggle('collapsed');
+    }
+  });
+
+  overlay.addEventListener('click', closeMobileSidebar);
+
+  window.addEventListener('resize', function () {
+    if (!isMobile()) {
+      closeMobileSidebar();
+    }
+  });
+})();
+
+document.addEventListener("DOMContentLoaded", () => {
+  const searchInput = document.getElementById("patientSearch");
+  const searchButton = document.getElementById("searchButton");
+
+  if (searchInput && searchButton) {
+    searchInput.addEventListener("keypress", function (event) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        searchButton.click();
+      }
+    });
+
+    searchButton.addEventListener("click", function () {
+      const searchQuery = searchInput.value.trim();
+      if (searchQuery) {
+        sessionStorage.setItem("searchQuery", searchQuery);
+        window.location.href = "searchPatient";
+      } else {
+        alert("Please enter a patient name to search.");
+      }
+    });
+  }
+});
+</script>
 </body>
 </html>

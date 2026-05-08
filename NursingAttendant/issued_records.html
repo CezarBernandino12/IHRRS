@@ -11,104 +11,100 @@
 	<title>Issued Records</title> 
 </head>
 <body>
-
-	<!-- Sidebar Section -->
+<!-- Sidebar Section -->
 	<section id="sidebar">
-		<a href="#" class="brand">
-			<img src="../img/logo.png" alt="RHULogo" class="logo">
-			<span class="text">Hello Nurse</span>
+		<a href="#" class="sidebar-brand">
+			<img src="../img/logo.png" alt="RHU Logo" class="brand-logo">
+			<div class="brand-text">
+				<span class="brand-name">Hello Nurse</span>
+			</div>
 		</a>
-		<ul class="side-menu top">
-			<li>
-				<a href="dashboard">
-					<i class="bx bxs-dashboard"></i>
-					<span class="text">Dashboard</span>
-				</a>
-			</li>
-            <li>
-				<a href="ITR">
-					<i class="bx bxs-notepad"></i>
-					<span class="text">Add New ITR</span>
-				</a>
-			</li>
-			<li class="active">
-                <a href="#" id="updateReferrals">
-                    <i class="bx bxs-user"></i>
-                    <span class="text">Pending Referrals</span>
-                </a>
-            </li>
-            
-            <script>
-            document.getElementById("updateReferrals").addEventListener("click", function (event) {
-                event.preventDefault(); // Prevent default navigation
-            
-                fetch("php/update_referrals.php") // Call PHP file
-                .then(response => response.json())
-                .then(data => {
-                    console.log(data.message); // Log success message (optional)
-                    window.location.href="pending"; // Redirect after updating
-                })
-                .catch(error => {
-                    console.error("Error updating referrals:", error);
-                    window.location.href="pending"; // Still redirect even if an error occurs
-                });
-            });
-            </script>
 
-            	<li>
-				<a href="followUpConsultations">
-					<i class="bx bxs-user"></i>
-					<span class="text">Follow-Up Visits</span>
-				</a>
-			</li>
-            
-			<li>
-				<a href="searchPatient">
-					<i class="bx bxs-search"></i>
-					<span class="text">Patient Records</span>
-				</a>
-			</li>
-            <li>
-                <a href="history">
-                    <i class="bx bx-history"></i>
-                    <span class="text">Referral History</span>
-                </a>
-            </li>
-            <li>
-				<a href="reports">
-					<i class="bx bx-notepad"></i>
-					<span class="text">Reports</span>
-				</a>
-			</li>
-		</ul>
-		<ul class="side-menu">
-			<li>
-				<a href="#" class="logout" onclick="return confirmLogout()">
-               <i class="bx bxs-log-out-circle"></i>
-                <span class="text">Logout</span>
-                </a>
-			</li>
-		</ul>
+		<div class="sidebar-scroll">
+			<div class="sidebar-section-label">Main Menu</div>
+			<ul class="side-menu top">
+				<li>
+					<a href="dashboard" data-tooltip="Dashboard">
+						<i class="bx bxs-dashboard nav-icon"></i>
+						<span class="nav-label">Dashboard</span>
+					</a>
+				</li>
+				<li>
+					<a href="ITR" data-tooltip="Add New ITR">
+						<i class="bx bxs-notepad nav-icon"></i>
+						<span class="nav-label">Add New ITR</span>
+					</a>
+				</li>
+				<li class="active">
+					<a href="#" id="updateReferrals" data-tooltip="Pending Referrals">
+						<i class="bx bxs-user nav-icon"></i>
+						<span class="nav-label">Pending Referrals</span>
+					</a>
+				</li>
+				<li>
+					<a href="followUpConsultations" data-tooltip="Follow-Up Visits">
+						<i class="bx bxs-user nav-icon"></i>
+						<span class="nav-label">Follow-Up Visits</span>
+					</a>
+				</li>
+				<li>
+					<a href="searchPatient" data-tooltip="Patient Records">
+						<i class="bx bxs-search nav-icon"></i>
+						<span class="nav-label">Patient Records</span>
+					</a>
+				</li>
+				<li>
+					<a href="history" data-tooltip="Referral History">
+						<i class="bx bx-history nav-icon"></i>
+						<span class="nav-label">Referral History</span>
+					</a>
+				</li>
+				<li>
+					<a href="reports" data-tooltip="Reports">
+						<i class="bx bx-notepad nav-icon"></i>
+						<span class="nav-label">Reports</span>
+					</a>
+				</li>
+			</ul>
+
+			<div class="sidebar-divider"></div>
+
+			<ul class="side-menu">
+				<li>
+					<a href="#" class="logout" data-tooltip="Logout" onclick="return confirmLogout()">
+						<i class="bx bxs-log-out-circle nav-icon"></i>
+						<span class="nav-label">Logout</span>
+					</a>
+				</li>
+			</ul>
+		</div>
+
+		<div class="sidebar-footer">
+			<div class="sidebar-user">
+				<img src="../img/nurse.png" alt="Nurse User">
+				<div class="sidebar-user-info">
+					<div class="user-name" id="sidebarUserName">Nurse User</div>
+					<div class="user-role">RHU Nurse</div>
+				</div>
+			</div>
+		</div>
 	</section>
+
+	<div class="sidebar-overlay" id="sidebarOverlay"></div>
 
 	<!-- Main Content Section -->
 	<section id="content">
 		<nav>
-			<form action="#" id="searchForm">
-				<div class="form-input">
-					<input type="search" id="searchInput" placeholder="Search Patient Name or Control Number...">
-					<button type="submit" class="search-btn">
-						<i class="bx bx-search"></i>
-					</button>
-				</div>
+			<button class="nav-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+				<i class="bx bx-menu"></i>
+			</button>
+
+			<form action="#" id="searchForm" class="nav-search" style="position: relative;">
+				<input type="search" id="searchInput" placeholder="Search Patient Name or Control Number..." autocomplete="off">
+				<button type="submit" aria-label="Search">
+					<i class="bx bx-search"></i>
+				</button>
 			</form>
-			
-			<div class="greeting">
-                <span id="userGreeting">Hello Nurse!</span>
-            </div>
-			<a href="#" class="profile">
-				<img src="../img/nurse.png">
-			</a>
 		</nav>
 
 		<main>
@@ -419,15 +415,14 @@ document.getElementById('searchInput').addEventListener('keyup', function() {
 fetch('php/getUserName.php')
     .then(response => response.json())
     .then(data => {
-        if (data.full_name) {
-            document.getElementById('userGreeting').textContent = `Hello, ${data.full_name}!`;
-        } else {
-            document.getElementById('userGreeting').textContent = 'Hello, BHW!';
-        }
+        const fullName = data.full_name || 'Nurse User';
+        const sidebarName = document.getElementById('sidebarUserName');
+        if (sidebarName) sidebarName.textContent = fullName;
     })
     .catch(error => {
         console.error('Error fetching user name:', error);
-        document.getElementById('userGreeting').textContent = 'Hello, BHW!';
+        const sidebarName = document.getElementById('sidebarUserName');
+        if (sidebarName) sidebarName.textContent = 'Nurse User';
     }); 
     function confirmLogout() {
             document.getElementById('logoutModal').style.display = 'block';
@@ -465,27 +460,69 @@ fetch('php/getUserName.php')
 </script>
 
 <script>
-document.addEventListener("DOMContentLoaded", () => {
-  const sidebar = document.getElementById("sidebar");
+(function () {
+  const updateReferrals = document.getElementById('updateReferrals');
+  if (!updateReferrals) return;
 
-  function applyResponsiveSidebar() {
-    if (window.innerWidth <= 1024) {
-      sidebar.classList.add("hide");   // collapsed on small screens
-    } else {
-      sidebar.classList.remove("hide"); // expanded on larger screens
-    }
+  updateReferrals.addEventListener('click', function (event) {
+    event.preventDefault();
+
+    fetch('php/update_referrals.php')
+      .then(response => response.json())
+      .then(data => {
+        console.log(data.message);
+        window.location.href = 'pending';
+      })
+      .catch(error => {
+        console.error('Error updating referrals:', error);
+        window.location.href = 'pending';
+      });
+  });
+})();
+</script>
+
+<script>
+(function () {
+  const sidebar = document.getElementById('sidebar');
+  const toggle = document.getElementById('sidebarToggle');
+  const overlay = document.getElementById('sidebarOverlay');
+  const MOBILE_BP = 768;
+
+  function isMobile() {
+    return window.innerWidth <= MOBILE_BP;
   }
 
-  applyResponsiveSidebar();
-  window.addEventListener("resize", applyResponsiveSidebar);
+  function closeMobileSidebar() {
+    if (!sidebar || !overlay) return;
+    sidebar.classList.remove('mobile-open');
+    overlay.classList.remove('active');
+    document.body.style.overflow = '';
+  }
 
-  // keep the rest of your existing code (auth, stats, modals, etc.)
-});
+  if (toggle && sidebar && overlay) {
+    toggle.addEventListener('click', function () {
+      if (isMobile()) {
+        const open = sidebar.classList.toggle('mobile-open');
+        overlay.classList.toggle('active', open);
+        document.body.style.overflow = open ? 'hidden' : '';
+      } else {
+        sidebar.classList.toggle('collapsed');
+      }
+    });
+
+    overlay.addEventListener('click', closeMobileSidebar);
+
+    window.addEventListener('resize', function () {
+      if (!isMobile()) {
+        closeMobileSidebar();
+      }
+    });
+  }
+})();
 </script>
 	<script src="js/script.js"></script>
     <script src="js/history.js"></script>
 </body>
 </html>
-
 
 
