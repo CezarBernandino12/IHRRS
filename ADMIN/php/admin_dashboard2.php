@@ -119,62 +119,83 @@ $unreadCount = 0;
     <title>Admin Dashboard</title>
 </head> 
 <body>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
     <!-- Sidebar Section --> 
     <section id="sidebar">
-        <a href="#" class="brand">
-            <img src="../../img/logo.png" alt="RHULogo" class="logo">
-                        <span class="text">Hello Admin</span>
+        <a href="#" class="sidebar-brand">
+            <img src="../../img/logo.png" alt="Admin Logo" class="brand-logo">
+            <div class="brand-text">
+                <span class="brand-name">Hello Admin</span>
+            </div>
+        </a>
 
+        <div class="sidebar-scroll">
+            <div class="sidebar-section-label">Main Menu</div>
+            <ul class="side-menu top">
+                <li class="active">
+                    <a href="admin_dashboard2" data-tooltip="Dashboard">
+                        <i class="bx bxs-dashboard nav-icon"></i>
+                        <span class="nav-label">Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="activity_logs" data-tooltip="Activity Logs">
+                        <i class="bx bxs-user nav-icon"></i>
+                        <span class="nav-label">Activity Logs</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="admin_user" data-tooltip="User Management">
+                        <i class="bx bxs-notepad nav-icon"></i>
+                        <span class="nav-label">User management</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="../reports" data-tooltip="Reports">
+                        <i class="bx bxs-report nav-icon"></i>
+                        <span class="nav-label">Reports</span>
+                    </a>
+                </li>
+            </ul>
 
-        </a> 
-        <ul class="side-menu top">
-            <li class="active">
-                <a href="admin_dashboard2">
-                    <i class="bx bxs-dashboard"></i>
-                    <span class="text">Dashboard</span>
-                </a>
-            </li>
-            <li> 
-                <a href="activity_logs">
-                    <i class="bx bxs-user"></i>
-                    <span class="text">Activity Logs</span>
-                </a>
-            </li>
-            <li>
-                <a href="admin_user">
-                    <i class="bx bxs-notepad"></i>
-                    <span class="text">User management</span>
-                </a>
-            </li>
-            <li>
-                <a href="../reports">
-                    <i class="bx bxs-report"></i>
-                    <span class="text">Reports</span>
-                </a>
-            </li>
-        </ul>
+            <div class="sidebar-divider"></div>
 
-        <ul class="side-menu">
-            <li>
-                <a href="#" class="logout" onclick="return confirmLogout()">
-               <i class="bx bxs-log-out-circle"></i>
-                <span class="text">Logout</span>
-                </a>
-            </li>
-        </ul>
+            <ul class="side-menu">
+                <li>
+                    <a href="#" class="logout" data-tooltip="Logout" onclick="return confirmLogout()">
+                        <i class="bx bxs-log-out-circle nav-icon"></i>
+                        <span class="nav-label">Logout</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="sidebar-footer">
+            <div class="sidebar-user">
+                <img src="../../img/admin.png" alt="Admin User">
+                <div class="sidebar-user-info">
+                    <div class="user-name" id="sidebarUserName">Admin User</div>
+                    <div class="user-role">Administrator</div>
+                </div>
+            </div>
+        </div>
     </section>
  
     <!-- Main Content Section -->
     <section id="content">
         <nav>
-            <form action="#">
-            </form>
-            <div class="greeting">
-                <span id="userGreeting">Hello Admin!</span>
+            <button class="nav-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+                <i class="bx bx-menu"></i>
+            </button>
+
+            <div class="nav-search" style="position: relative;">
+                <input type="search" id="patientSearch" placeholder="Search dashboard..." name="search" autocomplete="off">
+                <button type="button" id="searchButton" aria-label="Search">
+                    <i class="bx bx-search"></i>
+                </button>
+                <div id="resultDropdown" class="dropdown-content"></div>
             </div>
-            <a href="#" class="profile">
-                <img src="../../img/admin.png">
-            </a>
         </nav>
 
         <main>
@@ -295,19 +316,20 @@ $unreadCount = 0;
         fetch('getUserName.php')
             .then(response => response.json())
             .then(data => {
-                if (data.full_name) {
-                    document.getElementById('userGreeting').textContent = `Hello, ${data.full_name}!`;
-                } else {
-                    document.getElementById('userGreeting').textContent = 'Hello, Admin!';
+                const sidebarNameEl = document.getElementById('sidebarUserName');
+                if (sidebarNameEl) {
+                    sidebarNameEl.textContent = data.full_name || 'Admin User';
                 }
             })
             .catch(error => {
                 console.error('Error fetching user name:', error);
-                document.getElementById('userGreeting').textContent = 'Hello, Admin!';
+                const sidebarNameEl = document.getElementById('sidebarUserName');
+                if (sidebarNameEl) {
+                    sidebarNameEl.textContent = 'Admin User';
+                }
             });
 
-
-        function confirmLogout() {
+function confirmLogout() {
     document.getElementById('logoutModal').style.display = 'block';
     return false; // Prevent the default link behavior
 }
@@ -330,21 +352,66 @@ window.onclick = function(event) {
 
     </script>
     <script>
-document.addEventListener("DOMContentLoaded", () => {
-  const sidebar = document.getElementById("sidebar");
+(function () {
+  const sidebar = document.getElementById('sidebar');
+  const toggle = document.getElementById('sidebarToggle');
+  const overlay = document.getElementById('sidebarOverlay');
+  const MOBILE_BP = 768;
 
-  function applyResponsiveSidebar() {
-    if (window.innerWidth <= 1024) {
-      sidebar.classList.add("hide");   // collapsed on small screens
-    } else {
-      sidebar.classList.remove("hide"); // expanded on larger screens
-    }
+  if (!sidebar || !toggle || !overlay) return;
+
+  function isMobile() {
+    return window.innerWidth <= MOBILE_BP;
   }
 
-  applyResponsiveSidebar();
-  window.addEventListener("resize", applyResponsiveSidebar);
+  function closeMobileSidebar() {
+    sidebar.classList.remove('mobile-open');
+    overlay.classList.remove('active');
+    document.body.style.overflow = '';
+  }
 
-  // keep the rest of your existing code (auth, stats, modals, etc.)
+  toggle.addEventListener('click', function () {
+    if (isMobile()) {
+      const open = sidebar.classList.toggle('mobile-open');
+      overlay.classList.toggle('active', open);
+      document.body.style.overflow = open ? 'hidden' : '';
+    } else {
+      sidebar.classList.toggle('collapsed');
+    }
+  });
+
+  overlay.addEventListener('click', closeMobileSidebar);
+
+  window.addEventListener('resize', function () {
+    if (!isMobile()) {
+      closeMobileSidebar();
+    }
+  });
+})();
+
+// Keep the BHW-style navbar search local to this dashboard so content stays intact.
+document.addEventListener("DOMContentLoaded", () => {
+  const searchInput = document.getElementById("patientSearch");
+  const searchButton = document.getElementById("searchButton");
+  const cards = () => Array.from(document.querySelectorAll(".card, .user-card"));
+
+  function filterDashboardCards() {
+    const term = (searchInput?.value || "").toLowerCase().trim();
+    cards().forEach(card => {
+      card.style.display = card.textContent.toLowerCase().includes(term) ? "" : "none";
+    });
+  }
+
+  if (searchInput && searchButton) {
+    searchInput.addEventListener("input", filterDashboardCards);
+    searchInput.addEventListener("keypress", function (event) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        filterDashboardCards();
+      }
+    });
+    searchButton.addEventListener("click", filterDashboardCards);
+  }
 });
 </script>
 </body>
