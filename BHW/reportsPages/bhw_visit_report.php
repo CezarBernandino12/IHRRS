@@ -1,40 +1,34 @@
 <?php
-// Connect to DB
 require '../../php/db_connect.php';
 session_start();
 
 if (!isset($_SESSION['user_id'])) {
     header("Location: ../../role");
     exit;
-} 
+}
 
-$userId = $_SESSION['user_id'];// or however you store the logged-in user's ID
+$userId = $_SESSION['user_id'];
 
-// Fetch user info
 $stmt = $pdo->prepare("SELECT barangay FROM users WHERE user_id = ?");
 $stmt->execute([$userId]);
 $user = $stmt->fetch();
 
 $barangayName = $user ? $user['barangay'] : 'N/A';
 
-
-
-// Initialize filters
 $from_date = $_GET['from_date'] ?? '';
 $to_date = $_GET['to_date'] ?? '';
 $sex = $_GET['sex'] ?? '';
 $age_group = $_GET['age_group'] ?? '';
-$purok = $_GET['purok'] ?? ''; // Use 'purok' for address filtering
+$purok = $_GET['purok'] ?? '';
 $bmi = $_GET['bmi'] ?? '';
 $treatment = $_GET['treatment'] ?? '';
 
-// Build query with filters
 $sql = "SELECT v.*, p.first_name, p.last_name, p.age, p.sex, p.address FROM patient_assessment v 
         JOIN patients p ON v.patient_id = p.patient_id 
-        WHERE p.address LIKE :barangay"; // Always require barangay match
+        WHERE p.address LIKE :barangay";
 
 $params = [];
-$params['barangay'] = '%' . $barangayName . '%'; // Always set this param
+$params['barangay'] = '%' . $barangayName . '%';
 
 if (!empty($from_date) && !empty($to_date)) {
     $sql .= " AND DATE(v.visit_date) BETWEEN :from_date AND :to_date";
@@ -57,7 +51,6 @@ if (!empty($age_group)) {
 }
 
 if (!empty($purok)) {
-    // Use 'purok' for barangay filtering - check if address contains the barangay name
     $sql .= " AND p.address LIKE :purok";
     $params['purok'] = '%' . $purok . '%';
 }
@@ -84,11 +77,6 @@ if (!empty($treatment)) {
 }
 
 
-// Add this condition to filter by barangay in address
-if (!empty($barangayName) && $barangayName !== 'N/A') {
-    $sql .= " AND p.address LIKE :barangay";
-    $params['barangay'] = '%' . $barangayName . '%';
-}
 $sql .= " ORDER BY v.visit_date DESC";
 
 $stmt = $pdo->prepare($sql);
@@ -101,7 +89,6 @@ $total_medicines_dispensed = 0;
 $medicine_counts = [];
 
 foreach ($visits as $visit) {
-    // Get medicines dispensed for this visit
     $med_stmt = $pdo->prepare("SELECT * FROM bhs_medicine_dispensed WHERE visit_id = ?");
     $med_stmt->execute([$visit['visit_id']]);
     $meds = $med_stmt->fetchAll();
@@ -114,12 +101,10 @@ foreach ($visits as $visit) {
     }
 }
 
-// Find the most dispensed medicine
 arsort($medicine_counts);
 $most_dispensed_medicine = key($medicine_counts);
 $most_dispensed_quantity = current($medicine_counts);
 
-        //ADDED GENERATED REPORT FOR ACTIVITY LOG
         $stmt_log = $pdo->prepare("INSERT INTO logs (
             user_id, action, performed_by
         ) VALUES (
@@ -153,6 +138,7 @@ $most_dispensed_quantity = current($medicine_counts);
     cursor: pointer;
     position: relative;
     user-select: none;
+    white-space: nowrap;
   }
   #reportTable th .sort-indicator {
     margin-left: 6px;
@@ -161,6 +147,30 @@ $most_dispensed_quantity = current($medicine_counts);
   }
   #reportTable th.is-sorted-asc .sort-indicator::after { content: "▲"; }
   #reportTable th.is-sorted-desc .sort-indicator::after { content: "▼"; }
+
+  .report-table-container {
+    width: 100%;
+    overflow-x: auto;
+  }
+  #reportTable {
+    width: 100%;
+    min-width: 1200px;
+    border-collapse: collapse;
+    table-layout: auto;
+  }
+  #reportTable th,
+  #reportTable td {
+    padding: 8px 10px;
+    white-space: nowrap;
+    vertical-align: middle;
+  }
+  #reportTable td:nth-child(12),
+  #reportTable td:nth-child(13) {
+    white-space: normal;
+    min-width: 150px;
+    max-width: 220px;
+    word-wrap: break-word;
+  }
 </style>
 
 	<!-- Sidebar Section -->
@@ -265,7 +275,6 @@ $most_dispensed_quantity = current($medicine_counts);
         <h3 style="margin-bottom: 10px;"><i class="bx bx-filter-alt"></i> Selected Filters:</h3>
         <div id="filterTags" style="display: flex; flex-wrap: wrap; gap: 8px;">
             <?php
-            // Helper for tag rendering
             function renderTag($label, $param, $value) {
                 $display = htmlspecialchars($label . ': ' . $value);
                 $url = $_GET;
@@ -277,7 +286,6 @@ $most_dispensed_quantity = current($medicine_counts);
                 echo '</span>';
             }
 
-            // Render tags for each filter if set
             if ($from_date) renderTag('From', 'from_date', $from_date);
             if ($to_date) renderTag('To', 'to_date', $to_date);
             if ($sex) renderTag('Sex', 'sex', $sex);
@@ -307,7 +315,6 @@ $most_dispensed_quantity = current($medicine_counts);
             }
            
 
-            // If no filters, show "All"
             if (
                 !$from_date && !$to_date && !$sex && !$age_group &&
                 !$purok && !$bmi && !$treatment
@@ -376,7 +383,7 @@ $barangay_stmt->execute([':barangayName' => "%$barangayName%"]);
 $selected_purok = $_GET['purok'] ?? '';
 
 while ($row = $barangay_stmt->fetch(PDO::FETCH_ASSOC)) {
-    $value = $row['address']; // ✅ use 'address' since that's what you selected
+    $value = $row['address'];
     $selected = ($selected_purok === $value) ? 'selected' : '';
     echo "<option value=\"" . htmlspecialchars($value) . "\" $selected>" 
          . htmlspecialchars($value) . "</option>";
@@ -386,7 +393,6 @@ while ($row = $barangay_stmt->fetch(PDO::FETCH_ASSOC)) {
                             </select>
                         </div> 
                            <div class="form-item">
-                            <label for="treatment">Treatment:</label>
                             <select name="treatment" id="treatment" class="form-control">
                                 <option value="">All</option> 
                                 <option value="weighing" <?= $treatment == 'weighing' ? 'selected' : '' ?>>Weighing</option>
@@ -412,7 +418,6 @@ while ($row = $barangay_stmt->fetch(PDO::FETCH_ASSOC)) {
                             
                         </div>
                     </div>
-                     <!-- Filter Modal Footer Buttons -->
             <div class="modal-footer" style="text-align:right;">
                 <button type="button" class="btn" id="closeFilterModal">Cancel</button>
                 <button type="submit" class="btn-submit">Apply Filter</button>
@@ -483,11 +488,6 @@ while ($row = $barangay_stmt->fetch(PDO::FETCH_ASSOC)) {
   const thead = table.tHead || table.querySelector('thead');
   const tbody = table.tBodies[0];
 
-  // Optional: declare explicit types via header attributes (fallback: auto-detect)
-  // Example: <th data-type="date">Visit Date</th> or data-type="number"|"string"
-  // Below we'll auto-detect if not provided.
-
-  // Add indicators
   [...thead.querySelectorAll('th')].forEach(th => {
     const ind = document.createElement('span');
     ind.className = 'sort-indicator';
@@ -503,25 +503,20 @@ while ($row = $barangay_stmt->fetch(PDO::FETCH_ASSOC)) {
   }
 
   function detectType(colIdx) {
-    // 1) header hint
     const th = thead.querySelectorAll('th')[colIdx];
     const hinted = th && th.dataset && th.dataset.type;
     if (hinted) return hinted;
 
-    // 2) scan first non-empty cell
     for (const tr of tbody.rows) {
       const t = (tr.cells[colIdx]?.textContent || '').trim();
       if (!t) continue;
 
-      // date?
       const d = parseDate(t);
       if (d) return 'date';
 
-      // number?
-      const n = t.replace(/,/g, ''); // allow "1,234"
+      const n = t.replace(/,/g, '');
       if (!isNaN(n) && n !== '') return 'number';
 
-      // default string
       return 'string';
     }
     return 'string';
@@ -558,16 +553,14 @@ while ($row = $barangay_stmt->fetch(PDO::FETCH_ASSOC)) {
 
       if (va < vb) return dir === 'asc' ? -1 : 1;
       if (va > vb) return dir === 'asc' ? 1 : -1;
-      return 0; // stable enough for typical usage
+      return 0;
     });
 
-    // Re-append in sorted order
     const frag = document.createDocumentFragment();
     rows.forEach(r => frag.appendChild(r));
     tbody.appendChild(frag);
   }
 
-  // Attach header click handlers
   [...thead.querySelectorAll('th')].forEach((th, idx) => {
     th.addEventListener('click', () => {
       const isAsc  = th.classList.contains('is-sorted-asc');
@@ -582,9 +575,7 @@ while ($row = $barangay_stmt->fetch(PDO::FETCH_ASSOC)) {
     });
   });
 
-  // Optional: set sensible defaults:
-  // Sort by Visit Date (col 0) descending on load
-  const defaultCol = 0; // "Visit Date"
+  const defaultCol = 0;
   const defaultDir = 'desc';
   const defaultTh = thead.querySelectorAll('th')[defaultCol];
   if (defaultTh) {
@@ -736,44 +727,85 @@ while ($row = $barangay_stmt->fetch(PDO::FETCH_ASSOC)) {
 }
 </style>
 <style>
-  /* Extra space above the summary block */
   .summary-container { margin-top: 48px; }
 
   @media print {
     .summary-container { margin-top: 64px; }
   }
 
-  /* Summary table styling */
   .summary-table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 16px;
+    font-size: 15px;
     background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
   }
-  .summary-table th, .summary-table td {
-    border: 1px solid #000;
-    padding: 8px 10px;
+  .summary-table th,
+  .summary-table td {
+    padding: 12px 16px;
     vertical-align: top;
+    border-bottom: 1px solid #e8ecf0;
   }
   .summary-table th {
-    background: #f0f0f0;
+    background: #f4f6fb;
+    font-weight: 600;
+    color: #333;
+    width: 280px;
     text-align: left;
-    width: 280px; /* label column */
   }
+  .summary-table td {
+    color: #444;
+  }
+  .summary-table tr:last-child th,
+  .summary-table tr:last-child td {
+    border-bottom: none;
+  }
+  .summary-table tr:hover td,
+  .summary-table tr:hover th {
+    background: #f0f4ff;
+    transition: background 0.15s;
+  }
+
   .summary-title {
-    margin: 0 0 10px 0;
+    margin: 0 0 14px 0;
     font-size: 18px;
     display: flex;
     align-items: center;
     gap: 6px;
+    color: #333;
   }
   .summary-title i { font-size: 20px; }
+
   .summary-sublist {
     margin: 0;
     padding-left: 20px;
     list-style: disc;
   }
   .summary-mono { white-space: nowrap; }
+
+  @media print {
+    .summary-table {
+      border-radius: 0;
+      box-shadow: none;
+      font-size: 16px;
+      background: #fff;
+    }
+    .summary-table th,
+    .summary-table td {
+      border: 1px solid #000;
+      padding: 8px 10px;
+    }
+    .summary-table th {
+      background: #f0f0f0;
+      width: 280px;
+    }
+    .summary-table tr:hover td,
+    .summary-table tr:hover th {
+      background: inherit;
+    }
+  }
 </style>
 
 
@@ -832,8 +864,6 @@ document.addEventListener("DOMContentLoaded", () => {
             checkbox.addEventListener("change", () => {
                 chartElement.style.display = checkbox.checked ? "block" : "none";
             });
-
-            // Initialize state
             chartElement.style.display = checkbox.checked ? "block" : "none";
         }
     });
@@ -849,9 +879,7 @@ document.addEventListener("DOMContentLoaded", () => {
     </div>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        // Prepare data for the pie chart (Sex distribution)
         <?php
-            // Count unique patients by sex for the current filtered visits
             $sex_counts = ['Male' => 0, 'Female' => 0];
             $unique_patients = [];
             foreach ($visits as $visit) {
@@ -899,7 +927,6 @@ document.addEventListener("DOMContentLoaded", () => {
     </div>
     <script>
         <?php
-        // Prepare age group counts based on filtered visits (unique patients)
         $age_group_counts = [
             '0–5' => 0,
             '6–17' => 0,
@@ -970,7 +997,6 @@ document.addEventListener("DOMContentLoaded", () => {
     </div>
     <script>
     <?php
-    // Prepare BMI category counts for unique patients (latest visit per patient)
     $bmi_categories = [
         'Underweight' => 0,
         'Normal' => 0,
@@ -982,13 +1008,11 @@ document.addEventListener("DOMContentLoaded", () => {
     $latest_bmi_per_patient = [];
     foreach ($visits as $visit) {
         $pid = $visit['patient_id'];
-        // Only count the latest visit per patient for BMI
         if (!isset($latest_bmi_per_patient[$pid]) || strtotime($visit['visit_date']) > strtotime($latest_bmi_per_patient[$pid]['visit_date'])) {
             $latest_bmi_per_patient[$pid] = $visit;
         }
     }
     foreach ($latest_bmi_per_patient as $visit) {
-        // Skip if BMI is empty, null, or not numeric
         if (!isset($visit['bmi']) || $visit['bmi'] === '' || !is_numeric($visit['bmi'])) {
             continue;
         }
@@ -1047,7 +1071,6 @@ document.addEventListener("DOMContentLoaded", () => {
     </div>
     <script>
     <?php
-    // Prepare treatment counts (count each treatment keyword in filtered visits)
     $treatment_types = [
         'Weighing' => 0,
         'Immunization' => 0,
@@ -1108,7 +1131,6 @@ document.addEventListener("DOMContentLoaded", () => {
 </div>
 <script>
 <?php
-// Prepare address counts for the bar chart (unique patient IDs only)
 $unique_patient_addresses = [];
 foreach ($visits as $visit) {
     $patient_id = $visit['patient_id'];
@@ -1116,21 +1138,18 @@ foreach ($visits as $visit) {
     $unique_patient_addresses[$patient_id] = $address;
 }
 
-// Count unique patients per address
 $address_counts = [];
 foreach ($unique_patient_addresses as $address) {
     $address_counts[$address] = ($address_counts[$address] ?? 0) + 1;
 }
 
-// Collapse counts by Purok (so Purok 1 in multiple barangays will add up together)
 $purok_counts = [];
 foreach ($address_counts as $addr => $count) {
     $parts = explode('-', $addr, 2);
-    $purok = trim($parts[0]); // "Purok X"
+    $purok = trim($parts[0]);
     $purok_counts[$purok] = ($purok_counts[$purok] ?? 0) + $count;
 }
 
-// Sort by numeric purok order (extract number after "Purok")
 uksort($purok_counts, function($a, $b) {
     preg_match('/\d+/', $a, $matchA);
     preg_match('/\d+/', $b, $matchB);
@@ -1290,7 +1309,6 @@ if (addressData.length > 0 && addressData.reduce((a, b) => a + b, 0) > 0) {
           <td>
             <ul class="summary-sublist">
               <?php
-              // Rebuild (or reuse) the per-purok counts safely
               $unique_patient_addresses = [];
               foreach ($visits as $visit) {
                   $pid = $visit['patient_id'];
@@ -1299,7 +1317,7 @@ if (addressData.length > 0 && addressData.reduce((a, b) => a + b, 0) > 0) {
               $barangay_patient_counts = [];
               foreach ($unique_patient_addresses as $address) {
                   $parts = explode('-', $address, 2);
-                  $purok = trim($parts[0]); // "Purok X"
+                  $purok = trim($parts[0]);
                   $barangay_patient_counts[$purok] = ($barangay_patient_counts[$purok] ?? 0) + 1;
               }
               uksort($barangay_patient_counts, function($a, $b) {
@@ -1369,48 +1387,36 @@ if (addressData.length > 0 && addressData.reduce((a, b) => a + b, 0) > 0) {
     
 function exportTableToExcel(tableID, filename = 'Patient Summary Report') {
     try {
-        // Create a temporary div with the same content as print
         const tempDiv = document.createElement('div');
         tempDiv.style.position = 'absolute';
         tempDiv.style.left = '-9999px';
         tempDiv.style.top = '-9999px';
-        
-        // Clone the print header
+
         const printHeader = document.querySelector('.print-header');
         if (printHeader) {
             const headerClone = printHeader.cloneNode(true);
-            // Remove any scripts or interactive elements
-            const scripts = headerClone.querySelectorAll('script');
-            scripts.forEach(script => script.remove());
+            headerClone.querySelectorAll('script').forEach(script => script.remove());
             tempDiv.appendChild(headerClone);
         }
-        
-        // Clone the summary section
         const summary = document.querySelector('.summary-container');
         if (summary) {
             const summaryClone = summary.cloneNode(true);
-            const summaryScripts = summaryClone.querySelectorAll('script');
-            summaryScripts.forEach(script => script.remove());
+            summaryClone.querySelectorAll('script').forEach(script => script.remove());
             tempDiv.appendChild(summaryClone);
         }
-        
-        // Clone and modify the table to include signature column
+
         const originalTable = document.getElementById(tableID);
         if (!originalTable) {
             alert('Table not found!');
             return;
         }
-        
+
         const tableClone = originalTable.cloneNode(true);
-        
-        // Add signature header if not present
         const headerRow = tableClone.querySelector('thead tr');
-    
-        
+
         tempDiv.appendChild(tableClone);
         document.body.appendChild(tempDiv);
-        
-        // Create HTML content for Excel
+
         const htmlContent = `
             <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
             <head>
@@ -1436,18 +1442,16 @@ function exportTableToExcel(tableID, filename = 'Patient Summary Report') {
             </html>
         `;
         
-        // Create blob and download
         const blob = new Blob([htmlContent], {
             type: 'application/vnd.ms-excel'
         });
-        
+
         const downloadLink = document.createElement('a');
         downloadLink.href = URL.createObjectURL(blob);
         downloadLink.download = filename + '.xls';
         document.body.appendChild(downloadLink);
         downloadLink.click();
-        
-        // Clean up
+
         setTimeout(() => {
             document.body.removeChild(downloadLink);
             document.body.removeChild(tempDiv);
@@ -1477,16 +1481,13 @@ async function exportTableToPDF() {
 }
 
 function printDiv() {
-  // 1) Header (prefer new, fallback to old)
   const headerEl = document.querySelector('.print-letterhead, .print-header');
   const printHeader = headerEl ? headerEl.outerHTML : '';
 
-  // 2) Clone the area we want to print
   const area = document.querySelector('.print-area');
   if (!area) return;
   const clone = area.cloneNode(true);
 
-  // 3) Replace known canvases with images (if visible)
   const chartIds = ['sexPieChart','ageGroupBarChart','bmiPieChart','treatmentBarChart','addressBarChart'];
   chartIds.forEach(id => {
     const live = document.getElementById(id);
@@ -1499,14 +1500,11 @@ function printDiv() {
       inClone.parentNode.replaceChild(img, inClone);
     }
   });
-  // Remove any leftover canvases inside the clone
   clone.querySelectorAll('canvas').forEach(c => c.remove());
 
-  // 4) Avoid duplicate header in the cloned content
   const headerInClone = clone.querySelector('.print-letterhead, .print-header');
   if (headerInClone) headerInClone.remove();
 
-  // 5) Open window & print
   const w = window.open('', '', 'height=900,width=1100');
   if (!w) { alert('Please allow pop-ups to print this report.'); return; }
   w.document.write(`
@@ -1550,11 +1548,9 @@ fetch('../php/getUserName.php')
   .then(data => {
     const fullName = (data && data.full_name) ? data.full_name : '';
 
-    // Keep the greeting as before
     document.getElementById('userGreeting').textContent =
       fullName ? `Hello, ${fullName}!` : 'Hello, BHW!';
 
-    // Build the signature block content
     const gb = document.getElementById('generated_by');
     gb.innerHTML = `
       <div class="sig-label">Report Generated by:</div>
@@ -1563,7 +1559,6 @@ fetch('../php/getUserName.php')
       <div class="sig-title">Barangay Health Worker</div>
     `;
 
-    // Safely set the name text
     gb.querySelector('.sig-name').textContent = fullName || '________________';
   })
   .catch(() => {
@@ -1579,7 +1574,7 @@ fetch('../php/getUserName.php')
 
     function confirmLogout() {
     document.getElementById('logoutModal').style.display = 'block';
-    return false; // Prevent the default link behavior
+    return false;
 }
 
 function closeModal() {
@@ -1590,7 +1585,6 @@ function proceedLogout() {
     window.location.href='../../ADMIN/php/logout'; 
 }
 
-// Close modal when clicking outside
 window.onclick = function(event) {
     const modal = document.getElementById('logoutModal');
     if (event.target == modal) {
@@ -1598,29 +1592,21 @@ window.onclick = function(event) {
     }
 }
 
-// Remove charts from the clone (if they exist inside .print-area)
-const chartsInClone = originalArea.querySelectorAll("canvas, .chart-container");
-chartsInClone.forEach(chart => chart.remove());
-
-</script>
-
-<script>
 document.addEventListener("DOMContentLoaded", () => {
   const sidebar = document.getElementById("sidebar");
 
   function applyResponsiveSidebar() {
     if (window.innerWidth <= 1024) {
-      sidebar.classList.add("hide");   // collapsed on small screens
+      sidebar.classList.add("hide");
     } else {
-      sidebar.classList.remove("hide"); // expanded on larger screens
+      sidebar.classList.remove("hide");
     }
   }
 
   applyResponsiveSidebar();
   window.addEventListener("resize", applyResponsiveSidebar);
-
-  // keep the rest of your existing code (auth, stats, modals, etc.)
 });
+
 </script>
 
 </body>
