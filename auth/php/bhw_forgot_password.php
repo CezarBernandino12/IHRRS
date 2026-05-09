@@ -1,5 +1,5 @@
 <?php
-require '../ADMIN/php/config.php';
+require '../../ADMIN/php/config.php';
 header('Content-Type: application/json'); // Ensure responses are in JSON format
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     // Check if user exists and contact number matches
-    $stmt = $pdo->prepare("SELECT user_id FROM users WHERE username = ? AND contact_number = ? AND role = 'nursing_attendant'");
+    $stmt = $pdo->prepare("SELECT user_id FROM users WHERE username = ? AND contact_number = ? AND role = 'bhw'");
     $stmt->execute([$username, $contact_number]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 

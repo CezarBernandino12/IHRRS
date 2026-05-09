@@ -1561,10 +1561,6 @@ fetch('../php/getUserName.php')
   .then(data => {
     const fullName = (data && data.full_name) ? data.full_name : '';
 
-<<<<<<< HEAD
-    document.getElementById('userGreeting').textContent =
-      fullName ? `Hello, ${fullName}!` : 'Hello, BHW!';
-=======
     const greeting = document.getElementById('userGreeting');
     const sidebarUserName = document.getElementById('sidebarUserName');
 
@@ -1574,7 +1570,6 @@ fetch('../php/getUserName.php')
     if (sidebarUserName) {
       sidebarUserName.textContent = fullName || 'BHW User';
     }
->>>>>>> 89ab2bf3060e65d7a5b17b1dcaec584fde592302
 
     const gb = document.getElementById('generated_by');
     if (gb) {
@@ -1585,24 +1580,15 @@ fetch('../php/getUserName.php')
         <div class="sig-title">Barangay Health Worker</div>
       `;
 
-<<<<<<< HEAD
-    gb.querySelector('.sig-name').textContent = fullName || '________________';
-=======
       // Safely set the name text
       gb.querySelector('.sig-name').textContent = fullName || '________________';
     }
->>>>>>> 89ab2bf3060e65d7a5b17b1dcaec584fde592302
   })
   .catch(() => {
     const greeting = document.getElementById('userGreeting');
     const sidebarUserName = document.getElementById('sidebarUserName');
     const gb = document.getElementById('generated_by');
 
-<<<<<<< HEAD
-    function confirmLogout() {
-    document.getElementById('logoutModal').style.display = 'block';
-    return false;
-=======
     if (greeting) {
       greeting.textContent = 'Hello, BHW!';
     }
@@ -1621,7 +1607,6 @@ fetch('../php/getUserName.php')
 function confirmLogout() {
     document.getElementById('logoutModal').classList.add('open');
     return false; // Prevent the default link behavior
->>>>>>> 89ab2bf3060e65d7a5b17b1dcaec584fde592302
 }
 
 function closeModal() {
@@ -1632,35 +1617,12 @@ function proceedLogout() {
     window.location.href='../../ADMIN/php/logout'; 
 }
 
-<<<<<<< HEAD
-window.onclick = function(event) {
-=======
 // Close modal when clicking outside
 window.addEventListener('click', function(event) {
->>>>>>> 89ab2bf3060e65d7a5b17b1dcaec584fde592302
     const modal = document.getElementById('logoutModal');
     if (event.target == modal) {
         closeModal();
     }
-<<<<<<< HEAD
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-  const sidebar = document.getElementById("sidebar");
-
-  function applyResponsiveSidebar() {
-    if (window.innerWidth <= 1024) {
-      sidebar.classList.add("hide");
-    } else {
-      sidebar.classList.remove("hide");
-    }
-  }
-
-  applyResponsiveSidebar();
-  window.addEventListener("resize", applyResponsiveSidebar);
-});
-
-=======
 });
 </script>
 
@@ -1700,7 +1662,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 })();
->>>>>>> 89ab2bf3060e65d7a5b17b1dcaec584fde592302
 </script>
 
 </body>

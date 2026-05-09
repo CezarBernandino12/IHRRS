@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="icon" href="../img/logo.png" />
+  <link rel="icon" href="../../img/logo.png" />
   <title>IHRRS — Admin Login</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -322,10 +322,10 @@
 
     <!-- NAV -->
     <nav>
-      <a href="../" class="nav-brand">
+      <a href="../../" class="nav-brand">
         <span class="nav-wordmark">IHRRS</span>
       </a>
-      <a href="role" class="nav-back">
+      <a href="../role" class="nav-back">
         <svg viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
         Back
       </a>
@@ -366,7 +366,7 @@
         <?php endif; ?>
 
         <!-- Form -->
-        <form action="../LOGIN/admin_login" method="POST">
+        <form action="admin_login.php" method="POST">
 
           <!-- Username -->
           <div class="form-group">
@@ -409,7 +409,7 @@
           <button type="submit" class="submit-btn">Sign In</button>
         </form>
 
-        <a href="../LOGIN/admin_forgot_password" class="forgot-link">Forgot your password?</a>
+        <a href="../admin_forgot_password" class="forgot-link">Forgot your password?</a>
       </div>
     </main>
 

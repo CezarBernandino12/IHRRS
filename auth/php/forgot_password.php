@@ -1,19 +1,19 @@
 <?php
-require '../ADMIN/php/config.php';
+require '../../ADMIN/php/config.php';
 header('Content-Type: application/json'); // Ensure responses are in JSON format
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $username = trim($_POST['username']);
-    $contact_number = trim($_POST['contact_number']);
+    $contact_number = trim($_POST['contact_number']); 
 
-    // Validate input fields
+    // ✅ Validate input fields
     if (empty($username) || empty($contact_number)) {
         echo json_encode(["error" => "All fields are required."]);
         exit;
-    }
-
-    // Check if user exists and contact number matches
-    $stmt = $pdo->prepare("SELECT user_id FROM users WHERE username = ? AND contact_number = ? AND role = 'bhw'");
+    } 
+ 
+    // ✅ Check if user exists and contact number matches
+    $stmt = $pdo->prepare("SELECT user_id FROM users WHERE username = ? AND contact_number = ?");
     $stmt->execute([$username, $contact_number]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -21,10 +21,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         echo json_encode(["error" => "Invalid username or contact number."]);
         exit;
     }
-
+    
     $user_id = $user['user_id'];
 
-    // Check if there is an existing pending request
+    // ✅ Check if there is an existing pending request
     $stmt = $pdo->prepare("SELECT request_id FROM forgot_password_requests WHERE user_id = ? AND status = 'pending'");
     $stmt->execute([$user_id]);
 
@@ -33,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         exit;
     }
 
-    // Insert new password reset request
+    // ✅ Insert new password reset request
     $stmt = $pdo->prepare("INSERT INTO forgot_password_requests (user_id, status, request_time) VALUES (?, 'pending', NOW())");
     $stmt->execute([$user_id]);
 

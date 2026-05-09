@@ -1,10 +1,11 @@
 <?php
 session_start();
-require '../ADMIN/php/config.php';
+require '../../ADMIN/php/config.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = trim($_POST['username']);
     $password = trim($_POST['password']);
+    $remember_me = isset($_POST['remember_me']); // Check if "Remember Me" is checked
 
     // Check if user exists
     $stmt = $pdo->prepare("SELECT * FROM users WHERE username = :username");
@@ -22,6 +23,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($user['account_status'] === 'inactive') {
         logActivity($pdo, $user['user_id'], "Failed Login (Inactive Account)");
         header("Location: ../doctorlogin?error=Your account is deactivated.");
+        exit();
+    }
+
+    // ✅ Check if account is still pending admin approval
+    if ($user['status'] !== 'approved') {
+        logActivity($pdo, $user['user_id'], "Failed Login (Pending Approval)");
+        header("Location: ../doctorlogin?error=Your account is pending approval.");
         exit();
     }
 
@@ -47,16 +55,32 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $resetStmt = $pdo->prepare("UPDATE users SET failed_attempts = 0, lock_until = NULL WHERE user_id = ?");
         $resetStmt->execute([$user['user_id']]);
 
+        // Check if user has pending password reset request
+        $resetStmt = $pdo->prepare("SELECT request_id FROM forgot_password_requests WHERE user_id = ? AND status = 'pending'");
+        $resetStmt->execute([$user['user_id']]);
+        $hasPendingReset = $resetStmt->fetch();
+
         // Store session variables
+        session_regenerate_id(true);
         $_SESSION['user_id'] = $user['user_id'];
         $_SESSION['role'] = $user['role'];
         $_SESSION['full_name'] = $user['full_name'];
 
+        if ($hasPendingReset) {
+            $_SESSION['pending_reset'] = true;
+            echo "<script>sessionStorage.setItem('showPendingReset', 'true');</script>";
+        }
+
         logActivity($pdo, $user['user_id'], "Successful Login");
-        logUserLogin($pdo, $user['user_id']);
+
+        // ✅ "Remember Me" functionality
+        if ($remember_me) {
+            setcookie("username", $username, time() + (30 * 24 * 60 * 60), "/", "", false, true); // 30 days, HttpOnly
+            setcookie("role", $user['role'], time() + (30 * 24 * 60 * 60), "/", "", false, true);
+        }
 
         // Redirect to doctor dashboard
-        header("Location: ../RHUPhysician/dashboard");
+        header("Location: ../../RHUPhysician/dashboard");
         exit();
     } else {
         // Increment failed attempts
@@ -73,23 +97,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         } else {
             $updateStmt = $pdo->prepare("UPDATE users SET failed_attempts = ? WHERE user_id = ?");
             $updateStmt->execute([$new_attempts, $user['user_id']]);
-            logActivity($pdo, $user['user_id'], "Failed Login (Incorrect Password)");
-            header("Location: ../doctorlogin?error=Invalid password.");
+
+            // Check if user has pending password reset request for failed login
+            $resetStmt = $pdo->prepare("SELECT request_id FROM forgot_password_requests WHERE user_id = ? AND status = 'pending'");
+            $resetStmt->execute([$user['user_id']]);
+            $hasPendingReset = $resetStmt->fetch();
+
+            if ($hasPendingReset) {
+                logActivity($pdo, $user['user_id'], "Failed Login (Incorrect Password) - Pending Reset");
+                header("Location: ../doctorlogin?error=Password incorrect. You have a pending password reset request.");
+            } else {
+                logActivity($pdo, $user['user_id'], "Failed Login (Incorrect Password)");
+                header("Location: ../doctorlogin?error=Invalid password.");
+            }
         }
         exit();
     }
-} 
+}
 
 // ✅ Function to log events
 function logActivity($pdo, $user_id, $action) {
     $stmt = $pdo->prepare("INSERT INTO logs (user_id, performed_by, action, timestamp) VALUES (:user_id, :performed_by, :action, NOW())");
     $stmt->execute(['user_id' => $user_id, 'performed_by' => $user_id, 'action' => $action]);
 }
-
-// ✅ Track login for "users currently online"
-function logUserLogin($pdo, $user_id) {
-    $stmt = $pdo->prepare("INSERT INTO user_logs (user_id, action, log_time) VALUES (:user_id, 'login', NOW())");
-    $stmt->execute(['user_id' => $user_id]);
-}
-
 ?>

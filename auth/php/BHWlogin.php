@@ -1,6 +1,6 @@
 <?php
 session_start();
-require '../ADMIN/php/config.php';
+require '../../ADMIN/php/config.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = trim($_POST['username']);
@@ -14,14 +14,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $user = $stmt->fetch();
 
     if ($user) {
-        // Check if account is inactive
+        // Check if account is inactive (deactivated by admin)
         if ($user['account_status'] === 'inactive') {
             header("Location: ../BHWlogin?error=Your account is deactivated.");
             exit();
         }
 
-        // Check if account is still pending
-        if ($user['account_status'] !== 'active') {
+        // Check if account is still pending admin approval
+        if ($user['status'] !== 'approved') {
             header("Location: ../BHWlogin?error=Your account is pending approval.");
             exit();
         }
@@ -62,7 +62,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             logActivity($pdo, $user['user_id'], "Successful Login");
             logUserLogin($pdo, $user['user_id']); // ✅ Track online activity
 
-            header("Location: ../BHW/dashboard");
+            header("Location: ../../BHW/dashboard");
             exit();
         } else {
             // Increment failed attempts

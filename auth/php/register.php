@@ -1,5 +1,5 @@
 <?php
-require '../ADMIN/php/config.php';
+require '../../ADMIN/php/config.php';
 
 // Function to create a notification for new user registration
 function notifyAdminOfRegistration($pdo, $fullName, $username, $role, $userId = null) {

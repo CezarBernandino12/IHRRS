@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="icon" href="../img/logo.png" />
+  <link rel="icon" href="../../img/logo.png" />
   <title>IHRRS — Nursing Attendant Login</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -547,11 +547,11 @@
 
   <div class="page">
     <nav>
-      <a href="../" class="nav-brand">
+      <a href="../../" class="nav-brand">
         <span class="nav-wordmark">IHRRS</span>
       </a>
 
-      <a href="role" class="nav-back">
+      <a href="../role" class="nav-back">
         <svg viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
         Back
       </a>
@@ -588,7 +588,7 @@
           </span>
         </div>
 
-        <form action="../LOGIN/NursingAttendant" method="POST">
+        <form action="NursingAttendant.php" method="POST">
           <div class="form-group">
             <label class="form-label" for="username">Username</label>
             <div class="input-wrap">
@@ -644,7 +644,7 @@
           <button type="submit" class="submit-btn">Sign In</button>
         </form>
 
-        <a href="../LOGIN/nursing_attendant_forgot_password" class="forgot-link">
+        <a href="../nursing_attendant_forgot_password" class="forgot-link">
           Forgot your password?
         </a>
       </div>

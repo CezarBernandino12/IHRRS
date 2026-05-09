@@ -1,5 +1,5 @@
 <?php
-require '../ADMIN/php/config.php';
+require '../../ADMIN/php/config.php';
 header('Content-Type: application/json'); // Ensure responses are in JSON format
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {

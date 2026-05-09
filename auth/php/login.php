@@ -1,6 +1,6 @@
 <?php
 session_start();
-require '../ADMIN/php/config.php';
+require '../../ADMIN/php/config.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = trim($_POST['username']);
@@ -14,14 +14,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $user = $stmt->fetch();
 
     if ($user) {
-        // ✅ Check if the account is inactive
+        // ✅ Check if the account is inactive (deactivated by admin)
         if ($user['account_status'] === 'inactive') {
             header("Location: ../BHWlogin?error=Your account is deactivated.");
             exit();
         }
 
-        // ✅ Check if the account is still pending approval
-        if ($user['account_status'] !== 'active') {
+        // ✅ Check if the account is still pending admin approval
+        if ($user['status'] !== 'approved') {
             header("Location: ../BHWlogin?error=Your account is pending approval.");
             exit();
         }
@@ -52,12 +52,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             // ✅ If "Remember Me" is checked, store user in cookies for 30 days
             if ($remember_me) {
-                setcookie("username", $username, time() + (30 * 24 * 60 * 60), "/"); // 30 days
-                setcookie("role", $user['role'], time() + (30 * 24 * 60 * 60), "/");
+                setcookie("username", $username, time() + (30 * 24 * 60 * 60), "/", "", false, true); // 30 days, HttpOnly
+                setcookie("role", $user['role'], time() + (30 * 24 * 60 * 60), "/", "", false, true);
             }
 
             // ✅ Correct Redirect (Ensure BHW goes to the right page)
-            header("Location: ../BHW/dashboard");
+            header("Location: ../../BHW/dashboard");
             exit();
         } else {
             // Increment failed attempts
