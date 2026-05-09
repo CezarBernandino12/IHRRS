@@ -259,7 +259,12 @@ $total_patients = count(array_unique(array_column($visits, 'patient_id')));
     <!-- Filter Modal Trigger -->
    
         <div class="form-submit" style="margin-top: -10px;">
-               <button type="button" class="btn-export" id="openFilterModal">Select Filters</button>
+        <button type="button" class="btn-export" id="openFilterModal">Select Filters</button>
+        <button type="button" class="btn-export" onclick="exportTableToExcel('reportTable')">Export to Excel</button>
+        <button type="button" class="btn-print" onclick="printDiv()">
+        <i class='bx bx-printer'></i>
+        Print Report
+    </button>
     </div>
 
     <!-- Modern Filter Tags Display -->
@@ -1075,16 +1080,6 @@ usort($visits, function($a, $b) {
 <div id="generated_by"></div>
 </div> 
 
-<!-- Print Button at Bottom -->
-   <div class="form-submit">
-          <button type="button" class="btn-export" onclick="exportTableToExcel('reportTable')">Export to Excel</button>
-        <button type="button" class="btn-export" onclick="exportTableToPDF()">Export to PDF</button>
-       
-    <button type="button" class="btn-print" onclick="printDiv()">
-        <i class='bx bx-printer'></i>
-        Print Report
-    </button>
-</div>
 
 </div> 
 
@@ -1205,21 +1200,6 @@ function exportTableToExcel(tableID, filename = 'Patient Summary Report') {
     }
 }
 
-async function exportTableToPDF() {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-    const table = document.getElementById('reportTable');
-
-    await html2canvas(table).then(canvas => {
-        const imgData = canvas.toDataURL('image/png');
-        const imgProps = doc.getImageProperties(imgData);
-        const pdfWidth = doc.internal.pageSize.getWidth();
-        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-
-        doc.addImage(imgData, 'PNG', 10, 10, pdfWidth - 20, pdfHeight);
-        doc.save("report.pdf");
-    });
-}
 
 function printDiv() {
   const originalArea = document.querySelector(".print-area");
