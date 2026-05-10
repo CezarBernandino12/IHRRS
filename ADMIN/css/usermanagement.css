@@ -57,7 +57,6 @@ select {
 }
 
 #content main {
-<<<<<<< HEAD
     width: 100%;
     min-height: calc(100vh - 46px);
     padding: 26px 32px 42px;
@@ -97,275 +96,6 @@ select {
     font-weight: 800;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-=======
-	width: 100%;
-	padding: 36px 24px;
-	font-family: var(--poppins);
-	max-height: calc(100vh - 56px);
-	overflow-y: auto;
-}
-
-#content main .head-title {
-	display: flex;
-	align-items: center;
-  margin-bottom: 50px;
-	justify-content: space-between;
-	grid-gap: 16px;
-	flex-wrap: wrap;
-}
-
-#content main .head-title .left h1 {
-	font-size: 36px;
-	font-weight: 600;
-	margin-bottom: 10px;
-	color: var(--dark);
-}
-
-#content main .head-title .left .breadcrumb {
-	display: flex;
-	align-items: center;
-	grid-gap: 16px;
-}
-
-#content main .head-title .left .breadcrumb li {
-	color: var(--dark);
-}
-
-#content main .head-title .left .breadcrumb li a {
-	color: var(--dark-grey);
-	pointer-events: none;
-}
-
-#content main .head-title .left .breadcrumb li a.active {
-	color: var(--blue);
-	pointer-events: unset;
-}
-
-/* ═══════════════════════════════════════════════════════
-   USER MANAGEMENT  — ar-* card design (matches admin_reports)
-   ═══════════════════════════════════════════════════════ */
-
-/* ── Toolbar row (filter + add-user buttons) ── */
-.um-toolbar {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 16px;
-}
-
-.add-filter-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 16px;
-  background: #fff;
-  color: #3f51b5;
-  font-size: 13.5px;
-  font-weight: 600;
-  font-family: var(--poppins);
-  border: 1.5px solid #c5cae9;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background 0.18s, border-color 0.18s;
-}
-
-.add-filter-btn:hover {
-  background: #e8eaf6;
-  border-color: #9fa8da;
-}
-
-.add-filter-btn .icon {
-  font-size: 17px;
-  line-height: 1;
-}
-
-.add-user-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 18px;
-  background: #3f51b5;
-  color: #fff;
-  font-size: 13.5px;
-  font-weight: 600;
-  font-family: var(--poppins);
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background 0.18s;
-}
-
-.add-user-btn:hover { background: #303f9f; }
-.add-user-btn .icon { font-size: 17px; line-height: 1; }
-
-/* ── Filter form ── */
-.filter-form {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-  background: #fff;
-  border: 1px solid #e0e0e0;
-  border-radius: 10px;
-  padding: 12px 16px;
-  margin-bottom: 16px;
-  box-shadow: 0 1px 4px rgba(0,0,0,.06);
-}
-
-.filter-form input,
-.filter-form select {
-  padding: 7px 12px;
-  border: 1px solid #d0d5dd;
-  border-radius: 6px;
-  font-size: 13.5px;
-  font-family: var(--poppins);
-  color: #333;
-  transition: border-color .2s;
-}
-
-.filter-form input:focus,
-.filter-form select:focus {
-  outline: none;
-  border-color: #3f51b5;
-}
-
-/* ── Card wrapper around the table ── */
-.um-card {
-  background: #fff;
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0,0,0,.08);
-  overflow: clip;
-  margin-bottom: 24px;
-}
-
-.um-card-header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 14px 20px;
-  border-bottom: 1px solid #f0f0f0;
-  background: #fafbff;
-}
-
-.um-card-header i {
-  font-size: 20px;
-  color: #3f51b5;
-}
-
-.um-card-header h3 {
-  font-size: 15px;
-  font-weight: 600;
-  color: #1e2a5e;
-  margin: 0;
-}
-
-.um-card-header .um-count {
-  margin-left: auto;
-  font-size: 12px;
-  color: #999;
-  font-family: var(--poppins);
-}
-
-/* ── Table ── */
-.user-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-family: var(--poppins);
-  font-size: 13.5px;
-}
-
-.user-table thead tr {
-  background: #f5f7ff;
-}
-
-.user-table thead th {
-  text-align: left;
-  padding: 11px 16px;
-  font-size: 12px;
-  font-weight: 600;
-  color: #3f51b5;
-  text-transform: uppercase;
-  letter-spacing: .4px;
-  border-bottom: 2px solid #e8eaf6;
-  /* remove any inline color overrides */
-  color: #3f51b5 !important;
-}
-
-.user-table tbody tr {
-  transition: background 0.15s;
-}
-
-.user-table tbody tr:hover {
-  background: #f8f9ff;
-}
-
-.user-table tbody td {
-  padding: 11px 16px;
-  color: #444;
-  border-bottom: 1px solid #f0f0f0;
-  vertical-align: middle;
-  font-size: 13.5px;
-}
-
-/* ── Status badges ── */
-.status-cell { font-size: 13.5px; }
-
-.status-indicator {
-  display: inline-block;
-  font-size: 13px;
-  font-weight: 600;
-}
-
-.status-indicator.active {
-  color: #2e7d32;
-}
-
-.status-indicator.inactive {
-  color: #c62828;
-}
-
-/* ── Action buttons inside table ── */
-.action-buttons {
-  display: flex;
-  gap: 6px;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-/* Text-only action buttons — no background, no border */
-.user-table td button {
-  padding: 4px 6px;
-  font-size: 12.5px;
-  font-family: var(--poppins);
-  font-weight: 600;
-  background: none;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: opacity 0.15s;
-  line-height: 1.4;
-}
-
-.user-table td button:hover {
-  opacity: 0.7;
-}
-
-.view-user-btn {
-  color: #3f51b5;
-}
-
-.deactivate-btn {
-  color: #c62828;
-}
-
-button.reset-password-btn {
-  color: #1565c0;
-}
-
-button.reset-password-btn.pending-reset {
-  color: #e65100;
->>>>>>> 23984592a94087055b071541e42a022dc90209a3
 }
 
 .page-title-card h1 {
@@ -1564,5 +1294,111 @@ button.reset-password-btn.pending-reset {
         min-width: 30px;
         min-height: 30px;
         padding: 6px 8px;
+    }
+}
+
+
+/* =========================================================
+   ACTION BUTTON ICON COLORS - SIMPLE DISTINCT BUTTONS
+========================================================= */
+
+.action-group.simple-actions {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    flex-wrap: wrap;
+}
+
+.action-group.simple-actions .simple-action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 33px;
+    padding: 7px 11px;
+    border-radius: 10px;
+    border: 1px solid transparent;
+    box-shadow: none;
+    font-size: 11.5px;
+    font-weight: 800;
+    line-height: 1;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
+}
+
+.action-group.simple-actions .simple-action-btn i {
+    font-size: 15px;
+    line-height: 1;
+}
+
+.action-group.simple-actions .view-btn,
+.action-group.simple-actions .view-user-btn {
+    color: var(--blue);
+    background: rgba(31, 91, 151, 0.08);
+    border-color: rgba(31, 91, 151, 0.18);
+}
+
+.action-group.simple-actions .view-btn:hover,
+.action-group.simple-actions .view-user-btn:hover {
+    color: var(--blue-dark);
+    background: rgba(31, 91, 151, 0.13);
+    border-color: rgba(31, 91, 151, 0.34);
+    transform: translateY(-1px);
+}
+
+.action-group.simple-actions .terminate-btn,
+.action-group.simple-actions .deactivate-btn {
+    color: var(--red);
+    background: rgba(220, 38, 38, 0.08);
+    border-color: rgba(220, 38, 38, 0.2);
+}
+
+.action-group.simple-actions .terminate-btn:hover,
+.action-group.simple-actions .deactivate-btn:hover {
+    color: #b91c1c;
+    background: rgba(220, 38, 38, 0.13);
+    border-color: rgba(220, 38, 38, 0.36);
+    transform: translateY(-1px);
+}
+
+.action-group.simple-actions .password-action-btn,
+.action-group.simple-actions .reset-password-btn {
+    color: #7c3aed;
+    background: rgba(124, 58, 237, 0.08);
+    border-color: rgba(124, 58, 237, 0.2);
+}
+
+.action-group.simple-actions .password-action-btn:hover,
+.action-group.simple-actions .reset-password-btn:hover {
+    color: #6d28d9;
+    background: rgba(124, 58, 237, 0.13);
+    border-color: rgba(124, 58, 237, 0.36);
+    transform: translateY(-1px);
+}
+
+.action-group.simple-actions .password-action-btn.pending-reset,
+.action-group.simple-actions .reset-password-btn.pending-reset {
+    color: var(--orange);
+    background: rgba(249, 115, 22, 0.09);
+    border-color: rgba(249, 115, 22, 0.24);
+}
+
+.action-group.simple-actions .password-action-btn.pending-reset:hover,
+.action-group.simple-actions .reset-password-btn.pending-reset:hover {
+    color: #ea580c;
+    background: rgba(249, 115, 22, 0.14);
+    border-color: rgba(249, 115, 22, 0.4);
+}
+
+@media (max-width: 520px) {
+    .action-group.simple-actions {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .action-group.simple-actions .simple-action-btn,
+    .action-group.simple-actions .inline-action-form {
+        width: 100%;
     }
 }

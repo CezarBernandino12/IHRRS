@@ -213,11 +213,6 @@ $visibleEndPage = min($totalPages, $visibleStartPage + 2);
                 <div>
                     <span class="eyebrow">Admin Workspace</span>
                     <h1>User Management</h1>
-                    <ul class="breadcrumb">
-                        <li><a href="admin_dashboard2">Dashboard</a></li>
-                        <li><i class="bx bx-chevron-right"></i></li>
-                        <li><a class="active" href="admin_user">User Management</a></li>
-                    </ul>
                     <p>Manage approved users, account status, password reset requests, and staff access in one place.</p>
                 </div>
 
@@ -233,7 +228,6 @@ $visibleEndPage = min($totalPages, $visibleStartPage + 2);
                 </div>
             </section>
 
-<<<<<<< HEAD
             <section class="stat-grid">
                 <article class="stat-card">
                     <span class="stat-icon"><i class="bx bx-group"></i></span>
@@ -258,19 +252,6 @@ $visibleEndPage = min($totalPages, $visibleStartPage + 2);
                         <h3><?php echo number_format($terminatedTotal); ?></h3>
                     </div>
                 </article>
-=======
-                <div class="um-toolbar">
-                <button type="button" id="toggleFilterBtn" class="add-filter-btn">
-                    <span class="icon"><i class="bx bx-filter-alt"></i></span>
-                    <span class="label">Add a filter</span>
-                </button>
-
-                <button type="button" id="addUserBtn" class="add-user-btn">
-                    <span class="icon"><i class="bx bx-user-plus"></i></span>
-                    <span class="label">Add New User</span>
-                </button>
-                </div>
->>>>>>> 23984592a94087055b071541e42a022dc90209a3
 
                 <article class="stat-card">
                     <span class="stat-icon warning"><i class="bx bx-key"></i></span>
@@ -331,7 +312,6 @@ $visibleEndPage = min($totalPages, $visibleStartPage + 2);
                     </div>
                 </form>
 
-<<<<<<< HEAD
                 <div class="table-shell">
                     <table class="user-table">
                         <thead>
@@ -389,25 +369,34 @@ $visibleEndPage = min($totalPages, $visibleStartPage + 2);
                                     </td>
                                     <td>
                                         <div class="action-group simple-actions">
-                                            <button type="button" class="simple-action-btn view-user-btn" data-user='<?php echo e(json_encode($payload)); ?>'>
-                                                View
+                                            <button type="button" class="simple-action-btn view-btn view-user-btn" data-user='<?php echo e(json_encode($payload)); ?>' aria-label="View user details">
+                                                <i class="bx bx-show"></i>
+                                                <span>View</span>
                                             </button>
 
                                             <?php if ($user['account_status'] === 'active'): ?>
                                                 <form method="POST" action="terminated_user" class="inline-action-form">
                                                     <input type="hidden" name="user_id" value="<?php echo e($user['user_id']); ?>">
-                                                    <button type="button" class="simple-action-btn danger deactivate-btn" onclick="showTerminateModal(<?php echo (int)$user['user_id']; ?>)">
-                                                        Terminate
+                                                    <button type="button" class="simple-action-btn terminate-btn deactivate-btn" onclick="showTerminateModal(<?php echo (int)$user['user_id']; ?>)" aria-label="Terminate user">
+                                                        <i class="bx bx-user-x"></i>
+                                                        <span>Terminate</span>
                                                     </button>
                                                 </form>
 
                                                 <button type="button"
-                                                    class="simple-action-btn reset-password-btn <?php echo ($user['reset_status'] === 'pending') ? 'pending-reset' : ''; ?>"
+                                                    class="simple-action-btn password-action-btn reset-password-btn <?php echo ($user['reset_status'] === 'pending') ? 'pending-reset' : ''; ?>"
                                                     data-userid="<?php echo (int)$user['user_id']; ?>"
                                                     data-reset-status="<?php echo e($user['reset_status']); ?>"
                                                     data-contact="<?php echo e($user['contact_number'] ?? ''); ?>"
-                                                    onclick="showResetPasswordModal(<?php echo (int)$user['user_id']; ?>)">
-                                                    <?php echo ($user['reset_status'] === 'pending') ? 'Pending Reset' : 'Password'; ?>
+                                                    onclick="showResetPasswordModal(<?php echo (int)$user['user_id']; ?>)"
+                                                    aria-label="<?php echo ($user['reset_status'] === 'pending') ? 'Complete pending password reset' : 'Change user password'; ?>">
+                                                    <?php if ($user['reset_status'] === 'pending'): ?>
+                                                        <i class="bx bx-time-five"></i>
+                                                        <span>Pending Reset</span>
+                                                    <?php else: ?>
+                                                        <i class="bx bx-key"></i>
+                                                        <span>Password</span>
+                                                    <?php endif; ?>
                                                 </button>
                                             <?php endif; ?>
                                         </div>
@@ -427,77 +416,6 @@ $visibleEndPage = min($totalPages, $visibleStartPage + 2);
                         </tbody>
                     </table>
                 </div>
-=======
-                <div class="um-card">
-                    <div class="um-card-header">
-                        <i class="bx bxs-group"></i>
-                        <h3>Registered Users</h3>
-                        <span class="um-count"><?php echo $totalUsers; ?> total</span>
-                    </div>
-
-                <table class="user-table">
-                    <thead>
-                    <tr>
-                        <th>Full Name</th>
-                        <th>Username</th>
-                        <th>Role</th>
-                        <th>Account Status</th>
-                        <th>Action</th>
-                    </tr>
-                    </thead>
-                    
-                    <tbody id="userTableBody">
-
-                    <?php foreach ($users as $user):  
-                        $formattedDate = date("F j, Y g:i A", strtotime($user['registration_date']));
-                    ?>
-                        <tr>
-                            <td><?php echo htmlspecialchars($user['full_name']); ?></td>
-                            <td><?php echo htmlspecialchars($user['username']); ?></td>
-                            <td><?php echo ucfirst(htmlspecialchars($user['role'])); ?></td>
-                            <td class="status-cell">
-                                <?php if ($user['account_status'] === 'active'): ?>
-                                    <span class="status-indicator active">Active</span>
-                                <?php else: ?>
-                                    <span class="status-indicator inactive">Account Terminated</span>
-                                <?php endif; ?>
-                            </td>
-                            <td>
-                                <div class="action-buttons">
-                                <button class="view-user-btn" 
-                                    data-user='<?php echo json_encode([
-                                        'user_id' => $user['user_id'],
-                                        'full_name' => $user['full_name'],
-                                        'username' => $user['username'],
-                                        'role' => $user['role'],
-                                        'account_status' => $user['account_status'],
-                                        'barangay' => $user['barangay'],
-                                        'rhu' => $user['rhu'],
-                                        'address' => $user['address'] ?? 'N/A',
-                                        'age' => $user['age'],
-                                        'contact_number' => $user['contact_number'],
-                                        'registration_date' => $formattedDate
-                                    ]); ?>'>View</button>
-
-                                <?php if ($user['account_status'] === 'active'): ?>
-                                    <form method="POST" action="terminated_user" style="display:inline;">
-                                        <input type="hidden" name="user_id" value="<?php echo $user['user_id']; ?>">
-                                        <button type="button" class="deactivate-btn" onclick="showTerminateModal(<?php echo $user['user_id']; ?>)">Terminate</button>
-                                    </form>
-
-                                    <button class="reset-password-btn <?php echo ($user['reset_status'] == 'pending') ? 'pending-reset' : ''; ?>"
-                                        onclick="showResetPasswordModal(<?php echo $user['user_id']; ?>)">
-                                        <?php echo ($user['reset_status'] == 'pending') ? 'Pending Reset' : 'Change Password'; ?>
-                                    </button>
-                                <?php endif; ?>
-                                </div>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                    </tbody>
-                </table>
-                </div><!-- /.um-card -->
->>>>>>> 23984592a94087055b071541e42a022dc90209a3
 
                 <div class="pagination-container">
                     <div class="pagination-info">

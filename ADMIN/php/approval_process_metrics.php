@@ -2,32 +2,34 @@
 session_start();
 require_once 'config.php';
 
-// Function to calculate average processing time in hours
-// Since we don't have an approval timestamp, we'll use a placeholder value or remove this metric
-function calculateAverageProcessingTime($pdo) {
-    // Since we don't have approval_date, we'll return a placeholder
-    // In reality, you would need to track when status changes in your database
-    return "N/A"; // Not available without timestamp data
+if (!isset($_SESSION['user_id']) || !isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
+    session_destroy();
+    header("Location: ../../role");
+    exit();
 }
 
-// Function to calculate approval rates
+function e($value) {
+    return htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8');
+}
+
+function calculateAverageProcessingTime($pdo) {
+    return "N/A";
+}
+
 function calculateApprovalRates($pdo) {
-    // Get total count of processed users (approved or rejected)
     $totalQuery = "SELECT COUNT(*) as total FROM users WHERE status IN ('approved', 'rejected')";
     $totalStmt = $pdo->query($totalQuery);
     $totalResult = $totalStmt->fetch(PDO::FETCH_ASSOC);
-    $total = $totalResult['total'];
-    
-    // Get count of approved users
+    $total = (int)($totalResult['total'] ?? 0);
+
     $approvedQuery = "SELECT COUNT(*) as approved FROM users WHERE status = 'approved'";
     $approvedStmt = $pdo->query($approvedQuery);
     $approvedResult = $approvedStmt->fetch(PDO::FETCH_ASSOC);
-    $approved = $approvedResult['approved'];
-    
-    // Calculate rates
+    $approved = (int)($approvedResult['approved'] ?? 0);
+
     $approvalRate = $total > 0 ? round(($approved / $total) * 100, 1) : 0;
     $rejectionRate = $total > 0 ? round(100 - $approvalRate, 1) : 0;
-    
+
     return [
         'approval_rate' => $approvalRate,
         'rejection_rate' => $rejectionRate,
@@ -37,11 +39,8 @@ function calculateApprovalRates($pdo) {
     ];
 }
 
-// Function to get approval data for trend chart (monthly)
 function getMonthlyApprovalData($pdo, $months = 6) {
     try {
-        // Since we don't have approval_date, we'll use registration_date as our time basis
-        // This will show registration date trends, not approval date trends
         $query = "SELECT 
                   DATE_FORMAT(registration_date, '%Y-%m') as month,
                   COUNT(CASE WHEN status = 'approved' THEN 1 END) as approved,
@@ -52,36 +51,31 @@ function getMonthlyApprovalData($pdo, $months = 6) {
                   AND registration_date >= DATE_SUB(CURDATE(), INTERVAL ? MONTH)
                 GROUP BY DATE_FORMAT(registration_date, '%Y-%m')
                 ORDER BY month ASC";
-        
+
         $stmt = $pdo->prepare($query);
         $stmt->execute([$months]);
         $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
-        // Prepare data for chart
+
         $labels = [];
         $approvedData = [];
         $rejectedData = [];
-        
+
         foreach ($results as $row) {
-            // Format month for display (e.g., "2023-05" to "May 2023")
             $dateObj = DateTime::createFromFormat('Y-m', $row['month']);
             if ($dateObj) {
-                $formattedMonth = $dateObj->format('M Y');
-                
-                $labels[] = $formattedMonth;
-                $approvedData[] = $row['approved'] ?? 0;
-                $rejectedData[] = $row['rejected'] ?? 0;
+                $labels[] = $dateObj->format('M Y');
+                $approvedData[] = (int)($row['approved'] ?? 0);
+                $rejectedData[] = (int)($row['rejected'] ?? 0);
             }
         }
-        
+
         return [
             'labels' => $labels,
             'approved' => $approvedData,
             'rejected' => $rejectedData,
-            'avg_time' => array_fill(0, count($labels), null) // We don't have this data
+            'avg_time' => array_fill(0, count($labels), null)
         ];
     } catch (PDOException $e) {
-        // Graceful error handling
         error_log("Error getting monthly approval data: " . $e->getMessage());
         return [
             'labels' => [],
@@ -92,23 +86,31 @@ function getMonthlyApprovalData($pdo, $months = 6) {
     }
 }
 
-// Get data for the page - with error handling
 try {
     $averageProcessingTime = calculateAverageProcessingTime($pdo);
     $approvalRates = calculateApprovalRates($pdo);
     $trendData = getMonthlyApprovalData($pdo);
-    
-    // Convert trend data to JSON for JavaScript charts
-    $trendDataJson = json_encode($trendData);
-    
-    // Fetch the count of unread notifications
+    $trendDataJson = json_encode($trendData, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP);
+
     $stmt = $pdo->query("SELECT COUNT(*) FROM notifications WHERE status = 'unread'");
-    $unreadCount = $stmt->fetchColumn();
+    $unreadCount = (int)$stmt->fetchColumn();
+
+    $stmt = $pdo->query("SELECT COUNT(*) FROM users WHERE status = 'pending'");
+    $pendingUsers = (int)$stmt->fetchColumn();
+
+    $stmt = $pdo->query("SELECT COUNT(*) FROM users WHERE registration_date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)");
+    $newUsers30Days = (int)$stmt->fetchColumn();
+
+    $recentQuery = "SELECT user_id, full_name, registration_date, status, barangay 
+                    FROM users
+                    WHERE status IN ('approved', 'rejected', 'pending')
+                    ORDER BY registration_date DESC
+                    LIMIT 10";
+    $recentStmt = $pdo->query($recentQuery);
+    $recentUsers = $recentStmt ? $recentStmt->fetchAll(PDO::FETCH_ASSOC) : [];
 } catch (PDOException $e) {
-    // Log the error
     error_log("Database error: " . $e->getMessage());
-    
-    // Set default values
+
     $averageProcessingTime = "N/A";
     $approvalRates = [
         'approval_rate' => 0,
@@ -125,6 +127,9 @@ try {
     ];
     $trendDataJson = json_encode($trendData);
     $unreadCount = 0;
+    $pendingUsers = 0;
+    $newUsers30Days = 0;
+    $recentUsers = [];
 }
 ?>
 
@@ -135,338 +140,482 @@ try {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="../../img/logo.png">
     <link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="../css/metrics.css">
-    <link rel="stylesheet" href="../css/sidebar.css">   
+    <link rel="stylesheet" href="../css/sidebar.css">
     <link rel="stylesheet" href="../css/logout.css">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="../css/metrics.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <title>Approval Process Metrics</title>
 </head>
 <body>
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
-    <!-- Sidebar Section -->
-    <section id="sidebar">
-        <a href="#" class="sidebar-brand">
-            <img src="../../img/logo.png" alt="Admin Logo" class="brand-logo">
-            <div class="brand-text">
-                <span class="brand-name">Hello Admin</span>
-            </div>
-        </a>
 
-        <div class="sidebar-scroll">
-            <div class="sidebar-section-label">Main Menu</div>
-            <ul class="side-menu top">
-                <li>
-                    <a href="admin_dashboard2" data-tooltip="Dashboard">
-                        <i class="bx bxs-dashboard nav-icon"></i>
-                        <span class="nav-label">Dashboard</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="admin_approval" data-tooltip="Approval & Logs">
-                        <i class="bx bxs-user nav-icon"></i>
-                        <span class="nav-label">Approval & Logs</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="admin_user" data-tooltip="User Management">
-                        <i class="bx bxs-notepad nav-icon"></i>
-                        <span class="nav-label">User management</span>
-                    </a>
-                </li>
-                <li class="active">
-                    <a href="admin_reports" data-tooltip="Reports">
-                        <i class="bx bxs-report nav-icon"></i>
-                        <span class="nav-label">Reports</span>
-                    </a>
-                </li>
-            </ul>
-
-            <div class="sidebar-divider"></div>
-
-            <ul class="side-menu">
-                <li>
-                    <a href="../../role" class="logout" data-tooltip="Logout" onclick="return confirmLogout()">
-                        <i class="bx bxs-log-out-circle nav-icon"></i>
-                        <span class="nav-label">Logout</span>
-                    </a>
-                </li>
-            </ul>
+<section id="sidebar">
+    <a href="#" class="sidebar-brand">
+        <img src="../../img/logo.png" alt="Admin Logo" class="brand-logo">
+        <div class="brand-text">
+            <span class="brand-name">Hello Admin</span>
         </div>
+    </a>
 
-        <div class="sidebar-footer">
-            <div class="sidebar-user">
-                <img src="../../img/admin.png" alt="Admin User">
-                <div class="sidebar-user-info">
-                    <div class="user-name" id="sidebarUserName">Admin User</div>
-                    <div class="user-role">Administrator</div>
-                </div>
+    <div class="sidebar-scroll">
+        <div class="sidebar-section-label">Main Menu</div>
+        <ul class="side-menu top">
+            <li>
+                <a href="admin_dashboard2" data-tooltip="Dashboard">
+                    <i class="bx bxs-dashboard nav-icon"></i>
+                    <span class="nav-label">Dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a href="activity_logs" data-tooltip="Activity Logs">
+                    <i class="bx bxs-user nav-icon"></i>
+                    <span class="nav-label">Activity Logs</span>
+                </a>
+            </li>
+            <li>
+                <a href="admin_user" data-tooltip="User Management">
+                    <i class="bx bxs-notepad nav-icon"></i>
+                    <span class="nav-label">User Management</span>
+                </a>
+            </li>
+            <li class="active">
+                <a href="../reports" data-tooltip="Reports">
+                    <i class="bx bxs-report nav-icon"></i>
+                    <span class="nav-label">Reports</span>
+                </a>
+            </li>
+        </ul>
+
+        <div class="sidebar-divider"></div>
+
+        <ul class="side-menu">
+            <li>
+                <a href="#" class="logout" data-tooltip="Logout" onclick="return confirmLogout()">
+                    <i class="bx bxs-log-out-circle nav-icon"></i>
+                    <span class="nav-label">Logout</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="sidebar-footer">
+        <div class="sidebar-user">
+            <img src="../../img/admin.png" alt="Admin User">
+            <div class="sidebar-user-info">
+                <div class="user-name" id="sidebarUserName">Admin User</div>
+                <div class="user-role">Administrator</div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- Main Content Section -->
-    <section id="content">
-        <nav>
-            <button class="nav-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
-                <i class="bx bx-menu"></i>
+<section id="content">
+    <nav>
+        <button class="nav-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+            <i class="bx bx-menu"></i>
+        </button>
+
+        <div class="nav-search">
+            <input type="search" id="patientSearch" placeholder="Search recent users..." name="search" autocomplete="off">
+            <button type="button" id="searchButton" aria-label="Search">
+                <i class="bx bx-search"></i>
             </button>
+            <div id="resultDropdown" class="dropdown-content"></div>
+        </div>
+    </nav>
 
-            <div class="nav-search" style="position: relative;">
-                <input type="search" id="patientSearch" placeholder="Search approval metrics..." name="search" autocomplete="off">
-                <button type="button" id="searchButton" aria-label="Search">
-                    <i class="bx bx-search"></i>
-                </button>
-                <div id="resultDropdown" class="dropdown-content"></div>
-            </div>
-        </nav>
-
-        <main>
-            <div class="head-title">
-                <div class="left">
+    <main>
+        <div class="metrics-page">
+            <section class="page-hero">
+                <div class="hero-copy">
+                    <div class="eyebrow">
+                        <i class="bx bx-bar-chart-alt-2"></i>
+                        Admin Reports
+                    </div>
                     <h1>Approval Process Metrics</h1>
-                    </ul>
+                    <p>Monitor approval performance, processed registrations, and recent user account activity in one clean dashboard.</p>
                 </div>
-            </div>
 
-            <!-- Key Metrics Overview -->
-            <div class="metrics-container">
-                <div class="metric-card">
-                    <h3>Total Approved Users</h3>
-                    <div class="metric-value"><?php echo $approvalRates['total_approved']; ?></div>
-                    <p>Users with 'approved' status</p>
+                <div class="hero-actions">
+                    <a href="admin_approval" class="hero-btn secondary">
+                        <i class="bx bx-user-check"></i>
+                        Approval Logs
+                    </a>
+                    <a href="../reports" class="hero-btn primary">
+                        <i class="bx bx-arrow-back"></i>
+                        Back to Reports
+                    </a>
                 </div>
-                <div class="metric-card">
-                    <h3>Approval Rate</h3>
-                    <div class="metric-value"><?php echo $approvalRates['approval_rate']; ?>%</div>
-                    <div class="progress-bar">
-                        <div class="progress-bar-fill" style="width: <?php echo $approvalRates['approval_rate']; ?>%"></div>
+            </section>
+
+            <section class="metrics-grid" aria-label="Approval metric summary">
+                <article class="metric-card approved-card">
+                    <span class="metric-icon"><i class="bx bx-check-shield"></i></span>
+                    <div>
+                        <p>Total Approved Users</p>
+                        <h3><?php echo number_format($approvalRates['total_approved']); ?></h3>
+                        <small>Users currently marked as approved.</small>
                     </div>
-                    <div class="progress-label">
-                        <span>0%</span>
-                        <span>100%</span>
+                </article>
+
+                <article class="metric-card rate-card">
+                    <span class="metric-icon"><i class="bx bx-trending-up"></i></span>
+                    <div>
+                        <p>Approval Rate</p>
+                        <h3><?php echo e($approvalRates['approval_rate']); ?>%</h3>
+                        <div class="mini-progress" aria-hidden="true">
+                            <span style="width: <?php echo min(100, max(0, $approvalRates['approval_rate'])); ?>%"></span>
+                        </div>
                     </div>
-                </div>
-                <div class="metric-card">
-                    <h3>Total Processed</h3>
-                    <div class="metric-value"><?php echo $approvalRates['total_processed']; ?></div>
-                    <p><?php echo $approvalRates['total_approved']; ?> approved, <?php echo $approvalRates['total_rejected']; ?> rejected</p>
-                </div>
-            </div>
+                </article>
 
-            <!-- Trends Chart -->
-            <div class="chart-container">
-                <h3>Registration & Approval Trends</h3>
-                <div class="note">
-                    <strong>Note:</strong> This chart shows users by registration date, grouped by their current status (approved or rejected).
+                <article class="metric-card rejected-card">
+                    <span class="metric-icon"><i class="bx bx-x-circle"></i></span>
+                    <div>
+                        <p>Rejection Rate</p>
+                        <h3><?php echo e($approvalRates['rejection_rate']); ?>%</h3>
+                        <small><?php echo number_format($approvalRates['total_rejected']); ?> rejected users.</small>
+                    </div>
+                </article>
+
+                <article class="metric-card pending-card">
+                    <span class="metric-icon"><i class="bx bx-time-five"></i></span>
+                    <div>
+                        <p>Pending Reviews</p>
+                        <h3><?php echo number_format($pendingUsers); ?></h3>
+                        <small><?php echo number_format($newUsers30Days); ?> registrations in the last 30 days.</small>
+                    </div>
+                </article>
+            </section>
+
+            <section class="insight-grid">
+                <article class="chart-card searchable-card">
+                    <div class="section-heading">
+                        <div>
+                            <span class="section-kicker">Six-month overview</span>
+                            <h2>Registration & Approval Trends</h2>
+                            <p>This chart uses registration date as the time basis and groups users by current approval status.</p>
+                        </div>
+                        <span class="section-icon"><i class="bx bx-line-chart"></i></span>
+                    </div>
+
+                    <div class="chart-shell">
+                        <canvas id="approvalTrendsChart"></canvas>
+                    </div>
+
+                    <div class="note-box">
+                        <i class="bx bx-info-circle"></i>
+                        <span>Average approval processing time is unavailable because approval timestamps are not stored yet.</span>
+                    </div>
+                </article>
+
+                <aside class="snapshot-card searchable-card">
+                    <div class="section-heading compact">
+                        <div>
+                            <span class="section-kicker">Processing snapshot</span>
+                            <h2>Current Totals</h2>
+                        </div>
+                        <span class="section-icon"><i class="bx bx-pie-chart-alt-2"></i></span>
+                    </div>
+
+                    <div class="snapshot-list">
+                        <div class="snapshot-item">
+                            <span>Processed Users</span>
+                            <strong><?php echo number_format($approvalRates['total_processed']); ?></strong>
+                        </div>
+                        <div class="snapshot-item">
+                            <span>Approved Users</span>
+                            <strong><?php echo number_format($approvalRates['total_approved']); ?></strong>
+                        </div>
+                        <div class="snapshot-item">
+                            <span>Rejected Users</span>
+                            <strong><?php echo number_format($approvalRates['total_rejected']); ?></strong>
+                        </div>
+                        <div class="snapshot-item">
+                            <span>Unread Notifications</span>
+                            <strong><?php echo number_format($unreadCount); ?></strong>
+                        </div>
+                        <div class="snapshot-item muted">
+                            <span>Avg. Processing Time</span>
+                            <strong><?php echo e($averageProcessingTime); ?></strong>
+                        </div>
+                    </div>
+                </aside>
+            </section>
+
+            <section class="table-card searchable-card">
+                <div class="section-heading">
+                    <div>
+                        <span class="section-kicker">Latest records</span>
+                        <h2>Recently Registered Users</h2>
+                        <p>Latest approved, rejected, and pending user registrations.</p>
+                    </div>
+                    <span class="section-icon"><i class="bx bx-user-plus"></i></span>
                 </div>
-                <canvas id="approvalTrendsChart"></canvas>
-            </div>
 
-            <!-- Recent Users -->
-            <div class="chart-container">
-                <h3>Recently Registered Users</h3>
-                <?php
-                try {
-                    $recentQuery = "SELECT user_id, full_name, registration_date, status, barangay 
-                                    FROM users
-                                    WHERE status IN ('approved', 'rejected', 'pending')
-                                    ORDER BY registration_date DESC
-                                    LIMIT 10";
-                    
-                    $recentStmt = $pdo->query($recentQuery);
-                    $hasRecentData = ($recentStmt && $recentStmt->rowCount() > 0);
-                } catch (PDOException $e) {
-                    error_log("Error fetching recent users: " . $e->getMessage());
-                    $hasRecentData = false;
-                }
-                ?>
-                
-                <?php if ($hasRecentData): ?>
-                <table class="approval-table">
-                    <thead>
-                        <tr>
-                            <th>User</th>
-                            <th>Registration Date</th>
-                            <th>Barangay</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php while ($row = $recentStmt->fetch(PDO::FETCH_ASSOC)):
-                            $statusClass = '';
-                            if ($row['status'] === 'approved') {
-                                $statusClass = 'approved';
-                            } elseif ($row['status'] === 'rejected') {
-                                $statusClass = 'rejected';
-                            } elseif ($row['status'] === 'pending') {
-                                $statusClass = 'pending';
-                            }
-                        ?>
-                        <tr>
-                            <td><?php echo htmlspecialchars($row['full_name'] ?? 'Unknown'); ?></td>
-                            <td><?php echo date('M d, Y h:i A', strtotime($row['registration_date'])); ?></td>
-                            <td><?php echo htmlspecialchars($row['barangay'] ?? 'Not specified'); ?></td>
-                            <td><span class="status <?php echo $statusClass; ?>"><?php echo ucfirst($row['status']); ?></span></td>
-                        </tr>
-                        <?php endwhile; ?>
-                    </tbody>
-                </table>
-                <?php else: ?>
-                <p>No recent user data available.</p>
-                <?php endif; ?>
-            </div>
-        </main>
-    </section>
+                <div class="table-wrap">
+                    <table class="approval-table">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Registration Date</th>
+                                <th>Barangay</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php if (!empty($recentUsers)): ?>
+                                <?php foreach ($recentUsers as $row):
+                                    $status = strtolower((string)($row['status'] ?? 'pending'));
+                                    $statusClass = in_array($status, ['approved', 'rejected', 'pending'], true) ? $status : 'pending';
+                                    $registrationDate = !empty($row['registration_date']) ? date('M d, Y h:i A', strtotime($row['registration_date'])) : 'N/A';
+                                ?>
+                                <tr>
+                                    <td>
+                                        <div class="user-cell">
+                                            <strong><?php echo e($row['full_name'] ?? 'Unknown'); ?></strong>
+                                            <span>User ID: <?php echo e($row['user_id'] ?? 'N/A'); ?></span>
+                                        </div>
+                                    </td>
+                                    <td><?php echo e($registrationDate); ?></td>
+                                    <td><?php echo e($row['barangay'] ?? 'Not specified'); ?></td>
+                                    <td><span class="status-badge <?php echo e($statusClass); ?>"><?php echo e(ucfirst($status)); ?></span></td>
+                                </tr>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <tr>
+                                    <td colspan="4" class="empty-state">
+                                        <i class="bx bx-folder-open"></i>
+                                        <span>No recent user data available.</span>
+                                    </td>
+                                </tr>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </main>
+</section>
 
-    <script>
-        // Chart for Approval Trends
-        document.addEventListener('DOMContentLoaded', function() {
-            const trendData = <?php echo $trendDataJson; ?>;
-            
-            // Check if we have data to display
-            if (trendData.labels.length === 0) {
-                document.getElementById('approvalTrendsChart').parentNode.innerHTML = 
-                    '<h3>Registration & Approval Trends</h3>' +
-                    '<div class="note"><strong>Note:</strong> This chart would show users by registration date, grouped by status.</div>' +
-                    '<p>No trend data available for the selected time period.</p>';
-                return;
-            }
-            
-            const ctx = document.getElementById('approvalTrendsChart').getContext('2d');
-            const approvalTrendsChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: trendData.labels,
-                    datasets: [
-                        {
-                            label: 'Approved',
-                            data: trendData.approved,
-                            backgroundColor: 'rgba(60, 145, 230, 0.7)',
-                            borderColor: 'rgba(60, 145, 230, 1)',
-                            borderWidth: 1
-                        },
-                        {
-                            label: 'Rejected',
-                            data: trendData.rejected,
-                            backgroundColor: 'rgba(255, 99, 132, 0.7)',
-                            borderColor: 'rgba(255, 99, 132, 1)',
-                            borderWidth: 1
-                        }
-                    ]
+<div id="logoutModal" class="logout-modal">
+    <div class="logout-modal-content">
+        <div class="logout-modal-header">
+            <h3>Confirm Logout</h3>
+        </div>
+        <div class="logout-modal-body">
+            <p>Are you sure you want to logout?</p>
+        </div>
+        <div class="logout-modal-footer">
+            <button type="button" onclick="closeLogoutModal()" class="logout-cancel-btn">Cancel</button>
+            <button type="button" onclick="proceedLogout()" class="logout-confirm-btn">Yes, Logout</button>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    setupApprovalChart();
+    setupSidebar();
+    setupLocalSearch();
+    setupSidebarUserName();
+});
+
+function setupApprovalChart() {
+    const trendData = <?php echo $trendDataJson; ?>;
+    const canvas = document.getElementById('approvalTrendsChart');
+
+    if (!canvas) {
+        return;
+    }
+
+    if (!trendData.labels || trendData.labels.length === 0) {
+        const shell = canvas.closest('.chart-shell');
+        if (shell) {
+            shell.innerHTML = '<div class="chart-empty"><i class="bx bx-bar-chart-alt-2"></i><p>No trend data available for the selected time period.</p></div>';
+        }
+        return;
+    }
+
+    const ctx = canvas.getContext('2d');
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: trendData.labels,
+            datasets: [
+                {
+                    label: 'Approved',
+                    data: trendData.approved,
+                    backgroundColor: 'rgba(21, 145, 90, 0.78)',
+                    borderColor: 'rgba(21, 145, 90, 1)',
+                    borderWidth: 1,
+                    borderRadius: 10,
+                    barPercentage: 0.72,
+                    categoryPercentage: 0.72
                 },
-                options: {
-                    responsive: true,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            title: {
-                                display: true,
-                                text: 'Number of Users'
-                            }
-                        },
-                        x: {
-                            title: {
-                                display: true,
-                                text: 'Month'
-                            }
-                        }
+                {
+                    label: 'Rejected',
+                    data: trendData.rejected,
+                    backgroundColor: 'rgba(220, 38, 38, 0.72)',
+                    borderColor: 'rgba(220, 38, 38, 1)',
+                    borderWidth: 1,
+                    borderRadius: 10,
+                    barPercentage: 0.72,
+                    categoryPercentage: 0.72
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: {
+                mode: 'index',
+                intersect: false
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        precision: 0
                     },
-                    plugins: {
-                        title: {
-                            display: true,
-                            text: 'Monthly Registration by Current Status'
-                        },
-                        tooltip: {
-                            mode: 'index',
-                            intersect: false
-                        }
+                    grid: {
+                        color: 'rgba(15, 23, 42, 0.07)'
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
                     }
                 }
-            });
-        });
-
-        function confirmLogout() {
-            return confirm("Are you sure you want to logout?");
+            },
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        usePointStyle: true,
+                        boxWidth: 8,
+                        boxHeight: 8
+                    }
+                },
+                tooltip: {
+                    backgroundColor: '#061b3a',
+                    titleColor: '#ffffff',
+                    bodyColor: '#e2e8f0',
+                    padding: 12,
+                    cornerRadius: 12
+                }
+            }
         }
-    </script>
-    <script>
-(function () {
-  const sidebar = document.getElementById('sidebar');
-  const toggle = document.getElementById('sidebarToggle');
-  const overlay = document.getElementById('sidebarOverlay');
-  const MOBILE_BP = 768;
+    });
+}
 
-  if (!sidebar || !toggle || !overlay) return;
+function setupSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const toggle = document.getElementById('sidebarToggle');
+    const overlay = document.getElementById('sidebarOverlay');
+    const MOBILE_BP = 768;
 
-  function isMobile() {
-    return window.innerWidth <= MOBILE_BP;
-  }
-
-  function closeMobileSidebar() {
-    sidebar.classList.remove('mobile-open');
-    overlay.classList.remove('active');
-    document.body.style.overflow = '';
-  }
-
-  toggle.addEventListener('click', function () {
-    if (isMobile()) {
-      const open = sidebar.classList.toggle('mobile-open');
-      overlay.classList.toggle('active', open);
-      document.body.style.overflow = open ? 'hidden' : '';
-    } else {
-      sidebar.classList.toggle('collapsed');
+    if (!sidebar || !toggle || !overlay) {
+        return;
     }
-  });
 
-  overlay.addEventListener('click', closeMobileSidebar);
-
-  window.addEventListener('resize', function () {
-    if (!isMobile()) {
-      closeMobileSidebar();
+    function isMobile() {
+        return window.innerWidth <= MOBILE_BP;
     }
-  });
-})();
 
-document.addEventListener('DOMContentLoaded', function () {
-  const searchInput = document.getElementById('patientSearch');
-  const searchButton = document.getElementById('searchButton');
+    function closeMobileSidebar() {
+        sidebar.classList.remove('mobile-open');
+        overlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
 
-  function filterPageContent() {
-    const term = (searchInput?.value || '').toLowerCase().trim();
-    const rows = document.querySelectorAll('.approval-table tbody tr');
-
-    rows.forEach(row => {
-      row.style.display = row.textContent.toLowerCase().includes(term) ? '' : 'none';
+    toggle.addEventListener('click', function () {
+        if (isMobile()) {
+            const open = sidebar.classList.toggle('mobile-open');
+            overlay.classList.toggle('active', open);
+            document.body.style.overflow = open ? 'hidden' : '';
+        } else {
+            sidebar.classList.toggle('collapsed');
+        }
     });
-  }
 
-  if (searchInput && searchButton) {
-    searchInput.addEventListener('input', filterPageContent);
-    searchInput.addEventListener('keypress', function (event) {
-      if (event.key === 'Enter') {
-        event.preventDefault();
-        filterPageContent();
-      }
-    });
-    searchButton.addEventListener('click', filterPageContent);
-  }
+    overlay.addEventListener('click', closeMobileSidebar);
 
-  fetch('getUserName')
-    .then(response => response.json())
-    .then(data => {
-      const sidebarNameEl = document.getElementById('sidebarUserName');
-      if (sidebarNameEl) {
-        sidebarNameEl.textContent = data.full_name || 'Admin User';
-      }
-    })
-    .catch(error => {
-      console.error('Error fetching user name:', error);
-      const sidebarNameEl = document.getElementById('sidebarUserName');
-      if (sidebarNameEl) {
-        sidebarNameEl.textContent = 'Admin User';
-      }
+    window.addEventListener('resize', function () {
+        if (!isMobile()) {
+            closeMobileSidebar();
+        }
     });
+}
+
+function setupLocalSearch() {
+    const searchInput = document.getElementById('patientSearch');
+    const searchButton = document.getElementById('searchButton');
+
+    function filterPageContent() {
+        const term = (searchInput?.value || '').toLowerCase().trim();
+        const rows = document.querySelectorAll('.approval-table tbody tr');
+
+        rows.forEach(row => {
+            row.style.display = row.textContent.toLowerCase().includes(term) ? '' : 'none';
+        });
+    }
+
+    if (searchInput && searchButton) {
+        searchInput.addEventListener('input', filterPageContent);
+        searchInput.addEventListener('keypress', function (event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                filterPageContent();
+            }
+        });
+        searchButton.addEventListener('click', filterPageContent);
+    }
+}
+
+function setupSidebarUserName() {
+    fetch('getUserName')
+        .then(response => response.json())
+        .then(data => {
+            const sidebarNameEl = document.getElementById('sidebarUserName');
+            if (sidebarNameEl) {
+                sidebarNameEl.textContent = data.full_name || 'Admin User';
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching user name:', error);
+            const sidebarNameEl = document.getElementById('sidebarUserName');
+            if (sidebarNameEl) {
+                sidebarNameEl.textContent = 'Admin User';
+            }
+        });
+}
+
+function confirmLogout() {
+    const modal = document.getElementById('logoutModal');
+    if (modal) {
+        modal.style.display = 'grid';
+    }
+    return false;
+}
+
+function closeLogoutModal() {
+    const modal = document.getElementById('logoutModal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
+
+function proceedLogout() {
+    window.location.href = 'logout';
+}
+
+window.addEventListener('click', function(event) {
+    const logoutModal = document.getElementById('logoutModal');
+    if (event.target === logoutModal) {
+        closeLogoutModal();
+    }
 });
 </script>
 </body>

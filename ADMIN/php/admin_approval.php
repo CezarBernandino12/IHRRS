@@ -246,7 +246,7 @@ $startPage = max(1, $endPage - 2);
 
                 </div>
 
-                <a href="admin_reports" class="hero-action">
+                <a href="../reportsPages/admin_reports" class="hero-action">
                     <i class="bx bxs-report"></i>
                     View Reports
                 </a>
