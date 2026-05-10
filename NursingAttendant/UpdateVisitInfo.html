@@ -876,6 +876,13 @@ function setupQuantityDelegation(container) {
 }
 
 function resetClonedEntry(entry) {
+    // ✅ Destroy Select2 instances before removing their containers
+    entry.querySelectorAll("select").forEach(select => {
+        if ($(select).hasClass("select2-hidden-accessible")) {
+            $(select).select2("destroy");
+        }
+    });
+
     entry.querySelectorAll(".select2-container").forEach(el => el.remove());
 
     entry.querySelectorAll("select").forEach(select => {
@@ -897,26 +904,50 @@ function initializeDynamicSelects(scope, medicineCategory) {
     const instructionSelect = scope.querySelector(".med-instruction");
 
     if (medicineSelect) {
-        $(medicineSelect).select2({
-            placeholder: "Select or type medication",
-            allowClear: true,
-            minimumResultsForSearch: 0,
-            width: "100%"
-        });
-
-        loadCustomOptions(medicineSelect, medicineCategory);
+        loadCustomOptionsAndInit(medicineSelect, medicineCategory, "Select or type medication");
     }
 
     if (instructionSelect) {
-        $(instructionSelect).select2({
-            placeholder: "Select or type instruction",
-            allowClear: true,
-            minimumResultsForSearch: 0,
-            width: "100%"
-        });
-
-        loadCustomOptions(instructionSelect, "instruction");
+        loadCustomOptionsAndInit(instructionSelect, "instruction", "Select or type instruction");
     }
+}
+
+function loadCustomOptionsAndInit(selectElement, category, placeholder) {
+    if (!selectElement) return;
+
+    // ✅ Destroy existing Select2 before re-initializing
+    if ($(selectElement).hasClass("select2-hidden-accessible")) {
+        $(selectElement).select2("destroy");
+    }
+
+    fetch(`php/get_custom_options.php?category=${category}`)
+        .then(response => response.json())
+        .then(options => {
+            // Clear existing options except the default blank one
+            selectElement.innerHTML = '<option value="">Select</option>';
+
+            options.forEach(optionValue => {
+                selectElement.appendChild(new Option(optionValue, optionValue));
+            });
+
+            selectElement.appendChild(new Option("Other (Enter manually)", "other"));
+
+            $(selectElement).select2({
+                placeholder: placeholder,
+                allowClear: true,
+                minimumResultsForSearch: 0,
+                width: "100%"
+            });
+        })
+        .catch(error => {
+            console.error("Error fetching options:", error);
+            $(selectElement).select2({
+                placeholder: placeholder,
+                allowClear: true,
+                minimumResultsForSearch: 0,
+                width: "100%"
+            });
+        });
 }
 
 function handleOtherSelection(selector, category, promptLabel) {
@@ -968,6 +999,9 @@ function loadCustomOptions(selectElement, category) {
             if (!existingValues.includes("other")) {
                 selectElement.appendChild(new Option("Other (Enter manually)", "other"));
             }
+
+            // Notify Select2 to refresh its option list after async options are loaded
+            $(selectElement).trigger("change.select2");
         })
         .catch(error => console.error("Error fetching options:", error));
 }

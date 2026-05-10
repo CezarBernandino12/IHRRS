@@ -14,21 +14,25 @@ if (isset($_POST['query'])) {
     $sql = "SELECT first_name, last_name, middle_name, sex, date_of_birth, patient_id
     FROM patients
     WHERE 
-        CONCAT(first_name, ' ', last_name) LIKE :query
-        OR CONCAT(last_name, ' ', first_name) LIKE :query
-        OR first_name LIKE :query
-        OR last_name LIKE :query
+        CONCAT(first_name, ' ', last_name) LIKE :query1
+        OR CONCAT(last_name, ' ', first_name) LIKE :query2
+        OR first_name LIKE :query3
+        OR last_name LIKE :query4
 
         -- fuzzy sound-alike matching
-        OR SOUNDEX(first_name) = SOUNDEX(:sound)
-        OR SOUNDEX(last_name)  = SOUNDEX(:sound)";
+        OR SOUNDEX(first_name) = SOUNDEX(:sound1)
+        OR SOUNDEX(last_name)  = SOUNDEX(:sound2)";
         
     $stmt = $pdo->prepare($sql);
 
     $searchTerm = "%$query%";
 
-    $stmt->bindParam(':query', $searchTerm, PDO::PARAM_STR);
-    $stmt->bindParam(':sound', $query, PDO::PARAM_STR);
+    $stmt->bindParam(':query1', $searchTerm, PDO::PARAM_STR);
+    $stmt->bindParam(':query2', $searchTerm, PDO::PARAM_STR);
+    $stmt->bindParam(':query3', $searchTerm, PDO::PARAM_STR);
+    $stmt->bindParam(':query4', $searchTerm, PDO::PARAM_STR);
+    $stmt->bindParam(':sound1', $query, PDO::PARAM_STR);
+    $stmt->bindParam(':sound2', $query, PDO::PARAM_STR);
 
     $stmt->execute();
 
@@ -82,7 +86,7 @@ if (isset($_POST['query'])) {
         echo '<div class="no-results-container">
             <img src="../img/no.jpg" alt="No Results" class="no-results-img">
             <h2 class="no-results-title">SORRY!</h2>
-            <p class="no-results-text">We Haven’t Found Any Document</p>
+            <p class="no-results-text">We Haven\'t Found Any Document</p>
         </div>';
     }
 }

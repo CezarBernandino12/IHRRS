@@ -760,6 +760,13 @@ function setupQuantityDelegation(container) {
 }
 
 function resetClonedEntry(entry) {
+    // ✅ Destroy Select2 instances before removing their containers
+    entry.querySelectorAll("select").forEach(select => {
+        if ($(select).hasClass("select2-hidden-accessible")) {
+            $(select).select2("destroy");
+        }
+    });
+
     entry.querySelectorAll(".select2-container").forEach(el => el.remove());
 
     entry.querySelectorAll("select").forEach(select => {
@@ -833,27 +840,42 @@ function handleOtherSelection(selector, category, promptLabel) {
     });
 }
 
-function loadCustomOptions(selectElement, category) {
-    if (!selectElement) {
-        return;
+function loadCustomOptions(selectElement, category, placeholder) {
+    if (!selectElement) return;
+
+    // ✅ Destroy existing Select2 before re-initializing
+    if ($(selectElement).hasClass("select2-hidden-accessible")) {
+        $(selectElement).select2("destroy");
     }
 
     fetch(`php/get_custom_options.php?category=${category}`)
         .then(response => response.json())
         .then(options => {
-            const existingValues = Array.from(selectElement.options).map(option => option.value);
+            // Clear existing options except the default blank one
+            selectElement.innerHTML = '<option value="">Select</option>';
 
             options.forEach(optionValue => {
-                if (!existingValues.includes(optionValue)) {
-                    selectElement.appendChild(new Option(optionValue, optionValue));
-                }
+                selectElement.appendChild(new Option(optionValue, optionValue));
             });
 
-            if (!existingValues.includes("other")) {
-                selectElement.appendChild(new Option("Other (Enter manually)", "other"));
-            }
+            selectElement.appendChild(new Option("Other (Enter manually)", "other"));
+
+            $(selectElement).select2({
+                placeholder: placeholder,
+                allowClear: true,
+                minimumResultsForSearch: 0,
+                width: "100%"
+            });
         })
-        .catch(error => console.error("Error fetching options:", error));
+        .catch(error => {
+            console.error("Error fetching options:", error);
+            $(selectElement).select2({
+                placeholder: placeholder,
+                allowClear: true,
+                minimumResultsForSearch: 0,
+                width: "100%"
+            });
+        });
 }
 
 function saveCustomOption(category, value) {
