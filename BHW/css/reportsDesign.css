@@ -72,49 +72,6 @@ body {
   overflow-y: auto;
 }
 
-/* ═══════════════════════════════════════════════
-   PAGE HEADER
-═══════════════════════════════════════════════ */
-#content main .head-title {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  flex-wrap: wrap;
-  margin-bottom: 8px;
-}
-
-#content main .head-title .left h1 {
-  font-size: 28px;
-  font-weight: 800;
-  color: var(--navy);
-  letter-spacing: -.4px;
-  margin-bottom: 6px;
-}
-
-#content main .head-title .left .breadcrumb {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-#content main .head-title .left .breadcrumb li { color: var(--grey-500); }
-
-#content main .head-title .left .breadcrumb li a {
-  color: var(--grey-500);
-  font-size: 13px;
-  pointer-events: none;
-}
-
-#content main .head-title .left .breadcrumb li a.active {
-  color: var(--blue);
-  pointer-events: unset;
-  font-weight: 600;
-}
-
-/* ═══════════════════════════════════════════════
-   HISTORY / FILTER CONTAINER
-═══════════════════════════════════════════════ */
 .history-container {
   width: 100%;
 }

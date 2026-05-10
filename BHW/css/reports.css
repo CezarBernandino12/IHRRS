@@ -66,34 +66,6 @@ body {
 	flex-wrap: wrap;
 }
 
-#content main .head-title .left h1 {
-  color: var(--text);
-  font-size: clamp(24px, 2.8vw, 34px);
-  font-weight: 650;
-  line-height: 1.05;
-  letter-spacing: -0.03em;
-}
-
-#content main .head-title .left .breadcrumb {
-	display: flex;
-	align-items: center;
-	grid-gap: 16px;
-}
-
-#content main .head-title .left .breadcrumb li {
-	color: var(--dark);
-}
-
-#content main .head-title .left .breadcrumb li a {
-	color: var(--dark-grey);
-	pointer-events: none;
-}
-
-#content main .head-title .left .breadcrumb li a.active {
-	color: var(--blue);
-	pointer-events: unset;
-}
-
 #content main .box-info li .icon-img { width: 60px; height: auto; }
 #content main .box-info li .text h3 { font-size: 18px; text-align: center; }
 

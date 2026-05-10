@@ -55,35 +55,6 @@ body {
 	max-height: calc(100vh - 56px);
 	overflow-y: auto;
 }
-#content main .head-title {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	grid-gap: 16px;
-	flex-wrap: wrap;
-}
-#content main .head-title .left h1 {
-	font-size: 36px;
-	font-weight: 600;
-	margin-bottom: 10px;
-	color: var(--dark);
-}
-#content main .head-title .left .breadcrumb {
-	display: flex;
-	align-items: center;
-	grid-gap: 16px;
-}
-#content main .head-title .left .breadcrumb li {
-	color: var(--dark);
-}
-#content main .head-title .left .breadcrumb li a {
-	color: var(--dark-grey);
-	pointer-events: none;
-}
-#content main .head-title .left .breadcrumb li a.active {
-	color: var(--blue);
-	pointer-events: unset;
-}
 
 #content main .table-data {
 	display: flex;
@@ -693,7 +664,6 @@ body {
 }
 
 /* Page title matches the modern ITR pages */
-html body #content main .referral-page-title,
 html body #content main .history-filter-card,
 html body #content main .history-table-card {
   width: min(100%, 1440px) !important;
@@ -701,24 +671,6 @@ html body #content main .history-table-card {
   margin-left: auto !important;
   margin-right: auto !important;
   box-sizing: border-box !important;
-}
-
-html body #content main .referral-page-title {
-  display: flex !important;
-  align-items: flex-start !important;
-  justify-content: space-between !important;
-  gap: 16px !important;
-  margin: 0 auto 18px !important;
-}
-
-html body #content main .referral-page-title .left h1 {
-  margin: 0 0 10px !important;
-  color: #0f1f38 !important;
-  font-family: var(--poppins, 'Poppins', sans-serif) !important;
-  font-size: clamp(30px, 3.2vw, 42px) !important;
-  font-weight: 800 !important;
-  line-height: 1.12 !important;
-  letter-spacing: -0.045em !important;
 }
 
 html body #content main .referral-page-title .left h1::after {
