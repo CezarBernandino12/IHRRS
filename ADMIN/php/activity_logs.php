@@ -299,12 +299,6 @@ $hasFilters = $userFilter !== '' || $actionFilter !== '' || $fromDate !== '' || 
                     <div class="eyebrow">Administrator Monitoring</div>
                     <h1>System Activity Logs</h1>
                     <p>Review user actions, system activity, security-related events, and record changes in one clean dashboard.</p>
-
-                    <ul class="breadcrumb">
-                        <li><a href="admin_dashboard2">Dashboard</a></li>
-                        <li><i class="bx bx-chevron-right"></i></li>
-                        <li><a class="active" href="activity_logs">Activity Logs</a></li>
-                    </ul>
                 </div>
 
                 <a href="../reports" class="hero-action">
@@ -479,7 +473,7 @@ $hasFilters = $userFilter !== '' || $actionFilter !== '' || $fromDate !== '' || 
 
                                     <td>
                                         <a href="#" class="user-link" data-userid="<?= e($log['performed_by'] ?? ''); ?>" data-fullname="<?= e($displayName); ?>" data-username="<?= e($log['performed_by'] ?? 'N/A'); ?>" data-role="N/A" data-action="<?= e($log['action'] ?? ''); ?>" data-timestamp="<?= e($log['formatted_timestamp'] ?? 'N/A'); ?>">
-                                            <span class="user-avatar"><?= e(getInitials($displayName)); ?></span>
+                                            
                                             <span class="user-name-text"><?= e($displayName); ?></span>
                                         </a>
                                     </td>
