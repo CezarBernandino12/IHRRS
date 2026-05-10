@@ -486,6 +486,81 @@ button.reset-password-btn:hover {
   background: #fefefe !important;
 }
 
+/* ===== PAGINATION ===== */
+.pagination-container {
+    margin: 25px 0;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.pagination-info {
+    font-size: 14px;
+    color: #5f6368;
+    font-family: var(--poppins);
+}
+
+.pagination-buttons {
+    display: flex;
+    gap: 12px;
+}
+
+.pagination-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: var(--poppins);
+}
+
+.prev-btn {
+    background-color: #e8eaf6;
+    color: #3f51b5;
+}
+
+.prev-btn:hover:not(:disabled) {
+    background-color: #c5cae9;
+}
+
+.load-more-btn {
+    background-color: #3f51b5;
+    color: white;
+}
+
+.load-more-btn:hover:not(:disabled) {
+    background-color: #303f9f;
+}
+
+.pagination-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.pagination-btn.hidden {
+    display: none;
+}
+
+.pagination-btn i {
+    font-size: 18px;
+    line-height: 0;
+}
+
+.prev-btn i {
+    margin-right: 4px;
+}
+
+.load-more-btn i {
+    margin-left: 4px;
+}
+
 /* ===== RESPONSIVE DESIGN ===== */
 
 /* Modal responsiveness */
