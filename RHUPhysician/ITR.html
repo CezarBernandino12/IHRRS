@@ -153,14 +153,6 @@ fetch('php/getUserId.php')
             <button class="nav-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
                 <i class="bx bx-menu"></i>
             </button>
-
-            <div class="nav-search" style="position: relative;">
-                <input type="search" id="patientSearch" placeholder="Enter patient name..." name="search" autocomplete="off">
-                <button type="button" id="searchButton" aria-label="Search">
-                    <i class="bx bx-search"></i>
-                </button>
-                <div id="resultDropdown" class="dropdown-content"></div>
-            </div>
         </nav>
 
         <main>
@@ -191,10 +183,6 @@ fetch('php/getUserId.php')
         </div>
     </div>
 </div>
-
-    <div class="container-header">
-        <h2>INDIVIDUAL TREATMENT RECORD (ITR)</h2>
-    </div>
 
     <div class="container">
         <form class="personal-info-form" id="individualRecordForm" action="php/saveInitialAssessment" method="POST">

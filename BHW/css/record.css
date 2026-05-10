@@ -609,24 +609,6 @@ li {
   display: none !important;
 }
 
-/* =========================================================
-   FONT SIZE + WEIGHT REDUCTION
-   Paste at the very bottom of record.css
-   ========================================================= */
-
-/* Page title - slightly smaller and lighter */
-#content main .head-title .left h1 {
-  font-size: clamp(24px, 2.5vw, 34px) !important;
-  font-weight: 700 !important;
-  letter-spacing: -0.035em !important;
-}
-
-#content main .head-title .left h1::after {
-  width: 52px !important;
-  height: 3px !important;
-  margin-top: 10px !important;
-}
-
 /* Patient name container - more compact */
 #content main .patient-name-container {
   padding: 20px 22px !important;

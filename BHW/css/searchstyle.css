@@ -61,38 +61,6 @@ li {
     overflow-y: visible;
 }
 
-/* Page title */
-#content main .head-title {
-    width: min(100%, 1080px);
-    max-width: 1080px;
-    margin: 0 auto 16px;
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 16px;
-    flex-wrap: wrap;
-}
-
-#content main .head-title .left h1 {
-    position: relative;
-    margin: 0;
-    color: var(--records-text);
-    font-size: clamp(25px, 3vw, 36px);
-    font-weight: 720;
-    line-height: 1.1;
-    letter-spacing: -0.035em;
-}
-
-#content main .head-title .left h1::after {
-    content: "";
-    display: block;
-    width: 48px;
-    height: 3px;
-    margin-top: 9px;
-    border-radius: 999px;
-    background: linear-gradient(90deg, #2563eb, #12acc7);
-}
-
 /* Patient records card */
 .patient-record-container {
     position: relative;
