@@ -313,6 +313,7 @@ $hasFilters = $userFilter !== '' || $actionFilter !== '' || $fromDate !== '' || 
                 </a>
             </header>
 
+<<<<<<< HEAD
             <section class="stats-grid">
                 <article class="stat-card">
                     <div class="stat-icon">
@@ -380,6 +381,9 @@ $hasFilters = $userFilter !== '' || $actionFilter !== '' || $fromDate !== '' || 
                     <?php endif; ?>
                 </div>
 
+=======
+                <div class="logs-filter-card">
+>>>>>>> 23984592a94087055b071541e42a022dc90209a3
                 <form method="GET" action="" class="logs-filter-grid" id="logFilterForm">
                     <div class="form-group">
                         <label for="userFilter">Select User</label>
@@ -432,7 +436,18 @@ $hasFilters = $userFilter !== '' || $actionFilter !== '' || $fromDate !== '' || 
                         </div>
                     </div>
                 </form>
+<<<<<<< HEAD
             </section>
+=======
+                </div><!-- /.logs-filter-card -->
+
+                <div class="logs-table-card">
+                    <div class="logs-table-card-header">
+                        <i class="bx bx-history"></i>
+                        <h3>System Activity Logs</h3>
+                        <span class="logs-count">Total: <?= number_format($totalLogs) ?></span>
+                    </div>
+>>>>>>> 23984592a94087055b071541e42a022dc90209a3
 
             <section class="logs-panel table-panel" id="activity-table-section">
                 <div class="panel-heading table-heading">
@@ -512,6 +527,7 @@ $hasFilters = $userFilter !== '' || $actionFilter !== '' || $fromDate !== '' || 
                     <div class="pagination-info">
                         <span>Showing <?= number_format($startRecord); ?>–<?= number_format($endRecord); ?> of <?= number_format($filteredLogs); ?> record<?= $filteredLogs === 1 ? '' : 's'; ?></span>
                     </div>
+<<<<<<< HEAD
 
                     <nav class="pagination-nav" aria-label="Activity logs pagination">
                         <?php if ($page > 1): ?>
@@ -525,6 +541,10 @@ $hasFilters = $userFilter !== '' || $actionFilter !== '' || $fromDate !== '' || 
                                 Previous
                             </span>
                         <?php endif; ?>
+=======
+                </div>
+                </div><!-- /.logs-table-card -->
+>>>>>>> 23984592a94087055b071541e42a022dc90209a3
 
                         <div class="pagination-pages">
                             <?php

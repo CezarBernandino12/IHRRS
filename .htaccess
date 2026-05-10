@@ -5,7 +5,7 @@ RewriteBase /IHRRS/
 
 # Clean root aliases for auth pages
 RewriteRule ^role/?$ auth/role [L]
-RewriteRule ^adminlogin/?$ auth/adminlogin [L]
+RewriteRule ^adminlogin/?$ auth/php/adminlogin [L]
 RewriteRule ^doctorlogin/?$ auth/doctorlogin [L]
 RewriteRule ^BHWlogin/?$ auth/BHWlogin [L]
 RewriteRule ^NURSINGattendant/?$ auth/NURSINGattendant [L]
