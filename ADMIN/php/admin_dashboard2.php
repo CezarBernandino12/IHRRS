@@ -313,7 +313,7 @@ $unreadCount = 0;
 
     <script src="../js/notif.js"></script>
     <script>
-        fetch('getUserName.php')
+        fetch('getUserName')
             .then(response => response.json())
             .then(data => {
                 const sidebarNameEl = document.getElementById('sidebarUserName');
@@ -343,12 +343,12 @@ function proceedLogout() {
 }
 
 // Close modal when clicking outside
-window.onclick = function(event) {
-    const modal = document.getElementById('logoutModal');
-    if (event.target == modal) {
+window.addEventListener('click', function(event) {
+    const logoutModal = document.getElementById('logoutModal');
+    if (event.target === logoutModal) {
         closeModal();
     }
-};
+});
 
     </script>
     <script>

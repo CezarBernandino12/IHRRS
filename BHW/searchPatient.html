@@ -147,6 +147,72 @@
     </main>
 </section>
 
+<<<<<<< HEAD
+=======
+        <div class="record-btn-container">
+        <a href="recordHistory" class="btn">
+            <i class="bx bxs-calendar"></i> Visit Summary
+        </a>
+        </div>
+
+          
+        <div class="table-header">
+            <span class="column-title">Name</span>
+            <span class="column-title">Sex</span>
+            <span class="column-title">Birthday</span>
+          </div>
+        
+        <div id="results">Search patient's name to show results.</div>
+    </div>   
+             </main>
+    </section>
+
+    <script> 
+    function searchPatient() {
+        let query = document.getElementById("patientSearch").value;
+        let xhr = new XMLHttpRequest();
+        xhr.open("POST", "php/search_patient.php", true);
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                document.getElementById("results").innerHTML = xhr.responseText;
+            }
+        };
+        xhr.send("query=" + encodeURIComponent(query));
+    }
+    function selectPatient(patient_id) {
+        window.location.href="record?patient_id=" + patient_id;
+}
+
+    // Add Enter key functionality for search
+    document.addEventListener("DOMContentLoaded", function() {
+        const searchInput = document.getElementById("patientSearch");
+        searchInput.addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                event.preventDefault(); // Prevent form submission
+                searchPatient(); // Trigger the search function
+            }
+        });
+
+        const sidebarUserName = document.getElementById("sidebarUserName");
+        fetch('php/getUserName.php')
+            .then(response => response.json())
+            .then(data => {
+                if (sidebarUserName) {
+                    sidebarUserName.textContent = data.full_name || 'BHW User';
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching user name:', error);
+                if (sidebarUserName) {
+                    sidebarUserName.textContent = 'BHW User';
+                }
+            });
+    });
+
+    </script>
+    
+>>>>>>> 33fc5da55d190a4b262e16a6c8935100d5aecf81
 <div id="logoutModal" class="logout-modal">
     <div class="logout-modal-content">
         <div class="logout-modal-header">

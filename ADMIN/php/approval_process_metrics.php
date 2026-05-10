@@ -451,7 +451,7 @@ document.addEventListener('DOMContentLoaded', function () {
     searchButton.addEventListener('click', filterPageContent);
   }
 
-  fetch('getUserName.php')
+  fetch('getUserName')
     .then(response => response.json())
     .then(data => {
       const sidebarNameEl = document.getElementById('sidebarUserName');

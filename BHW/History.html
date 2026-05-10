@@ -489,6 +489,21 @@ fetch('php/getUserId.php')
                 alert("An error occurred while updating the referral.");
             });
         }
+    
+        const sidebarUserName = document.getElementById("sidebarUserName");
+        fetch('php/getUserName.php')
+            .then(response => response.json())
+            .then(data => {
+                if (sidebarUserName) {
+                    sidebarUserName.textContent = data.full_name || 'BHW User';
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching user name:', error);
+                if (sidebarUserName) {
+                    sidebarUserName.textContent = 'BHW User';
+                }
+            });
     });
     </script>
     <script src="js/script.js"></script>

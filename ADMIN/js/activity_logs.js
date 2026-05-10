@@ -47,8 +47,11 @@ document.getElementById("prevBtn").addEventListener("click", function() {
 
 // Function to load logs based on current offset
 function loadMoreLogs() {
-    fetch(`load_more_logs.php?offset=${currentOffset}`)
-        .then(response => response.text())
+    fetch(`load_more_logs?offset=${currentOffset}`)
+        .then(response => {
+            if (!response.ok) throw new Error('Server responded with status ' + response.status);
+            return response.text();
+        })
         .then(data => {
             if (data.trim() === "") {
                 document.getElementById("loadMoreBtn").disabled = true;
@@ -108,7 +111,7 @@ function updateUser(userId, action) {
 
 function showLogUserModal(userId, action) {
     // Fetch user information
-    fetch('get_user_info.php?user_id=' + userId)
+    fetch('get_user_info?user_id=' + userId)
     .then(response => response.json())
     .then(data => {
         document.getElementById('logUserFullName').innerText = data.full_name;

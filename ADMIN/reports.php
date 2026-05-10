@@ -1,3 +1,14 @@
+<?php
+require 'php/config.php';
+session_start();
+
+// Check if user is logged in and has admin role
+if (!isset($_SESSION['user_id']) || !isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
+    session_destroy();
+    header("Location: ../auth/role");
+    exit();
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -69,7 +80,7 @@
 			<div class="sidebar-user">
 				<img src="../img/admin.png" alt="Admin User">
 				<div class="sidebar-user-info">
-					<div class="user-name" id="sidebarUserName">Admin User</div>
+					<div class="user-name" id="sidebarUserName"><?php echo htmlspecialchars($_SESSION['full_name'] ?? 'Admin User'); ?></div>
 					<div class="user-role">Administrator</div>
 				</div>
 			</div>
@@ -156,19 +167,6 @@
 			closeModal();
 		}
 	}
-	      // Check if user is logged in
-		  fetch('php/getUserId.php', { credentials: 'include' })
-            .then(response => response.json())
-            .then(data => {
-                if (data.error) {
-                    // User is not logged in, redirect to role selection page
-                    window.location.href='../auth/role';
-                }
-            })
-            .catch(error => {
-                console.error('Error checking session:', error);
-                window.location.href='../auth/role';
-            });
 
 	</script>
 
