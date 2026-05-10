@@ -3,15 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Individual Treatment Record</title>
+
     <link rel="icon" href="../img/logo.png">
-    <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
-    <link rel="stylesheet" href="css/exist.css">
-    <link rel="stylesheet" href="css/print.css">
+    <link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/update.css">
     <link rel="stylesheet" href="css/sidebar.css">
     <link rel="stylesheet" href="css/logout.css">
-    <title>Individual Treatment Record</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 </head>
@@ -20,343 +22,602 @@
 
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-    <!-- Sidebar Section -->
-    <section id="sidebar">
-        <a href="#" class="sidebar-brand">
-            <img src="../img/logo.png" alt="RHU Logo" class="brand-logo">
-            <div class="brand-text">
-                <span class="brand-name">Hello Physician</span>
-            </div>
-        </a>
+<section id="sidebar">
+    <a href="#" class="sidebar-brand">
+        <img src="../img/logo.png" alt="RHU Logo" class="brand-logo">
 
-        <div class="sidebar-scroll">
-            <div class="sidebar-section-label">Main Menu</div>
-            <ul class="side-menu top">
-                <li>
-                    <a href="dashboard" data-tooltip="Dashboard">
-                        <i class="bx bxs-dashboard nav-icon"></i>
-                        <span class="nav-label">Dashboard</span>
-                    </a>
-                </li>
-                <li class="active">
-                    <a href="#" id="updateReferrals" data-tooltip="Pending Referrals">
-                        <i class="bx bxs-user nav-icon"></i>
-                        <span class="nav-label">Pending Referrals</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="followUpConsultations" data-tooltip="Follow-Up Visits">
-                        <i class="bx bxs-user nav-icon"></i>
-                        <span class="nav-label">Follow-Up Visits</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="searchPatient" data-tooltip="Patient Records">
-                        <i class="bx bxs-search nav-icon"></i>
-                        <span class="nav-label">Patient Records</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="history" data-tooltip="Referral History">
-                        <i class="bx bx-history nav-icon"></i>
-                        <span class="nav-label">Referral History</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="reports" data-tooltip="Reports">
-                        <i class="bx bx-notepad nav-icon"></i>
-                        <span class="nav-label">Reports</span>
-                    </a>
-                </li>
-            </ul>
-
-            <div class="sidebar-divider"></div>
-
-            <ul class="side-menu">
-                <li>
-                    <a href="#" class="logout" data-tooltip="Logout" onclick="return confirmLogout()">
-                        <i class="bx bxs-log-out-circle nav-icon"></i>
-                        <span class="nav-label">Logout</span>
-                    </a>
-                </li>
-            </ul>
+        <div class="brand-text">
+            <span class="brand-name">Hello Nurse</span>
         </div>
+    </a>
 
-        <div class="sidebar-footer">
-            <div class="sidebar-user">
-                <img src="../img/doctor.png" alt="Physician User">
-                <div class="sidebar-user-info">
-                    <div class="user-name" id="sidebarUserName">Physician User</div>
-                    <div class="user-role">RHU Physician</div>
-                </div>
+    <div class="sidebar-scroll">
+        <div class="sidebar-section-label">Main Menu</div>
+
+        <ul class="side-menu top">
+            <li>
+                <a href="dashboard" data-tooltip="Dashboard">
+                    <i class="bx bxs-dashboard nav-icon"></i>
+                    <span class="nav-label">Dashboard</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="ITR" data-tooltip="Add New ITR">
+                    <i class="bx bxs-notepad nav-icon"></i>
+                    <span class="nav-label">Add New ITR</span>
+                </a>
+            </li>
+
+            <li class="active">
+                <a href="#" id="updateReferrals" data-tooltip="Pending Referrals">
+                    <i class="bx bxs-user nav-icon"></i>
+                    <span class="nav-label">Pending Referrals</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="followUpConsultations" data-tooltip="Follow-Up Visits">
+                    <i class="bx bxs-calendar-check nav-icon"></i>
+                    <span class="nav-label">Follow-Up Visits</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="searchPatient" data-tooltip="Patient Records">
+                    <i class="bx bxs-search nav-icon"></i>
+                    <span class="nav-label">Patient Records</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="history" data-tooltip="Referral History">
+                    <i class="bx bx-history nav-icon"></i>
+                    <span class="nav-label">Referral History</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="reports" data-tooltip="Reports">
+                    <i class="bx bx-notepad nav-icon"></i>
+                    <span class="nav-label">Reports</span>
+                </a>
+            </li>
+        </ul>
+
+        <div class="sidebar-divider"></div>
+
+        <ul class="side-menu">
+            <li>
+                <a href="#" class="logout" data-tooltip="Logout" onclick="return confirmLogout()">
+                    <i class="bx bxs-log-out-circle nav-icon"></i>
+                    <span class="nav-label">Logout</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="sidebar-footer">
+        <div class="sidebar-user">
+            <img src="../img/nurse.png" alt="Nurse User">
+
+            <div class="sidebar-user-info">
+                <div class="user-name" id="sidebarUserName">Nurse User</div>
+                <div class="user-role">RHU Nurse</div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
 <section id="content">
-        <nav>
-            <button class="nav-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
-                <i class="bx bx-menu"></i>
+    <nav>
+        <button type="button" class="nav-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+            <i class="bx bx-menu"></i>
+        </button>
+
+        <div class="nav-search">
+            <input 
+                type="search" 
+                id="patientSearch" 
+                placeholder="Enter patient name..." 
+                name="search" 
+                autocomplete="off"
+            >
+
+            <button type="button" id="searchButton" aria-label="Search">
+                <i class="bx bx-search"></i>
             </button>
 
-            <div class="nav-search" style="position: relative;">
-                <input type="search" id="patientSearch" placeholder="Enter patient name..." name="search" autocomplete="off">
-                <button type="button" id="searchButton" aria-label="Search">
-                    <i class="bx bx-search"></i>
-                </button>
-                <div id="resultDropdown" class="dropdown-content"></div>
-            </div>
-        </nav>
+            <div id="resultDropdown" class="dropdown-content"></div>
+        </div>
+    </nav>
 
-        <main>
-            <div class="head-title">
-            </div>
-
-
-    <div class="container-header">
-        <h2>VISIT DETAILS</h2>
-    </div>
-    
-    <div class="container">
-
-
-        <p style="display: flex; justify-content: space-between; align-items: center;">
-            <b>PERSONAL INFORMATION:</b>
-            <span id="togglePersonalInfo" class="view-all-btn">View All</span>
-        </p>     
-
-        <div id="hiddenPersonalInfo" style="display: none;">
-            <div class="form-row">
-                <div class="form-group">
-                    <label>First Name:</label>
-                    <p class="patient-first-name">N/A</p>
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Last Name:</label>
-                    <p class="patient-last-name">N/A</p>
-                </div>
-                <div class="form-group">
-                    <label>Middle Name:</label>
-                    <p class="patient-middle-name">N/A</p>
-                </div>
-                <div class="form-group">
-                    <label>Ext:</label>
-                    <p class="patient-extension">N/A</p>
-                </div>
-            </div>
-    
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Birth Place:</label>
-                    <p class="patient-birth-place">N/A</p>
-                </div>
-                <div class="form-group">
-                    <label>Date of Birth:</label>
-                    <p class="date-of-birth">N/A</p>
-                </div>
-                <div class="form-group">
-                    <label>Age:</label>
-                    <p class="age">N/A</p>
-                </div>
-            </div>
-    
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Permanent Address:</label>
-                    <p class="address">N/A</p>
-                </div>
-            </div>
-    
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Civil Status:</label>
-                    <p class="civil-status">N/A</p>
-                </div>
-                <div class="form-group">
-                    <label>Mobile Number:</label>
-                    <p class="contact-number">N/A</p>
-                </div>
-            </div>
-    
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Religion:</label>
-                    <p class="religion">N/A</p>
-                </div>
-                <div class="form-group">
-                    <label>Occupation:</label>
-                    <p class="occupation">N/A</p>
-                </div>
-                <div class="form-group">
-                    <label>Birth Weight:</label>
-                    <p class="birth-weight">N/A</p>
-                </div>
-            </div>
-    
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Educational Attainment:</label>
-                    <p class="educational-attainment">N/A
-                <div class="form-group">
-                    <label>Philhealth Member Number:</label>
-                    <p class="philhealth-member-no">N/A</p>
-                </div>
-                <div class="form-group">
-                    <label>Family Serial Number:</label>
-                    <p class="family-serial-no">N/A</p>
-                </div>
-                <div class="form-group">
-                    <label>Category:</label>
-                    <p class="category">N/A</p>
-                </div>
-            </div>
-    
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Gender:</label>
-                    <p class="sex">N/A</p>
-                </div>
-                <div class="form-group">
-                    <label>4Ps:</label>
-                    <p class="fourps-status">N/A</p>
-                </div>
+    <main>
+        <div class="page-title">
+            <div>
+                <h1>Individual Treatment Record</h1>
+                <p>Review patient visit details, add RHU treatment, medication, remarks, and prescription if needed.</p>
             </div>
         </div>
-        </div>
-            
-            <!-- INITIAL ASSESSMENT / VISIT INFO -->
-            <div class="additional-group box-group additional-fields" style="background-color: rgb(255, 255, 255);">
-                <div class="additional-options">
-                    <div class="form-row">
+
+        <section class="update-page">
+            <section class="update-card">
+                <div class="section-heading">
+                    <div class="section-heading-left">
+                        <span class="section-icon">
+                            <i class="bx bx-user"></i>
+                        </span>
+
+                        <div>
+                            <h2>Personal Information</h2>
+                            <p>Patient demographic and household details.</p>
+                        </div>
+                    </div>
+
+                    <button type="button" id="togglePersonalInfo" class="view-all-btn">
+                        View All
+                    </button>
+                </div>
+
+                <div id="hiddenPersonalInfo" class="personal-info-grid is-hidden" hidden aria-hidden="true">
+                    <div class="form-group">
+                        <label>First Name</label>
+                        <p class="patient-first-name">N/A</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Last Name</label>
+                        <p class="patient-last-name">N/A</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Middle Name</label>
+                        <p class="patient-middle-name">N/A</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Ext</label>
+                        <p class="patient-extension">N/A</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Birth Place</label>
+                        <p class="patient-birth-place">N/A</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Date of Birth</label>
+                        <p class="date-of-birth">N/A</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Age</label>
+                        <p class="age">N/A</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Permanent Address</label>
+                        <p class="address">N/A</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Civil Status</label>
+                        <p class="civil-status">N/A</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Mobile Number</label>
+                        <p class="contact-number">N/A</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Religion</label>
+                        <p class="religion">N/A</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Occupation</label>
+                        <p class="occupation">N/A</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Birth Weight</label>
+                        <p class="birth-weight">N/A</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Educational Attainment</label>
+                        <p class="educational-attainment">N/A</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Philhealth Member Number</label>
+                        <p class="philhealth-member-no">N/A</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Family Serial Number</label>
+                        <p class="family-serial-no">N/A</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Category</label>
+                        <p class="category">N/A</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Gender</label>
+                        <p class="sex">N/A</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>4Ps Status</label>
+                        <p class="fourps-status">N/A</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="update-card">
+                <div class="section-heading">
+                    <div class="section-heading-left">
+                        <span class="section-icon">
+                            <i class="bx bx-clipboard"></i>
+                        </span>
+
+                        <div>
+                            <h2>Initial Assessment / Visit Info</h2>
+                            <p>Barangay assessment, vital signs, chief complaint, and BHW remarks.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="subsection-title">
+                        <i class="bx bx-info-circle"></i>
+                        <span>Visit Information</span>
+                    </div>
+
+                    <div class="visit-info-grid">
                         <div class="form-group">
-                            <label>Patient Alert:</label>
+                            <label>Patient Alert</label>
                             <p class="patient-alert">N/A</p>
                         </div>
-                    </div>
 
-                    <div class="form-row">
-                        <div class="form-group" style="font-weight: bold;">
-                            <label>Date of Visit:</label>
+                        <div class="form-group">
+                            <label>Date of Visit</label>
                             <p class="visit-date">N/A</p>
                         </div>
-                    </div>
-    
-                    <div class="form-row">
-                        <div class="form-group" style="font-weight: bold;">
-                            <label>Chief Complaints:</label>
-                            <p class="chief-complaints">N/A</p>
-                        </div>
-                    </div>
-    
-                    <div class="form-row">
-                        <label for="vitals"><b>Vital Signs:</b></label>
-                        <div class="vitals-section">
-                            <div class="form-group" style="font-weight: bold;">
-                                <label>Blood Pressure (mm Hg):</label>
-                                <p class="blood-pressure">N/A</p>
-                            </div>
-                            <div class="form-group" style="font-weight: bold;">
-                                <label>Temperature (°C):</label>
-                                <p class="temperature">N/A</p>
-                            </div>
-                            <div class="form-group" style="font-weight: bold;">
-                                <label>Weight (kg):</label>
-                                <p class="weight">N/A</p>
-                            </div>
-                            <div class="form-group" style="font-weight: bold;">
-                                <label>Height (cm):</label>
-                                <p class="height">N/A</p>
-                            </div>
-                            <div class="form-group" style="font-weight: bold;">
-                                <label>Pulse Rate (per minute):</label>
-                                <p class="pulse-rate">N/A</p>
-                            </div>
-                            <div class="form-group" style="font-weight: bold;">
-                                <label>Respiratory Rate (per minute):</label>
-                                <p class="respiratory-rate">N/A</p>
-                            </div>
-                        </div>
-    
-                    </div>
-                                    
-            <div class="form-row">
-                <div class="form-group" style="font-weight: bold;">
-                    <label>Remarks:</label>
-                    <p class="remarks">N/A</p>
-                </div>
-            </div>
-                </div>
-            </div> <br>
 
-            <input type="hidden" id="visit_id" name="visit_id" value="">
+                        <div class="form-group full-width">
+                            <label>Chief Complaints</label>
+                            <p class="chief-complaints text-display">N/A</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="subsection-title">
+                        <i class="bx bx-heart"></i>
+                        <span>Vital Signs</span>
+                    </div>
+
+                    <div class="vitals-section">
+                        <div class="form-group">
+                            <label>Blood Pressure (mm Hg)</label>
+                            <p class="blood-pressure">N/A</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Temperature (°C)</label>
+                            <p class="temperature">N/A</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Weight (kg)</label>
+                            <p class="weight">N/A</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Height (cm)</label>
+                            <p class="height">N/A</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Pulse Rate (per minute)</label>
+                            <p class="pulse-rate">N/A</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Respiratory Rate (per minute)</label>
+                            <p class="respiratory-rate">N/A</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="subsection-title">
+                        <i class="bx bx-message-square-detail"></i>
+                        <span>BHW Remarks</span>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label>Remarks</label>
+                        <p class="remarks text-display">N/A</p>
+                    </div>
+                </div>
+            </section>
+
+            <form class="update-card update-form" id="individualRecordForm" action="php/saveConsultation.php" method="POST" enctype="multipart/form-data">
+                <div class="section-heading">
+                    <div class="section-heading-left">
+                        <span class="section-icon">
+                            <i class="bx bx-plus-medical"></i>
+                        </span>
+
+                        <div>
+                            <h2>Patient Treatment</h2>
+                            <p>Add laboratory result, diagnosis, medication, remarks, follow-up, and prescription.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="subsection-title">
+                        <i class="bx bx-file"></i>
+                        <span>Laboratory Result</span>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="photo">Upload Laboratory Result</label>
+                        <input type="file" id="photo" name="photo" accept="image/*,.pdf" capture="environment">
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="subsection-title">
+                        <i class="bx bx-plus-medical"></i>
+                        <span>Diagnosis</span>
+                    </div>
+
+                    <div class="diagnosis-grid">
+                        <div class="form-group">
+                            <label for="diagnosis" class="required">Diagnosis</label>
+
+                            <select id="diagnosis" name="diagnosis" class="select2">
+                                <option value="">Select diagnosis</option>
+                                <option value="other">Other (Enter manually)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group is-hidden" id="diagnosis-status-wrapper" hidden aria-hidden="true">
+                            <label for="status">Diagnosis Status</label>
+
+                            <select id="status" name="status" class="select2">
+                                <option value="Ongoing">Ongoing</option>
+                                <option value="Treated">Treated</option>
+                                <option value="Referred">Referred</option>
+                                <option value="Deceased">Deceased</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="subsection-title">
+                        <i class="bx bx-capsule"></i>
+                        <span>Medication Given</span>
+                    </div>
+
+                    <div id="medicine-container" class="medicine-editor-list">
+                        <div class="medicine-entry">
+                            <div class="form-group medicine-field">
+                                <label>Medication Given</label>
+
+                                <select name="medicine_given[]" class="medicine-select select2">
+                                    <option value="">Select</option>
+                                    <option value="other">Other (Enter manually)</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group quantity-field">
+                                <label>Quantity</label>
+
+                                <div class="quantity-container">
+                                    <button type="button" class="btn-minus">−</button>
+                                    <input type="number" name="quantity_given[]" value="0" min="0">
+                                    <button type="button" class="btn-plus">+</button>
+                                </div>
+                            </div>
+
+                            <div class="form-group instruction-field">
+                                <label>Instruction</label>
+
+                                <select name="med_instruction[]" class="med-instruction select2">
+                                    <option value="">Select</option>
+                                    <option value="other">Other (Enter manually)</option>
+                                </select>
+                            </div>
+
+                            <button type="button" class="btn-remove">Remove</button>
+                        </div>
+                    </div>
+
+                    <div class="add-medicine-container">
+                        <button type="button" id="add-medicine" class="add-medicine">+ Add</button>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="subsection-title">
+                        <i class="bx bx-message-square-detail"></i>
+                        <span>Remarks and Follow-Up</span>
+                    </div>
+
+                    <div class="remarks-grid">
+                        <div class="form-group">
+                            <label for="rhu_remarks" class="required">Remarks</label>
+
+                            <select id="rhu_remarks" name="rhu_remarks" class="select2">
+                                <option value="">Select</option>
+                                <option value="other">Other (Enter manually)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="physician2" class="required">Physician</label>
+
+                            <select id="physician2" name="physician2" class="select2">
+                                <option value="">Select Physician</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label for="followup">Schedule Follow-up Consultation</label>
+                            <input type="date" id="followup" name="followup" class="date-input">
+                        </div>
+                    </div>
+                </div>
+
+                <input type="hidden" id="visit_id" name="visit_id">
+                <input type="hidden" name="user_id" id="user_id" value="">
+
+                <div class="form-section prescription-section">
+                    <div class="prescription-toggle-card">
+                        <div class="prescription-icon">
+                            <i class="bx bx-question-mark"></i>
+                        </div>
+
+                        <div>
+                            <h3>No medicine available?</h3>
+
+                            <label class="prescription-option" for="prescriptionCheckbox">
+                                <input type="checkbox" id="prescriptionCheckbox">
+                                <span>Generate Prescription (Rx)</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="prescription-container is-hidden" id="prescriptionContainer" hidden aria-hidden="true">
+                        <div class="subsection-title">
+                            <i class="bx bx-receipt"></i>
+                            <span>Prescription Details</span>
+                        </div>
+
+                        <p class="helper-text">Ensure to fill out all fields before submitting.</p>
+
+                        <div id="medicine-container2" class="prescription-list">
+                            <div class="prescription-group">
+                                <div class="medicine-entry prescription-entry">
+                                    <div class="form-group medicine-field">
+                                        <label>Medicine Name</label>
+
+                                        <select name="medicine_prescription[]" class="medicine-select2 select2">
+                                            <option value="">Select</option>
+                                            <option value="other">Other (Enter manually)</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group quantity-field">
+                                        <label>Quantity</label>
+
+                                        <div class="quantity-container">
+                                            <button type="button" class="btn-minus">−</button>
+                                            <input type="number" name="quantity_prescription[]" value="0" min="0">
+                                            <button type="button" class="btn-plus">+</button>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group instruction-field">
+                                        <label>Dosage Instruction</label>
+
+                                        <select name="prescription_instruction[]" class="med-instruction select2">
+                                            <option value="">Select</option>
+                                            <option value="other">Other (Enter manually)</option>
+                                        </select>
+                                    </div>
+
+                                    <button type="button" class="btn-remove">Remove</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="add-medicine-container">
+                            <button type="button" id="add-prescription" class="add-medicine">+ Add</button>
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label for="physician">Prescribed by</label>
+
+                            <select id="physician" name="physician" class="select2">
+                                <option value="">Select Physician</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
 
                 <div class="button-container">
-                <button type="button" class="submit-btn" id="dashButton">Go back to Dashboard</button>
-            </div>
-
-              <div id="myModal" class="modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <img src="../img/verify.png" alt="Checkmark" class="checkmark-image">
-                    <h3>Confirmation</h3>
-                    <span class="close-btn" id="closeBtn">&times;</span>
-                </div>
-                <div class="modal-body">
-                    <p>This record will be sent back to attendant for recording</p>
-                </div>
-                
-                <div class="modal-footer">
-                    <button id="cancelBtn" class="btn no" type="button">Cancel</button>
-                    <button id="confirmBtn" class="btn yes" type="submit">Confirm</button>
+                    <button type="button" class="submit-btn" id="submitButton">
+                        Submit
+                    </button>
                 </div>
 
+                <div id="myModal" class="modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <div class="modal-icon">
+                                <i class="bx bx-help-circle"></i>
+                            </div>
+
+                            <h3>Confirmation</h3>
+                            <span class="close-btn" id="closeBtn">&times;</span>
+                        </div>
+
+                        <div class="modal-body">
+                            <p>Save patient record?</p>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button id="cancelButton" class="btn no" type="button">Cancel</button>
+                            <button id="confirmBtn" class="btn yes" type="button">Save</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </section>
+    </main>
+</section>
+
+<div id="responseModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <div class="modal-icon modal-icon-response">
+                <i class="bx bx-info-circle"></i>
             </div>
-        </div>
-        <!-- Success/Error Modal -->
-        <div id="successModal" class="modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <img src="../img/check.png" alt="Checkmark" class="checkmark-image">
-                    <h3>Success</h3>
-                    <span class="close-btn" id="closeSuccessModal">&times;</span>
-                </div>
-                <div class="modal-body">
-                    <p id="responseMessage">Record saved successfully!</p>
-                </div>
-                <div class="modal-footer">
-                    <button id="backToDashboardButton" class="btn yes">Back to Dashboard</button>
-                    
-                </div>
-            </div>
+
+            <h3 id="responseTitle">Notice</h3>
+            <span class="close-btn" id="closeResponseModal">&times;</span>
         </div>
 
-          <div id="errorModal" class="modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <img src="../img/error.jpg" alt="Checkmark" class="checkmark-image">
-                    <h3>Error</h3>
-                    <span class="close-btn" id="closeErrorModal">&times;</span>
-                </div>
-                <div class="modal-body">
-                    <p>Something went wrong. Try Again</p>
-                </div>
-                <div class="modal-footer">
-                    <button id="okButton" class="btn yes">OK</button>
-                    
-                </div>
-            </div>
+        <div class="modal-body">
+            <p id="responseMessage">Record saved successfully!</p>
         </div>
+
+        <div class="modal-footer">
+            <button id="okButton" class="btn yes" type="button">OK</button>
+        </div>
+    </div>
+</div>
 
 <div id="logoutModal" class="logout-modal">
     <div class="logout-modal-content">
         <div class="logout-modal-header">
             <h3>Confirm Logout</h3>
         </div>
+
         <div class="logout-modal-body">
             <p>Are you sure you want to logout?</p>
         </div>
+
         <div class="logout-modal-footer">
             <button onclick="closeModal()" class="logout-cancel-btn">Cancel</button>
             <button onclick="proceedLogout()" class="logout-confirm-btn">Yes, Logout</button>
@@ -364,185 +625,761 @@
     </div>
 </div>
 
-</div>
-           </main>
-    </section>
-    
-    <script src="js/form.js"></script>
-    <script src="js/script.js"></script>
-    <script>
+<script src="js/form.js"></script>
 
-const urlParams = new URLSearchParams(window.location.search);
-const visitId = urlParams.get('visit_id');
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    setupInitialValues();
+    setupPersonalInfoToggle();
+    setupDateInput();
+    setupDiagnosisStatus();
+    setupSelectFields();
+    setupMedicineControls();
+    setupPrescriptionControls();
+    setupFormSubmit();
+    setupModals();
+    setupUserInfo();
+    setupUserId();
+    setupResponsiveSidebar();
+    setupUpdateReferrals();
+    setupPatientSearch();
+});
 
-document.getElementById("dashButton").onclick = function() {
-    window.location.href='dashboard';
+function getPersonalInfoColumns() {
+    if (window.innerWidth <= 768) {
+        return "1fr";
+    }
+
+    if (window.innerWidth <= 900) {
+        return "repeat(2, minmax(0, 1fr))";
+    }
+
+    if (window.innerWidth <= 1100) {
+        return "repeat(3, minmax(0, 1fr))";
+    }
+
+    return "repeat(4, minmax(0, 1fr))";
 }
 
-document.getElementById("confirmBtn").onclick = function() {
-  
-        if (visitId) {
-        
-            fetch("php/update_referral_status.php", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    visit_id: visitId,
-                    new_status: "Awaiting Recording"
-                })
-            })
-            .then(res => res.json())
-            .then(response => {
-                if (response.success) {
-                     document.getElementById("myModal").style.display = "none";
-                      document.getElementById("successModal").style.display = "block";
-                
-                  
+function forceHideElement(element) {
+    if (!element) {
+        return;
+    }
+
+    element.hidden = true;
+    element.setAttribute("aria-hidden", "true");
+    element.classList.add("is-hidden");
+    element.style.setProperty("display", "none", "important");
+}
+
+function forceShowPersonalInfoGrid(element) {
+    if (!element) {
+        return;
+    }
+
+    element.hidden = false;
+    element.setAttribute("aria-hidden", "false");
+    element.classList.remove("is-hidden");
+    element.style.setProperty("display", "grid", "important");
+    element.style.setProperty("grid-template-columns", getPersonalInfoColumns(), "important");
+    element.style.setProperty("gap", "16px", "important");
+    element.style.setProperty("align-items", "start", "important");
+    element.style.setProperty("width", "100%", "important");
+
+    element.querySelectorAll(".form-group").forEach(group => {
+        group.style.setProperty("width", "100%", "important");
+        group.style.setProperty("min-width", "0", "important");
+        group.style.setProperty("max-width", "none", "important");
+        group.style.setProperty("grid-column", "auto", "important");
+    });
+}
+
+function forceShowGrid(element) {
+    if (!element) {
+        return;
+    }
+
+    element.hidden = false;
+    element.setAttribute("aria-hidden", "false");
+    element.classList.remove("is-hidden");
+    element.style.setProperty("display", "grid", "important");
+}
+
+function forceShowBlock(element) {
+    if (!element) {
+        return;
+    }
+
+    element.hidden = false;
+    element.setAttribute("aria-hidden", "false");
+    element.classList.remove("is-hidden");
+    element.style.setProperty("display", "block", "important");
+}
+
+function setupInitialValues() {
+    const params = new URLSearchParams(window.location.search);
+    const visitId = params.get("visit_id");
+
+    if (visitId) {
+        document.getElementById("visit_id").value = visitId;
+    }
+
+    forceHideElement(document.getElementById("hiddenPersonalInfo"));
+    forceHideElement(document.getElementById("diagnosis-status-wrapper"));
+    forceHideElement(document.getElementById("prescriptionContainer"));
+}
+
+function setupPersonalInfoToggle() {
+    const button = document.getElementById("togglePersonalInfo");
+    const panel = document.getElementById("hiddenPersonalInfo");
+
+    if (!button || !panel) {
+        return;
+    }
+
+    forceHideElement(panel);
+    button.textContent = "View All";
+
+    button.addEventListener("click", function () {
+        const isHidden = panel.classList.contains("is-hidden") || panel.hidden;
+
+        if (isHidden) {
+            forceShowPersonalInfoGrid(panel);
+            button.textContent = "View Less";
+        } else {
+            forceHideElement(panel);
+            button.textContent = "View All";
+        }
+    });
+
+    window.addEventListener("resize", function () {
+        if (!panel.classList.contains("is-hidden") && !panel.hidden) {
+            forceShowPersonalInfoGrid(panel);
+        }
+    });
+}
+
+function setupDateInput() {
+    const followupInput = document.getElementById("followup");
+
+    if (!followupInput) {
+        return;
+    }
+
+    followupInput.min = new Date().toISOString().split("T")[0];
+}
+
+function setupDiagnosisStatus() {
+    const diagnosis = document.getElementById("diagnosis");
+    const statusWrapper = document.getElementById("diagnosis-status-wrapper");
+
+    if (!diagnosis || !statusWrapper) {
+        return;
+    }
+
+    function toggleStatus() {
+        const value = diagnosis.value;
+
+        if (value && value !== "None") {
+            forceShowBlock(statusWrapper);
+        } else {
+            forceHideElement(statusWrapper);
+            $("#status").val("").trigger("change");
+        }
+    }
+
+    $("#diagnosis").on("change", toggleStatus);
+    toggleStatus();
+}
+
+function setupSelectFields() {
+    initializeSelect2("#diagnosis", "Select or type diagnosis");
+    initializeSelect2("#status", "Select status");
+    initializeSelect2("#rhu_remarks", "Select or type remarks");
+    initializeSelect2(".medicine-select", "Select or type medication");
+    initializeSelect2(".medicine-select2", "Select or type medication");
+    initializeSelect2(".med-instruction", "Select or type instruction");
+    initializeSelect2("#physician", "Select physician");
+    initializeSelect2("#physician2", "Select physician");
+
+    loadCustomOptions(document.getElementById("diagnosis"), "diagnosis");
+    loadCustomOptions(document.getElementById("rhu_remarks"), "rhu_remarks");
+
+    document.querySelectorAll(".medicine-select").forEach(select => {
+        loadCustomOptions(select, "medicine");
+    });
+
+    document.querySelectorAll(".medicine-select2").forEach(select => {
+        loadCustomOptions(select, "prescription");
+    });
+
+    document.querySelectorAll(".med-instruction").forEach(select => {
+        loadCustomOptions(select, "instruction");
+    });
+
+    handleOtherSelection("#diagnosis", "diagnosis", "diagnosis");
+    handleOtherSelection("#rhu_remarks", "rhu_remarks", "remarks");
+    handleOtherSelection(".medicine-select", "medicine", "medication");
+    handleOtherSelection(".medicine-select2", "prescription", "medication");
+    handleOtherSelection(".med-instruction", "instruction", "instruction");
+}
+
+function initializeSelect2(selector, placeholder) {
+    $(selector).select2({
+        placeholder: placeholder,
+        allowClear: true,
+        minimumResultsForSearch: 0,
+        width: "100%"
+    });
+}
+
+function setupMedicineControls() {
+    const container = document.getElementById("medicine-container");
+    const addButton = document.getElementById("add-medicine");
+
+    if (!container || !addButton) {
+        return;
+    }
+
+    addButton.addEventListener("click", function () {
+        const template = container.querySelector(".medicine-entry");
+        const clone = template.cloneNode(true);
+
+        resetClonedEntry(clone);
+        container.appendChild(clone);
+        initializeDynamicSelects(clone, "medicine");
+    });
+
+    setupQuantityDelegation(container);
+}
+
+function setupPrescriptionControls() {
+    const checkbox = document.getElementById("prescriptionCheckbox");
+    const prescriptionContainer = document.getElementById("prescriptionContainer");
+    const medicineContainer = document.getElementById("medicine-container2");
+    const addButton = document.getElementById("add-prescription");
+
+    if (checkbox && prescriptionContainer) {
+        forceHideElement(prescriptionContainer);
+
+        checkbox.addEventListener("change", function () {
+            if (this.checked) {
+                forceShowGrid(prescriptionContainer);
+            } else {
+                forceHideElement(prescriptionContainer);
+            }
+        });
+    }
+
+    if (medicineContainer && addButton) {
+        addButton.addEventListener("click", function () {
+            const template = medicineContainer.querySelector(".prescription-group");
+            const clone = template.cloneNode(true);
+
+            resetClonedEntry(clone);
+            medicineContainer.appendChild(clone);
+            initializeDynamicSelects(clone, "prescription");
+        });
+
+        setupQuantityDelegation(medicineContainer);
+    }
+}
+
+function setupQuantityDelegation(container) {
+    container.addEventListener("click", function (event) {
+        if (event.target.classList.contains("btn-plus")) {
+            const input = event.target.parentElement.querySelector("input[type='number']");
+            input.value = (parseInt(input.value || "0") + 1).toString();
+        }
+
+        if (event.target.classList.contains("btn-minus")) {
+            const input = event.target.parentElement.querySelector("input[type='number']");
+            const value = parseInt(input.value || "0");
+
+            if (value > 0) {
+                input.value = (value - 1).toString();
+            }
+        }
+
+        if (event.target.classList.contains("btn-remove")) {
+            const entries = container.querySelectorAll(".medicine-entry, .prescription-group");
+
+            if (entries.length > 1) {
+                const removable = event.target.closest(".prescription-group") || event.target.closest(".medicine-entry");
+                removable.remove();
+            } else {
+                alert("Cannot remove the last medicine entry.");
+            }
+        }
+    });
+}
+
+function resetClonedEntry(entry) {
+    entry.querySelectorAll(".select2-container").forEach(el => el.remove());
+
+    entry.querySelectorAll("select").forEach(select => {
+        select.classList.remove("select2-hidden-accessible");
+        select.removeAttribute("data-select2-id");
+        select.removeAttribute("aria-hidden");
+        select.removeAttribute("tabindex");
+        select.value = "";
+        select.style.display = "";
+    });
+
+    entry.querySelectorAll("input[type='number']").forEach(input => {
+        input.value = "0";
+    });
+}
+
+function initializeDynamicSelects(scope, medicineCategory) {
+    const medicineSelect = scope.querySelector(".medicine-select, .medicine-select2");
+    const instructionSelect = scope.querySelector(".med-instruction");
+
+    if (medicineSelect) {
+        $(medicineSelect).select2({
+            placeholder: "Select or type medication",
+            allowClear: true,
+            minimumResultsForSearch: 0,
+            width: "100%"
+        });
+
+        loadCustomOptions(medicineSelect, medicineCategory);
+    }
+
+    if (instructionSelect) {
+        $(instructionSelect).select2({
+            placeholder: "Select or type instruction",
+            allowClear: true,
+            minimumResultsForSearch: 0,
+            width: "100%"
+        });
+
+        loadCustomOptions(instructionSelect, "instruction");
+    }
+}
+
+function handleOtherSelection(selector, category, promptLabel) {
+    $(document).on("change", selector, function () {
+        if (this.value !== "other") {
+            return;
+        }
+
+        const userInput = prompt(`Enter ${promptLabel}:`);
+
+        if (!userInput) {
+            $(this).val("").trigger("change");
+            return;
+        }
+
+        saveCustomOption(category, userInput)
+            .then(data => {
+                if (data.success) {
+                    const option = new Option(userInput, userInput, true, true);
+                    $(this).append(option).trigger("change");
                 } else {
-                    alert("Failed to update referral status.");
-                       document.getElementById("myModal").style.display = "none";
-                      document.getElementById("errorModal").style.display = "block";
+                    alert(`Failed to save custom ${promptLabel}.`);
+                    $(this).val("").trigger("change");
                 }
             })
             .catch(error => {
-                console.error("Error updating referral status:", error);
-                 document.getElementById("myModal").style.display = "none";
-                      document.getElementById("errorModal").style.display = "block";
+                console.error("Error:", error);
+                $(this).val("").trigger("change");
             });
+    });
+}
+
+function loadCustomOptions(selectElement, category) {
+    if (!selectElement) {
+        return;
+    }
+
+    fetch(`php/get_custom_options.php?category=${category}`)
+        .then(response => response.json())
+        .then(options => {
+            const existingValues = Array.from(selectElement.options).map(option => option.value);
+
+            options.forEach(optionValue => {
+                if (!existingValues.includes(optionValue)) {
+                    selectElement.appendChild(new Option(optionValue, optionValue));
+                }
+            });
+
+            if (!existingValues.includes("other")) {
+                selectElement.appendChild(new Option("Other (Enter manually)", "other"));
+            }
+        })
+        .catch(error => console.error("Error fetching options:", error));
+}
+
+function saveCustomOption(category, value) {
+    return fetch("php/save_custom_option.php", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: `category=${encodeURIComponent(category)}&value=${encodeURIComponent(value)}`
+    }).then(response => response.json());
+}
+
+function loadPhysicians(selectElement, userId) {
+    if (!selectElement || !userId) {
+        return;
+    }
+
+    fetch(`php/get_physicians.php?user_id=${encodeURIComponent(userId)}`)
+        .then(response => response.json())
+        .then(physicians => {
+            selectElement.innerHTML = '<option value="">Select Physician</option>';
+
+            physicians.forEach(physician => {
+                selectElement.appendChild(new Option(physician.full_name, physician.id));
+            });
+
+            $("#physician").trigger("change.select2");
+            $("#physician2").trigger("change.select2");
+        })
+        .catch(error => console.error("Error fetching physicians:", error));
+}
+
+function validateRequiredFields() {
+    const diagnosis = $("#diagnosis").val();
+    const remarks = $("#rhu_remarks").val();
+    const physician = $("#physician2").val();
+
+    if (!diagnosis || !remarks || !physician) {
+        showResponseModal("error", "Please complete the required fields: diagnosis, remarks, and physician.");
+        return false;
+    }
+
+    return true;
+}
+
+function setupFormSubmit() {
+    const submitButton = document.getElementById("submitButton");
+    const confirmButton = document.getElementById("confirmBtn");
+
+    submitButton.addEventListener("click", function () {
+        if (validateRequiredFields()) {
+            openAppModal("myModal");
         }
+    });
+
+    confirmButton.addEventListener("click", function () {
+        submitTreatmentForm();
+    });
 }
 
-document.getElementById("cancelBtn").onclick = function() {
-    document.getElementById("myModal").style.display = "none";
-}
-document.getElementById("closeBtn").onclick = function() {
-    document.getElementById("myModal").style.display = "none";
-}
+function submitTreatmentForm() {
+    const form = document.getElementById("individualRecordForm");
+    const formData = new FormData(form);
 
+    $.ajax({
+        url: "php/saveConsultation.php",
+        type: "POST",
+        data: formData,
+        processData: false,
+        contentType: false,
+        dataType: "json",
 
-document.getElementById("closeErrorModal").onclick = function() {
-    document.getElementById("errorModal").style.display = "none";
-}
-document.getElementById("okButton").onclick = function() {
-    document.getElementById("errorModal").style.display = "none";
-}
+        success: function (response) {
+            closeAppModal("myModal");
 
-document.getElementById("closeSuccessModal").onclick = function() {
-    document.getElementById("myModal").style.display = "none";
-      window.location.href='dashboard';
-}
+            const res = typeof response === "object" ? response : JSON.parse(response);
 
-document.getElementById("backToDashboardButton").onclick = function() {
-    document.getElementById("myModal").style.display = "none";
-    window.location.href='dashboard';
-}
+            if (res.status === "success") {
+                $("#responseModal").data("consultationId", res.consultation_id);
 
-
-document.addEventListener('DOMContentLoaded', function() {
-    // Fetch the logged-in user's name using your existing getUserName.php
-    fetch('php/getUserName.php')
-        .then(response => response.json())
-        .then(data => {
-            const sidebarUserName = document.getElementById('sidebarUserName');
-            if (sidebarUserName) {
-                sidebarUserName.textContent = data.full_name || 'Physician User';
+                showResponseModal(
+                    "success",
+                    res.message || "Record saved successfully!",
+                    res.hasPrescription || false,
+                    res.hasMedicine || false
+                );
+            } else {
+                showResponseModal("error", res.message || "An unexpected error occurred.");
             }
-        })
-        .catch(error => {
-            console.error('Error fetching user name:', error);
-            const sidebarUserName = document.getElementById('sidebarUserName');
-            if (sidebarUserName) {
-                sidebarUserName.textContent = 'Physician User';
+        },
+
+        error: function (xhr, status, error) {
+            closeAppModal("myModal");
+            showResponseModal("error", "Error saving record. Please try again.");
+            console.error("AJAX error:", status, error, xhr.responseText);
+        }
+    });
+}
+
+function setupModals() {
+    document.getElementById("cancelButton").addEventListener("click", function () {
+        closeAppModal("myModal");
+    });
+
+    document.getElementById("closeBtn").addEventListener("click", function () {
+        closeAppModal("myModal");
+    });
+
+    document.getElementById("closeResponseModal").addEventListener("click", function () {
+        const isSuccess = document.getElementById("responseTitle").textContent === "Success";
+
+        if (isSuccess) {
+            window.location.href = "pending";
+        } else {
+            closeAppModal("responseModal");
+        }
+    });
+
+    document.querySelectorAll(".modal").forEach(modal => {
+        modal.addEventListener("click", function (event) {
+            if (event.target === modal) {
+                modal.classList.remove("open");
             }
-        });
-});
-
-
-
-
-
-</script>
-
-<script src="js/logout.js"></script>
-
-<script>
-(function () {
-  const sidebar = document.getElementById('sidebar');
-  const toggle = document.getElementById('sidebarToggle');
-  const overlay = document.getElementById('sidebarOverlay');
-  const MOBILE_BP = 768;
-
-  if (!sidebar || !toggle || !overlay) return;
-
-  function isMobile() {
-    return window.innerWidth <= MOBILE_BP;
-  }
-
-  function closeMobileSidebar() {
-    sidebar.classList.remove('mobile-open');
-    overlay.classList.remove('active');
-    document.body.style.overflow = '';
-  }
-
-  toggle.addEventListener('click', function () {
-    if (isMobile()) {
-      const open = sidebar.classList.toggle('mobile-open');
-      overlay.classList.toggle('active', open);
-      document.body.style.overflow = open ? 'hidden' : '';
-    } else {
-      sidebar.classList.toggle('collapsed');
-    }
-  });
-
-  overlay.addEventListener('click', closeMobileSidebar);
-
-  window.addEventListener('resize', function () {
-    if (!isMobile()) {
-      closeMobileSidebar();
-    }
-  });
-})();
-
-document.addEventListener("DOMContentLoaded", () => {
-  const updateReferrals = document.getElementById("updateReferrals");
-  const searchInput = document.getElementById("patientSearch");
-  const searchButton = document.getElementById("searchButton");
-
-  if (updateReferrals) {
-    updateReferrals.addEventListener("click", function (event) {
-      event.preventDefault();
-
-      fetch("php/update_referrals.php")
-        .then(response => response.json())
-        .then(data => {
-          console.log(data.message);
-          window.location.href = "pending";
-        })
-        .catch(error => {
-          console.error("Error updating referrals:", error);
-          window.location.href = "pending";
         });
     });
-  }
+}
 
-  if (searchInput && searchButton) {
-    searchInput.addEventListener("keypress", function (event) {
-      if (event.key === "Enter") {
+function showResponseModal(type, message, hasPrescription = false, hasMedicine = false) {
+    const modal = $("#responseModal");
+    const title = $("#responseTitle");
+    const text = $("#responseMessage");
+    const icon = $(".modal-icon-response i");
+    const iconWrap = $(".modal-icon-response");
+    const body = modal.find(".modal-body");
+    const footer = modal.find(".modal-footer");
+
+    body.find(".print-option").remove();
+    footer.empty();
+
+    const isSuccess = type === "success";
+
+    title.text(isSuccess ? "Success" : "Error");
+    text.text(message);
+    icon.attr("class", isSuccess ? "bx bx-check" : "bx bx-error-circle");
+    iconWrap.toggleClass("success", isSuccess).toggleClass("error", !isSuccess);
+
+    if (isSuccess) {
+        let checkboxesHTML = "";
+
+        if (hasMedicine) {
+            checkboxesHTML += `
+                <label class="print-option">
+                    <input type="checkbox" id="printInstruction" checked>
+                    <span>Print Instruction Copy</span>
+                </label>
+            `;
+        }
+
+        if (hasPrescription) {
+            checkboxesHTML += `
+                <label class="print-option">
+                    <input type="checkbox" id="printPrescription" checked>
+                    <span>Print Prescription</span>
+                </label>
+            `;
+        }
+
+        body.append(checkboxesHTML);
+        footer.append('<button id="proceedButton" class="btn yes" type="button">Proceed</button>');
+
+        $("#proceedButton").on("click", function () {
+            const consultationId = $("#responseModal").data("consultationId");
+            const visitId = document.getElementById("visit_id").value;
+            const types = [];
+
+            if ($("#printInstruction").is(":checked")) {
+                types.push("instruction");
+            }
+
+            if ($("#printPrescription").is(":checked")) {
+                types.push("prescription");
+            }
+
+            if (types.length > 0) {
+                window.open(
+                    `php/printPrescription.php?consultation_id=${encodeURIComponent(consultationId)}&type=${encodeURIComponent(types.join(","))}`,
+                    "_blank"
+                );
+            }
+
+            window.location.href = `visitInfo?visit_id=${visitId}`;
+        });
+    } else {
+        footer.append('<button id="okButton" class="btn yes" type="button">OK</button>');
+
+        $("#okButton").on("click", function () {
+            closeAppModal("responseModal");
+        });
+    }
+
+    openAppModal("responseModal");
+}
+
+function openAppModal(id) {
+    const modal = document.getElementById(id);
+
+    if (modal) {
+        modal.classList.add("open");
+    }
+}
+
+function closeAppModal(id) {
+    const modal = document.getElementById(id);
+
+    if (modal) {
+        modal.classList.remove("open");
+    }
+}
+
+function setupUserInfo() {
+    fetch("php/getUserName.php")
+        .then(response => response.json())
+        .then(data => {
+            const name = document.getElementById("sidebarUserName");
+
+            if (name) {
+                name.textContent = data.full_name || "Nurse User";
+            }
+        })
+        .catch(error => {
+            console.error("Error fetching user name:", error);
+
+            const name = document.getElementById("sidebarUserName");
+
+            if (name) {
+                name.textContent = "Nurse User";
+            }
+        });
+}
+
+function setupUserId() {
+    fetch("php/getUserId.php")
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                window.location.href = "../auth/role";
+                return;
+            }
+
+            if (data.user_id) {
+                document.getElementById("user_id").value = data.user_id;
+
+                loadPhysicians(document.getElementById("physician"), data.user_id);
+                loadPhysicians(document.getElementById("physician2"), data.user_id);
+            }
+        })
+        .catch(error => {
+            console.error("Error checking session:", error);
+            window.location.href = "../auth/role";
+        });
+}
+
+function setupResponsiveSidebar() {
+    const sidebar = document.getElementById("sidebar");
+    const toggle = document.getElementById("sidebarToggle");
+    const overlay = document.getElementById("sidebarOverlay");
+    const MOBILE_BP = 768;
+
+    if (!sidebar || !toggle || !overlay) {
+        return;
+    }
+
+    function isMobile() {
+        return window.innerWidth <= MOBILE_BP;
+    }
+
+    function closeMobileSidebar() {
+        sidebar.classList.remove("mobile-open");
+        overlay.classList.remove("active");
+        document.body.style.overflow = "";
+    }
+
+    toggle.addEventListener("click", function () {
+        if (isMobile()) {
+            const open = sidebar.classList.toggle("mobile-open");
+
+            overlay.classList.toggle("active", open);
+            document.body.style.overflow = open ? "hidden" : "";
+        } else {
+            sidebar.classList.toggle("collapsed");
+        }
+    });
+
+    overlay.addEventListener("click", closeMobileSidebar);
+
+    window.addEventListener("resize", function () {
+        if (!isMobile()) {
+            closeMobileSidebar();
+        }
+    });
+}
+
+function setupUpdateReferrals() {
+    const updateReferrals = document.getElementById("updateReferrals");
+
+    if (!updateReferrals) {
+        return;
+    }
+
+    updateReferrals.addEventListener("click", function (event) {
         event.preventDefault();
-        searchButton.click();
-      }
+
+        fetch("php/update_referrals.php")
+            .then(response => response.json())
+            .then(data => {
+                console.log(data.message);
+                window.location.href = "pending";
+            })
+            .catch(error => {
+                console.error("Error updating referrals:", error);
+                window.location.href = "pending";
+            });
+    });
+}
+
+function setupPatientSearch() {
+    const searchInput = document.getElementById("patientSearch");
+    const searchButton = document.getElementById("searchButton");
+
+    if (!searchInput || !searchButton) {
+        return;
+    }
+
+    searchInput.addEventListener("keypress", function (event) {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            searchButton.click();
+        }
     });
 
     searchButton.addEventListener("click", function () {
-      const searchQuery = searchInput.value.trim();
-      if (searchQuery) {
-        sessionStorage.setItem("searchQuery", searchQuery);
-        window.location.href = "searchPatient";
-      } else {
-        alert("Please enter a patient name to search.");
-      }
+        const searchQuery = searchInput.value.trim();
+
+        if (searchQuery) {
+            sessionStorage.setItem("searchQuery", searchQuery);
+            window.location.href = "searchPatient";
+        } else {
+            alert("Please enter a patient name to search.");
+        }
     });
-  }
+}
+
+function confirmLogout() {
+    document.getElementById("logoutModal").style.display = "block";
+    return false;
+}
+
+function closeModal() {
+    document.getElementById("logoutModal").style.display = "none";
+}
+
+function proceedLogout() {
+    window.location.href = "../ADMIN/php/logout";
+}
+
+window.addEventListener("click", function (event) {
+    const logoutModal = document.getElementById("logoutModal");
+
+    if (event.target === logoutModal) {
+        closeModal();
+    }
 });
 </script>
 

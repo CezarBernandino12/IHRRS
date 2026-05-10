@@ -290,18 +290,556 @@ $disp_stmt->execute(array_merge($ids, $medicine_list));
 <body>
 
 <style>
-  #reportTable th {
-    cursor: pointer;
-    position: relative;
-    user-select: none;
+/* Page-specific polish to match the unified reports UI. */
+#content main {
+  width: 100%;
+  padding: 32px 28px;
+  max-height: calc(100vh - 56px);
+  overflow-y: auto;
+}
+
+.history-container,
+.main-content {
+  width: 100%;
+}
+
+.filter-form {
+  background: var(--surface, #fff);
+  border: 1px solid var(--border, #dde4ef);
+  border-radius: var(--r-lg, 16px);
+  padding: 28px 32px 24px;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow-sm, 0 2px 8px rgba(13,45,82,.09));
+}
+
+.filter-form h2 {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--navy, #0d2d52);
+  letter-spacing: -.2px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.filter-form h2::before {
+  content: '';
+  display: inline-block;
+  width: 4px;
+  height: 18px;
+  background: var(--blue, #1c6fba);
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.form-submit {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 0 !important;
+}
+
+.selected-filters {
+  margin: 20px 0 0 !important;
+}
+
+.selected-filters h3 {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--grey-700, #4a5568);
+  margin-bottom: 10px !important;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+
+#filterTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.filter-tag {
+  background: var(--blue-pale, #f0f6ff) !important;
+  color: var(--navy, #0d2d52) !important;
+  border: 1px solid var(--border, #dde4ef) !important;
+  padding: 5px 12px !important;
+  border-radius: 20px !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+}
+
+.filter-tag a {
+  color: var(--grey-500, #8c96aa) !important;
+  font-weight: 700 !important;
+  font-size: 14px !important;
+  line-height: 1;
+  margin-left: 0 !important;
+  text-decoration: none !important;
+}
+
+.filter-tag a:hover {
+  color: var(--red, #e53e3e) !important;
+}
+
+.modal-content {
+  max-width: 620px !important;
+}
+
+.checkbox-list {
+  max-height: 170px;
+  overflow-y: auto;
+  background: var(--grey-100, #f8f9fc);
+  border: 1.5px solid var(--border, #dde4ef);
+  border-radius: var(--r-sm, 6px);
+  padding: 10px 12px;
+}
+
+.checkbox-list label {
+  display: flex !important;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px !important;
+  text-align: left !important;
+  font-size: 13px;
+  font-weight: 500 !important;
+  color: var(--grey-700, #4a5568);
+  line-height: 1.35;
+}
+
+.checkbox-list label:last-child {
+  margin-bottom: 0 !important;
+}
+
+.checkbox-list input[type="checkbox"] {
+  width: 14px;
+  height: 14px;
+  accent-color: var(--blue, #1c6fba);
+  flex: 0 0 auto;
+}
+
+.form-item small {
+  color: var(--grey-500, #8c96aa) !important;
+  font-size: 12px;
+}
+
+.print-area {
+  background: var(--white, #fff);
+  border: 1px solid var(--border, #dde4ef);
+  border-radius: var(--r-lg, 16px);
+  padding: 28px 32px;
+  box-shadow: var(--shadow-sm, 0 2px 8px rgba(13,45,82,.09));
+}
+
+.print-letterhead {
+  display: none;
+}
+
+.title {
+  text-align: center;
+  display: none;
+}
+
+.report-content {
+  width: 100%;
+}
+
+.chart-card {
+  width: 100%;
+  max-width: 760px;
+  margin: 24px auto 0;
+  padding: 20px;
+  text-align: center;
+  background: var(--grey-100, #f8f9fc);
+  border: 1px solid var(--border-soft, #edf0f7);
+  border-radius: var(--r-md, 10px);
+}
+
+.chart-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--navy, #0d2d52);
+  margin-bottom: 12px;
+}
+
+.report-table-container {
+  margin-top: 24px;
+}
+
+.report-table-scroll {
+  width: 100%;
+  overflow: auto;
+  max-height: 620px;
+}
+
+#reportTable {
+  min-width: 1200px;
+}
+
+#reportTable th {
+  cursor: pointer;
+  position: relative;
+  user-select: none;
+}
+
+#reportTable th .sort-indicator {
+  margin-left: 6px;
+  font-size: 11px;
+  opacity: .7;
+}
+
+#reportTable th.is-sorted-asc .sort-indicator::after { content: "▲"; }
+#reportTable th.is-sorted-desc .sort-indicator::after { content: "▼"; }
+
+#reportTable td:nth-child(2),
+#reportTable td:nth-child(3) {
+  white-space: normal;
+  word-break: break-word;
+  min-width: 150px;
+}
+
+.summary-container {
+  margin-top: 32px;
+}
+
+.summary-title,
+.summary > h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--navy, #0d2d52);
+  letter-spacing: -.1px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.summary-title i,
+.summary > h3 i {
+  font-size: 18px;
+  color: var(--blue, #1c6fba);
+}
+
+.summary-table,
+.summary-table2 {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 1px solid var(--border, #dde4ef);
+  border-radius: var(--r-lg, 16px);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm, 0 2px 8px rgba(13,45,82,.09));
+  font-size: 14px;
+  margin-top: 8px;
+  table-layout: auto;
+}
+
+.summary-table th,
+.summary-table2 th {
+  background: var(--grey-100, #f8f9fc);
+  font-weight: 600;
+  color: var(--navy, #0d2d52);
+  padding: 12px 16px !important;
+  text-align: left;
+  border-bottom: 1px solid var(--border-soft, #edf0f7) !important;
+  border-right: 1px solid var(--border-soft, #edf0f7) !important;
+}
+
+.summary-table td,
+.summary-table2 td {
+  color: var(--grey-700, #4a5568);
+  padding: 12px 16px !important;
+  border-bottom: 1px solid var(--border-soft, #edf0f7) !important;
+  border-right: 1px solid var(--border-soft, #edf0f7) !important;
+  vertical-align: top;
+}
+
+.summary-table tr:last-child th,
+.summary-table tr:last-child td,
+.summary-table2 tr:last-child th,
+.summary-table2 tr:last-child td {
+  border-bottom: none !important;
+}
+
+.dispensed-summary-block {
+  margin-top: 16px;
+}
+
+.dispensed-summary-block strong {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--navy, #0d2d52);
+  font-size: 14px !important;
+}
+
+#generated_by {
+  display: block;
+  margin: 32px 0 0 4px;
+  color: var(--dark, #0f1d31);
+}
+
+#generated_by .sig-label {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--grey-500, #8c96aa);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  margin-bottom: 20px;
+}
+
+#generated_by .sig-line {
+  display: none;
+  width: 200px;
+  border: 0;
+  border-top: 1.5px solid var(--dark, #0f1d31);
+  margin: 26px 0 6px;
+}
+
+#generated_by .sig-name {
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--navy, #0d2d52);
+  margin-top: 4px;
+}
+
+#generated_by .sig-title {
+  font-size: 12.5px;
+  color: var(--grey-500, #8c96aa);
+  margin-top: 2px;
+}
+
+
+
+/* Balanced responsive chart layout for this report */
+.chart-controls-panel {
+  background: var(--grey-100, #f8f9fc);
+  border: 1px solid var(--border-soft, #edf0f7);
+  border-radius: var(--r-md, 10px);
+  padding: 16px 20px;
+  margin: 0 0 24px;
+}
+
+.chart-controls-panel h3 {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--grey-700, #4a5568);
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  margin-bottom: 12px;
+}
+
+.chart-toggle-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.chart-toggle-group label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 14px;
+  background: var(--white, #fff);
+  border: 1.5px solid var(--border, #dde4ef);
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--grey-700, #4a5568);
+  cursor: pointer;
+  transition: border-color .18s, background .18s, color .18s, transform .12s;
+  user-select: none;
+}
+
+.chart-toggle-group label:hover {
+  transform: translateY(-1px);
+  border-color: var(--blue, #1c6fba);
+}
+
+.chart-toggle-group label:has(input:checked) {
+  background: var(--navy, #0d2d52);
+  border-color: var(--navy, #0d2d52);
+  color: var(--white, #fff);
+}
+
+.chart-toggle-group input[type="checkbox"] {
+  width: 14px;
+  height: 14px;
+  accent-color: var(--white, #fff);
+  cursor: pointer;
+}
+
+.medicine-charts-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(280px, 1fr));
+  gap: 24px;
+  align-items: stretch;
+  margin: 0 0 28px;
+  transition: all .28s ease;
+}
+
+.medicine-charts-grid.single-chart {
+  grid-template-columns: minmax(280px, 760px);
+  justify-content: center;
+}
+
+.medicine-charts-grid .chart-card {
+  width: 100%;
+  max-width: none !important;
+  margin: 0 !important;
+  min-height: 350px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  animation: chartFadeUp .28s ease both;
+}
+
+.medicine-charts-grid .chart-card canvas {
+  width: 100% !important;
+  height: 280px !important;
+  max-height: 280px;
+}
+
+#medicineLineChartWrap {
+  grid-column: 1 / -1;
+  max-width: 1000px !important;
+  justify-self: center;
+}
+
+.medicine-charts-grid.single-chart #medicineLineChartWrap {
+  grid-column: auto;
+  max-width: 760px !important;
+}
+
+#medicineLineChartWrap canvas {
+  height: 320px !important;
+  max-height: 320px;
+}
+
+.medicine-chart-hidden {
+  display: none !important;
+}
+
+.medicine-chart-visible {
+  display: flex !important;
+}
+
+@keyframes chartFadeUp {
+  from { opacity: 0; transform: translateY(14px) scale(.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@media (max-width: 900px) {
+  .medicine-charts-grid,
+  .medicine-charts-grid.single-chart {
+    grid-template-columns: 1fr;
   }
-  #reportTable th .sort-indicator {
-    margin-left: 6px;
-    font-size: 11px;
-    opacity: 0.7;
+  #medicineLineChartWrap {
+    grid-column: auto;
+    max-width: none !important;
   }
-  #reportTable th.is-sorted-asc  .sort-indicator::after { content: "▲"; }
-  #reportTable th.is-sorted-desc .sort-indicator::after { content: "▼"; }
+}
+
+@media (max-width: 480px) {
+  .medicine-charts-grid .chart-card { min-height: 310px; }
+  .medicine-charts-grid .chart-card canvas { height: 240px !important; max-height: 240px; }
+  #medicineLineChartWrap canvas { height: 270px !important; max-height: 270px; }
+}
+
+@media print {
+  @page { size: landscape; margin: 1cm; }
+
+  .title { display: block !important; }
+  .print-letterhead { display: grid !important; }
+  .form-submit,
+  .selected-filters,
+  .chart-controls-panel,
+  .medicine-chart-controls,
+  .chart-toggle-group,
+  .medicine-chart-hidden,
+  .chart-card,
+  nav,
+  #sidebar,
+  .sidebar-overlay {
+    display: none !important;
+  }
+
+  .print-area {
+    box-shadow: none;
+    border: none;
+    padding: 0;
+    border-radius: 0;
+  }
+
+  .print-letterhead {
+    grid-template-columns: 72px auto 72px;
+    align-items: center;
+    justify-content: center;
+    column-gap: 60px;
+    margin: 0 auto 18px;
+    text-align: center;
+    width: fit-content;
+  }
+
+  .print-logo { width: 64px; height: 64px; object-fit: contain; }
+  .print-heading { line-height: 1.1; color: #000; }
+  .print-heading .ph-line-1 { font-size: 12pt; font-weight: 500; }
+  .print-heading .ph-line-2 { font-size: 14pt; font-weight: 800; }
+  .print-heading .ph-line-3 { font-size: 12pt; font-weight: 600; }
+  .print-sub { font-size: 12pt; margin-top: 4px; }
+  .print-rule { height: 1px; border: 0; background: #cfd8e3; margin: 8px 0 12px; }
+
+  .report-table-container {
+    box-shadow: none;
+    border: 1px solid #000;
+    border-radius: 0;
+    margin-top: 12px !important;
+    margin-bottom: 40px !important;
+  }
+
+  .report-table-scroll {
+    overflow: visible !important;
+    max-height: none !important;
+  }
+
+  #reportTable {
+    min-width: unset;
+    font-size: 9pt;
+  }
+
+  #reportTable th,
+  #reportTable td,
+  .summary-table th,
+  .summary-table td,
+  .summary-table2 th,
+  .summary-table2 td {
+    border: 1px solid #000 !important;
+    color: #000 !important;
+    background: transparent !important;
+  }
+
+  #generated_by { margin: 20mm 0 0 0; }
+  #generated_by .sig-label { font-size: 12pt; }
+  #generated_by .sig-name { font-size: 12pt; }
+  #generated_by .sig-title { font-size: 11pt; }
+  #generated_by .sig-line { display: block; width: 45mm; border-top-width: 1px; margin: 10mm 0 3mm; }
+}
+
+@media (max-width: 768px) {
+  #content main { padding: 20px 14px; }
+  .filter-form,
+  .print-area { padding: 20px 18px; }
+  .form-row { grid-template-columns: 1fr; }
+  .modal-content { padding: 24px 20px 20px; }
+}
 </style>
 
 <!-- Sidebar Section -->
@@ -311,7 +849,11 @@ $disp_stmt->execute(array_merge($ids, $medicine_list));
 		<a href="#" class="sidebar-brand">
 			<img src="../../img/logo.png" alt="RHU Logo" class="brand-logo">
 			<div class="brand-text">
+<<<<<<< HEAD
+				<span class="brand-name">Hello Physician</span>
+=======
 				<span class="brand-name">Physician</span>
+>>>>>>> 33fc5da55d190a4b262e16a6c8935100d5aecf81
 			</div>
 		</a>
 
@@ -381,20 +923,20 @@ $disp_stmt->execute(array_merge($ids, $medicine_list));
 
 	<!-- Main Content Section -->
 	<section id="content">
-		 <nav>
-			<button class="nav-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
-				<i class="bx bx-menu"></i>
-			</button>
+        <nav>
+        <button class="nav-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+            <i class="bx bx-menu"></i>
+        </button>
 
-			<div class="nav-search" style="position: relative;">
-				<input type="search" id="patientSearch" placeholder="Enter patient name..." name="search" autocomplete="off">
-				<button type="button" id="searchButton" aria-label="Search">
-					<i class="bx bx-search"></i>
-				</button>
-				<div id="resultDropdown" class="dropdown-content"></div>
-			</div>
-		</nav>
-
+        <div class="nav-search" style="position: relative;">
+            <input type="search" id="patientSearch" placeholder="Enter patient name..." name="search" autocomplete="off">
+            <button type="button" id="searchButton" aria-label="Search">
+                <i class="bx bx-search"></i>
+            </button>
+            <div id="resultDropdown" class="dropdown-content"></div>
+        </div>
+        <span id="userGreeting" style="display:none;"></span>
+    </nav>
 
 
 		<main>
@@ -410,33 +952,33 @@ $disp_stmt->execute(array_merge($ids, $medicine_list));
                 </div>
               </div>
 
-      <br> <br>
-            </div>
-
 <div class="history-container">
 
 
 <!-- Filter Form -->
 
-<form method="GET" class="filter-form">
-      <h2>Medicine Utilization Report - <?php echo htmlspecialchars($rhu); ?></h2> <br>
+<div class="filter-form">
+      <h2>Medicine Utilization Report - <?php echo htmlspecialchars($rhu); ?></h2>
        
 
     <!-- Filter Modal Trigger -->
    
         <div class="form-submit" style="margin-top: -10px;">
-        <button type="button" class="btn-export" id="openFilterModal">Select Filters</button>
-                  <button type="button" class="btn-export" onclick="exportTableToExcel('reportTable')">Export to Excel</button>
-         <button type="button" class="btn-print" onclick="printDiv()">
-        <i class='bx bx-printer'></i>
-        Print Report
-    </button>
+        <button type="button" class="btn-export" id="openFilterModal">
+            <i class="bx bx-filter-alt"></i> Select Filters
+        </button>
+        <button type="button" class="btn-export" onclick="exportTableToExcel('reportTable')">
+            <i class="bx bx-spreadsheet"></i> Export to Excel
+        </button>
+        <button type="button" class="btn-print" onclick="printDiv()">
+            <i class="bx bx-printer"></i> Print Report
+        </button>
     </div>
 
     <!-- Modern Filter Tags Display -->
-    <div class="selected-filters" style="margin: 20px 0;">
-        <h3 style="margin-bottom: 10px;"><i class="bx bx-filter-alt"></i> Selected Filters:</h3>
-        <div id="filterTags" style="display: flex; flex-wrap: wrap; gap: 8px;">
+    <div class="selected-filters">
+        <h3><i class="bx bx-filter-alt"></i> Selected Filters:</h3>
+        <div id="filterTags">
             <?php
             // Helper for tag rendering
             function renderTag($label, $param, $value) {
@@ -461,9 +1003,9 @@ $disp_stmt->execute(array_merge($ids, $medicine_list));
                     $query = http_build_query($url);
                 }
 
-                echo '<span class="filter-tag" style="background:#e3e6ea;color:#222;padding:6px 12px;border-radius:16px;display:inline-flex;align-items:center;font-size:14px;">';
+                echo '<span class="filter-tag">';
                 echo $display;
-                echo ' <a href="?' . $query . '" style="margin-left:8px;color:#888;text-decoration:none;font-weight:bold;" title="Remove filter">&times;</a>';
+                echo ' <a href="?' . $query . '" title="Remove filter">&times;</a>';
                 echo '</span>';
             }
 
@@ -501,16 +1043,13 @@ $disp_stmt->execute(array_merge($ids, $medicine_list));
             ?>
         </div>
     </div>
-    <style>
-        .filter-tag a:hover { color: #e15759; }
-    </style>
 
 
   <!-- Filter Modal -->
     <div id="filterModal" class="modal" style="display:none;">
         <div class="modal-content" style="max-width: 600px;">
             <div class="modal-header">
-                <h3>Apply Filters</h3>
+                <h3><i class="bx bx-filter-alt" style="margin-right:8px;color:var(--blue);"></i>Apply Filters</h3>
             </div>
             <form method="GET" id="filterForm">
                 <div class="modal-body">
@@ -564,7 +1103,7 @@ $disp_stmt->execute(array_merge($ids, $medicine_list));
 
                     <div class="form-item">
                         <label for="medicine">Given Medicine:</label>
-                        <div id="medicine-checkboxes" style="max-height:150px;overflow-y:auto;border:1px solid #ccc;padding:8px;border-radius:6px;">
+                        <div class="checkbox-list">
                             <?php
                             // Fetch medicines for checkboxes
                             $medicine_stmt = $pdo->prepare("SELECT DISTINCT medicine_name FROM rhu_medicine_dispensed ORDER BY medicine_name ASC");
@@ -574,7 +1113,7 @@ $disp_stmt->execute(array_merge($ids, $medicine_list));
                           while ($row = $medicine_stmt->fetch(PDO::FETCH_ASSOC)) {
     $value = $row['medicine_name'];  // correct column
     $checked = in_array($value, $selected_medicines) ? 'checked' : '';
-    echo '<label style="display:block;margin-bottom:4px;text-align:left;font-weight:300;">';
+    echo '<label>';
     echo '<input type="checkbox" name="medicine[]" value="' . htmlspecialchars($value) . '" ' . $checked . '> ';
     echo htmlspecialchars($value);
     echo '</label>';
@@ -587,7 +1126,7 @@ $disp_stmt->execute(array_merge($ids, $medicine_list));
 
                    <div class="form-item">
                         <label for="subcategory">Medicine Category:</label>
-                        <div id="medicine-checkboxes" style="max-height:150px;overflow-y:auto;border:1px solid #ccc;padding:8px;border-radius:6px;">
+                        <div class="checkbox-list">
                             <?php
                             // Fetch subcategory for checkboxes
                             $subcategory_stmt = $pdo->prepare("SELECT DISTINCT sub_category FROM custom_options WHERE category = 'medicine' ORDER BY sub_category ASC");
@@ -597,7 +1136,7 @@ $disp_stmt->execute(array_merge($ids, $medicine_list));
                           while ($row = $subcategory_stmt->fetch(PDO::FETCH_ASSOC)) {
     $value = $row['sub_category'];  // correct column
     $checked = in_array($value, $selected_subcategory) ? 'checked' : '';
-    echo '<label style="display:block;margin-bottom:4px;text-align:left;font-weight:300;">';
+    echo '<label>';
     echo '<input type="checkbox" name="subcategory[]" value="' . htmlspecialchars($value) . '" ' . $checked . '> ';
     echo htmlspecialchars($value);
     echo '</label>';
@@ -610,7 +1149,7 @@ $disp_stmt->execute(array_merge($ids, $medicine_list));
 
                         </div>
                     </div>
-                     <div class="modal-footer" style="text-align:right;">
+                     <div class="modal-footer">
                     <button type="button" class="btn" id="closeFilterModal">Cancel</button>
                     <button type="submit" class="btn-submit">Apply Filter</button>
                 </div>
@@ -626,10 +1165,9 @@ $disp_stmt->execute(array_merge($ids, $medicine_list));
     // Modal logic for filter
     document.getElementById('openFilterModal').onclick = function() {
         document.getElementById('filterModal').style.display = 'block';
-    };
 
-       // Initialize Flatpickr AFTER the modal is visible
-    setTimeout(() => {
+        // Initialize Flatpickr AFTER the modal is visible
+        setTimeout(() => {
         // Check if Flatpickr instances already exist, destroy them first
         const fromDateInput = document.getElementById('from_date');
         const toDateInput = document.getElementById('to_date');
@@ -653,7 +1191,8 @@ $disp_stmt->execute(array_merge($ids, $medicine_list));
             allowInput: true,
             disableMobile: true
         });
-    }, 100); // Small delay to ensure modal is fully visible
+        }, 100); // Small delay to ensure modal is fully visible
+    };
 
     document.getElementById('closeFilterModal').onclick = function() {
         document.getElementById('filterModal').style.display = 'none';
@@ -671,13 +1210,7 @@ $disp_stmt->execute(array_merge($ids, $medicine_list));
         }
     });
     </script>
-</form>
-
-
-
-
-
-
+</div>
 
 <div class="main-content">
 
@@ -735,190 +1268,22 @@ $disp_stmt->execute(array_merge($ids, $medicine_list));
     </div>
 </div>
 
-    <style>
-  .print-letterhead { display: none; }
-    .title { text-align: center; display: none;}
 
-  @media print {
-     .title {
-        display: block;
-    }
-    .print-letterhead { display: block; }
+    <!-- Chart Visibility Controls -->
+    <div class="chart-controls-panel medicine-chart-controls">
+      <h3>Charts</h3>
+      <div class="chart-toggle-group">
+        <label><input type="checkbox" id="toggleSexChart"> Patients by Sex</label>
+        <label><input type="checkbox" id="toggleAgeGroupChart"> Age Groups</label>
+        <label><input type="checkbox" id="toggleBarangayChart"> Patients by Barangay</label>
+        <label><input type="checkbox" id="toggleMedicineLineChart" checked> Dispensed Medicines Over Time</label>
+      </div>
+    </div>
 
-    .print-letterhead{
-  display: grid;
-  grid-template-columns: 72px auto 72px;  /* widened logo columns */
-  align-items: center;
-  justify-content: center;
-  column-gap: 60px;                       /* increased space between logos and heading */
-  margin: 0 auto 18px;
-  text-align: center;
-  width: fit-content;
-    }
-    .print-logo{ width:64px; height:64px; object-fit:contain; }
-    .print-heading{ line-height:1.1; color:#000; }
-    .print-heading .ph-line-1{ font-size:12pt; font-weight:500;}
-    .print-heading .ph-line-2{ font-size:12pt; font-weight:500;}
-    .print-heading .ph-line-3{ font-size:12pt; font-weight:600;}
-    .print-heading .ph-line-4{ font-size:12pt; font-weight:600; margin-top:15px; letter-spacing:.3px; }
-    .print-sub{ font-size:12pt; margin-top:4px; }
-    .print-rule{ height:1px; border:0; background:#cfd8e3; margin:8px 0 12px; }
-
-    /* keep your existing print hides working */
-    .chart-title, .form-submit { display: none !important; }
-  }
-</style>
-
-<style>
-
-    /* Add breathing room above the summary */
-.summary-container {
-  margin-top: 32px;
-}
-
-/* Two-column summary table */
-.summary-table {
-  width: auto;
-  border-collapse: collapse;
-  table-layout: fixed;
-  font-size: 16px;
-}
-
-.summary-table th,
-.summary-table td {
-  border: 1px solid #d5d7db;
-  padding: 8px 12px;
-  vertical-align: top;
-  text-align: left;
-  word-wrap: break-word;
-}
-
-.summary-table th {
-  background: #f2f4f7;
-  font-weight: 600;
-}
-
-.summary-table2 {
-  width: 100%; 
-  border-collapse:collapse; 
-  margin-top:12px;
-}
-
-
-/* Hide the “Summary” title on print only; keep spacing a bit larger */
-@media print {
-  .summary > h3 { 
-    display: none !important;
-  }
-  .summary-container { 
-    margin-top: 40px; 
-  }
-  .summary-table th,
-.summary-table td {
-  border: 1px solid #000000ff;
-  padding: 8px 12px;
-  vertical-align: top;
-  text-align: left;
-  word-wrap: break-word;
-}
-  .summary-table2 th,
-.summary-table2 td {
-    border: 1px solid #000000ff !important;
-}
-}
-
-    @media print {
-        .chart-title { 
-           display: none;
-        }
-         .form-submit { 
-           display: none;
-        }
-        
-    .report-table-container {
-        margin-top: -20px !important;
-        margin-bottom: 40px !important;
-        }
-      
-    }
-
-   #generated_by {
-  display: block;           
-  margin: 22px 0 0 48px;    
-  color: #000;
-}
-
-#generated_by .sig-label {
-  font-size: 14px;
-  margin-bottom: 16px;
-}
-
-#generated_by .sig-line {
-    display: none;
-  width: 250px;           
-  border: 0;
-  border-top: 1.5px solid #000;
-  margin: 26px 0 6px;       
-}
-
-#generated_by .sig-name {
-  font-weight: 600;
-  font-size: 16px;
-  margin-top: 4px;
-}
-
-#generated_by .sig-title {
-  font-size: 13px;
-  color: #333;
-}
-
-/* Print sizing (optional, nicer on paper) */
-@media print {
-  #generated_by {  margin: 20mm 0 0 0;}
-  #generated_by .sig-label { font-size: 12pt; }
-  #generated_by .sig-name  { font-size: 12pt; }
-  #generated_by .sig-title { font-size: 11pt; }
-  #generated_by .sig-line  {display: block; width: 45mm; border-top-width: 1px; margin: 10mm 0 3mm; }
-}
-</style>
-
-
-<!-- Chart Visibility Controls 
-<div style="margin: 20px;" class="chart-title">
-    <h3>Charts:</h3>
-    <label><input type="checkbox" id="toggleSexChart"> Show Patients by Sex</label> <br>
-    <label><input type="checkbox" id="toggleAgeGroupChart"> Show Age Group</label> <br>
-    <label><input type="checkbox" id="toggleBarangayChart"> Show Barangays</label> <br> -->
-
-
-</div>
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-    const chartMapping = {
-        toggleSexChart: "sexChart",
-        toggleAgeGroupChart: "ageGroupChart",
-        toggleBarangayChart: "barangayChart"
-    };
-
-    Object.keys(chartMapping).forEach(toggleId => {
-        const checkbox = document.getElementById(toggleId);
-        const chartElement = document.getElementById(chartMapping[toggleId]);
-
-        if (checkbox && chartElement) {
-            checkbox.addEventListener("change", () => {
-                chartElement.style.display = checkbox.checked ? "block" : "none";
-            });
-
-            // Initialize state
-            chartElement.style.display = checkbox.checked ? "block" : "none";
-        }
-    });
-});
-</script>
-
+    <div id="medicineChartsGrid" class="medicine-charts-grid single-chart">
 
     <!-- Pie Chart Section -->
-    <div id="sexChart" style="max-width: 400px; margin: 30px auto 0 auto; text-align:center; display: none;">
+    <div id="sexChart" class="chart chart-card medicine-chart-hidden">
       <h3 class="chart-title">Patients by Sex</h3>
         <canvas id="sexPieChart"></canvas>
     </div>
@@ -949,6 +1314,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 },
                 options: {
                     responsive: true,
+                    maintainAspectRatio: false,
+                    layout: { padding: 6 },
                     plugins: {
                         legend: { position: 'bottom' },
                         title: { display: false }
@@ -958,9 +1325,9 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     </script>
 
-    <br><br>
+
     <!-- Age Group Distribution Bar Chart -->
-    <div id="ageGroupChart" style="max-width: 500px; margin: 30px auto 0 auto; text-align:center; display: none;">
+    <div id="ageGroupChart" class="chart chart-card medicine-chart-hidden">
         <h3 class="chart-title">Age Groups</h3>
         <canvas id="ageGroupBarChart"></canvas>
     </div>
@@ -1003,6 +1370,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 },
                 options: {
                     responsive: true,
+                    maintainAspectRatio: false,
+                    layout: { padding: 6 },
                     plugins: {
                         legend: { display: false },
                         title: { display: false }
@@ -1021,9 +1390,9 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     </script>
 
-    <br><br>
+
     <!-- Address Distribution Bar Chart -->
-    <div id="barangayChart" style="max-width: 500px; margin: 30px auto 0 auto; text-align:center; display: none;">
+    <div id="barangayChart" class="chart chart-card medicine-chart-hidden">
       <h3 class="chart-title">Patient Counts per Barangay</h3>
         <canvas id="barangayBarChart"></canvas>
     </div>
@@ -1062,6 +1431,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 },
                 options: {
                     responsive: true,
+                    maintainAspectRatio: false,
+                    layout: { padding: 6 },
                     plugins: {
                         legend: { display: false },
                         title: { display: false }
@@ -1080,7 +1451,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     </script>
     <!-- Line Graph: Quantity of Dispensed Medicines Over Time -->
-<div style="max-width: 700px; margin: 30px auto 0 auto; text-align:center;">
+<div id="medicineLineChartWrap" class="chart chart-card medicine-chart-visible">
    <h3 class="chart-title">Quantity of Dispensed Medicines Over Time</h3>
     <canvas id="medicineLineChart"></canvas>
 </div>
@@ -1127,9 +1498,65 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 </script>
 
+</div><!-- /medicineChartsGrid -->
+
+
+<script>
+/* Balanced chart toggle behavior */
+document.addEventListener('DOMContentLoaded', () => {
+  const grid = document.getElementById('medicineChartsGrid');
+  const chartMapping = {
+    toggleSexChart: 'sexChart',
+    toggleAgeGroupChart: 'ageGroupChart',
+    toggleBarangayChart: 'barangayChart',
+    toggleMedicineLineChart: 'medicineLineChartWrap'
+  };
+
+  function resizeChartsInside(element) {
+    if (!element || typeof Chart === 'undefined') return;
+    setTimeout(() => {
+      element.querySelectorAll('canvas').forEach(canvas => {
+        const chart = Chart.getChart ? Chart.getChart(canvas) : null;
+        if (chart) {
+          chart.resize();
+          chart.update('none');
+        }
+      });
+    }, 280);
+  }
+
+  function syncGridLayout() {
+    if (!grid) return;
+    const visibleCount = Object.values(chartMapping).reduce((count, chartId) => {
+      const el = document.getElementById(chartId);
+      return count + (el && !el.classList.contains('medicine-chart-hidden') ? 1 : 0);
+    }, 0);
+    grid.classList.toggle('single-chart', visibleCount <= 1);
+  }
+
+  Object.entries(chartMapping).forEach(([toggleId, chartId]) => {
+    const checkbox = document.getElementById(toggleId);
+    const chartElement = document.getElementById(chartId);
+    if (!checkbox || !chartElement) return;
+
+    function syncVisibility() {
+      const show = checkbox.checked;
+      chartElement.classList.toggle('medicine-chart-hidden', !show);
+      chartElement.classList.toggle('medicine-chart-visible', show);
+      if (show) resizeChartsInside(chartElement);
+      syncGridLayout();
+    }
+
+    checkbox.addEventListener('change', syncVisibility);
+    syncVisibility();
+  });
+});
+</script>
+
 <!-- Patient Table -->
 <div class="report-table-container">
-<table id="reportTable" border="1" cellpadding="8" cellspacing="0">
+<div class="report-table-scroll">
+<table id="reportTable">
   <thead>
     <tr>
       <th data-type="date">Date Given</th>
@@ -1171,12 +1598,12 @@ usort($patient_meds, function($a, $b) {
 </tbody>
 
 </table>
-<br> <br>
+</div>
 </div> 
 
 <div class="summary-container">
   <div class="summary">
-    <h3><i class="bx bx-file"></i> Report Details</h3>
+    <h3 class="summary-title"><i class="bx bx-file"></i> Report Details</h3>
 
     <table class="summary-table">
       <colgroup>
@@ -1247,8 +1674,8 @@ usort($patient_meds, function($a, $b) {
 
 
     <!-- Keep your “Dispensed Medicines” block just below if you want -->
-    <div style="margin-top:12px;">
-      <strong style="font-size: 12pt;">Dispensed Medicines:</strong>
+    <div class="dispensed-summary-block">
+      <strong><i class="bx bx-capsule"></i> Dispensed Medicines:</strong>
       <?php if (!empty($medicine_list)): ?>
         <table class="summary-table" style="margin-top:8px;">
           <colgroup>
@@ -1287,9 +1714,13 @@ usort($patient_meds, function($a, $b) {
 
 
 
+</div><!-- /.report-content -->
+</div><!-- /.print-area -->
+</div><!-- /.main-content -->
+</div><!-- /.history-container -->
+</main>
+</section>
 
-</div> 
-</div>
 <div id="logoutModal" class="logout-modal">
     <div class="logout-modal-content">
         <div class="logout-modal-header">
@@ -1305,11 +1736,9 @@ usort($patient_meds, function($a, $b) {
     </div>
 </div>
 
-</div>
 <!-- jsPDF and html2canvas libraries -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-
 
 <!-- SheetJS for proper Excel export -->
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -1399,12 +1828,12 @@ function exportTableToExcel(tableID, filename = 'Medicine Utilization Report') {
         const dateStr = new Date().toISOString().slice(0, 10);
         XLSX.writeFile(wb, filename + ' ' + dateStr + '.xlsx');
 
-        
     } catch (error) {
         console.error('Excel export error:', error);
         alert('Error exporting to Excel: ' + error.message);
     }
 }
+
 
 (function() {
   const table = document.getElementById('reportTable');
@@ -1510,56 +1939,97 @@ function exportTableToExcel(tableID, filename = 'Medicine Utilization Report') {
 
 //PRINT
 function printDiv() {
-  // Use the new header
   const headerEl = document.querySelector('.print-letterhead');
   const printHeader = headerEl ? headerEl.outerHTML : '';
-
-  // Clone the print area
-  const originalArea = document.querySelector(".print-area");
+  const originalArea = document.querySelector('.print-area');
   if (!originalArea) return;
+
   const clone = originalArea.cloneNode(true);
 
-  // Remove duplicate header inside the clone
   const headerInClone = clone.querySelector('.print-letterhead');
   if (headerInClone) headerInClone.remove();
+  const ruleInClone = clone.querySelector('.print-rule');
+  if (ruleInClone) ruleInClone.remove();
 
-  // Remove canvases from the clone
-  clone.querySelectorAll('canvas').forEach(c => c.remove());
+  // Do not print chart controls/check boxes.
+  clone.querySelectorAll('.chart-controls-panel, .medicine-chart-controls, .chart-toggle-group').forEach(el => el.remove());
 
-  // Open print window
+  // Remove charts that the user did not select/view before converting canvases.
+  const chartPairs = [
+    { canvasId: 'sexPieChart', wrapperId: 'sexChart' },
+    { canvasId: 'ageGroupBarChart', wrapperId: 'ageGroupChart' },
+    { canvasId: 'barangayBarChart', wrapperId: 'barangayChart' },
+    { canvasId: 'medicineLineChart', wrapperId: 'medicineLineChartWrap' }
+  ];
+
+  chartPairs.forEach(({ canvasId, wrapperId }) => {
+    const liveWrapper = document.getElementById(wrapperId);
+    const cloneWrapper = clone.querySelector('#' + wrapperId);
+    const liveCanvas = document.getElementById(canvasId);
+    const cloneCanvas = clone.querySelector('#' + canvasId);
+
+    const isHidden = !liveWrapper ||
+      liveWrapper.classList.contains('medicine-chart-hidden') ||
+      liveWrapper.getAttribute('aria-hidden') === 'true' ||
+      window.getComputedStyle(liveWrapper).display === 'none';
+
+    if (isHidden) {
+      if (cloneWrapper) cloneWrapper.remove();
+      return;
+    }
+
+    if (liveCanvas && cloneCanvas && typeof liveCanvas.toDataURL === 'function') {
+      try {
+        const img = document.createElement('img');
+        img.src = liveCanvas.toDataURL('image/png');
+        img.style.cssText = 'max-width:100%;height:auto;display:block;margin:0 auto 14px;';
+        cloneCanvas.parentNode.replaceChild(img, cloneCanvas);
+      } catch (error) {
+        if (cloneWrapper) cloneWrapper.remove();
+      }
+    } else if (cloneWrapper) {
+      cloneWrapper.remove();
+    }
+  });
+
+  // Safety cleanup: remove any remaining hidden/empty chart elements and canvases.
+  clone.querySelectorAll('.medicine-chart-hidden, [aria-hidden="true"], canvas').forEach(el => el.remove());
+  clone.querySelectorAll('.medicine-charts-grid').forEach(grid => {
+    if (!grid.querySelector('.chart-card')) grid.remove();
+  });
+
   const w = window.open('', '', 'height=900,width=1100');
+  if (!w) { alert('Please allow pop-ups to print this report.'); return; }
   w.document.write(`
     <html>
- <head>
+      <head>
         <title>Print Report</title>
         <meta charset="utf-8" />
         <style>
-          body { font-family: Arial, sans-serif; font-size: 12px; color: black; }
-          table { width: 100%; border-collapse: collapse; }
-          th, td { border: 1px solid #000; padding: 4px; text-align: left; }
-          thead { background-color: #f0f0f0; }
-          img { display: block; margin: 0 auto; max-width: 100%; height: auto; }
-          h3 { margin: 10px 0 5px 0; }
-
-          /* same print-only rules inside the print window */
-          .print-only { display: block; }
-          .print-letterhead{
-            display:grid; grid-template-columns:64px auto 64px;
-            align-items:center; justify-content:center; column-gap:14px;
-            margin:0 auto 10px; text-align:center; width:fit-content;
-          }
-          .print-logo{ width:64px; height:64px; object-fit:contain; }
-          .print-heading{ line-height:1.1; color:#000; }
-          .print-heading .ph-line-1{ font-size:12pt; font-weight:500; }
-          .print-heading .ph-line-2{ font-size:12pt; font-weight:800; }
-          .print-heading .ph-line-3{ font-size:12pt; font-weight:500; }
-          .print-heading .ph-line-4{ font-size:12pt; font-weight:800; margin-top:4px; letter-spacing:.3px; }
-          .print-sub{ font-size:12pt; margin-top:4px; }
-          .print-rule{ height:1px; border:0; background:#cfd8e3; margin:8px 0 12px; }
+          body{font-family:'Plus Jakarta Sans',Arial,sans-serif;font-size:12px;color:#000;}
+          table{width:100%;border-collapse:collapse;}
+          th,td{border:1px solid #000;padding:4px 6px;text-align:left;}
+          thead{background:#d8e4f0;print-color-adjust:exact;}
+          img{display:block;margin:0 auto;max-width:100%;height:auto;}
+          h3{margin:10px 0 6px;color:#000;}
+          .print-letterhead{display:grid;grid-template-columns:64px auto 64px;align-items:center;justify-content:center;column-gap:60px;margin:0 auto 10px;text-align:center;width:fit-content;}
+          .print-logo{width:64px;height:64px;object-fit:contain;}
+          .print-heading{line-height:1.1;color:#000;}
+          .print-heading .ph-line-1{font-size:12pt;font-weight:500;}
+          .print-heading .ph-line-2{font-size:14pt;font-weight:800;}
+          .print-heading .ph-line-3{font-size:12pt;font-weight:600;}
+          .print-sub{font-size:11pt;margin-top:4px;}
+          .print-rule{height:1px;border:0;background:#cfd8e3;margin:8px 0 12px;}
+          .form-submit,.selected-filters,.chart-controls-panel,.medicine-chart-controls,.chart-toggle-group,.medicine-chart-hidden{display:none!important;}
+          .chart-card{break-inside:avoid;page-break-inside:avoid;margin:10px 0 18px;text-align:center;}
+          .medicine-charts-grid{display:block!important;margin:0 0 16px!important;}
+          .report-table-scroll{overflow:visible!important;max-height:none!important;}
+          .summary-table,.summary-table2{box-shadow:none!important;border-radius:0!important;}
         </style>
       </head>
       <body>
         ${printHeader}
+        <hr class="print-rule">
         ${clone.innerHTML}
       </body>
     </html>
@@ -1577,6 +2047,12 @@ document.addEventListener('DOMContentLoaded', () => {
     .then(data => {
       const fullName = (data && data.full_name) ? data.full_name : '';
 
+<<<<<<< HEAD
+      // Greeting (keep current behavior)
+      const greetingEl = document.getElementById('userGreeting');
+      if (greetingEl) {
+        greetingEl.textContent = fullName ? `Hello, ${fullName}!` : 'Hello, User!';
+=======
       // Sidebar user display
       const sidebarNameEl = document.getElementById('sidebarUserName');
       if (sidebarNameEl) {
@@ -1586,6 +2062,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const legacyGreeting = document.getElementById('userGreeting');
       if (legacyGreeting) {
         legacyGreeting.textContent = fullName ? `Hello, ${fullName}!` : 'Hello, User!';
+>>>>>>> 33fc5da55d190a4b262e16a6c8935100d5aecf81
       }
 
       // Build the signature block
@@ -1599,6 +2076,11 @@ document.addEventListener('DOMContentLoaded', () => {
       gb.querySelector('.sig-name').textContent = fullName || '________________';
     })
     .catch(() => {
+<<<<<<< HEAD
+      const greetingEl = document.getElementById('userGreeting');
+      if (greetingEl) {
+        greetingEl.textContent = 'Hello, User!';
+=======
       const sidebarNameEl = document.getElementById('sidebarUserName');
       if (sidebarNameEl) {
         sidebarNameEl.textContent = 'Physician';
@@ -1606,6 +2088,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const legacyGreeting = document.getElementById('userGreeting');
       if (legacyGreeting) {
         legacyGreeting.textContent = 'Hello, User!';
+>>>>>>> 33fc5da55d190a4b262e16a6c8935100d5aecf81
       }
       const gb = document.getElementById('generated_by');
       gb.innerHTML = `
@@ -1665,44 +2148,8 @@ fetch('../php/getUserId.php')
 
 
 
+
 <script>
-(function () {
-  const sidebar = document.getElementById('sidebar');
-  const toggle = document.getElementById('sidebarToggle');
-  const overlay = document.getElementById('sidebarOverlay');
-  const MOBILE_BP = 768;
-
-  if (!sidebar || !toggle || !overlay) return;
-
-  function isMobile() {
-    return window.innerWidth <= MOBILE_BP;
-  }
-
-  function closeMobileSidebar() {
-    sidebar.classList.remove('mobile-open');
-    overlay.classList.remove('active');
-    document.body.style.overflow = '';
-  }
-
-  toggle.addEventListener('click', function () {
-    if (isMobile()) {
-      const open = sidebar.classList.toggle('mobile-open');
-      overlay.classList.toggle('active', open);
-      document.body.style.overflow = open ? 'hidden' : '';
-    } else {
-      sidebar.classList.toggle('collapsed');
-    }
-  });
-
-  overlay.addEventListener('click', closeMobileSidebar);
-
-  window.addEventListener('resize', function () {
-    if (!isMobile()) {
-      closeMobileSidebar();
-    }
-  });
-})();
-
 document.addEventListener("DOMContentLoaded", () => {
   const updateReferrals = document.getElementById("updateReferrals");
   const searchInput = document.getElementById("patientSearch");
@@ -1743,8 +2190,21 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   }
+
+  fetch('../php/getUserName.php')
+    .then(response => response.json())
+    .then(data => {
+      const sidebarName = document.getElementById('sidebarUserName');
+      if (sidebarName) {
+        sidebarName.textContent = data.full_name || 'Nurse';
+      }
+    })
+    .catch(error => {
+      console.error('Error fetching sidebar user name:', error);
+      const sidebarName = document.getElementById('sidebarUserName');
+      if (sidebarName) sidebarName.textContent = 'Nurse';
+    });
 });
 </script>
-
 </body>
 </html>

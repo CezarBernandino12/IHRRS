@@ -3,529 +3,641 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Individual Treatment Record</title>
+
     <link rel="icon" href="../img/logo.png">
-    <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
-    <link rel="stylesheet" href="css/exist.css">
-    <link rel="stylesheet" href="css/modal.css">
-    <link rel="stylesheet" href="css/print.css">
+    <link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/visit.css">
     <link rel="stylesheet" href="css/sidebar.css">
     <link rel="stylesheet" href="css/logout.css">
-    <title>Individual Treatment Record</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 </head>
 
 <body>
+
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-    <section id="sidebar">
-        <a href="#" class="sidebar-brand">
-            <img src="../img/logo.png" alt="RHU Logo" class="brand-logo">
-            <div class="brand-text">
-                <span class="brand-name">Hello Nurse</span>
-            </div>
-        </a>
+<section id="sidebar">
+    <a href="#" class="sidebar-brand">
+        <img src="../img/logo.png" alt="RHU Logo" class="brand-logo">
 
-        <div class="sidebar-scroll">
-            <div class="sidebar-section-label">Main Menu</div>
-            <ul class="side-menu top">
-                <li>
-                    <a href="dashboard" data-tooltip="Dashboard">
-                        <i class="bx bxs-dashboard nav-icon"></i>
-                        <span class="nav-label">Dashboard</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="ITR" data-tooltip="Add New ITR">
-                        <i class="bx bxs-notepad nav-icon"></i>
-                        <span class="nav-label">Add New ITR</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="#" id="updateReferrals" data-tooltip="Pending Referrals">
-                        <i class="bx bxs-user nav-icon"></i>
-                        <span class="nav-label">Pending Referrals</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="followUpConsultations" data-tooltip="Follow-Up Visits">
-                        <i class="bx bxs-user nav-icon"></i>
-                        <span class="nav-label">Follow-Up Visits</span>
-                    </a>
-                </li>
-                <li class="active">
-                    <a href="searchPatient" data-tooltip="Patient Records">
-                        <i class="bx bxs-search nav-icon"></i>
-                        <span class="nav-label">Patient Records</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="history" data-tooltip="Referral History">
-                        <i class="bx bx-history nav-icon"></i>
-                        <span class="nav-label">Referral History</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="reports" data-tooltip="Reports">
-                        <i class="bx bx-notepad nav-icon"></i>
-                        <span class="nav-label">Reports</span>
-                    </a>
-                </li>
-            </ul>
-
-            <div class="sidebar-divider"></div>
-
-            <ul class="side-menu">
-                <li>
-                    <a href="#" class="logout" data-tooltip="Logout" onclick="return confirmLogout()">
-                        <i class="bx bxs-log-out-circle nav-icon"></i>
-                        <span class="nav-label">Logout</span>
-                    </a>
-                </li>
-            </ul>
+        <div class="brand-text">
+            <span class="brand-name">Hello Nurse</span>
         </div>
+    </a>
 
-        <div class="sidebar-footer">
-            <div class="sidebar-user">
-                <img src="../img/nurse.png" alt="Nurse User">
-                <div class="sidebar-user-info">
-                    <div class="user-name" id="sidebarUserName">Nurse User</div>
-                    <div class="user-role">RHU Nurse</div>
-                </div>
+    <div class="sidebar-scroll">
+        <div class="sidebar-section-label">Main Menu</div>
+
+        <ul class="side-menu top">
+            <li>
+                <a href="dashboard" data-tooltip="Dashboard">
+                    <i class="bx bxs-dashboard nav-icon"></i>
+                    <span class="nav-label">Dashboard</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="ITR" data-tooltip="Add New ITR">
+                    <i class="bx bxs-notepad nav-icon"></i>
+                    <span class="nav-label">Add New ITR</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="#" id="updateReferrals" data-tooltip="Pending Referrals">
+                    <i class="bx bxs-user nav-icon"></i>
+                    <span class="nav-label">Pending Referrals</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="followUpConsultations" data-tooltip="Follow-Up Visits">
+                    <i class="bx bxs-calendar-check nav-icon"></i>
+                    <span class="nav-label">Follow-Up Visits</span>
+                </a>
+            </li>
+
+            <li class="active">
+                <a href="searchPatient" data-tooltip="Patient Records">
+                    <i class="bx bxs-search nav-icon"></i>
+                    <span class="nav-label">Patient Records</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="history" data-tooltip="Referral History">
+                    <i class="bx bx-history nav-icon"></i>
+                    <span class="nav-label">Referral History</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="reports" data-tooltip="Reports">
+                    <i class="bx bx-notepad nav-icon"></i>
+                    <span class="nav-label">Reports</span>
+                </a>
+            </li>
+        </ul>
+
+        <div class="sidebar-divider"></div>
+
+        <ul class="side-menu">
+            <li>
+                <a href="#" class="logout" data-tooltip="Logout" onclick="return confirmLogout()">
+                    <i class="bx bxs-log-out-circle nav-icon"></i>
+                    <span class="nav-label">Logout</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="sidebar-footer">
+        <div class="sidebar-user">
+            <img src="../img/nurse.png" alt="Nurse User">
+
+            <div class="sidebar-user-info">
+                <div class="user-name" id="sidebarUserName">Nurse User</div>
+                <div class="user-role">RHU Nurse</div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
 <section id="content">
-        <nav>
-            <button class="nav-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
-                <i class="bx bx-menu"></i>
+    <nav>
+        <button type="button" class="nav-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+            <i class="bx bx-menu"></i>
+        </button>
+
+        <div class="nav-search">
+            <input 
+                type="search" 
+                id="patientSearch" 
+                placeholder="Enter patient name..." 
+                name="search" 
+                autocomplete="off"
+            >
+
+            <button type="button" id="searchButton" aria-label="Search">
+                <i class="bx bx-search"></i>
             </button>
 
-            <div class="nav-search" style="position: relative;">
-                <input type="search" id="patientSearch" placeholder="Enter patient name..." name="search" autocomplete="off">
-                <button type="button" id="searchButton" aria-label="Search">
-                    <i class="bx bx-search"></i>
-                </button>
-                <div id="resultDropdown" class="dropdown-content"></div>
+            <div id="resultDropdown" class="dropdown-content"></div>
+        </div>
+    </nav>
+
+    <main>
+        <div class="page-title">
+            <div>
+                <h1>Individual Treatment Record</h1>
+                <p>Review patient visit details, diagnosis, medication, remarks, and print the treatment record.</p>
             </div>
-        </nav>
-
-        <main>
-            <div class="head-title">
-            </div>
-
-
-    <div class="container-header">
-        <h2>VISIT DETAILS</h2>
-    </div>
-    
-    <div class="container">
-        <p style="display: flex; justify-content: space-between; align-items: center;">
-            <b>PERSONAL INFORMATION:</b>
-            <span id="togglePersonalInfo" class="view-all-btn">SHOW</span>
-        </p>
-        
-        <div id="hiddenPersonalInfo" style="display: none;">
-            
-         <div class="patient-info">
-
-    <div class="info-row">
-        <div class="info-group">
-            <label>Last Name:</label>
-            <p class="patient-last-name">N/A</p>
         </div>
-    </div>
 
-    <div class="info-row">
-        <div class="info-group">
-            <label>First Name:</label>
-            <p class="patient-first-name">N/A</p>
-        </div>
-        <div class="info-group">
-            <label>Middle Name:</label>
-            <p class="patient-middle-name">N/A</p>
-        </div>
-        <div class="info-group">
-            <label>Ext:</label>
-            <p class="patient-extension">N/A</p>
-        </div>
-    </div>
+        <section class="visit-page">
+            <section class="visit-card">
+                <div class="section-heading">
+                    <div class="section-heading-left">
+                        <span class="section-icon">
+                            <i class="bx bx-user"></i>
+                        </span>
 
-    <div class="info-row">
-        <div class="info-group">
-            <label>Birth Place:</label>
-            <p class="patient-birth-place">N/A</p>
-        </div>
-        <div class="info-group">
-            <label>Date of Birth:</label>
-            <p class="date-of-birth">N/A</p>
-        </div>
-        <div class="info-group">
-            <label>Age:</label>
-            <p class="age">N/A</p>
-        </div>
-    </div>
-
-    <div class="info-row">
-        <div class="info-group full-width">
-            <label>Permanent Address:</label>
-            <p class="address">N/A</p>
-        </div>
-    </div>
-
-    <div class="info-row">
-        <div class="info-group">
-            <label>Civil Status:</label>
-            <p class="civil-status">N/A</p>
-        </div>
-        <div class="info-group">
-            <label>Mobile Number:</label>
-            <p class="contact-number">N/A</p>
-        </div>
-    </div>
-
-    <div class="info-row">
-        <div class="info-group">
-            <label>Religion:</label>
-            <p class="religion">N/A</p>
-        </div>
-        <div class="info-group">
-            <label>Occupation:</label>
-            <p class="occupation">N/A</p>
-        </div>
-    </div>
-
-    <div class="info-row">
-        <div class="info-group">
-            <label>Educational Attainment:</label>
-            <p class="educational-attainment">N/A</p>
-        </div>
-        <div class="info-group">
-            <label>Philhealth Member Number:</label>
-            <p class="philhealth-member-no">N/A</p>
-        </div>
-        <div class="info-group">
-            <label>Family Serial Number:</label>
-            <p class="family-serial-no">N/A</p>
-        </div>
-        <div class="info-group">
-            <label>Category:</label>
-            <p class="category">N/A</p>
-        </div>
-    </div>
-
-    <div class="info-row">
-        <div class="info-group">
-            <label>Gender:</label>
-            <p class="sex">N/A</p>
-        </div>
-        <div class="info-group">
-            <label>4Ps Status:</label>
-            <p class="fourps-status">N/A</p>
-        </div>
-    </div>
-
-</div>
-
-        </div>
-       <!-- INITIAL ASSESSMENT / VISIT INFO -->
-<div class="assessment-section">
-    
-    <h3>Initial Assessment / Visit Info</h3>
-
-    <!-- Patient Alert -->
-    <div class="assessment-card">
-        <label>Patient Alert:</label>
-        <p class="patient-alert">N/A</p>
-    </div>
-
-    <!-- Date of Visit -->
-    <div class="assessment-card">
-        <label>Date of Visit:</label>
-        <p class="visit-date">N/A</p>
-    </div>
-
-    <!-- Chief Complaints -->
-    <div class="assessment-card">
-        <label>Chief Complaints:</label>
-        <p class="chief-complaints">N/A</p>
-    </div>
-
-    <!-- Vital Signs -->
-    <div class="assessment-card">
-        <label>Vital Signs</label>
-        <div class="vitals-grid">
-            <div><strong>Blood Pressure:</strong> <p class="blood-pressure">N/A</p></div>
-            <div><strong>Temperature (°C):</strong> <p class="temperature">N/A</p></div>
-            <div><strong>Weight (kg):</strong> <p class="weight">N/A</p></div>
-            <div><strong>Height (cm):</strong> <p class="height">N/A</p></div>
-            <div><strong>Pulse Rate:</strong> <p class="pulse-rate">N/A</p></div>
-            <div><strong>Respiratory Rate:</strong> <p class="respiratory-rate">N/A</p></div>
-        </div>
-    </div>
-
-    <!-- Medicines -->
-    <div class="assessment-card">
-        <label>Given Medicines (BHS):</label>
-        <div class="medicine-lists">
-            <p class="assessment-val no-background">No medication recorded.</p>
-        </div>
-    </div>
-
-    <!-- Remarks -->
-    <div class="assessment-card">
-        <label>BHW Remarks:</label>
-        <p class="remarks">N/A</p>
-    </div>
-
-    <!-- Hidden Barangay -->
-    <div class="assessment-card" style="display:none;">
-        <label>Barangay Health Station:</label>
-        <p class="bhs">N/A</p>
-    </div>
-
-</div>
- <br>
-
-            <p style="display: flex; justify-content: space-between; align-items: center;">
-                <b>PATIENT'S DIAGNOSIS :</b>  
-            </p>
-
-            <div class="additional-group box-group additional-fields" style="background-color: rgb(255, 255, 255);">
-                
-                <div class="additional-options">
-                        <div class="assessment-card">
-                         <label>Laboratory Test Result:</label>
-                    <div id="lab-file-container" style="font-family: 'Trebuchet MS', sans-serif; border: 1px solid #fff; padding: 10px; border-style: none; background-color: #fff; color: #00000079; font-weight: bolder;">
-                       <!-- File preview will load here -->
-                  </div>
-                    </div>
-                       <div class="assessment-card">
-                        <label for="diagnosis">Diagnosis:</label>
-                         <input type="text" id="diagnosis" name="diagnosis" class="diagnosis" style="background-color: #fff; color: #0447ac; border-style: none; font-weight: bolder; font-size: 15px;" readonly value="N/A">
-                    </div>
-                         <div class="assessment-card">
-                        <label for="diagnosis_status">Status:</label>
-                         <p class="diagnosis_status" style="font-family: 'Trebuchet MS', sans-serif; margin-left: 10px;">N/A</p>
+                        <div>
+                            <h2>Personal Information</h2>
+                            <p>Patient demographic and household details.</p>
+                        </div>
                     </div>
 
-                       <div class="assessment-card">
-                         <!-- MEDICATION -->
-                         <div class="form-row" style="font-weight: bold;">
-                            <label for="medicine"><b>Given Medicines:</b></label> 
-                            <div class="rhu-medicine-lists" style="margin-left: 20px; " >
-                                <p> No medication recorded.</p>
+                    <button type="button" id="togglePersonalInfo" class="view-all-btn">
+                        View All
+                    </button>
+                </div>
+
+                <div id="hiddenPersonalInfo" class="personal-info-grid is-hidden">
+                    <div class="form-group">
+                        <label>Last Name</label>
+                        <p class="patient-last-name">N/A</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>First Name</label>
+                        <p class="patient-first-name">N/A</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Middle Name</label>
+                        <p class="patient-middle-name">N/A</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Ext</label>
+                        <p class="patient-extension">N/A</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Birth Place</label>
+                        <p class="patient-birth-place">N/A</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Date of Birth</label>
+                        <p class="date-of-birth">N/A</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Age</label>
+                        <p class="age">N/A</p>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label>Permanent Address</label>
+                        <p class="address">N/A</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Civil Status</label>
+                        <p class="civil-status">N/A</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Mobile Number</label>
+                        <p class="contact-number">N/A</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Religion</label>
+                        <p class="religion">N/A</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Occupation</label>
+                        <p class="occupation">N/A</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Birth Weight</label>
+                        <p class="birth-weight">N/A</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Educational Attainment</label>
+                        <p class="educational-attainment">N/A</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Philhealth Member Number</label>
+                        <p class="philhealth-member-no">N/A</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Family Serial Number</label>
+                        <p class="family-serial-no">N/A</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Category</label>
+                        <p class="category">N/A</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Gender</label>
+                        <p class="sex">N/A</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>4Ps Status</label>
+                        <p class="fourps-status">N/A</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="visit-card">
+                <div class="section-heading">
+                    <div class="section-heading-left">
+                        <span class="section-icon">
+                            <i class="bx bx-clipboard"></i>
+                        </span>
+
+                        <div>
+                            <h2>Initial Assessment / Visit Info</h2>
+                            <p>Barangay assessment, vital signs, medicines, and BHW remarks.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="subsection-title">
+                        <i class="bx bx-info-circle"></i>
+                        <span>Visit Information</span>
+                    </div>
+
+                    <div class="visit-info-grid">
+                        <div class="form-group">
+                            <label>Patient Alert</label>
+                            <p class="patient-alert">N/A</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Date of Visit</label>
+                            <p class="visit-date">N/A</p>
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label>Chief Complaints</label>
+                            <p class="chief-complaints text-display">N/A</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="subsection-title">
+                        <i class="bx bx-heart"></i>
+                        <span>Vital Signs</span>
+                    </div>
+
+                    <div class="vitals-section">
+                        <div class="form-group">
+                            <label>Blood Pressure</label>
+                            <p class="blood-pressure">N/A</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Temperature (°C)</label>
+                            <p class="temperature">N/A</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Weight (kg)</label>
+                            <p class="weight">N/A</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Height (cm)</label>
+                            <p class="height">N/A</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Pulse Rate</label>
+                            <p class="pulse-rate">N/A</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Respiratory Rate</label>
+                            <p class="respiratory-rate">N/A</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label>BMI</label>
+                            <p class="bmi">N/A</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="subsection-title">
+                        <i class="bx bx-capsule"></i>
+                        <span>Given Medicines from BHS</span>
+                    </div>
+
+                    <div class="medicine-list medicine-lists">
+                        <p class="empty-message no-background">No medication recorded.</p>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="subsection-title">
+                        <i class="bx bx-message-square-detail"></i>
+                        <span>BHW Remarks</span>
+                    </div>
+
+                    <div class="visit-info-grid">
+                        <div class="form-group full-width">
+                            <label>Remarks</label>
+                            <p class="remarks text-display">N/A</p>
+                        </div>
+
+                        <div class="form-group" style="display: none;">
+                            <label>Barangay Health Station</label>
+                            <p class="bhs">N/A</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="visit-card">
+                <div class="section-heading">
+                    <div class="section-heading-left">
+                        <span class="section-icon">
+                            <i class="bx bx-plus-medical"></i>
+                        </span>
+
+                        <div>
+                            <h2>Patient Diagnosis</h2>
+                            <p>RHU laboratory result, diagnosis, medication, physician remarks, and treatment status.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="subsection-title">
+                        <i class="bx bx-file"></i>
+                        <span>Laboratory and Diagnosis</span>
+                    </div>
+
+                    <div class="visit-info-grid">
+                        <div class="form-group full-width">
+                            <label>Laboratory Test Result</label>
+                            <div id="lab-file-container" class="file-preview-box">
+                                <!-- File preview will load here -->
                             </div>
                         </div>
-                       </div>
-                <div class="assessment-card">
-                <label for="instruction">Remarks:</label>
-                <p class="instruction" style="margin-left: 10px;">N/A</p>
-            </div>
-            <div class="assessment-card" 
-     style="display: flex; align-items: center; flex-wrap: wrap; gap: 20px; font-family: 'Trebuchet MS', sans-serif;">
-  
-  <div style="display: flex; align-items: center;">
-    <label for="doctor">Physician:</label>
-    <p style="margin-top: 5px;" class="doctor" >N/A</p>
-  </div>
 
-  <div style="display: flex; align-items: center;">
-    <label for="licenseNo">License Number:</label>
-    <p style="margin-top: 5px;" class="licenseNo" >N/A</p>
-  </div>
-  <div style="display: none;">
-    <label for="rhu">RHU:</label>
-    <p class="rhu">N/A</p>
-  </div>
+                        <div class="form-group">
+                            <label for="diagnosis">Diagnosis</label>
+                            <input type="text" id="diagnosis" name="diagnosis" class="diagnosis" readonly value="N/A">
+                        </div>
 
-</div>
+                        <div class="form-group">
+                            <label>Status</label>
+                            <p class="diagnosis_status">N/A</p>
+                        </div>
+                    </div>
+                </div>
 
-
-
-          
-                                
-        
-                            </div>
-                        </div> <br>
-                        
-                    
-                      <button id="printBtn" class="footer-btn print-pill" type="button" title="Print">
-                              <i class='bx bxs-printer' aria-hidden="true"></i>
-                              <span>Print</span>
-                          </button>
-                         <button id="resumeBtn" class="footer-btn action-pill" type="button" title="Resume Treatment">
-                             <i class='bx bxs-capsule' aria-hidden="true"></i>
-                              <span>Resume Treatment</span>
-                        </button>
-                        <button id="addMedCertBtn" class="footer-btn action-pill" type="button" title="Add Medical Certificate">
-                          <i class='bx bx-badge-check' aria-hidden="true"></i>
-                          <span>Issue Medical Certificate</span>
-                        </button>
-
+                <div class="form-section">
+                    <div class="subsection-title">
+                        <i class="bx bx-capsule"></i>
+                        <span>Given Medicines from RHU</span>
                     </div>
 
-        </main>
-    </section>
-
-                        <div id="printContent" style="display:none;">
-
-<div class="print-letterhead">
-  <img src="../img/daet_logo.png" alt="Municipality / Station Logo" class="print-logo" aria-hidden="true">
-
-  <div class="print-heading">
-    <div class="ph-line-1">Republic of the Philippines</div>
-    <div class="ph-line-2">Daet, Camarines Norte</div>
-    <div class="ph-line-3" id="printRHU"></div>
-    <hr class="print-rule"> 
-    
-  </div>
-
-  <img src="../img/mho_logo.png" alt="RHU Logo" class="print-logo" aria-hidden="true">
-</div>
-
-<h3 class="print-title">INDIVIDUAL TREATMENT RECORD</h3> <br>
-    <p><strong>Family Serial No.:</strong> <span id="printFamilySerial"></span></p>
-
-  <table class="info-table" style="width:100%; border-collapse:collapse;">
-  <tr>
-    <td><strong>Last Name:</strong> <span id="printLastName"></span></td>
-    <td><strong>First Name:</strong> <span id="printFirstName"></span></td>
-    <td><strong>Middle Name:</strong> <span id="printMiddleName"></span></td>
-    <td><strong>Ext:</strong> <span id="printExt"></span></td>
-  </tr>
-  <tr>
-  
-    <td><strong>Birthday:</strong> <span id="printBirthday"></span></td>
-    <td><strong>Sex:</strong> <span id="printSex"></span></td>
-    <td><strong>Civil Status:</strong> <span id="printCivilStatus"></span></td>
-  </tr>
-  <tr>
-    <td colspan="4"><strong>Address:</strong> <span id="printAddress"></span></td>
-  </tr>
-  <tr>
-    <td colspan="2"><strong>Mobile No.:</strong> <span id="printMobileNo"></span></td>
-    <td colspan="2"><strong>Educational Attainment:</strong> <span id="printEducationalAttainment"></span></td>
-  </tr>
-  <tr>
-    <td><strong>PhilHealth No.:</strong> <span id="printPhilhealthNum"></span></td>
-    <td><strong>Category:</strong> <span id="printCategory"></span></td>
-    <td><strong>Birth Weight:</strong> <span id="printBirthWeight"></span>N/A</td>
-    <td><strong>4Ps:</strong> <span id="print4ps"></span></td>
-  </tr>
-</table>
-
-    <br /><br />
-
-    <table class="info-table">
-      <tr>
-        <td><strong>Patient Alert:</strong> <span id="printPatientAlert"></span></td>
-      </tr>
-    </table>
-
-    
-    <table class="treatment-table">
-      <thead>
-        <tr>
-          <th width="10%">DATE</th>
-          <th width="8%">AGE</th>
-          <th width="27%">CHIEF COMPLAINTS &amp; VITAL SIGNS<br />(BP, Wt, Ht, Temp, CR, RR, BMI)</th>
-          <th width="30%">DIAGNOSIS / TREATMENT / MEDICATION / INSTRUCTION</th>
-          <th width="25%">REMARKS<br />CONSULTED / REFERRED / SIGNATURE</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><span id="printDate"></span></td>
-          <td><span id="printVisitAge"></span> yrs old</td>
-          <td>
-            <div><strong>Chief Complaints:</strong> <span id="printChiefComplaints"></span></div>
-            <div>BP: <span id="printBp"></span></div>
-            <div>Wt: <span id="printWt"></span></div>
-            <div>Ht: <span id="printHt"></span></div>
-            <div>Temp: <span id="printTemp"></span></div>
-            <div>CR: <span id="printCr"></span></div>
-            <div>RR: <span id="printRr"></span></div>
-            <div>BMI: <span id="printBmi"></span></div>
-          </td>
-          <td>
-            <div><strong>Diagnosis:</strong> <span id="printDiagnosis"></span></div> <br>
-            <div>
- <strong>Medications:</strong> <br>
-<span id="printMedication" 
-      style="display: block; white-space: pre-line; line-height: 1.0; margin: 0; padding: 0; margin-top: -10px;"></span>
-
-</div>
-            
-          </td>
-          <td>
-            <div><strong>Remarks:</strong> <span id="printInstruction"></span></div> <br><br><br><br><br>
-            <div style="margin-top:10px;"><strong>Physician:</strong> <br> <span id="printUsername"></span></div>
-              <div><strong>Lic. No.:</strong> <span id="printLicenseNo"></span></div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-            
-                    <input type="hidden" id="visit_id" name="visit_id">
-                    <input type="hidden" id="patient_id" name="patient_id">
-                    <input type="hidden" name="doctor_id" id="doctor_id" value="1">
-                     <input type="hidden" name="consultation_id" id="consultation_id" value="">
-
-                    <div class="referral-form-footer">
-              
-                    
-        
-                      </div>
-                   <style>
-    .referral-form-footer { text-align: right; margin-top: 20px; }
-    .footer-btn {
-      padding: 10px 18px; margin-left: 10px; background-color: #162e51;
-      color: #fff; font-size: 15px; border: none; border-radius: 50px;
-      cursor: pointer; transition: background-color .3s ease;
-    }
-    .footer-btn:hover { background-color: #15253d; }
-  </style>
-                    </div> </div>
-
-        
-            
-
-            
-        <div id="myModal" class="modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <img src="../img/verify.png" alt="Checkmark" class="checkmark-image">
-                    <h3>Confirmation</h3>
-                    <span class="close-btn" id="closeBtn">&times;</span>
-                </div>
-                <div class="modal-body">
-                    <p>Save patient record?
-                </div>
-                
-                <div class="modal-footer">
-                    <button id="cancelButton" class="btn maybe">Cancel</button>
-                    <button id="yesButton" class="btn yes">Save</button>
+                    <div class="medicine-list rhu-medicine-lists">
+                        <p class="empty-message">No medication recorded.</p>
+                    </div>
                 </div>
 
-            </div>
+                <div class="form-section">
+                    <div class="subsection-title">
+                        <i class="bx bx-message-square-detail"></i>
+                        <span>Remarks and Physician Details</span>
+                    </div>
+
+                    <div class="visit-info-grid">
+                        <div class="form-group full-width">
+                            <label>Remarks</label>
+                            <p class="instruction text-display">N/A</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Physician</label>
+                            <p class="doctor">N/A</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label>License Number</label>
+                            <p class="licenseNo">N/A</p>
+                        </div>
+
+                        <div class="form-group" style="display: none;">
+                            <label>RHU</label>
+                            <p class="rhu">N/A</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="referral-form-footer">
+                    <button id="printBtn" class="footer-btn print-pill" type="button" title="Print">
+                        <i class="bx bxs-printer" aria-hidden="true"></i>
+                        <span>Print</span>
+                    </button>
+
+                    <button id="resumeBtn" class="footer-btn action-pill" type="button" title="Resume Treatment">
+                        <i class="bx bxs-capsule" aria-hidden="true"></i>
+                        <span>Resume Treatment</span>
+                    </button>
+
+                    <button id="addMedCertBtn" class="footer-btn action-pill" type="button" title="Add Medical Certificate">
+                        <i class="bx bx-badge-check" aria-hidden="true"></i>
+                        <span>Issue Medical Certificate</span>
+                    </button>
+                </div>
+            </section>
+        </section>
+    </main>
+</section>
+
+<input type="hidden" id="visit_id" name="visit_id">
+<input type="hidden" id="patient_id" name="patient_id">
+<input type="hidden" name="doctor_id" id="doctor_id" value="1">
+<input type="hidden" name="consultation_id" id="consultation_id" value="">
+
+<!-- PRINT TEMPLATE -->
+<div id="printContent" style="display:none;">
+    <div class="print-letterhead">
+        <img src="../img/daet_logo.png" alt="Municipality / Station Logo" class="print-logo" aria-hidden="true">
+
+        <div class="print-heading">
+            <div class="ph-line-1">Republic of the Philippines</div>
+            <div class="ph-line-2">Daet, Camarines Norte</div>
+            <div class="ph-line-3" id="printRHU"></div>
+            <hr class="print-rule">
         </div>
 
-        
+        <img src="../img/mho_logo.png" alt="RHU Logo" class="print-logo" aria-hidden="true">
+    </div>
+
+    <h3 class="print-title">INDIVIDUAL TREATMENT RECORD</h3>
+    <br>
+
+    <p><strong>Family Serial No.:</strong> <span id="printFamilySerial"></span></p>
+
+    <table class="info-table" style="width:100%; border-collapse:collapse;">
+        <tr>
+            <td><strong>Last Name:</strong> <span id="printLastName"></span></td>
+            <td><strong>First Name:</strong> <span id="printFirstName"></span></td>
+            <td><strong>Middle Name:</strong> <span id="printMiddleName"></span></td>
+            <td><strong>Ext:</strong> <span id="printExt"></span></td>
+        </tr>
+
+        <tr>
+            <td><strong>Birthday:</strong> <span id="printBirthday"></span></td>
+            <td><strong>Sex:</strong> <span id="printSex"></span></td>
+            <td><strong>Civil Status:</strong> <span id="printCivilStatus"></span></td>
+            <td><strong>Age:</strong> <span id="printAge"></span></td>
+        </tr>
+
+        <tr>
+            <td colspan="4"><strong>Address:</strong> <span id="printAddress"></span></td>
+        </tr>
+
+        <tr>
+            <td colspan="2"><strong>Mobile No.:</strong> <span id="printMobileNo"></span></td>
+            <td colspan="2"><strong>Educational Attainment:</strong> <span id="printEducationalAttainment"></span></td>
+        </tr>
+
+        <tr>
+            <td><strong>PhilHealth No.:</strong> <span id="printPhilhealthNum"></span></td>
+            <td><strong>Category:</strong> <span id="printCategory"></span></td>
+            <td><strong>Birth Weight:</strong> <span id="printBirthWeight"></span></td>
+            <td><strong>4Ps:</strong> <span id="print4ps"></span></td>
+        </tr>
+    </table>
+
+    <br><br>
+
+    <table class="info-table">
+        <tr>
+            <td><strong>Patient Alert:</strong> <span id="printPatientAlert"></span></td>
+        </tr>
+    </table>
+
+    <table class="treatment-table">
+        <thead>
+            <tr>
+                <th width="10%">DATE</th>
+                <th width="8%">AGE</th>
+                <th width="27%">CHIEF COMPLAINTS &amp; VITAL SIGNS<br>(BP, Wt, Ht, Temp, CR, RR, BMI)</th>
+                <th width="30%">DIAGNOSIS / TREATMENT / MEDICATION / INSTRUCTION</th>
+                <th width="25%">REMARKS<br>CONSULTED / REFERRED / SIGNATURE</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr>
+                <td><span id="printDate"></span></td>
+                <td><span id="printVisitAge"></span> yrs old</td>
+
+                <td>
+                    <div><strong>Chief Complaints:</strong> <span id="printChiefComplaints"></span></div>
+                    <div>BP: <span id="printBp"></span></div>
+                    <div>Wt: <span id="printWt"></span></div>
+                    <div>Ht: <span id="printHt"></span></div>
+                    <div>Temp: <span id="printTemp"></span></div>
+                    <div>CR: <span id="printCr"></span></div>
+                    <div>RR: <span id="printRr"></span></div>
+                    <div>BMI: <span id="printBmi"></span></div>
+                </td>
+
+                <td>
+                    <div><strong>Diagnosis:</strong> <span id="printDiagnosis"></span></div>
+                    <br>
+                    <div>
+                        <strong>Medications:</strong><br>
+                        <span id="printMedication" style="display:block; white-space:pre-line; line-height:1.2;"></span>
+                    </div>
+                </td>
+
+                <td>
+                    <div><strong>Remarks:</strong> <span id="printInstruction"></span></div>
+                    <br><br><br><br><br>
+                    <div style="margin-top:10px;">
+                        <strong>Physician:</strong><br>
+                        <span id="printUsername"></span>
+                    </div>
+                    <div><strong>Lic. No.:</strong> <span id="printLicenseNo"></span></div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div id="myModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <div class="modal-icon">
+                <i class="bx bx-help-circle"></i>
+            </div>
+
+            <h3>Confirmation</h3>
+            <span class="close-btn" id="closeBtn">&times;</span>
+        </div>
+
+        <div class="modal-body">
+            <p>Save patient record?</p>
+        </div>
+
+        <div class="modal-footer">
+            <button id="cancelButton" class="btn no" type="button">Cancel</button>
+            <button id="yesButton" class="btn yes" type="button">Save</button>
+        </div>
+    </div>
+</div>
+
+<div id="responseModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <div class="modal-icon modal-icon-response">
+                <i class="bx bx-info-circle"></i>
+            </div>
+
+            <h3>Notice</h3>
+        </div>
+
+        <div class="modal-body">
+            <p id="responseMessage"></p>
+        </div>
+
+        <div class="modal-footer">
+            <button id="closeResponseModal" class="btn yes" type="button">OK</button>
+        </div>
+    </div>
+</div>
+
 <div id="logoutModal" class="logout-modal">
     <div class="logout-modal-content">
         <div class="logout-modal-header">
             <h3>Confirm Logout</h3>
         </div>
+
         <div class="logout-modal-body">
             <p>Are you sure you want to logout?</p>
         </div>
+
         <div class="logout-modal-footer">
             <button onclick="closeModal()" class="logout-cancel-btn">Cancel</button>
             <button onclick="proceedLogout()" class="logout-confirm-btn">Yes, Logout</button>
@@ -533,96 +645,187 @@
     </div>
 </div>
 
+<script src="js/form.js"></script>
+<script src="js/script.js"></script>
 
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    checkUserSession();
+    setupUserName();
+    setupResponsiveSidebar();
+    setupUpdateReferrals();
+    setupPatientSearch();
+    setupPersonalInfoToggle();
+    setupPrintButton();
+    setupLogoutModal();
+});
 
-
-        <!-- Success/Error Modal -->
-        <div id="responseModal" class="modal">
-            <div class="modal-content">
-                <p id="responseMessage"></p>
-                <button id="closeResponseModal" class="modal-btn">OK</button>
-            </div>
-        </div>
-
-
-
-
-    </div>
-    <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      // Sidebar responsiveness
-      const sidebar = document.getElementById("sidebar");
-      function applyResponsiveSidebar() {
-        if (window.innerWidth <= 1024) sidebar.classList.add("hide");
-        else sidebar.classList.remove("hide");
-      }
-      applyResponsiveSidebar();
-      window.addEventListener("resize", applyResponsiveSidebar);
-
-      // Toggle Personal Info - handled in form.js
-
-      // Update Referrals via POST then redirect
-      document.getElementById("updateReferrals")?.addEventListener("click", async (e) => {
-        e.preventDefault();
-        try {
-          const res = await fetch("php/update_referrals.php", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            credentials: "same-origin"
-          });
-          const data = await res.json().catch(() => ({}));
-          console.log((data && data.message) || "Referrals updated.");
-        } catch (err) {
-          console.error("Error updating referrals:", err);
-        } finally {
-          window.location.href="pending";
+function checkUserSession() {
+    fetch("php/getUserId.php", {
+        credentials: "same-origin"
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data && data.error) {
+            window.location.href = "../auth/role";
         }
-      });
+    })
+    .catch(error => {
+        console.error("Error checking session:", error);
+    });
+}
 
-      // Logout modal helpers
-      window.confirmLogout = function () {
-        document.getElementById('logoutModal').style.display = 'block';
-        return false;
-      };
-      window.closeModal = function () {
-        document.getElementById('logoutModal').style.display = 'none';
-      };
-      window.proceedLogout = function () {
-        window.location.href='../ADMIN/php/logout';
-      };
-      window.addEventListener("click", (event) => {
-        const modal = document.getElementById('logoutModal');
-        if (event.target === modal) closeModal();
-      });
-      document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape") closeModal();
-      });
+function setupUserName() {
+    fetch("php/getUserName.php", {
+        credentials: "same-origin"
+    })
+    .then(response => response.json())
+    .then(data => {
+        const sidebarUserName = document.getElementById("sidebarUserName");
 
-      // Greeting
-      fetch('php/getUserName.php', { credentials: "same-origin" })
-        .then(r => r.json())
-        .then(data => {
-          document.getElementById('sidebarUserName').textContent =
-            data?.full_name ? `Hello, ${data.full_name}!` : 'Nurse User';
+        if (sidebarUserName) {
+            sidebarUserName.textContent = data && data.full_name ? data.full_name : "Nurse User";
+        }
+    })
+    .catch(error => {
+        console.error("Error fetching user name:", error);
+
+        const sidebarUserName = document.getElementById("sidebarUserName");
+
+        if (sidebarUserName) {
+            sidebarUserName.textContent = "Nurse User";
+        }
+    });
+}
+
+function setupResponsiveSidebar() {
+    const sidebar = document.getElementById("sidebar");
+    const toggle = document.getElementById("sidebarToggle");
+    const overlay = document.getElementById("sidebarOverlay");
+    const MOBILE_BP = 768;
+
+    if (!sidebar || !toggle || !overlay) {
+        return;
+    }
+
+    function isMobile() {
+        return window.innerWidth <= MOBILE_BP;
+    }
+
+    function closeMobileSidebar() {
+        sidebar.classList.remove("mobile-open");
+        overlay.classList.remove("active");
+        document.body.style.overflow = "";
+    }
+
+    toggle.addEventListener("click", function () {
+        if (isMobile()) {
+            const open = sidebar.classList.toggle("mobile-open");
+
+            overlay.classList.toggle("active", open);
+            document.body.style.overflow = open ? "hidden" : "";
+        } else {
+            sidebar.classList.toggle("collapsed");
+        }
+    });
+
+    overlay.addEventListener("click", closeMobileSidebar);
+
+    window.addEventListener("resize", function () {
+        if (!isMobile()) {
+            closeMobileSidebar();
+        }
+    });
+}
+
+function setupUpdateReferrals() {
+    const updateReferrals = document.getElementById("updateReferrals");
+
+    if (!updateReferrals) {
+        return;
+    }
+
+    updateReferrals.addEventListener("click", function (event) {
+        event.preventDefault();
+
+        fetch("php/update_referrals.php", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            credentials: "same-origin"
         })
-        .catch(() => (document.getElementById('sidebarUserName').textContent = 'Nurse User'));
+        .then(response => response.json())
+        .then(data => {
+            console.log(data && data.message ? data.message : "Referrals updated.");
+            window.location.href = "pending";
+        })
+        .catch(error => {
+            console.error("Error updating referrals:", error);
+            window.location.href = "pending";
+        });
+    });
+}
 
-      // Auth check
-      fetch('php/getUserId.php', { credentials: "same-origin" })
-        .then(r => r.json())
-        .then(data => { if (data?.error) window.location.href='../auth/role'; })
-        .catch(err => console.error('Error checking session:', err));
+function setupPatientSearch() {
+    const searchInput = document.getElementById("patientSearch");
+    const searchButton = document.getElementById("searchButton");
 
-      // PRINT HANDLER
-      document.getElementById("printBtn")?.addEventListener("click", () => {
-        const set = (id, selector, attr = "textContent") => {
-          const src = selector ? document.querySelector(selector) : null;
-          const val = src ? (attr === "value" ? src.value : src.textContent) : "";
-          const tgt = document.getElementById(id);
-          if (tgt) tgt.textContent = val || "";
+    if (!searchInput || !searchButton) {
+        return;
+    }
+
+    searchInput.addEventListener("keypress", function (event) {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            searchButton.click();
+        }
+    });
+
+    searchButton.addEventListener("click", function () {
+        const searchQuery = searchInput.value.trim();
+
+        if (searchQuery) {
+            sessionStorage.setItem("searchQuery", searchQuery);
+            window.location.href = "searchPatient";
+        } else {
+            alert("Please enter a patient name to search.");
+        }
+    });
+}
+
+function setupPersonalInfoToggle() {
+    const button = document.getElementById("togglePersonalInfo");
+    const panel = document.getElementById("hiddenPersonalInfo");
+
+    if (!button || !panel) {
+        return;
+    }
+
+    button.addEventListener("click", function () {
+        const hidden = panel.classList.toggle("is-hidden");
+        button.textContent = hidden ? "View All" : "View Less";
+    });
+}
+
+function setupPrintButton() {
+    const printButton = document.getElementById("printBtn");
+
+    if (!printButton) {
+        return;
+    }
+
+    printButton.addEventListener("click", function () {
+        const set = function (id, selector, attr = "textContent") {
+            const source = selector ? document.querySelector(selector) : null;
+            const value = source ? (attr === "value" ? source.value : source.textContent) : "";
+            const target = document.getElementById(id);
+
+            if (target) {
+                target.textContent = value || "";
+            }
         };
 
-        // Header & personal
         set("printRHU", ".rhu");
         set("printFamilySerial", ".family-serial-no");
         set("printLastName", ".patient-last-name");
@@ -642,7 +845,6 @@
         set("printCategory", ".category");
         set("printPatientAlert", ".patient-alert");
 
-        // Visit & vitals
         set("printDate", ".visit-date");
         set("printVisitAge", ".age");
         set("printChiefComplaints", ".chief-complaints");
@@ -654,187 +856,206 @@
         set("printRr", ".respiratory-rate");
         set("printBmi", ".bmi");
 
-        // Diagnosis / meds / remarks
-        const diagInput = document.getElementById("diagnosis");
-        document.getElementById("printDiagnosis").textContent = diagInput?.value || "";
-        document.getElementById("printMedication").textContent =
-          document.querySelector(".rhu-medicine-lists")?.textContent || "";
-        document.getElementById("printInstruction").textContent =
-          document.querySelector(".instruction")?.textContent || "";
-        document.getElementById("printUsername").textContent =
-          document.querySelector(".doctor")?.textContent || "";
-         document.getElementById("printLicenseNo").textContent =
-          document.querySelector(".licenseNo")?.textContent || "";
+        const diagnosisInput = document.getElementById("diagnosis");
+        const printDiagnosis = document.getElementById("printDiagnosis");
+        const printMedication = document.getElementById("printMedication");
+        const printInstruction = document.getElementById("printInstruction");
+        const printUsername = document.getElementById("printUsername");
+        const printLicenseNo = document.getElementById("printLicenseNo");
 
-        // Clone & prepare
+        if (printDiagnosis) {
+            printDiagnosis.textContent = diagnosisInput ? diagnosisInput.value : "";
+        }
+
+        if (printMedication) {
+            printMedication.textContent = document.querySelector(".rhu-medicine-lists")?.textContent || "";
+        }
+
+        if (printInstruction) {
+            printInstruction.textContent = document.querySelector(".instruction")?.textContent || "";
+        }
+
+        if (printUsername) {
+            printUsername.textContent = document.querySelector(".doctor")?.textContent || "";
+        }
+
+        if (printLicenseNo) {
+            printLicenseNo.textContent = document.querySelector(".licenseNo")?.textContent || "";
+        }
+
         const printContent = document.getElementById("printContent");
+
+        if (!printContent) {
+            return;
+        }
+
         const contentToPrint = printContent.cloneNode(true);
         contentToPrint.style.display = "block";
 
-        // Print CSS (standardized)
-const css = `
-  @page { size: A4; margin: 18mm 16mm; }
-  * { box-sizing: border-box; }
-  html, body { background:#fff !important; }
-  body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; line-height: 1.3; color: #000; }
+        const printStyles = `
+            @page { size: A4; margin: 18mm 16mm; }
+            * { box-sizing: border-box; }
+            html, body { background:#fff !important; }
+            body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; line-height: 1.3; color: #000; }
 
-  /* === Two-logo centered letterhead === */
-  .print-letterhead{
-  display: grid;
-  grid-template-columns: 80px auto 80px; /* same logo column width */
-  align-items: center;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  justify-content: center;
-  column-gap: 50px; /* space between logos and heading */
-  row-gap: 0;
-  width: fit-content;
-  margin: 8px auto 25px;
-  padding: 0;
-  }
+            .print-letterhead {
+                display: grid;
+                grid-template-columns: 80px auto 80px;
+                align-items: center;
+                justify-content: center;
+                column-gap: 50px;
+                width: fit-content;
+                margin: 8px auto 25px;
+                padding: 0;
+                font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            }
 
-          /* remove any margin added directly on the title */
-    .referral-heading .title {
-    margin-bottom: 0 !important;
-    }
+            .print-logo {
+                width: 65px;
+                height: 65px;
+                object-fit: contain;
+            }
 
-    /* add spacing below the whole header block */
-    .referral-header {
-    margin-bottom: 40px; 
-    }
+            .print-heading {
+                line-height: 1.1;
+                color: #000;
+            }
 
-    /* print version */
-    @media print {
-    .referral-header {
-        margin-bottom: 40pt !important;
-    }
-    }
-  .print-logo{ width: 65px; height: 65px; object-fit: contain; }
-  .print-heading{ line-height: 1.1; color: #000; }
-  .print-heading > *{ margin: 0; }
-  .ph-line-1{ font-size: 12pt; font-weight: 400; text-align: center;}
-  .ph-line-2{ font-size: 14pt; font-weight: 500; text-align: center;}
-  .ph-line-3{ font-size: 12pt; font-weight: 400; margin-top: 2px; text-align: center;}
-  .print-rule{ height: 1px; border: 0; background: #cfd8e3; margin: 6px 0 8px; }
-  .print-title{ font-size: 13.5pt; font-weight: 700; letter-spacing: .3px; margin-top: 50px; color:#000; text-align: center; }
+            .print-heading > * {
+                margin: 0;
+            }
 
-  /* === Info tables === */
-  .info-table { width: 100%; border-collapse: collapse; margin-top: 6px; table-layout: fixed; }
-  .info-table td { padding: 4px 6px; font-size: 11pt; vertical-align: top; word-break: break-word; }
+            .ph-line-1 {
+                font-size: 12pt;
+                font-weight: 400;
+                text-align: center;
+            }
 
-  /* === Treatment table === */
-  .treatment-table { width: 100%; border-collapse: collapse; margin-top: 10px; table-layout: fixed; }
-  .treatment-table th, .treatment-table td {
-    border: 1px solid #000; padding: 6px; vertical-align: top; word-wrap: break-word; font-size: 11pt;
-  }
-  .treatment-table th { background: #f2f2f2; text-align: left; font-weight: 700; }
-`;
+            .ph-line-2 {
+                font-size: 14pt;
+                font-weight: 500;
+                text-align: center;
+            }
 
+            .ph-line-3 {
+                font-size: 12pt;
+                font-weight: 400;
+                margin-top: 2px;
+                text-align: center;
+            }
 
-        const html = `
-          <html>
-            <head>
-              <title>Print Preview</title>
-              <meta charset="utf-8" />
-              <style>${css}</style>
-            </head>
-            <body>${contentToPrint.outerHTML}</body>
-          </html>
+            .print-rule {
+                height: 1px;
+                border: 0;
+                background: #cfd8e3;
+                margin: 6px 0 8px;
+            }
+
+            .print-title {
+                font-size: 13.5pt;
+                font-weight: 700;
+                letter-spacing: .3px;
+                margin-top: 50px;
+                color: #000;
+                text-align: center;
+            }
+
+            .info-table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 6px;
+                table-layout: fixed;
+            }
+
+            .info-table td {
+                padding: 4px 6px;
+                font-size: 11pt;
+                vertical-align: top;
+                word-break: break-word;
+            }
+
+            .treatment-table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 10px;
+                table-layout: fixed;
+            }
+
+            .treatment-table th,
+            .treatment-table td {
+                border: 1px solid #000;
+                padding: 6px;
+                vertical-align: top;
+                word-wrap: break-word;
+                font-size: 11pt;
+            }
+
+            .treatment-table th {
+                background: #f2f2f2;
+                text-align: left;
+                font-weight: 700;
+            }
         `;
 
-        const win = window.open("", "", "height=800,width=1000");
-        win.document.open();
-        win.document.write(html);
-        win.document.close();
-        win.onload = () => { win.focus(); win.print(); win.close(); };
-      });
+        const printWindow = window.open("", "", "height=800,width=1000");
 
- 
+        if (!printWindow) {
+            return;
+        }
+
+        printWindow.document.open();
+        printWindow.document.write(`
+            <!doctype html>
+            <html>
+            <head>
+                <meta charset="utf-8">
+                <title>Print Preview</title>
+                <style>${printStyles}</style>
+            </head>
+            <body>
+                ${contentToPrint.outerHTML}
+            </body>
+            </html>
+        `);
+        printWindow.document.close();
+
+        printWindow.onload = function () {
+            printWindow.focus();
+            printWindow.print();
+            printWindow.close();
+        };
     });
-            
-			</script>
-    <script>
-document.addEventListener("DOMContentLoaded", () => {
-  const sidebar = document.getElementById("sidebar");
+}
 
-  function applyResponsiveSidebar() {
-    if (window.innerWidth <= 1024) {
-      sidebar.classList.add("hide");   // collapsed on small screens
-    } else {
-      sidebar.classList.remove("hide"); // expanded on larger screens
-    }
-  }
+function setupLogoutModal() {
+    window.confirmLogout = function () {
+        document.getElementById("logoutModal").style.display = "block";
+        return false;
+    };
 
-  applyResponsiveSidebar();
-  window.addEventListener("resize", applyResponsiveSidebar);
+    window.closeModal = function () {
+        document.getElementById("logoutModal").style.display = "none";
+    };
 
-  // keep the rest of your existing code (auth, stats, modals, etc.)
-});
+    window.proceedLogout = function () {
+        window.location.href = "../ADMIN/php/logout";
+    };
+
+    window.addEventListener("click", function (event) {
+        const modal = document.getElementById("logoutModal");
+
+        if (event.target === modal) {
+            closeModal();
+        }
+    });
+
+    document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape") {
+            closeModal();
+        }
+    });
+}
 </script>
 
-<script>
-(function () {
-  const sidebar = document.getElementById('sidebar');
-  const toggle = document.getElementById('sidebarToggle');
-  const overlay = document.getElementById('sidebarOverlay');
-  const MOBILE_BP = 768;
-
-  if (!sidebar || !toggle || !overlay) return;
-
-  function isMobile() {
-    return window.innerWidth <= MOBILE_BP;
-  }
-
-  function closeMobileSidebar() {
-    sidebar.classList.remove('mobile-open');
-    overlay.classList.remove('active');
-    document.body.style.overflow = '';
-  }
-
-  toggle.addEventListener('click', function () {
-    if (isMobile()) {
-      const open = sidebar.classList.toggle('mobile-open');
-      overlay.classList.toggle('active', open);
-      document.body.style.overflow = open ? 'hidden' : '';
-    } else {
-      sidebar.classList.toggle('collapsed');
-    }
-  });
-
-  overlay.addEventListener('click', closeMobileSidebar);
-
-  window.addEventListener('resize', function () {
-    if (!isMobile()) {
-      closeMobileSidebar();
-    }
-  });
-})();
-
-document.addEventListener("DOMContentLoaded", () => {
-  const searchInput = document.getElementById("patientSearch");
-  const searchButton = document.getElementById("searchButton");
-
-  if (searchInput && searchButton) {
-    searchInput.addEventListener("keypress", function (event) {
-      if (event.key === "Enter") {
-        event.preventDefault();
-        searchButton.click();
-      }
-    });
-
-    searchButton.addEventListener("click", function () {
-      const searchQuery = searchInput.value.trim();
-      if (searchQuery) {
-        sessionStorage.setItem("searchQuery", searchQuery);
-        window.location.href = "searchPatient";
-      } else {
-        alert("Please enter a patient name to search.");
-      }
-    });
-  }
-});
-</script>
-
-    <script src="js/form.js"></script>
-    <script src="js/script.js"></script>
 </body>
 </html>

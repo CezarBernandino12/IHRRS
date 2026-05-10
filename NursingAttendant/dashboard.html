@@ -109,7 +109,7 @@
 			</div>
 		</nav>
 		<main>
-			
+
 			<div id="pendingResetNotification" class="info-message" style="background:#fff3cd; border:1px solid #ffeaa7; padding:15px; margin-bottom:20px; border-radius:5px; display:none; align-items:center; gap:10px;">
 				<i class="bx bx-info-circle" style="color:#856404; font-size:24px;"></i>
 				<div>
@@ -122,88 +122,79 @@
 			<div class="head-title">
 				<div class="left">
 					<h1>Dashboard</h1>
-					<ul class="breadcrumb">
-						<li><a href="#">Dashboard</a></li>
-						<li><i class="bx bx-chevron-right"></i></li>
-						<li><a class="active" href="#">Home</a></li>
-					</ul>
 				</div>
 			</div>
 
+			<div class="dashboard-layout">
+				<ul class="box-info">
+					<li class="mrr">
+						<div class="icon-container">
+							<i class="bx bx-git-pull-request dashboard-card-icon" aria-hidden="true"></i>
+						</div>
+						<div class="text">
+							<a href="pending">
+								<h3>Pending Refferals</h3>
+							</a>
+						</div>
+					</li>
 
-    <div class="dashboard-layout">
-		<div class="progress-container">
-			<div class="progress-circle-container">
-				<div class="title">Pending Referrals From BHS</div>
-				<p class="date">Loading date...</p>
-				<div class="progress-circle">
-					<svg width="180" height="180" viewBox="0 0 180 180">
-						<circle class="circle-background" cx="90" cy="90" r="67" stroke-width="16" /> 
-						<circle class="progress-ring" id="progress-ring-1" cx="90" cy="90" r="67"></circle>
-					</svg>
-					<div class="progress-text" id="progress-text-1">0</div>
+					<li class="mrr">
+						<div class="icon-container">
+							<i class="bx bx-folder-open dashboard-card-icon" aria-hidden="true"></i>
+						</div>
+						<div class="text">
+							<a href="searchPatient">
+								<h3>View Patient Record</h3>
+							</a>
+						</div>
+					</li>
+				</ul>
+
+				<div class="progress-container">
+					<div class="progress-circle-container">
+						<div class="title">Pending Referrals From BHS</div>
+						<p class="date">Loading date...</p>
+						<div class="progress-circle">
+							<svg width="180" height="180" viewBox="0 0 180 180">
+								<circle class="circle-background" cx="90" cy="90" r="67" stroke-width="16" /> 
+								<circle class="progress-ring" id="progress-ring-1" cx="90" cy="90" r="67"></circle>
+							</svg>
+							<div class="progress-text" id="progress-text-1">0</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="progress-container">
+					<div class="progress-circle-container">
+						<div class="title">Total Consultations Today </div>
+						<p class="date">Loading date...</p>
+						<div class="progress-circle">
+							<svg width="180" height="180" viewBox="0 0 180 180">
+								<circle class="circle-background" cx="90" cy="90" r="67" stroke-width="16" /> 
+								<circle class="progress-ring" id="progress-ring-2" cx="90" cy="90" r="67"></circle>
+							</svg>
+							<div class="progress-text" id="progress-text-2">0</div>
+						</div>
+					</div>
 				</div>
 			</div>
-		</div>
-		
-		<div class="progress-container">
-			<div class="progress-circle-container">
-				<div class="title">Total Consultations Today </div>
-				<p class="date">Loading date...</p>
-				<div class="progress-circle">
-					<svg width="180" height="180" viewBox="0 0 180 180">
-						<circle class="circle-background" cx="90" cy="90" r="67" stroke-width="16" /> 
-						<circle class="progress-ring" id="progress-ring-2" cx="90" cy="90" r="67"></circle>
-					</svg>
-					<div class="progress-text" id="progress-text-2">0</div>
+
+			<div id="logoutModal" class="logout-modal">
+				<div class="logout-modal-content">
+					<div class="logout-modal-header">
+						<h3>Confirm Logout</h3>
+					</div>
+					<div class="logout-modal-body">
+						<p>Are you sure you want to logout?</p>
+					</div>
+					<div class="logout-modal-footer">
+						<button onclick="closeModal()" class="logout-cancel-btn">Cancel</button>
+						<button onclick="proceedLogout()" class="logout-confirm-btn">Yes, Logout</button>
+					</div>
 				</div>
 			</div>
-		</div>
-
-		<ul class="box-info">
-
-			<li class="mrr"> 
-				<div class="icon-container">
-					<img src="../img/history.png" alt="Add Record" class="icon-img">
-				</div>
-				<div class="text">
-					<a href="pending">
-						<h3>Pending Refferals</h3>
-					</a>
-				</div>
-			</li>    
-			<li class="mrr">
-				<div class="icon-container">
-					<img src="../img/record.png" alt="Add Record" class="icon-img">
-				</div>
-				<div class="text">
-					<a href="searchPatient">
-						<h3>View Patient Record</h3>
-					</a>
-				</div>
-			</li>    
-
-		
-		</ul>		
-		
-    </div>
-
-<div id="logoutModal" class="logout-modal">
-    <div class="logout-modal-content">
-        <div class="logout-modal-header">
-            <h3>Confirm Logout</h3>
-        </div>
-        <div class="logout-modal-body">
-            <p>Are you sure you want to logout?</p>
-        </div>
-        <div class="logout-modal-footer">
-            <button onclick="closeModal()" class="logout-cancel-btn">Cancel</button>
-            <button onclick="proceedLogout()" class="logout-confirm-btn">Yes, Logout</button>
-        </div>
-    </div>
-</div>
-	</main>	
-</section>
+		</main>	
+	</section>
 <script>
 	document.addEventListener("DOMContentLoaded", () => {
   const today = new Date().toISOString().split("T")[0];

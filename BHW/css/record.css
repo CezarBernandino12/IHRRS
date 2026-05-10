@@ -1,235 +1,892 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Poppins:wght@400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap");
+
+/* =========================================================
+   FULL UPDATED RECORD.CSS
+   Patient Record Page UI
+   ========================================================= */
 
 /* Base */
-* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-a { text-decoration: none; }
-li { list-style: none; }
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-:root{
-  --poppins: 'Poppins', sans-serif;
-  --lato: 'Lato', sans-serif;
-  --light: #fafcff;
-  --blue: #1c538a;
-  --light-blue: #CFE8FF;
-  --grey: #eee;
-  --dark-grey: #AAAAAA;
-  --dark: #342E37;
-  --red: #DB504A;
-  --yellow: #FFCE26;
-  --light-yellow: #FFF2C6;
-  --orange: #FD7238;
-  --light-orange: #FFE0D3;
-  --btn-border: rgba(46, 147, 255, .35); /* soft sky-blue border */
+html,
+body {
+  overflow-x: hidden;
+}
+
+body {
+  min-height: 100vh;
+  color: #061b3a;
+  background:
+    radial-gradient(circle at top right, rgba(18, 172, 199, 0.08), transparent 26%),
+    radial-gradient(circle at top left, rgba(37, 99, 235, 0.06), transparent 28%),
+    linear-gradient(180deg, #f8fbff 0%, #f5f8fc 100%);
+  font-family: var(--poppins, "Poppins", sans-serif);
+}
+
+a {
+  text-decoration: none;
+}
+
+li {
+  list-style: none;
+}
+
+:root {
+  --poppins: "Poppins", sans-serif;
+  --lato: "Lato", sans-serif;
+
+  --record-bg: #f5f8fc;
+  --record-card: #ffffff;
+  --record-text: #061b3a;
+  --record-muted: #64748b;
+  --record-blue: #1c538a;
+  --record-blue-dark: #123b63;
+  --record-cyan: #12acc7;
+  --record-border: rgba(15, 23, 42, 0.08);
+  --record-border-soft: rgba(15, 23, 42, 0.06);
+  --record-shadow: 0 14px 34px rgba(15, 23, 42, 0.08);
+  --record-shadow-soft: 0 8px 22px rgba(15, 23, 42, 0.06);
+
+  --btn-border: rgba(46, 147, 255, 0.35);
   --btn-bg: #ffffff;
   --btn-bg-hover: #f7fbff;
-  --btn-text: #1e6bb8;  /* readable blue text/icon */
-  --btn-shadow: 0 2px 6px rgba(0,0,0,.04);
+  --btn-text: #1e6bb8;
+  --btn-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
 }
 
-html { overflow-x: hidden; }
-body {
-	background: url(img/body.png);
-	overflow-x: hidden;
-	background-size: cover;
-    
+/* =========================================================
+   MAIN CONTENT
+   ========================================================= */
+
+#content main {
+  width: 100%;
+  min-height: calc(100vh - 64px);
+  max-height: none;
+  overflow-x: hidden;
+  overflow-y: visible;
+  padding: 28px 32px 42px;
+  background:
+    radial-gradient(circle at top right, rgba(18, 172, 199, 0.08), transparent 26%),
+    linear-gradient(180deg, #f8fbff 0%, #f5f8fc 100%);
+  font-family: var(--poppins);
 }
 
-/* Main */
-#content main{
-  width:100%; padding:36px 24px; font-family:var(--poppins);
-  max-height:calc(100vh - 56px); overflow-y:auto;
-}
-#content main .head-title{ display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
-#content main .head-title .left h1{ font-size:36px; font-weight:600; margin-bottom:10px; color:var(--dark); }
-#content main .head-title .left .breadcrumb{ display:flex; align-items:center; gap:16px; }
-#content main .head-title .left .breadcrumb li{ color:var(--dark); }
-#content main .head-title .left .breadcrumb li a{ color:var(--dark-grey); pointer-events:none; }
-#content main .head-title .left .breadcrumb li a.active{ color:var(--blue); pointer-events:unset; }
+/* =========================================================
+   PATIENT NAME HEADER
+   ========================================================= */
 
-/* Buttons */
-.btn-pill{
+#content main .patient-header-container {
+  display: block;
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto 24px;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+#content main .patient-name-container {
+  position: relative;
+  width: 100%;
+  padding: 24px 26px 26px;
+  border: 1px solid var(--record-border);
+  border-radius: 24px;
+  background: linear-gradient(145deg, #ffffff, #f8fbff);
+  box-shadow: var(--record-shadow-soft);
+  overflow: hidden;
+  white-space: normal;
+}
+
+#content main .patient-name-container::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 5px;
+  height: 100%;
+  background: linear-gradient(180deg, var(--record-blue), var(--record-cyan));
+}
+
+#content main .patient-name-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+  color: var(--record-blue);
+  font-family: var(--poppins);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+#content main .patient-name-label::before {
+  content: "\ec63";
+  display: inline-grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  border-radius: 12px;
+  background: rgba(31, 91, 151, 0.09);
+  color: var(--record-blue);
+  font-family: "boxicons";
+  font-size: 18px;
+  font-weight: normal;
+  letter-spacing: 0;
+}
+
+#content main .patient-name {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  width: 100%;
+}
+
+#content main .name-part {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  min-width: 0;
+  min-height: 78px;
+  padding: 16px 18px;
+  border: 1px solid var(--record-border);
+  border-radius: 18px;
+  background: #ffffff;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.035);
+}
+
+#content main .last-name,
+#content main .first-name,
+#content main .middle-name,
+#content main .extension {
+  display: block;
+  width: 100%;
+  color: var(--record-text);
+  font-family: var(--poppins);
+  font-size: clamp(20px, 1.7vw, 26px);
+  font-weight: 800;
+  line-height: 1.15;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#content main .name-label {
+  display: block;
+  margin-top: 8px;
+  color: var(--record-muted);
+  font-family: var(--poppins);
+  font-size: 11px;
+  font-weight: 750;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+#content main .patient-id-box[hidden] {
+  display: none !important;
+}
+
+#content main .patient-id-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  border: 1px solid var(--record-border);
+  padding: 10px 20px;
+  border-radius: 20px;
+  min-width: 150px;
+  background: #ffffff;
+}
+
+#content main .patient-id-label {
+  font-size: 12px;
+  color: var(--record-blue);
+  text-transform: uppercase;
+  font-weight: 800;
+  margin-bottom: 5px;
+  font-family: var(--poppins);
+}
+
+#content main .id-number {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--record-text);
+}
+
+/* =========================================================
+   MAIN PATIENT RECORD CARD
+   ========================================================= */
+
+#content main .patient-record-container {
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto 36px;
+  padding: 22px;
+  border: 1px solid var(--record-border);
+  border-radius: 24px;
+  background: linear-gradient(145deg, #ffffff, #f8fbff);
+  box-shadow: var(--record-shadow);
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+#content main .patient-content {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(300px, 0.8fr);
+  align-items: start;
+  gap: 22px;
+  width: 100%;
+  padding: 0;
+  overflow: hidden;
+}
+
+/* =========================================================
+   SECTION TITLES
+   ========================================================= */
+
+#content main .section-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 18px;
+  padding: 0 0 14px;
+  border-bottom: 1px solid var(--record-border);
+  color: var(--record-text);
+  font-family: var(--poppins);
+  font-size: 17px;
+  font-weight: 750;
+  letter-spacing: -0.01em;
+  text-transform: none;
+  text-align: left;
+  white-space: nowrap;
+}
+
+#content main .section-title::before {
+  content: "\ea4a";
+  display: inline-grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  border-radius: 13px;
+  background: rgba(31, 91, 151, 0.09);
+  color: var(--record-blue);
+  font-family: "boxicons";
+  font-size: 19px;
+  font-weight: normal;
+}
+
+#content main .patient-records-section .section-title::before {
+  content: "\eb20";
+}
+
+/* =========================================================
+   PERSONAL INFORMATION CARD
+   ========================================================= */
+
+#content main .personal-info-section {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 20px;
+  border: 1px solid var(--record-border);
+  border-radius: 22px;
+  background: #ffffff;
+  box-shadow: var(--record-shadow-soft);
+  font-family: var(--poppins);
+  overflow: hidden;
+}
+
+#content main .personal-info-section .detail {
+  display: grid;
+  grid-template-columns: 150px minmax(0, 1fr);
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 10px;
+  padding: 12px 14px;
+  border: 1px solid var(--record-border-soft);
+  border-radius: 16px;
+  background: #f8fbff;
+  font-size: 13px;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+#content main .personal-info-section .detail:hover {
+  background: #f2f7fd;
+  border-color: rgba(31, 91, 151, 0.12);
+}
+
+#content main .personal-info-section .detail:last-child {
+  margin-bottom: 0;
+}
+
+#content main .personal-info-section strong {
+  width: auto;
+  color: #44566f;
+  font-family: var(--poppins);
+  font-size: 12px;
+  font-weight: 750;
+}
+
+#content main .underline {
+  min-width: 0;
+  border-bottom: none;
+  padding: 0;
+  color: var(--record-text);
+  font-size: 13px;
+  font-weight: 650;
+  line-height: 1.35;
+  word-break: break-word;
+}
+
+/* =========================================================
+   TREATMENT RECORDS CARD
+   ========================================================= */
+
+#content main .patient-records-section {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 20px;
+  border: 1px solid var(--record-border);
+  border-radius: 22px;
+  background: #ffffff;
+  box-shadow: var(--record-shadow-soft);
+  font-family: var(--poppins);
+  overflow: hidden;
+}
+
+#content main .patient-records-section > p {
+  margin: 0;
+  padding: 18px 20px;
+  border-radius: 16px;
+  background: #f8fbff;
+  color: var(--record-muted);
+  font-size: 13px;
+  font-weight: 650;
+}
+
+/* Visit cards generated by JavaScript */
+#content main .record {
+  position: relative;
+  margin-bottom: 12px;
+  padding: 14px 14px 14px 18px;
+  border: 1px solid rgba(15, 23, 42, 0.07);
+  border-radius: 16px;
+  background: #f8fbff;
+  box-shadow: none;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+#content main .record::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 14px;
+  bottom: 14px;
+  width: 4px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, var(--record-blue), var(--record-cyan));
+}
+
+#content main .record:hover {
+  transform: translateY(-1px);
+  background: #ffffff;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.07);
+}
+
+#content main .record:last-child {
+  margin-bottom: 0;
+}
+
+#content main .record-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+#content main .record-header p {
+  margin: 0;
+  color: var(--record-text);
+  font-size: 14px;
+  font-weight: 750;
+}
+
+#content main .view-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(31, 91, 151, 0.09);
+  color: var(--record-blue);
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+#content main .view-link:hover {
+  background: rgba(31, 91, 151, 0.15);
+  transform: translateY(-1px);
+}
+
+#content main .last-updated {
+  margin: 0;
+  color: var(--record-muted);
+  font-size: 12px;
+}
+
+#content main .last-updated span {
+  color: #334155;
+  font-weight: 650;
+}
+
+/* =========================================================
+   BUTTONS
+   ========================================================= */
+
+.btn-pill {
   -webkit-tap-highlight-color: transparent;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   padding: 10px 16px;
   border-radius: 9999px;
   border: 1.5px solid var(--btn-border);
   background: var(--btn-bg);
   color: var(--btn-text);
-  font: 600 14px/1.1 system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  letter-spacing: .2px;
+  font: 600 14px / 1.1 var(--poppins);
+  letter-spacing: 0.2px;
   box-shadow: var(--btn-shadow);
   cursor: pointer;
-  transition: background-color .15s ease, border-color .15s ease, transform .05s ease, box-shadow .15s ease;
+  transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.05s ease, box-shadow 0.15s ease;
 }
 
-/* Sizes */
-.btn-pill--sm{ padding: 8px 14px; font-size: 14px; }
-.btn-pill--md{ padding: 12px 18px; font-size: 15px; }
-.btn-pill--lg{ padding: 14px 22px; font-size: 16px; }
+.btn-pill--sm {
+  padding: 8px 14px;
+  font-size: 14px;
+}
 
-/* Icon (Boxicons / Font Awesome) */
-.btn-pill i{
-  font-size: 18px;            /* icon size */
+.btn-pill--md {
+  padding: 12px 18px;
+  font-size: 15px;
+}
+
+.btn-pill--lg {
+  padding: 14px 22px;
+  font-size: 16px;
+}
+
+.btn-pill i {
+  font-size: 18px;
   line-height: 1;
   display: inline-block;
 }
 
-/* Interactions */
-.btn-pill:hover{
+.btn-pill:hover {
   background: var(--btn-bg-hover);
-  border-color: rgba(46, 147, 255, .5);
-  box-shadow: 0 3px 10px rgba(0,0,0,.06);
-}
-.btn-pill:active{ transform: translateY(1px); }
-.btn-pill:focus-visible{
-  outline: 3px solid rgba(46,147,255,.25);
-  outline-offset: 2px;
+  border-color: rgba(46, 147, 255, 0.5);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
 }
 
-/* Disabled */
-.btn-pill[disabled], .btn-pill[aria-disabled="true"]{
-  opacity: .6;
-  cursor: not-allowed;
-  box-shadow: none;
-}
-
-/* Optional: dark background safety */
-@media (prefers-color-scheme: dark){
-  .btn-pill{
-    background: #0e1116;
-    color: #cfe6ff;
-    border-color: rgba(143, 197, 255, .35);
-    box-shadow: 0 2px 6px rgba(0,0,0,.35);
-  }
-  .btn-pill:hover{ background: #121722; }
-}
-
-/* Motion respect */
-@media (prefers-reduced-motion: reduce){
-  .btn-pill{ transition: none; }
-}
-
-/* === Colorful variants === */
-.btn-pill--primary{ background:#1c538a; color:#fff; border-color:transparent; }
-.btn-pill--primary:hover{ background:#184773; }
-.btn-pill--primary:focus-visible{ outline:3px solid rgba(28,83,138,.45); }
-
-.btn-pill--success{ background:#1d8f5a; color:#fff; border-color:transparent; }
-.btn-pill--success:hover{ background:#167a4c; }
-.btn-pill--success:focus-visible{ outline:3px solid rgba(29,143,90,.45); }
-
-.btn-pill--warning{ background:#c27b06; color:#fff; border-color:transparent; }
-.btn-pill--warning:hover{ background:#a76a05; }
-.btn-pill--warning:focus-visible{ outline:3px solid rgba(194,123,6,.45); }
-
-.btn-pill--danger{ background:#b93737; color:#fff; border-color:transparent; }
-.btn-pill--danger:hover{ background:#9d2f2f; }
-.btn-pill--danger:focus-visible{ outline:3px solid rgba(185,55,55,.45); }
-
-.btn-pill--info{ background:#117a8b; color:#fff; border-color:transparent; }
-.btn-pill--info:hover{ background:#0e6776; }
-.btn-pill--info:focus-visible{ outline:3px solid rgba(17,122,139,.45); }
-
-.btn-pill--neutral{ background:#5b6472; color:#fff; border-color:transparent; }
-.btn-pill--neutral:hover{ background:#4c5561; }
-.btn-pill--neutral:focus-visible{ outline:3px solid rgba(91,100,114,.45); }
-
-/* Keep the slight press motion */
-.btn-pill--primary:active,
-.btn-pill--success:active,
-.btn-pill--warning:active,
-.btn-pill--danger:active,
-.btn-pill--info:active,
-.btn-pill--neutral:active{
+.btn-pill:active {
   transform: translateY(1px);
 }
 
-/* Dark mode adjustments */
-@media (prefers-color-scheme: dark){
-  .btn-pill--primary{ background:#1d61a6; }
-  .btn-pill--success{ background:#1e9e63; }
-  .btn-pill--warning{ background:#d48806; }
-  .btn-pill--danger{  background:#d24646; }
-  .btn-pill--info{    background:#148da0; }
-  .btn-pill--neutral{ background:#6a7382; }
+.btn-pill:focus-visible {
+  outline: 3px solid rgba(46, 147, 255, 0.25);
+  outline-offset: 2px;
 }
 
-
-/* Patient header */
-.patient-header-container{
-  display:flex; justify-content:space-between; align-items:center; gap:100px;
-  border-radius:8px; padding:15px; width:30%; margin-left:25%; margin-bottom:10px;
-}
-.patient-name-container{
-  display:flex; flex-direction:column; align-items:flex-start; border-bottom:3px solid #007BFF;
-  padding:7px 55px; background-color:#fdfeff; border-radius:12px; white-space:nowrap;
-}
-.patient-name-label{
-  font-size:23px; color:#00356d; text-transform:uppercase; font-weight:bold; margin-bottom:10px;
-  font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,'Open Sans','Helvetica Neue',sans-serif;
-}
-.patient-name{ display:flex; gap:20px; }
-.name-part{ display:flex; flex-direction:column; align-items:center; }
-.last-name,.first-name,.middle-name,.extension{ font-size:25px; font-family:Arial, Helvetica, sans-serif; }
-.name-label{ font-size:12px; color:#555; margin-top:5px; }
-
-/* Patient ID */
-.patient-id-container{
-  display:flex; flex-direction:column; align-items:flex-start; border:2px solid #007BFF;
-  padding:10px 20px; border-radius:20px; min-width:150px; background:#fff;
-}
-.patient-id-label{
-  font-size:17px; color:#007BFF; text-transform:uppercase; font-weight:bold; margin-bottom:5px;
-  font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,'Open Sans','Helvetica Neue',sans-serif;
-}
-.id-number{ font-size:24px; font-weight:bold; color:#333; }
-
-/* Patient record container */
-.patient-record-container{
-  background:#fff; border-radius:10px; width:60%; margin:0 auto 30px; padding:20px; margin-left:25%;
-}
-.section-title{
-  font-size:20px; font-weight:bold; color:#00356d; text-transform:uppercase; margin-bottom:15px;
-  letter-spacing:1px; border-bottom:2px solid #007BFF; padding-bottom:5px;
-  font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,'Open Sans','Helvetica Neue',sans-serif;
-}
-.patient-content{
-  display:flex; justify-content:space-between; align-items:flex-start; gap:30px; flex-wrap:wrap; padding:10px;
+.btn-pill[disabled],
+.btn-pill[aria-disabled="true"] {
+  opacity: 0.55;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
 }
 
-/* Personal info box */
-.personal-info-section{
-  flex:1; margin-bottom:15px; font-family:Arial, Helvetica, sans-serif; padding:20px;
-  background-color:#b3c8cf6c; border-radius:5px; box-shadow:0 4px 8px rgba(0,0,0,.1);
+.btn-pill--primary {
+  background: var(--record-blue);
+  color: #ffffff;
+  border-color: transparent;
 }
-.personal-info-section .section-title{ font-size:24px; font-weight:bold; color:#00356d; margin-bottom:20px; text-transform:uppercase; letter-spacing:2px; text-align:center; }
-.personal-info-section .detail{
-  display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; font-size:16px;
-}
-.personal-info-section strong{ font-weight:bold; width:120px; color:#333; }
-.underline{ border-bottom:2px solid #979899; padding-bottom:3px; flex-grow:1; font-size:16px; }
-.personal-info-section .detail .underline{ color:#0a0a0a; }
-.personal-info-section .detail:last-child{ margin-bottom:0; }
 
-/* Records list */
-.patient-records-section{ flex:1; border-radius:8px; max-width:900px; margin:20px auto; }
-.record{ background:#fff; padding:15px; border-radius:8px; margin-bottom:15px; box-shadow:0 2px 4px rgba(0,0,0,.1); }
-.record-header{ display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
-.view-link{ color:#2c3e50; text-decoration:none; padding:5px 10px; border-radius:4px; background:#f0f0f0; transition:all .3s ease; }
-.view-link:hover{ background:#e0e0e0; }
-.last-updated{ color:#666; font-size:.9em; }
-
-/* Responsive */
-@media screen and (max-width: 768px){
-  #sidebar{ width:200px; }
-  #content{ width:calc(100% - 60px); left:200px; }
+.btn-pill--primary:hover {
+  background: var(--record-blue-dark);
 }
-@media screen and (max-width: 576px){
-  #content nav form .form-input input{ display:none; }
-  #content nav form .form-input button{
-    width:auto; height:auto; background:transparent; border-radius:0; color:var(--dark);
+
+.btn-pill--success {
+  background: #1d8f5a;
+  color: #ffffff;
+  border-color: transparent;
+}
+
+.btn-pill--success:hover {
+  background: #167a4c;
+}
+
+.btn-pill--warning {
+  background: #c27b06;
+  color: #ffffff;
+  border-color: transparent;
+}
+
+.btn-pill--warning:hover {
+  background: #a76a05;
+}
+
+.btn-pill--danger {
+  background: #b93737;
+  color: #ffffff;
+  border-color: transparent;
+}
+
+.btn-pill--danger:hover {
+  background: #9d2f2f;
+}
+
+.btn-pill--info {
+  background: #117a8b;
+  color: #ffffff;
+  border-color: transparent;
+}
+
+.btn-pill--info:hover {
+  background: #0e6776;
+}
+
+.btn-pill--neutral {
+  background: #5b6472;
+  color: #ffffff;
+  border-color: transparent;
+}
+
+.btn-pill--neutral:hover {
+  background: #4c5561;
+}
+
+#content main .record-action-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+#content main .record-action-buttons .btn-pill {
+  min-height: 38px;
+  padding: 9px 14px;
+  border-radius: 999px;
+  border: none;
+  font-family: var(--poppins);
+  font-size: 12px;
+  font-weight: 700;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.12);
+}
+
+#content main .record-action-buttons .btn-pill i {
+  font-size: 16px;
+}
+
+/* =========================================================
+   HIDDEN PRINT ELEMENTS
+   ========================================================= */
+
+#content main #history-table[style*="display: none"],
+#history-table[style*="display: none"],
+.print-letterhead[style*="display: none"] {
+  display: none !important;
+}
+
+/* Patient name container - more compact */
+#content main .patient-name-container {
+  padding: 20px 22px !important;
+  border-radius: 20px !important;
+}
+
+/* Patient Name label - smaller */
+#content main .patient-name-label {
+  margin-bottom: 14px !important;
+  font-size: 10.5px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.10em !important;
+}
+
+#content main .patient-name-label::before {
+  width: 28px !important;
+  height: 28px !important;
+  min-width: 28px !important;
+  border-radius: 10px !important;
+  font-size: 16px !important;
+}
+
+/* Name cards - smaller and cleaner */
+#content main .name-part {
+  min-height: 64px !important;
+  padding: 12px 14px !important;
+  border-radius: 15px !important;
+}
+
+/* Main patient name text - reduced size and weight */
+#content main .last-name,
+#content main .first-name,
+#content main .middle-name,
+#content main .extension {
+  font-size: clamp(16px, 1.35vw, 21px) !important;
+  font-weight: 650 !important;
+  line-height: 1.15 !important;
+  letter-spacing: -0.02em !important;
+}
+
+/* Small labels under each name */
+#content main .name-label {
+  margin-top: 6px !important;
+  font-size: 9.5px !important;
+  font-weight: 650 !important;
+  letter-spacing: 0.05em !important;
+}
+
+/* Personal Information and ITR section titles */
+#content main .section-title {
+  font-size: 15px !important;
+  font-weight: 650 !important;
+}
+
+#content main .section-title::before {
+  width: 32px !important;
+  height: 32px !important;
+  min-width: 32px !important;
+  border-radius: 11px !important;
+  font-size: 17px !important;
+}
+
+/* Personal info rows - lighter text */
+#content main .personal-info-section .detail {
+  padding: 10px 12px !important;
+  font-size: 12px !important;
+}
+
+#content main .personal-info-section strong {
+  font-size: 11.5px !important;
+  font-weight: 650 !important;
+}
+
+#content main .underline {
+  font-size: 12px !important;
+  font-weight: 550 !important;
+}
+
+/* Treatment record empty/record text */
+#content main .patient-records-section > p {
+  font-size: 12px !important;
+  font-weight: 550 !important;
+}
+
+#content main .record-header p {
+  font-size: 13px !important;
+  font-weight: 650 !important;
+}
+
+#content main .last-updated {
+  font-size: 11.5px !important;
+}
+
+#content main .last-updated span {
+  font-weight: 550 !important;
+}
+
+/* Buttons - slightly smaller */
+#content main .record-action-buttons .btn-pill {
+  min-height: 34px !important;
+  padding: 8px 12px !important;
+  font-size: 11.5px !important;
+  font-weight: 650 !important;
+}
+
+#content main .record-action-buttons .btn-pill i {
+  font-size: 15px !important;
+}
+
+/* Mobile compact version */
+@media (max-width: 768px) {
+  #content main .last-name,
+  #content main .first-name,
+  #content main .middle-name,
+  #content main .extension {
+    font-size: 16px !important;
+    font-weight: 650 !important;
+  }
+
+  #content main .name-part {
+    min-height: 58px !important;
+    padding: 11px 12px !important;
+  }
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 1280px) {
+  #content main {
+    padding: 24px 24px 38px;
+  }
+
+  #content main .patient-name {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  #content main .patient-content {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  #content main {
+    padding: 18px 14px 28px;
+  }
+
+  #content main .head-title {
+    margin-bottom: 20px;
+  }
+
+  #content main .head-title .left h1 {
+    font-size: 26px;
+  }
+
+  #content main .patient-header-container,
+  #content main .patient-record-container {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  #content main .patient-name-container,
+  #content main .patient-record-container {
+    border-radius: 18px;
+  }
+
+  #content main .patient-name-container {
+    padding: 18px;
+  }
+
+  #content main .patient-name {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  #content main .name-part {
+    min-height: auto;
+    padding: 12px 14px;
+  }
+
+  #content main .last-name,
+  #content main .first-name,
+  #content main .middle-name,
+  #content main .extension {
+    font-size: 18px;
+  }
+
+  #content main .patient-record-container {
+    padding: 14px;
+  }
+
+  #content main .personal-info-section,
+  #content main .patient-records-section {
+    padding: 14px;
+    border-radius: 18px;
+  }
+
+  #content main .section-title {
+    white-space: normal;
+    font-size: 16px;
+  }
+
+  #content main .personal-info-section .detail {
+    grid-template-columns: 1fr;
+    gap: 5px;
+    padding: 11px;
+  }
+
+  #content main .record-action-buttons {
+    flex-direction: column;
+  }
+
+  #content main .record-action-buttons .btn-pill {
+    width: 100%;
+    justify-content: center;
+  }
+
+  #content main .record-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  #content main .view-link {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  #content main {
+    padding: 16px 10px 24px;
+  }
+
+  #content main .patient-name-label {
+    font-size: 11px;
+  }
+
+  #content main .section-title {
+    font-size: 15px;
+  }
+
+  #content main .personal-info-section .detail,
+  #content main .underline,
+  #content main .record-header p {
+    font-size: 12px;
+  }
+
+  #content main .patient-name-container,
+  #content main .patient-record-container {
+    border-radius: 16px;
+  }
+}
+
+/* =========================================================
+   PRINT SAFETY
+   ========================================================= */
+
+@media print {
+  #sidebar,
+  #content nav,
+  .record-action-buttons,
+  .sidebar-overlay,
+  .logout-modal {
+    display: none !important;
+  }
+
+  #content,
+  #content main {
+    width: 100% !important;
+    left: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+  }
+
+  #content main .patient-header-container,
+  #content main .patient-record-container {
+    max-width: 100% !important;
+    box-shadow: none !important;
   }
 }

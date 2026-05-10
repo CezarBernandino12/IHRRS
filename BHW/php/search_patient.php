@@ -1,69 +1,67 @@
 <?php
 require '../../php/db_connect.php';
 
-session_start();
-
-if (!isset($_SESSION['user_id'])) {
-    http_response_code(401);
-    exit("Unauthorized");
-}
-
-
-if (isset($_POST['query'])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['query'])) {
     $query = trim($_POST['query']);
 
-    $sql = "SELECT first_name, last_name, middle_name, sex, date_of_birth, patient_id
-    FROM patients
-    WHERE 
-        CONCAT(first_name, ' ', last_name) LIKE :query
-        OR CONCAT(last_name, ' ', first_name) LIKE :query
-        OR first_name LIKE :query
-        OR last_name LIKE :query
+    if ($query === '') {
+        echo "<div class='result-info-section'>Please enter a patient name.</div>";
+        exit;
+    }
 
-        -- fuzzy sound-alike matching
-        OR SOUNDEX(first_name) = SOUNDEX(:sound)
-        OR SOUNDEX(last_name)  = SOUNDEX(:sound)";
-        
-$stmt = $pdo->prepare($sql);
+    $sql = "
+        SELECT 
+            patient_id,
+            first_name,
+            last_name,
+            middle_name,
+            sex,
+            date_of_birth
+        FROM patients
+        WHERE first_name LIKE :first_name
+           OR last_name LIKE :last_name
+           OR middle_name LIKE :middle_name
+        ORDER BY last_name ASC, first_name ASC
+        LIMIT 20
+    ";
 
-$searchTerm = "%$query%";
+    $stmt = $pdo->prepare($sql);
 
-$stmt->bindParam(':query', $searchTerm, PDO::PARAM_STR);
-$stmt->bindParam(':sound', $query, PDO::PARAM_STR);
+    $searchTerm = "%{$query}%";
 
-$stmt->execute();
+    $stmt->bindValue(':first_name', $searchTerm, PDO::PARAM_STR);
+    $stmt->bindValue(':last_name', $searchTerm, PDO::PARAM_STR);
+    $stmt->bindValue(':middle_name', $searchTerm, PDO::PARAM_STR);
 
-$results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $stmt->execute();
 
+    $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-if ($results) { 
-    foreach ($results as $row) {
+    if ($results) {
+        foreach ($results as $row) {
+            $patientId = (int) $row['patient_id'];
 
-        $dob = date("F j, Y", strtotime($row['date_of_birth']));
+            $lastName = $row['last_name'] ?? '';
+            $firstName = $row['first_name'] ?? '';
+            $middleName = $row['middle_name'] ?? '';
 
-        echo '<div class="result-info-section">
-                <div class="search-result" onclick="selectPatient(' . $row['patient_id'] . ')">
-                    <div style="font-size: 17px;"> 
-                        <span class="icon">
-                            <img src="../img/person_icon.png" alt="person icon" style="width:35px; height:30px; vertical-align:middle; margin-bottom: 8px; margin-right: 10px;">
-                        </span>
-                        <strong>' . htmlspecialchars($row['last_name'] . ', ' . $row['first_name'] . ' ' . $row['middle_name']) . '</strong>
+            $fullName = trim($lastName . ', ' . $firstName . ' ' . $middleName);
+
+            $sex = $row['sex'] ?? '';
+            $birthDate = $row['date_of_birth'] ?? '';
+
+            echo '
+                <div class="result-info-section">
+                    <div class="search-result" onclick="selectPatient(' . $patientId . ')">
+                        <span class="patient-name-cell">' . htmlspecialchars($fullName, ENT_QUOTES, 'UTF-8') . '</span>
+                        <span class="patient-sex-cell">' . htmlspecialchars($sex, ENT_QUOTES, 'UTF-8') . '</span>
+                        <span>' . htmlspecialchars($birthDate, ENT_QUOTES, 'UTF-8') . '</span>
                     </div>
-                    <div>' . htmlspecialchars($row['sex']) . '</div>
-                    <div>' . $dob . '</div>
                 </div>
-              </div><br>';
-    }
-
-        
+            ';
+        }
     } else {
-        echo '<div class="no-results-container">
-        <img src="../img/no.jpg" alt="No Results" class="no-results-img">
-        <h2 class="no-results-title">SORRY!</h2>
-        <p class="no-results-text">We Havent Found Any Document</p>
-      </div>';
-
+        echo "<div class='result-info-section'>No results found.</div>";
     }
-    
 }
 ?>

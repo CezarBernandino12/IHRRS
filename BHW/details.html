@@ -108,18 +108,18 @@ fetch('php/getUserId.php')
 				<i class="bx bx-menu"></i>
 			</button>
 		</nav>
+        <main>
             <div class="head-title">
                 <div class="left">
                     <h1>Referral Slip Preview</h1>
                 </div>
             </div>
-        </main>
-    </section>
 
 <!-- referral-container section -->
 
+<div class="referral-page-shell">
 <div class="referral-container">
-    <a id="viewRecordLink" href="#" class="view-record-link" style="float: right;">View Record</a>
+    <a id="viewRecordLink" href="#" class="view-record-link">View Record</a>
     <br>
     
 <div class="referral-header">
@@ -317,20 +317,6 @@ document.addEventListener("DOMContentLoaded", () => {
         console.error('Error fetching user name:', error);
         document.getElementById('sidebarUserName').textContent = 'BHW User';
     });
-  // Fetch user name for sidebar
-  fetch('php/getUserName.php')
-    .then(response => response.json())
-    .then(data => {
-        if (data.full_name) {
-            document.getElementById('sidebarUserName').textContent = data.full_name;
-        } else {
-            document.getElementById('sidebarUserName').textContent = 'BHW User';
-        }
-    })
-    .catch(error => {
-        console.error('Error fetching user name:', error);
-        document.getElementById('sidebarUserName').textContent = 'BHW User';
-    });
 });
 </script>
 
@@ -457,6 +443,11 @@ if (data.date_of_birth) {
         };
     </script>
 
+</div>
+</div>
+        </main>
+    </section>
+
 <div id="logoutModal" class="logout-modal">
     <div class="logout-modal-content">
         <div class="logout-modal-header">
@@ -577,8 +568,6 @@ fetch('php/getUserName.php')
   }
   window.addEventListener("beforeprint", fitToA4Once);
 })();
-</script>
-
 </script>
 
 </body>

@@ -479,7 +479,7 @@ const recordsPerPage = 10;
 
 function initPagination() {
     const prevBtn = document.getElementById('prevBtn');
-    const nextBtn = document.getElementById('nextBtn');
+    const loadMoreBtn = document.getElementById('loadMoreBtn');
 
     if (prevBtn) {
         prevBtn.addEventListener('click', function() {
@@ -489,8 +489,8 @@ function initPagination() {
         });
     }
 
-    if (nextBtn) {
-        nextBtn.addEventListener('click', function() {
+    if (loadMoreBtn) {
+        loadMoreBtn.addEventListener('click', function() {
             currentOffset += recordsPerPage;
             loadUsers();
             updatePaginationButtons();
@@ -507,7 +507,7 @@ function loadUsers() {
     const search = searchInput ? searchInput.value : '';
     const role = roleFilter ? roleFilter.value : '';
 
-    fetch(`load_more_users.php?offset=${currentOffset}&search=${encodeURIComponent(search)}&role=${encodeURIComponent(role)}`)
+    fetch(`load_more_users?offset=${currentOffset}&search=${encodeURIComponent(search)}&role=${encodeURIComponent(role)}`)
         .then(response => response.json())
         .then(data => {
             if (data.success) {
@@ -531,7 +531,7 @@ function loadUsers() {
 
 function updatePaginationButtons() {
     const prevBtn = document.getElementById('prevBtn');
-    const nextBtn = document.getElementById('nextBtn');
+    const loadMoreBtn = document.getElementById('loadMoreBtn');
     const totalUsers = parseInt(document.getElementById('totalUsers').textContent);
 
     if (prevBtn) {
@@ -543,9 +543,9 @@ function updatePaginationButtons() {
         }
     }
 
-    if (nextBtn) {
+    if (loadMoreBtn) {
         const hasMore = (currentOffset + recordsPerPage) < totalUsers;
-        nextBtn.disabled = !hasMore;
+        loadMoreBtn.disabled = !hasMore;
     }
 }
 

@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     function checkNotifications() {
         // Use fetch API to check for new notifications
-        fetch('notif.php?get_unread_count=1')
+        fetch('notif?get_unread_count=1')
             .then(response => response.json())
             .then(data => {
                 const badge = document.getElementById('notification-badge');

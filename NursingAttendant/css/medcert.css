@@ -1,225 +1,250 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Poppins:wght@400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap");
 
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Inter', sans-serif;
-  }
-  
-a {
-	text-decoration: none;
-}
-
-li {
-	list-style: none;
 }
 
 :root {
-	--poppins: 'Poppins', sans-serif;
-	--lato: 'Lato', sans-serif;
+    --poppins: "Poppins", sans-serif;
+    --lato: "Lato", sans-serif;
 
-	--light: #fafcff;
-	--blue: #1c538a;
-	--light-blue: #CFE8FF;
-	--grey: #eee;
-	--dark-grey: #AAAAAA;
-	--dark: #342E37;
-	--red: #DB504A;
-	--yellow: #FFCE26;
-	--light-yellow: #FFF2C6;
-	--orange: #FD7238;
-	--light-orange: #FFE0D3;
+    --light: #fafcff;
+    --blue: #1c538a;
+    --blue-dark: #123b63;
+    --cyan: #12acc7;
+    --light-blue: #cfe8ff;
+    --grey: #eee;
+    --dark-grey: #aaaaaa;
+    --dark: #061b3a;
+    --muted: #64748b;
+    --border: rgba(15, 23, 42, 0.08);
+    --border-strong: rgba(15, 23, 42, 0.12);
+    --shadow: 0 14px 34px rgba(15, 23, 42, 0.08);
+    --shadow-soft: 0 8px 22px rgba(15, 23, 42, 0.06);
+
+    --red: #db504a;
+    --yellow: #ffce26;
+    --orange: #fd7238;
 }
 
-html {
-  overflow-x: hidden;
-} 
-
-
-body.dark {
-	--light: #0C0C1E;
-	--grey: #060714;
-	--dark: #FBFBFB;
+html,
+body {
+    overflow-x: hidden;
 }
 
 body {
-	background: url(img/body.png);
-	overflow-x: hidden;
-	background-size: cover;
-    
+    min-height: 100vh;
+    color: var(--dark);
+    background:
+        radial-gradient(circle at top left, rgba(37, 99, 235, 0.06), transparent 26%),
+        radial-gradient(circle at top right, rgba(18, 172, 199, 0.07), transparent 24%),
+        linear-gradient(180deg, #f8fbff 0%, #f5f8fc 100%);
+    font-family: var(--poppins);
 }
 
+body.dark {
+    --light: #0c0c1e;
+    --grey: #060714;
+    --dark: #fbfbfb;
+}
+
+a {
+    text-decoration: none;
+}
+
+li {
+    list-style: none;
+}
+
+/* Sidebar isolation */
+#sidebar .sidebar-section-label {
+    background: transparent !important;
+    padding: 0 22px 8px !important;
+    margin: 0 !important;
+    color: var(--muted) !important;
+    font-family: var(--poppins) !important;
+}
+
+/* Main */
 #content main {
-	width: 100%;
-	padding: 36px 24px;
-	font-family: var(--poppins);
-	max-height: calc(100vh - 56px);
-	overflow-y: auto;
-}
-#content main .head-title {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	grid-gap: 16px;
-	flex-wrap: wrap;
-}
-#content main .head-title .left h1 {
-	font-size: 36px;
-	font-weight: 600;
-	margin-bottom: 10px;
-	color: var(--dark);
-}
-#content main .head-title .left .breadcrumb {
-	display: flex;
-	align-items: center;
-	grid-gap: 16px;
-}
-#content main .head-title .left .breadcrumb li {
-	color: var(--dark);
-}
-#content main .head-title .left .breadcrumb li a {
-	color: var(--dark-grey);
-	pointer-events: none;
-}
-#content main .head-title .left .breadcrumb li a.active {
-	color: var(--blue);
-	pointer-events: unset;
+    width: 100%;
+    min-height: calc(100vh - 64px);
+    max-height: none;
+    overflow-y: visible;
+    padding: 28px 32px 42px;
+    background: transparent;
+    font-family: var(--poppins);
 }
 
-#content main .table-data {
-	display: flex;
-	flex-wrap: wrap;
-	grid-gap: 24px;
-	margin-top: 24px;
-	width: 90%;
-	color: var(--dark);
-}
-#content main .table-data > div {
-	border-radius: 20px;
-	background: var(--light);
-	padding: 24px;
-	overflow-x: auto;
-}
-#content main .table-data .head {
-	display: flex;
-	align-items: center;
-	grid-gap: 16px;
-	margin-bottom: 24px;
-}
-#content main .table-data .head h1 {
-	font-size: 20px;
-	font-weight: 550;
-}
-#content main .table-data .head h3 {
-	margin-right: auto;
-	font-size: 24px;
-	font-weight: 600;
-}
-#content main .table-data .head p {
-	font-size: 24px;
-	font-weight: 600;
-}
-#content main .table-data .head .bx {
-	cursor: grab;
+.page-heading,
+.certificate-view-card {
+    width: min(100%, 1080px);
+    margin-left: auto;
+    margin-right: auto;
 }
 
-#content main .table-data .order {
-	flex-grow: 1;
-	flex-basis: 500px;
-}
-#content main .table-data .order table {
-	width: 100%;
-	border-collapse: collapse;
-}
-#content main .table-data .order table th {
-	padding-bottom: 12px;
-	font-size: 13px;
-	text-align: left;
-	border-bottom: 1px solid var(--grey);
-}
-#content main .table-data .order table td {
-	padding: 16px 0;
-}
-#content main .table-data .order table tr td:first-child {
-	display: flex;
-	align-items: center;
-	grid-gap: 12px;
-	padding-left: 6px;
-}
-#content main .table-data .order table td img {
-	width: 36px;
-	height: 36px;
-	border-radius: 50%;
-	object-fit: cover;
-}
-#content main .table-data .order table tbody tr:hover {
-	background: var(--grey);
-}
-#content main .table-data .order table tr td .status {
-	font-size: 10px;
-	padding: 6px 16px;
-	color: var(--light);
-	border-radius: 20px;
-	font-weight: 700;
-}
-#content main .table-data .order table tr td .status.completed {
-	background: var(--blue);
-}
-#content main .table-data .order table tr td .status.process {
-	background: var(--yellow);
-}
-#content main .table-data .order table tr td .status.pending {
-	background: var(--orange);
+.page-heading {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 22px;
+    flex-wrap: wrap;
 }
 
-
-#content main .table-data .todo {
-	flex-grow: 1;
-	flex-basis: 300px;
-}
-#content main .table-data .todo .todo-list {
-	width: 50%;
-}
-#content main .table-data .todo .todo-list li {
-	width: 100%;
-	margin-bottom: 16px;
-	background: var(--grey);
-	border-radius: 10px;
-	padding: 14px 20px;
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-}
-#content main .table-data .todo .todo-list li .bx {
-	cursor: pointer;
-}
-#content main .table-data .todo .todo-list li.completed {
-	border-left: 200px solid var(--blue);
+.page-heading h1 {
+    position: relative;
+    margin: 0;
+    color: var(--dark);
+    font-size: clamp(26px, 3vw, 38px);
+    font-weight: 750;
+    line-height: 1.1;
+    letter-spacing: -0.04em;
 }
 
-#content main .table-data .todo .todo-list li:last-child {
-	margin-bottom: 0;
+.page-heading h1::after {
+    content: "";
+    display: block;
+    width: 58px;
+    height: 4px;
+    margin-top: 12px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--blue), var(--cyan));
 }
 
-  .certificate-container {
-            max-width: 900px;
-            margin: 0 auto;
-            background: white;
-            padding: 60px 80px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
+.page-heading p {
+    margin-top: 12px;
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 500;
+}
 
-        /* Header */
+.page-heading-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.screen-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 38px;
+    padding: 9px 15px;
+    border: none;
+    border-radius: 999px;
+    font-family: var(--poppins);
+    font-size: 12.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.screen-button i {
+    font-size: 17px;
+}
+
+.screen-button-primary {
+    color: #ffffff;
+    background: var(--blue);
+    box-shadow: 0 8px 18px rgba(31, 91, 151, 0.15);
+}
+
+.screen-button-primary:hover {
+    background: var(--blue-dark);
+    transform: translateY(-1px);
+}
+
+.screen-button-secondary {
+    color: #334155;
+    background: #e5e7eb;
+}
+
+.screen-button-secondary:hover {
+    background: #d1d5db;
+    transform: translateY(-1px);
+}
+
+/* Preview card */
+.certificate-view-card {
+    margin-bottom: 40px;
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    background: linear-gradient(145deg, #ffffff, #f8fbff);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+}
+
+.certificate-card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 18px 20px;
+    border-bottom: 1px solid var(--border);
+    background: #ffffff;
+}
+
+.certificate-card-icon {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    border-radius: 14px;
+    color: var(--blue);
+    background: rgba(31, 91, 151, 0.09);
+}
+
+.certificate-card-icon i {
+    font-size: 22px;
+}
+
+.certificate-card-header h2 {
+    margin: 0;
+    color: var(--dark);
+    font-size: 16px;
+    font-weight: 750;
+}
+
+.certificate-card-header span {
+    display: block;
+    margin-top: 3px;
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 500;
+}
+
+/* Screen certificate preview */
+.certificate-container {
+    max-width: 900px;
+    margin: 0 auto;
+    background: white;
+    padding: 46px 70px;
+    box-shadow: none;
+}
+
+.container {
+    position: relative;
+    padding: 26px;
+    border: 1px solid rgba(15, 23, 42, 0.12);
+    border-radius: 18px;
+    background: #ffffff;
+    box-shadow: 0 10px 26px rgba(15, 23, 42, 0.06);
+}
+
+/* Header */
 .header {
     display: flex;
     align-items: center;
-    justify-content: center;   /* centers everything as a group */
+    justify-content: center;
     border-bottom: 3px solid #000;
     padding-bottom: 8px;
     margin-bottom: 10px;
-    gap: 100px;                 /* small space between items */
+    gap: 100px;
 }
 
 .header .logo {
@@ -230,484 +255,561 @@ body {
 
 .header-text {
     text-align: center;
-    flex: 0.75;                   /* prevents it from expanding */
+    flex: 0.75;
 }
 
-
-        .header-text h1 {
-            font-size: 14px;
-            font-weight: 600;
-            
-            color: #000;
-        }
-
-        .header-text h2 {
-            font-size: 18px;
-            font-weight: 700;
-            margin: 3px 0;
-            color: #000;
-        }
-
-        /* Control Number */
-        .control-no {
-            margin: 15px 0 20px 0;
-            font-size: 10px;
-            color: #000;
-        }
-
-        /* Title */
-        .title {
-            text-align: center;
-            margin: 30px 0;
-        }
-
-        .title h1 {
-            font-size: 24px;
-            font-weight: 700;
-            letter-spacing: 3px;
-            color: #000;
-        }
-
-        /* Content */
-        .content {
-            line-height: 2;
-            font-size: 14px;
-            color: #000;
-        }
-
-        .content p {
-            margin-bottom: 15px;
-            text-align: justify;
-        }
-
-        .underline {
-            border-bottom: 1px solid #000;
-            padding-bottom: 0.1px;
-            display: inline-block;
-            min-width: 150px;
-            font-weight: 600;
-
-        }
-
-        /* Patient Info Section */
-        .patient-info {
-            margin-bottom: 25px;
-        }
-
-        /* Diagnosis */
-        .diagnosis-section {
-            margin: 20px 0;
-        }
-
-        .diagnosis-section p,
-        .remarks-section p {
-            text-align: left;
-        }
-
-        .diagnosis-section strong,
-        .remarks-section strong {
-            font-weight: 700;
-        }
-
-        /* Fit/Unfit Status */
-        .fit-status {
-            margin: 25px 0;
-        }
-
-        .checkbox-group {
-            display: flex;
-            gap: 40px;
-            align-items: center;
-        }
-
-        .checkbox-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .checkbox-box {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 2px solid #000;
-            text-align: center;
-            line-height: 18px;
-            font-weight: 700;
-            font-size: 16px;
-            vertical-align: middle;
-        }
-
-        /* Laboratory Section */
-        .lab-section {
-            margin: 25px 0;
-        }
-
-        .lab-section > p {
-            text-align: left;
-            margin-bottom: 15px;
-        }
-
-        .lab-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px 30px;
-            margin-left: 20px;
-        }
-
-        .lab-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        /* Footer Note */
-        .footer-note {
-            margin: 30px 0;
-        }
-
-        .footer-note p {
-            text-align: justify;
-        }
-
-        /* Signature */
-
-        .signature {
-             text-align: left;
-            justify-content: left;
-        }
-        .signature-section {
-            margin-top: 50px;
-            text-align: right;
-        }
-
-        .signature-line {
-            border-top: 2px solid #000;
-            width: 300px;
-            margin: 0 0 8px auto;
-            text-align: left;
-            justify-content: left;
-        }
-
-        .signature-name {
-            font-weight: 700;
-            font-size: 15px;
-            margin-bottom: 5px;
-        }
-
-        .signature-title {
-            font-size: 13px;
-            font-weight: 500;
-            margin-bottom: 8px;
-        }
-
-        .signature-license {
-            font-size: 12px;
-        }
-
-        /* Buttons */
-        .buttons {
-            text-align: right;
-            margin-top: 40px;
-            display: flex;
-            justify-content: right;
-            gap: 15px;
-        }
-
-        .button {
-            padding: 12px 30px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 500;
-            transition: all 0.3s;
-        }
-
-        .button-print {
-            background: #1c538a;
-            color: white;
-        }
-
-        .button-print:hover {
-            background: #154470;
-        }
-
-        .button-back {
-            background: #6c757d;
-            color: white;
-        }
-
-        .button-back:hover {
-            background: #5a6268;
-        }
-
-        /* Print Styles */
-        @media print {
-            * {
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-            }
-
-            #sidebar,
-            #content nav,
-            nav,
-            .side-menu,
-            .brand,
-            .buttons {
-                display: none !important;
-            }
-
-            body {
-                background: white !important;
-                padding: 0 !important;
-                margin: 0 !important;
-                font-family: 'Times New Roman', serif !important;
-            }
-
-
-.certificate-container {
-    width: 100% !important;
-    max-width: 100% !important;
-    height: auto !important;
-    box-shadow: none !important;
-    padding: 5pt !important;   /* smaller padding */
-    margin: 0 !important;
+.header-text h1 {
+    font-size: 14px;
+    font-weight: 600;
+    color: #000;
 }
 
-.container {
-    width: 100% !important;
-    max-width: 100% !important;
-    height: auto !important;
-    border: 2pt solid #000 !important;
-    border-radius: 5pt !important;
-    padding: 8pt !important;       /* reduce padding */
-    margin: 0 !important;
-    box-sizing: border-box !important; /* include padding/border in width */
+.header-text h2 {
+    font-size: 18px;
+    font-weight: 700;
+    margin: 3px 0;
+    color: #000;
 }
 
+/* Control Number */
+.control-no {
+    margin: 15px 0 20px 0;
+    font-size: 10px;
+    color: #000;
+}
 
+/* Title */
+.title {
+    text-align: center;
+    margin: 30px 0;
+}
 
-            #content {
-                position: static !important;
-                width: 100% !important;
-                left: 0 !important;
-                margin: 0 !important;
-                padding: 0 !important;
-            }
+.title h1 {
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    color: #000;
+}
 
-            main {
-                padding: 0 !important;
-                margin: 0 !important;
-                max-height: none !important;
-            }
+/* Content */
+.content {
+    line-height: 2;
+    font-size: 14px;
+    color: #000;
+}
+
+.content p {
+    margin-bottom: 15px;
+    text-align: justify;
+}
+
+.underline {
+    border-bottom: 1px solid #000;
+    padding-bottom: 0.1px;
+    display: inline-block;
+    min-width: 150px;
+    font-weight: 600;
+}
+
+/* Patient Info Section */
+.patient-info {
+    margin-bottom: 25px;
+}
+
+/* Diagnosis */
+.diagnosis-section {
+    margin: 20px 0;
+}
+
+.diagnosis-section p,
+.remarks-section p {
+    text-align: left;
+}
+
+.diagnosis-section strong,
+.remarks-section strong {
+    font-weight: 700;
+}
+
+/* Fit/Unfit Status */
+.fit-status {
+    margin: 25px 0;
+}
+
+.checkbox-group {
+    display: flex;
+    gap: 40px;
+    align-items: center;
+}
+
+.checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.checkbox-box {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #000;
+    text-align: center;
+    line-height: 18px;
+    font-weight: 700;
+    font-size: 16px;
+    vertical-align: middle;
+}
+
+/* Laboratory Section */
+.lab-section {
+    margin: 25px 0;
+}
+
+.lab-section > p {
+    text-align: left;
+    margin-bottom: 15px;
+}
+
+.lab-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px 30px;
+    margin-left: 20px;
+}
+
+.lab-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Footer Note */
+.footer-note {
+    margin: 30px 0;
+}
+
+.footer-note p {
+    text-align: justify;
+}
+
+/* Signature */
+.signature {
+    text-align: left;
+    justify-content: left;
+}
+
+.signature-section {
+    margin-top: 50px;
+    text-align: right;
+}
+
+.signature-line {
+    border-top: 2px solid #000;
+    width: 300px;
+    margin: 0 0 8px auto;
+    text-align: left;
+    justify-content: left;
+}
+
+.signature-name {
+    font-weight: 700;
+    font-size: 15px;
+    margin-bottom: 5px;
+}
+
+.signature-title {
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+
+.signature-license {
+    font-size: 12px;
+}
+
+/* Buttons inside certificate */
+.buttons {
+    text-align: right;
+    margin-top: 40px;
+    display: flex;
+    justify-content: right;
+    gap: 15px;
+}
+
+.button {
+    padding: 12px 30px;
+    border: none;
+    border-radius: 999px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 650;
+    transition: all 0.2s ease;
+    font-family: var(--poppins);
+}
+
+.button-print {
+    background: var(--blue);
+    color: white;
+}
+
+.button-print:hover {
+    background: var(--blue-dark);
+}
+
+.button-back {
+    background: #e5e7eb;
+    color: #334155;
+}
+
+.button-back:hover {
+    background: #d1d5db;
+}
+
+/* Responsive screen preview only */
+@media (max-width: 980px) {
+    #content main {
+        padding: 22px 18px 34px;
+    }
+
+    .certificate-container {
+        padding: 28px 24px;
+        overflow-x: auto;
+    }
+
+    .container {
+        min-width: 760px;
+    }
+
+    .page-heading-actions {
+        width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    #content main {
+        padding: 18px 14px 28px;
+    }
+
+    .page-heading h1 {
+        font-size: 26px;
+    }
+
+    .certificate-view-card {
+        border-radius: 18px;
+    }
+
+    .certificate-card-header {
+        align-items: flex-start;
+    }
+
+    .screen-button {
+        flex: 1;
+    }
+
+    .certificate-container {
+        padding: 18px 12px;
+    }
+
+    .buttons {
+        flex-direction: column-reverse;
+    }
+
+    .button {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    #content main {
+        padding: 16px 10px 24px;
+    }
+
+    .certificate-card-header h2 {
+        font-size: 15px;
+    }
+
+    .certificate-card-header span {
+        font-size: 11.5px;
+    }
+}
+
+/* =========================================================
+   PRINT STYLES - kept as your original printed layout
+   ========================================================= */
+
+@media print {
+    * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    #sidebar,
+    #content nav,
+    nav,
+    .side-menu,
+    .brand,
+    .buttons,
+    .screen-only,
+    .certificate-card-header {
+        display: none !important;
+    }
+
+    body {
+        background: white !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        font-family: "Times New Roman", serif !important;
+    }
+
+    .certificate-view-card {
+        border: none !important;
+        border-radius: 0 !important;
+        background: white !important;
+        box-shadow: none !important;
+        margin: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        overflow: visible !important;
+    }
+
+    .certificate-container {
+        width: 100% !important;
+        max-width: 100% !important;
+        height: auto !important;
+        box-shadow: none !important;
+        padding: 5pt !important;
+        margin: 0 !important;
+    }
+
+    .container {
+        width: 100% !important;
+        max-width: 100% !important;
+        height: auto !important;
+        border: 2pt solid #000 !important;
+        border-radius: 5pt !important;
+        padding: 8pt !important;
+        margin: 0 !important;
+        box-sizing: border-box !important;
+    }
+
+    #content {
+        position: static !important;
+        width: 100% !important;
+        left: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    main {
+        padding: 0 !important;
+        margin: 0 !important;
+        max-height: none !important;
+    }
 
     .header {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important; /* center everything as a group */
-    border-bottom: 1.5pt solid #000 !important;
-    padding-bottom: 3pt !important;
-    margin-bottom: 3pt !important;
-    column-gap: 10pt !important; /* reduced gap for tighter spacing */
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        border-bottom: 1.5pt solid #000 !important;
+        padding-bottom: 3pt !important;
+        margin-bottom: 3pt !important;
+        column-gap: 10pt !important;
+    }
+
+    .header .logo {
+        height: 38pt !important;
+        width: 38pt !important;
+        flex-shrink: 0 !important;
+    }
+
+    .header-text {
+        text-align: center !important;
+        flex: 0.75 !important;
+        line-height: 1.1 !important;
+    }
+
+    .header-text h1 {
+        font-size: 7.5pt !important;
+        font-weight: 600 !important;
+        font-family: "Times New Roman", serif !important;
+    }
+
+    .header-text h2 {
+        font-size: 9.5pt !important;
+        font-weight: 700 !important;
+        margin: 0.3pt 0 !important;
+        font-family: "Times New Roman", serif !important;
+    }
+
+    .control-no {
+        margin: 2pt 0 4pt 0 !important;
+        font-size: 7pt !important;
+        font-family: "Times New Roman", serif !important;
+    }
+
+    .title {
+        text-align: center !important;
+        margin: 5pt 0 !important;
+        margin-bottom: 10pt !important;
+    }
+
+    .title h1 {
+        font-size: 11pt !important;
+        font-weight: 700 !important;
+        letter-spacing: 1.5pt !important;
+        font-family: "Times New Roman", serif !important;
+    }
+
+    .content {
+        font-size: 8.5pt !important;
+        line-height: 1.3 !important;
+        font-family: "Times New Roman", serif !important;
+    }
+
+    .content p {
+        margin-bottom: 4pt !important;
+        text-align: justify !important;
+    }
+
+    .patient-info {
+        margin-bottom: 5pt !important;
+    }
+
+    .underline {
+        border-bottom: 0.8pt solid #000 !important;
+        padding-bottom: 0.3pt !important;
+        display: inline-block !important;
+        min-width: 65pt !important;
+        font-weight: 600 !important;
+    }
+
+    .diagnosis-section,
+    .remarks-section {
+        margin-left: 0 0 !important;
+    }
+
+    .diagnosis-section p,
+    .remarks-section p {
+        text-align: left !important;
+        margin-left: 60px !important;
+        margin-top: -12px;
+    }
+
+    .fit-status {
+        margin-left: 60px !important;
+        margin-top: -12px;
+    }
+
+    .checkbox-group {
+        display: flex !important;
+        gap: 18pt !important;
+    }
+
+    .checkbox-item {
+        display: flex !important;
+        align-items: center !important;
+        gap: 5pt !important;
+    }
+
+    .checkbox-box {
+        display: inline-block !important;
+        width: 10pt !important;
+        height: 10pt !important;
+        border: 1.2pt solid #000 !important;
+        text-align: center !important;
+        line-height: 8.5pt !important;
+        font-weight: 700 !important;
+        font-size: 8pt !important;
+        vertical-align: middle !important;
+        flex-shrink: 0 !important;
+    }
+
+    .lab-section {
+        margin-left: 60px !important;
+        margin-top: -8px;
+    }
+
+    .lab-section > p {
+        text-align: left !important;
+        margin-bottom: 3pt !important;
+    }
+
+    .lab-grid {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 2pt 20pt !important;
+        margin-left: 0 !important;
+    }
+
+    .lab-item {
+        display: flex !important;
+        align-items: center !important;
+        gap: 5pt !important;
+        page-break-inside: avoid !important;
+    }
+
+    .footer-note {
+        margin-left: 20px !important;
+        margin-top: -12px;
+    }
+
+    .footer-note p {
+        text-align: justify !important;
+    }
+
+    .signature-section {
+        margin-top: 10pt !important;
+        text-align: center !important;
+        page-break-inside: avoid !important;
+    }
+
+    .signature-line {
+        border-top: 1.2pt solid #000 !important;
+        width: 160pt !important;
+        margin: 0 0 2pt auto !important;
+    }
+
+    .signature-name {
+        font-weight: 700 !important;
+        font-size: 9pt !important;
+        margin-bottom: 1.5pt !important;
+        font-family: "Times New Roman", serif !important;
+        line-height: 1.2 !important;
+        text-align: center !important;
+        margin-left: auto !important;
+        width: 160pt !important;
+    }
+
+    .signature-title {
+        font-size: 8pt !important;
+        font-weight: 400 !important;
+        margin-bottom: 2.5pt !important;
+        font-family: "Times New Roman", serif !important;
+        line-height: 1.2 !important;
+        text-align: center !important;
+        margin-left: auto !important;
+        width: 160pt !important;
+    }
+
+    .signature-license {
+        font-size: 8pt !important;
+        font-family: "Times New Roman", serif !important;
+        line-height: 1.2 !important;
+        text-align: center !important;
+        margin-left: auto !important;
+        width: 160pt !important;
+    }
+
+    .buttons {
+        display: none !important;
+    }
+
+    * {
+        box-shadow: none !important;
+    }
 }
 
-.header .logo {
-    height: 38pt !important;
-    width: 38pt !important;
-    flex-shrink: 0 !important;
+@page {
+    size: A5 landscape;
+    margin: 0.05in 0.05in 0.05in 0.05in;
 }
-
-.header-text {
-    text-align: center !important;
-    flex: 0.75 !important; /* prevents stretching */
-    line-height: 1.1 !important;
-}
-
-            .header-text h1 {
-                font-size: 7.5pt !important;
-                font-weight: 600 !important;
-                
-                font-family: 'Times New Roman', serif !important;
-            }
-
-            .header-text h2 {
-                font-size: 9.5pt !important;
-                font-weight: 700 !important;
-                margin: 0.3pt 0 !important;
-                font-family: 'Times New Roman', serif !important;
-            }
-
-            .control-no {
-                margin: 2pt 0 4pt 0 !important;
-                font-size: 7pt !important;
-                font-family: 'Times New Roman', serif !important;
-            }
-
-            .title {
-                text-align: center !important;
-                margin: 5pt 0 !important;
-                margin-bottom: 10pt !important;
-            }
-
-            .title h1 {
-                font-size: 11pt !important;
-                font-weight: 700 !important;
-                letter-spacing: 1.5pt !important;
-                font-family: 'Times New Roman', serif !important;
-            }
-
-            .content {
-                font-size: 8.5pt !important;
-                line-height: 1.3 !important;
-                font-family: 'Times New Roman', serif !important;
-            }
-
-            .content p {
-                margin-bottom: 4pt !important;
-                text-align: justify !important;
-            }
-
-            .patient-info {
-                margin-bottom: 5pt !important;
-            }
-
-            .underline {
-                border-bottom: 0.8pt solid #000 !important;
-                padding-bottom: 0.3pt !important;
-                display: inline-block !important;
-                min-width: 65pt !important; 
-                font-weight: 600 !important;
-            }
-
-            .diagnosis-section,
-            .remarks-section {
-                margin-left: 0 0 !important;
-            }
-
-            .diagnosis-section p,
-            .remarks-section p {
-                text-align: left !important;
-                margin-left: 60px !important;
-                margin-top: -12px;
-            }
-
-            .fit-status {
-                margin-left: 60px !important;
-                margin-top: -12px;
-            }
-
-            .checkbox-group {
-                display: flex !important;
-                gap: 18pt !important;
-            }
-
-            .checkbox-item {
-                display: flex !important;
-                align-items: center !important;
-                gap: 5pt !important;
-            }
-
-            .checkbox-box {
-                display: inline-block !important;
-                width: 10pt !important;
-                height: 10pt !important;
-                border: 1.2pt solid #000 !important;
-                text-align: center !important;
-                line-height: 8.5pt !important;
-                font-weight: 700 !important;
-                font-size: 8pt !important;
-                vertical-align: middle !important;
-                flex-shrink: 0 !important;
-            }
-
-            .lab-section {
-                margin-left: 60px !important;
-                margin-top: -8px;
-            }
-
-            .lab-section > p {
-                text-align: left !important;
-                margin-bottom: 3pt !important;
-            }
-
-            .lab-grid {
-                display: grid !important;
-                grid-template-columns: 1fr 1fr !important;
-                gap: 2pt 20pt !important;
-                margin-left: 0 !important;
-            }
-
-            .lab-item {
-                display: flex !important;
-                align-items: center !important;
-                gap: 5pt !important;
-                page-break-inside: avoid !important;
-            }
-
-            .footer-note {
-               
-                  margin-left: 20px !important;
-                margin-top: -12px;
-            }
-
-            .footer-note p {
-                text-align: justify !important;
-               
-            }
-
-            .signature-section {
-                margin-top: 10pt !important;
-                text-align: center !important;
-                page-break-inside: avoid !important;
-            }
-
-            .signature-line {
-                border-top: 1.2pt solid #000 !important;
-                width: 160pt !important;
-                margin: 0 0 2pt auto !important;
-            }
-
-            .signature-name {
-                font-weight: 700 !important;
-                font-size: 9pt !important;
-                margin-bottom: 1.5pt !important;
-                font-family: 'Times New Roman', serif !important;
-                line-height: 1.2 !important;
-                text-align: center !important;
-                margin-left: auto !important;
-                width: 160pt !important;
-            }
-
-            .signature-title {
-                font-size: 8pt !important;
-                font-weight: 400 !important;
-                margin-bottom: 2.5pt !important;
-                font-family: 'Times New Roman', serif !important;
-                line-height: 1.2 !important;
-                text-align: center !important;
-                margin-left: auto !important;
-                width: 160pt !important;
-            }
-
-            .signature-license {
-                font-size: 8pt !important;
-                font-family: 'Times New Roman', serif !important;
-                line-height: 1.2 !important;
-                text-align: center !important;
-                margin-left: auto !important;
-                width: 160pt !important;
-            }
-
-            .buttons {
-                display: none !important;
-            }
-
-            * {
-                box-shadow: none !important;
-            }
-        }
-        @page {
-            size: A5 landscape;
-            margin: 0.05in 0.05in 0.05in 0.05in;
-        }

@@ -1,502 +1,994 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Poppins:wght@400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap");
 
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Inter', sans-serif;
-  }
-  
-a {
-	text-decoration: none;
 }
-
-li {
-	list-style: none;
-}
-
 
 :root {
-	--poppins: 'Poppins', sans-serif;
-	--lato: 'Lato', sans-serif;
+    --font-main: "Poppins", sans-serif;
 
-	--light: #fafcff;
-	--blue: #1c538a;
-	--light-blue: #CFE8FF;
-	--grey: #eee;
-	--dark-grey: #AAAAAA;
-	--dark: #342E37;
-	--red: #DB504A;
-	--yellow: #FFCE26;
-	--light-yellow: #FFF2C6;
-	--orange: #FD7238;
-	--light-orange: #FFE0D3;
+    --page-bg: #f5f8fc;
+    --soft-bg: #f8fbff;
+
+    --text-main: #061b3a;
+    --text-muted: #64748b;
+
+    --blue: #1f5b97;
+    --blue-dark: #174d83;
+    --cyan: #12acc7;
+    --red: #dc2626;
+
+    --border: rgba(15, 23, 42, 0.08);
+    --border-strong: rgba(15, 23, 42, 0.12);
+
+    --shadow: 0 14px 34px rgba(15, 23, 42, 0.08);
+    --shadow-soft: 0 8px 22px rgba(15, 23, 42, 0.06);
 }
 
-html {
-  overflow-x: hidden;
-} 
-
-
-body.dark {
-	--light: #0C0C1E;
-	--grey: #060714;
-	--dark: #FBFBFB;
+html,
+body {
+    overflow-x: hidden;
 }
 
 body {
-	background: url(img/body.png);
-	overflow-x: hidden;
-	background-size: cover;
-    
+    min-height: 100vh;
+    color: var(--text-main);
+    background:
+        radial-gradient(circle at top left, rgba(37, 99, 235, 0.06), transparent 26%),
+        radial-gradient(circle at top right, rgba(18, 172, 199, 0.07), transparent 24%),
+        linear-gradient(180deg, #f8fbff 0%, var(--page-bg) 100%);
+    font-family: var(--font-main);
 }
 
+a {
+    text-decoration: none;
+}
+
+li {
+    list-style: none;
+}
+
+#sidebar .sidebar-section-label {
+    background: transparent !important;
+    padding: 0 22px 8px !important;
+    margin: 0 !important;
+    color: var(--text-muted) !important;
+    font-family: var(--font-main) !important;
+}
+
+/* Main */
 #content main {
-	width: 100%;
-	padding: 36px 24px;
-	font-family: var(--poppins);
-	max-height: calc(100vh - 56px);
-	overflow-y: auto;
-}
-#content main .head-title {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	grid-gap: 16px;
-	flex-wrap: wrap;
-    margin-bottom: 50px;
-}
-#content main .head-title .left h1 {
-	font-size: 36px;
-	font-weight: 600;
-	margin-bottom: 10px;
-	color: var(--dark);
-}
-#content main .head-title .left .breadcrumb {
-	display: flex;
-	align-items: center;
-	grid-gap: 16px;
-}
-#content main .head-title .left .breadcrumb li {
-	color: var(--dark);
-}
-#content main .head-title .left .breadcrumb li a {
-	color: var(--dark-grey);
-	pointer-events: none;
-}
-#content main .head-title .left .breadcrumb li a.active {
-	color: var(--blue);
-	pointer-events: unset;
+    width: 100%;
+    min-height: calc(100vh - 64px);
+    max-height: none;
+    overflow-y: visible;
+    padding: 28px 32px 42px;
+    background: transparent;
+    font-family: var(--font-main);
 }
 
-#content main .table-data {
-	display: flex;
-	flex-wrap: wrap;
-	grid-gap: 24px;
-	margin-top: 24px;
-	width: 90%;
-	color: var(--dark);
-}
-#content main .table-data > div {
-	border-radius: 20px;
-	background: var(--light);
-	padding: 24px;
-	overflow-x: auto;
-}
-#content main .table-data .head {
-	display: flex;
-	align-items: center;
-	grid-gap: 16px;
-	margin-bottom: 24px;
-}
-#content main .table-data .head h1 {
-	font-size: 20px;
-	font-weight: 550;
-}
-#content main .table-data .head h3 {
-	margin-right: auto;
-	font-size: 24px;
-	font-weight: 600;
-}
-#content main .table-data .head p {
-	font-size: 24px;
-	font-weight: 600;
-}
-#content main .table-data .head .bx {
-	cursor: grab;
+.medcert-page {
+    width: min(100%, 1080px);
+    margin: 0 auto;
 }
 
-#content main .table-data .order {
-	flex-grow: 1;
-	flex-basis: 500px;
-}
-#content main .table-data .order table {
-	width: 100%;
-	border-collapse: collapse;
-}
-#content main .table-data .order table th {
-	padding-bottom: 12px;
-	font-size: 13px;
-	text-align: left;
-	border-bottom: 1px solid var(--grey);
-}
-#content main .table-data .order table td {
-	padding: 16px 0;
-}
-#content main .table-data .order table tr td:first-child {
-	display: flex;
-	align-items: center;
-	grid-gap: 12px;
-	padding-left: 6px;
-}
-#content main .table-data .order table td img {
-	width: 36px;
-	height: 36px;
-	border-radius: 50%;
-	object-fit: cover;
-}
-#content main .table-data .order table tbody tr:hover {
-	background: var(--grey);
-}
-#content main .table-data .order table tr td .status {
-	font-size: 10px;
-	padding: 6px 16px;
-	color: var(--light);
-	border-radius: 20px;
-	font-weight: 700;
-}
-#content main .table-data .order table tr td .status.completed {
-	background: var(--blue);
-}
-#content main .table-data .order table tr td .status.process {
-	background: var(--yellow);
-}
-#content main .table-data .order table tr td .status.pending {
-	background: var(--orange);
+/* Patient Card */
+.patient-record-container {
+    width: 100%;
+    margin: 0 auto 24px;
 }
 
-
-#content main .table-data .todo {
-	flex-grow: 1;
-	flex-basis: 300px;
-}
-#content main .table-data .todo .todo-list {
-	width: 50%;
-}
-#content main .table-data .todo .todo-list li {
-	width: 100%;
-	margin-bottom: 16px;
-	background: var(--grey);
-	border-radius: 10px;
-	padding: 14px 20px;
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-}
-#content main .table-data .todo .todo-list li .bx {
-	cursor: pointer;
-}
-#content main .table-data .todo .todo-list li.completed {
-	border-left: 200px solid var(--blue);
+.patient-name-container {
+    position: relative;
+    margin-bottom: 18px;
+    padding: 20px 22px;
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    background: linear-gradient(145deg, #ffffff, #f8fbff);
+    box-shadow: var(--shadow-soft);
+    overflow: hidden;
 }
 
-#content main .table-data .todo .todo-list li:last-child {
-	margin-bottom: 0;
+.patient-name-container::before {
+    content: "";
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 5px;
+    background: linear-gradient(180deg, var(--blue), var(--cyan));
 }
 
-
-/* =========================
-   MEDCERT — Modern Form Skin
-   (No HTML changes needed)
-   ========================= */
-
-:root{
-  --mc-bg: #F7FAFC;
-  --mc-surface: #FFFFFF;
-  --mc-surface-2: #F9FBFD;
-  --mc-text: #1F2937;
-  --mc-muted: #6B7280;
-  --mc-border: #E5E7EB;
-
-  --mc-primary: #0B74B5;
-  --mc-primary-600: #095e90;
-
-  --mc-danger: #dc2626;
-  --mc-success: #16a34a;
-
-  --mc-r: 14px;
-  --mc-shadow: 0 6px 18px rgba(2,18,34,.06);
-  --mc-ring: 0 0 0 4px color-mix(in srgb, var(--mc-primary) 20%, transparent);
+.patient-label-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 14px;
 }
 
-/* Card + section rhythm */
-.medcert-form{
-  max-width: 980px;
-  margin: 20px auto 64px;
-  background: var(--mc-surface);
-  border: 1px solid var(--mc-border);
-  border-radius: 16px;
-  padding: 22px;
-  box-shadow: var(--mc-shadow);
-}
-.form-section{
-  padding: 18px 4px 22px;
-  border-bottom: 1px solid var(--mc-border);
-}
-.form-section:last-of-type{ border-bottom: 0; }
-.form-section h3{
-  display: flex; align-items: center; gap: 10px;
-  font-weight: 700; color: var(--mc-text); letter-spacing: .2px;
-  margin-bottom: 12px;
-}
-.form-section h3::after{
-  content: ''; width: 6px; height: 6px; border-radius: 999px;
-  background: var(--mc-primary);
-  box-shadow: 0 0 0 6px color-mix(in srgb, var(--mc-primary) 16%, transparent);
+.patient-name-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--blue);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
 }
 
-/* Labels, hints, validation text */
-.form-group{ margin-bottom: 16px; }
-.form-group label{
-  display: inline-block;
-  margin-bottom: 8px;
-  font-weight: 600; color: var(--mc-text);
-}
-.form-hint{
-  margin-top: 6px; font-size: 12px; color: var(--mc-muted);
-}
-.form-error{
-  margin-top: 6px; font-size: 12px; color: var(--mc-danger);
+.patient-name-label i {
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 10px;
+    background: rgba(31, 91, 151, 0.09);
+    font-size: 16px;
 }
 
-/* Unified input skin (includes Flatpickr) */
-.medcert-form .form-group input[type="text"],
-.medcert-form .form-group input[type="date"],
-.medcert-form .form-group input[type="number"],
-.medcert-form .form-group textarea,
-.medcert-form .form-group select,
-.flatpickr-input{
-  width: 100%;
-  background: var(--mc-surface-2);
-  border: 1px solid var(--mc-border);
-  border-radius: 12px;
-  padding: 12px 14px;
-  font-size: 14px; color: var(--mc-text);
-  transition: border-color .15s ease, box-shadow .15s ease, background .2s ease;
-}
-.medcert-form .form-group input::placeholder,
-.medcert-form .form-group textarea::placeholder{ color: #9aa3ad; }
-.medcert-form .form-group input:focus,
-.medcert-form .form-group textarea:focus,
-.medcert-form .form-group select:focus{
-  outline: none;
-  border-color: var(--mc-primary);
-  box-shadow: var(--mc-ring);
-  background: #fff;
+.name-part {
+    display: flex;
+    align-items: center;
+    min-height: 64px;
+    padding: 14px 16px;
+    border: 1px solid var(--border);
+    border-radius: 17px;
+    background: #ffffff;
 }
 
-/* Select (options) — modern arrow without HTML changes */
-.medcert-form .form-group select{
-  -webkit-appearance: none; -moz-appearance: none; appearance: none;
-  background-image:
-    linear-gradient(45deg, transparent 50%, var(--mc-text) 50%),
-    linear-gradient(135deg, var(--mc-text) 50%, transparent 50%),
-    linear-gradient(to right, transparent, transparent);
-  background-position:
-    calc(100% - 22px) calc(50% - 3px),
-    calc(100% - 16px) calc(50% - 3px),
-    calc(100% - 40px) 0.6em;
-  background-size: 6px 6px, 6px 6px, 1px 1.8em;
-  background-repeat: no-repeat;
-  padding-right: 44px;
-  cursor: pointer;
-}
-.medcert-form .form-group select:disabled{
-  opacity: .7; cursor: not-allowed;
+.patient-full-name {
+    display: block;
+    width: 100%;
+    color: var(--text-main);
+    font-size: clamp(18px, 2vw, 24px);
+    font-weight: 700;
+    line-height: 1.2;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
-/* Textareas — tuned for clinical text */
-.medcert-form .form-group textarea{
-  line-height: 1.5;
-  min-height: 140px;
-  resize: vertical;
-}
-.medcert-form .form-group textarea:focus{
-  background: #fff;
-}
-.textarea-compact{ min-height: 90px; } /* optional helper */
-
-/* Radio “chips” (FIT/UNFIT) */
-.radio-group{ display: flex; flex-wrap: wrap; gap: 10px; }
-.radio-label{
-  display: inline-flex; align-items: center; gap: 8px;
-  border: 1px solid var(--mc-border);
-  background: var(--mc-surface-2);
-  border-radius: 999px;
-  padding: 8px 12px;
-  transition: background .15s, border-color .15s, box-shadow .15s;
-}
-.radio-label input{ accent-color: var(--mc-primary); }
-.radio-label input:focus-visible{
-  outline: 2px solid var(--mc-primary); outline-offset: 2px; border-radius: 999px;
-}
-.radio-label.is-checked{
-  border-color: var(--mc-primary);
-  background: color-mix(in srgb, var(--mc-primary) 10%, #fff);
-  box-shadow: var(--mc-ring);
-  font-weight: 700;
+/* Form */
+.medcert-form {
+    width: 100%;
+    margin: 0 auto 64px;
+    padding: 22px;
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    background: linear-gradient(145deg, #ffffff, #f8fbff);
+    box-shadow: var(--shadow);
 }
 
-/* Character counter (if enabled via JS) */
-.input-with-counter{ position: relative; }
-.input-counter{
-  position: absolute; right: 10px; bottom: 8px;
-  font-size: 11px; color: var(--mc-muted);
-}
-.input-counter.is-danger{ color: var(--mc-danger); }
-
-.form-actions {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 14px;
-  margin-top: 30px;
-  padding-top: 20px;
-  border-top: 1px solid #e5e7eb;
+.form-section {
+    margin-bottom: 18px;
+    padding: 20px;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    background: #ffffff;
+    box-shadow: var(--shadow-soft);
 }
 
-/* Base button style */
-.button {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 10px 20px;
-  border-radius: 12px;
-  font-size: 15px;
-  font-weight: 600;
-  letter-spacing: 0.3px;
-  border: none;
-  cursor: pointer;
-  transition: all 0.25s ease;
-  outline: none;
-  user-select: none;
-  overflow: hidden;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+.form-section:last-of-type {
+    margin-bottom: 0;
 }
 
-/* Primary (Issue Certificate) */
-.button-primary {
-  background: linear-gradient(135deg, #0066cc 0%, #004c99 100%);
-  color: #fff;
-}
-.button-primary:hover {
-  background: linear-gradient(135deg, #0078e6 0%, #005bb5 100%);
-  transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(0, 102, 204, 0.3);
-}
-.button-primary:active {
-  transform: translateY(0);
-  box-shadow: 0 2px 6px rgba(0, 102, 204, 0.25);
-}
-.button-primary::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at center, rgba(255,255,255,0.25), transparent 60%);
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-.button-primary:hover::after {
-  opacity: 0.4;
+.form-section.is-hidden,
+.form-group.is-hidden {
+    display: none !important;
 }
 
-/* Secondary (Cancel) */
-.button-secondary {
-  background: #f1f3f5;
-  color: #374151;
-  border: 1px solid #d1d5db;
-}
-.button-secondary:hover {
-  background: #e5e7eb;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-}
-.button-secondary:active {
-  transform: translateY(0);
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+.section-heading {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 18px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--border);
 }
 
-/* Focus ring for accessibility */
-.button:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 4px rgba(0, 102, 204, 0.25);
+.section-icon {
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+    border-radius: 14px;
+    color: var(--blue);
+    background: rgba(31, 91, 151, 0.09);
 }
 
-/* Optional subtle animation when loaded */
-@keyframes buttonReveal {
-  0% { opacity: 0; transform: translateY(6px); }
-  100% { opacity: 1; transform: translateY(0); }
-}
-.button { animation: buttonReveal 0.3s ease-out; }
-
-/* Patient banner subtle */
-.patient-record-container{
-  width: min(100%, 980px);
-  margin: 0 auto 24px; padding: 14px 16px;
-  background: var(--mc-surface);
-  border: 1px dashed color-mix(in srgb, var(--mc-primary) 24%, #fff);
-  border-radius: 12px;
+.section-icon i {
+    font-size: 20px;
 }
 
-
-/* Print-friendly */
-@media print{
-  body{ background:#fff !important; }
-  #sidebar, nav{ display:none !important; }
-  #content{ width:100% !important; left:0 !important; }
-  .patient-record-container, .medcert-form{
-    box-shadow: none !important; background:#fff !important; border:1px solid #000 !important;
-  }
-  .form-section{ border-color:#000 !important; }
-  .button, .logout-modal{ display:none !important; }
-}
-/* --- Laboratory Results: proper 2-column alignment --- */
-.form-section.lab-results{
-  display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr)); /* robust grid */
-  column-gap: 24px;
-  row-gap: 18px;
-  align-items: start;
+.section-heading h3 {
+    margin: 0;
+    color: var(--text-main);
+    font-size: 16px;
+    font-weight: 750;
+    line-height: 1.25;
 }
 
-/* Make the section title span full width so fields start on the next row */
-.form-section.lab-results > h3{
-  grid-column: 1 / -1;
-  margin-bottom: 2px; /* compact under-title spacing */
+.section-heading p {
+    margin: 3px 0 0;
+    color: var(--text-muted);
+    font-size: 12px;
+    font-weight: 500;
 }
 
-/* Each field takes half (6/12) — gives perfect two columns */
-.form-section.lab-results .form-group{
-  grid-column: span 6;
-  margin: 0; /* remove extra vertical gaps from previous styles */
+.form-group {
+    margin-bottom: 16px;
 }
 
-/* Ensure inputs fill their grid cell cleanly */
-.form-section.lab-results .form-group input[type="text"],
-.form-section.lab-results .form-group select,
-.form-section.lab-results .form-group textarea{
-  width: 100%;
-  box-sizing: border-box;
+.form-group:last-child {
+    margin-bottom: 0;
 }
 
-/* Mobile: stack to one column */
-@media (max-width: 768px){
-  .form-section.lab-results{
-    grid-template-columns: repeat(6, minmax(0, 1fr));
-  }
-  .form-section.lab-results .form-group{
+.form-group label {
+    display: inline-block;
+    margin-bottom: 8px;
+    color: #334155;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.required {
+    color: var(--red);
+}
+
+.form-hint {
+    display: block;
+    margin-top: 7px;
+    color: var(--text-muted);
+    font-size: 11.5px;
+    font-weight: 500;
+}
+
+/* Inputs */
+.medcert-form input[type="text"],
+.medcert-form input[type="date"],
+.medcert-form input[type="number"],
+.medcert-form select,
+.medcert-form textarea,
+.flatpickr-input {
+    width: 100%;
+    min-height: 44px;
+    padding: 11px 13px;
+    border: 1px solid var(--border-strong);
+    border-radius: 14px;
+    background: var(--soft-bg);
+    color: var(--text-main);
+    font-family: var(--font-main);
+    font-size: 13px;
+    font-weight: 500;
+    outline: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+.medcert-form textarea {
+    min-height: 110px;
+    line-height: 1.5;
+    resize: vertical;
+}
+
+.medcert-form input::placeholder,
+.medcert-form textarea::placeholder {
+    color: #94a3b8;
+}
+
+.medcert-form input:focus,
+.medcert-form select:focus,
+.medcert-form textarea:focus {
+    border-color: rgba(31, 91, 151, 0.42);
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(31, 91, 151, 0.08);
+}
+
+.medcert-form select {
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+    padding-right: 42px;
+    background-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%231f5b97' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    background-size: 15px;
+}
+
+.visit-display {
+    display: none;
+    margin-top: 10px;
+    padding: 12px 14px;
+    border: 1px solid rgba(31, 91, 151, 0.14);
+    border-radius: 14px;
+    color: var(--text-main);
+    background: rgba(31, 91, 151, 0.06);
+    font-size: 12.5px;
+    font-weight: 650;
+}
+
+.visit-display.is-visible {
+    display: block;
+}
+
+/* Examination Layout */
+.exam-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(220px, 0.55fr);
+    gap: 18px;
+    align-items: start;
+}
+
+/* Fit Status - clean radio layout */
+.fit-status-group {
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+}
+
+.fit-status-group > label {
+    display: block;
+    margin-bottom: 10px;
+    color: var(--text-main);
+    font-size: 13px;
+    font-weight: 750;
+}
+
+.radio-group {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+}
+
+.radio-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: auto;
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    color: var(--text-main);
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.radio-label input[type="radio"] {
+    position: static;
+    opacity: 1;
+    pointer-events: auto;
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    accent-color: var(--blue);
+    cursor: pointer;
+}
+
+.radio-label.is-checked {
+    color: var(--text-main);
+    background: transparent;
+    box-shadow: none;
+}
+
+.radio-text {
+    color: var(--text-main);
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.remarks-group {
+    margin-top: 18px;
+}
+
+/* Rows */
+.form-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+/* Textarea Counter */
+.input-with-counter {
+    position: relative;
+}
+
+.input-counter {
+    position: absolute;
+    right: 12px;
+    bottom: 8px;
+    color: var(--text-muted);
+    font-size: 10.5px;
+    font-weight: 600;
+    pointer-events: none;
+}
+
+.input-counter.is-danger {
+    color: var(--red);
+}
+
+/* Lab Grid */
+.form-section.lab-results {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.form-section.lab-results .section-heading {
     grid-column: 1 / -1;
-  }
+    margin-bottom: 2px;
+}
+
+.form-section.lab-results .lab-other-field {
+    grid-column: 1 / -1;
+}
+
+/* Buttons */
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 12px;
+    margin-top: 22px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+}
+
+.button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 40px;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 999px;
+    font-family: var(--font-main);
+    font-size: 12.5px;
+    font-weight: 750;
+    cursor: pointer;
+    transition: background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.button-primary {
+    color: #ffffff;
+    background: var(--blue);
+    box-shadow: 0 8px 18px rgba(31, 91, 151, 0.16);
+}
+
+.button-primary:hover {
+    background: var(--blue-dark);
+    transform: translateY(-1px);
+}
+
+.button-secondary {
+    color: #334155;
+    background: #e5e7eb;
+}
+
+.button-secondary:hover {
+    background: #d1d5db;
+    transform: translateY(-1px);
+}
+
+/* Smaller Material Date Picker */
+.flatpickr-calendar.material-date-picker,
+.flatpickr-calendar {
+    width: 330px !important;
+    max-width: calc(100vw - 24px) !important;
+    padding: 12px 14px 0 !important;
+    border: 1px solid rgba(31, 91, 151, 0.12) !important;
+    border-radius: 16px !important;
+    background: #ffffff !important;
+    box-shadow: 0 18px 45px rgba(15, 23, 42, 0.18) !important;
+    font-family: var(--font-main) !important;
+    overflow: hidden !important;
+}
+
+.flatpickr-calendar::before,
+.flatpickr-calendar::after {
+    display: none !important;
+}
+
+.flatpickr-months {
+    width: 100% !important;
+    height: auto !important;
+    margin: 0 0 10px !important;
+    padding: 0 !important;
+}
+
+.material-picker-header {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 8px !important;
+    width: 100% !important;
+}
+
+.material-picker-group {
+    display: grid !important;
+    grid-template-columns: 32px minmax(0, 1fr) 32px !important;
+    align-items: center !important;
+    gap: 5px !important;
+    min-width: 0 !important;
+}
+
+.material-picker-nav {
+    display: grid !important;
+    place-items: center !important;
+    width: 32px !important;
+    height: 32px !important;
+    border: none !important;
+    border-radius: 10px !important;
+    color: var(--blue) !important;
+    background: #eef5fb !important;
+    font-size: 18px !important;
+    font-weight: 700 !important;
+    line-height: 1 !important;
+    cursor: pointer !important;
+}
+
+.material-picker-nav:hover {
+    background: #e1edf8 !important;
+}
+
+.flatpickr-prev-month,
+.flatpickr-next-month {
+    display: none !important;
+}
+
+.flatpickr-current-month,
+.flatpickr-months .flatpickr-month {
+    position: static !important;
+    width: auto !important;
+    height: auto !important;
+    padding: 0 !important;
+    overflow: visible !important;
+}
+
+.flatpickr-current-month {
+    display: contents !important;
+}
+
+.flatpickr-monthDropdown-months,
+.flatpickr-current-month .flatpickr-monthDropdown-months,
+.flatpickr-current-month .numInputWrapper,
+.material-picker-year-group .numInputWrapper {
+    width: 100% !important;
+    height: 40px !important;
+    min-width: 0 !important;
+    border: 1px solid rgba(15, 23, 42, 0.1) !important;
+    border-radius: 12px !important;
+    background: #ffffff !important;
+    box-shadow: none !important;
+}
+
+.flatpickr-monthDropdown-months,
+.flatpickr-current-month .flatpickr-monthDropdown-months {
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    padding: 0 30px 0 12px !important;
+    color: #0f1f38 !important;
+    background-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%231f5b97' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 10px center !important;
+    background-size: 13px !important;
+    font-size: 13px !important;
+    font-weight: 650 !important;
+    line-height: 40px !important;
+}
+
+.material-picker-year-group input.cur-year {
+    width: 100% !important;
+    height: 38px !important;
+    padding: 0 10px !important;
+    border: none !important;
+    outline: none !important;
+    color: #0f1f38 !important;
+    background: transparent !important;
+    font-family: var(--font-main) !important;
+    font-size: 13px !important;
+    font-weight: 650 !important;
+    text-align: center !important;
+    appearance: textfield !important;
+    -moz-appearance: textfield !important;
+}
+
+.material-picker-year-group input.cur-year::-webkit-outer-spin-button,
+.material-picker-year-group input.cur-year::-webkit-inner-spin-button {
+    -webkit-appearance: none !important;
+    margin: 0 !important;
+}
+
+.flatpickr-current-month .numInputWrapper span,
+.material-picker-year-group .numInputWrapper span,
+.material-picker-year-group .numInputWrapper .arrowUp,
+.material-picker-year-group .numInputWrapper .arrowDown {
+    display: none !important;
+}
+
+.flatpickr-innerContainer,
+.flatpickr-rContainer,
+.flatpickr-weekdays,
+.flatpickr-weekdaycontainer,
+.flatpickr-days,
+.dayContainer {
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+}
+
+.flatpickr-weekdays {
+    height: auto !important;
+    margin: 6px 0 4px !important;
+}
+
+.flatpickr-weekdaycontainer {
+    display: grid !important;
+    grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
+}
+
+span.flatpickr-weekday {
+    display: grid !important;
+    place-items: center !important;
+    height: 26px !important;
+    color: #5f6f85 !important;
+    font-size: 11px !important;
+    font-weight: 800 !important;
+}
+
+.dayContainer {
+    display: grid !important;
+    grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
+    gap: 4px 3px !important;
+    padding-bottom: 12px !important;
+}
+
+.flatpickr-day {
+    display: grid !important;
+    place-items: center !important;
+    width: 100% !important;
+    max-width: none !important;
+    height: 32px !important;
+    margin: 0 !important;
+    border: none !important;
+    border-radius: 10px !important;
+    color: #27364a !important;
+    background: transparent !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    line-height: 32px !important;
+}
+
+.flatpickr-day:hover,
+.flatpickr-day:focus {
+    color: var(--blue) !important;
+    background: rgba(31, 91, 151, 0.08) !important;
+}
+
+.flatpickr-day.today {
+    color: var(--blue) !important;
+    background: rgba(31, 91, 151, 0.06) !important;
+    box-shadow: inset 0 0 0 1px rgba(31, 91, 151, 0.18) !important;
+}
+
+.flatpickr-day.selected,
+.flatpickr-day.selected:hover {
+    color: var(--blue) !important;
+    background: rgba(31, 91, 151, 0.10) !important;
+    box-shadow: inset 0 0 0 1px rgba(31, 91, 151, 0.35) !important;
+}
+
+.flatpickr-day.prevMonthDay,
+.flatpickr-day.nextMonthDay,
+.flatpickr-day.flatpickr-disabled {
+    color: #cbd5e1 !important;
+}
+
+.material-picker-footer {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    gap: 16px !important;
+    margin: 0 -14px !important;
+    padding: 11px 14px !important;
+    border-top: 1px solid rgba(15, 23, 42, 0.08) !important;
+    background: #ffffff !important;
+}
+
+.material-picker-footer button {
+    min-height: 24px !important;
+    padding: 4px 0 !important;
+    border: none !important;
+    color: var(--blue) !important;
+    background: transparent !important;
+    font-family: var(--font-main) !important;
+    font-size: 12px !important;
+    font-weight: 800 !important;
+    cursor: pointer !important;
+}
+
+/* Logout Modal */
+.logout-modal {
+    display: none;
+    position: fixed;
+    z-index: 3000;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.45);
+}
+
+.logout-modal-content {
+    width: min(90%, 360px);
+    margin: 14vh auto 0;
+    padding: 22px;
+    border-radius: 22px;
+    background: #ffffff;
+    box-shadow: 0 24px 60px rgba(15, 23, 42, 0.22);
+    font-family: var(--font-main);
+}
+
+.logout-modal-header h3 {
+    margin-bottom: 10px;
+    color: var(--text-main);
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.logout-modal-body p {
+    color: var(--text-muted);
+    font-size: 14px;
+}
+
+.logout-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.logout-cancel-btn,
+.logout-confirm-btn {
+    min-height: 36px;
+    padding: 8px 14px;
+    border: none;
+    border-radius: 999px;
+    font-family: var(--font-main);
+    font-size: 12px;
+    font-weight: 650;
+    cursor: pointer;
+}
+
+.logout-cancel-btn {
+    color: #334155;
+    background: #e5e7eb;
+}
+
+.logout-confirm-btn {
+    color: #ffffff;
+    background: #dc2626;
+}
+
+#medCertForm .fit-status-group {
+    width: 100%;
+    margin: 0 0 16px 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+#medCertForm .fit-status-title {
+    display: block !important;
+    margin: 0 0 10px 0 !important;
+    color: #061b3a !important;
+    font-family: var(--font-main, "Poppins", sans-serif) !important;
+    font-size: 13px !important;
+    font-weight: 750 !important;
+    line-height: 1.2 !important;
+}
+
+#medCertForm .fit-status-options {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 28px !important;
+    flex-wrap: nowrap !important;
+    width: 100% !important;
+}
+
+#medCertForm .fit-radio-option {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 8px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    color: #061b3a !important;
+    font-family: var(--font-main, "Poppins", sans-serif) !important;
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    line-height: 1 !important;
+    white-space: nowrap !important;
+    cursor: pointer !important;
+}
+
+#medCertForm .fit-radio-option input[type="radio"] {
+    position: static !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    appearance: auto !important;
+    -webkit-appearance: radio !important;
+    width: 19px !important;
+    height: 19px !important;
+    min-width: 19px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    accent-color: #1f5b97 !important;
+    cursor: pointer !important;
+}
+
+#medCertForm .fit-radio-option span {
+    display: inline-block !important;
+    color: #061b3a !important;
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    line-height: 1 !important;
+    white-space: nowrap !important;
+}
+
+/* Remove old chip/radio styles from previous CSS */
+#medCertForm .radio-label,
+#medCertForm .radio-label.is-checked,
+#medCertForm .fit-status-group .radio-label,
+#medCertForm .fit-status-group .radio-label.is-checked {
+    padding: 0 !important;
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+#medCertForm .radio-check {
+    display: none !important;
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+    #medCertForm .fit-status-options {
+        gap: 22px !important;
+    }
+
+    #medCertForm .fit-radio-option span {
+        font-size: 13.5px !important;
+    }
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    #content main {
+        padding: 22px 18px 34px;
+    }
+
+    .exam-grid,
+    .form-section.lab-results {
+        grid-template-columns: 1fr;
+    }
+
+    .form-section.lab-results .lab-other-field {
+        grid-column: auto;
+    }
+}
+
+@media (max-width: 768px) {
+    #content main {
+        padding: 18px 14px 28px;
+    }
+
+    #content main .head-title .left h1 {
+        font-size: 26px;
+    }
+
+    .patient-name-container,
+    .medcert-form,
+    .form-section {
+        border-radius: 18px;
+    }
+
+    .medcert-form {
+        padding: 14px;
+    }
+
+    .form-section {
+        padding: 16px;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+
+    .section-heading {
+        align-items: flex-start;
+    }
+
+    .form-actions {
+        flex-direction: column-reverse;
+        align-items: stretch;
+    }
+
+    .button {
+        width: 100%;
+    }
+
+    .patient-full-name {
+        font-size: 18px;
+        white-space: normal;
+    }
+}
+
+@media (max-width: 480px) {
+    #content main {
+        padding: 16px 10px 24px;
+    }
+
+    .section-heading h3 {
+        font-size: 15px;
+    }
+
+    .section-heading p {
+        font-size: 11.5px;
+    }
+
+    .flatpickr-calendar.material-date-picker,
+    .flatpickr-calendar {
+        width: calc(100vw - 20px) !important;
+        padding: 11px 12px 0 !important;
+    }
+
+    .material-picker-header {
+        grid-template-columns: 1fr !important;
+    }
+
+    .material-picker-footer {
+        margin: 0 -12px !important;
+        padding: 11px 12px !important;
+    }
+}
+
+/* Print */
+@media print {
+    #sidebar,
+    #content nav,
+    .form-actions,
+    .sidebar-overlay,
+    .logout-modal {
+        display: none !important;
+    }
+
+    body {
+        background: #ffffff !important;
+    }
+
+    #content,
+    #content main {
+        width: 100% !important;
+        padding: 0 !important;
+        background: #ffffff !important;
+    }
+
+    .patient-name-container,
+    .medcert-form,
+    .form-section {
+        box-shadow: none !important;
+        border-color: #000 !important;
+        background: #ffffff !important;
+    }
 }

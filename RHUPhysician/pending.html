@@ -1,176 +1,169 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="icon" href="../img/logo.png">
-	<link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
-	<link rel="stylesheet" href="css/form.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pending Referrals</title>
+
+    <link rel="icon" href="../img/logo.png">
+    <link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/pending.css">
     <link rel="stylesheet" href="css/logout.css">
     <link rel="stylesheet" href="css/sidebar.css">
-	<style>
-		/* Fix: form.css has a global p rule. Keep BHW sidebar labels clean. */
-		#sidebar .sidebar-section-label {
-			background: transparent !important;
-			height: auto !important;
-			width: auto !important;
-			margin: 0 !important;
-			padding: 0 22px 8px !important;
-			display: block !important;
-			line-height: 1.2 !important;
-			color: var(--text-muted, #a0abc0) !important;
-			font-family: var(--font-main, 'Plus Jakarta Sans', sans-serif) !important;
-			font-size: 10px !important;
-			font-weight: 600 !important;
-			text-transform: uppercase !important;
-			letter-spacing: 0.8px !important;
-		}
-	</style>
-	<title>Pending Referrals</title> 
 </head>
+
 <body>
 
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-	<!-- Sidebar Section -->
-	<section id="sidebar">
-		<a href="#" class="sidebar-brand">
-			<img src="../img/logo.png" alt="RHU Logo" class="brand-logo">
-			<div class="brand-text">
-				<span class="brand-name">Hello Physician</span>
-			</div>
-		</a>
+<section id="sidebar">
+    <a href="#" class="sidebar-brand">
+        <img src="../img/logo.png" alt="RHU Logo" class="brand-logo">
 
-		<div class="sidebar-scroll">
-			<div class="sidebar-section-label">Main Menu</div>
-			<ul class="side-menu top">
-				<li>
-					<a href="dashboard" data-tooltip="Dashboard">
-						<i class="bx bxs-dashboard nav-icon"></i>
-						<span class="nav-label">Dashboard</span>
-					</a>
-				</li>
-				<li class="active">
-					<a href="#" id="updateReferrals" data-tooltip="Pending Referrals">
-						<i class="bx bxs-user nav-icon"></i>
-						<span class="nav-label">Pending Referrals</span>
-					</a>
-				</li>
-				<li>
-					<a href="followUpConsultations" data-tooltip="Follow-Up Visits">
-						<i class="bx bxs-user nav-icon"></i>
-						<span class="nav-label">Follow-Up Visits</span>
-					</a>
-				</li>
-				<li>
-					<a href="searchPatient" data-tooltip="Patient Records">
-						<i class="bx bxs-search nav-icon"></i>
-						<span class="nav-label">Patient Records</span>
-					</a>
-				</li>
-				<li>
-					<a href="history" data-tooltip="Referral History">
-						<i class="bx bx-history nav-icon"></i>
-						<span class="nav-label">Referral History</span>
-					</a>
-				</li>
-				<li>
-					<a href="reports" data-tooltip="Reports">
-						<i class="bx bx-notepad nav-icon"></i>
-						<span class="nav-label">Reports</span>
-					</a>
-				</li>
-			</ul>
+        <div class="brand-text">
+            <span class="brand-name">Hello Physician</span>
+        </div>
+    </a>
 
-			<div class="sidebar-divider"></div>
+    <div class="sidebar-scroll">
+        <div class="sidebar-section-label">Main Menu</div>
 
-			<ul class="side-menu">
-				<li>
-					<a href="#" class="logout" data-tooltip="Logout" onclick="return confirmLogout()">
-						<i class="bx bxs-log-out-circle nav-icon"></i>
-						<span class="nav-label">Logout</span>
-					</a>
-				</li>
-			</ul>
-		</div>
+        <ul class="side-menu top">
+            <li>
+                <a href="dashboard" data-tooltip="Dashboard">
+                    <i class="bx bxs-dashboard nav-icon"></i>
+                    <span class="nav-label">Dashboard</span>
+                </a>
+            </li>
 
-		<div class="sidebar-footer">
-			<div class="sidebar-user">
-				<img src="../img/doctor.png" alt="Physician User">
-				<div class="sidebar-user-info">
-					<div class="user-name" id="sidebarUserName">Physician User</div>
-					<div class="user-role">RHU Physician</div>
-				</div>
-			</div>
-		</div>
-	</section>
+            <li class="active">
+                <a href="#" id="updateReferrals" data-tooltip="Pending Referrals">
+                    <i class="bx bxs-user nav-icon"></i>
+                    <span class="nav-label">Pending Referrals</span>
+                </a>
+            </li>
 
-	<!-- Main Content Section -->
-	<section id="content">
-		<nav>
-			<button class="nav-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
-				<i class="bx bx-menu"></i>
-			</button>
+            <li>
+                <a href="followUpConsultations" data-tooltip="Follow-Up Visits">
+                    <i class="bx bxs-calendar-check nav-icon"></i>
+                    <span class="nav-label">Follow-Up Visits</span>
+                </a>
+            </li>
 
-			<form action="#" id="searchForm" class="nav-search" style="position: relative;">
-				<input type="search" id="searchInput" placeholder="Search by Referral ID or Patient Name..." autocomplete="off">
-				<button type="submit" id="searchButton" aria-label="Search">
-					<i class="bx bx-search"></i>
-				</button>
-				<div id="resultDropdown" class="dropdown-content"></div>
-			</form>
-		</nav>
+            <li>
+                <a href="searchPatient" data-tooltip="Patient Records">
+                    <i class="bx bxs-search nav-icon"></i>
+                    <span class="nav-label">Patient Records</span>
+                </a>
+            </li>
 
-		<main>
-            
-            <div class="head-title">
-                <div class="left">
-                  <h1>Pending Referrals</h1>
-                  <ul class="breadcrumb">
-                    <li><a href="#">Pending Referrals</a></li>
-                    <li><i class="bx bx-chevron-right"></i></li>
-                    <li><a class="active" href="#">Home</a></li>
-                  </ul>
+            <li>
+                <a href="history" data-tooltip="Referral History">
+                    <i class="bx bx-history nav-icon"></i>
+                    <span class="nav-label">Referral History</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="reports" data-tooltip="Reports">
+                    <i class="bx bx-notepad nav-icon"></i>
+                    <span class="nav-label">Reports</span>
+                </a>
+            </li>
+        </ul>
+
+        <div class="sidebar-divider"></div>
+
+        <ul class="side-menu">
+            <li>
+                <a href="#" class="logout" data-tooltip="Logout" onclick="return confirmLogout()">
+                    <i class="bx bxs-log-out-circle nav-icon"></i>
+                    <span class="nav-label">Logout</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="sidebar-footer">
+        <div class="sidebar-user">
+            <img src="../img/doctor.png" alt="Physician User">
+
+            <div class="sidebar-user-info">
+                <div class="user-name" id="sidebarUserName">Physician User</div>
+                <div class="user-role">RHU Physician</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="content">
+    <nav>
+        <button type="button" class="nav-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+            <i class="bx bx-menu"></i>
+        </button>
+
+        <form action="#" id="searchForm" class="nav-search">
+            <input 
+                type="search" 
+                id="searchInput" 
+                placeholder="Search by Referral ID or Patient Name..." 
+                autocomplete="off"
+            >
+
+            <button type="submit" id="searchButton" aria-label="Search">
+                <i class="bx bx-search"></i>
+            </button>
+
+            <div id="resultDropdown" class="dropdown-content"></div>
+        </form>
+    </nav>
+
+    <main>
+        <div class="page-title">
+            <div>
+                <h1>Pending Referrals</h1>
+            </div>
+        </div>
+
+        <section class="referrals-page">
+            <div class="referral-summary-card">
+                <div class="summary-icon">
+                    <i class="bx bx-calendar-check"></i>
                 </div>
-              </div>
 
-<br>
+                <div class="summary-content">
+                    <h3>Referrals Today</h3>
+                    <span id="currentDate"></span>
+                </div>
+            </div>
 
-            <div class="history-container">
-                <div class="referral-summary-card">
-                    <div class="content">
-                      <h3>Referrals Today</h3>
-                      <span id="currentDate"></span>
+            <div class="table-card">
+                <div class="table-header">
+                    <div>
+                        <h2>Pending Referral List</h2>
+                        <p>Click a row to view complete visit information.</p>
                     </div>
-                  </div>
-                  
-<script>
-    // Get the current date
-    const today = new Date();
-  
-  // Format the date as "Month Day, Year"
-  const options = { year: 'numeric', month: 'long', day: 'numeric' };
-  const formattedDate = today.toLocaleDateString('en-US', options);
+                </div>
 
-  // Display the date in the element
-  document.getElementById("currentDate").textContent = formattedDate;
-</script>
-                <table id="history-table" class="status">
-                    <thead>
-                        <tr>
-                            <th>REFERRAL ID</th>
-                            <th>Date</th>
-                            <th>Patient Name</th>
-                            <th>Referral from</th>
-                            <th>Status</th>
-                            
-                        </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                    
-                </table>
-                
+                <div class="table-scroll">
+                    <table id="history-table" class="referral-table physician-referral-table">
+                        <thead>
+                            <tr>
+                                <th>Referral ID</th>
+                                <th>Date</th>
+                                <th>Patient Name</th>
+                                <th>Referral From</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <!-- Dynamic referral data will be inserted here by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+
                 <div class="pagination" id="pagination">
                     <a href="#" class="prev">Previous</a>
                     <a href="#" class="page-number">1</a>
@@ -179,235 +172,317 @@
                     <a href="#" class="next">Next</a>
                 </div>
             </div>
+        </section>
+    </main>
+</section>
 
 <div id="logoutModal" class="logout-modal">
     <div class="logout-modal-content">
         <div class="logout-modal-header">
             <h3>Confirm Logout</h3>
         </div>
+
         <div class="logout-modal-body">
             <p>Are you sure you want to logout?</p>
         </div>
+
         <div class="logout-modal-footer">
             <button onclick="closeModal()" class="logout-cancel-btn">Cancel</button>
             <button onclick="proceedLogout()" class="logout-confirm-btn">Yes, Logout</button>
         </div>
     </div>
-</div>	   </main>	
-</section>
+</div>
 
 <script>
-	document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function () {
+    displayCurrentDate();
+    checkUserSession();
+    setupUserName();
+    setupResponsiveSidebar();
+    setupUpdateReferrals();
+    setupReferralSearch();
     fetchReferrals();
+});
 
-    function fetchReferrals() {
-        fetch("php/fetch_referrals.php")
-            .then(response => response.json())
-            .then(data => {
-                const tableBody = document.querySelector("#history-table tbody");
-                tableBody.innerHTML = ""; // Clear existing content
+function displayCurrentDate() {
+    const today = new Date();
 
-                if (data.error) {
-                    console.error(data.error);
-                    tableBody.innerHTML = `<tr><td colspan="5">Error fetching data</td></tr>`;
-                    return;
-                }
+    const formattedDate = today.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric"
+    });
 
-                data.forEach(referral => {
-                    const row = document.createElement("tr");
-                    row.innerHTML = `
-                        <td style="padding: 18px 10px;">${referral.referral_id}</td>
-                        <td>${formatDate(referral.referral_date)}</td>
-                        <td>${referral.patient_name}</td>
-                        <td>${referral.referral_from || 'Nursing Attendant'}</td>
-                        <td class="${referral.referral_status.toLowerCase()}">${referral.referral_status}</td>
-           
-                    `;
-
-                    // Make row clickable (excluding action buttons)
-                    row.style.cursor = "pointer";
-                    row.addEventListener("click", function () {
-                        window.location.href = `UpdateVisitInfo?visit_id=${referral.visit_id}`;
-                    });
-
-                    tableBody.appendChild(row);
-                });
-            })
-            .catch(error => {
-                console.error("Error fetching referrals:", error);
-            });
-    }
-
-  function formatDate(dateString) {
-    if (!dateString) return "N/A";
-    const date = new Date(dateString);
-    if (isNaN(date.getTime())) return "Invalid Date";
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    return date.toLocaleDateString('en-US', options);
+    document.getElementById("currentDate").textContent = formattedDate;
 }
 
-});
+function fetchReferrals() {
+    fetch("php/fetch_referrals.php")
+        .then(response => response.json())
+        .then(data => {
+            const tableBody = document.querySelector("#history-table tbody");
+            tableBody.innerHTML = "";
 
-document.getElementById('searchForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-    const table = document.getElementById('history-table');
-    const rows = table.getElementsByTagName('tr');
+            if (data.error) {
+                console.error(data.error);
 
-    for (let i = 1; i < rows.length; i++) { // Start from 1 to skip header row
-        const row = rows[i];
-        const referralId = row.cells[0].textContent.toLowerCase();
-        const patientName = row.cells[2].textContent.toLowerCase();
-        
-        if (referralId.includes(searchTerm) || patientName.includes(searchTerm)) {
-            row.style.display = '';
-        } else {
-            row.style.display = 'none';
-        }
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="empty-message">Error fetching data.</td>
+                    </tr>
+                `;
+                return;
+            }
+
+            if (!Array.isArray(data) || data.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="empty-message">No referrals found.</td>
+                    </tr>
+                `;
+                return;
+            }
+
+            data.forEach(referral => {
+                const row = document.createElement("tr");
+
+                row.innerHTML = `
+                    <td>${referral.referral_id}</td>
+                    <td>${formatDate(referral.referral_date)}</td>
+                    <td>${referral.patient_name || "N/A"}</td>
+                    <td>${referral.referral_from || "Nursing Attendant"}</td>
+                    <td>
+                        <span class="status-badge ${getStatusClass(referral.referral_status)}">
+                            ${referral.referral_status || "N/A"}
+                        </span>
+                    </td>
+                `;
+
+                row.addEventListener("click", function () {
+                    window.location.href = `UpdateVisitInfo?visit_id=${referral.visit_id}`;
+                });
+
+                tableBody.appendChild(row);
+            });
+
+            document.getElementById("pagination").innerHTML = "";
+            applyReferralSearch();
+        })
+        .catch(error => {
+            console.error("Error fetching referrals:", error);
+        });
+}
+
+function getStatusClass(status) {
+    const normalizedStatus = String(status || "").toLowerCase();
+
+    if (normalizedStatus.includes("forwarded")) {
+        return "status-forwarded";
     }
-});
 
-// Add event listener for real-time search
-document.getElementById('searchInput').addEventListener('keyup', function() {
-    const searchTerm = this.value.toLowerCase();
-    const table = document.getElementById('history-table');
-    const rows = table.getElementsByTagName('tr');
-
-    for (let i = 1; i < rows.length; i++) {
-        const row = rows[i];
-        const referralId = row.cells[0].textContent.toLowerCase();
-        const patientName = row.cells[2].textContent.toLowerCase();
-        
-        if (referralId.includes(searchTerm) || patientName.includes(searchTerm)) {
-            row.style.display = '';
-        } else {
-            row.style.display = 'none';
-        }
+    if (normalizedStatus.includes("pending")) {
+        return "status-pending";
     }
-});
+
+    if (normalizedStatus.includes("completed")) {
+        return "status-completed";
+    }
+
+    if (normalizedStatus.includes("missed")) {
+        return "status-missed";
+    }
+
+    return "status-default";
+}
+
+function setupReferralSearch() {
+    const searchForm = document.getElementById("searchForm");
+    const searchInput = document.getElementById("searchInput");
+
+    if (!searchForm || !searchInput) {
+        return;
+    }
+
+    searchForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+        applyReferralSearch();
+    });
+
+    searchInput.addEventListener("keyup", applyReferralSearch);
+}
+
+function applyReferralSearch() {
+    const searchInput = document.getElementById("searchInput");
+
+    if (!searchInput) {
+        return;
+    }
+
+    const searchTerm = searchInput.value.toLowerCase();
+    const rows = document.querySelectorAll("#history-table tbody tr");
+
+    rows.forEach(row => {
+        const cells = row.querySelectorAll("td");
+
+        if (cells.length < 3) {
+            return;
+        }
+
+        const referralId = cells[0].textContent.toLowerCase();
+        const patientName = cells[2].textContent.toLowerCase();
+
+        row.style.display = referralId.includes(searchTerm) || patientName.includes(searchTerm)
+            ? ""
+            : "none";
+    });
+}
+
+function formatDate(dateString) {
+    if (!dateString) {
+        return "N/A";
+    }
+
+    const date = new Date(dateString);
+
+    if (isNaN(date.getTime())) {
+        return "Invalid Date";
+    }
+
+    return date.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric"
+    });
+}
+
+function setupUserName() {
+    fetch("php/getUserName.php")
+        .then(response => response.json())
+        .then(data => {
+            const sidebarUserName = document.getElementById("sidebarUserName");
+
+            if (sidebarUserName) {
+                sidebarUserName.textContent = data.full_name || "Physician User";
+            }
+        })
+        .catch(error => {
+            console.error("Error fetching user name:", error);
+
+            const sidebarUserName = document.getElementById("sidebarUserName");
+
+            if (sidebarUserName) {
+                sidebarUserName.textContent = "Physician User";
+            }
+        });
+}
+
+function checkUserSession() {
+    fetch("php/getUserId.php")
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                window.location.href = "../auth/role";
+            }
+        })
+        .catch(error => {
+            console.error("Error checking session:", error);
+            window.location.href = "../auth/role";
+        });
+}
+
+function setupResponsiveSidebar() {
+    const sidebar = document.getElementById("sidebar");
+    const toggle = document.getElementById("sidebarToggle");
+    const overlay = document.getElementById("sidebarOverlay");
+    const MOBILE_BP = 768;
+
+    if (!sidebar || !toggle || !overlay) {
+        return;
+    }
+
+    function isMobile() {
+        return window.innerWidth <= MOBILE_BP;
+    }
+
+    function closeMobileSidebar() {
+        sidebar.classList.remove("mobile-open");
+        overlay.classList.remove("active");
+        document.body.style.overflow = "";
+    }
+
+    toggle.addEventListener("click", function () {
+        if (isMobile()) {
+            const open = sidebar.classList.toggle("mobile-open");
+
+            overlay.classList.toggle("active", open);
+            document.body.style.overflow = open ? "hidden" : "";
+        } else {
+            sidebar.classList.toggle("collapsed");
+        }
+    });
+
+    overlay.addEventListener("click", closeMobileSidebar);
+
+    window.addEventListener("resize", function () {
+        if (!isMobile()) {
+            closeMobileSidebar();
+        }
+    });
+}
+
+function setupUpdateReferrals() {
+    const updateReferrals = document.getElementById("updateReferrals");
+
+    if (!updateReferrals) {
+        return;
+    }
+
+    updateReferrals.addEventListener("click", function (event) {
+        event.preventDefault();
+
+        fetch("php/update_referrals.php")
+            .then(response => response.json())
+            .then(data => {
+                console.log(data.message);
+                window.location.href = "pending";
+            })
+            .catch(error => {
+                console.error("Error updating referrals:", error);
+                window.location.href = "pending";
+            });
+    });
+}
 
 function confirmLogout() {
-    const modal = document.getElementById('logoutModal');
-    if (modal) modal.classList.add('open');
+    const modal = document.getElementById("logoutModal");
+
+    if (modal) {
+        modal.style.display = "block";
+    }
+
     return false;
 }
 
 function closeModal() {
-    const modal = document.getElementById('logoutModal');
-    if (modal) modal.classList.remove('open');
+    const modal = document.getElementById("logoutModal");
+
+    if (modal) {
+        modal.style.display = "none";
+    }
 }
 
 function proceedLogout() {
-    window.location.href='../auth/role';
+    window.location.href = "../auth/role";
 }
 
-window.addEventListener('click', function(event) {
-    const modal = document.getElementById('logoutModal');
-    if (event.target === modal) {
+window.addEventListener("click", function (event) {
+    const logoutModal = document.getElementById("logoutModal");
+
+    if (event.target === logoutModal) {
         closeModal();
     }
 });
-fetch('php/getUserName.php')
-    .then(response => response.json())
-    .then(data => {
-        const sidebarUserName = document.getElementById('sidebarUserName');
-        if (sidebarUserName) {
-            sidebarUserName.textContent = data.full_name || 'Physician User';
-        }
-    })
-    .catch(error => {
-        console.error('Error fetching user name:', error);
-        const sidebarUserName = document.getElementById('sidebarUserName');
-        if (sidebarUserName) {
-            sidebarUserName.textContent = 'Physician User';
-        }
-    });
-
-    	// Check if user is logged in
-fetch('php/getUserId.php')
-    .then(response => response.json())
-    .then(data => {
-        if (data.error) {
-            // User is not logged in, redirect to role selection page
-            window.location.href='../auth/role';
-        }
-    })
-    .catch(error => {
-        console.error('Error checking session:', error);
-        window.location.href='../auth/role';
-    });
-
 </script>
 
-<script>
-(function () {
-  const sidebar = document.getElementById('sidebar');
-  const toggle = document.getElementById('sidebarToggle');
-  const overlay = document.getElementById('sidebarOverlay');
-  const MOBILE_BP = 768;
-
-  function isMobile() {
-    return window.innerWidth <= MOBILE_BP;
-  }
-
-  function setDesktopState() {
-    if (!sidebar || !overlay) return;
-    sidebar.classList.remove('mobile-open');
-    overlay.classList.remove('active');
-    document.body.style.overflow = '';
-  }
-
-  if (toggle && sidebar && overlay) {
-    toggle.addEventListener('click', function () {
-      if (isMobile()) {
-        const open = sidebar.classList.toggle('mobile-open');
-        overlay.classList.toggle('active', open);
-        document.body.style.overflow = open ? 'hidden' : '';
-      } else {
-        sidebar.classList.toggle('collapsed');
-      }
-    });
-  }
-
-  if (overlay && sidebar) {
-    overlay.addEventListener('click', function () {
-      sidebar.classList.remove('mobile-open');
-      overlay.classList.remove('active');
-      document.body.style.overflow = '';
-    });
-  }
-
-  window.addEventListener('resize', function () {
-    if (!isMobile()) {
-      setDesktopState();
-    }
-  });
-})();
-
-document.addEventListener("DOMContentLoaded", () => {
-  const updateReferrals = document.getElementById("updateReferrals");
-
-  if (updateReferrals) {
-    updateReferrals.addEventListener("click", function (event) {
-      event.preventDefault();
-
-      fetch("php/update_referrals.php")
-        .then(response => response.json())
-        .then(data => {
-          console.log(data.message);
-          window.location.href = "pending";
-        })
-        .catch(error => {
-          console.error("Error updating referrals:", error);
-          window.location.href = "pending";
-        });
-    });
-  }
-});
-</script>
-
-	<script src="js/script.js"></script>
-    <script src="js/history.js"></script>
-    <script src="js/logout.js"></script>
 </body>
 </html>

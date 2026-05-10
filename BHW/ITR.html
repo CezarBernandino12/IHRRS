@@ -139,14 +139,6 @@ fetch('php/getUserId.php')
 			<button class="nav-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
 				<i class="bx bx-menu"></i>
 			</button>
-
-			<div class="nav-search" style="position: relative;">
-				<input type="search" id="patientSearch" placeholder="Enter patient name..." name="search" autocomplete="off">
-				<button type="button" id="searchButton" aria-label="Search">
-					<i class="bx bx-search"></i>
-				</button>
-				<div id="resultDropdown" class="dropdown-content"></div>
-			</div>
 		</nav>
 
         <main>
@@ -156,18 +148,20 @@ fetch('php/getUserId.php')
 				</div>
 			</div>
 
-
-
-    <div class="container-header">
-        <h2>INDIVIDUAL TREATMENT RECORD (ITR)</h2>
-    </div>
+            <div class="itr-guide-card" aria-label="Form guide">
+                <div class="itr-guide-icon"><i class="bx bx-info-circle"></i></div>
+                <div>
+                    <h2>Quick Guide</h2>
+                    <p>Fill in the required fields marked with <b>*</b>. After completing the form, click <b>Submit</b> to save or refer the patient.</p>
+                </div>
+            </div>
 
     <div class="container">
         <form class="personal-info-form" id="individualRecordForm" action="php/saveInitialAssessment" method="POST">
             <input type="hidden" name="form_type" value="individual_record">
             <input type="hidden" name="permanent_address" id="permanent_address_combined">
 
-            <p><b>PERSONAL INFORMATION:</b></p>
+            <div class="form-section-title"><i class="bx bx-user"></i><b>PERSONAL INFORMATION:</b></div>
 
             <div class="form-container">
                 <!-- Column 1 -->
@@ -326,10 +320,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
     
 
-                <div class="form-group">
+                <div class="form-group dob-age-group">
                     <label for="dob" class="required">Date of Birth:</label>
-                    <input type="text" id="dob" name="dob" class="flatpickr-dob" onchange="calculateAge()" required placeholder="Select date of birth">
-                    <label id="age-display" >Age: </label>
+                    <div class="dob-age-row">
+                        <input type="text" id="dob" name="dob" class="flatpickr-dob" onchange="calculateAge()" required placeholder="Select date of birth">
+                        <label id="age-display">Age: </label>
+                    </div>
                 </div>
                 <input type="hidden" id="age-input" name="age">
 
@@ -443,14 +439,17 @@ document.addEventListener("DOMContentLoaded", function () {
                     </div>
                 </div>
             </div>
-            <br> <br> <br>
-
-            <p><b>PATIENT ASSESSMENT:</b></p>
+            <div class="form-section-title"><i class="bx bx-clipboard"></i><b>PATIENT ASSESSMENT:</b></div>
             <div class="additional-group box-group additional-fields">
 
-                <div class="additional-options">
+                <div class="additional-options">                    <div class="form-group dov-field">
+                        <label for="dov">Date of Visit:</label>
+                        <input type="text" name="dov" id="dov" class="flatpickr-dov" required placeholder="Select date of visit">
+                    </div>
 
-                    <div class="form-group"  style ="width: 200px;">
+
+
+                    <div class="form-group patient-alert-field">
                         <label for="alert">Patient Alert:</label>
                         <select name="patient_alert" id="patient_alert">
                             <option value="">Select (if any)</option>
@@ -462,11 +461,6 @@ document.addEventListener("DOMContentLoaded", function () {
                            
                         </select>
                     </div>
-<br>
-<div class="additonal-group" hidden> 
-    <label for="dov">Date of Visit:</label>
-    <input type="text" name="dov" id="dov" class="flatpickr-dov" required placeholder="Select date of visit">
-</div>
 
 
 
@@ -497,11 +491,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
 <div class="vitals-section box-group">
 
-    <div class="additional-group vitals-item" id="bmiContainer">
+    <div class="additional-group vitals-item bmi-result-card" id="bmiContainer">
         <label for="bmi">BMI:</label>
-        <input type="number" step="any" name="bmi" id="bmi"
-            placeholder="BMI will appear here"
-            style="background-color: #f9f9f9; color: #033cad; font-weight: bolder; border: none;" readonly>
+        <input type="hidden" step="any" name="bmi" id="bmi">
+        <div class="bmi-auto-display" id="bmiDisplay" aria-live="polite">BMI will appear here</div>
     </div>
 
     <div class="additional-group vitals-item">
@@ -541,8 +534,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 </div>
             </div>
 
-            <div class="form-group">
-                <div class="form-group">
+            <div class="form-group treatment-medicine-section">
+                <div class="form-group treatment-field">
                     <label for="treatment">Treatment: <i><span style="font-weight: 400;">(if no referral)</span></i></label>
                     <select id="treatment" name="treatment">
                         <option  disabled selected="">Select treatment (if no referral)</option>
@@ -552,13 +545,13 @@ document.addEventListener("DOMContentLoaded", function () {
                         <option value="BP only">BP only</option>
                        
                     </select>
-                </div> <br>
+                </div>
 
                 <div id="medicine-container">
-                    <div class="medicine-entry" style="display: flex; gap: 10px; align-items: center;">
-                        <div class="form-group" style="flex: 1;"> 
+                    <div class="medicine-entry">
+                        <div class="form-group medicine-name-field"> 
                             <label for="medicine_given[]">Medication Given:</label>
-                            <select name="medicine_given[]" class="medicine-select" style="width: 200px;">
+                            <select name="medicine_given[]" class="medicine-select">
                                 <option value="">Select</option>
                                 <option value="other">Other (Enter manually)</option>
                            
@@ -567,13 +560,13 @@ document.addEventListener("DOMContentLoaded", function () {
                         
                         <div class="form-group">
                             <label for="quantity_given[]">Quantity:</label>
-                            <div class="quantity-container" style="display: flex; gap: 5px;">
+                            <div class="quantity-container">
                                 <button type="button" class="btn-minus">−</button>
-                                <input type="number" name="quantity_given[]" value="0" min="0" style="height: 17px;">
+                                <input type="number" name="quantity_given[]" value="0" min="0">
                                 <button type="button" class="btn-plus">+</button>
                             </div>
                         </div>
-                        <button type="button" class="btn-remove" style="margin-top: 25px; background-color: #e6e6e6; color: rgb(0, 0, 0); border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; height: 35px;">
+                        <button type="button" class="btn-remove">
                             Remove
                         </button>
                     </div>
@@ -605,13 +598,124 @@ document.addEventListener("click", function(event) {
     }
 });
 
- // Date of Birth picker (disable future dates)
+ // Improved date pickers: easy navigation, clear/today actions, consistent UI on all screens
+    function setupMaterialDatePicker(instance, options = {}) {
+        const calendar = instance.calendarContainer;
+        if (!calendar) return;
+
+        calendar.classList.add("material-date-picker");
+
+        // Hide Flatpickr's default arrows and build a Material-style header.
+        const monthsContainer = calendar.querySelector(".flatpickr-months");
+        const currentMonth = calendar.querySelector(".flatpickr-current-month");
+        const monthSelect = calendar.querySelector(".flatpickr-monthDropdown-months");
+        const yearWrapper = calendar.querySelector(".numInputWrapper");
+
+        if (monthsContainer && currentMonth && monthSelect && yearWrapper && !calendar.querySelector(".material-picker-header")) {
+            const header = document.createElement("div");
+            header.className = "material-picker-header";
+
+            const monthGroup = document.createElement("div");
+            monthGroup.className = "material-picker-group material-picker-month-group";
+
+            const monthPrev = document.createElement("button");
+            monthPrev.type = "button";
+            monthPrev.className = "material-picker-nav";
+            monthPrev.setAttribute("aria-label", "Previous month");
+            monthPrev.innerHTML = "‹";
+            monthPrev.addEventListener("click", function () {
+                instance.changeMonth(-1);
+            });
+
+            const monthNext = document.createElement("button");
+            monthNext.type = "button";
+            monthNext.className = "material-picker-nav";
+            monthNext.setAttribute("aria-label", "Next month");
+            monthNext.innerHTML = "›";
+            monthNext.addEventListener("click", function () {
+                instance.changeMonth(1);
+            });
+
+            const yearGroup = document.createElement("div");
+            yearGroup.className = "material-picker-group material-picker-year-group";
+
+            const yearPrev = document.createElement("button");
+            yearPrev.type = "button";
+            yearPrev.className = "material-picker-nav";
+            yearPrev.setAttribute("aria-label", "Previous year");
+            yearPrev.innerHTML = "‹";
+            yearPrev.addEventListener("click", function () {
+                instance.changeYear(instance.currentYear - 1);
+            });
+
+            const yearNext = document.createElement("button");
+            yearNext.type = "button";
+            yearNext.className = "material-picker-nav";
+            yearNext.setAttribute("aria-label", "Next year");
+            yearNext.innerHTML = "›";
+            yearNext.addEventListener("click", function () {
+                instance.changeYear(instance.currentYear + 1);
+            });
+
+            monthGroup.appendChild(monthPrev);
+            monthGroup.appendChild(monthSelect);
+            monthGroup.appendChild(monthNext);
+
+            yearGroup.appendChild(yearPrev);
+            yearGroup.appendChild(yearWrapper);
+            yearGroup.appendChild(yearNext);
+
+            header.appendChild(monthGroup);
+            header.appendChild(yearGroup);
+
+            monthsContainer.innerHTML = "";
+            monthsContainer.appendChild(header);
+        }
+
+        if (!calendar.querySelector(".material-picker-footer")) {
+            const footer = document.createElement("div");
+            footer.className = "material-picker-footer";
+
+            const cancelBtn = document.createElement("button");
+            cancelBtn.type = "button";
+            cancelBtn.className = "material-picker-text-btn";
+            cancelBtn.textContent = "Cancel";
+            cancelBtn.addEventListener("click", function () {
+                instance.close();
+            });
+
+            const okBtn = document.createElement("button");
+            okBtn.type = "button";
+            okBtn.className = "material-picker-text-btn material-picker-ok-btn";
+            okBtn.textContent = "OK";
+            okBtn.addEventListener("click", function () {
+                if (typeof options.onOk === "function") options.onOk();
+                instance.close();
+            });
+
+            footer.appendChild(cancelBtn);
+            footer.appendChild(okBtn);
+            calendar.appendChild(footer);
+        }
+    }
+
+    // Date of Birth picker (disable future dates)
     flatpickr("#dob", {
         dateFormat: "Y-m-d",
         maxDate: "today",
         allowInput: true,
         altInput: true,
         altFormat: "F j, Y",
+        monthSelectorType: "dropdown",
+        disableMobile: true,
+        clickOpens: true,
+        static: false,
+        onReady: function(selectedDates, dateStr, instance) {
+            setupMaterialDatePicker(instance);
+        },
+        onOpen: function(selectedDates, dateStr, instance) {
+            setupMaterialDatePicker(instance);
+        },
         onChange: function() {
             calculateAge();
         }
@@ -624,7 +728,17 @@ document.addEventListener("click", function(event) {
         allowInput: true,
         altInput: true,
         altFormat: "F j, Y",
-        defaultDate: "today"
+        defaultDate: "today",
+        monthSelectorType: "dropdown",
+        disableMobile: true,
+        clickOpens: true,
+        static: false,
+        onReady: function(selectedDates, dateStr, instance) {
+            setupMaterialDatePicker(instance);
+        },
+        onOpen: function(selectedDates, dateStr, instance) {
+            setupMaterialDatePicker(instance);
+        }
     });
 
                 </script>
@@ -764,43 +878,74 @@ document.addEventListener("DOMContentLoaded", function() {
             
 
 
-                document.getElementById('consentCheckbox').addEventListener('change', function () {
-    document.getElementById('continueBtn').disabled = !this.checked;
-  });
-  
-  document.getElementById('continueBtn').addEventListener('click', function () {
-    // Fill hidden fields
-    document.getElementById('consentModal').style.display = 'none';
-    document.getElementById('consentGiven').value = "1";
-    document.getElementById('consentMethod').value = "verbal"; // change if needed
-    document.getElementById('consentDate').value = new Date().toISOString(); // timestamp
+                                const consentModal = document.getElementById('consentModal');
+                const consentCheckbox = document.getElementById('consentCheckbox');
+                const continueBtn = document.getElementById('continueBtn');
+                const declineBtn = document.getElementById('declineBtn');
 
-  });
-  
-  document.getElementById('declineBtn').addEventListener('click', function () {
+                if (consentModal) {
+                    consentModal.style.display = 'grid';
+                    document.body.classList.add('consent-modal-open');
+                }
 
-    window.location.href="dashboard"; // or use history.back()
-  });
-  
+                if (consentCheckbox && continueBtn) {
+                    continueBtn.disabled = !consentCheckbox.checked;
 
+                    consentCheckbox.addEventListener('change', function () {
+                        continueBtn.disabled = !this.checked;
+                    });
 
-            });
+                    continueBtn.addEventListener('click', function () {
+                        if (!consentCheckbox.checked) return;
+
+                        const consentGiven = document.getElementById('consent_given');
+                        const consentMethod = document.getElementById('consent_method');
+
+                        if (consentGiven) {
+                            consentGiven.value = "COLLECTION AND USE OF PERSONAL HEALTH INFORMATION";
+                        }
+
+                        if (consentMethod) {
+                            consentMethod.value = "verbal";
+                        }
+
+                        consentModal.style.display = 'none';
+                        document.body.classList.remove('consent-modal-open');
+                    });
+                }
+
+                if (declineBtn) {
+                    declineBtn.addEventListener('click', function () {
+                        window.location.href = "dashboard";
+                    });
+                }
+});
             function calculateBMI() {
                 const heightInput = document.getElementById('height').value;
                 const weightInput = document.getElementById('weight').value;
                 const bmiField = document.getElementById('bmi');
+                const bmiDisplay = document.getElementById('bmiDisplay');
 
-            
                 const height = parseFloat(heightInput);
                 const weight = parseFloat(weightInput);
-            
+
                 if (height > 0 && weight > 0) {
                     // Convert height from cm to meters
                     const heightInMeters = height / 100;
                     const bmi = weight / (heightInMeters * heightInMeters);
-                    bmiField.value = bmi.toFixed(2);
+                    const bmiValue = bmi.toFixed(2);
+
+                    if (bmiField) bmiField.value = bmiValue;
+                    if (bmiDisplay) {
+                        bmiDisplay.textContent = bmiValue;
+                        bmiDisplay.classList.add('has-value');
+                    }
                 } else {
-                    bmiField.value = '';
+                    if (bmiField) bmiField.value = '';
+                    if (bmiDisplay) {
+                        bmiDisplay.textContent = 'BMI will appear here';
+                        bmiDisplay.classList.remove('has-value');
+                    }
                 }
             }
             
@@ -1001,47 +1146,69 @@ updateRemoveButtons();
             </script>            
 
               <!-- MODAL -->
-            <div id="myModal" class="modal">
-                <div class="modal-content">
+            <div id="myModal" class="modal" aria-hidden="true">
+                <div class="modal-content modal-card-action" role="dialog" aria-modal="true" aria-labelledby="saveRecordTitle">
+                    <button type="button" class="close-btn" id="closeBtn" aria-label="Close modal">
+                        <i class="bx bx-x"></i>
+                    </button>
+
                     <div class="modal-header">
-                        <img src="../img/verify.png" alt="Checkmark" class="checkmark-image">
-                        <h3>Confirmation</h3>
-                        <span class="close-btn" id="closeBtn">&times;</span>
+                        <div class="modal-icon modal-icon-question" aria-hidden="true">
+                            <i class="bx bx-help-circle"></i>
+                        </div>
+                        <h3 id="saveRecordTitle">Confirmation</h3>
                     </div>
-             <br><br>
+
+                    <div class="modal-body">
+                        <p class="modal-main-note">Choose what to do with this patient record.</p>
+                        <p class="modal-sub-note"><b>Save only</b> keeps the record in BHS. <b>Refer to RHU</b> sends it to RHU for follow-up.</p>
+                    </div>
+
                     <div class="modal-footer">
                         <button id="cancelBtn" class="btn cancel" type="button">Cancel</button>
                         <button id="noButton" class="btn maybe" type="button">Save only</button>
-                        <button id="yesButton" class="btn yes">Refer to RHU</button>
+                        <button id="yesButton" class="btn yes" type="button">Refer to RHU</button>
                     </div>
-
                 </div>
-            </div> 
+            </div>
              </div>
 
              <input type="hidden" name="referral_status" value="pending">
         </main>
     </section>
-<div id="myModal2" class="modal">
-  <div class="modal-content">
+
+<div id="myModal2" class="modal" aria-hidden="true">
+  <div class="modal-content modal-card-action" role="dialog" aria-modal="true" aria-labelledby="referralDateTitle">
+    <button type="button" class="close-btn" id="closeBtn2" aria-label="Close modal">
+      <i class="bx bx-x"></i>
+    </button>
+
     <div class="modal-header">
-      <img src="../img/verify.png" alt="Checkmark" class="checkmark-image">
-      <h3>Confirm</h3>
-      <span class="close-btn" id="closeBtn2">&times;</span>
+      <div class="modal-icon modal-icon-calendar" aria-hidden="true">
+        <i class="bx bx-calendar-check"></i>
+      </div>
+      <h3 id="referralDateTitle">Confirm</h3>
     </div>
-      <p style="text-align: center; background-color: #fff; margin-bottom: -20px;" >Select referral date:</p>
-    <div class="modal-body" style="text-align: left; padding: 20px 30px;">
 
+    <div class="modal-body modal-body-left">
+      <p class="modal-main-note center">Select referral date:</p>
+      <p class="modal-sub-note center">Choose when the patient should be referred before continuing.</p>
 
-      <div class="custom-consent-checkbox" style="margin-top: 5px; margin-left: -175px; display: flex; gap: 6px;">
+      <label class="modal-choice" for="setToday">
         <input type="checkbox" id="setToday">
-        <label for="setToday" style="font-weight:500">Set for Today</label>
-      </div>
+        <span>
+          <b>Set for Today</b>
+          <small>Use this if RHU can receive the referral today.</small>
+        </span>
+      </label>
 
-      <div class="custom-consent-checkbox" style="margin-top: 10px; display: flex; gap: 6px;">
+      <label class="modal-choice" for="setTomorrow">
         <input type="checkbox" id="setTomorrow">
-        <label for="setTomorrow" style="font-weight: 500;">Set for Tomorrow (Select if physician is not available)</label>
-      </div>
+        <span>
+          <b>Set for Tomorrow</b>
+          <small>Select if physician is not available today.</small>
+        </span>
+      </label>
     </div>
 
     <div class="modal-footer">
@@ -1051,72 +1218,90 @@ updateRemoveButtons();
   </div>
 </div>
 
-            <div id="myModal3" class="modal">
-                <div class="modal-content">
+            <div id="myModal3" class="modal" aria-hidden="true">
+                <div class="modal-content modal-card-status" role="dialog" aria-modal="true" aria-labelledby="referralSentTitle">
+                    <button type="button" class="close-btn" id="closeBtn3" aria-label="Close modal">
+                        <i class="bx bx-x"></i>
+                    </button>
+
                     <div class="modal-header">
-                        <img src="../img/check.png" alt="Checkmark" class="checkmark-image">
-                        <h3></h3>
-                        <span class="close-btn" id="closeBtn3">&times;</span>
+                        <div class="modal-icon modal-icon-success" aria-hidden="true">
+                            <i class="bx bx-check"></i>
+                        </div>
+                        <h3 id="referralSentTitle">Referral Sent to RHU!</h3>
                     </div>
 
-                    <div class="modal-footer">
-                        <div class="modal-header">
-                            <h3 style="color: #033cad;">Referral Sent to RHU!</h3>
-                        </div>
+                    <div class="modal-body">
+                        <p class="modal-main-note">You can now print the referral slip for the patient.</p>
                     </div>
                     
                     <div class="modal-footer">
-                    <button id="viewDetailsButton" class="btn yes" type="button">PRINT REFERRAL SLIP</button>
-                </div>
-            </div> 
+                        <button id="viewDetailsButton" class="btn yes" type="button">PRINT REFERRAL SLIP</button>
+                    </div>
+                </div> 
             </div>
         
-            <div id="myModal4" class="modal">
-                <div class="modal-content">
+            <div id="myModal4" class="modal" aria-hidden="true">
+                <div class="modal-content modal-card-status" role="dialog" aria-modal="true" aria-labelledby="recordedSuccessTitle">
+                    <button type="button" class="close-btn" id="closeBtn4" aria-label="Close modal">
+                        <i class="bx bx-x"></i>
+                    </button>
+
                     <div class="modal-header">
-                        <img src="../img/check.png" alt="Checkmark" class="checkmark-image">
-                        <h3></h3>
-                        <span class="close-btn" id="closeBtn4">&times;</span>
-                    </div>
-                    <div class="modal-footer">
-                        <div class="modal-body">
-                            <p>Recorded successfully.</p>
+                        <div class="modal-icon modal-icon-success" aria-hidden="true">
+                            <i class="bx bx-check"></i>
                         </div>
+                        <h3 id="recordedSuccessTitle">Recorded successfully.</h3>
+                    </div>
+                    <div class="modal-body">
+                        <p class="modal-main-note">The patient record was saved.</p>
                     </div>
                 </div>
             </div> 
             
-            <div id="myModal5" class="modal">
-                <div class="modal-content">
+            <div id="myModal5" class="modal" aria-hidden="true">
+                <div class="modal-content modal-card-status" role="dialog" aria-modal="true" aria-labelledby="recordAddedTitle">
+                    <button type="button" class="close-btn" id="closeBtn5" aria-label="Close modal">
+                        <i class="bx bx-x"></i>
+                    </button>
+
                     <div class="modal-header">
-                        <img src="../img/verify.png" alt="Checkmark" class="checkmark-image">
-                        <h3>Record Added</h3>
-                        <span class="close-btn" id="closeBtn5">&times;</span>
+                        <div class="modal-icon modal-icon-success" aria-hidden="true">
+                            <i class="bx bx-check"></i>
+                        </div>
+                        <h3 id="recordAddedTitle">Record Added</h3>
                     </div>
                     <div class="modal-body">
-                        <p>The patient record has been successfully added.</p>
+                        <p class="modal-main-note">The patient record has been successfully added.</p>
                     </div>
                     <div class="modal-footer">
-                        <button id="exitButton" onclick="closeModal()" class="btn yes">Exit</button>
+                        <button id="exitButton" onclick="closeModal()" class="btn yes" type="button">Exit</button>
                     </div>
                 </div>
             </div>
 
-        <div id="patientExistsModal" class="modal">
-    <div class="modal-content">
+        <div id="patientExistsModal" class="modal" aria-hidden="true">
+    <div class="modal-content modal-card-action" role="dialog" aria-modal="true" aria-labelledby="patientExistsTitle">
+        <button type="button" class="close-btn" id="closeBtnPatientExists" aria-label="Close modal">
+            <i class="bx bx-x"></i>
+        </button>
+
         <div class="modal-header">
-            <h2>Patient Already Exists</h2>
-            <span class="close-btn" id="closeBtnPatientExists">&times;</span>  
+            <div class="modal-icon modal-icon-warning" aria-hidden="true">
+                <i class="bx bx-user-check"></i>
+            </div>
+            <h2 id="patientExistsTitle">Patient Already Exists</h2>
         </div>
 
     <div class="modal-body">
-        <p>Patient with the same Name and Date of Birth was found. Would you like to use the existing patient record or add a new one?</p>
+        <p class="modal-main-note">Patient with the same Name and Date of Birth was found. Would you like to use the existing patient record or add a new one?</p>
+        <p class="modal-sub-note">Choose <b>Use Existing</b> to avoid duplicate records.</p>
     </div>
 
     <div class="modal-footer">
-        <button id="cancelBtnPatientExists" class="btn cancel">Cancel</button> 
-        <button id="useExistingBtn" class="btn yes">Use Existing</button>
-        <button id="addNewBtn" class="btn yes">Add New</button>
+        <button id="cancelBtnPatientExists" class="btn cancel" type="button">Cancel</button> 
+        <button id="useExistingBtn" class="btn yes" type="button">Use Existing</button>
+        <button id="addNewBtn" class="btn yes" type="button">Add New</button>
 
     </div>
 
@@ -1130,17 +1315,21 @@ updateRemoveButtons();
                 Error saving data.
             </div>
 
-            <div id="errorModal" class="modal">
-                <div class="modal-content">
+            <div id="errorModal" class="modal" aria-hidden="true">
+                <div class="modal-content modal-card-status" role="dialog" aria-modal="true" aria-labelledby="submissionErrorTitle">
+                    <button type="button" class="close-btn" id="errorCloseBtn" onclick="closeModal()" aria-label="Close modal">
+                        <i class="bx bx-x"></i>
+                    </button>
+
                     <div class="modal-header">
-                        <img src="../img/error.jpg" alt="Checkmark" class="checkmark-image">
-                        <h3>Error</h3>
-                        <span class="close-btn" id="errorCloseBtn" onclick="closeModal()">&times;</span>
-                    </div>
-                    <div class="modal-footer">
-                        <div class="modal-body">
-                            <p>Submission unsuccessful. Make sure to fill out required fields.</p>
+                        <div class="modal-icon modal-icon-error" aria-hidden="true">
+                            <i class="bx bx-error-circle"></i>
                         </div>
+                        <h3 id="submissionErrorTitle">Error</h3>
+                    </div>
+                    <div class="modal-body">
+                        <p class="modal-main-note">Submission unsuccessful. Make sure to fill out required fields.</p>
+                        <p class="modal-sub-note">Tip: required fields are marked with a red asterisk (*).</p>
                     </div>
                 </div>
             </div> 
@@ -1408,37 +1597,44 @@ window.addEventListener('click', function(event) {
 </script>
 
 <!-- Error Modal -->
-<div id="errorModal" class="modal">
-    <div class="modal-content">
+<div id="errorModal" class="modal" aria-hidden="true">
+    <div class="modal-content modal-card-status" role="dialog" aria-modal="true" aria-labelledby="errorModalTitle">
+        <button type="button" class="close-btn" id="closeErrorBtn" aria-label="Close modal">
+            <i class="bx bx-x"></i>
+        </button>
+
         <div class="modal-header">
-            <img src="../img/error.png" alt="Error" class="checkmark-image">
-            <h3>Error</h3>
-            <span class="close-btn" id="closeErrorBtn">&times;</span>
+            <div class="modal-icon modal-icon-error" aria-hidden="true">
+                <i class="bx bx-error-circle"></i>
+            </div>
+            <h3 id="errorModalTitle">Error</h3>
         </div>
         <div class="modal-body">
-            <p id="errorModalMessage">An error occurred.</p>
+            <p id="errorModalMessage" class="modal-main-note">An error occurred.</p>
+            <p class="modal-sub-note">Please review the information and try again.</p>
         </div>
         <div class="modal-footer">
-            <button id="errorOkBtn" class="btn yes">OK</button>
+            <button id="errorOkBtn" class="btn yes" type="button">OK</button>
         </div>
     </div>
 </div>
 <!-- CONSENT Modal -->
-<div class="custom-modal-backdrop" id="consentModal">
+<div class="custom-modal-backdrop" id="consentModal" style="display: grid;">
     <div class="custom-consent-box">
-        <h3><b>PATIENT CONSENT FOR COLLECTION AND USE OF PERSONAL HEALTH INFORMATION</b></h3> <br>
-         <h3><b>Basahin sa pasyente:</b></h3>
-            <h4>
-                 "Pumapayag ako, alinsunod sa Data Privacy Act of 2012, na itala ng health worker ang aking personal at medikal na impormasyon sa computer system upang ako ay mabigyan ng tamang gamutan at ma-refer kung kinakailangan. Naiintindihan ko na ang aking impormasyon ay gagamitin lamang para sa aking kalusugan at mananatiling pribado."
-            </h4>
-             <br>
-             <div class="custom-consent-checkbox">
-                <input type="checkbox" id="consentCheckbox">
-                <label for="consentCheckbox">Nagbigay ng pahintulot ang pasyente</label>
-            </div>
-             <br>
-                    <button id="declineBtn">Declined</button>
-                    <button id="continueBtn" disabled>Agree and Continue</button>
+        <div class="consent-icon" aria-hidden="true"><i class="bx bx-shield-quarter"></i></div>
+        <h3><b>PATIENT CONSENT FOR COLLECTION AND USE OF PERSONAL HEALTH INFORMATION</b></h3>
+        <div class="consent-read-label"><b>Basahin sa pasyente:</b></div>
+        <h4>
+            "Pumapayag ako, alinsunod sa Data Privacy Act of 2012, na itala ng health worker ang aking personal at medikal na impormasyon sa computer system upang ako ay mabigyan ng tamang gamutan at ma-refer kung kinakailangan. Naiintindihan ko na ang aking impormasyon ay gagamitin lamang para sa aking kalusugan at mananatiling pribado."
+        </h4>
+        <div class="custom-consent-checkbox">
+            <input type="checkbox" id="consentCheckbox">
+            <label for="consentCheckbox">Nagbigay ng pahintulot ang pasyente</label>
+        </div>
+        <div class="consent-actions">
+            <button id="declineBtn" type="button">Declined</button>
+            <button id="continueBtn" type="button" disabled>Agree and Continue</button>
+        </div>
     </div>
 </div>
 
@@ -1446,9 +1642,11 @@ window.addEventListener('click', function(event) {
 <div id="customInputModal" class="custom-input-modal">
     <div class="custom-input-modal-content">
         <div class="custom-input-modal-header">
+            <div class="custom-input-icon" aria-hidden="true"><i class="bx bx-edit"></i></div>
             <h3 id="customInputModalTitle">Enter Information</h3>
         </div>
         <div class="custom-input-modal-body">
+            <p class="custom-input-help">Type the new value, then click Confirm.</p>
             <input type="text" id="customInputField" placeholder="Enter value here">
         </div>
         <div class="custom-input-modal-footer">
@@ -1610,5 +1808,86 @@ document.addEventListener("DOMContentLoaded", () => {
     <script src="js/form.js"></script>
     <script src="js/script.js"></script>
     <script src="js/modal.js"></script>
+
+<script>
+/* Reliable Select2 dropdown enhancement.
+   Keeps every original select option/content/value unchanged,
+   but renders a modern dropdown UI like the reference image. */
+(function () {
+  function shouldEnhance(select) {
+    if (!select) return false;
+    if (select.multiple) return false;
+    if (select.dataset.noSelect2 === "true") return false;
+    return true;
+  }
+
+  function initOneSelect(select) {
+    if (!window.jQuery || !jQuery.fn || !jQuery.fn.select2 || !shouldEnhance(select)) return;
+
+    const $select = jQuery(select);
+
+    if ($select.hasClass('select2-hidden-accessible')) {
+      return;
+    }
+
+    const firstOption = select.options && select.options.length ? select.options[0] : null;
+    const placeholder = firstOption ? firstOption.textContent.trim() : 'Select';
+
+    $select.select2({
+      width: '100%',
+      minimumResultsForSearch: Infinity,
+      dropdownAutoWidth: false,
+      dropdownCssClass: 'reference-select-dropdown',
+      selectionCssClass: 'reference-select-selection',
+      placeholder: placeholder,
+      dropdownParent: jQuery(document.body)
+    });
+
+    $select.on('select2:select select2:close', function () {
+      select.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+  }
+
+  function initAllSelects(root) {
+    const scope = root || document;
+    scope.querySelectorAll('select').forEach(initOneSelect);
+  }
+
+  function bootSelectUI() {
+    initAllSelects(document);
+
+    const medicineContainer = document.getElementById('medicine-container');
+    if (medicineContainer && !medicineContainer.dataset.selectObserverBound) {
+      const observer = new MutationObserver(function (mutations) {
+        mutations.forEach(function (mutation) {
+          mutation.addedNodes.forEach(function (node) {
+            if (node.nodeType === 1) {
+              initAllSelects(node);
+            }
+          });
+        });
+      });
+
+      observer.observe(medicineContainer, { childList: true, subtree: true });
+      medicineContainer.dataset.selectObserverBound = "true";
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', bootSelectUI);
+  window.addEventListener('load', function () {
+    bootSelectUI();
+    setTimeout(bootSelectUI, 150);
+    setTimeout(bootSelectUI, 500);
+  });
+
+  document.addEventListener('click', function (event) {
+    if (event.target && (event.target.id === 'add-medicine' || event.target.closest('#add-medicine'))) {
+      setTimeout(bootSelectUI, 50);
+      setTimeout(bootSelectUI, 200);
+    }
+  });
+})();
+</script>
+
 </body>
 </html>

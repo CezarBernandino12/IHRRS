@@ -366,7 +366,7 @@
         <?php endif; ?>
 
         <!-- Form -->
-        <form action="admin_login.php" method="POST">
+        <form action="/IHRRS/auth/php/admin_login.php" method="POST">
 
           <!-- Username -->
           <div class="form-group">
@@ -471,15 +471,6 @@
       const msgEl = document.getElementById('success-message');
       if (msgEl) msgEl.textContent = successMsg;
       modal.classList.add('open');
-    }
-
-    // Error via URL param (JS fallback)
-    const errorMsg = params.get('error');
-    if (errorMsg) {
-      const box  = document.getElementById('error-box');
-      const text = document.getElementById('error-text');
-      if (text) text.textContent = errorMsg;
-      if (box)  box.classList.add('visible');
     }
 
     // Close modal

@@ -66,33 +66,6 @@ body {
 	flex-wrap: wrap;
 }
 
-#content main .head-title .left h1 {
-	font-size: 36px;
-	font-weight: 600;
-	margin-bottom: 10px;
-	color: var(--dark);
-}
-
-#content main .head-title .left .breadcrumb {
-	display: flex;
-	align-items: center;
-	grid-gap: 16px;
-}
-
-#content main .head-title .left .breadcrumb li {
-	color: var(--dark);
-}
-
-#content main .head-title .left .breadcrumb li a {
-	color: var(--dark-grey);
-	pointer-events: none;
-}
-
-#content main .head-title .left .breadcrumb li a.active {
-	color: var(--blue);
-	pointer-events: unset;
-}
-
 #content main .box-info li .icon-img { width: 60px; height: auto; }
 #content main .box-info li .text h3 { font-size: 18px; text-align: center; }
 
@@ -776,3 +749,494 @@ input[type="radio"]:last-child {
     color: #2c3e50;
     text-align: center;
   }
+
+
+
+/* =========================================================
+   BHW REPORTS - DASHBOARD-LIKE ENHANCED UI
+   Keeps existing report links, IDs, modal, sidebar, and logout functions intact.
+   ========================================================= */
+
+:root {
+  --reports-bg: #f5f8fc;
+  --reports-card: #ffffff;
+  --reports-text: #0f1f38;
+  --reports-muted: #64748b;
+  --reports-blue: #1f5b97;
+  --reports-blue-2: #2563eb;
+  --reports-cyan: #12acc7;
+  --reports-border: rgba(15, 23, 42, 0.10);
+  --reports-shadow: 0 14px 34px rgba(15, 23, 42, 0.08);
+  --reports-shadow-soft: 0 8px 22px rgba(15, 23, 42, 0.06);
+  --reports-radius: 22px;
+}
+
+html,
+body {
+  overflow-x: hidden !important;
+}
+
+body {
+  min-height: 100vh !important;
+  color: var(--reports-text) !important;
+  background:
+    radial-gradient(circle at top left, rgba(37, 99, 235, 0.075), transparent 26%),
+    radial-gradient(circle at top right, rgba(18, 172, 199, 0.07), transparent 24%),
+    linear-gradient(180deg, #f8fbff 0%, var(--reports-bg) 100%) !important;
+  font-family: var(--poppins, 'Poppins', sans-serif) !important;
+}
+
+/* Keep sidebar and nav text protected from broad report CSS rules */
+#sidebar .sidebar-section-label,
+#sidebar p,
+#sidebar .nav-label,
+#sidebar .brand-name,
+#sidebar .user-name,
+#sidebar .user-role {
+  background: transparent !important;
+}
+
+#content main {
+  width: 100% !important;
+  max-height: none !important;
+  min-height: calc(100vh - 64px) !important;
+  overflow-y: visible !important;
+  padding: 24px 26px 38px !important;
+  background: transparent !important;
+  font-family: var(--poppins, 'Poppins', sans-serif) !important;
+}
+
+/* Page header */
+#content main .head-title {
+  width: min(100%, 1180px) !important;
+  max-width: 1180px !important;
+  margin: 0 auto 18px !important;
+  padding: 0 !important;
+  display: flex !important;
+  align-items: flex-end !important;
+  justify-content: space-between !important;
+  gap: 16px !important;
+}
+
+#content main .head-title .left h1 {
+  position: relative !important;
+  margin: 0 !important;
+  color: var(--reports-text) !important;
+  font-size: clamp(28px, 3.5vw, 42px) !important;
+  font-weight: 800 !important;
+  line-height: 1.1 !important;
+  letter-spacing: -0.045em !important;
+  text-align: left !important;
+}
+
+#content main .head-title .left h1::after {
+  content: "" !important;
+  display: block !important;
+  width: 58px !important;
+  height: 4px !important;
+  margin-top: 12px !important;
+  border-radius: 999px !important;
+  background: linear-gradient(90deg, var(--reports-blue-2), var(--reports-cyan)) !important;
+}
+
+/* Report card grid */
+#content main .box-info {
+  width: min(100%, 1180px) !important;
+  max-width: 1180px !important;
+  margin: 0 auto !important;
+  padding: 6px 0 0 !important;
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 18px !important;
+  overflow: visible !important;
+  text-align: left !important;
+  animation: none !important;
+}
+
+#content main .box-info > a {
+  display: block !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  color: inherit !important;
+  text-decoration: none !important;
+}
+
+/* Dashboard-style report cards */
+#content main .box-info li,
+#content main .box-info li.mrr,
+.box-info .mrr {
+  position: relative !important;
+  width: 100% !important;
+  height: auto !important;
+  min-height: 174px !important;
+  margin: 0 !important;
+  padding: 22px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  align-items: flex-start !important;
+  gap: 18px !important;
+  border: 1px solid var(--reports-border) !important;
+  border-radius: var(--reports-radius) !important;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.96), rgba(248, 251, 255, 0.96)) !important;
+  color: var(--reports-text) !important;
+  box-shadow: var(--reports-shadow-soft) !important;
+  overflow: hidden !important;
+  opacity: 1 !important;
+  cursor: pointer !important;
+  transform: none !important;
+  animation: none !important;
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    border-color 0.18s ease,
+    background 0.18s ease !important;
+}
+
+#content main .box-info li::before {
+  content: "" !important;
+  position: absolute !important;
+  inset: 0 auto 0 0 !important;
+  width: 5px !important;
+  border-radius: var(--reports-radius) 0 0 var(--reports-radius) !important;
+  background: linear-gradient(180deg, var(--reports-blue-2), var(--reports-cyan)) !important;
+}
+
+#content main .box-info li::after {
+  content: "" !important;
+  position: absolute !important;
+  right: -34px !important;
+  top: -36px !important;
+  width: 112px !important;
+  height: 112px !important;
+  border-radius: 999px !important;
+  background: rgba(31, 91, 151, 0.075) !important;
+  pointer-events: none !important;
+}
+
+#content main .box-info li:hover,
+#content main .box-info li.mrr:hover,
+.box-info .mrr:hover {
+  transform: translateY(-4px) !important;
+  border-color: rgba(37, 99, 235, 0.24) !important;
+  box-shadow: var(--reports-shadow) !important;
+}
+
+/* Icon area */
+#content main .box-info li .icon-container,
+.box-info .mrr .icon-container {
+  position: relative !important;
+  z-index: 1 !important;
+  width: 54px !important;
+  height: 54px !important;
+  margin: 0 !important;
+  display: grid !important;
+  place-items: center !important;
+  border-radius: 18px !important;
+  background: rgba(31, 91, 151, 0.10) !important;
+  box-shadow: inset 0 0 0 1px rgba(31, 91, 151, 0.08) !important;
+}
+
+#content main .box-info li .icon-img,
+.box-info .mrr .icon-img {
+  width: 32px !important;
+  height: 32px !important;
+  object-fit: contain !important;
+  filter: saturate(1.05) contrast(1.02) !important;
+}
+
+/* Text area */
+#content main .box-info li .text,
+.box-info .mrr .text {
+  position: relative !important;
+  z-index: 1 !important;
+  width: 100% !important;
+  text-align: left !important;
+}
+
+#content main .box-info li .text h3,
+.box-info .mrr .text h3 {
+  margin: 0 !important;
+  color: var(--reports-text) !important;
+  font-family: var(--poppins, 'Poppins', sans-serif) !important;
+  font-size: clamp(15px, 1.5vw, 18px) !important;
+  font-weight: 700 !important;
+  line-height: 1.35 !important;
+  letter-spacing: -0.015em !important;
+  text-align: left !important;
+}
+
+/* Small arrow cue without changing HTML contents */
+#content main .box-info > a li .text::after {
+  content: "Open report  →" !important;
+  display: inline-flex !important;
+  margin-top: 12px !important;
+  color: var(--reports-blue) !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.01em !important;
+}
+
+/* Modal redesign */
+.modal {
+  display: none;
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 1200 !important;
+  width: 100% !important;
+  height: 100% !important;
+  padding: 18px !important;
+  overflow: auto !important;
+  background: rgba(15, 23, 42, 0.48) !important;
+  backdrop-filter: blur(7px) !important;
+}
+
+.modal[style*="block"],
+.modal.open {
+  display: grid !important;
+  place-items: center !important;
+}
+
+.modal-content {
+  position: relative !important;
+  width: min(94vw, 440px) !important;
+  max-width: 440px !important;
+  margin: 0 auto !important;
+  padding: 26px 24px 22px !important;
+  border: 1px solid rgba(37, 99, 235, 0.12) !important;
+  border-radius: 24px !important;
+  background: #ffffff !important;
+  text-align: center !important;
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.22) !important;
+}
+
+.modal-header {
+  position: relative !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+}
+
+.modal-header .checkmark-image {
+  width: 58px !important;
+  height: 58px !important;
+  padding: 12px !important;
+  border-radius: 18px !important;
+  background: rgba(31, 91, 151, 0.10) !important;
+  object-fit: contain !important;
+}
+
+.modal-header h3 {
+  margin: 14px 0 0 !important;
+  color: var(--reports-text) !important;
+  font-family: var(--poppins, 'Poppins', sans-serif) !important;
+  font-size: 20px !important;
+  font-weight: 700 !important;
+  line-height: 1.25 !important;
+}
+
+.modal-body {
+  margin-top: 12px !important;
+  color: var(--reports-muted) !important;
+  font-family: var(--poppins, 'Poppins', sans-serif) !important;
+  font-size: 14px !important;
+  line-height: 1.6 !important;
+}
+
+.modal-footer {
+  display: flex !important;
+  justify-content: center !important;
+  gap: 10px !important;
+  flex-wrap: wrap !important;
+  margin-top: 22px !important;
+}
+
+.modal-footer .btn {
+  min-width: 104px !important;
+  min-height: 42px !important;
+  margin: 0 !important;
+  padding: 10px 18px !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  color: #ffffff !important;
+  font-family: var(--poppins, 'Poppins', sans-serif) !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  transform: none !important;
+}
+
+.modal-footer .no {
+  background: #e5e7eb !important;
+  color: var(--reports-text) !important;
+}
+
+.modal-footer .yes {
+  background: var(--reports-blue) !important;
+}
+
+.modal-footer .btn:hover {
+  opacity: 1 !important;
+  transform: translateY(-1px) !important;
+}
+
+.close-btn {
+  position: absolute !important;
+  top: -8px !important;
+  right: -6px !important;
+  display: grid !important;
+  place-items: center !important;
+  width: 34px !important;
+  height: 34px !important;
+  border-radius: 999px !important;
+  color: #526176 !important;
+  background: transparent !important;
+  font-size: 28px !important;
+  line-height: 1 !important;
+  cursor: pointer !important;
+}
+
+.close-btn:hover {
+  color: #ef4444 !important;
+  background: rgba(239, 68, 68, 0.08) !important;
+}
+
+/* Logout modal consistency */
+.logout-modal-content {
+  border-radius: 22px !important;
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.22) !important;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  #content main .box-info {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 768px) {
+  #content main {
+    padding: 18px 14px 28px !important;
+  }
+
+  #content main .head-title {
+    margin-bottom: 16px !important;
+  }
+
+  #content main .box-info {
+    grid-template-columns: 1fr !important;
+    gap: 14px !important;
+  }
+
+  #content main .box-info li,
+  #content main .box-info li.mrr,
+  .box-info .mrr {
+    min-height: 150px !important;
+    padding: 18px !important;
+    border-radius: 18px !important;
+  }
+
+  #content main .box-info li .icon-container,
+  .box-info .mrr .icon-container {
+    width: 50px !important;
+    height: 50px !important;
+    border-radius: 16px !important;
+  }
+
+  .modal-content {
+    padding: 24px 18px 20px !important;
+    border-radius: 22px !important;
+  }
+
+  .modal-footer {
+    flex-direction: column !important;
+  }
+
+  .modal-footer .btn {
+    width: 100% !important;
+  }
+}
+
+
+
+/* =========================================================
+   ICON-BASED REPORT CARDS
+   Replaces report images with modern Boxicons.
+   ========================================================= */
+
+#content main .box-info li .icon-container,
+.box-info .mrr .icon-container {
+  width: 58px !important;
+  height: 58px !important;
+  min-width: 58px !important;
+  min-height: 58px !important;
+  display: grid !important;
+  place-items: center !important;
+  border-radius: 18px !important;
+  background:
+    linear-gradient(135deg, rgba(37, 99, 235, 0.13), rgba(18, 172, 199, 0.10)) !important;
+  box-shadow: inset 0 0 0 1px rgba(31, 91, 151, 0.10) !important;
+}
+
+#content main .box-info li .report-card-icon,
+.box-info .mrr .report-card-icon {
+  display: block !important;
+  margin: 0 !important;
+  color: #1f5b97 !important;
+  font-size: 31px !important;
+  line-height: 1 !important;
+}
+
+#content main .box-info li:hover .report-card-icon,
+.box-info .mrr:hover .report-card-icon {
+  transform: scale(1.05) !important;
+}
+
+#content main .box-info li .icon-img,
+.box-info .mrr .icon-img {
+  display: none !important;
+}
+
+/* Modal success icon instead of image */
+.modal-icon {
+  display: grid !important;
+  place-items: center !important;
+  width: 58px !important;
+  height: 58px !important;
+  min-width: 58px !important;
+  margin: 0 auto !important;
+  border-radius: 18px !important;
+  color: #ffffff !important;
+  background: #1f5b97 !important;
+  box-shadow: 0 12px 24px rgba(31, 91, 151, 0.22) !important;
+}
+
+.modal-icon-success {
+  background: #15915a !important;
+}
+
+.modal-icon i {
+  font-size: 34px !important;
+  line-height: 1 !important;
+}
+
+.modal-header .checkmark-image {
+  display: none !important;
+}
+
+@media (max-width: 768px) {
+  #content main .box-info li .icon-container,
+  .box-info .mrr .icon-container {
+    width: 52px !important;
+    height: 52px !important;
+    min-width: 52px !important;
+    min-height: 52px !important;
+    border-radius: 16px !important;
+  }
+
+  #content main .box-info li .report-card-icon,
+  .box-info .mrr .report-card-icon {
+    font-size: 28px !important;
+  }
+}
