@@ -123,130 +123,125 @@
         </nav>
 
         <main>
-            <div class="head-title">
+            <div class="head-title itr-page-title">
+                <div class="left">
+                    <h1>Individual Treatment Record</h1>
+                </div>
             </div>
 
-
-    <div class="container-header">
-        <h2><span>INDIVIDUAL TREATMENT</span> RECORD</h2>
-    </div>
-
-    <div class="container">
-        <form class="personal-info-form" id="individualRecordForm">
-            <p><b>PERSONAL INFORMATION:</b></p>
+    <div class="container record-page-card itr-matched-card">
+        <form class="personal-info-form record-view-form" id="individualRecordForm">
+            <p class="section-title personal-section-title itr-section-title"><span class="section-title-left"><span class="section-icon"><i class="bx bx-user"></i></span><b>PERSONAL INFORMATION:</b></span></p>
     
-            <div class="form-row">
-                <div class="form-group">
+            <div class="form-row personal-name-row">
+                <div class="form-group last-name-field">
                     <label>Last Name:</label>
                     <p>This is a Sample Text</p>
                 </div>
-                <div class="form-group">
+                <div class="form-group first-name-field">
                     <label>First Name:</label>
                     <p>This is a Sample Text</p>
                 </div>
-                <div class="form-group">
+                <div class="form-group middle-name-field">
                     <label>Middle Name:</label>
                     <p>This is a Sample Text</p>
                 </div>
             </div>
     
-            <div class="form-row">
-                <div class="form-group">
+            <div class="form-row personal-birth-row">
+                <div class="form-group birth-place-field">
                     <label>Birth Place:</label>
                     <p>Manila</p>
                 </div>
-                <div class="form-group">
+                <div class="form-group dob-field">
                     <label>Date of Birth:</label>
                     <p>11/21/2003</p>
                 </div>
-                <div class="form-group">
+                <div class="form-group age-field">
                     <label>Age:</label>
                     <p>29</p>
                 </div>
             </div>
     
-            <div class="form-row">
-                <div class="form-group">
+            <div class="form-row personal-address-row">
+                <div class="form-group address-field">
                     <label>Permanent Address:</label>
                     <p>Purok 1- Barangay 1 Daet, Camarines Norte</p>
                 </div>
             </div>
     
-            <div class="form-row">
-                <div class="form-group">
+            <div class="form-row personal-contact-row">
+                <div class="form-group civil-status-field">
                     <label>Civil Status:</label>
                     <p>Single</p>
                 </div>
-                <div class="form-group">
+                <div class="form-group mobile-field">
                     <label>Mobile Number:</label>
                     <p>09123456789</p>
                 </div>
             </div>
     
-            <div class="form-row">
-                <div class="form-group">
+            <div class="form-row personal-work-row">
+                <div class="form-group religion-field">
                     <label>Religion:</label>
                     <p>Roman Catholic</p>
                 </div>
-                <div class="form-group">
+                <div class="form-group occupation-field">
                     <label>Occupation:</label>
                     <p>Teacher</p>
                 </div>
             </div>
     
-            <div class="form-row">
-                <div class="form-group">
+            <div class="form-row personal-education-row">
+                <div class="form-group education-field">
                     <label>Educational Attainment:</label>
                     <p>Secondary Education</p>
                 </div>
-                <div class="form-group">
+                <div class="form-group philhealth-field">
                     <label>Philhealth Member number:</label>
                     <p>1234567890</p>
                 </div>
-                <div class="form-group">
+                <div class="form-group family-serial-field">
                     <label>Family Serial number:</label>
                     <p>987654321</p>
                 </div>
             </div>
-    
-            <div class="form-row">
 
-                <div class="form-group">
-                    <label>Patient Alert:</label>
-                    <p>Allergic to Penicillin</p>
-                </div>
-            </div>
     
-            <div class="form-row">
-                <div class="form-group">
+            <div class="form-row personal-status-row">
+                <div class="form-group gender-field">
                     <label>Gender:</label>
                     <p>Male</p>
                 </div>
-                <div class="form-group">
+                <div class="form-group fourps-field">
                     <label>4Ps Status:</label>
                     <p>Yes</p>
                 </div>
             </div>
     
             <!-- INITIAL ASSESSMENT / VISIT INFO -->
-            <p><b>PATIENT VISIT SUMMARY:</b></p>
-            <div class="additional-group box-group additional-fields">
+            <p class="section-title visit-section-title itr-section-title"><span class="section-title-left"><span class="section-icon"><i class="bx bx-clipboard"></i></span><b>PATIENT VISIT SUMMARY:</b></span></p>
+            <div class="additional-group box-group additional-fields visit-summary-card itr-visit-card">
                 <div class="additional-options">
-                    <div class="form-row">
-                        <div class="form-group">
+                    <div class="form-row visit-date-row">
+                        <div class="form-group visit-date-field">
                             <label>Date of Visit:</label>
                             <p>2024-02-17</p>
                         </div>
+                        <div class="form-group patient-alert-field">
+                    <label>Patient Alert:</label>
+                    <p>Allergic to Penicillin</p>
+                </div>
                     </div>
 
-                    <div class="form-row">
-                        <div class="form-group">
+                    <div class="form-row chief-complaints-row">
+                        <div class="form-group complaints-field complaints-display-field">
                             <label>Chief Complaints:</label>
                             <p>Headache and fever</p>
                         </div>
                     </div>
     
-                    <div class="form-row">
+                    <div class="form-row vitals-row">
                         <label for="vitals"><b>Vital Signs:</b></label>
                         <div class="vitals-section">
                             <div class="form-group">
@@ -275,19 +270,19 @@
                             </div>
                         </div>
                     </div>
-                    <div class="form-row">
-                        <div class="form-group">
+                    <div class="form-row visit-medicine-row">
+                        <div class="form-group medicine-summary-field">
                             <label>Medicine Given:</label>
                             <p></p>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group quantity-summary-field">
                             <label>Quantity:</label>
                             <p>1 tablet</p>
                         </div>
                     </div>
             
-                    <div class="form-row">
-                        <div class="form-group">
+                    <div class="form-row visit-remarks-row">
+                        <div class="form-group remarks-summary-field remarks-display-field">
                             <label>Remarks:</label>
                             <p>Take after meals</p>
                         </div>
@@ -295,10 +290,10 @@
                 </div>
             </div>
 
-            <p><b>PATIENT DIAGNOSIS:</b></p>
-            <div class="form-group-group">
-                <div class="form-row">
-                    <div class="form-group">
+            <p class="section-title diagnosis-section-title itr-section-title"><span class="section-title-left"><span class="section-icon"><i class="bx bx-plus-medical"></i></span><b>PATIENT DIAGNOSIS:</b></span></p>
+            <div class="form-group-group diagnosis-panel itr-diagnosis-card">
+                <div class="form-row diagnosis-input-row">
+                    <div class="form-group diagnosis-select-field">
                         <label for="diagnosis">Diagnosis:</label>
                         <select id="diagnosis" name="diagnosis">
                             <option value="select">Select</option>
@@ -307,7 +302,7 @@
                             <option value="diagnosis2">Diagnosis 2</option>
                         </select>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group medication-select-field">
                         <label for="medication">Medication Given:</label>
                         <select id="medication" name="medication">
                             <option value="select">Select</option>
@@ -317,35 +312,33 @@
                         </select>
                     </div>
             
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="quantity">Quantity:</label>
-                            <div class="quantity-controls">
-                                <button type="button" class="quantity-btn" id="decrease">-</button>
-                                <input type="number" id="quantity" name="quantity" value="1" min="1">
-                                <button type="button" class="quantity-btn" id="increase">+</button>
-                            </div>
+                    <div class="form-group diagnosis-quantity-field">
+                        <label for="quantity">Quantity:</label>
+                        <div class="quantity-controls">
+                            <button type="button" class="quantity-btn" id="decrease">-</button>
+                            <input type="number" id="quantity" name="quantity" value="1" min="1">
+                            <button type="button" class="quantity-btn" id="increase">+</button>
                         </div>
                     </div>                    
                     
                 </div>
                 
-                <div class="form-row">
-                    <div class="form-group">
+                <div class="form-row diagnosis-instructions-row">
+                    <div class="form-group instructions-field">
                         <label for="instructions">Instructions:</label>
                         <textarea id="instructions" name="instructions" placeholder="Enter your Diagnosis/Treatment/Medication/Instruction..."></textarea>
                     </div>
                 </div>
                 
-                <div class="form-row">
-                    <div class="form-group">
+                <div class="form-row diagnosis-remarks-row">
+                    <div class="form-group diagnosis-remarks-field">
                         <label for="remarks">Remarks:</label>
                         <textarea id="remarks" name="remarks" placeholder="Enter your remarks..."></textarea>
                     </div>
                 </div>
             </div>
             <div class="button-container">
-                <button class="print-btn">Print</button>
+                <button type="button" class="print-btn" id="printButton"><i class="bx bx-printer" aria-hidden="true"></i><span>Print</span></button>
                 <button type="submit" class="submit-btn" id="submitButton">Record</button>
             </div>
        </form>
@@ -355,7 +348,7 @@
     <div id="myModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <img src="../img/verify.png" alt="Checkmark" class="checkmark-image">
+                <div class="modal-icon modal-icon-question" aria-hidden="true"><i class="bx bx-help-circle"></i></div>
                 <h3>Confirmation</h3>
                 <span class="close-btn" id="closeBtn">&times;</span>
             </div>
@@ -373,7 +366,7 @@
     <div id="myModal2" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <img src="../img/success.png" alt="Checkmark" class="checkmark-image">
+                <div class="modal-icon modal-icon-success" aria-hidden="true"><i class="bx bx-check"></i></div>
                 <h3>Appointment Successful</h3>
                 <span class="close-btn" id="closeBtn3">&times;</span>
             </div>
@@ -511,12 +504,12 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function confirmLogout() {
-  document.getElementById('logoutModal').style.display = 'block';
+  document.getElementById('logoutModal').classList.add('open');
   return false;
 }
 
 function closeModal() {
-  document.getElementById('logoutModal').style.display = 'none';
+  document.getElementById('logoutModal').classList.remove('open');
 }
 
 function proceedLogout() {
@@ -531,5 +524,19 @@ window.addEventListener('click', function (event) {
 });
 </script>
  <script src="js/script.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const printButton = document.getElementById('printButton');
+  if (printButton && !printButton.dataset.printReady) {
+    printButton.dataset.printReady = 'true';
+    printButton.addEventListener('click', function (event) {
+      event.preventDefault();
+      window.print();
+    });
+  }
+});
+</script>
+
 </body>
 </html>

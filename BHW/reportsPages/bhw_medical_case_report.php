@@ -203,36 +203,35 @@ $visits = $stmt->fetchAll();
                 </div>
               </div>
 
-      <br> <br>
-            </div>
-
 <div class="history-container">
 
     
 	
 
 <!-- Filter Form -->
-<form method="GET" class="filter-form">
+<div class="filter-form">
     <h2>Medical Cases Monitoring Report - BHS <?php echo htmlspecialchars($barangayName); ?>   </h2> <br>
 
     
     <!-- Filter Modal Trigger -->
 
-        <div class="form-submit" style="margin-top: -10px;">
-               <button type="button" class="btn-export" id="openFilterModal">Select Filters</button>
-              <button type="button" class="btn-export" onclick="exportTableToExcel('reportTable')">Export to Excel</button>
-
-    <button type="button" class="btn-print" onclick="printDiv()">
-        <i class='bx bx-printer'></i>
-        Print Report
-    </button>
-    </div>
+        <div class="form-submit">
+            <button type="button" class="btn-export" id="openFilterModal">
+                <i class="bx bx-filter-alt"></i> Select Filters
+            </button>
+            <button type="button" class="btn-export" onclick="exportTableToExcel('reportTable')">
+                <i class="bx bx-spreadsheet"></i> Export to Excel
+            </button>
+            <button type="button" class="btn-print" onclick="printDiv()">
+                <i class="bx bx-printer"></i> Print Report
+            </button>
+        </div>
 
 
     <!-- Modern Filter Tags Display -->
-    <div class="selected-filters" style="margin: 20px 0;">
-        <h3 style="margin-bottom: 10px;"><i class="bx bx-filter-alt"></i> Selected Filters:</h3>
-        <div id="filterTags" style="display: flex; flex-wrap: wrap; gap: 8px;">
+    <div class="selected-filters">
+        <h3><i class="bx bx-filter-alt"></i> Selected Filters:</h3>
+        <div id="filterTags">
             <?php
             function renderTag($label, $param, $value) {
                 $display = htmlspecialchars($label . ': ' . $value);
@@ -287,9 +286,9 @@ if ($to_date) {
 
   <!-- Filter Modal -->
     <div id="filterModal" class="modal" style="display:none;">
-        <div class="modal-content" style="max-width: 600px;">
+        <div class="modal-content">
             <div class="modal-header">
-                <h3>Apply Filters</h3>
+                <h3><i class="bx bx-filter-alt" style="margin-right:8px;color:var(--blue);"></i>Apply Filters</h3>
             </div>
             <form method="GET" id="filterForm">
                 <div class="modal-body">
@@ -359,7 +358,7 @@ while ($row = $barangay_stmt->fetch(PDO::FETCH_ASSOC)) {
 
                                   <div class="form-item">
                         <label for="diagnosis">Diagnoses:</label>
-                        <div id="medicine-checkboxes" style="max-height:150px;overflow-y:auto;border:1px solid #ccc;padding:8px;border-radius:6px;">
+                        <div id="diagnosis-checkboxes" class="checkbox-scroll">
                             <?php
                             $diagnosis_stmt = $pdo->prepare("SELECT value FROM custom_options WHERE category = 'diagnosis' ");
                             $diagnosis_stmt->execute();
@@ -367,7 +366,7 @@ while ($row = $barangay_stmt->fetch(PDO::FETCH_ASSOC)) {
                             while ($row = $diagnosis_stmt->fetch()) {
                                 $value = $row['value'];
                                 $checked = in_array($value, $selected_diagnosis) ? 'checked' : '';
-                                echo '<label style="display:block;margin-bottom:4px;text-align:left;font-weight:300;">';
+                                echo '<label class="checkbox-option">';
                                 echo '<input type="checkbox" name="diagnosis[]" value="' . htmlspecialchars($value) . '" ' . $checked . '> ';
                                 echo htmlspecialchars($value);
                                 echo '</label>';
@@ -380,9 +379,9 @@ while ($row = $barangay_stmt->fetch(PDO::FETCH_ASSOC)) {
                             
                         </div>
                     </div>
-                     <div class="modal-footer" style="text-align:right;">
+                     <div class="modal-footer">
                     <button type="button" class="btn" id="closeFilterModal">Cancel</button>
-                    <button type="submit" class="btn-submit">Apply Filter</button>
+                    <button type="submit" class="btn-submit">Apply Filters</button>
                 </div>
               
                
@@ -440,7 +439,7 @@ while ($row = $barangay_stmt->fetch(PDO::FETCH_ASSOC)) {
     </script>
 
 
-</form>
+</div>
 
 <div class="main-content">
 
@@ -696,12 +695,576 @@ if ($from_date || $to_date) {
 }
 </style>
 
-<!-- Chart Visibility Controls -->
-<div style="margin: 20px;" class="chart-title">
-    <h3>Charts:</h3>
-    <label><input type="checkbox" id="toggleSexChart"> Show Patients by Sex</label> <br>
-    <label><input type="checkbox" id="toggleAgeGroupChart"> Show Age Group</label> <br>
 
+<style>
+/* ═══════════════════════════════════════════════
+   UI CONSISTENCY OVERRIDES - BHW MEDICAL CASES
+═══════════════════════════════════════════════ */
+#content main {
+  padding: 32px 28px;
+  max-height: calc(100vh - 56px);
+  overflow-y: auto;
+}
+
+#content main .head-title { margin-bottom: 8px; }
+#content main .head-title .left h1 {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--navy);
+  letter-spacing: -.4px;
+  margin-bottom: 6px;
+}
+
+.history-container { width: 100%; }
+
+.filter-form {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 28px 32px 24px;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow-sm);
+}
+
+.filter-form h2 {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--navy);
+  letter-spacing: -.2px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.filter-form h2::before {
+  content: '';
+  width: 4px;
+  height: 18px;
+  background: var(--blue);
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.form-submit {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: 0 !important;
+}
+
+.selected-filters {
+  margin-top: 20px;
+}
+
+.selected-filters h3 {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--grey-700);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+
+#filterTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.filter-tag {
+  background: var(--blue-pale) !important;
+  color: var(--navy) !important;
+  border: 1px solid var(--border) !important;
+  padding: 5px 12px !important;
+  border-radius: 20px !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+}
+
+.filter-tag a {
+  color: var(--grey-500) !important;
+  margin-left: 2px !important;
+  text-decoration: none !important;
+  font-weight: 700 !important;
+}
+.filter-tag a:hover { color: var(--red) !important; }
+
+.modal-content {
+  width: 90%;
+  max-width: 620px !important;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px 20px;
+}
+
+.form-item label {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--grey-700);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+
+.checkbox-scroll {
+  max-height: 170px;
+  overflow-y: auto;
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-sm);
+  background: var(--grey-100);
+  padding: 8px 10px;
+}
+
+.checkbox-option {
+  display: flex !important;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+  text-align: left;
+  font-weight: 500 !important;
+  font-size: 13px;
+  color: var(--grey-700);
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+}
+
+.chart-controls-panel {
+  background: var(--grey-100);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--r-md);
+  padding: 16px 20px;
+  margin: 0 0 24px;
+}
+
+.chart-controls-panel h3 {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--grey-700);
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  margin-bottom: 12px;
+}
+
+.chart-toggle-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.chart-toggle-group label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 14px;
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--grey-700);
+  cursor: pointer;
+  user-select: none;
+}
+
+.chart-toggle-group label:has(input:checked) {
+  background: var(--navy);
+  border-color: var(--navy);
+  color: var(--white);
+}
+
+.report-chart-card {
+  background: var(--white);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-xs);
+  padding: 20px;
+  margin: 24px auto 0;
+  text-align: center;
+}
+
+.line-chart-card {
+  width: 100%;
+  max-width: 980px;
+  min-height: 390px;
+}
+.small-chart-card { max-width: 460px; }
+.medium-chart-card { max-width: 540px; }
+
+.report-chart-card canvas {
+  width: 100% !important;
+  height: 280px !important;
+  max-height: 280px;
+}
+
+.line-chart-card canvas {
+  height: 320px !important;
+  max-height: 320px;
+}
+
+.report-charts-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(280px, 1fr));
+  gap: 24px;
+  align-items: stretch;
+  margin: 24px 0 6px;
+}
+
+.report-charts-grid .report-chart-card {
+  width: 100%;
+  max-width: none;
+  min-height: 340px;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.report-charts-grid.single-chart {
+  grid-template-columns: minmax(280px, 540px);
+  justify-content: center;
+}
+
+.chart-hidden {
+  opacity: 0;
+  transform: translateY(12px);
+  max-height: 0;
+  min-height: 0 !important;
+  overflow: hidden;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  margin: 0 !important;
+  border-width: 0 !important;
+  pointer-events: none;
+}
+
+.chart-visible {
+  opacity: 1;
+  transform: translateY(0);
+  animation: reportChartIn .28s ease-out both;
+}
+
+@keyframes reportChartIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+#reportTable th { cursor: pointer; user-select: none; }
+#reportTable th .sort-indicator { margin-left: 6px; font-size: 10px; opacity: .7; }
+#reportTable th.is-sorted-asc .sort-indicator::after { content: "▲"; }
+#reportTable th.is-sorted-desc .sort-indicator::after { content: "▼"; }
+
+.chart-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 12px;
+}
+
+.print-area {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 28px 32px;
+  box-shadow: var(--shadow-sm);
+}
+
+.report-table-container {
+  width: 100%;
+  border-radius: var(--r-lg);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  background: var(--white);
+  margin: 24px 0 32px !important;
+}
+
+.report-table-scroll {
+  width: 100%;
+  overflow-x: auto;
+  max-height: 560px;
+  overflow-y: auto;
+}
+
+#reportTable {
+  width: 100%;
+  min-width: 980px;
+  border-collapse: collapse;
+  font-size: 13.5px;
+}
+
+#reportTable thead {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+#reportTable thead tr {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 100%);
+}
+
+#reportTable th {
+  padding: 13px 14px;
+  text-align: left;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: rgba(255,255,255,.92);
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  white-space: nowrap;
+  border-right: 1px solid rgba(255,255,255,.08);
+}
+
+#reportTable td {
+  padding: 11px 14px;
+  color: var(--grey-700);
+  font-size: 13.5px;
+  vertical-align: middle;
+  border-right: 1px solid var(--border-soft);
+  border-bottom: 1px solid var(--border-soft);
+  white-space: nowrap;
+}
+
+#reportTable td:nth-child(2),
+#reportTable td:nth-child(4),
+#reportTable td:nth-child(7) {
+  white-space: normal;
+  word-break: break-word;
+  min-width: 150px;
+}
+
+#reportTable tbody tr:nth-child(odd) { background: var(--white); }
+#reportTable tbody tr:nth-child(even) { background: var(--grey-100); }
+#reportTable tbody tr:hover { background: var(--blue-pale); }
+
+.summary-container { margin-top: 32px !important; }
+.summary h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--navy);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.kv-table,
+.mini-table,
+.purok-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  font-size: 14px;
+  margin-bottom: 14px;
+}
+
+.kv-table th,
+.kv-table td,
+.mini-table th,
+.mini-table td,
+.purok-table th,
+.purok-table td {
+  border: 0 !important;
+  border-bottom: 1px solid var(--border-soft) !important;
+  padding: 12px 16px !important;
+  text-align: left;
+  vertical-align: top;
+}
+
+.kv-table th,
+.mini-table thead th,
+.purok-table thead th {
+  background: var(--grey-100);
+  color: var(--navy);
+  font-weight: 700;
+}
+
+.kv-table tr:last-child th,
+.kv-table tr:last-child td,
+.mini-table tr:last-child td,
+.purok-table tr:last-child td {
+  border-bottom: 0 !important;
+}
+
+.mini-wrap {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+#generated_by {
+  display: block;
+  margin: 32px 0 0 4px !important;
+  color: var(--dark) !important;
+}
+#generated_by .sig-label {
+  font-size: 12.5px !important;
+  font-weight: 600;
+  color: var(--grey-500);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  margin-bottom: 20px;
+}
+#generated_by .sig-line { display: none; }
+#generated_by .sig-name {
+  font-weight: 700;
+  font-size: 15px !important;
+  color: var(--navy);
+}
+#generated_by .sig-title {
+  font-size: 12.5px !important;
+  color: var(--grey-500) !important;
+}
+
+@media print {
+  @page { size: landscape; margin: 1cm; }
+  body * { visibility: hidden; }
+  .print-area, .print-area * { visibility: visible; }
+  .print-area {
+    position: absolute;
+    left: 0; top: 0;
+    width: 100%;
+    box-shadow: none;
+    border: none;
+    padding: 0;
+    border-radius: 0;
+  }
+  .title { display: block !important; }
+  .print-letterhead { display: grid !important; }
+  .chart-controls-panel,
+  .chart-title,
+  .report-chart-card,
+  .form-submit,
+  nav,
+  #sidebar { display: none !important; }
+  .report-table-container {
+    box-shadow: none;
+    border: 1px solid #000;
+    border-radius: 0;
+    margin: 18px 0 30px !important;
+  }
+  .report-table-scroll {
+    max-height: none !important;
+    overflow: visible !important;
+  }
+  #reportTable { min-width: unset; font-size: 10pt; }
+  #reportTable th,
+  #reportTable td {
+    border: 1px solid #000 !important;
+    color: #000 !important;
+    background: transparent !important;
+    padding: 6px 8px;
+  }
+  .kv-table,
+  .mini-table,
+  .purok-table {
+    border: 1px solid #000 !important;
+    box-shadow: none;
+    border-radius: 0;
+    font-size: 11pt;
+  }
+  .kv-table th,
+  .kv-table td,
+  .mini-table th,
+  .mini-table td,
+  .purok-table th,
+  .purok-table td {
+    border: 1px solid #000 !important;
+  }
+  #generated_by { margin: 50mm 0 0 10mm !important; }
+  #generated_by .sig-line { display: block; width: 45mm; border: 0; border-top: 1px solid #000; margin: 10mm 0 3mm; }
+}
+
+@media (max-width: 900px) {
+  .report-charts-grid,
+  .report-charts-grid.single-chart {
+    grid-template-columns: 1fr;
+  }
+
+  .report-charts-grid .report-chart-card {
+    max-width: 540px;
+    margin: 0 auto;
+  }
+}
+
+@media (max-width: 768px) {
+  #content main { padding: 20px 14px; }
+  .filter-form { padding: 20px 18px; }
+  .form-row { grid-template-columns: 1fr; }
+  .modal-content { padding: 24px 20px 20px; }
+  .mini-wrap { grid-template-columns: 1fr; }
+
+  .report-table-container {
+    border-radius: var(--r-md);
+    box-shadow: var(--shadow-sm);
+  }
+  #reportTable { min-width: unset; }
+  #reportTable thead { display: none; }
+  #reportTable,
+  #reportTable tbody,
+  #reportTable tr,
+  #reportTable td { display: block; width: 100%; }
+  #reportTable tr {
+    margin: 0 0 12px;
+    padding: 14px 14px 8px;
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    background: var(--white);
+    box-shadow: var(--shadow-xs);
+  }
+  #reportTable td {
+    border: 0 !important;
+    border-bottom: 1px solid var(--border-soft) !important;
+    padding: 9px 0;
+    white-space: normal;
+    font-size: 13px;
+  }
+  #reportTable td:last-child { border-bottom: none !important; }
+  #reportTable td::before {
+    content: attr(data-label);
+    display: block;
+    font-size: 10.5px;
+    font-weight: 700;
+    color: var(--grey-500);
+    text-transform: uppercase;
+    letter-spacing: .07em;
+    margin-bottom: 2px;
+  }
+
+  .report-chart-card canvas {
+    height: 240px !important;
+    max-height: 240px;
+  }
+
+  .line-chart-card canvas {
+    height: 280px !important;
+    max-height: 280px;
+  }
+}
+</style>
+
+<!-- Chart Visibility Controls -->
+<div class="chart chart-controls-panel">
+    <h3>Charts:</h3>
+    <div class="chart-toggle-group">
+        <label><input type="checkbox" id="toggleSexChart"> Show Patients by Sex</label>
+        <label><input type="checkbox" id="toggleAgeGroupChart"> Show Age Group</label>
+    </div>
 </div>
 <script>
 document.addEventListener("DOMContentLoaded", () => {
@@ -709,25 +1272,53 @@ document.addEventListener("DOMContentLoaded", () => {
         toggleSexChart: "sexChart",
         toggleAgeGroupChart: "ageGroupChart"
     };
+    const optionalGrid = document.getElementById('optionalChartsGrid');
+
+    function resizeChartInside(chartElement) {
+        if (!chartElement || typeof Chart === 'undefined' || typeof Chart.getChart !== 'function') return;
+        const canvas = chartElement.querySelector('canvas');
+        const chart = canvas ? Chart.getChart(canvas) : null;
+        if (chart) {
+            requestAnimationFrame(() => chart.resize());
+            setTimeout(() => chart.resize(), 180);
+        }
+    }
+
+    function syncOptionalChartLayout() {
+        let visibleCount = 0;
+
+        Object.keys(chartMapping).forEach(toggleId => {
+            const checkbox = document.getElementById(toggleId);
+            const chartElement = document.getElementById(chartMapping[toggleId]);
+            if (!checkbox || !chartElement) return;
+
+            const isVisible = checkbox.checked;
+            chartElement.classList.toggle('chart-visible', isVisible);
+            chartElement.classList.toggle('chart-hidden', !isVisible);
+
+            if (isVisible) {
+                visibleCount++;
+                resizeChartInside(chartElement);
+            }
+        });
+
+        if (optionalGrid) {
+            optionalGrid.classList.toggle('single-chart', visibleCount <= 1);
+        }
+    }
 
     Object.keys(chartMapping).forEach(toggleId => {
         const checkbox = document.getElementById(toggleId);
-        const chartElement = document.getElementById(chartMapping[toggleId]);
-
-        if (checkbox && chartElement) {
-            checkbox.addEventListener("change", () => {
-                chartElement.style.display = checkbox.checked ? "block" : "none";
-            });
-
-            chartElement.style.display = checkbox.checked ? "block" : "none";
-        }
+        if (checkbox) checkbox.addEventListener("change", syncOptionalChartLayout);
     });
+
+    syncOptionalChartLayout();
 });
 </script>
 
 
   <!-- Disease Frequency Over Time Line Chart -->
-<div style="max-width: 800px; margin: 30px auto 0 auto; text-align:center;">
+<div class="chart report-chart-card line-chart-card">
     <h3 class="chart-title">Medical Cases Frequency Over Time</h3>
     <canvas id="casesLineChart"></canvas>
 </div>
@@ -814,6 +1405,8 @@ document.addEventListener("DOMContentLoaded", () => {
             },
             options: {
                 responsive: true,
+                maintainAspectRatio: false,
+                animation: { duration: 650, easing: 'easeOutQuart' },
                 plugins: {
                     legend: { position: 'top' },
                     title: { display: false }
@@ -833,8 +1426,9 @@ document.addEventListener("DOMContentLoaded", () => {
 </script>
 
 
+    <div id="optionalChartsGrid" class="report-charts-grid single-chart">
     <!-- Pie Chart Section: Sex Distribution -->
-    <div id="sexChart" style="max-width: 400px; margin: 30px auto 0 auto; text-align:center; display:none;">
+    <div id="sexChart" class="chart report-chart-card small-chart-card chart-hidden">
         <h3 class="chart-title">Patients by Sex</h3>
         <canvas id="sexPieChart"></canvas>
     </div>
@@ -870,6 +1464,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 },
                 options: {
                     responsive: true,
+                    maintainAspectRatio: false,
+                    animation: { duration: 650, easing: 'easeOutQuart' },
                     plugins: {
                         legend: { position: 'bottom' },
                         title: { display: false }
@@ -880,9 +1476,10 @@ document.addEventListener("DOMContentLoaded", () => {
     </script>
 
     <!-- Age Group Distribution Bar Chart -->
-    <div id="ageGroupChart" style="max-width: 500px; margin: 30px auto 0 auto; text-align:center; display: none;">
+    <div id="ageGroupChart" class="chart report-chart-card medium-chart-card chart-hidden">
         <h3 class="chart-title">Age Groups</h3>
         <canvas id="ageGroupBarChart"></canvas>
+    </div>
     </div>
     <script>
         <?php
@@ -930,6 +1527,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 },
                 options: {
                     responsive: true,
+                    maintainAspectRatio: false,
+                    animation: { duration: 650, easing: 'easeOutQuart' },
                     plugins: {
                         legend: { display: false },
                         title: { display: false }
@@ -951,32 +1550,34 @@ document.addEventListener("DOMContentLoaded", () => {
 <!-- Table with Visit Details -->
 <?php if ($visits && count($visits) > 0): ?>
     <div class="report-table-container">
+      <div class="report-table-scroll">
       <table id="reportTable">
         <thead>
             <tr>
-                <th>Date Diagnosed</th>
-                <th>Diagnosis</th>
-                <th>Status</th>
-                <th>Patient Name</th>
-                <th>Sex</th>
-                <th>Age</th>
-                <th>Address</th>
+                <th data-type="date">Date Diagnosed</th>
+                <th data-type="string">Diagnosis</th>
+                <th data-type="string">Status</th>
+                <th data-type="string">Patient Name</th>
+                <th data-type="string">Sex</th>
+                <th data-type="number">Age</th>
+                <th data-type="string">Address</th>
             </tr>
         </thead>
         <tbody>
         <?php foreach ($visits as $visit): ?>
             <tr>
-                <td><?= date('M d, Y', strtotime($visit['consultation_date'])) ?></td>
-                <td><?= htmlspecialchars($visit['diagnosis']) ?></td>
-                <td><?= htmlspecialchars($visit['diagnosis_status']) ?></td>
-                <td><?= htmlspecialchars($visit['first_name'] . ' ' . $visit['last_name']) ?></td>
-                <td><?= htmlspecialchars($visit['sex']) ?></td>
-                <td><?= htmlspecialchars($visit['age']) ?></td>
-                <td><?= htmlspecialchars($visit['address']) ?></td>
+                <td data-label="Date Diagnosed"><?= date('M d, Y', strtotime($visit['consultation_date'])) ?></td>
+                <td data-label="Diagnosis"><?= htmlspecialchars($visit['diagnosis']) ?></td>
+                <td data-label="Status"><?= htmlspecialchars($visit['diagnosis_status']) ?></td>
+                <td data-label="Patient Name"><?= htmlspecialchars($visit['first_name'] . ' ' . $visit['last_name']) ?></td>
+                <td data-label="Sex"><?= htmlspecialchars($visit['sex']) ?></td>
+                <td data-label="Age"><?= htmlspecialchars($visit['age']) ?></td>
+                <td data-label="Address"><?= htmlspecialchars($visit['address']) ?></td>
             </tr>
         <?php endforeach; ?>
         </tbody>
     </table>
+      </div>
     </div>
     <br>
  
@@ -1133,13 +1734,12 @@ $most_common_treatment = $treatment_counts ? array_key_first($treatment_counts) 
 
    <span id="generated_by"></span>
 
-</div> 
-
-
-</div> 
-
-
-
+</div><!-- /.report-content -->
+</div><!-- /.print-area -->
+</div><!-- /.main-content -->
+</div><!-- /.history-container -->
+</main>
+</section>
 
 <div id="logoutModal" class="logout-modal">
     <div class="logout-modal-content">
@@ -1157,6 +1757,76 @@ $most_common_treatment = $treatment_counts ? array_key_first($treatment_counts) 
 </div>
 
 </div>
+
+<script>
+(function() {
+  const table = document.getElementById('reportTable');
+  if (!table) return;
+  const thead = table.tHead || table.querySelector('thead');
+  const tbody = table.tBodies[0];
+  if (!thead || !tbody) return;
+
+  [...thead.querySelectorAll('th')].forEach(th => {
+    if (!th.querySelector('.sort-indicator')) {
+      const ind = document.createElement('span');
+      ind.className = 'sort-indicator';
+      th.appendChild(ind);
+    }
+  });
+
+  function parseDate(v) {
+    const t = (v || '').trim();
+    const d = new Date(t);
+    return isNaN(d.getTime()) ? null : d;
+  }
+  function detectType(idx) {
+    const th = thead.querySelectorAll('th')[idx];
+    if (th?.dataset?.type) return th.dataset.type;
+    for (const tr of tbody.rows) {
+      const t = (tr.cells[idx]?.textContent || '').trim();
+      if (!t) continue;
+      if (parseDate(t)) return 'date';
+      if (!isNaN(t.replace(/,/g, ''))) return 'number';
+      return 'string';
+    }
+    return 'string';
+  }
+  function val(tr, idx, type) {
+    const raw = (tr.cells[idx]?.textContent || '').trim();
+    if (type === 'number') {
+      const n = parseFloat(raw.replace(/,/g, ''));
+      return isNaN(n) ? Number.NEGATIVE_INFINITY : n;
+    }
+    if (type === 'date') {
+      const d = parseDate(raw);
+      return d ? d.getTime() : Number.NEGATIVE_INFINITY;
+    }
+    return raw.toLowerCase();
+  }
+  function sortBy(idx, dir) {
+    const type = detectType(idx);
+    const rows = [...tbody.rows].sort((a, b) => {
+      const va = val(a, idx, type), vb = val(b, idx, type);
+      if (va < vb) return dir === 'asc' ? -1 : 1;
+      if (va > vb) return dir === 'asc' ? 1 : -1;
+      return 0;
+    });
+    const frag = document.createDocumentFragment();
+    rows.forEach(r => frag.appendChild(r));
+    tbody.appendChild(frag);
+  }
+  [...thead.querySelectorAll('th')].forEach((th, idx) => {
+    th.addEventListener('click', () => {
+      const nextDir = th.classList.contains('is-sorted-asc') ? 'desc' : 'asc';
+      [...thead.querySelectorAll('th')].forEach(h => h.classList.remove('is-sorted-asc', 'is-sorted-desc'));
+      th.classList.add(nextDir === 'asc' ? 'is-sorted-asc' : 'is-sorted-desc');
+      sortBy(idx, nextDir);
+    });
+  });
+  const def = thead.querySelectorAll('th')[0];
+  if (def) { def.classList.add('is-sorted-desc'); sortBy(0, 'desc'); }
+})();
+</script>
 
 <!-- jsPDF and html2canvas libraries -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>

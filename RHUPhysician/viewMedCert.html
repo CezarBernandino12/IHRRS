@@ -1,127 +1,161 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="icon" href="../img/logo.png">
-	<link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
-	<link rel="stylesheet" href="css/medcert.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Issued Records</title>
+
+    <link rel="icon" href="../img/logo.png">
+    <link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/medcert.css">
     <link rel="stylesheet" href="css/logout.css">
     <link rel="stylesheet" href="css/sidebar.css">
-   
-	<title>Issued Records</title> 
-
 </head>
+
 <body>
 
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-	<!-- Sidebar Section -->
-	<section id="sidebar">
-		<a href="#" class="sidebar-brand">
-			<img src="../img/logo.png" alt="RHU Logo" class="brand-logo">
-			<div class="brand-text">
-				<span class="brand-name">Hello Physician</span>
-			</div>
-		</a>
+<section id="sidebar">
+    <a href="#" class="sidebar-brand">
+        <img src="../img/logo.png" alt="RHU Logo" class="brand-logo">
 
-		<div class="sidebar-scroll">
-			<div class="sidebar-section-label">Main Menu</div>
-			<ul class="side-menu top">
-				<li>
-					<a href="dashboard" data-tooltip="Dashboard">
-						<i class="bx bxs-dashboard nav-icon"></i>
-						<span class="nav-label">Dashboard</span>
-					</a>
-				</li>
-				<li>
-					<a href="ITR" data-tooltip="Add New ITR">
-						<i class="bx bxs-notepad nav-icon"></i>
-						<span class="nav-label">Add New ITR</span>
-					</a>
-				</li>
-				<li class="active">
-					<a href="#" id="updateReferrals" data-tooltip="Pending Referrals">
-						<i class="bx bxs-user nav-icon"></i>
-						<span class="nav-label">Pending Referrals</span>
-					</a>
-				</li>
-				<li>
-					<a href="followUpConsultations" data-tooltip="Follow-Up Visits">
-						<i class="bx bxs-user nav-icon"></i>
-						<span class="nav-label">Follow-Up Visits</span>
-					</a>
-				</li>
-				<li>
-					<a href="searchPatient" data-tooltip="Patient Records">
-						<i class="bx bxs-search nav-icon"></i>
-						<span class="nav-label">Patient Records</span>
-					</a>
-				</li>
-				<li>
-					<a href="history" data-tooltip="Referral History">
-						<i class="bx bx-history nav-icon"></i>
-						<span class="nav-label">Referral History</span>
-					</a>
-				</li>
-				<li>
-					<a href="reports" data-tooltip="Reports">
-						<i class="bx bx-notepad nav-icon"></i>
-						<span class="nav-label">Reports</span>
-					</a>
-				</li>
-			</ul>
+        <div class="brand-text">
+            <span class="brand-name">Hello Physician</span>
+        </div>
+    </a>
 
-			<div class="sidebar-divider"></div>
+    <div class="sidebar-scroll">
+        <div class="sidebar-section-label">Main Menu</div>
 
-			<ul class="side-menu">
-				<li>
-					<a href="#" class="logout" data-tooltip="Logout" onclick="return confirmLogout()">
-						<i class="bx bxs-log-out-circle nav-icon"></i>
-						<span class="nav-label">Logout</span>
-					</a>
-				</li>
-			</ul>
-		</div>
+        <ul class="side-menu top">
+            <li>
+                <a href="dashboard" data-tooltip="Dashboard">
+                    <i class="bx bxs-dashboard nav-icon"></i>
+                    <span class="nav-label">Dashboard</span>
+                </a>
+            </li>
 
-		<div class="sidebar-footer">
-			<div class="sidebar-user">
-				<img src="../img/doctor.png" alt="Physician User">
-				<div class="sidebar-user-info">
-					<div class="user-name" id="sidebarUserName">Physician User</div>
-					<div class="user-role">RHU Physician</div>
-				</div>
-			</div>
-		</div>
-	</section>
+            <li>
+                <a href="ITR" data-tooltip="Add New ITR">
+                    <i class="bx bxs-notepad nav-icon"></i>
+                    <span class="nav-label">Add New ITR</span>
+                </a>
+            </li>
 
-	<!-- Main Content Section -->
-	<section id="content">
-		<nav>
-			<button class="nav-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
-				<i class="bx bx-menu"></i>
-			</button>
+            <li>
+                <a href="#" id="updateReferrals" data-tooltip="Pending Referrals">
+                    <i class="bx bxs-user nav-icon"></i>
+                    <span class="nav-label">Pending Referrals</span>
+                </a>
+            </li>
 
-			<form action="#" id="searchForm" class="nav-search" style="position: relative;">
-				<input type="search" id="searchInput" placeholder="Search by Referral ID or Patient Name..." autocomplete="off">
-				<button type="submit" aria-label="Search">
-					<i class="bx bx-search"></i>
-				</button>
-				<div id="resultDropdown" class="dropdown-content"></div>
-			</form>
-		</nav>
+            <li>
+                <a href="followUpConsultations" data-tooltip="Follow-Up Visits">
+                    <i class="bx bxs-calendar-check nav-icon"></i>
+                    <span class="nav-label">Follow-Up Visits</span>
+                </a>
+            </li>
 
-	<main>
+            <li class="active">
+                <a href="searchPatient" data-tooltip="Patient Records">
+                    <i class="bx bxs-search nav-icon"></i>
+                    <span class="nav-label">Patient Records</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="history" data-tooltip="Referral History">
+                    <i class="bx bx-history nav-icon"></i>
+                    <span class="nav-label">Referral History</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="reports" data-tooltip="Reports">
+                    <i class="bx bx-notepad nav-icon"></i>
+                    <span class="nav-label">Reports</span>
+                </a>
+            </li>
+        </ul>
+
+        <div class="sidebar-divider"></div>
+
+        <ul class="side-menu">
+            <li>
+                <a href="#" class="logout" data-tooltip="Logout" onclick="return confirmLogout()">
+                    <i class="bx bxs-log-out-circle nav-icon"></i>
+                    <span class="nav-label">Logout</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="sidebar-footer">
+        <div class="sidebar-user">
+            <img src="../img/doctor.png" alt="Physician User">
+
+            <div class="sidebar-user-info">
+                <div class="user-name" id="sidebarUserName">Physician User</div>
+                <div class="user-role">RHU Physician</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="content">
+    <nav>
+        <button class="nav-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+            <i class="bx bx-menu"></i>
+        </button>
+
+        <form action="#" id="searchForm" class="nav-search">
+            <input 
+                type="search" 
+                id="searchInput" 
+                placeholder="Search by Referral ID or Patient Name..." 
+                autocomplete="off"
+            >
+
+            <button type="submit" aria-label="Search">
+                <i class="bx bx-search"></i>
+            </button>
+        </form>
+    </nav>
+
+    <main>
+        <div class="page-heading screen-only">
+            <div>
+                <h1>Medical Certificate</h1>
+                <p>Review, print, or return to the patient record.</p>
+            </div>
+        </div>
+
+        <div class="certificate-view-card">
+            <div class="certificate-card-header screen-only">
+                <div class="certificate-card-icon">
+                    <i class="bx bx-certification"></i>
+                </div>
+
+                <div>
+                    <h2>Certificate Preview</h2>
+                    <span>This preview is enhanced for screen viewing. Printing keeps the official layout.</span>
+                </div>
+            </div>
+
             <div class="certificate-container">
                 <div class="container">
                     <div class="header">
                         <img src="../img/daet_logo.png" alt="Left Logo" class="logo">
+
                         <div class="header-text">
                             <h1>Republic of the Philippines</h1>
                             <h2>Municipal Health Office</h2>
                             <h1>Daet Camarines Norte</h1>
                             <h1><span id="rhu"></span></h1>
                         </div>
+
                         <img src="../img/mho_logo.png" alt="Right Logo" class="logo">
                     </div>
 
@@ -137,8 +171,8 @@
                         <div class="patient-info">
                             <p class="patient-info-line">
                                 TO WHOM IT MAY CONCERN:
-                             
                             </p>
+
                             <p class="patient-info-line" style="margin-left: 20px;">
                                 This is to certify that
                                 <span class="underline" id="patientName"></span>,
@@ -147,9 +181,11 @@
                                 <span class="underline" id="civilStatus"></span>,
                                 was examined by the undersigned:
                             </p>
+
                             <p class="patient-info-line" style="margin-left: 40px;">
                                 Address: <span class="underline" id="patientAddress"></span>
                             </p>
+
                             <p class="patient-info-line" style="margin-left: 40px;">
                                 Date of Examination: <span class="underline" id="examDate"></span>
                             </p>
@@ -165,6 +201,7 @@
                                     <span class="checkbox-box" id="fitBox"></span>
                                     <span>FIT</span>
                                 </div>
+
                                 <div class="checkbox-item">
                                     <span class="checkbox-box" id="unfitBox"></span>
                                     <span>UNFIT at the time of examination</span>
@@ -178,31 +215,38 @@
 
                         <div class="lab-section" style="margin-left: 40px;">
                             <p><strong>Laboratory:</strong></p>
+
                             <div class="lab-grid">
                                 <div class="lab-item">
                                     <span class="checkbox-box" id="cbcBox"></span>
-                                    <span>CBC: <span id="labCbc" ></span></span>
+                                    <span>CBC: <span id="labCbc"></span></span>
                                 </div>
+
                                 <div class="lab-item">
                                     <span class="checkbox-box" id="urinalysisBox"></span>
-                                    <span>URINALYSIS: <span id="labUrinalysis" ></span></span>
+                                    <span>URINALYSIS: <span id="labUrinalysis"></span></span>
                                 </div>
+
                                 <div class="lab-item">
                                     <span class="checkbox-box" id="fecalysisBox"></span>
-                                    <span>FECALYSIS: <span id="labFecalysis" ></span></span>
+                                    <span>FECALYSIS: <span id="labFecalysis"></span></span>
                                 </div>
+
                                 <div class="lab-item">
                                     <span class="checkbox-box" id="hbsagBox"></span>
-                                    <span>HBsAg: <span id="labHbsag" ></span></span>
+                                    <span>HBsAg: <span id="labHbsag"></span></span>
                                 </div>
+
                                 <div class="lab-item">
                                     <span class="checkbox-box" id="cxrBox"></span>
-                                    <span>CXR: <span id="labCxr" ></span></span>
+                                    <span>CXR: <span id="labCxr"></span></span>
                                 </div>
+
                                 <div class="lab-item">
                                     <span class="checkbox-box" id="sputumBox"></span>
-                                    <span>SPUTUM AFB: <span id="labSputum" ></span></span>
+                                    <span>SPUTUM AFB: <span id="labSputum"></span></span>
                                 </div>
+
                                 <div class="lab-item">
                                     <span class="checkbox-box" id="otherBox"></span>
                                     <span>OTHER: <span id="labOther"></span></span>
@@ -219,6 +263,7 @@
                             <div class="signature-line"></div>
                             <div class="signature-name" id="doctorName"></div>
                             <div class="signature-title">Rural Health Physician</div>
+
                             <div class="signature-license">
                                 License No.<span id="licenseNumber"></span>
                             </div>
@@ -226,21 +271,25 @@
                     </div>
 
                     <div class="buttons">
-                        <button class="button button-back" onclick="goBack()">Back to Records</button>
-                        <button class="button button-print" onclick="window.print()">Print Certificate</button>
+                        <button class="button button-back" onclick="goBack()" type="button"><i class="bx bx-arrow-back"></i> Back to Records</button>
+                        <button class="button button-print" onclick="window.print()" type="button"><i class="bx bx-printer"></i> Print Certificate</button>
                     </div>
                 </div>
             </div>
-
+        </div>
+    </main>
+</section>
 
 <div id="logoutModal" class="logout-modal">
     <div class="logout-modal-content">
         <div class="logout-modal-header">
             <h3>Confirm Logout</h3>
         </div>
+
         <div class="logout-modal-body">
             <p>Are you sure you want to logout?</p>
         </div>
+
         <div class="logout-modal-footer">
             <button onclick="closeModal()" class="logout-cancel-btn">Cancel</button>
             <button onclick="proceedLogout()" class="logout-confirm-btn">Yes, Logout</button>
@@ -248,210 +297,248 @@
     </div>
 </div>
 
-        </main>
-    </section>
-
-    <script>
-        // Load user name when the page loads
-        document.addEventListener('DOMContentLoaded', function() {
-            // Get user's name for sidebar user card
-            fetch('php/getUserName.php')
-                .then(response => response.json())
-                .then(data => {
-                    const sidebarUserName = document.getElementById('sidebarUserName');
-                    if (sidebarUserName) {
-                        sidebarUserName.textContent = data.full_name || 'Physician User';
-                    }
-                })
-                .catch(error => {
-                    console.error('Error loading user info:', error);
-                    const sidebarUserName = document.getElementById('sidebarUserName');
-                    if (sidebarUserName) {
-                        sidebarUserName.textContent = 'Physician User';
-                    }
-                });
-        });
-
-        const urlParams = new URLSearchParams(window.location.search);
-        const medcertId = urlParams.get('medcert_id');
-
-        if (medcertId) {
-            loadCertificate(medcertId);
-        } else {
-            alert('No certificate ID provided');
-            window.history.back();
-        }
-
-        function loadCertificate(medcertId) {
-            fetch(`php/get_medcert.php?medcert_id=${medcertId}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success && data.certificate) {
-                        displayCertificate(data.certificate);
-                    } else {
-                        alert('Error loading certificate');
-                        window.history.back();
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Error loading certificate');
-                });
-        }
-
-        function displayCertificate(cert) {
-            // Basic patient info
-            document.getElementById('patientName').textContent = cert.patient_name.toUpperCase();
-            document.getElementById('patientAge').textContent = cert.age;
-            document.getElementById('patientSex').textContent = cert.sex;
-            document.getElementById('civilStatus').textContent = cert.civil_status;
-            document.getElementById('patientAddress').textContent = cert.address.toUpperCase();
-            document.getElementById('diagnosis').textContent = cert.diagnosis;
-            document.getElementById('remarks').textContent = cert.remarks || '';
-            
-            // Dates
-            document.getElementById('examDate').textContent = formatDate(cert.date_of_examination || cert.issuance_date);
-            
-            // Fit/Unfit status
-            if (cert.fit_status === 'FIT') {
-                document.getElementById('fitBox').innerHTML = '✓';
-                document.getElementById('unfitBox').innerHTML = '';
-            } else if (cert.fit_status === 'UNFIT') {
-                document.getElementById('fitBox').innerHTML = '';
-                document.getElementById('unfitBox').innerHTML = '✓';
-            }
-            
-            // Laboratory results
-            document.getElementById('labCbc').textContent = cert.lab_cbc || '';
-            document.getElementById('labUrinalysis').textContent = cert.lab_urinalysis || '';
-            document.getElementById('labFecalysis').textContent = cert.lab_fecalysis || '';
-            document.getElementById('labHbsag').textContent = cert.lab_hbsag || '';
-            document.getElementById('labCxr').textContent = cert.lab_cxr || '';
-            document.getElementById('labSputum').textContent = cert.lab_sputum_afb || '';
-            document.getElementById('labOther').textContent = cert.lab_other || '';
-            
-            // Check laboratory boxes that have data
-            if (cert.lab_cbc) document.getElementById('cbcBox').innerHTML = '✓';
-            if (cert.lab_urinalysis) document.getElementById('urinalysisBox').innerHTML = '✓';
-            if (cert.lab_fecalysis) document.getElementById('fecalysisBox').innerHTML = '✓';
-            if (cert.lab_hbsag) document.getElementById('hbsagBox').innerHTML = '✓';
-            if (cert.lab_cxr) document.getElementById('cxrBox').innerHTML = '✓';
-            if (cert.lab_sputum_afb) document.getElementById('sputumBox').innerHTML = '✓';
-            if (cert.lab_other) document.getElementById('otherBox').innerHTML = '✓';
-            
-            // Issuance date breakdown
-            const issuanceDate = new Date(cert.issuance_date);
-            document.getElementById('issuedDay').textContent = issuanceDate.getDate();
-            document.getElementById('issuedMonth').textContent = issuanceDate.toLocaleString('en-US', { month: 'long' });
-            document.getElementById('issuedYear').textContent = issuanceDate.getFullYear().toString().slice(-2);
-            
-            // Control number and RHU
-            document.getElementById('controlNo').textContent = cert.control_number;
-            document.getElementById('rhu').textContent = cert.rhu || 'RURAL HEALTH UNIT II';
-            
-            // Doctor information
-            document.getElementById('doctorName').textContent = cert.issued_by.toUpperCase();
-            document.getElementById('licenseNumber').textContent = cert.license_number || '';
-        }
-
-        function formatDate(dateString) {
-            const options = { year: 'numeric', month: 'long', day: 'numeric' };
-            return new Date(dateString).toLocaleDateString('en-US', options);
-        }
-
-        function goBack() {
-            window.history.back();
-        }
-    </script>
-
-
 <script>
-function confirmLogout() {
-    const logoutModal = document.getElementById('logoutModal');
-    if (logoutModal) {
-        logoutModal.classList.add('open');
-        logoutModal.style.display = '';
+document.addEventListener("DOMContentLoaded", function () {
+    loadSidebarUserName();
+    setupSidebar();
+    setupUpdateReferrals();
+    setupSearch();
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const medcertId = urlParams.get("medcert_id");
+
+    if (medcertId) {
+        loadCertificate(medcertId);
+    } else {
+        alert("No certificate ID provided");
+        window.history.back();
     }
+});
+
+function loadSidebarUserName() {
+    fetch("php/getUserName.php")
+        .then(response => response.json())
+        .then(data => {
+            const sidebarUserName = document.getElementById("sidebarUserName");
+
+            if (sidebarUserName) {
+                sidebarUserName.textContent = data.full_name || "Physician User";
+            }
+        })
+        .catch(error => {
+            console.error("Error loading user info:", error);
+
+            const sidebarUserName = document.getElementById("sidebarUserName");
+
+            if (sidebarUserName) {
+                sidebarUserName.textContent = "Physician User";
+            }
+        });
+}
+
+function loadCertificate(medcertId) {
+    fetch(`php/get_medcert.php?medcert_id=${medcertId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success && data.certificate) {
+                displayCertificate(data.certificate);
+            } else {
+                alert("Error loading certificate");
+                window.history.back();
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            alert("Error loading certificate");
+        });
+}
+
+function displayCertificate(cert) {
+    document.getElementById("patientName").textContent = String(cert.patient_name || "").toUpperCase();
+    document.getElementById("patientAge").textContent = cert.age || "";
+    document.getElementById("patientSex").textContent = cert.sex || "";
+    document.getElementById("civilStatus").textContent = cert.civil_status || "";
+    document.getElementById("patientAddress").textContent = String(cert.address || "").toUpperCase();
+    document.getElementById("diagnosis").textContent = cert.diagnosis || "";
+    document.getElementById("remarks").textContent = cert.remarks || "";
+
+    document.getElementById("examDate").textContent = formatDate(cert.date_of_examination || cert.issuance_date);
+
+    if (cert.fit_status === "FIT") {
+        document.getElementById("fitBox").innerHTML = "✓";
+        document.getElementById("unfitBox").innerHTML = "";
+    } else if (cert.fit_status === "UNFIT") {
+        document.getElementById("fitBox").innerHTML = "";
+        document.getElementById("unfitBox").innerHTML = "✓";
+    }
+
+    document.getElementById("labCbc").textContent = cert.lab_cbc || "";
+    document.getElementById("labUrinalysis").textContent = cert.lab_urinalysis || "";
+    document.getElementById("labFecalysis").textContent = cert.lab_fecalysis || "";
+    document.getElementById("labHbsag").textContent = cert.lab_hbsag || "";
+    document.getElementById("labCxr").textContent = cert.lab_cxr || "";
+    document.getElementById("labSputum").textContent = cert.lab_sputum_afb || "";
+    document.getElementById("labOther").textContent = cert.lab_other || "";
+
+    if (cert.lab_cbc) document.getElementById("cbcBox").innerHTML = "✓";
+    if (cert.lab_urinalysis) document.getElementById("urinalysisBox").innerHTML = "✓";
+    if (cert.lab_fecalysis) document.getElementById("fecalysisBox").innerHTML = "✓";
+    if (cert.lab_hbsag) document.getElementById("hbsagBox").innerHTML = "✓";
+    if (cert.lab_cxr) document.getElementById("cxrBox").innerHTML = "✓";
+    if (cert.lab_sputum_afb) document.getElementById("sputumBox").innerHTML = "✓";
+    if (cert.lab_other) document.getElementById("otherBox").innerHTML = "✓";
+
+    const issuanceDate = new Date(cert.issuance_date);
+
+    if (!Number.isNaN(issuanceDate.getTime())) {
+        document.getElementById("issuedDay").textContent = issuanceDate.getDate();
+        document.getElementById("issuedMonth").textContent = issuanceDate.toLocaleString("en-US", { month: "long" });
+        document.getElementById("issuedYear").textContent = issuanceDate.getFullYear().toString().slice(-2);
+    }
+
+    document.getElementById("controlNo").textContent = cert.control_number || "";
+    document.getElementById("rhu").textContent = cert.rhu || "RURAL HEALTH UNIT II";
+    document.getElementById("doctorName").textContent = String(cert.issued_by || "").toUpperCase();
+    document.getElementById("licenseNumber").textContent = cert.license_number || "";
+}
+
+function formatDate(dateString) {
+    if (!dateString) {
+        return "";
+    }
+
+    const date = new Date(dateString);
+
+    if (Number.isNaN(date.getTime())) {
+        return dateString;
+    }
+
+    return date.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric"
+    });
+}
+
+function setupSearch() {
+    const searchForm = document.getElementById("searchForm");
+    const searchInput = document.getElementById("searchInput");
+
+    if (!searchForm || !searchInput) {
+        return;
+    }
+
+    searchForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        const query = searchInput.value.trim();
+
+        if (query) {
+            sessionStorage.setItem("searchQuery", query);
+            window.location.href = "searchPatient";
+        }
+    });
+}
+
+function setupUpdateReferrals() {
+    const updateReferrals = document.getElementById("updateReferrals");
+
+    if (!updateReferrals) {
+        return;
+    }
+
+    updateReferrals.addEventListener("click", function (event) {
+        event.preventDefault();
+
+        fetch("php/update_referrals.php")
+            .then(response => response.json())
+            .then(data => {
+                console.log(data.message);
+                window.location.href = "pending";
+            })
+            .catch(error => {
+                console.error("Error updating referrals:", error);
+                window.location.href = "pending";
+            });
+    });
+}
+
+function setupSidebar() {
+    const sidebar = document.getElementById("sidebar");
+    const toggle = document.getElementById("sidebarToggle");
+    const overlay = document.getElementById("sidebarOverlay");
+    const MOBILE_BP = 768;
+
+    if (!sidebar || !toggle || !overlay) {
+        return;
+    }
+
+    function isMobile() {
+        return window.innerWidth <= MOBILE_BP;
+    }
+
+    function closeMobileSidebar() {
+        sidebar.classList.remove("mobile-open");
+        overlay.classList.remove("active");
+        document.body.style.overflow = "";
+    }
+
+    toggle.addEventListener("click", function () {
+        if (isMobile()) {
+            const open = sidebar.classList.toggle("mobile-open");
+
+            overlay.classList.toggle("active", open);
+            document.body.style.overflow = open ? "hidden" : "";
+        } else {
+            sidebar.classList.toggle("collapsed");
+        }
+    });
+
+    overlay.addEventListener("click", closeMobileSidebar);
+
+    window.addEventListener("resize", function () {
+        if (!isMobile()) {
+            closeMobileSidebar();
+        }
+    });
+}
+
+function goBack() {
+    window.history.back();
+}
+
+function confirmLogout() {
+    const logoutModal = document.getElementById("logoutModal");
+
+    if (logoutModal) {
+        logoutModal.classList.add("open");
+        logoutModal.style.display = "";
+    }
+
     return false;
 }
 
 function closeModal() {
-    const logoutModal = document.getElementById('logoutModal');
+    const logoutModal = document.getElementById("logoutModal");
+
     if (logoutModal) {
-        logoutModal.classList.remove('open');
-        logoutModal.style.display = '';
+        logoutModal.classList.remove("open");
+        logoutModal.style.display = "";
     }
 }
 
 function proceedLogout() {
-    window.location.href = '../auth/role';
+    window.location.href = "../auth/role";
 }
 
-window.addEventListener('click', function(event) {
-    const logoutModal = document.getElementById('logoutModal');
+window.addEventListener("click", function (event) {
+    const logoutModal = document.getElementById("logoutModal");
+
     if (event.target === logoutModal) {
         closeModal();
     }
 });
-
-(function () {
-  const sidebar = document.getElementById('sidebar');
-  const toggle = document.getElementById('sidebarToggle');
-  const overlay = document.getElementById('sidebarOverlay');
-  const MOBILE_BP = 768;
-
-  if (!sidebar || !toggle || !overlay) return;
-
-  function isMobile() {
-    return window.innerWidth <= MOBILE_BP;
-  }
-
-  function closeMobileSidebar() {
-    sidebar.classList.remove('mobile-open');
-    overlay.classList.remove('active');
-    document.body.style.overflow = '';
-  }
-
-  toggle.addEventListener('click', function () {
-    if (isMobile()) {
-      const open = sidebar.classList.toggle('mobile-open');
-      overlay.classList.toggle('active', open);
-      document.body.style.overflow = open ? 'hidden' : '';
-    } else {
-      sidebar.classList.toggle('collapsed');
-    }
-  });
-
-  overlay.addEventListener('click', closeMobileSidebar);
-
-  window.addEventListener('resize', function () {
-    if (!isMobile()) {
-      closeMobileSidebar();
-    }
-  });
-})();
-
-document.addEventListener('DOMContentLoaded', function () {
-  const updateReferrals = document.getElementById('updateReferrals');
-
-  if (updateReferrals) {
-    updateReferrals.addEventListener('click', function (event) {
-      event.preventDefault();
-
-      fetch('php/update_referrals.php')
-        .then(response => response.json())
-        .then(data => {
-          console.log(data.message);
-          window.location.href = 'pending';
-        })
-        .catch(error => {
-          console.error('Error updating referrals:', error);
-          window.location.href = 'pending';
-        });
-    });
-  }
-});
 </script>
+
 </body>
 </html>
-

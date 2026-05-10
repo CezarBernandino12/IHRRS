@@ -3,13 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Records Summary</title>
+
     <link rel="icon" href="../img/logo.png">
     <link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="css/form.css">
+    <link rel="stylesheet" href="css/summary.css">
     <link rel="stylesheet" href="css/logout.css">
     <link rel="stylesheet" href="css/sidebar.css">
-    <title>Record</title>
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 </head>
@@ -18,135 +21,153 @@
 
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-	<!-- Sidebar Section -->
-	<section id="sidebar">
-		<a href="#" class="sidebar-brand">
-			<img src="../img/logo.png" alt="RHU Logo" class="brand-logo">
-			<div class="brand-text">
-				<span class="brand-name">Hello Physician</span>
-			</div>
-		</a>
+<section id="sidebar">
+    <a href="#" class="sidebar-brand">
+        <img src="../img/logo.png" alt="RHU Logo" class="brand-logo">
 
-		<div class="sidebar-scroll">
-			<div class="sidebar-section-label">Main Menu</div>
-			<ul class="side-menu top">
-				<li>
-					<a href="dashboard" data-tooltip="Dashboard">
-						<i class="bx bxs-dashboard nav-icon"></i>
-						<span class="nav-label">Dashboard</span>
-					</a>
-				</li>
-				<li>
-					<a href="#" id="updateReferrals" data-tooltip="Pending Referrals">
-						<i class="bx bxs-user nav-icon"></i>
-						<span class="nav-label">Pending Referrals</span>
-					</a>
-				</li>
-				<li>
-					<a href="followUpConsultations" data-tooltip="Follow-Up Visits">
-						<i class="bx bxs-user nav-icon"></i>
-						<span class="nav-label">Follow-Up Visits</span>
-					</a>
-				</li>
-				<li class="active">
-					<a href="searchPatient" data-tooltip="Patient Records">
-						<i class="bx bxs-search nav-icon"></i>
-						<span class="nav-label">Patient Records</span>
-					</a>
-				</li>
-				<li>
-					<a href="history" data-tooltip="Referral History">
-						<i class="bx bx-history nav-icon"></i>
-						<span class="nav-label">Referral History</span>
-					</a>
-				</li>
-				<li>
-					<a href="reports" data-tooltip="Reports">
-						<i class="bx bx-notepad nav-icon"></i>
-						<span class="nav-label">Reports</span>
-					</a>
-				</li>
-			</ul>
+        <div class="brand-text">
+            <span class="brand-name">Hello Physician</span>
+        </div>
+    </a>
 
-			<div class="sidebar-divider"></div>
+    <div class="sidebar-scroll">
+        <div class="sidebar-section-label">Main Menu</div>
 
-			<ul class="side-menu">
-				<li>
-					<a href="#" class="logout" data-tooltip="Logout" onclick="return confirmLogout()">
-						<i class="bx bxs-log-out-circle nav-icon"></i>
-						<span class="nav-label">Logout</span>
-					</a>
-				</li>
-			</ul>
-		</div>
+        <ul class="side-menu top">
+            <li>
+                <a href="dashboard" data-tooltip="Dashboard">
+                    <i class="bx bxs-dashboard nav-icon"></i>
+                    <span class="nav-label">Dashboard</span>
+                </a>
+            </li>
 
-		<div class="sidebar-footer">
-			<div class="sidebar-user">
-				<img src="../img/doctor.png" alt="Physician User">
-				<div class="sidebar-user-info">
-					<div class="user-name" id="sidebarUserName">Physician User</div>
-					<div class="user-role">RHU Physician</div>
-				</div>
-			</div>
-		</div>
-	</section>
+            <li>
+                <a href="#" id="updateReferrals" data-tooltip="Pending Referrals">
+                    <i class="bx bxs-user nav-icon"></i>
+                    <span class="nav-label">Pending Referrals</span>
+                </a>
+            </li>
 
-    <section id="content">
-        <nav>
-            <button class="nav-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
-                <i class="bx bx-menu"></i>
+            <li>
+                <a href="followUpConsultations" data-tooltip="Follow-Up Visits">
+                    <i class="bx bxs-calendar-check nav-icon"></i>
+                    <span class="nav-label">Follow-Up Visits</span>
+                </a>
+            </li>
+
+            <li class="active">
+                <a href="searchPatient" data-tooltip="Patient Records">
+                    <i class="bx bxs-search nav-icon"></i>
+                    <span class="nav-label">Patient Records</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="history" data-tooltip="Referral History">
+                    <i class="bx bx-history nav-icon"></i>
+                    <span class="nav-label">Referral History</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="reports" data-tooltip="Reports">
+                    <i class="bx bx-notepad nav-icon"></i>
+                    <span class="nav-label">Reports</span>
+                </a>
+            </li>
+        </ul>
+
+        <div class="sidebar-divider"></div>
+
+        <ul class="side-menu">
+            <li>
+                <a href="#" class="logout" data-tooltip="Logout" onclick="return confirmLogout()">
+                    <i class="bx bxs-log-out-circle nav-icon"></i>
+                    <span class="nav-label">Logout</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="sidebar-footer">
+        <div class="sidebar-user">
+            <img src="../img/doctor.png" alt="Physician User">
+
+            <div class="sidebar-user-info">
+                <div class="user-name" id="sidebarUserName">Physician User</div>
+                <div class="user-role">RHU Physician</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="content">
+    <nav>
+        <button type="button" class="nav-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+            <i class="bx bx-menu"></i>
+        </button>
+
+        <div class="nav-search">
+            <input 
+                type="search" 
+                id="patientSearch" 
+                placeholder="Enter patient name..." 
+                name="search" 
+                autocomplete="off"
+            >
+
+            <button type="button" id="searchButton" aria-label="Search">
+                <i class="bx bx-search"></i>
             </button>
 
-            <div class="nav-search" style="position: relative;">
-                <input type="search" id="patientSearch" placeholder="Enter patient name..." name="search" autocomplete="off">
-                <button type="button" id="searchButton" aria-label="Search">
-                    <i class="bx bx-search"></i>
-                </button>
-                <div id="resultDropdown" class="dropdown-content"></div>
-            </div>
-        </nav>
+            <div id="resultDropdown" class="dropdown-content"></div>
+        </div>
+    </nav>
 
-        <main>
-            <div class="head-title">
-                <div class="left">
-                    <h1>Patient Records Summary</h1>
-                    <ul class="breadcrumb">
-                        <li><a href="#">Patient Records Summary</a></li>
-                        <li><i class="bx bx-chevron-right"></i></li>
-                        <li><a class="active" href="#">Home</a></li>
-                    </ul>
+    <main>
+        <div class="page-title">
+            <div>
+                <h1>Patient Records Summary</h1>
+            </div>
+        </div>
+
+        <section class="summary-card">
+            <div class="patient-card">
+                <div class="patient-icon">
+                    <i class="bx bx-user"></i>
+                </div>
+
+                <div class="patient-info">
+                    <strong id="patientName">Name:</strong>
+                    <span id="patientAge">Age:</span>
+                    <span id="patientGender">Sex:</span>
                 </div>
             </div>
 
-
-
-<br>
-
-            <div class="history-container">
-                <div class="referral-summary-card">
-                    <div class="content">
-                      <b><span id="patientName"></span></b> <br>
-                        <span id="patientAge"></span> <br>
-                        <span id="patientGender"></span>
+            <div class="table-card">
+                <div class="table-header">
+                    <div>
+                        <h2>Diagnosis History</h2>
+                        <p>Click a row to view complete visit information.</p>
                     </div>
-                  </div>
-                  
+                </div>
 
-                <table id="history-table" class="status">
-                    <thead>
-                        <tr>
-                            <th>Date of Visit</th>
-                            <th>Diagnosis</th>
-                            <th>Status</th>
-                          
-                        </tr>
-                    </thead>
-                    <tbody>
-                
-                    </tbody>
-                    
-                </table>
-                
+                <div class="table-scroll">
+                    <table id="history-table" class="summary-table physician-summary-table">
+                        <thead>
+                            <tr>
+                                <th>Date of Visit</th>
+                                <th>Diagnosis</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <!-- Dynamic patient data will be inserted here by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+
                 <div class="pagination" id="pagination">
                     <a href="#" class="prev">Previous</a>
                     <a href="#" class="page-number">1</a>
@@ -155,34 +176,44 @@
                     <a href="#" class="next">Next</a>
                 </div>
             </div>
-
-
-
+        </section>
+    </main>
+</section>
 
 <div id="logoutModal" class="logout-modal">
     <div class="logout-modal-content">
         <div class="logout-modal-header">
             <h3>Confirm Logout</h3>
         </div>
+
         <div class="logout-modal-body">
             <p>Are you sure you want to logout?</p>
         </div>
+
         <div class="logout-modal-footer">
             <button onclick="closeModal()" class="logout-cancel-btn">Cancel</button>
             <button onclick="proceedLogout()" class="logout-confirm-btn">Yes, Logout</button>
         </div>
     </div>
-</div>        </main>
-    </section>
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-       
-            // Get the patient_id from the URL
-            const urlParams = new URLSearchParams(window.location.search);
-            const patientId = urlParams.get("patient_id");
+</div>
 
-            // If patient_id exists, fetch and display the patient's summary
-           if (patientId) {
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    setupPatientSummary();
+    setupUserName();
+    setupResponsiveSidebar();
+    setupUpdateReferrals();
+    setupPatientSearch();
+});
+
+function setupPatientSummary() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const patientId = urlParams.get("patient_id");
+
+    if (!patientId) {
+        return;
+    }
+
     fetch(`php/patient_summary.php?patient_id=${patientId}`)
         .then(response => response.json())
         .then(data => {
@@ -191,155 +222,189 @@
             document.getElementById("patientGender").textContent = `Sex: ${data.sex}`;
 
             const historyTableBody = document.querySelector("#history-table tbody");
-            historyTableBody.innerHTML = ""; // Clear existing rows
+            historyTableBody.innerHTML = "";
 
             data.history.forEach(record => {
                 const row = document.createElement("tr");
-                row.style.cursor = "pointer"; // make it clear it's clickable
 
                 row.innerHTML = `
-                    <td style="padding: 18px 10px;">${record.date_of_visit}</td>
-                    <td>${record.diagnosis}</td>
-                    <td>${record.diagnosis_status}</td>
+                    <td>${record.date_of_visit}</td>
+                    <td>${record.diagnosis || "N/A"}</td>
+                    <td>
+                        <span class="status-badge ${getStatusClass(record.diagnosis_status)}">
+                            ${record.diagnosis_status || "N/A"}
+                        </span>
+                    </td>
                 `;
 
-                // Redirect on click
-                row.addEventListener("click", () => {
+                row.addEventListener("click", function () {
                     window.location.href = `visitInfo?visit_id=${record.visit_id}`;
                 });
 
                 historyTableBody.appendChild(row);
             });
 
-            // Update pagination
-            const pagination = document.getElementById("pagination");
-            pagination.innerHTML = "";
+            document.getElementById("pagination").innerHTML = "";
         })
         .catch(error => {
             console.error("Error fetching patient summary:", error);
         });
 }
 
-        });
-    </script>
-  <script>
+function getStatusClass(status) {
+    const normalizedStatus = String(status || "").toLowerCase();
 
-         fetch('php/getUserName.php')
-    .then(response => response.json())
-    .then(data => {
-        if (data.full_name) {
-            document.getElementById('sidebarUserName').textContent = data.full_name;
-        } else {
-            document.getElementById('sidebarUserName').textContent = 'Physician User';
-        }
-    })
-    .catch(error => {
-        console.error('Error fetching user name:', error);
-        document.getElementById('sidebarUserName').textContent = 'Physician User';
-    });
-
-(function () {
-  const sidebar = document.getElementById('sidebar');
-  const toggle = document.getElementById('sidebarToggle');
-  const overlay = document.getElementById('sidebarOverlay');
-  const MOBILE_BP = 768;
-
-  if (!sidebar || !toggle || !overlay) return;
-
-  function isMobile() {
-    return window.innerWidth <= MOBILE_BP;
-  }
-
-  function closeMobileSidebar() {
-    sidebar.classList.remove('mobile-open');
-    overlay.classList.remove('active');
-    document.body.style.overflow = '';
-  }
-
-  toggle.addEventListener('click', function () {
-    if (isMobile()) {
-      const open = sidebar.classList.toggle('mobile-open');
-      overlay.classList.toggle('active', open);
-      document.body.style.overflow = open ? 'hidden' : '';
-    } else {
-      sidebar.classList.toggle('collapsed');
+    if (normalizedStatus.includes("treated") || normalizedStatus.includes("completed")) {
+        return "status-treated";
     }
-  });
 
-  overlay.addEventListener('click', closeMobileSidebar);
-
-  window.addEventListener('resize', function () {
-    if (!isMobile()) {
-      closeMobileSidebar();
+    if (normalizedStatus.includes("ongoing") || normalizedStatus.includes("pending")) {
+        return "status-ongoing";
     }
-  });
-})();
 
-document.addEventListener("DOMContentLoaded", () => {
-  const updateReferrals = document.getElementById("updateReferrals");
-  const searchInput = document.getElementById("patientSearch");
-  const searchButton = document.getElementById("searchButton");
+    if (normalizedStatus.includes("referred")) {
+        return "status-referred";
+    }
 
-  if (updateReferrals) {
-    updateReferrals.addEventListener("click", function (event) {
-      event.preventDefault();
+    if (normalizedStatus.includes("deceased")) {
+        return "status-deceased";
+    }
 
-      fetch("php/update_referrals.php")
+    return "status-default";
+}
+
+function setupUserName() {
+    fetch("php/getUserName.php")
         .then(response => response.json())
         .then(data => {
-          console.log(data.message);
-          window.location.href = "pending";
+            const sidebarName = document.getElementById("sidebarUserName");
+
+            if (sidebarName) {
+                sidebarName.textContent = data.full_name || "Physician User";
+            }
         })
         .catch(error => {
-          console.error("Error updating referrals:", error);
-          window.location.href = "pending";
-        });
-    });
-  }
+            console.error("Error fetching user name:", error);
 
-  if (searchInput && searchButton) {
-    searchInput.addEventListener("keypress", function (event) {
-      if (event.key === "Enter") {
+            const sidebarName = document.getElementById("sidebarUserName");
+
+            if (sidebarName) {
+                sidebarName.textContent = "Physician User";
+            }
+        });
+}
+
+function setupResponsiveSidebar() {
+    const sidebar = document.getElementById("sidebar");
+    const toggle = document.getElementById("sidebarToggle");
+    const overlay = document.getElementById("sidebarOverlay");
+    const MOBILE_BP = 768;
+
+    if (!sidebar || !toggle || !overlay) {
+        return;
+    }
+
+    function isMobile() {
+        return window.innerWidth <= MOBILE_BP;
+    }
+
+    function closeMobileSidebar() {
+        sidebar.classList.remove("mobile-open");
+        overlay.classList.remove("active");
+        document.body.style.overflow = "";
+    }
+
+    toggle.addEventListener("click", function () {
+        if (isMobile()) {
+            const open = sidebar.classList.toggle("mobile-open");
+
+            overlay.classList.toggle("active", open);
+            document.body.style.overflow = open ? "hidden" : "";
+        } else {
+            sidebar.classList.toggle("collapsed");
+        }
+    });
+
+    overlay.addEventListener("click", closeMobileSidebar);
+
+    window.addEventListener("resize", function () {
+        if (!isMobile()) {
+            closeMobileSidebar();
+        }
+    });
+}
+
+function setupUpdateReferrals() {
+    const updateReferrals = document.getElementById("updateReferrals");
+
+    if (!updateReferrals) {
+        return;
+    }
+
+    updateReferrals.addEventListener("click", function (event) {
         event.preventDefault();
-        searchButton.click();
-      }
+
+        fetch("php/update_referrals.php")
+            .then(response => response.json())
+            .then(data => {
+                console.log(data.message);
+                window.location.href = "pending";
+            })
+            .catch(error => {
+                console.error("Error updating referrals:", error);
+                window.location.href = "pending";
+            });
+    });
+}
+
+function setupPatientSearch() {
+    const searchInput = document.getElementById("patientSearch");
+    const searchButton = document.getElementById("searchButton");
+
+    if (!searchInput || !searchButton) {
+        return;
+    }
+
+    searchInput.addEventListener("keypress", function (event) {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            searchButton.click();
+        }
     });
 
     searchButton.addEventListener("click", function () {
-      const searchQuery = searchInput.value.trim();
-      if (searchQuery) {
-        sessionStorage.setItem("searchQuery", searchQuery);
-        window.location.href = "searchPatient";
-      } else {
-        alert("Please enter a patient name to search.");
-      }
+        const searchQuery = searchInput.value.trim();
+
+        if (searchQuery) {
+            sessionStorage.setItem("searchQuery", searchQuery);
+            window.location.href = "searchPatient";
+        } else {
+            alert("Please enter a patient name to search.");
+        }
     });
-  }
-});
-</script>
-    
-<script>
+}
+
 function confirmLogout() {
-    document.getElementById('logoutModal').style.display = 'block';
+    document.getElementById("logoutModal").style.display = "block";
     return false;
 }
 
 function closeModal() {
-    document.getElementById('logoutModal').style.display = 'none';
+    document.getElementById("logoutModal").style.display = "none";
 }
 
 function proceedLogout() {
-    window.location.href='../auth/role';
+    window.location.href = "../auth/role";
 }
 
-window.addEventListener('click', function(event) {
-    const modal = document.getElementById('logoutModal');
+window.addEventListener("click", function (event) {
+    const modal = document.getElementById("logoutModal");
+
     if (event.target === modal) {
         closeModal();
     }
 });
 </script>
+
 </body>
-
-
-
+</html>

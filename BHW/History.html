@@ -5,8 +5,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="icon" href="../img/logo.png">
 	<link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="css/history.css">
-    <link rel="stylesheet" href="css/modal.css">
+    <link rel="stylesheet" href="css/history.css">  
     <link rel="stylesheet" href="css/sidebar.css">
     <link rel="stylesheet" href="css/logout.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
@@ -107,42 +106,48 @@ fetch('php/getUserId.php')
           <i class="bx bx-menu"></i>
         </button>
 
-        <div class="nav-search" style="position: relative;">
+        <form class="nav-search" id="searchForm" style="position: relative;">
           <input type="search" id="searchInput" placeholder="Search by Patient Name..." autocomplete="off">
-          <button type="button" id="searchButton" aria-label="Search">
+          <button type="submit" id="searchButton" aria-label="Search">
             <i class="bx bx-search"></i>
           </button>
           <div id="resultDropdown" class="dropdown-content"></div>
-        </div>
+        </form>
       </nav>
 
       <main>
-                <div class="left">
-                  <h1>Referral History</h1>
-                </div>
-              </div>
+        <div class="head-title referral-page-title">
+          <div class="left">
+            <h1>Referral History</h1>
+          </div>
+        </div>
 
-              <div class="header">
-                <div class="date-picker">
-                    <label for="date">Select date:</label>
-            <input type="text" id="date" name="date" class="flatpickr" placeholder="Select date" />
+        <div class="history-toolbar-card">
+<div class="history-toolbar-actions history-toolbar-actions-only">
+            <div class="history-toolbar-field history-toolbar-field-date">
+              <label for="date" class="sr-only">Select date</label>
+              <i class="bx bx-calendar"></i>
+              <input type="text" id="date" name="date" class="flatpickr" placeholder="Select date" />
+            </div>
 
-            <div class="filter-container">
-                <label for="status">Select Status:</label>
-                <select id="status" name="status">
-				<option value="All">All</option>
-				  <option value="Pending">Pending</option>
-                  <option value="Completed">Completed</option>
-                  <option value="Uncompleted">Uncompleted</option>
-				  <option value="Canceled">Canceled</option>
-                </select>
-                <button id="applyFilter">Apply Filter</button>
-              </div>
-				
+            <div class="history-toolbar-field history-toolbar-field-select">
+              <label for="status" class="sr-only">Select Status</label>
+              <i class="bx bx-filter-alt"></i>
+              <select id="status" name="status">
+                <option value="All">All</option>
+                <option value="Pending">Pending</option>
+                <option value="Completed">Completed</option>
+                <option value="Uncompleted">Uncompleted</option>
+                <option value="Canceled">Canceled</option>
+              </select>
             </div>
-            </div>
-            <div class="history-container">
-				<table id="history-table" class="status">
+
+            <button id="applyFilter" class="history-primary-btn">Apply Filter</button>
+          </div>
+        </div>
+
+        <div class="history-container history-table-card">
+          <table id="history-table" class="status">
 					<thead>
 						<tr>
 							<th>Date</th>
@@ -156,8 +161,9 @@ fetch('php/getUserId.php')
 						
 					</tbody>
 				</table>
+        </div>
 
-            </div>
+        <div class="history-pagination" id="historyPagination" aria-label="Referral history pagination"></div>
          
 			<div id="confirmationModal" class="modal">
                 <div class="modal-content">
@@ -165,7 +171,7 @@ fetch('php/getUserId.php')
                   
                   <div class="modal-header">
                     <!-- Optional: checkmark image -->
-                    <img src="../img/verify.png" alt="Check" class="checkmark-image">
+                    <div class="modal-icon modal-icon-question" aria-hidden="true"><i class="bx bx-help-circle"></i></div>
                     <h3 id="modalTitle">Confirm Action</h3>
                   </div>
               
@@ -189,121 +195,222 @@ fetch('php/getUserId.php')
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        document.getElementById("status").value = "All";
+        const statusSelect = document.getElementById("status");
+        const dateInput = document.getElementById("date");
+        const applyFilterButton = document.getElementById("applyFilter");
+        const searchForm = document.getElementById("searchForm");
+        const searchInput = document.getElementById("searchInput");
+        const tableBody = document.querySelector("#history-table tbody");
+        const paginationContainer = document.getElementById("historyPagination");
+
+        let allReferralRows = [];
+        let filteredReferralRows = [];
+        let currentHistoryPage = 1;
+        const rowsPerHistoryPage = 10;
+
+        if (statusSelect) statusSelect.value = "All";
+
         fetchReferrals("", "All");
-    
-        document.getElementById("applyFilter").addEventListener("click", () => {
-            const selectedDate = document.getElementById("date").value;
-            const selectedStatus = document.getElementById("status").value;
-            fetchReferrals(selectedDate, selectedStatus);
-        });
 
-        // Add search functionality
-        document.getElementById('searchForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            const table = document.getElementById('history-table');
-            const rows = table.getElementsByTagName('tr');
+        if (applyFilterButton) {
+            applyFilterButton.addEventListener("click", () => {
+                const selectedDate = dateInput ? dateInput.value : "";
+                const selectedStatus = statusSelect ? statusSelect.value : "All";
+                fetchReferrals(selectedDate, selectedStatus);
+            });
+        }
 
-            for (let i = 1; i < rows.length; i++) { // Start from 1 to skip header row
-                const row = rows[i];
-                const patientName = row.cells[1].textContent.toLowerCase();
-                
-                if (patientName.includes(searchTerm)) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
+        if (searchForm) {
+            searchForm.addEventListener("submit", function(e) {
+                e.preventDefault();
+                currentHistoryPage = 1;
+                applySearchFilter();
+            });
+        }
+
+        if (searchInput) {
+            searchInput.addEventListener("keyup", function() {
+                currentHistoryPage = 1;
+                applySearchFilter();
+            });
+        }
+
+        function getStatusClass(status) {
+            return String(status || "")
+                .trim()
+                .toLowerCase()
+                .replace(/\s+/g, "-");
+        }
+
+        function applySearchFilter() {
+            const searchTerm = searchInput ? searchInput.value.trim().toLowerCase() : "";
+
+            if (!searchTerm) {
+                filteredReferralRows = [...allReferralRows];
+            } else {
+                filteredReferralRows = allReferralRows.filter(row => {
+                    const patientNameCell = row.querySelector('[data-label="Patient Name"]');
+                    const patientName = patientNameCell ? patientNameCell.textContent.toLowerCase() : "";
+                    return patientName.includes(searchTerm);
+                });
             }
-        });
 
-        // Add real-time search
-        document.getElementById('searchInput').addEventListener('keyup', function() {
-            const searchTerm = this.value.toLowerCase();
-            const table = document.getElementById('history-table');
-            const rows = table.getElementsByTagName('tr');
+            renderHistoryPage();
+        }
 
-            for (let i = 1; i < rows.length; i++) {
-                const row = rows[i];
-                const patientName = row.cells[1].textContent.toLowerCase();
-                
-                if (patientName.includes(searchTerm)) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
+        function renderHistoryPage() {
+            if (!tableBody) return;
+
+            tableBody.innerHTML = "";
+
+            if (!filteredReferralRows.length) {
+                tableBody.innerHTML = `<tr class="empty-state-row"><td colspan="5">No records found</td></tr>`;
+                if (paginationContainer) paginationContainer.innerHTML = "";
+                return;
             }
-        });
+
+            const totalPages = Math.ceil(filteredReferralRows.length / rowsPerHistoryPage);
+            if (currentHistoryPage > totalPages) currentHistoryPage = totalPages;
+            if (currentHistoryPage < 1) currentHistoryPage = 1;
+
+            const start = (currentHistoryPage - 1) * rowsPerHistoryPage;
+            const visibleRows = filteredReferralRows.slice(start, start + rowsPerHistoryPage);
+
+            visibleRows.forEach(row => tableBody.appendChild(row));
+            bindActionEvents();
+            renderPagination(filteredReferralRows.length);
+        }
+
+        function renderPagination(totalRows) {
+            if (!paginationContainer) return;
+
+            const totalPages = Math.ceil(totalRows / rowsPerHistoryPage);
+
+            if (totalPages <= 1) {
+                paginationContainer.innerHTML = "";
+                return;
+            }
+
+            const pageItems = [];
+
+            pageItems.push(`
+                <button type="button" class="pagination-btn pagination-prev" data-page="${Math.max(1, currentHistoryPage - 1)}" ${currentHistoryPage === 1 ? "disabled" : ""}>
+                    ‹
+                </button>
+            `);
+
+            const addPage = page => {
+                pageItems.push(`<button type="button" class="pagination-page ${page === currentHistoryPage ? "active" : ""}" data-page="${page}">${page}</button>`);
+            };
+
+            /* Show only 3 numeric page buttons max */
+            let startPage = Math.max(1, currentHistoryPage - 1);
+            let endPage = Math.min(totalPages, startPage + 2);
+
+            if (endPage - startPage < 2) {
+                startPage = Math.max(1, endPage - 2);
+            }
+
+            for (let page = startPage; page <= endPage; page++) {
+                addPage(page);
+            }
+
+            pageItems.push(`
+                <button type="button" class="pagination-btn pagination-next" data-page="${Math.min(totalPages, currentHistoryPage + 1)}" ${currentHistoryPage === totalPages ? "disabled" : ""}>
+                    ›
+                </button>
+            `);
+
+            paginationContainer.innerHTML = pageItems.join("");
+
+            paginationContainer.querySelectorAll("button[data-page]").forEach(button => {
+                button.addEventListener("click", function () {
+                    const nextPage = parseInt(this.dataset.page, 10);
+                    if (!Number.isNaN(nextPage)) {
+                        currentHistoryPage = nextPage;
+                        renderHistoryPage();
+                    }
+                });
+            });
+        }
 
         function fetchReferrals(date = "", status = "All") {
             const params = new URLSearchParams();
             if (date) params.append("date", date);
             if (status && status !== "All") params.append("status", status);
-    
+
             console.log("Fetching referrals with:", { date, status });
-    
+
             fetch("php/fetch_referrals_history.php?" + params.toString())
                 .then(response => response.json())
                 .then(data => {
-                    const tableBody = document.querySelector("#history-table tbody");
-                    tableBody.innerHTML = "";
-    
+                    allReferralRows = [];
+                    filteredReferralRows = [];
+                    currentHistoryPage = 1;
+
                     if (data.error) {
                         console.error(data.error);
-                        tableBody.innerHTML = `<tr><td colspan="5">Error fetching data</td></tr>`;
+                        if (tableBody) {
+                            tableBody.innerHTML = `<tr class="empty-state-row"><td colspan="5">Error fetching data</td></tr>`;
+                        }
+                        if (paginationContainer) paginationContainer.innerHTML = "";
                         return;
                     }
-    
-                    if (data.length === 0) {
-                        tableBody.innerHTML = `<tr><td colspan="5">No records found</td></tr>`;
+
+                    if (!data || data.length === 0) {
+                        applySearchFilter();
                         return;
                     }
-    
+
                     data.forEach(referral => {
-                        const isPending = referral.referral_status === "Pending";
+                        const referralStatus = referral.referral_status || "";
+                        const isPending = referralStatus.toLowerCase() === "pending";
+                        const statusClass = getStatusClass(referralStatus);
                         const row = document.createElement("tr");
-    
-row.innerHTML = `
-  <td data-label="Date">${formatDate(referral.referral_date)}</td>
-  <td data-label="Patient Name">${referral.patient_name}</td>
-  <td data-label="Referred by">${referral.referred_by}</td>
-  <td data-label="Status" class="${referral.referral_status.toLowerCase()}">
-    ${referral.referral_status}
-  </td>
-  <td data-label="Action">
-    <div class="action-buttons">
-      <a 
-        href="#" 
-        class="cancel-action ${!isPending ? 'disabled' : ''}" 
-        data-id="${referral.referral_id}"
-        ${!isPending ? "tabindex='-1' style='pointer-events: none; color: gray;'" : ""}
-      >
-        <i class="bx bx-trash"></i> Cancel
-      </a>
-    </div>
-  </td>
-`;
 
+                        row.innerHTML = `
+                            <td data-label="Date">${formatDate(referral.referral_date)}</td>
+                            <td data-label="Patient Name" class="patient-name-cell">${referral.patient_name}</td>
+                            <td data-label="Referred by">${referral.referred_by}</td>
+                            <td data-label="Status"><span class="status-pill ${statusClass}">${referralStatus}</span></td>
+                            <td data-label="Action">
+                                <div class="action-buttons">
+                                    <a 
+                                        href="#" 
+                                        class="cancel-action ${!isPending ? 'disabled' : ''}" 
+                                        data-id="${referral.referral_id}"
+                                        ${!isPending ? "tabindex='-1'" : ""}
+                                    >
+                                        <i class="bx bx-trash"></i> <span>Cancel</span>
+                                    </a>
+                                </div>
+                            </td>
+                        `;
 
-// Make the row clickable (excluding clicks on Edit/Cancel links)
-row.style.cursor = 'pointer';
-row.addEventListener('click', function (event) {
-    const isAction = event.target.closest('.edit-action, .cancel-action');
-    if (!isAction) {
-        window.location.href = `details?referral_id=${referral.referral_id}`;
-    }
-});
+                        row.style.cursor = "pointer";
+                        row.addEventListener("click", function (event) {
+                            const isAction = event.target.closest(".edit-action, .cancel-action");
+                            if (!isAction) {
+                                window.location.href = `details?referral_id=${referral.referral_id}`;
+                            }
+                        });
 
-                        tableBody.appendChild(row);
+                        allReferralRows.push(row);
                     });
-    
-                    bindActionEvents(); // bind events after rendering
+
+                    applySearchFilter();
                 })
                 .catch(error => {
                     console.error("Error fetching referrals:", error);
+                    allReferralRows = [];
+                    filteredReferralRows = [];
+                    if (tableBody) {
+                        tableBody.innerHTML = `<tr class="empty-state-row"><td colspan="5">Error fetching data</td></tr>`;
+                    }
+                    if (paginationContainer) paginationContainer.innerHTML = "";
                 });
         }
-    
+
         function bindActionEvents() {
             document.querySelectorAll(".edit-action").forEach(el => {
                 if (!el.classList.contains("disabled")) {
@@ -316,7 +423,7 @@ row.addEventListener('click', function (event) {
                     });
                 }
             });
-    
+
             document.querySelectorAll(".cancel-action").forEach(el => {
                 if (!el.classList.contains("disabled")) {
                     el.addEventListener("click", function (e) {
@@ -329,37 +436,37 @@ row.addEventListener('click', function (event) {
                 }
             });
         }
-   function formatDate(dateString) {
-    if (!dateString) return "N/A";
-    const date = new Date(dateString);
-    if (isNaN(date.getTime())) return "Invalid Date";
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    return date.toLocaleDateString('en-US', options);
-}
 
-    
+        function formatDate(dateString) {
+            if (!dateString) return "N/A";
+            const date = new Date(dateString);
+            if (isNaN(date.getTime())) return "Invalid Date";
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return date.toLocaleDateString('en-US', options);
+        }
+
         function showModal(title, message, onConfirm) {
             const modal = document.getElementById("confirmationModal");
             if (!modal) {
                 console.error("Modal not found in the DOM.");
                 return;
             }
-    
+
             document.getElementById("modalTitle").textContent = title;
             document.getElementById("modalMessage").textContent = message;
-    
+
             document.getElementById("confirmAction").onclick = function () {
                 onConfirm();
                 modal.style.display = "none";
             };
-    
+
             document.getElementById("cancelAction").onclick = function () {
                 modal.style.display = "none";
             };
-    
+
             modal.style.display = "block";
         }
-    
+
         function cancelReferral(referralId) {
             fetch("php/cancel_referral.php", {
                 method: "POST",
@@ -384,8 +491,7 @@ row.addEventListener('click', function (event) {
         }
     });
     </script>
-    
-	<script src="js/script.js"></script>
+    <script src="js/script.js"></script>
     <script src="js/history.js"></script>
 
 <div id="logoutModal" class="logout-modal">
@@ -427,23 +533,142 @@ window.onclick = function(event) {
 fetch('php/getUserName.php')
     .then(response => response.json())
     .then(data => {
-        if (data.full_name) {
-            document.getElementById('userGreeting').textContent = `Hello, ${data.full_name}!`;
-        } else {
-            document.getElementById('userGreeting').textContent = 'Hello, BHW!';
-        }
+        const fullName = data.full_name || 'BHW User';
+        const sidebarUserName = document.getElementById('sidebarUserName');
+        const userGreeting = document.getElementById('userGreeting');
+
+        if (sidebarUserName) sidebarUserName.textContent = fullName;
+        if (userGreeting) userGreeting.textContent = `Hello, ${fullName}!`;
     })
     .catch(error => {
         console.error('Error fetching user name:', error);
-        document.getElementById('userGreeting').textContent = 'Hello, BHW!';
+        const sidebarUserName = document.getElementById('sidebarUserName');
+        const userGreeting = document.getElementById('userGreeting');
+
+        if (sidebarUserName) sidebarUserName.textContent = 'BHW User';
+        if (userGreeting) userGreeting.textContent = 'Hello, BHW!';
     });
 
      // Initialize Flatpickr
+    function setupReferralDatePicker(instance) {
+        const calendar = instance.calendarContainer;
+        if (!calendar) return;
+
+        calendar.classList.add("material-date-picker", "compact-referral-picker");
+
+        const monthsContainer = calendar.querySelector(".flatpickr-months");
+        const monthSelect = calendar.querySelector(".flatpickr-monthDropdown-months");
+        const yearWrapper = calendar.querySelector(".numInputWrapper");
+
+        if (monthsContainer && monthSelect && yearWrapper && !calendar.querySelector(".material-picker-header")) {
+            const header = document.createElement("div");
+            header.className = "material-picker-header";
+
+            const monthGroup = document.createElement("div");
+            monthGroup.className = "material-picker-group material-picker-month-group";
+
+            const monthPrev = document.createElement("button");
+            monthPrev.type = "button";
+            monthPrev.className = "material-picker-nav";
+            monthPrev.setAttribute("aria-label", "Previous month");
+            monthPrev.innerHTML = "‹";
+            monthPrev.addEventListener("click", function () {
+                instance.changeMonth(-1);
+            });
+
+            const monthNext = document.createElement("button");
+            monthNext.type = "button";
+            monthNext.className = "material-picker-nav";
+            monthNext.setAttribute("aria-label", "Next month");
+            monthNext.innerHTML = "›";
+            monthNext.addEventListener("click", function () {
+                instance.changeMonth(1);
+            });
+
+            const yearGroup = document.createElement("div");
+            yearGroup.className = "material-picker-group material-picker-year-group";
+
+            const yearPrev = document.createElement("button");
+            yearPrev.type = "button";
+            yearPrev.className = "material-picker-nav";
+            yearPrev.setAttribute("aria-label", "Previous year");
+            yearPrev.innerHTML = "‹";
+            yearPrev.addEventListener("click", function () {
+                instance.changeYear(instance.currentYear - 1);
+            });
+
+            const yearNext = document.createElement("button");
+            yearNext.type = "button";
+            yearNext.className = "material-picker-nav";
+            yearNext.setAttribute("aria-label", "Next year");
+            yearNext.innerHTML = "›";
+            yearNext.addEventListener("click", function () {
+                instance.changeYear(instance.currentYear + 1);
+            });
+
+            monthGroup.appendChild(monthPrev);
+            monthGroup.appendChild(monthSelect);
+            monthGroup.appendChild(monthNext);
+
+            yearGroup.appendChild(yearPrev);
+            yearGroup.appendChild(yearWrapper);
+            yearGroup.appendChild(yearNext);
+
+            header.appendChild(monthGroup);
+            header.appendChild(yearGroup);
+
+            monthsContainer.innerHTML = "";
+            monthsContainer.appendChild(header);
+        }
+
+        if (!calendar.querySelector(".material-picker-footer")) {
+            const footer = document.createElement("div");
+            footer.className = "material-picker-footer";
+
+            const cancelBtn = document.createElement("button");
+            cancelBtn.type = "button";
+            cancelBtn.className = "material-picker-text-btn";
+            cancelBtn.textContent = "Cancel";
+            cancelBtn.addEventListener("click", function () {
+                instance.close();
+            });
+
+            const okBtn = document.createElement("button");
+            okBtn.type = "button";
+            okBtn.className = "material-picker-text-btn material-picker-ok-btn";
+            okBtn.textContent = "OK";
+            okBtn.addEventListener("click", function () {
+                instance.close();
+            });
+
+            footer.appendChild(cancelBtn);
+            footer.appendChild(okBtn);
+            calendar.appendChild(footer);
+        }
+    }
+
     flatpickr(".flatpickr", {
         dateFormat: "Y-m-d",
         allowInput: true,
         altInput: true,
-        altFormat: "F j, Y",
+        altFormat: "M j, Y",
+        disableMobile: true,
+        maxDate: "today",
+        monthSelectorType: "dropdown",
+        clickOpens: true,
+        static: false,
+        onReady: function(selectedDates, dateStr, instance) {
+            setupReferralDatePicker(instance);
+        },
+        onOpen: function(selectedDates, dateStr, instance) {
+            setupReferralDatePicker(instance);
+        },
+        onMonthChange: function(selectedDates, dateStr, instance) {
+            setupReferralDatePicker(instance);
+        },
+        onYearChange: function(selectedDates, dateStr, instance) {
+            setupReferralDatePicker(instance);
+        }
     });
 
 </script>

@@ -1,195 +1,604 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap");
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --poppins: "Poppins", sans-serif;
+    --lato: "Lato", sans-serif;
+
+    --light: #fafcff;
+    --blue: #1c538a;
+    --blue-dark: #123b63;
+    --blue-soft: rgba(31, 91, 151, 0.1);
+
+    --records-bg: #f5f8fc;
+    --records-card: #ffffff;
+    --records-text: #0f1f38;
+    --records-muted: #64748b;
+    --records-border: rgba(15, 23, 42, 0.08);
+    --records-shadow: 0 14px 34px rgba(15, 23, 42, 0.08);
+    --records-shadow-soft: 0 8px 22px rgba(15, 23, 42, 0.06);
+
+    --male: #1f5b97;
+    --female: #be3f8f;
+}
+
+html {
+    overflow-x: hidden;
+}
+
+body {
+    min-height: 100vh;
+    overflow-x: hidden;
+    color: var(--records-text);
+    background:
+        radial-gradient(circle at top left, rgba(37, 99, 235, 0.075), transparent 26%),
+        radial-gradient(circle at top right, rgba(18, 172, 199, 0.07), transparent 24%),
+        linear-gradient(180deg, #f8fbff 0%, var(--records-bg) 100%);
+    font-family: var(--poppins);
+}
+
+a {
+    text-decoration: none;
+}
+
+li {
+    list-style: none;
+}
+
+/* Main content */
+#content main {
+    width: 100%;
+    min-height: calc(100vh - 64px);
+    padding: 24px 26px 38px;
+    background: transparent;
+    font-family: var(--poppins);
+    overflow-y: visible;
+}
+
+/* Page title */
+#content main .head-title {
+    width: min(100%, 1080px);
+    max-width: 1080px;
+    margin: 0 auto 16px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+#content main .head-title .left h1 {
+    position: relative;
+    margin: 0;
+    color: var(--records-text);
+    font-size: clamp(25px, 3vw, 36px);
+    font-weight: 720;
+    line-height: 1.1;
+    letter-spacing: -0.035em;
+}
+
+#content main .head-title .left h1::after {
+    content: "";
+    display: block;
+    width: 48px;
+    height: 3px;
+    margin-top: 9px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #2563eb, #12acc7);
+}
+
+/* Patient records card */
 .patient-record-container {
-  /* centered by default */
-  width: min(100% - 2rem, 960px);
-  margin: 24px auto;
-  padding: 20px;
-  background: #fff;
-  border-radius: 10px;
-  box-shadow: 2px 4px 8px rgba(0,0,0,.08);
-  box-sizing: border-box;
+    position: relative;
+    width: min(100%, 1080px);
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 16px;
+    border: none;
+    border-radius: 18px;
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.98), rgba(248, 251, 255, 0.98));
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.055);
+    overflow: hidden;
+}
+
+/* Header area */
+.results-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
 }
 
 .results-header {
-    text-align: left;
-    font-size: 20px;
-    font-weight: bold;
-    color: #333;
-    padding: 12px 10px;
-    margin-bottom: 15px;
-    border-radius: 5px;
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
-}
-
-.table-header {
-    background-color: #f3f6fc;
-    color: #4b6cb7;
-    display: grid;
-    grid-template-columns: 2fr 1fr 1fr;
-    padding: 10px 10px;
-    font-size: 14px;
-    font-weight: bold;
-    border-bottom: 2px solid #a1a1a1;
-    text-transform: uppercase;
-    font-family: "system-ui", sans-serif;
-    width: 100%;
-    margin-bottom: 10px;
-}
-
-.search-result {
-    display: grid;
-    grid-template-columns: 2fr 1fr 1fr;
-    padding: 10px 5px;
-    border-bottom: 1px solid #ddd;
-    font-family: 'Trebuchet MS', sans-serif;
+    min-height: 36px;
+    display: flex;
     align-items: center;
-    transition: background-color 0.3s ease;
 }
 
-.search-result span {
+.results-header h3 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    color: var(--records-text);
+    font-size: 15px;
+    font-weight: 650;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+}
+
+.results-title-icon {
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    min-width: 30px;
+    border-radius: 10px;
+    color: var(--blue);
+    background: rgba(31, 91, 151, 0.085);
     font-size: 16px;
-    color: #333;
-    padding: 5px 0;
-    text-align: left; 
+    line-height: 1;
 }
 
-.search-result:hover {
-    background-color: #eef5ff;
+/* Visit Summary button */
+.record-btn-container {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 36px;
+    padding: 8px 14px;
+    border: none;
+    border-radius: 999px;
+    color: #ffffff;
+    background: var(--blue);
+    box-shadow: 0 7px 16px rgba(31, 91, 151, 0.13);
+    font-family: var(--poppins);
+    font-size: 12px;
+    font-weight: 620;
+    line-height: 1;
+    text-decoration: none;
     cursor: pointer;
-    font-weight: bold;
+    transition: background 0.16s ease, transform 0.16s ease, box-shadow 0.16s ease;
 }
 
-
-/* Responsive adjustments */
-@media (max-width: 1024px) {
-    .patient-record-container {
-        margin: 5%;
-        padding: 15px;
-    }
-
-    .table-header,
-    .search-result {
-        grid-template-columns: 1fr 1fr 1fr;
-        padding: 10px 15px;
-        font-size: 13px;
-    }
-
-    .search-result span {
-        font-size: 14px;
-    }
+.btn .bx {
+    margin: 0;
+    color: #ffffff;
+    font-size: 15px;
+    line-height: 1;
 }
 
-@media (max-width: 768px) {
-    .table-header,
-    .search-result {
-        grid-template-columns: 1fr;
-        padding: 10px;
-    }
-
-    .table-header > div,
-    .search-result > span {
-        padding: 5px 0;
-    }
-
-    .search-result span {
-        font-size: 14px;
-    }
+.btn:hover {
+    background: #174d83;
+    transform: translateY(-1px);
+    box-shadow: 0 12px 24px rgba(31, 91, 151, 0.18);
 }
 
+.btn:active {
+    transform: translateY(0);
+}
 
+/* Table header */
+.table-header {
+    display: grid;
+    grid-template-columns: 2fr 0.75fr 1fr;
+    align-items: center;
+    width: 100%;
+    padding: 10px 14px;
+    border-radius: 13px 13px 0 0;
+    color: #44566f;
+    background: #eef3f8;
+    font-family: var(--poppins);
+    font-size: 10.5px;
+    font-weight: 650;
+}
+
+.table-header .column-title {
+    display: block;
+    padding: 0;
+    color: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    text-align: left;
+}
+
+/* Results container */
+#results {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border: none;
+    border-radius: 0 0 13px 13px;
+    background: #ffffff;
+    color: #1f2f45;
+    font-family: var(--poppins);
+    font-size: 12.5px;
+    line-height: 1.45;
+    overflow: hidden;
+}
+
+/* Default text inside results */
+#results > p,
+#results:not(:has(.search-result)) {
+    padding: 16px;
+    color: var(--records-muted);
+    font-size: 12.5px;
+    font-weight: 500;
+}
+
+/* Result rows */
+#results .search-result {
+    display: grid;
+    grid-template-columns: 2fr 0.75fr 1fr;
+    align-items: center;
+    column-gap: 14px;
+    min-height: 50px;
+    width: 100%;
+    padding: 10px 14px;
+    border-bottom: 1px solid rgba(15, 23, 42, 0.065);
+    background: #ffffff;
+    font-family: var(--poppins);
+    transition: background 0.15s ease;
+}
+
+#results .search-result:last-child {
+    border-bottom: none;
+}
+
+#results .search-result:hover {
+    background: #f8fbff;
+    cursor: pointer;
+}
+
+/* Smaller and lighter patient name */
+#results .search-result .patient-name-cell {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+    min-height: 30px;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.2;
+    color: #1e293b;
+    letter-spacing: -0.005em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Name text */
+#results .search-result .patient-name-text {
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font: inherit;
+    color: inherit;
+}
+
+/* User icon beside name */
+#results .search-result .patient-row-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 24px;
+    width: 24px;
+    height: 24px;
+    min-width: 24px;
+    min-height: 24px;
+    margin: 0;
+    border-radius: 8px;
+    background: rgba(31, 91, 151, 0.09);
+    color: var(--blue);
+    font-size: 14px;
+    line-height: 1;
+}
+
+/* Sex column */
+#results .search-result .patient-sex-cell {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+    min-height: 30px;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.2;
+    color: #334155;
+    white-space: nowrap;
+}
+
+#results .search-result .patient-sex-text {
+    display: inline-block;
+    font: inherit;
+    color: inherit;
+}
+
+/* Sex icon base style */
+#results .search-result .sex-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 22px;
+    width: 22px;
+    height: 22px;
+    min-width: 22px;
+    min-height: 22px;
+    margin: 0;
+    border-radius: 50%;
+    font-size: 16px;
+    line-height: 1;
+}
+
+/* Male style */
+#results .search-result .patient-sex-cell.male {
+    color: var(--male);
+}
+
+#results .search-result .sex-icon.male {
+    color: var(--male);
+    background: rgba(31, 91, 151, 0.1);
+}
+
+/* Female style */
+#results .search-result .patient-sex-cell.female {
+    color: var(--female);
+}
+
+#results .search-result .sex-icon.female {
+    color: var(--female);
+    background: rgba(190, 63, 143, 0.1);
+}
+
+/* Birthday column */
+#results .search-result > span:nth-child(3) {
+    display: inline-flex;
+    align-items: center;
+    min-height: 30px;
+    font-size: 12px;
+    font-weight: 400;
+    color: #334155;
+    white-space: nowrap;
+}
+
+/* Result info messages */
+.result-info-section {
+    width: 100%;
+}
+
+.result-info-section:not(:has(.search-result)) {
+    padding: 16px;
+    color: var(--records-muted);
+    font-size: 12.5px;
+    font-weight: 500;
+}
+
+/* No result design */
 .no-results-container {
     text-align: center;
-    padding: 50px 20px;
-    color: #666;
-    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    padding: 32px 16px;
+    color: var(--records-muted);
+    font-family: var(--poppins);
 }
 
 .no-results-img {
-    max-width: 250px;
+    max-width: 150px;
     width: 100%;
     height: auto;
-    margin: 0 auto 20px;
+    margin: 0 auto 12px;
     display: block;
 }
 
 .no-results-title {
-    font-size: 28px;
-    font-weight: bold;
-    color: #D84040;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
+    color: #ef4444;
+    font-size: 18px;
+    font-weight: 700;
 }
 
 .no-results-text {
-    font-size: 16px;
-    color: #D84040;
+    color: #ef4444;
+    font-size: 12.5px;
+    font-weight: 450;
 }
 
-.record-btn-container {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 20px;
+/* Logout modal support */
+.logout-modal {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.45);
 }
 
-.btn {
-  /* visuals */
-  background-color: #033974;     /* blue */
-  color: #fff;
-  border: none;
-  border-radius: 9999px;         /* pill */
-  box-shadow: 0 6px 12px rgba(0,0,0,.15), inset 0 -2px 0 rgba(0,0,0,.20);
-  text-decoration: none;
-
-  /* keep layout behavior the same */
-  display: inline-block;         /* same flow as your link/button */
-  padding: 10px 18px;            /* slight bump for pill look */
-  font-size: 15px;               /* same as before */
-  line-height: 1;                /* compact pill text */
-  vertical-align: middle;        /* no shift */
-  cursor: pointer;
-
-  /* interactions */
-  transition: background-color .2s ease, box-shadow .2s ease, transform .06s ease;
+.logout-modal-content {
+    width: min(90%, 360px);
+    margin: 14vh auto 0;
+    padding: 22px;
+    border-radius: 22px;
+    background: #ffffff;
+    box-shadow: 0 24px 60px rgba(15, 23, 42, 0.22);
+    font-family: var(--poppins);
 }
 
-.btn:hover {
-  background-color: #1a5491;
-}
-
-.btn:active {
-  background-color: #184d86;
-  transform: translateY(1px);
-  box-shadow: 0 4px 10px rgba(0,0,0,.18), inset 0 -1px 0 rgba(0,0,0,.25);
-}
-
-.btn:focus-visible {
-  outline: none;
-  box-shadow:
-    0 0 0 3px rgba(66,133,244,.35),
-    0 6px 12px rgba(0,0,0,.15),
-    inset 0 -2px 0 rgba(0,0,0,.20);
-}
-
-/* Optional: if you place a Boxicons icon inside */
-.btn .bx {
-  font-size: 1.1em;
-  margin-right: 8px;   /* spacing before text */
-  vertical-align: -1px;
-  color: #fff;
-}
-
-
-
-#results {
+.logout-modal-header h3 {
+    margin-bottom: 10px;
+    color: var(--records-text);
     font-size: 18px;
-    color: #333333;
-    padding: 20px;
-    margin-bottom: 30px;
-    border-radius: 8px;
-    font-family: Arial, Helvetica, sans-serif;
+    font-weight: 700;
 }
 
+.logout-modal-body p {
+    color: var(--records-muted);
+    font-size: 14px;
+}
+
+.logout-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.logout-cancel-btn,
+.logout-confirm-btn {
+    min-height: 36px;
+    padding: 8px 14px;
+    border: none;
+    border-radius: 999px;
+    font-family: var(--poppins);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.logout-cancel-btn {
+    color: #334155;
+    background: #e5e7eb;
+}
+
+.logout-confirm-btn {
+    color: #ffffff;
+    background: #dc2626;
+}
+
+.logout-cancel-btn:hover {
+    background: #d1d5db;
+}
+
+.logout-confirm-btn:hover {
+    background: #b91c1c;
+}
+
+/* Responsive */
 @media (max-width: 768px) {
+    #content main {
+        padding: 16px 12px 24px;
+    }
+
+    #content main .head-title {
+        margin-bottom: 14px;
+    }
+
+    #content main .head-title .left h1 {
+        font-size: 26px;
+    }
+
+    .patient-record-container {
+        padding: 14px;
+        border-radius: 16px;
+    }
+
+    .results-top {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .record-btn-container {
+        width: 100%;
+    }
+
+    .btn {
+        width: 100%;
+    }
+
+    .table-header {
+        display: none;
+    }
+
     #results {
-        font-size: 16px;
-        max-width: 90%;
+        border-radius: 0;
+        background: transparent;
+        overflow: visible;
+    }
+
+    #results .search-result {
+        display: block;
+        min-height: auto;
+        margin-bottom: 12px;
+        padding: 12px;
+        border: 1px solid rgba(15, 23, 42, 0.1);
+        border-radius: 14px;
+        background: #ffffff;
+        box-shadow: var(--records-shadow-soft);
+    }
+
+    #results .search-result .patient-name-cell,
+    #results .search-result .patient-sex-cell,
+    #results .search-result > span:nth-child(3) {
+        display: flex;
+        width: 100%;
+        min-height: 28px;
+        padding: 4px 0;
+        white-space: normal;
+    }
+
+    #results .search-result .patient-name-text {
+        white-space: normal;
+    }
+
+    #results .search-result .patient-name-cell::before,
+    #results .search-result .patient-sex-cell::before,
+    #results .search-result > span:nth-child(3)::before {
+        display: block;
+        width: 70px;
+        min-width: 70px;
+        color: var(--records-muted);
+        font-size: 9.5px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+
+    #results .search-result .patient-name-cell::before {
+        content: "Name";
+    }
+
+    #results .search-result .patient-sex-cell::before {
+        content: "Sex";
+    }
+
+    #results .search-result > span:nth-child(3)::before {
+        content: "Birthday";
+    }
+}
+
+@media (max-width: 480px) {
+    #content main {
+        padding: 14px 10px 22px;
+    }
+
+    .patient-record-container {
+        padding: 12px;
+    }
+
+    .results-header h3 {
+        font-size: 14px;
+    }
+
+    .results-title-icon {
+        width: 28px;
+        height: 28px;
+        min-width: 28px;
+        font-size: 15px;
+    }
+
+    #results .search-result {
+        padding: 11px;
     }
 }

@@ -1,640 +1,634 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="icon" href="../img/logo.png">
-	<link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
-	<link rel="stylesheet" href="css/form.css">
-    <link rel="stylesheet" href="css/logout.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Follow-Up Visits</title>
+
+    <link rel="icon" href="../img/logo.png">
+    <link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/followup.css">
     <link rel="stylesheet" href="css/sidebar.css">
-	<title> Follow-Up Visits</title> 
+    <link rel="stylesheet" href="css/logout.css">
 </head>
+
 <body>
 
-	<!-- Sidebar Section -->
-	<section id="sidebar">
-		<a href="#" class="sidebar-brand">
-			<img src="../img/logo.png" alt="RHU Logo" class="brand-logo">
-			<div class="brand-text">
-				<span class="brand-name">Hello Nurse</span>
-			</div>
-		</a>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-		<div class="sidebar-scroll">
-			<div class="sidebar-section-label">Main Menu</div>
-			<ul class="side-menu top">
-				<li>
-					<a href="dashboard" data-tooltip="Dashboard">
-						<i class="bx bxs-dashboard nav-icon"></i>
-						<span class="nav-label">Dashboard</span>
-					</a>
-				</li>
-				<li>
-					<a href="ITR" data-tooltip="Add New ITR">
-						<i class="bx bxs-notepad nav-icon"></i>
-						<span class="nav-label">Add New ITR</span>
-					</a>
-				</li>
-				<li>
-					<a href="#" id="updateReferrals" data-tooltip="Pending Referrals">
-						<i class="bx bxs-user nav-icon"></i>
-						<span class="nav-label">Pending Referrals</span>
-					</a>
-				</li>
-				<li class="active">
-					<a href="followUpConsultations" data-tooltip="Follow-Up Visits">
-						<i class="bx bxs-user nav-icon"></i>
-						<span class="nav-label">Follow-Up Visits</span>
-					</a>
-				</li>
-				<li>
-					<a href="searchPatient" data-tooltip="Patient Records">
-						<i class="bx bxs-search nav-icon"></i>
-						<span class="nav-label">Patient Records</span>
-					</a>
-				</li>
-				<li>
-					<a href="history" data-tooltip="Referral History">
-						<i class="bx bx-history nav-icon"></i>
-						<span class="nav-label">Referral History</span>
-					</a>
-				</li>
-				<li>
-					<a href="reports" data-tooltip="Reports">
-						<i class="bx bx-notepad nav-icon"></i>
-						<span class="nav-label">Reports</span>
-					</a>
-				</li>
-			</ul>
+<section id="sidebar">
+    <a href="#" class="sidebar-brand">
+        <img src="../img/logo.png" alt="RHU Logo" class="brand-logo">
 
-			<div class="sidebar-divider"></div>
+        <div class="brand-text">
+            <span class="brand-name">Hello Nurse</span>
+        </div>
+    </a>
 
-			<ul class="side-menu">
-				<li>
-					<a href="#" class="logout" data-tooltip="Logout" onclick="return confirmLogout()">
-						<i class="bx bxs-log-out-circle nav-icon"></i>
-						<span class="nav-label">Logout</span>
-					</a>
-				</li>
-			</ul>
-		</div>
+    <div class="sidebar-scroll">
+        <div class="sidebar-section-label">Main Menu</div>
 
-		<div class="sidebar-footer">
-			<div class="sidebar-user">
-				<img src="../img/nurse.png" alt="Nurse User">
-				<div class="sidebar-user-info">
-					<div class="user-name" id="sidebarUserName">Nurse User</div>
-					<div class="user-role">RHU Nurse</div>
-				</div>
-			</div>
-		</div>
-	</section>
+        <ul class="side-menu top">
+            <li>
+                <a href="dashboard" data-tooltip="Dashboard">
+                    <i class="bx bxs-dashboard nav-icon"></i>
+                    <span class="nav-label">Dashboard</span>
+                </a>
+            </li>
 
-	<div class="sidebar-overlay" id="sidebarOverlay"></div>
+            <li>
+                <a href="ITR" data-tooltip="Add New ITR">
+                    <i class="bx bxs-notepad nav-icon"></i>
+                    <span class="nav-label">Add New ITR</span>
+                </a>
+            </li>
 
+            <li>
+                <a href="#" id="updateReferrals" data-tooltip="Pending Referrals">
+                    <i class="bx bxs-user nav-icon"></i>
+                    <span class="nav-label">Pending Referrals</span>
+                </a>
+            </li>
 
-	<!-- Main Content Section -->
-	<section id="content">
-		<nav>
-			<button class="nav-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
-				<i class="bx bx-menu"></i>
-			</button>
+            <li class="active">
+                <a href="followUpConsultations" data-tooltip="Follow-Up Visits">
+                    <i class="bx bxs-calendar-check nav-icon"></i>
+                    <span class="nav-label">Follow-Up Visits</span>
+                </a>
+            </li>
 
-			<form action="#" id="searchForm" class="nav-search" style="position: relative;">
-				<input type="search" id="searchInput" placeholder="Search by Referral ID or Patient Name..." autocomplete="off">
-				<button type="submit" aria-label="Search">
-					<i class="bx bx-search"></i>
-				</button>
-			</form>
-		</nav>
+            <li>
+                <a href="searchPatient" data-tooltip="Patient Records">
+                    <i class="bx bxs-search nav-icon"></i>
+                    <span class="nav-label">Patient Records</span>
+                </a>
+            </li>
 
-		<main>
-            
-              <div class="head-title">
-                <div class="left">
-                  <h1>Follow-up Consultations</h1>
-                  <ul class="breadcrumb">
-                    <li><a href="#">Follow-up Consultations</a></li>
-                    <li><i class="bx bx-chevron-right"></i></li>
-                    <li><a class="active" href="#">Home</a></li>
-                  </ul>
+            <li>
+                <a href="history" data-tooltip="Referral History">
+                    <i class="bx bx-history nav-icon"></i>
+                    <span class="nav-label">Referral History</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="reports" data-tooltip="Reports">
+                    <i class="bx bx-notepad nav-icon"></i>
+                    <span class="nav-label">Reports</span>
+                </a>
+            </li>
+        </ul>
+
+        <div class="sidebar-divider"></div>
+
+        <ul class="side-menu">
+            <li>
+                <a href="#" class="logout" data-tooltip="Logout" onclick="return confirmLogout()">
+                    <i class="bx bxs-log-out-circle nav-icon"></i>
+                    <span class="nav-label">Logout</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="sidebar-footer">
+        <div class="sidebar-user">
+            <img src="../img/nurse.png" alt="Nurse User">
+
+            <div class="sidebar-user-info">
+                <div class="user-name" id="sidebarUserName">Nurse User</div>
+                <div class="user-role">RHU Nurse</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="content">
+    <nav>
+        <button class="nav-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+            <i class="bx bx-menu"></i>
+        </button>
+
+        <form action="#" id="searchForm" class="nav-search">
+            <input 
+                type="search" 
+                id="searchInput" 
+                placeholder="Search patient, scheduler, status, or date..." 
+                autocomplete="off"
+            >
+
+            <button type="submit" aria-label="Search">
+                <i class="bx bx-search"></i>
+            </button>
+        </form>
+    </nav>
+
+    <main>
+        <div class="head-title">
+            <div class="left">
+                <h1>Follow-Up Visits</h1>
+            </div>
+        </div>
+
+        <section class="followup-page">
+            <div class="followup-summary-card">
+                <div class="summary-icon">
+                    <i class="bx bx-calendar"></i>
                 </div>
-              </div>
 
-<br>
-
-               <div class="history-container">
-                <div class="referral-summary-card">
-                    <div class="content">
-                      <h3>Today</h3>
-                      <span id="currentDate"></span>
-                    </div>
-                  </div>
-<script>
-    // Get the current date
-    const today = new Date();
-  
-  // Format the date as "Month Day, Year"
-  const options = { year: 'numeric', month: 'long', day: 'numeric' };
-  const formattedDate = today.toLocaleDateString('en-US', options);
-
-  // Display the date in the element
-  document.getElementById("currentDate").textContent = formattedDate;
-</script>
-             <table id="todayFollowups-table" class="status">
-                    <thead>
-                        <tr>
-                       
-                            <th>Date</th>
-                            <th>Patient Name</th>
-                            <th>Scheduled by</th>
-                            <th>Status</th>
-                            <th>Action</th>
-                            
-                        </tr>
-                    </thead>
-                    <tbody>
-                       
-                    </tbody>
-                    
-                </table> <br><br>
-
-                
-                 <div class="referral-summary-card">
-                    <div class="content">
-                      <h3>Future Consultations</h3>
-                      
-                    </div>
-                  </div>
-
-                  <table id="followups-table" class="status">
-                    <thead>
-                        <tr>
-                       
-                            <th>Date</th>
-                            <th>Patient Name</th>
-                            <th>Scheduled by</th>
-                            <th>Status</th>
-                            <th>Action</th>
-                            
-                        </tr>
-                    </thead>
-                    <tbody>
-                       
-                    </tbody>
-                    
-                </table>
-                
-                <div class="pagination" id="pagination">
-                    <a href="#" class="prev">Previous</a>
-                    <a href="#" class="page-number">1</a>
-                    <a href="#" class="page-number">2</a>
-                    <a href="#" class="page-number">3</a>
-                    <a href="#" class="next">Next</a>
+                <div>
+                    <h2>Today</h2>
+                    <span id="currentDate">Loading date...</span>
                 </div>
             </div>
 
+            <div class="followup-card">
+                <div class="followup-card-header">
+                    <div>
+                        <h3>Today’s Follow-Up Consultations</h3>
+                        <p>Patients scheduled for follow-up today.</p>
+                    </div>
+                </div>
 
+                <div class="table-wrap">
+                    <table id="todayFollowups-table" class="followup-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Patient Name</th>
+                                <th>Scheduled by</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
 
-               <!-- Confirmation Modal -->
-<div id="confirmModal" class="modal">
-    <div class="modal-content" style="height: 250px;">
-      <div class="modal-header">
-        <h3>Confirmation</h3>
-      </div>
-      <div class="modal-body">
-        <p>Are you sure you want to forward this referral to the physician?</p>
-      </div>
-      <div class="modal-footer">
-        
-        <button id="confirmNo" class="btn no" style="background-color: rgb(211, 67, 67);">No</button>
-        <button id="confirmYes" class="btn yes">Yes</button>
-      </div>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="followup-card">
+                <div class="followup-card-header">
+                    <div>
+                        <h3>Future Consultations</h3>
+                        <p>Upcoming follow-up consultation schedules.</p>
+                    </div>
+                </div>
+
+                <div class="table-wrap">
+                    <table id="followups-table" class="followup-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Patient Name</th>
+                                <th>Scheduled by</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+</section>
+
+<div id="confirmModal" class="app-modal">
+    <div class="app-modal-content">
+        <div class="modal-icon modal-icon-warning">
+            <i class="bx bx-help-circle"></i>
+        </div>
+
+        <div class="app-modal-header">
+            <h3>Confirmation</h3>
+        </div>
+
+        <div class="app-modal-body">
+            <p>Are you sure you want to mark this as completed?</p>
+        </div>
+
+        <div class="app-modal-footer">
+            <button id="confirmNo" class="modal-btn modal-btn-cancel">No</button>
+            <button id="confirmYes" class="modal-btn modal-btn-primary">Yes</button>
+        </div>
     </div>
-  </div>
+</div>
 
+<div id="successModal" class="app-modal">
+    <div class="app-modal-content">
+        <div class="modal-icon modal-icon-success">
+            <i class="bx bx-check"></i>
+        </div>
 
-    <!-- Success Modal -->
-  <div id="successModal" class="modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3>Success</h3>
-      </div>
-      <div class="modal-body">
-        <p>Referral successfully forwarded to physician.</p>
-      </div>
-      <div class="modal-footer">
-        <button id="closeSuccessModal" class="btn maybe" style="background-color: rgb(46, 128, 223);">OK</button>
-      </div>
+        <div class="app-modal-header">
+            <h3>Success</h3>
+        </div>
+
+        <div class="app-modal-body">
+            <p>Follow-up status successfully updated.</p>
+        </div>
+
+        <div class="app-modal-footer">
+            <button id="closeSuccessModal" class="modal-btn modal-btn-primary">OK</button>
+        </div>
     </div>
-  </div>
-
+</div>
 
 <div id="logoutModal" class="logout-modal">
     <div class="logout-modal-content">
         <div class="logout-modal-header">
             <h3>Confirm Logout</h3>
         </div>
+
         <div class="logout-modal-body">
             <p>Are you sure you want to logout?</p>
         </div>
+
         <div class="logout-modal-footer">
             <button onclick="closeModal()" class="logout-cancel-btn">Cancel</button>
             <button onclick="proceedLogout()" class="logout-confirm-btn">Yes, Logout</button>
         </div>
     </div>
-</div>	  
-
-</main>	
-</section>
-
+</div>
 
 <script>
-	document.addEventListener("DOMContentLoaded", function () {
-    fetchFollowupsToday();
-    fetchFollowups();
+document.addEventListener("DOMContentLoaded", function () {
+    const currentDate = document.getElementById("currentDate");
+    const todayTableBody = document.querySelector("#todayFollowups-table tbody");
+    const futureTableBody = document.querySelector("#followups-table tbody");
+
+    const searchForm = document.getElementById("searchForm");
+    const searchInput = document.getElementById("searchInput");
 
     const confirmModal = document.getElementById("confirmModal");
     const confirmYes = document.getElementById("confirmYes");
     const confirmNo = document.getElementById("confirmNo");
+
     const successModal = document.getElementById("successModal");
     const closeSuccessModal = document.getElementById("closeSuccessModal");
+
     let selectedFollowupId = null;
+    let selectedActionIsUndo = false;
 
-      function fetchFollowups() {
-        fetch("php/fetch_followups.php")
-            .then(response => response.json())
-            .then(data => {
-                const tableBody = document.querySelector("#followups-table tbody");
-                tableBody.innerHTML = "";
+    setCurrentDate();
+    fetchFollowupsToday();
+    fetchFollowups();
+    loadSidebarUserName();
+    setupSidebar();
+    setupUpdateReferrals();
 
-                if (data.error) {
-                    console.error(data.error);
-                    tableBody.innerHTML = `<tr><td colspan="6">Error fetching data</td></tr>`;
-                    return;
-                }
+    searchForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+        filterTables();
+    });
 
-                if (data.length === 0) {
-                    tableBody.innerHTML = `<tr><td colspan="6"><br>No follow-up consultations scheduled.<br></td></tr>`;
-                    return;
-                }
+    searchInput.addEventListener("input", filterTables);
 
-                data.forEach(followup => {
-                    const row = document.createElement("tr");
-                    const isCompleted = followup.followup_status === "Completed";
-                    row.innerHTML = `
-                        
-                        <td style="padding: 18px 10px;">${formatDate(followup.date)}</td>
-                        <td>${followup.patient_name}</td>
-                        <td>${followup.full_name}</td>
-                        <td class="${followup.followup_status.toLowerCase()}">${followup.followup_status}</td>
-                        <td>
-                            <a href="#" class="view-icon ${isCompleted ? 'unforward-link' : 'forward-link'}" data-id="${followup.followup_id}">
-                                <i class="bx ${isCompleted ? 'bx-undo' : 'bx-send'}"></i> ${isCompleted ? 'Undo' : 'Mark as Completed'}
-                            </a>
-                        </td>
-                    `;
+    confirmYes.addEventListener("click", updateSelectedFollowup);
 
-                    row.style.cursor = "pointer";
-                    row.addEventListener("click", function (e) {
-                        if (!e.target.closest(".forward-link") && !e.target.closest(".unforward-link")) {
-                            window.location.href = `visitInfo?visit_id=${followup.visit_id}`;
-                        }
-                    });
+    confirmNo.addEventListener("click", function () {
+        closeAppModal(confirmModal);
+        selectedFollowupId = null;
+        selectedActionIsUndo = false;
+    });
 
-                    tableBody.appendChild(row);
-                });
+    closeSuccessModal.addEventListener("click", function () {
+        closeAppModal(successModal);
+        fetchFollowupsToday();
+        fetchFollowups();
+    });
 
-                // Attach listener for forward/unforward buttons
-                document.querySelectorAll(".forward-link, .unforward-link").forEach(link => {
-                    link.addEventListener("click", function (e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        selectedFollowupId = this.getAttribute("data-id");
-                        const isUndo = this.classList.contains("unforward-link");
-                        
-                        // Update modal text based on action
-                        const modalBody = document.querySelector("#confirmModal .modal-body p");
-                        modalBody.textContent = isUndo ? 
-                            "Are you sure you want to undo?" : 
-                            "Are you sure you want to mark this as Completed?";
-                            
-                        confirmModal.style.display = "flex";
-                    });
-                });
-            })
-            .catch(error => {
-                console.error("Error fetching referrals:", error);
-            });
+    window.addEventListener("click", function (event) {
+        const logoutModal = document.getElementById("logoutModal");
+
+        if (event.target === confirmModal) {
+            closeAppModal(confirmModal);
+        }
+
+        if (event.target === successModal) {
+            closeAppModal(successModal);
+        }
+
+        if (event.target === logoutModal) {
+            closeModal();
+        }
+    });
+
+    function setCurrentDate() {
+        const today = new Date();
+
+        currentDate.textContent = today.toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "long",
+            day: "numeric"
+        });
     }
 
-
-
-
-        function fetchFollowupsToday() {
+    function fetchFollowupsToday() {
         fetch("php/fetch_followups_today.php")
             .then(response => response.json())
             .then(data => {
-                const tableBody = document.querySelector("#todayFollowups-table tbody");
-                tableBody.innerHTML = "";
-
-                if (data.error) {
-                    console.error(data.error);
-                    tableBody.innerHTML = `<tr><td colspan="6">Error fetching data</td></tr>`;
-                    return;
-                }
-
-                if (data.length === 0) {
-                    tableBody.innerHTML = `<tr><td colspan="6"><br>No follow-up consultations scheduled for today.<br></td></tr>`;
-                    return;
-                }
-
-
-                data.forEach(followup => {
-                    const row = document.createElement("tr");
-                    const isCompleted = followup.followup_status === "Completed";
-                    row.innerHTML = `
-                        
-                        <td style="padding: 18px 10px;">${formatDate(followup.date)}</td>
-                        <td>${followup.patient_name}</td>
-                        <td>${followup.full_name}</td>
-                        <td class="${followup.followup_status.toLowerCase()}">${followup.followup_status}</td>
-                        <td>
-                            <a href="#" class="view-icon ${isCompleted ? 'unforward-link' : 'forward-link'}" data-id="${followup.followup_id}">
-                                <i class="bx ${isCompleted ? 'bx-undo' : 'bx-send'}"></i> ${isCompleted ? 'Undo' : 'Mark as Completed'}
-                            </a>
-                        </td>
-                    `;
-
-                    row.style.cursor = "pointer";
-                    row.addEventListener("click", function (e) {
-                        if (!e.target.closest(".forward-link") && !e.target.closest(".unforward-link")) {
-                            window.location.href = `visitInfo?visit_id=${followup.visit_id}`;
-                        }
-                    });
-
-                    tableBody.appendChild(row);
-                });
-
-                // Attach listener for forward/unforward buttons
-                document.querySelectorAll(".forward-link, .unforward-link").forEach(link => {
-                    link.addEventListener("click", function (e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        selectedFollowupId = this.getAttribute("data-id");
-                        const isUndo = this.classList.contains("unforward-link");
-                        
-                        // Update modal text based on action
-                        const modalBody = document.querySelector("#confirmModal .modal-body p");
-                        modalBody.textContent = isUndo ? 
-                            "Are you sure you want to undo?" : 
-                            "Are you sure you want to mark this as Completed??";
-                            
-                        confirmModal.style.display = "flex";
-                    });
-                });
+                renderFollowupsTable(todayTableBody, data, "No follow-up consultations scheduled for today.");
             })
             .catch(error => {
-                console.error("Error fetching referrals:", error);
+                console.error("Error fetching today's follow-ups:", error);
+                renderErrorRow(todayTableBody);
             });
     }
 
-           // Show success modal
-    function showSuccessModal() {
-        successModal.style.display = "block";
-
-        closeSuccessModal.onclick = function () {
-            successModal.style.display = "none";
-            location.reload(); // Optional: reload after success
-        };
-
-        window.onclick = function (event) {
-            if (event.target == successModal || event.target == confirmModal) {
-                successModal.style.display = "none";
-                confirmModal.style.display = "none";
-            }
-        };
-    }
-
-    confirmYes.addEventListener("click", () => {
-        if (selectedFollowupId) {
-            const isUndo = document.querySelector(`[data-id="${selectedFollowupId}"]`).classList.contains("unforward-link");
-            fetch("php/update_followups.php", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    followup_id: selectedFollowupId,
-                    new_status: isUndo ? "Pending" : "Completed"
-                })
-            })
-            .then(res => res.json())
-            .then(response => {
-                if (response.success) {
-                    confirmModal.style.display = "none";
-                    selectedFollowupId = null;
-                    showSuccessModal(); // Show success modal
-                } else {
-                    alert("Failed to update referral status.");
-                    confirmModal.style.display = "none";
-                    selectedFollowupId = null;
-                }
+    function fetchFollowups() {
+        fetch("php/fetch_followups.php")
+            .then(response => response.json())
+            .then(data => {
+                renderFollowupsTable(futureTableBody, data, "No future follow-up consultations scheduled.");
             })
             .catch(error => {
-                console.error("Error updating referral status:", error);
-                confirmModal.style.display = "none";
-                selectedFollowupId = null;
+                console.error("Error fetching future follow-ups:", error);
+                renderErrorRow(futureTableBody);
             });
+    }
+
+    function renderFollowupsTable(tableBody, data, emptyMessage) {
+        tableBody.innerHTML = "";
+
+        if (data.error) {
+            console.error(data.error);
+            renderErrorRow(tableBody);
+            return;
         }
-    });
 
-    confirmNo.addEventListener("click", () => {
-        confirmModal.style.display = "none";
-        selectedFollowupId = null;
-    });
+        if (!Array.isArray(data) || data.length === 0) {
+            renderEmptyRow(tableBody, emptyMessage);
+            return;
+        }
 
+        data.forEach(followup => {
+            const row = document.createElement("tr");
+            const isCompleted = followup.followup_status === "Completed";
+            const statusClass = String(followup.followup_status || "Pending").toLowerCase();
 
+            row.innerHTML = `
+                <td data-label="Date">${formatDate(followup.date)}</td>
+                <td data-label="Patient Name">${escapeHtml(followup.patient_name || "N/A")}</td>
+                <td data-label="Scheduled by">${escapeHtml(followup.full_name || "N/A")}</td>
+                <td data-label="Status">
+                    <span class="status-badge ${statusClass}">
+                        ${escapeHtml(followup.followup_status || "Pending")}
+                    </span>
+                </td>
+                <td data-label="Action">
+                    <button 
+                        type="button" 
+                        class="action-btn ${isCompleted ? "undo-btn" : "complete-btn"}" 
+                        data-id="${followup.followup_id}"
+                        data-action="${isCompleted ? "undo" : "complete"}"
+                    >
+                        <i class="bx ${isCompleted ? "bx-undo" : "bx-check"}"></i>
+                        ${isCompleted ? "Undo" : "Mark as Completed"}
+                    </button>
+                </td>
+            `;
 
+            row.addEventListener("click", function (event) {
+                if (!event.target.closest(".action-btn")) {
+                    window.location.href = `visitInfo?visit_id=${followup.visit_id}`;
+                }
+            });
 
+            tableBody.appendChild(row);
+        });
 
-function formatDate(dateString) {
-    if (!dateString) return "N/A";
-    const date = new Date(dateString);
-    if (isNaN(date.getTime())) return "Invalid Date";
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    return `${date.toLocaleDateString('en-US', options)} <br><span class="time">&nbsp;</span>`;
+        attachActionListeners();
+        filterTables();
+    }
+
+    function attachActionListeners() {
+        document.querySelectorAll(".action-btn").forEach(button => {
+            button.addEventListener("click", function (event) {
+                event.preventDefault();
+                event.stopPropagation();
+
+                selectedFollowupId = this.dataset.id;
+                selectedActionIsUndo = this.dataset.action === "undo";
+
+                const modalText = confirmModal.querySelector(".app-modal-body p");
+
+                modalText.textContent = selectedActionIsUndo
+                    ? "Are you sure you want to undo this completed follow-up?"
+                    : "Are you sure you want to mark this follow-up as completed?";
+
+                openAppModal(confirmModal);
+            });
+        });
+    }
+
+    function updateSelectedFollowup() {
+        if (!selectedFollowupId) {
+            return;
+        }
+
+        fetch("php/update_followups.php", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                followup_id: selectedFollowupId,
+                new_status: selectedActionIsUndo ? "Pending" : "Completed"
+            })
+        })
+        .then(response => response.json())
+        .then(response => {
+            closeAppModal(confirmModal);
+
+            if (response.success) {
+                selectedFollowupId = null;
+                selectedActionIsUndo = false;
+                openAppModal(successModal);
+            } else {
+                alert("Failed to update follow-up status.");
+            }
+        })
+        .catch(error => {
+            console.error("Error updating follow-up status:", error);
+            closeAppModal(confirmModal);
+        });
+    }
+
+    function filterTables() {
+        const searchTerm = searchInput.value.trim().toLowerCase();
+
+        filterTableRows(document.getElementById("todayFollowups-table"), searchTerm);
+        filterTableRows(document.getElementById("followups-table"), searchTerm);
+    }
+
+    function filterTableRows(table, searchTerm) {
+        const rows = table.querySelectorAll("tbody tr");
+
+        rows.forEach(row => {
+            if (row.classList.contains("empty-row") || row.classList.contains("error-row")) {
+                row.style.display = "";
+                return;
+            }
+
+            const rowText = row.textContent.toLowerCase();
+
+            row.style.display = rowText.includes(searchTerm) ? "" : "none";
+        });
+    }
+
+    function renderEmptyRow(tableBody, message) {
+        tableBody.innerHTML = `
+            <tr class="empty-row">
+                <td colspan="5">${message}</td>
+            </tr>
+        `;
+    }
+
+    function renderErrorRow(tableBody) {
+        tableBody.innerHTML = `
+            <tr class="error-row">
+                <td colspan="5">Error fetching data.</td>
+            </tr>
+        `;
+    }
+
+    function formatDate(dateString) {
+        if (!dateString) {
+            return "N/A";
+        }
+
+        const date = new Date(dateString);
+
+        if (Number.isNaN(date.getTime())) {
+            return "Invalid Date";
+        }
+
+        return date.toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "long",
+            day: "numeric"
+        });
+    }
+
+    function escapeHtml(value) {
+        return String(value)
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replaceAll("'", "&#039;");
+    }
+
+    function openAppModal(modal) {
+        modal.classList.add("is-open");
+    }
+
+    function closeAppModal(modal) {
+        modal.classList.remove("is-open");
+    }
+});
+
+function loadSidebarUserName() {
+    fetch("php/getUserName.php")
+        .then(response => response.json())
+        .then(data => {
+            const sidebarUserName = document.getElementById("sidebarUserName");
+
+            if (sidebarUserName) {
+                sidebarUserName.textContent = data.full_name || "Nurse User";
+            }
+        })
+        .catch(error => {
+            console.error("Error fetching user name:", error);
+
+            const sidebarUserName = document.getElementById("sidebarUserName");
+
+            if (sidebarUserName) {
+                sidebarUserName.textContent = "Nurse User";
+            }
+        });
 }
 
-});
+function setupSidebar() {
+    const sidebar = document.getElementById("sidebar");
+    const toggle = document.getElementById("sidebarToggle");
+    const overlay = document.getElementById("sidebarOverlay");
+    const MOBILE_BP = 768;
 
-document.getElementById('searchForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-    const table = document.getElementById('followups-table');
-    const rows = table.getElementsByTagName('tr');
-
-    for (let i = 1; i < rows.length; i++) { // Start from 1 to skip header row
-        const row = rows[i];
-        const referralId = row.cells[0].textContent.toLowerCase();
-        const patientName = row.cells[2].textContent.toLowerCase();
-        
-        if (referralId.includes(searchTerm) || patientName.includes(searchTerm)) {
-            row.style.display = '';
-        } else {
-            row.style.display = 'none';
-        }
+    if (!sidebar || !toggle || !overlay) {
+        return;
     }
-    const table2 = document.getElementById('todayFollowups-table');
-    const rows2 = table2.getElementsByTagName('tr');
 
-       for (let i = 1; i < rows2.length; i++) { // Start from 1 to skip header row
-        const row = rows2[i];
-        const referralId = row.cells[0].textContent.toLowerCase();
-        const patientName = row.cells[2].textContent.toLowerCase();
-        
-        if (referralId.includes(searchTerm) || patientName.includes(searchTerm)) {
-            row.style.display = '';
-        } else {
-            row.style.display = 'none';
-        }
+    function isMobile() {
+        return window.innerWidth <= MOBILE_BP;
     }
-});
 
-// Add event listener for real-time search
-document.getElementById('searchInput').addEventListener('keyup', function() {
-    const searchTerm = this.value.toLowerCase();
-    const table = document.getElementById('todayFollowups-table');
-    const rows = table.getElementsByTagName('tr');
-
-    for (let i = 1; i < rows.length; i++) {
-        const row = rows[i];
-        const referralId = row.cells[0].textContent.toLowerCase();
-        const patientName = row.cells[2].textContent.toLowerCase();
-        
-        if (referralId.includes(searchTerm) || patientName.includes(searchTerm)) {
-            row.style.display = '';
-        } else {
-            row.style.display = 'none';
-        }
+    function closeMobileSidebar() {
+        sidebar.classList.remove("mobile-open");
+        overlay.classList.remove("active");
+        document.body.style.overflow = "";
     }
-    const table2 = document.getElementById('followups-table');
-    const rows2 = table2.getElementsByTagName('tr');
 
-    for (let i = 1; i < rows2.length; i++) {
-        const row = rows2[i];
-        const referralId = row.cells[0].textContent.toLowerCase();
-        const patientName = row.cells[2].textContent.toLowerCase();
-        
-        if (referralId.includes(searchTerm) || patientName.includes(searchTerm)) {
-            row.style.display = '';
+    toggle.addEventListener("click", function () {
+        if (isMobile()) {
+            const open = sidebar.classList.toggle("mobile-open");
+
+            overlay.classList.toggle("active", open);
+            document.body.style.overflow = open ? "hidden" : "";
         } else {
-            row.style.display = 'none';
+            sidebar.classList.toggle("collapsed");
         }
-    }
-});
+    });
 
+    overlay.addEventListener("click", closeMobileSidebar);
+
+    window.addEventListener("resize", function () {
+        if (!isMobile()) {
+            closeMobileSidebar();
+        }
+    });
+}
+
+function setupUpdateReferrals() {
+    const updateReferrals = document.getElementById("updateReferrals");
+
+    if (!updateReferrals) {
+        return;
+    }
+
+    updateReferrals.addEventListener("click", function (event) {
+        event.preventDefault();
+
+        fetch("php/update_referrals.php")
+            .then(response => response.json())
+            .then(data => {
+                console.log(data.message);
+                window.location.href = "pending";
+            })
+            .catch(error => {
+                console.error("Error updating referrals:", error);
+                window.location.href = "pending";
+            });
+    });
+}
 
 function confirmLogout() {
-    document.getElementById('logoutModal').style.display = 'block';
-    return false; // Prevent the default link behavior
+    document.getElementById("logoutModal").style.display = "block";
+    return false;
 }
 
 function closeModal() {
-    document.getElementById('logoutModal').style.display = 'none'; 
+    document.getElementById("logoutModal").style.display = "none";
 }
 
 function proceedLogout() {
-    window.location.href='../ADMIN/php/logout'; 
+    window.location.href = "../ADMIN/php/logout";
 }
-
-// Close modal when clicking outside
-window.onclick = function(event) {
-    const modal = document.getElementById('logoutModal');
-    if (event.target == modal) {
-        closeModal();
-    }
-}
-fetch('php/getUserName.php')
-    .then(response => response.json())
-    .then(data => {
-        if (data.full_name) {
-            document.getElementById('sidebarUserName').textContent = data.full_name;
-        } else {
-            document.getElementById('sidebarUserName').textContent = 'Nurse User';
-        }
-    })
-    .catch(error => {
-        console.error('Error fetching user name:', error);
-        document.getElementById('sidebarUserName').textContent = 'Nurse User';
-    });
-
 </script>
 
-
-<script>
-(function () {
-  const sidebar = document.getElementById('sidebar');
-  const toggle = document.getElementById('sidebarToggle');
-  const overlay = document.getElementById('sidebarOverlay');
-  const MOBILE_BP = 768;
-
-  if (!sidebar || !toggle || !overlay) return;
-
-  function isMobile() {
-    return window.innerWidth <= MOBILE_BP;
-  }
-
-  function closeMobileSidebar() {
-    sidebar.classList.remove('mobile-open');
-    overlay.classList.remove('active');
-    document.body.style.overflow = '';
-  }
-
-  toggle.addEventListener('click', function () {
-    if (isMobile()) {
-      const open = sidebar.classList.toggle('mobile-open');
-      overlay.classList.toggle('active', open);
-      document.body.style.overflow = open ? 'hidden' : '';
-    } else {
-      sidebar.classList.toggle('collapsed');
-    }
-  });
-
-  overlay.addEventListener('click', closeMobileSidebar);
-
-  window.addEventListener('resize', function () {
-    if (!isMobile()) {
-      closeMobileSidebar();
-    }
-  });
-})();
-</script>
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  const updateReferrals = document.getElementById("updateReferrals");
-
-  if (updateReferrals) {
-    updateReferrals.addEventListener("click", function (event) {
-      event.preventDefault();
-
-      fetch("php/update_referrals.php")
-        .then(response => response.json())
-        .then(data => {
-          console.log(data.message);
-          window.location.href = "pending";
-        })
-        .catch(error => {
-          console.error("Error updating referrals:", error);
-          window.location.href = "pending";
-        });
-    });
-  }
-});
-</script>
-
-	<script src="js/script.js"></script>
-    <script src="js/history.js"></script>
 </body>
 </html>
-
-

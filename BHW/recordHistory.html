@@ -1,420 +1,639 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="icon" href="../img/logo.png">
-	<link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Record History</title>
+
+    <link rel="icon" href="../img/logo.png">
+    <link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
+
+    <!-- Flatpickr Date Picker -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+    <!-- Page CSS -->
     <link rel="stylesheet" href="css/history.css">
-    <link rel="stylesheet" href="css/modal.css">
     <link rel="stylesheet" href="css/sidebar.css">
     <link rel="stylesheet" href="css/logout.css">
-	<title>Referral History</title>
-</head>
-<body>
 
-<script>
-// Check if user is logged in
-fetch('php/getUserId.php')
-    .then(response => response.json())
-    .then(data => {
-        if (data.error) {
-            // User is not logged in, redirect to role selection page
-            window.location.href='../auth/role';
-        }
-    })
-    .catch(error => {
-        console.error('Error checking session:', error);
-        window.location.href='../auth/role';
-    });
-</script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+</head>
+
+<body>
 
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-    <section id="sidebar">
-        <a href="#" class="sidebar-brand">
-            <img src="../img/logo.png" alt="RHU Logo" class="brand-logo">
-            <div class="brand-text">
-                <span class="brand-name">Hello BHW</span>
-            </div>
-        </a>
-
-        <div class="sidebar-scroll">
-            <p class="sidebar-section-label">Main Menu</p>
-            <ul class="side-menu top">
-                <li>
-                    <a href="dashboard" data-tooltip="Dashboard">
-                        <i class="bx bxs-dashboard nav-icon"></i>
-                        <span class="nav-label">Dashboard</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="ITR" data-tooltip="Add New ITR">
-                        <i class="bx bxs-notepad nav-icon"></i>
-                        <span class="nav-label">Add New ITR</span>
-                    </a>
-                </li>
-                <li class="active">
-                    <a href="searchPatient" data-tooltip="Patient Records">
-                        <i class="bx bxs-search nav-icon"></i>
-                        <span class="nav-label">Patient Records</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="History" data-tooltip="Referral History">
-                        <i class="bx bx-history nav-icon"></i>
-                        <span class="nav-label">Referral History</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="reports" data-tooltip="Reports">
-                        <i class="bx bx-notepad nav-icon"></i>
-                        <span class="nav-label">Reports</span>
-                    </a>
-                </li>
-            </ul>
-
-            <div class="sidebar-divider"></div>
-
-            <ul class="side-menu">
-                <li>
-                    <a href="#" class="logout" data-tooltip="Logout" onclick="return confirmLogout()">
-                        <i class="bx bxs-log-out-circle nav-icon"></i>
-                        <span class="nav-label">Logout</span>
-                    </a>
-                </li>
-            </ul>
+<section id="sidebar">
+    <a href="#" class="sidebar-brand">
+        <img src="../img/logo.png" alt="RHU Logo" class="brand-logo">
+        <div class="brand-text">
+            <span class="brand-name">Hello BHW</span>
         </div>
+    </a>
 
-        <div class="sidebar-footer">
-            <div class="sidebar-user">
-                <img src="../img/bhw.png" alt="BHW User">
-                <div class="sidebar-user-info">
-                    <div class="user-name" id="sidebarUserName">BHW User</div>
-                    <div class="user-role">Barangay Health Worker</div>
-                </div>
+    <div class="sidebar-scroll">
+        <p class="sidebar-section-label">Main Menu</p>
+
+        <ul class="side-menu top">
+            <li>
+                <a href="dashboard" data-tooltip="Dashboard">
+                    <i class="bx bxs-dashboard nav-icon"></i>
+                    <span class="nav-label">Dashboard</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="ITR" data-tooltip="Add New ITR">
+                    <i class="bx bxs-notepad nav-icon"></i>
+                    <span class="nav-label">Add New ITR</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="searchPatient" data-tooltip="Patient Records">
+                    <i class="bx bxs-search nav-icon"></i>
+                    <span class="nav-label">Patient Records</span>
+                </a>
+            </li>
+
+            <li class="active">
+                <a href="History" data-tooltip="Referral History">
+                    <i class="bx bx-history nav-icon"></i>
+                    <span class="nav-label">Referral History</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="reports" data-tooltip="Reports">
+                    <i class="bx bx-notepad nav-icon"></i>
+                    <span class="nav-label">Reports</span>
+                </a>
+            </li>
+        </ul>
+
+        <div class="sidebar-divider"></div>
+
+        <ul class="side-menu">
+            <li>
+                <a href="#" class="logout" data-tooltip="Logout" onclick="return confirmLogout()">
+                    <i class="bx bxs-log-out-circle nav-icon"></i>
+                    <span class="nav-label">Logout</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="sidebar-footer">
+        <div class="sidebar-user">
+            <img src="../img/bhw.png" alt="BHW User">
+            <div class="sidebar-user-info">
+                <div class="user-name" id="sidebarUserName">BHW User</div>
+                <div class="user-role">Barangay Health Worker</div>
             </div>
         </div>
-    </section>
-
-    <!-- Main Content Section -->
-    <section id="content">
-        <nav>
-            <button class="nav-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
-                <i class="bx bx-menu"></i>
-            </button>
-            <form id="searchForm" onsubmit="return false;" class="nav-form">
-				<div class="form-input">
-					<input type="search" id="searchInput" placeholder="Search...">
-					<button type="submit" class="search-btn">
-						<i class="bx bx-search"></i>
-					</button>
-				</div>
-			</form>
-		</nav>
-
-		<main>
-            
-            <div class="head-title">
-                <div class="left">
-                  <h1>Record History</h1>
-                  <ul class="breadcrumb">
-                    <li><a href="#">Record History</a></li>
-                    <li><i class="bx bx-chevron-right"></i></li>
-                    <li><a class="active" href="#" onclick="history.back(); return false;">Go back</a></li>
-                  </ul>
-                </div>
-              </div>
-
-              <div class="header">
-                <div class="date-picker">
-                    <label for="date">Select date:</label>
-            <input type="date" id="date" name="date" />
-                <button id="applyFilter">Apply Filter</button>
-				<style>
-
-				</style>
-             
-				
-            </div>
-            </div>
-            <div class="history-container">
-				<table id="visitTable" class="status">
-					<thead>
-						<tr>
-							<th>Date</th>
-							<th>Patient Name</th>
-							<th>Recorded by</th>
-							
-						</tr>
-					</thead>
-					<tbody>
-						
-					</tbody>
-				</table>
-				
-                
-				<div class="pagination" id="pagination">
-					<a href="#" class="prev">Previous</a>
-					<a href="#" class="page-number active">1</a>
-					<a href="#" class="page-number">2</a>
-					<a href="#" class="page-number">3</a>
-					<a href="#" class="next">Next</a>
-				</div>
-				
-            </div>
-         
-			<div id="confirmationModal" class="modal">
-                <div class="modal-content">
-                 
-                  
-                  <div class="modal-header">
-                    <!-- optional only: checkmark image -->
-                    <!-- <img src="checkmark.png" alt="Check" class="checkmark-image"> -->
-                    <h3 id="modalTitle">Confirm Action</h3>
-                  </div>
-              
-                  <div class="modal-body">
-                    <p id="modalMessage">Are you sure you want to proceed with this action?</p>
-                  </div>
-              
-                  <div class="modal-footer">
-                    <button id="confirmAction" class="btn yes">Yes</button>
-                    <button id="cancelAction" class="btn no">No</button>
-                  </div>
-                </div>
-              </div>
-              
-			
-			<style>
-                
-            </style>
-	   </main>	
+    </div>
 </section>
 
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    const tableBody = document.querySelector('#visitTable tbody');
-    let allData = [];
+<section id="content">
+    <nav>
+        <button class="nav-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+            <i class="bx bx-menu"></i>
+        </button>
 
-    // Fetch all records and store in memory
-    fetch('php/fetch_records_history.php')
-        .then(response => response.json())
-        .then(data => {
-            allData = data;
-            displayTable(data); // Initial display
-        })
-        .catch(error => {
-            console.error('Error fetching visit data:', error);
-        });
+        <div class="nav-search-placeholder" aria-hidden="true"></div>
+    </nav>
 
-    // Display records in table
-    function displayTable(data) {
-        tableBody.innerHTML = ''; // Clear old data
-        
-        if (data.length === 0) {
-            // Show "No record found." message
-            const tr = document.createElement('tr');
-            const td = document.createElement('td');
-            td.colSpan = 3;  // Span across all columns
-            td.textContent = 'No record found.';
-            td.style.textAlign = 'center';  // Center the message
-            tableBody.appendChild(tr);
-            tr.appendChild(td);
-        } else {
-            data.forEach(row => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${row.visit_date}</td>
-                    <td>${row.patient_name}</td>
-                    <td>${row.recorded_by}</td>
-                `;
-                tr.style.cursor = 'pointer';
-                tr.addEventListener('click', () => {
-                    window.location.href = `visitInfo?visit_id=${row.visit_id}`;
-                });
-                tableBody.appendChild(tr);
-            });
-        }
-    }
+    <main>
+        <div class="head-title referral-page-title">
+            <div class="left">
+                <h1>Record History</h1>
+            </div>
+        </div>
 
-    // Filter button logic
-    document.getElementById('applyFilter').addEventListener('click', () => {
-        const selectedDate = document.getElementById('date').value;
-        if (!selectedDate) return;
+        <div class="history-toolbar-card">
+            <form id="searchForm" onsubmit="return false;" class="history-search">
+                <label for="searchInput" class="sr-only">Search records</label>
 
-        // Remove the time part from the stored visit_date (e.g., '2025-04-19 14:25:31' -> '2025-04-19')
-        const filtered = allData.filter(row => row.visit_date.split(' ')[0] === selectedDate);
-        
-        displayTable(filtered);
-    });
-});
+                <button type="submit" class="search-inline-btn" aria-label="Search">
+                    <i class="bx bx-search"></i>
+                </button>
 
-// Add this to your existing JavaScript
-document.getElementById('searchForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    loadRecords();
-});
+                <input 
+                    type="search" 
+                    id="searchInput" 
+                    placeholder="Search patient or recorder..." 
+                    autocomplete="off"
+                >
+            </form>
 
-document.getElementById('searchInput').addEventListener('input', function(e) {
-    // Add a small delay to prevent too many requests
-    clearTimeout(this.searchTimeout);
-    this.searchTimeout = setTimeout(() => {
-        loadRecords();
-    }, 300);
-});
+            <div class="history-toolbar-actions">
+                <div class="history-toolbar-field history-toolbar-field-date">
+                    <i class="bx bx-calendar"></i>
+                    <label for="date" class="sr-only">Select date</label>
 
-function loadRecords() {
-    const searchTerm = document.getElementById('searchInput').value;
-    fetch(`php/fetch_records_history.php?search=${encodeURIComponent(searchTerm)}`)
-        .then(response => response.json())
-        .then(data => {
-            if (data.error) {
-                console.error('Error:', data.error);
-                return;
-            }
-            // Update your table with the filtered results
-            updateTable(data);
-        })
-        .catch(error => console.error('Error:', error));
-}
+                    <input 
+                        type="text" 
+                        id="date" 
+                        name="date" 
+                        placeholder="Select date" 
+                        readonly
+                    >
+                </div>
 
-function updateTable(data) {
-    const tbody = document.querySelector('table tbody');
-    tbody.innerHTML = '';
-    
-    if (data.length === 0) {
-        const tr = document.createElement('tr');
-        const td = document.createElement('td');
-        td.colSpan = 3;  // Span across all columns
-        td.textContent = 'No record found.';
-        td.style.textAlign = 'center';  // Center the message
-        tr.appendChild(td);
-        tbody.appendChild(tr);
-    } else {
-        data.forEach(record => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${formatDate(record.visit_date)}</td>
-                <td>${record.patient_name}</td>
-                <td>${record.recorded_by}</td>
-            `;
-            row.style.cursor = 'pointer';
-            row.addEventListener('click', () => {
-                window.location.href = `visitInfo?visit_id=${record.visit_id}`;
-            });
-            tbody.appendChild(row);
-        });
-    }
-}
+                <button id="applyFilter" class="history-primary-btn" type="button">
+                    Apply Filter
+                </button>
+            </div>
+        </div>
 
-function formatDate(dateString) {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-    });
-}
+        <div class="history-table-card">
+            <div class="history-card-heading">
+                <div class="history-card-icon">
+                    <i class="bx bx-history"></i>
+                </div>
 
-// Call loadRecords when the page loads
-document.addEventListener('DOMContentLoaded', loadRecords);
+                <div>
+                    <h2>Visit Records</h2>
+                    <span>Click a row to view the full visit information.</span>
+                </div>
+            </div>
 
-	</script>
-	
-	<script src="js/recordhistory.js"></script>
-	<script src="js/script.js"></script>
+            <table id="visitTable" class="status">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Patient Name</th>
+                        <th>Recorded by</th>
+                    </tr>
+                </thead>
+
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <div class="history-pagination" id="pagination"></div>
+    </main>
+</section>
 
 <div id="logoutModal" class="logout-modal">
     <div class="logout-modal-content">
         <div class="logout-modal-header">
             <h3>Confirm Logout</h3>
         </div>
+
         <div class="logout-modal-body">
             <p>Are you sure you want to logout?</p>
         </div>
+
         <div class="logout-modal-footer">
             <button onclick="closeModal()" class="logout-cancel-btn">Cancel</button>
             <button onclick="proceedLogout()" class="logout-confirm-btn">Yes, Logout</button>
         </div>
     </div>
-</div>    
-
+</div>
 
 <script>
-function confirmLogout() {
-    document.getElementById('logoutModal').style.display = 'block';
-    return false; // Prevent the default link behavior
-}
-
-function closeModal() {
-    document.getElementById('logoutModal').style.display = 'none';
-}
-
-function proceedLogout() {
-		 window.location.href='../ADMIN/php/logout';
-}
-
-// Close modal when clicking outside
-window.onclick = function(event) {
-    const modal = document.getElementById('logoutModal');
-    if (event.target == modal) {
-        closeModal();
-    }
-}
-fetch('php/getUserName.php')
+/* Login check */
+fetch("php/getUserId.php")
     .then(response => response.json())
     .then(data => {
-        if (data.full_name) {
-            document.getElementById('userGreeting').textContent = `Hello, ${data.full_name}!`;
-        } else {
-            document.getElementById('userGreeting').textContent = 'Hello, BHW!';
+        if (data.error) {
+            window.location.href = "../auth/role";
         }
     })
     .catch(error => {
-        console.error('Error fetching user name:', error);
-        document.getElementById('userGreeting').textContent = 'Hello, BHW!';
+        console.error("Error checking session:", error);
+        window.location.href = "../auth/role";
     });
-</script>
 
-<script>
-(function () {
-  const sidebar   = document.getElementById('sidebar');
-  const toggle    = document.getElementById('sidebarToggle');
-  const overlay   = document.getElementById('sidebarOverlay');
-  const MOBILE_BP = 768;
 
-  function isMobile() {
-    return window.innerWidth <= MOBILE_BP;
-  }
+/* Sidebar user name */
+fetch("php/getUserName.php")
+    .then(response => response.json())
+    .then(data => {
+        const sidebarUserName = document.getElementById("sidebarUserName");
 
-  function closeMobileSidebar() {
-    sidebar.classList.remove('mobile-open');
-    overlay.classList.remove('active');
-    document.body.style.overflow = '';
-  }
+        if (sidebarUserName) {
+            sidebarUserName.textContent = data.full_name || "BHW User";
+        }
+    })
+    .catch(error => {
+        console.error("Error fetching user name:", error);
 
-  if (toggle) {
-    toggle.addEventListener('click', function () {
-      if (isMobile()) {
-        const open = sidebar.classList.toggle('mobile-open');
-        overlay.classList.toggle('active', open);
-        document.body.style.overflow = open ? 'hidden' : '';
-      } else {
-        sidebar.classList.toggle('collapsed');
-      }
+        const sidebarUserName = document.getElementById("sidebarUserName");
+
+        if (sidebarUserName) {
+            sidebarUserName.textContent = "BHW User";
+        }
     });
-  }
 
-  if (overlay) {
-    overlay.addEventListener('click', closeMobileSidebar);
-  }
 
-  window.addEventListener('resize', function () {
-    if (!isMobile()) {
-      closeMobileSidebar();
+/* Record history logic */
+document.addEventListener("DOMContentLoaded", function () {
+    const tableBody = document.querySelector("#visitTable tbody");
+    const searchForm = document.getElementById("searchForm");
+    const searchInput = document.getElementById("searchInput");
+    const dateInput = document.getElementById("date");
+    const applyFilterBtn = document.getElementById("applyFilter");
+    const pagination = document.getElementById("pagination");
+
+    let allData = [];
+    let visibleData = [];
+    let currentPage = 1;
+    const rowsPerPage = 10;
+    let searchTimeout = null;
+
+    initializeDatePicker();
+    loadRecords();
+
+    searchForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+        currentPage = 1;
+        loadRecords();
+    });
+
+    searchInput.addEventListener("input", function () {
+        clearTimeout(searchTimeout);
+
+        searchTimeout = setTimeout(() => {
+            currentPage = 1;
+            loadRecords();
+        }, 300);
+    });
+
+    applyFilterBtn.addEventListener("click", function () {
+        currentPage = 1;
+        applyFiltersAndRender();
+    });
+
+    function loadRecords() {
+        const searchTerm = searchInput.value.trim();
+        const url = searchTerm
+            ? `php/fetch_records_history.php?search=${encodeURIComponent(searchTerm)}`
+            : "php/fetch_records_history.php";
+
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    console.error("Error:", data.error);
+                    allData = [];
+                } else {
+                    allData = Array.isArray(data) ? data : [];
+                }
+
+                applyFiltersAndRender();
+            })
+            .catch(error => {
+                console.error("Error fetching visit data:", error);
+                allData = [];
+                applyFiltersAndRender();
+            });
     }
-  });
+
+    function applyFiltersAndRender() {
+        const selectedDate = dateInput.value;
+
+        visibleData = allData.filter(row => {
+            if (!selectedDate) {
+                return true;
+            }
+
+            const rowDate = String(row.visit_date || "").split(" ")[0].split("T")[0];
+
+            return rowDate === selectedDate;
+        });
+
+        renderTable();
+        renderPagination();
+    }
+
+    function renderTable() {
+        tableBody.innerHTML = "";
+
+        if (visibleData.length === 0) {
+            const tr = document.createElement("tr");
+            tr.className = "empty-state-row";
+
+            const td = document.createElement("td");
+            td.colSpan = 3;
+            td.textContent = "No record found.";
+            td.style.textAlign = "center";
+
+            tr.appendChild(td);
+            tableBody.appendChild(tr);
+
+            return;
+        }
+
+        const start = (currentPage - 1) * rowsPerPage;
+        const end = start + rowsPerPage;
+        const pageRows = visibleData.slice(start, end);
+
+        pageRows.forEach(record => {
+            const row = document.createElement("tr");
+
+            row.innerHTML = `
+                <td data-label="Date">${formatDate(record.visit_date)}</td>
+                <td data-label="Patient Name" class="patient-name-cell">${escapeHtml(record.patient_name || "N/A")}</td>
+                <td data-label="Recorded by">${escapeHtml(record.recorded_by || "N/A")}</td>
+            `;
+
+            row.style.cursor = "pointer";
+
+            row.addEventListener("click", () => {
+                window.location.href = `visitInfo?visit_id=${record.visit_id}`;
+            });
+
+            tableBody.appendChild(row);
+        });
+    }
+
+    function renderPagination() {
+        pagination.innerHTML = "";
+
+        const totalPages = Math.ceil(visibleData.length / rowsPerPage);
+
+        if (totalPages <= 1) {
+            return;
+        }
+
+        const previousBtn = document.createElement("button");
+        previousBtn.type = "button";
+        previousBtn.textContent = "Previous";
+        previousBtn.disabled = currentPage === 1;
+
+        previousBtn.addEventListener("click", () => {
+            if (currentPage > 1) {
+                currentPage--;
+                renderTable();
+                renderPagination();
+            }
+        });
+
+        pagination.appendChild(previousBtn);
+
+        for (let page = 1; page <= totalPages; page++) {
+            const pageBtn = document.createElement("button");
+            pageBtn.type = "button";
+            pageBtn.textContent = page;
+
+            if (page === currentPage) {
+                pageBtn.classList.add("active");
+            }
+
+            pageBtn.addEventListener("click", () => {
+                currentPage = page;
+                renderTable();
+                renderPagination();
+            });
+
+            pagination.appendChild(pageBtn);
+        }
+
+        const nextBtn = document.createElement("button");
+        nextBtn.type = "button";
+        nextBtn.textContent = "Next";
+        nextBtn.disabled = currentPage === totalPages;
+
+        nextBtn.addEventListener("click", () => {
+            if (currentPage < totalPages) {
+                currentPage++;
+                renderTable();
+                renderPagination();
+            }
+        });
+
+        pagination.appendChild(nextBtn);
+    }
+
+    function initializeDatePicker() {
+        if (!dateInput || typeof flatpickr === "undefined") {
+            return;
+        }
+
+        flatpickr(dateInput, {
+            dateFormat: "Y-m-d",
+            allowInput: false,
+            disableMobile: true,
+            clickOpens: true,
+            closeOnSelect: false,
+            monthSelectorType: "dropdown",
+
+            onReady: function (selectedDates, dateStr, instance) {
+                instance.calendarContainer.classList.add("material-date-picker");
+
+                buildMaterialDatePickerHeader(instance);
+                buildMaterialDatePickerFooter(instance);
+            },
+
+            onOpen: function (selectedDates, dateStr, instance) {
+                instance.calendarContainer.classList.add("material-date-picker");
+            }
+        });
+    }
+
+    function buildMaterialDatePickerHeader(instance) {
+        const calendar = instance.calendarContainer;
+        const monthsContainer = calendar.querySelector(".flatpickr-months");
+        const monthSelect = calendar.querySelector(".flatpickr-monthDropdown-months");
+        const yearWrapper = calendar.querySelector(".numInputWrapper");
+
+        if (!monthsContainer || !monthSelect || !yearWrapper) {
+            return;
+        }
+
+        if (monthsContainer.querySelector(".material-picker-header")) {
+            return;
+        }
+
+        const header = document.createElement("div");
+        header.className = "material-picker-header";
+
+        const monthGroup = document.createElement("div");
+        monthGroup.className = "material-picker-group material-picker-month-group";
+
+        const yearGroup = document.createElement("div");
+        yearGroup.className = "material-picker-group material-picker-year-group";
+
+        const prevMonthBtn = createPickerNavButton("‹", "Previous month");
+        const nextMonthBtn = createPickerNavButton("›", "Next month");
+
+        const prevYearBtn = createPickerNavButton("‹", "Previous year");
+        const nextYearBtn = createPickerNavButton("›", "Next year");
+
+        prevMonthBtn.addEventListener("click", function () {
+            instance.changeMonth(-1);
+        });
+
+        nextMonthBtn.addEventListener("click", function () {
+            instance.changeMonth(1);
+        });
+
+        prevYearBtn.addEventListener("click", function () {
+            instance.changeYear(instance.currentYear - 1);
+        });
+
+        nextYearBtn.addEventListener("click", function () {
+            instance.changeYear(instance.currentYear + 1);
+        });
+
+        monthGroup.appendChild(prevMonthBtn);
+        monthGroup.appendChild(monthSelect);
+        monthGroup.appendChild(nextMonthBtn);
+
+        yearGroup.appendChild(prevYearBtn);
+        yearGroup.appendChild(yearWrapper);
+        yearGroup.appendChild(nextYearBtn);
+
+        header.appendChild(monthGroup);
+        header.appendChild(yearGroup);
+
+        monthsContainer.innerHTML = "";
+        monthsContainer.appendChild(header);
+    }
+
+    function buildMaterialDatePickerFooter(instance) {
+        const calendar = instance.calendarContainer;
+
+        if (calendar.querySelector(".material-picker-footer")) {
+            return;
+        }
+
+        const footer = document.createElement("div");
+        footer.className = "material-picker-footer";
+
+        const cancelBtn = document.createElement("button");
+        cancelBtn.type = "button";
+        cancelBtn.textContent = "Cancel";
+
+        const okBtn = document.createElement("button");
+        okBtn.type = "button";
+        okBtn.textContent = "OK";
+
+        cancelBtn.addEventListener("click", function () {
+            instance.clear();
+            instance.close();
+
+            currentPage = 1;
+            applyFiltersAndRender();
+        });
+
+        okBtn.addEventListener("click", function () {
+            instance.close();
+
+            currentPage = 1;
+            applyFiltersAndRender();
+        });
+
+        footer.appendChild(cancelBtn);
+        footer.appendChild(okBtn);
+
+        calendar.appendChild(footer);
+    }
+
+    function createPickerNavButton(text, label) {
+        const button = document.createElement("button");
+
+        button.type = "button";
+        button.className = "material-picker-nav";
+        button.textContent = text;
+        button.setAttribute("aria-label", label);
+
+        return button;
+    }
+
+    function formatDate(dateString) {
+        if (!dateString) {
+            return "N/A";
+        }
+
+        const normalizedDate = String(dateString).replace(" ", "T");
+        const date = new Date(normalizedDate);
+
+        if (Number.isNaN(date.getTime())) {
+            return dateString;
+        }
+
+        return date.toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "long",
+            day: "numeric"
+        });
+    }
+
+    function escapeHtml(value) {
+        return String(value)
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replaceAll("'", "&#039;");
+    }
+});
+
+
+/* Logout modal */
+function confirmLogout() {
+    document.getElementById("logoutModal").style.display = "block";
+    return false;
+}
+
+function closeModal() {
+    document.getElementById("logoutModal").style.display = "none";
+}
+
+function proceedLogout() {
+    window.location.href = "../ADMIN/php/logout";
+}
+
+window.onclick = function (event) {
+    const modal = document.getElementById("logoutModal");
+
+    if (event.target === modal) {
+        closeModal();
+    }
+};
+
+
+/* Sidebar */
+(function () {
+    const sidebar = document.getElementById("sidebar");
+    const toggle = document.getElementById("sidebarToggle");
+    const overlay = document.getElementById("sidebarOverlay");
+    const MOBILE_BP = 768;
+
+    function isMobile() {
+        return window.innerWidth <= MOBILE_BP;
+    }
+
+    function closeMobileSidebar() {
+        sidebar.classList.remove("mobile-open");
+        overlay.classList.remove("active");
+        document.body.style.overflow = "";
+    }
+
+    if (toggle) {
+        toggle.addEventListener("click", function () {
+            if (isMobile()) {
+                const open = sidebar.classList.toggle("mobile-open");
+                overlay.classList.toggle("active", open);
+                document.body.style.overflow = open ? "hidden" : "";
+            } else {
+                sidebar.classList.toggle("collapsed");
+            }
+        });
+    }
+
+    if (overlay) {
+        overlay.addEventListener("click", closeMobileSidebar);
+    }
+
+    window.addEventListener("resize", function () {
+        if (!isMobile()) {
+            closeMobileSidebar();
+        }
+    });
 })();
 </script>
 

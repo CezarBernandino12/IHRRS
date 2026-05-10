@@ -1,528 +1,581 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="icon" href="../img/logo.png">
-	<link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
-	<link rel="stylesheet" href="css/form.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Issued Records</title>
+
+    <link rel="icon" href="../img/logo.png">
+    <link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/issued.css">
     <link rel="stylesheet" href="css/logout.css">
-   <link rel="stylesheet" href="css/sidebar.css">
-	<title>Issued Records</title> 
+    <link rel="stylesheet" href="css/sidebar.css">
 </head>
+
 <body>
-<!-- Sidebar Section -->
-	<section id="sidebar">
-		<a href="#" class="sidebar-brand">
-			<img src="../img/logo.png" alt="RHU Logo" class="brand-logo">
-			<div class="brand-text">
-				<span class="brand-name">Hello Nurse</span>
-			</div>
-		</a>
 
-		<div class="sidebar-scroll">
-			<div class="sidebar-section-label">Main Menu</div>
-			<ul class="side-menu top">
-				<li>
-					<a href="dashboard" data-tooltip="Dashboard">
-						<i class="bx bxs-dashboard nav-icon"></i>
-						<span class="nav-label">Dashboard</span>
-					</a>
-				</li>
-				<li>
-					<a href="ITR" data-tooltip="Add New ITR">
-						<i class="bx bxs-notepad nav-icon"></i>
-						<span class="nav-label">Add New ITR</span>
-					</a>
-				</li>
-				<li class="active">
-					<a href="#" id="updateReferrals" data-tooltip="Pending Referrals">
-						<i class="bx bxs-user nav-icon"></i>
-						<span class="nav-label">Pending Referrals</span>
-					</a>
-				</li>
-				<li>
-					<a href="followUpConsultations" data-tooltip="Follow-Up Visits">
-						<i class="bx bxs-user nav-icon"></i>
-						<span class="nav-label">Follow-Up Visits</span>
-					</a>
-				</li>
-				<li>
-					<a href="searchPatient" data-tooltip="Patient Records">
-						<i class="bx bxs-search nav-icon"></i>
-						<span class="nav-label">Patient Records</span>
-					</a>
-				</li>
-				<li>
-					<a href="history" data-tooltip="Referral History">
-						<i class="bx bx-history nav-icon"></i>
-						<span class="nav-label">Referral History</span>
-					</a>
-				</li>
-				<li>
-					<a href="reports" data-tooltip="Reports">
-						<i class="bx bx-notepad nav-icon"></i>
-						<span class="nav-label">Reports</span>
-					</a>
-				</li>
-			</ul>
+<!-- Sidebar Section - kept as is -->
+<section id="sidebar">
+    <a href="#" class="sidebar-brand">
+        <img src="../img/logo.png" alt="RHU Logo" class="brand-logo">
 
-			<div class="sidebar-divider"></div>
+        <div class="brand-text">
+            <span class="brand-name">Hello Nurse</span>
+        </div>
+    </a>
 
-			<ul class="side-menu">
-				<li>
-					<a href="#" class="logout" data-tooltip="Logout" onclick="return confirmLogout()">
-						<i class="bx bxs-log-out-circle nav-icon"></i>
-						<span class="nav-label">Logout</span>
-					</a>
-				</li>
-			</ul>
-		</div>
+    <div class="sidebar-scroll">
+        <div class="sidebar-section-label">Main Menu</div>
 
-		<div class="sidebar-footer">
-			<div class="sidebar-user">
-				<img src="../img/nurse.png" alt="Nurse User">
-				<div class="sidebar-user-info">
-					<div class="user-name" id="sidebarUserName">Nurse User</div>
-					<div class="user-role">RHU Nurse</div>
-				</div>
-			</div>
-		</div>
-	</section>
+        <ul class="side-menu top">
+            <li>
+                <a href="dashboard" data-tooltip="Dashboard">
+                    <i class="bx bxs-dashboard nav-icon"></i>
+                    <span class="nav-label">Dashboard</span>
+                </a>
+            </li>
 
-	<div class="sidebar-overlay" id="sidebarOverlay"></div>
+            <li>
+                <a href="ITR" data-tooltip="Add New ITR">
+                    <i class="bx bxs-notepad nav-icon"></i>
+                    <span class="nav-label">Add New ITR</span>
+                </a>
+            </li>
 
-	<!-- Main Content Section -->
-	<section id="content">
-		<nav>
-			<button class="nav-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
-				<i class="bx bx-menu"></i>
-			</button>
+            <li class="active">
+                <a href="#" id="updateReferrals" data-tooltip="Pending Referrals">
+                    <i class="bx bxs-user nav-icon"></i>
+                    <span class="nav-label">Pending Referrals</span>
+                </a>
+            </li>
 
-			<form action="#" id="searchForm" class="nav-search" style="position: relative;">
-				<input type="search" id="searchInput" placeholder="Search Patient Name or Control Number..." autocomplete="off">
-				<button type="submit" aria-label="Search">
-					<i class="bx bx-search"></i>
-				</button>
-			</form>
-		</nav>
+            <li>
+                <a href="followUpConsultations" data-tooltip="Follow-Up Visits">
+                    <i class="bx bxs-user nav-icon"></i>
+                    <span class="nav-label">Follow-Up Visits</span>
+                </a>
+            </li>
 
-		<main>
-            
-            <div class="head-title">
-                <div class="left">
-                  <h1>Issued Records</h1>
-                  <ul class="breadcrumb">
-                    <li><a href="#">Issued Records</a></li>
-                    <li><i class="bx bx-chevron-right"></i></li>
-                    <li><a class="active" href="#">Home</a></li>
-                  </ul>
+            <li>
+                <a href="searchPatient" data-tooltip="Patient Records">
+                    <i class="bx bxs-search nav-icon"></i>
+                    <span class="nav-label">Patient Records</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="history" data-tooltip="Referral History">
+                    <i class="bx bx-history nav-icon"></i>
+                    <span class="nav-label">Referral History</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="reports" data-tooltip="Reports">
+                    <i class="bx bx-notepad nav-icon"></i>
+                    <span class="nav-label">Reports</span>
+                </a>
+            </li>
+        </ul>
+
+        <div class="sidebar-divider"></div>
+
+        <ul class="side-menu">
+            <li>
+                <a href="#" class="logout" data-tooltip="Logout" onclick="return confirmLogout()">
+                    <i class="bx bxs-log-out-circle nav-icon"></i>
+                    <span class="nav-label">Logout</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="sidebar-footer">
+        <div class="sidebar-user">
+            <img src="../img/nurse.png" alt="Nurse User">
+
+            <div class="sidebar-user-info">
+                <div class="user-name" id="sidebarUserName">Nurse User</div>
+                <div class="user-role">RHU Nurse</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<!-- Main Content Section -->
+<section id="content">
+    <nav>
+        <button class="nav-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+            <i class="bx bx-menu"></i>
+        </button>
+
+        <form action="#" id="searchForm" class="nav-search">
+            <input 
+                type="search" 
+                id="searchInput" 
+                placeholder="Search patient name or control number..." 
+                autocomplete="off"
+            >
+
+            <button type="submit" aria-label="Search">
+                <i class="bx bx-search"></i>
+            </button>
+        </form>
+    </nav>
+
+    <main>
+        <div class="head-title issued-page-title">
+            <div class="left">
+                <h1>Issued Records</h1>
+            </div>
+        </div>
+
+        <section class="issued-page">
+            <div class="issued-summary-card">
+                <div class="issued-summary-icon">
+                    <i class="bx bx-folder-open"></i>
                 </div>
-              </div>
 
-<br>
-
-            <div class="history-container">
-             
-                  <br>
-             <h4 style="opacity: 0.8;">Medical Certificates</h4>
-                <table id="medcert-history-table" class="status">
-                    <thead>
-                        <tr>
-                            <th>Control Number</th>
-                            <th>Issuance Date</th>
-                            <th>Patient Name</th>
-                            <th>Issued By</th>
-                            <th>Generated By</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                       
-                        <!-- Dynamic referral data will be inserted here by JavaScript -->
-                    </tbody>
-                    
-                </table> <br> <br>
-                
-               <h4 style="opacity: 0.8;">Prescriptions</h4>
-                <table id="prescription-history-table" class="status">
-                    <thead>
-                        <tr>
-                            <th>Prescription Date</th>
-                            <th>Patient Name</th>
-                            <th>Prescribed By</th>
-                            <th>Generated By</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                       
-                        <!-- Dynamic referral data will be inserted here by JavaScript -->
-                    </tbody>
-                    
-                </table>
-
-
-                
-                <div class="pagination" id="pagination">
-                    <a href="#" class="prev">Previous</a>
-                    <a href="#" class="page-number">1</a>
-                    <a href="#" class="page-number">2</a>
-                    <a href="#" class="page-number">3</a>
-                    <a href="#" class="next">Next</a>
+                <div>
+                    <h2>Generated Patient Documents</h2>
+                    <p>View medical certificates and prescriptions issued for the selected patient.</p>
                 </div>
             </div>
 
+            <div class="issued-record-card">
+                <div class="issued-card-header">
+                    <div class="issued-card-icon">
+                        <i class="bx bx-certification"></i>
+                    </div>
 
-   <!-- Confirmation Modal -->
-<div id="confirmModal" class="modal">
-    <div class="modal-content" style="height: 250px;">
-      <div class="modal-header">
-        <h3>Confirmation</h3>
-      </div>
-      <div class="modal-body">
-        <p>Are you sure you want to forward this referral to the physician?</p>
-      </div>
-      <div class="modal-footer">
-        
-        <button id="confirmNo" class="btn no" style="background-color: rgb(211, 67, 67);">No</button>
-        <button id="confirmYes" class="btn yes">Yes</button>
-      </div>
-    </div>
-  </div>
-  
-  <!-- Success Modal -->
-  <div id="successModal" class="modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3>Success</h3>
-      </div>
-      <div class="modal-body">
-        <p>Referral successfully forwarded to physician.</p>
-      </div>
-      <div class="modal-footer">
-        <button id="closeSuccessModal" class="btn maybe" style="background-color: rgb(46, 128, 223);">OK</button>
-      </div>
-    </div>
-  </div>
-  
+                    <div>
+                        <h3>Medical Certificates</h3>
+                        <p>Click a row to preview and print the certificate.</p>
+                    </div>
+                </div>
+
+                <div class="issued-table-wrap">
+                    <table id="medcert-history-table" class="issued-table">
+                        <thead>
+                            <tr>
+                                <th>Control Number</th>
+                                <th>Issuance Date</th>
+                                <th>Patient Name</th>
+                                <th>Issued By</th>
+                                <th>Generated By</th>
+                            </tr>
+                        </thead>
+
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="issued-record-card">
+                <div class="issued-card-header">
+                    <div class="issued-card-icon">
+                        <i class="bx bx-receipt"></i>
+                    </div>
+
+                    <div>
+                        <h3>Prescriptions</h3>
+                        <p>Click a row to view the prescription record.</p>
+                    </div>
+                </div>
+
+                <div class="issued-table-wrap">
+                    <table id="prescription-history-table" class="issued-table">
+                        <thead>
+                            <tr>
+                                <th>Prescription Date</th>
+                                <th>Patient Name</th>
+                                <th>Prescribed By</th>
+                                <th>Generated By</th>
+                            </tr>
+                        </thead>
+
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+</section>
+
 <div id="logoutModal" class="logout-modal">
     <div class="logout-modal-content">
         <div class="logout-modal-header">
             <h3>Confirm Logout</h3>
         </div>
+
         <div class="logout-modal-body">
             <p>Are you sure you want to logout?</p>
         </div>
+
         <div class="logout-modal-footer">
             <button onclick="closeModal()" class="logout-cancel-btn">Cancel</button>
             <button onclick="proceedLogout()" class="logout-confirm-btn">Yes, Logout</button>
         </div>
     </div>
-</div>  
-
-	   </main>	
-</section>
+</div>
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
+    checkUserSession();
+    loadSidebarUserName();
+    setupIssuedRecords();
+    setupSearch();
+    setupUpdateReferrals();
+    setupSidebar();
+});
+
+function setupIssuedRecords() {
     const medcertTableBody = document.querySelector("#medcert-history-table tbody");
     const prescriptionTableBody = document.querySelector("#prescription-history-table tbody");
 
-    // Get patient_id from URL if present
     const urlParams = new URLSearchParams(window.location.search);
-    const patientId = urlParams.get('patient_id');
+    const patientId = urlParams.get("patient_id");
 
-    function formatDate(dateString) {
-        if (!dateString) return "N/A";
-        const date = new Date(dateString);
-        if (isNaN(date.getTime())) return dateString; // return raw if not a standard parseable string
-        const options = { year: 'numeric', month: 'long', day: 'numeric' };
-        return date.toLocaleDateString('en-US', options);
+    if (!patientId) {
+        showMessageInTable(medcertTableBody, 5, "No patient selected.");
+        showMessageInTable(prescriptionTableBody, 4, "No patient selected.");
+        return;
     }
 
-    function showMessageInTable(tbody, colspan, message) {
-        tbody.innerHTML = `<tr><td colspan="${colspan}" style="padding:18px 10px;">${message}</td></tr>`;
-    }
+    fetch(`php/fetch_issued_records.php?patient_id=${encodeURIComponent(patientId)}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                console.error(data.error);
 
-    function fetchIssuedRecords() {
-        if (!patientId) {
-            showMessageInTable(medcertTableBody, 5, "No patient selected.");
-            showMessageInTable(prescriptionTableBody, 4, "No patient selected.");
-            return;
-        }
-
-        fetch(`php/fetch_issued_records.php?patient_id=${encodeURIComponent(patientId)}`)
-            .then(response => response.json())
-            .then(data => {
-                if (data.error) {
-                    console.error(data.error);
-                    showMessageInTable(medcertTableBody, 5, "Error fetching medical certificates.");
-                    showMessageInTable(prescriptionTableBody, 4, "Error fetching prescriptions.");
-                    return;
-                }
-
-                // Populate medical certificates
-                const medcerts = data.medical_certificates || [];
-                medcertTableBody.innerHTML = "";
-                if (medcerts.length === 0) {
-                    showMessageInTable(medcertTableBody, 5, "No medical certificates found.");
-                } else {
-                    medcerts.forEach(mc => {
-                        const tr = document.createElement("tr");
-                        tr.innerHTML = `
-                            <td style="padding: 18px 10px;">${mc.control_number || 'N/A'}</td>
-                            <td>${formatDate(mc.issuance_date)}</td>
-                            <td>${mc.patient_name || 'N/A'}</td>
-                            <td>${mc.issued_by || 'N/A'}</td>
-                            <td>${mc.prepared_by || 'N/A'}</td>
-                        `;
-
-        // 🔹 Add click event for redirecting to the prescription view page
-        tr.addEventListener("click", () => {
-            if (mc.medcert_id) {
-                window.location.href = `viewMedCert?medcert_id=${mc.medcert_id}`;
-            } else {
-                console.error("No consultation_id found for this record");
+                showMessageInTable(medcertTableBody, 5, "Error fetching medical certificates.");
+                showMessageInTable(prescriptionTableBody, 4, "Error fetching prescriptions.");
+                return;
             }
+
+            renderMedicalCertificates(medcertTableBody, data.medical_certificates || []);
+            renderPrescriptions(prescriptionTableBody, data.prescriptions || []);
+
+            const searchInput = document.getElementById("searchInput");
+
+            if (searchInput && searchInput.value.trim()) {
+                filterIssuedTables(searchInput.value);
+            }
+        })
+        .catch(error => {
+            console.error("Fetch issued records error:", error);
+
+            showMessageInTable(medcertTableBody, 5, "Error fetching medical certificates.");
+            showMessageInTable(prescriptionTableBody, 4, "Error fetching prescriptions.");
         });
+}
 
-        // 🔹 Optional: make row visually clickable (cursor + hover effect)
-        tr.style.cursor = "pointer";
-        tr.addEventListener("mouseover", () => tr.style.backgroundColor = "#f8f9fa");
-        tr.addEventListener("mouseout", () => tr.style.backgroundColor = "");
+function renderMedicalCertificates(tableBody, records) {
+    tableBody.innerHTML = "";
 
-                        medcertTableBody.appendChild(tr);
-                    });
-                }
+    if (!records.length) {
+        showMessageInTable(tableBody, 5, "No medical certificates found.");
+        return;
+    }
 
-// Populate prescriptions 
-const prescriptions = data.prescriptions || [];
-prescriptionTableBody.innerHTML = "";
+    records.forEach(record => {
+        const row = document.createElement("tr");
+        row.className = "issued-clickable-row";
 
-if (prescriptions.length === 0) {
-    showMessageInTable(prescriptionTableBody, 4, "No prescriptions found.");
-} else {
-    prescriptions.forEach(p => {
-        const tr = document.createElement("tr");
-
-        tr.innerHTML = `
-            <td style="padding: 18px 10px;">${formatDate(p.issuance_date)}</td>
-            <td>${p.patient_name || 'N/A'}</td>
-            <td>${p.prescribed_by || 'N/A'}</td>
-            <td>${p.generated_by || 'N/A'}</td>
+        row.innerHTML = `
+            <td data-label="Control Number">${escapeHtml(record.control_number || "N/A")}</td>
+            <td data-label="Issuance Date">${formatDate(record.issuance_date)}</td>
+            <td data-label="Patient Name">${escapeHtml(record.patient_name || "N/A")}</td>
+            <td data-label="Issued By">${escapeHtml(record.issued_by || "N/A")}</td>
+            <td data-label="Generated By">${escapeHtml(record.prepared_by || "N/A")}</td>
         `;
 
-        // 🔹 Add click event for redirecting to the prescription view page
-        tr.addEventListener("click", () => {
-            if (p.consultation_id) {
-                window.location.href = `viewPrescription?consultation_id=${p.consultation_id}`;
+        row.addEventListener("click", function () {
+            if (record.medcert_id) {
+                window.location.href = `viewMedCert?medcert_id=${record.medcert_id}`;
             } else {
-                console.error("No consultation_id found for this record");
+                console.error("No medcert_id found for this record");
             }
         });
 
-        // 🔹 Optional: make row visually clickable (cursor + hover effect)
-        tr.style.cursor = "pointer";
-        tr.addEventListener("mouseover", () => tr.style.backgroundColor = "#f8f9fa");
-        tr.addEventListener("mouseout", () => tr.style.backgroundColor = "");
-
-        prescriptionTableBody.appendChild(tr);
+        tableBody.appendChild(row);
     });
 }
 
-            })
-            .catch(err => {
-                console.error("Fetch issued records error:", err);
-                showMessageInTable(medcertTableBody, 5, "Error fetching medical certificates.");
-                showMessageInTable(prescriptionTableBody, 4, "Error fetching prescriptions.");
-            });
+function renderPrescriptions(tableBody, records) {
+    tableBody.innerHTML = "";
+
+    if (!records.length) {
+        showMessageInTable(tableBody, 4, "No prescriptions found.");
+        return;
     }
 
-    fetchIssuedRecords();
+    records.forEach(record => {
+        const row = document.createElement("tr");
+        row.className = "issued-clickable-row";
 
-    // Updated search: search both tables' tbody rows for control number / patient name
-    function searchTables(searchTerm) {
-        const term = searchTerm.trim().toLowerCase();
-        const tables = [
-            document.querySelector("#medcert-history-table tbody"),
-            document.querySelector("#prescription-history-table tbody")
-        ];
+        row.innerHTML = `
+            <td data-label="Prescription Date">${formatDate(record.issuance_date)}</td>
+            <td data-label="Patient Name">${escapeHtml(record.patient_name || "N/A")}</td>
+            <td data-label="Prescribed By">${escapeHtml(record.prescribed_by || "N/A")}</td>
+            <td data-label="Generated By">${escapeHtml(record.generated_by || "N/A")}</td>
+        `;
 
-        tables.forEach(tbody => {
-            if (!tbody) return;
-            const rows = Array.from(tbody.querySelectorAll("tr"));
-            rows.forEach(row => {
-                const cellsText = Array.from(row.cells).map(c => c.textContent.toLowerCase()).join(' ');
-                row.style.display = cellsText.includes(term) ? '' : 'none';
-            });
-        });
-    }
-
-    const searchForm = document.getElementById('searchForm');
-    const searchInput = document.getElementById('searchInput');
-
-    if (searchForm) {
-        searchForm.addEventListener('submit', function (e) {
-            e.preventDefault();
-            searchTables(searchInput.value);
-        });
-    }
-
-    if (searchInput) {
-        searchInput.addEventListener('keyup', function () {
-            searchTables(this.value);
-        });
-    }
-
-});
-
-document.getElementById('searchForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-    const table = document.getElementById('history-table');
-    const rows = table.getElementsByTagName('tr');
-
-    for (let i = 1; i < rows.length; i++) { // Start from 1 to skip header row
-        const row = rows[i];
-        const referralId = row.cells[0].textContent.toLowerCase();
-        const patientName = row.cells[2].textContent.toLowerCase();
-        
-        if (referralId.includes(searchTerm) || patientName.includes(searchTerm)) {
-            row.style.display = '';
-        } else {
-            row.style.display = 'none';
-        }
-    }
-});
-
-// Add event listener for real-time search
-document.getElementById('searchInput').addEventListener('keyup', function() {
-    const searchTerm = this.value.toLowerCase();
-    const table = document.getElementById('history-table');
-    const rows = table.getElementsByTagName('tr');
-
-    for (let i = 1; i < rows.length; i++) {
-        const row = rows[i];
-        const referralId = row.cells[0].textContent.toLowerCase();
-        const patientName = row.cells[2].textContent.toLowerCase();
-        
-        if (referralId.includes(searchTerm) || patientName.includes(searchTerm)) {
-            row.style.display = '';
-        } else {
-            row.style.display = 'none';
-        }
-    }
-});
-fetch('php/getUserName.php')
-    .then(response => response.json())
-    .then(data => {
-        const fullName = data.full_name || 'Nurse User';
-        const sidebarName = document.getElementById('sidebarUserName');
-        if (sidebarName) sidebarName.textContent = fullName;
-    })
-    .catch(error => {
-        console.error('Error fetching user name:', error);
-        const sidebarName = document.getElementById('sidebarUserName');
-        if (sidebarName) sidebarName.textContent = 'Nurse User';
-    }); 
-    function confirmLogout() {
-            document.getElementById('logoutModal').style.display = 'block';
-            return false; // Prevent the default link behavior
-        }
-        
-        function closeModal() {
-            document.getElementById('logoutModal').style.display = 'none';
-        }
-        
-        function proceedLogout() {
-            window.location.href='../ADMIN/php/logout'; 
-        }
-        
-        // Close modal when clicking outside
-        window.onclick = function(event) {
-            const modal = document.getElementById('logoutModal');
-            if (event.target == modal) {
-                closeModal();
+        row.addEventListener("click", function () {
+            if (record.consultation_id) {
+                window.location.href = `viewPrescription?consultation_id=${record.consultation_id}`;
+            } else {
+                console.error("No consultation_id found for this record");
             }
-        } 
-              // Check if user is logged in
-              fetch('php/getUserId.php')
+        });
+
+        tableBody.appendChild(row);
+    });
+}
+
+function setupSearch() {
+    const searchForm = document.getElementById("searchForm");
+    const searchInput = document.getElementById("searchInput");
+
+    if (!searchForm || !searchInput) {
+        return;
+    }
+
+    searchForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+        filterIssuedTables(searchInput.value);
+    });
+
+    searchInput.addEventListener("input", function () {
+        filterIssuedTables(searchInput.value);
+    });
+}
+
+function filterIssuedTables(searchValue) {
+    const searchTerm = searchValue.trim().toLowerCase();
+
+    filterTableRows(
+        document.querySelector("#medcert-history-table tbody"),
+        searchTerm,
+        5,
+        "No matching medical certificates found."
+    );
+
+    filterTableRows(
+        document.querySelector("#prescription-history-table tbody"),
+        searchTerm,
+        4,
+        "No matching prescriptions found."
+    );
+}
+
+function filterTableRows(tableBody, searchTerm, colspan, noMatchMessage) {
+    if (!tableBody) {
+        return;
+    }
+
+    const oldNoMatchRow = tableBody.querySelector(".no-match-row");
+
+    if (oldNoMatchRow) {
+        oldNoMatchRow.remove();
+    }
+
+    const rows = Array.from(tableBody.querySelectorAll("tr:not(.empty-row)"));
+
+    if (!rows.length) {
+        return;
+    }
+
+    let visibleCount = 0;
+
+    rows.forEach(row => {
+        const rowText = row.textContent.toLowerCase();
+        const shouldShow = rowText.includes(searchTerm);
+
+        row.style.display = shouldShow ? "" : "none";
+
+        if (shouldShow) {
+            visibleCount++;
+        }
+    });
+
+    if (searchTerm && visibleCount === 0) {
+        const row = document.createElement("tr");
+        row.className = "empty-row no-match-row";
+
+        row.innerHTML = `
+            <td colspan="${colspan}">
+                ${escapeHtml(noMatchMessage)}
+            </td>
+        `;
+
+        tableBody.appendChild(row);
+    }
+}
+
+function showMessageInTable(tableBody, colspan, message) {
+    if (!tableBody) {
+        return;
+    }
+
+    tableBody.innerHTML = `
+        <tr class="empty-row">
+            <td colspan="${colspan}">
+                ${escapeHtml(message)}
+            </td>
+        </tr>
+    `;
+}
+
+function formatDate(dateString) {
+    if (!dateString) {
+        return "N/A";
+    }
+
+    const date = new Date(dateString);
+
+    if (Number.isNaN(date.getTime())) {
+        return dateString;
+    }
+
+    return date.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric"
+    });
+}
+
+function escapeHtml(value) {
+    return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
+
+function loadSidebarUserName() {
+    fetch("php/getUserName.php")
+        .then(response => response.json())
+        .then(data => {
+            const sidebarName = document.getElementById("sidebarUserName");
+
+            if (sidebarName) {
+                sidebarName.textContent = data.full_name || "Nurse User";
+            }
+        })
+        .catch(error => {
+            console.error("Error fetching user name:", error);
+
+            const sidebarName = document.getElementById("sidebarUserName");
+
+            if (sidebarName) {
+                sidebarName.textContent = "Nurse User";
+            }
+        });
+}
+
+function checkUserSession() {
+    fetch("php/getUserId.php")
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                window.location.href = "../auth/role";
+            }
+        })
+        .catch(error => {
+            console.error("Error checking session:", error);
+            window.location.href = "../auth/role";
+        });
+}
+
+function setupUpdateReferrals() {
+    const updateReferrals = document.getElementById("updateReferrals");
+
+    if (!updateReferrals) {
+        return;
+    }
+
+    updateReferrals.addEventListener("click", function (event) {
+        event.preventDefault();
+
+        fetch("php/update_referrals.php")
             .then(response => response.json())
             .then(data => {
-                if (data.error) {
-                    // User is not logged in, redirect to role selection page
-                    window.location.href='../auth/role';
-                }
+                console.log(data.message);
+                window.location.href = "pending";
             })
             .catch(error => {
-                console.error('Error checking session:', error);
-                window.location.href='../auth/role';
+                console.error("Error updating referrals:", error);
+                window.location.href = "pending";
             });
-</script>
+    });
+}
 
-<script>
-(function () {
-  const updateReferrals = document.getElementById('updateReferrals');
-  if (!updateReferrals) return;
+function setupSidebar() {
+    const sidebar = document.getElementById("sidebar");
+    const toggle = document.getElementById("sidebarToggle");
+    const overlay = document.getElementById("sidebarOverlay");
+    const MOBILE_BP = 768;
 
-  updateReferrals.addEventListener('click', function (event) {
-    event.preventDefault();
+    if (!sidebar || !toggle || !overlay) {
+        return;
+    }
 
-    fetch('php/update_referrals.php')
-      .then(response => response.json())
-      .then(data => {
-        console.log(data.message);
-        window.location.href = 'pending';
-      })
-      .catch(error => {
-        console.error('Error updating referrals:', error);
-        window.location.href = 'pending';
-      });
-  });
-})();
-</script>
+    function isMobile() {
+        return window.innerWidth <= MOBILE_BP;
+    }
 
-<script>
-(function () {
-  const sidebar = document.getElementById('sidebar');
-  const toggle = document.getElementById('sidebarToggle');
-  const overlay = document.getElementById('sidebarOverlay');
-  const MOBILE_BP = 768;
+    function closeMobileSidebar() {
+        sidebar.classList.remove("mobile-open");
+        overlay.classList.remove("active");
+        document.body.style.overflow = "";
+    }
 
-  function isMobile() {
-    return window.innerWidth <= MOBILE_BP;
-  }
+    toggle.addEventListener("click", function () {
+        if (isMobile()) {
+            const open = sidebar.classList.toggle("mobile-open");
 
-  function closeMobileSidebar() {
-    if (!sidebar || !overlay) return;
-    sidebar.classList.remove('mobile-open');
-    overlay.classList.remove('active');
-    document.body.style.overflow = '';
-  }
-
-  if (toggle && sidebar && overlay) {
-    toggle.addEventListener('click', function () {
-      if (isMobile()) {
-        const open = sidebar.classList.toggle('mobile-open');
-        overlay.classList.toggle('active', open);
-        document.body.style.overflow = open ? 'hidden' : '';
-      } else {
-        sidebar.classList.toggle('collapsed');
-      }
+            overlay.classList.toggle("active", open);
+            document.body.style.overflow = open ? "hidden" : "";
+        } else {
+            sidebar.classList.toggle("collapsed");
+        }
     });
 
-    overlay.addEventListener('click', closeMobileSidebar);
+    overlay.addEventListener("click", closeMobileSidebar);
 
-    window.addEventListener('resize', function () {
-      if (!isMobile()) {
-        closeMobileSidebar();
-      }
+    window.addEventListener("resize", function () {
+        if (!isMobile()) {
+            closeMobileSidebar();
+        }
     });
-  }
-})();
+}
+
+function confirmLogout() {
+    document.getElementById("logoutModal").style.display = "block";
+    return false;
+}
+
+function closeModal() {
+    document.getElementById("logoutModal").style.display = "none";
+}
+
+function proceedLogout() {
+    window.location.href = "../ADMIN/php/logout";
+}
+
+window.addEventListener("click", function (event) {
+    const modal = document.getElementById("logoutModal");
+
+    if (event.target === modal) {
+        closeModal();
+    }
+});
 </script>
-	<script src="js/script.js"></script>
-    <script src="js/history.js"></script>
+
 </body>
 </html>
-
-

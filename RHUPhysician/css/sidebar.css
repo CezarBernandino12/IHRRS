@@ -62,7 +62,6 @@ body.dark {
 /* ─── Body & Layout ─────────────────────────────────────── */
 body {
   font-family: var(--font-main);
-  background: url(img/body.png);
   color: var(--text-primary);
   overflow-x: hidden;
   min-height: 100vh;

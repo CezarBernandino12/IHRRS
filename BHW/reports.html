@@ -118,7 +118,7 @@ fetch('php/getUserId.php')
 			  <a href="reportsPages/bhw_visit_report">
 				<li class="mrr">
 				  <div class="icon-container">
-					<img src="../img/report.png" alt="Visit Report" class="icon-img">
+					<i class="bx bx-notepad report-card-icon" aria-hidden="true"></i>
 				  </div>
 				  <div class="text">
 					<h3>Patient Visits Summary Report</h3>
@@ -129,7 +129,7 @@ fetch('php/getUserId.php')
 			  <a href="reportsPages/bhw_medicine_dispensation">
 				<li class="mrr">
 				  <div class="icon-container">
-					<img src="../img/meds.png" alt="Medicines" class="icon-img">
+					<i class="bx bx-plus-medical report-card-icon" aria-hidden="true"></i>
 				  </div>
 				  <div class="text">
 					<h3>Medicine Dispensation Report</h3>
@@ -140,7 +140,7 @@ fetch('php/getUserId.php')
 			  <a href="reportsPages/bhw_referral_report">
 				<li class="mrr">
 				  <div class="icon-container">
-					<img src="../img/referred.png" alt="Referrals" class="icon-img">
+					<i class="bx bx-transfer-alt report-card-icon" aria-hidden="true"></i>
 				  </div>
 				  <div class="text">
 					<h3>Referrals Report</h3>
@@ -155,7 +155,7 @@ fetch('php/getUserId.php')
 	<div id="myModal" class="modal">
 		<div class="modal-content">
 			<div class="modal-header">
-				<img src="../img/verify.png" alt="Checkmark" class="checkmark-image">
+				<div class="modal-icon modal-icon-success" aria-hidden="true"><i class="bx bx-check"></i></div>
 				<h3>Confirmation</h3>
 				<span class="close-btn" id="closeBtn">&times;</span>
 			</div>
@@ -252,15 +252,22 @@ window.onclick = function(event) {
 fetch('php/getUserName.php')
     .then(response => response.json())
     .then(data => {
+        const sidebarUserName = document.getElementById('sidebarUserName');
+        const userGreeting = document.getElementById('userGreeting');
         if (data.full_name) {
-            document.getElementById('userGreeting').textContent = `Hello, ${data.full_name}!`;
+            if (sidebarUserName) sidebarUserName.textContent = data.full_name;
+            if (userGreeting) userGreeting.textContent = `Hello, ${data.full_name}!`;
         } else {
-            document.getElementById('userGreeting').textContent = 'Hello, BHW!';
+            if (sidebarUserName) sidebarUserName.textContent = 'BHW User';
+            if (userGreeting) userGreeting.textContent = 'Hello, BHW!';
         }
     })
     .catch(error => {
         console.error('Error fetching user name:', error);
-        document.getElementById('userGreeting').textContent = 'Hello, BHW!';
+        const sidebarUserName = document.getElementById('sidebarUserName');
+        const userGreeting = document.getElementById('userGreeting');
+        if (sidebarUserName) sidebarUserName.textContent = 'BHW User';
+        if (userGreeting) userGreeting.textContent = 'Hello, BHW!';
     });
 </script>
 

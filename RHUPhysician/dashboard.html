@@ -5,8 +5,8 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="icon" href="../img/logo.png">
 	<link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
-	<link rel="stylesheet" href="css/dashstyle.css">
 	<link rel="stylesheet" href="css/referral.css">
+	<link rel="stylesheet" href="css/dashstyle.css">
 	<link rel="stylesheet" href="css/sidebar.css">
 	<link rel="stylesheet" href="css/logout.css">
 	<title>RHU Dashboard</title>
@@ -118,143 +118,127 @@
 			<div class="head-title">
 				<div class="left">
 					<h1>Dashboard</h1>
-					<ul class="breadcrumb">
-						<li><a href="#">Dashboard</a></li>
-						<li><i class="bx bx-chevron-right"></i></li>
-						<li><a class="active" href="#">Home</a></li>
-					</ul>
 				</div>
 			</div>
 
-
-    <div class="dashboard-layout">
-		<div class="progress-container">
-			<div class="progress-circle-container">
-				<div class="title">Pending Referrals From BHS</div>
-				<h4 class="date">Loading date...</h4>
-				<div class="progress-circle">
-					<svg width="180" height="180" viewBox="0 0 180 180">
-						<circle class="circle-background" cx="90" cy="90" r="67" stroke-width="16" /> 
-						<circle class="progress-ring" id="progress-ring-1" cx="90" cy="90" r="67"></circle>
-					</svg>
-					<div class="progress-text" id="progress-text-1">0</div>
-				</div>
-			</div>
-		</div>
-		
-		<div class="progress-container">
-			<div class="progress-circle-container">
-				<div class="title">Total Consultations Today </div>
-				<h4 class="date">Loading date...</h4>
-				<div class="progress-circle">
-					<svg width="180" height="180" viewBox="0 0 180 180">
-						<circle class="circle-background" cx="90" cy="90" r="67" stroke-width="16" /> 
-						<circle class="progress-ring" id="progress-ring-2" cx="90" cy="90" r="67"></circle>
-					</svg>
-					<div class="progress-text" id="progress-text-2">0</div>
-				</div>
-			</div>
-		</div>
-
-	
-		
-    </div>
-
-
-<br> <br>
-            
-
-
-		<div class="history-container">
-			<div class="referral-summary-card">
-				<div class="content">
-					<div class="title-section">
-						<h3>Forwarded by Nursing Attendants</h3>
-						<div class="date-display">
-							<i class="bx bx-calendar"></i>
-							<span id="currentDate"></span>
+			<div class="dashboard-layout">
+				<div class="progress-container">
+					<div class="progress-circle-container">
+						<div class="title">Pending Referrals From BHS</div>
+						<h4 class="date">Loading date...</h4>
+						<div class="progress-circle">
+							<svg width="180" height="180" viewBox="0 0 180 180">
+								<circle class="circle-background" cx="90" cy="90" r="67" stroke-width="16" /> 
+								<circle class="progress-ring" id="progress-ring-1" cx="90" cy="90" r="67"></circle>
+							</svg>
+							<div class="progress-text" id="progress-text-1">0</div>
 						</div>
 					</div>
-					<div class="summary-stats">
-						<div class="stat-item">
-							<i class="bx bx-user-check"></i>
-							<span class="stat-value" id="totalReferrals">0</span>
-							<span class="stat-label">Total</span>
-						</div>
-						<div class="stat-item">
-							<i class="bx bx-time"></i>
-							<span class="stat-value" id="pendingReferrals">0</span>
-							<span class="stat-label">Pending</span>
-						</div>
-						<div class="stat-item">
-							<i class="bx bx-check-circle"></i>
-							<span class="stat-value" id="completedReferrals">0</span>
-							<span class="stat-label">Completed</span>
+				</div>
+
+				<div class="progress-container">
+					<div class="progress-circle-container">
+						<div class="title">Total Consultations Today </div>
+						<h4 class="date">Loading date...</h4>
+						<div class="progress-circle">
+							<svg width="180" height="180" viewBox="0 0 180 180">
+								<circle class="circle-background" cx="90" cy="90" r="67" stroke-width="16" /> 
+								<circle class="progress-ring" id="progress-ring-2" cx="90" cy="90" r="67"></circle>
+							</svg>
+							<div class="progress-text" id="progress-text-2">0</div>
 						</div>
 					</div>
 				</div>
 			</div>
-			  
-			<div class="table-container">
-				<div class="table-header">
-					<div class="search-box">
-						<i class="bx bx-search"></i>
-						<input type="text" id="referralSearch" placeholder="Search...">
-					</div>
-					<div class="filter-options">
-						<select id="statusFilter">
-							<option value="all">All</option>
-							<option value="pending">Pending</option>
-							<option value="completed">Completed</option>
-							<option value="missed">Missed</option>
-						</select>
+
+			<div class="history-container">
+				<div class="referral-summary-card compact-summary-card">
+					<div class="content">
+						<div class="title-section">
+							<h3>Forwarded by Nursing Attendants</h3>
+							<div class="date-display">
+								<i class="bx bx-calendar"></i>
+								<span id="currentDate"></span>
+							</div>
+						</div>
+						<div class="summary-stats">
+							<div class="stat-item">
+								<i class="bx bx-user-check"></i>
+								<span class="stat-value" id="totalReferrals">0</span>
+								<span class="stat-label">Total</span>
+							</div>
+							<div class="stat-item">
+								<i class="bx bx-time"></i>
+								<span class="stat-value" id="pendingReferrals">0</span>
+								<span class="stat-label">Pending</span>
+							</div>
+							<div class="stat-item">
+								<i class="bx bx-check-circle"></i>
+								<span class="stat-value" id="completedReferrals">0</span>
+								<span class="stat-label">Completed</span>
+							</div>
+						</div>
 					</div>
 				</div>
 
-				<table id="history-table" class="status">
-					<thead>
-						<tr>
-							<th>ID</th>
-							<th>Date</th>
-							<th>Patient</th>
-							<th>From</th>
-							<th>Status</th>
-							<th></th>
-						</tr>
-					</thead>
-					<tbody>
-					</tbody>
-				</table>
-				
-				<div class="pagination" id="pagination">
-					<a href="#" class="prev"><i class="bx bx-chevron-left"></i></a>
-					<div class="page-numbers">
-						<a href="#" class="page-number active">1</a>
-						<a href="#" class="page-number">2</a>
-						<a href="#" class="page-number">3</a>
+				<div class="table-container">
+					<div class="table-header">
+						<div class="search-box">
+							<i class="bx bx-search"></i>
+							<input type="text" id="referralSearch" placeholder="Search...">
+						</div>
+						<div class="filter-options">
+							<select id="statusFilter">
+								<option value="all">All</option>
+								<option value="pending">Pending</option>
+								<option value="completed">Completed</option>
+								<option value="missed">Missed</option>
+							</select>
+						</div>
 					</div>
-					<a href="#" class="next"><i class="bx bx-chevron-right"></i></a>
+
+					<table id="history-table" class="status">
+						<thead>
+							<tr>
+								<th>ID</th>
+								<th>Date</th>
+								<th>Patient</th>
+								<th>From</th>
+								<th>Status</th>
+								<th></th>
+							</tr>
+						</thead>
+						<tbody>
+						</tbody>
+					</table>
+
+					<div class="pagination" id="pagination">
+						<a href="#" class="prev"><i class="bx bx-chevron-left"></i></a>
+						<div class="page-numbers">
+							<a href="#" class="page-number active">1</a>
+							<a href="#" class="page-number">2</a>
+							<a href="#" class="page-number">3</a>
+						</div>
+						<a href="#" class="next"><i class="bx bx-chevron-right"></i></a>
+					</div>
 				</div>
 			</div>
-		</div>
-  
 
-<div id="logoutModal" class="logout-modal">
-    <div class="logout-modal-content">
-        <div class="logout-modal-header">
-            <h3>Confirm Logout</h3>
-        </div>
-        <div class="logout-modal-body">
-            <p>Are you sure you want to logout?</p>
-        </div>
-        <div class="logout-modal-footer">
-            <button onclick="closeModal()" class="logout-cancel-btn">Cancel</button>
-            <button onclick="proceedLogout()" class="logout-confirm-btn">Yes, Logout</button>
-        </div>
-    </div>
-</div>
-
-</main>
+			<div id="logoutModal" class="logout-modal">
+				<div class="logout-modal-content">
+					<div class="logout-modal-header">
+						<h3>Confirm Logout</h3>
+					</div>
+					<div class="logout-modal-body">
+						<p>Are you sure you want to logout?</p>
+					</div>
+					<div class="logout-modal-footer">
+						<button onclick="closeModal()" class="logout-cancel-btn">Cancel</button>
+						<button onclick="proceedLogout()" class="logout-confirm-btn">Yes, Logout</button>
+					</div>
+				</div>
+			</div>
+		</main>
 	</section>
 
 <script>

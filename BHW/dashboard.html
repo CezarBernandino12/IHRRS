@@ -115,309 +115,292 @@
 				</div>
 			</div>
 
+			<div class="dashboard-layout">
+				<section class="guidelines-card" aria-label="Tagalog guidelines">
+					<div class="guidelines-header">
+						<i class="bx bx-info-circle" aria-hidden="true"></i>
+						<div>
+							<h2>Gabay sa Paggamit</h2>
+							<p>Simple steps para mas madaling gamitin ang dashboard.</p>
+						</div>
+					</div>
 
-    <div class="dashboard-layout">
-	<!-- First Progress Circle -->
-<div class="progress-container"> 
-	<div class="progress-circle-container">
-	  <div class="title">Patient Visited Today</div>
-	  <p class="date">Loading date...</p>
-	  <div class="progress-circle">
-		<svg width="180" height="180" viewBox="0 0 180 180">
-		  <circle class="circle-background" cx="90" cy="90" r="67" stroke-width="16" />
-		  <circle class="progress-ring" id="progress-ring-1" cx="90" cy="90" r="67" stroke-width="16" />
-		</svg>
-		<div class="progress-text" id="progress-text" hidden>0</div>
-		<div class="progress-text" id="progress-text-1">0</div>
-	  </div>
-	</div>
-  </div>
-  
-  <!-- Second Progress Circle -->
-  <div class="progress-container"> 
-	<div class="progress-circle-container">
-	  <div class="title">Pending referrals to RHU</div>
-	  <p class="date">Loading date...</p>
-	  <div class="progress-circle">
-		<svg width="180" height="180" viewBox="0 0 180 180">
-		  <circle class="circle-background" cx="90" cy="90" r="67" stroke-width="16" />
-		  <circle class="progress-ring" id="progress-ring-2" cx="90" cy="90" r="67" stroke-width="16" />
-		</svg>
-		<div class="progress-text" id="progress-text-2">0</div>
-	  </div>
-	</div>
-  </div>
-  
-		  
-		  
-		  
-		<ul class="box-info">
-			<li class="mrr">
-				<div class="icon-container">
-					<img src="../img/add.png" alt="Add Record" class="icon-img">
+					<ul class="guidelines-list">
+						<li>I-click ang <strong>Add Individual Treatment Record</strong> kung gagawa ng bagong record.</li>
+						<li>I-click ang <strong>View Patient Record</strong> para maghanap o tumingin ng record ng pasyente.</li>
+						<li>I-click ang <strong>View Refferal History</strong> para makita ang mga referral na nagawa.</li>
+						<li>Gamitin ang search bar sa taas para mabilis mahanap ang pangalan ng pasyente.</li>
+					</ul>
+				</section>
+
+				<ul class="box-info">
+					<li class="mrr">
+						<div class="icon-container">
+							<i class="bx bx-plus-medical dashboard-card-icon" aria-hidden="true"></i>
+						</div>
+						<a href="#" id="openModal">
+							<div class="text">
+								<h3>Add Individual Treatment Record</h3>
+							</div>
+						</a>
+					</li>
+
+					<li class="mrr">
+						<div class="icon-container">
+							<i class="bx bx-folder-open dashboard-card-icon" aria-hidden="true"></i>
+						</div>
+						<div class="text">
+							<a href="searchPatient">
+								<h3>View Patient Record</h3>
+							</a>
+						</div>
+					</li>
+
+					<li class="mrr">
+						<div class="icon-container">
+							<i class="bx bx-history dashboard-card-icon" aria-hidden="true"></i>
+						</div>
+						<div class="text">
+							<a href="History">
+								<h3>View Refferal History</h3>
+							</a>
+						</div>
+					</li>
+				</ul>
+
+				<!-- First Progress Circle -->
+				<div class="progress-container">
+					<div class="progress-circle-container">
+						<div class="title">Patient Visited Today</div>
+						<p class="date">Loading date...</p>
+						<div class="progress-circle">
+							<svg width="180" height="180" viewBox="0 0 180 180">
+								<circle class="circle-background" cx="90" cy="90" r="67" stroke-width="16" />
+								<circle class="progress-ring" id="progress-ring-1" cx="90" cy="90" r="67" stroke-width="16" />
+							</svg>
+							<div class="progress-text" id="progress-text" hidden>0</div>
+							<div class="progress-text" id="progress-text-1">0</div>
+						</div>
+					</div>
 				</div>
-			<a href="#" id="openModal">
-				<div class="text">
-						<h3>Add Individual Treatment Record</h3>
+
+				<!-- Second Progress Circle -->
+				<div class="progress-container">
+					<div class="progress-circle-container">
+						<div class="title">Pending referrals to RHU</div>
+						<p class="date">Loading date...</p>
+						<div class="progress-circle">
+							<svg width="180" height="180" viewBox="0 0 180 180">
+								<circle class="circle-background" cx="90" cy="90" r="67" stroke-width="16" />
+								<circle class="progress-ring" id="progress-ring-2" cx="90" cy="90" r="67" stroke-width="16" />
+							</svg>
+							<div class="progress-text" id="progress-text-2">0</div>
+						</div>
+					</div>
 				</div>
-			</a>
-			</li>    
+			</div>
 
-			<li class="mrr">
-				<div class="icon-container">
-					<img src="../img/record.png" alt="Add Record" class="icon-img">
+			<script>
+			function confirmLogout() {
+				document.getElementById('logoutModal').style.display = 'block';
+				return false;
+			}
+
+			function closeModal() {
+				document.getElementById('logoutModal').style.display = 'none';
+			}
+
+			function proceedLogout() {
+				window.location.href='../ADMIN/php/logout';
+			}
+
+			window.onclick = function(event) {
+				const modal = document.getElementById('logoutModal');
+				if (event.target == modal) {
+					closeModal();
+				}
+			}
+			</script>
+
+			<div id="myModal" class="modal" aria-hidden="true">
+				<div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="confirmationTitle">
+					<button type="button" class="close-btn" id="closeBtn" aria-label="Close confirmation modal">
+						<i class="bx bx-x"></i>
+					</button>
+
+					<div class="modal-header">
+						<div class="modal-icon" aria-hidden="true">
+							<i class="bx bx-check"></i>
+						</div>
+						<h3 id="confirmationTitle">Confirmation</h3>
+					</div>
+
+					<div class="modal-body">
+						<p>Does the patient have an existing record?</p>
+					</div>
+
+					<div class="modal-footer">
+						<button id="noButton" class="btn no" type="button">No</button>
+						<button id="yesButton" class="btn yes" type="button">Yes</button>
+					</div>
 				</div>
-				<div class="text">
-					<a href="searchPatient">
-						<h3>View Patient Record</h3>
-					</a>
+			</div>
+
+			<div id="logoutModal" class="logout-modal">
+				<div class="logout-modal-content">
+					<div class="logout-modal-header">
+						<h3>Confirm Logout</h3>
+					</div>
+					<div class="logout-modal-body">
+						<p>Are you sure you want to logout?</p>
+					</div>
+					<div class="logout-modal-footer">
+						<button onclick="closeModal()" class="logout-cancel-btn">Cancel</button>
+						<button onclick="proceedLogout()" class="logout-confirm-btn">Yes, Logout</button>
+					</div>
 				</div>
-			</li>    
-
-			<li class="mrr"> 
-				<div class="icon-container">
-					<img src="../img/history.png" alt="Add Record" class="icon-img">
-				</div>
-				<div class="text">
-					<a href="History">
-						<h3>View Refferal History</h3>
-					</a>
-				</div>
-			</li>    
-		</ul>		
-		
-    </div>
-
-	
-	<script>
-	function confirmLogout() {
-		document.getElementById('logoutModal').style.display = 'block';
-		return false;
-	}
-	
-	function closeModal() {
-		document.getElementById('logoutModal').style.display = 'none';
-	}
-	
-	function proceedLogout() {
-		 window.location.href='../ADMIN/php/logout';
-	}
-	
-	window.onclick = function(event) {
-		const modal = document.getElementById('logoutModal');
-		if (event.target == modal) {
-			closeModal();
-		}
-	}
-
-	</script>
-
-
-
-<div id="myModal" class="modal">
-	<div class="modal-content">
-		<div class="modal-header">
-			<img src="../img/verify.png" alt="Checkmark" class="checkmark-image">
-			<h3>Confirmation</h3>
-			<span class="close-btn" id="closeBtn">&times;</span>
-		</div>
-		<div class="modal-body">
-			<p>Does the patient have an existing record?</p>
-		</div>
-		
-		<div class="modal-footer">
-			<button id="noButton" class="btn no">No</button>
-			<button id="yesButton" class="btn yes">Yes</button>
-		</div>
-	</div>
-</div>
-
-<div id="logoutModal" class="logout-modal">
-    <div class="logout-modal-content">
-        <div class="logout-modal-header">
-            <h3>Confirm Logout</h3>
-        </div>
-        <div class="logout-modal-body">
-            <p>Are you sure you want to logout?</p>
-        </div>
-        <div class="logout-modal-footer">
-            <button onclick="closeModal()" class="logout-cancel-btn">Cancel</button>
-            <button onclick="proceedLogout()" class="logout-confirm-btn">Yes, Logout</button>
-        </div>
-    </div>
-</div>
-
-	</main>	
-</section>
-
+			</div>
+		</main>
+	</section>
 
 <script>
 	document.addEventListener("DOMContentLoaded", () => {
-  const today = new Date().toISOString().split("T")[0];
-  const url = `php/fetch_dashboard_stats.php?date=${today}`;
+		const today = new Date().toISOString().split("T")[0];
+		const url = `php/fetch_dashboard_stats.php?date=${today}`;
 
-  const formattedDate = new Date(today).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  });
+		const formattedDate = new Date(today).toLocaleDateString('en-US', {
+			year: 'numeric',
+			month: 'long',
+			day: 'numeric'
+		});
 
-  document.querySelectorAll(".date").forEach(el => el.textContent = formattedDate);
+		document.querySelectorAll(".date").forEach(el => el.textContent = formattedDate);
 
-  fetch(url)
-    .then(response => response.json())
-    .then(data => {
-      console.log("Dashboard Data:", data);
+		fetch(url)
+			.then(response => response.json())
+			.then(data => {
+				console.log("Dashboard Data:", data);
 
-      updateProgress("progress-ring-1", "progress-text-1", data.visits_today, 100);
-      updateProgress("progress-ring-2", "progress-text-2", data.pending_referrals, 100);
-    })
-    .catch(error => console.error("Error loading dashboard data:", error));
-});
+				updateProgress("progress-ring-1", "progress-text-1", data.visits_today, 100);
+				updateProgress("progress-ring-2", "progress-text-2", data.pending_referrals, 100);
+			})
+			.catch(error => console.error("Error loading dashboard data:", error));
+	});
 
-function updateProgress(ringId, textId, value, max = 100) {
-  const radius = 67;
-  const circumference = 2 * Math.PI * radius;
-  const percent = Math.min(value / max, 1);
-  const offset = circumference * (1 - percent);
+	function updateProgress(ringId, textId, value, max = 100) {
+		const radius = 67;
+		const circumference = 2 * Math.PI * radius;
+		const percent = Math.min(value / max, 1);
+		const offset = circumference * (1 - percent);
 
-  const ring = document.getElementById(ringId);
-  const text = document.getElementById(textId);
+		const ring = document.getElementById(ringId);
+		const text = document.getElementById(textId);
 
-  ring.style.strokeDasharray = `${circumference}`;
-  ring.style.strokeDashoffset = `${offset}`;
-  text.textContent = value;
-}
-fetch('php/getUserName.php')
-    .then(response => response.json())
-    .then(data => {
-        if (data.full_name) {
-            document.getElementById('userGreeting').textContent = `Hello, ${data.full_name}!`;
-        } else {
-            document.getElementById('userGreeting').textContent = 'Hello, BHW!';
-        }
-    })
-    .catch(error => {
-        console.error('Error fetching user name:', error);
-        document.getElementById('userGreeting').textContent = 'Hello, BHW!';
-    });
-		
-fetch('php/getUserId.php')
-		  .then(response => response.json())
-		  .then(data => {
-		      if (data.error) {
-		          window.location.href='../auth/role';
-		      } else {
-		          if (sessionStorage.getItem('showPendingReset')) {
-		              document.getElementById('pendingResetNotification').style.display = 'flex';
-		              sessionStorage.removeItem('showPendingReset');
-		          }
-		      }
-		  })
-		  .catch(error => {
-		      console.error('Error checking session:', error);
-		      window.location.href='../auth/role';
-		  });
+		ring.style.strokeDasharray = `${circumference}`;
+		ring.style.strokeDashoffset = `${offset}`;
+		text.textContent = value;
+	}
 
+	fetch('php/getUserName.php')
+		.then(response => response.json())
+		.then(data => {
+			const sidebarUserName = document.getElementById('sidebarUserName');
+			if (!sidebarUserName) return;
+
+			if (data.full_name) {
+				sidebarUserName.textContent = data.full_name;
+			} else {
+				sidebarUserName.textContent = 'BHW User';
+			}
+		})
+		.catch(error => {
+			console.error('Error fetching user name:', error);
+			const sidebarUserName = document.getElementById('sidebarUserName');
+			if (sidebarUserName) {
+				sidebarUserName.textContent = 'BHW User';
+			}
+		});
+
+	fetch('php/getUserId.php')
+		.then(response => response.json())
+		.then(data => {
+			if (data.error) {
+				window.location.href='../auth/role';
+			} else {
+				if (sessionStorage.getItem('showPendingReset')) {
+					document.getElementById('pendingResetNotification').style.display = 'flex';
+					sessionStorage.removeItem('showPendingReset');
+				}
+			}
+		})
+		.catch(error => {
+			console.error('Error checking session:', error);
+			window.location.href='../auth/role';
+		});
 </script>
 
 <script>
 (function () {
-  const sidebar   = document.getElementById('sidebar');
-  const toggle    = document.getElementById('sidebarToggle');
-  const overlay   = document.getElementById('sidebarOverlay');
-  const MOBILE_BP = 768;
-  const LARGE_BP  = 1280;
- 
-  function isMobile() { return window.innerWidth <= MOBILE_BP; }
- 
-  function setDesktopState() {
-    sidebar.classList.remove('mobile-open');
-    overlay.classList.remove('active');
-    document.body.style.overflow = '';
-    // Let CSS handle collapsed via media query
-  }
- 
-  toggle.addEventListener('click', function () {
-    if (isMobile()) {
-      const open = sidebar.classList.toggle('mobile-open');
-      overlay.classList.toggle('active', open);
-      document.body.style.overflow = open ? 'hidden' : '';
-    } else {
-      sidebar.classList.toggle('collapsed');
-    }
-  });
- 
-  overlay.addEventListener('click', function () {
-    sidebar.classList.remove('mobile-open');
-    overlay.classList.remove('active');
-    document.body.style.overflow = '';
-  });
- 
-  window.addEventListener('resize', function () {
-    if (!isMobile()) { setDesktopState(); }
-  });
+	const sidebar = document.getElementById('sidebar');
+	const toggle = document.getElementById('sidebarToggle');
+	const overlay = document.getElementById('sidebarOverlay');
+	const MOBILE_BP = 768;
+
+	function isMobile() { return window.innerWidth <= MOBILE_BP; }
+
+	function setDesktopState() {
+		sidebar.classList.remove('mobile-open');
+		overlay.classList.remove('active');
+		document.body.style.overflow = '';
+	}
+
+	toggle.addEventListener('click', function () {
+		if (isMobile()) {
+			const open = sidebar.classList.toggle('mobile-open');
+			overlay.classList.toggle('active', open);
+			document.body.style.overflow = open ? 'hidden' : '';
+		} else {
+			sidebar.classList.toggle('collapsed');
+		}
+	});
+
+	overlay.addEventListener('click', function () {
+		sidebar.classList.remove('mobile-open');
+		overlay.classList.remove('active');
+		document.body.style.overflow = '';
+	});
+
+	window.addEventListener('resize', function () {
+		if (!isMobile()) { setDesktopState(); }
+	});
 })();
 
 document.addEventListener("DOMContentLoaded", () => {
-  const sidebar = document.getElementById("sidebar");
-  const sidebarToggle = document.getElementById("sidebarToggle");
-  const sidebarOverlay = document.getElementById("sidebarOverlay");
+	const searchInput = document.getElementById("patientSearch");
+	const searchButton = document.getElementById("searchButton");
 
-  function applyResponsiveSidebar() {
-    if (window.innerWidth <= 1024) {
-      sidebar.classList.add("hide");
-    } else {
-      sidebar.classList.remove("hide");
-    }
-  }
+	if (searchInput) {
+		searchInput.addEventListener("keypress", function (event) {
+			if (event.key === "Enter") {
+				event.preventDefault();
+				searchButton.click();
+			}
+		});
+	}
 
-  function toggleSidebar() {
-    sidebar.classList.toggle("hide");
-    if (!sidebar.classList.contains("hide")) {
-      sidebarOverlay.style.display = "block";
-    } else {
-      sidebarOverlay.style.display = "none";
-    }
-  }
-
-  applyResponsiveSidebar();
-  window.addEventListener("resize", applyResponsiveSidebar);
-
-  if (sidebarToggle) {
-    sidebarToggle.addEventListener("click", toggleSidebar);
-  }
-
-  if (sidebarOverlay) {
-    sidebarOverlay.addEventListener("click", toggleSidebar);
-  }
-
-  const searchInput = document.getElementById("patientSearch");
-  const searchButton = document.getElementById("searchButton");
-
-  if (searchInput) {
-    searchInput.addEventListener("keypress", function (event) {
-      if (event.key === "Enter") {
-        event.preventDefault();
-        searchButton.click();
-      }
-    });
-  }
-
-  if (searchButton) {
-    searchButton.addEventListener("click", function () {
-      const searchQuery = searchInput.value.trim();
-      if (searchQuery) {
-        sessionStorage.setItem("searchQuery", searchQuery);
-        window.location.href = "searchPatient";
-      } else {
-        alert("Please enter a patient name to search.");
-      }
-    });
-  }
+	if (searchButton) {
+		searchButton.addEventListener("click", function () {
+			const searchQuery = searchInput.value.trim();
+			if (searchQuery) {
+				sessionStorage.setItem("searchQuery", searchQuery);
+				window.location.href = "searchPatient";
+			} else {
+				alert("Please enter a patient name to search.");
+			}
+		});
+	}
 });
 </script>
-
 
 	<script src="js/script.js"></script>
 </body>
