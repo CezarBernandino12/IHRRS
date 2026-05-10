@@ -703,7 +703,7 @@ $totalActions = array_sum(array_column($commonActions, 'count'));
 
 <script>
     // Fetch and display user name in the BHW-style sidebar footer
-    fetch('../php/getUserName.php')
+    fetch('../php/getUserName')
         .then(response => response.json())
         .then(data => {
             const sidebarNameEl = document.getElementById('sidebarUserName');
@@ -743,7 +743,7 @@ $totalActions = array_sum(array_column($commonActions, 'count'));
 
 // Populate signature block
 document.addEventListener('DOMContentLoaded', () => {
-  fetch('../php/getUserName.php')
+  fetch('../php/getUserName')
     .then(r => r.json())
     .then(data => {
       const fullName = (data && data.full_name) ? data.full_name : '';

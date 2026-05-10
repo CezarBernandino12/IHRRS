@@ -427,7 +427,7 @@ document.addEventListener("DOMContentLoaded", () => {
 </script>
 
 <script>
-fetch('getUserName.php')
+fetch('getUserName')
     .then(response => response.json())
     .then(data => {
         const sidebarNameEl = document.getElementById('sidebarUserName');

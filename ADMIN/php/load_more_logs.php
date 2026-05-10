@@ -1,5 +1,12 @@
 <?php
 require 'config.php';
+session_start();
+
+// Check if user is logged in and has admin role
+if (!isset($_SESSION['user_id']) || !isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
+    http_response_code(403);
+    exit();
+}
 
 $offset = isset($_GET['offset']) ? (int) $_GET['offset'] : 0;
 $limit = 10;

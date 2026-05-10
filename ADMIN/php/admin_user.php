@@ -656,7 +656,7 @@ document.addEventListener("DOMContentLoaded", () => {
 </script>
     <script>
         // Fetch and display user name in the BHW-style sidebar footer
-        fetch('getUserName.php')
+        fetch('getUserName')
             .then(response => response.json())
             .then(data => {
                 const sidebarNameEl = document.getElementById('sidebarUserName');

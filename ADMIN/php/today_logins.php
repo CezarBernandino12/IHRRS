@@ -265,7 +265,7 @@ window.onclick = function(event) {
 })();
 
 document.addEventListener("DOMContentLoaded", () => {
-  fetch('getUserName.php')
+  fetch('getUserName')
     .then(response => response.json())
     .then(data => {
       const sidebarNameEl = document.getElementById('sidebarUserName');
