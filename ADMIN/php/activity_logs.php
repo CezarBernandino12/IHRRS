@@ -180,12 +180,7 @@ $logs = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             <div class="logs-container">
 
-                <style>
-    h2 {
-      font-family: 'Poppins', sans-serif;
-    }
-  </style>
-
+                <div class="logs-filter-card">
                 <form method="GET" action="" class="logs-filter-grid" id="logFilterForm">
                     <div class="form-group">
                         <label for="user">Select User</label>
@@ -246,6 +241,14 @@ $logs = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <button type="submit" id="filterButton">Filter</button>
                     </div>
                 </form>
+                </div><!-- /.logs-filter-card -->
+
+                <div class="logs-table-card">
+                    <div class="logs-table-card-header">
+                        <i class="bx bx-history"></i>
+                        <h3>System Activity Logs</h3>
+                        <span class="logs-count">Total: <?= number_format($totalLogs) ?></span>
+                    </div>
 
                 <table class="logs-table" id="logTable">
                     <thead>
@@ -276,11 +279,7 @@ $logs = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         </button>
                     </div>
                 </div>
-
-                <!-- Total Logs Summary -->
-                <div class="logs-summary">
-                    <p>Total Logs: <strong><?= number_format($totalLogs) ?></strong></p>
-                </div>
+                </div><!-- /.logs-table-card -->
 
                 <div id="modalOverlay"></div>
 

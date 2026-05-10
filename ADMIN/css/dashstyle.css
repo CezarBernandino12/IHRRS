@@ -118,9 +118,9 @@ body {
 
 /* Hover effects for card */
 .card:hover {
-    transform: translateY(-8px);  
-    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.2);  
-    background-color: var(--light-blue); 
+    transform: translateY(-3px);
+    box-shadow: 0 6px 18px rgba(63,81,181,0.14);
+    background-color: #fff;
 }
 
 /* Card Heading Style */
@@ -213,7 +213,7 @@ body {
 }
 
 .card.hoverable:hover {
-    background-color: #f5f5f5;
+    background-color: #fff;
     cursor: pointer;
 }
 

@@ -176,18 +176,17 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             <div class="container">
 
-            
-
+                <div class="um-toolbar">
                 <button type="button" id="toggleFilterBtn" class="add-filter-btn">
-                    <span class="icon">+</span>
+                    <span class="icon"><i class="bx bx-filter-alt"></i></span>
                     <span class="label">Add a filter</span>
                 </button>
 
-                 <!-- Add the new "Add User" button -->
                 <button type="button" id="addUserBtn" class="add-user-btn">
-                    <span class="icon">+</span>
+                    <span class="icon"><i class="bx bx-user-plus"></i></span>
                     <span class="label">Add New User</span>
                 </button>
+                </div>
 
                 <form method="GET" action="" class="filter-form" id="filterForm" style="<?php echo (!empty($search) || !empty($roleFilter)) ? 'display: flex;' : 'display: none;'; ?>">
                     <input type="text" name="search" placeholder="Search by name or username" value="<?php echo htmlspecialchars($search); ?>">
@@ -200,23 +199,28 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     </select>
                 </form>
 
-                
+                <div class="um-card">
+                    <div class="um-card-header">
+                        <i class="bx bxs-group"></i>
+                        <h3>Registered Users</h3>
+                        <span class="um-count"><?php echo $totalUsers; ?> total</span>
+                    </div>
 
                 <table class="user-table">
                     <thead>
                     <tr>
-                        <th style="color: black;"><strong>FULL NAME</strong></th>
-                        <th style="color: black;"><strong>USERNAME</strong></th>
-                        <th style="color: black;"><strong>ROLE</strong></th>
-                        <th style="color: black;"><strong>ACCOUNT STATUS</strong></th>
-                        <th style="color: black;"><strong>ACTION</strong></th>
+                        <th>Full Name</th>
+                        <th>Username</th>
+                        <th>Role</th>
+                        <th>Account Status</th>
+                        <th>Action</th>
                     </tr>
                     </thead>
                     
                     <tbody id="userTableBody">
 
                     <?php foreach ($users as $user):  
-                        $formattedDate = date("F j, Y g:i A", strtotime($user['registration_date'])); // ✅ Convert to 12-hour format
+                        $formattedDate = date("F j, Y g:i A", strtotime($user['registration_date']));
                     ?>
                         <tr>
                             <td><?php echo htmlspecialchars($user['full_name']); ?></td>
@@ -224,16 +228,13 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <td><?php echo ucfirst(htmlspecialchars($user['role'])); ?></td>
                             <td class="status-cell">
                                 <?php if ($user['account_status'] === 'active'): ?>
-                                    <span class="status-indicator active">
                                     <span class="status-indicator active">Active</span>
-                                    </span>
                                 <?php else: ?>
-                                    <span class="status-indicator inactive">
                                     <span class="status-indicator inactive">Account Terminated</span>
-                                    </span>
                                 <?php endif; ?>
                             </td>
-                            <td style="display: flex; gap: 5px;">
+                            <td>
+                                <div class="action-buttons">
                                 <button class="view-user-btn" 
                                     data-user='<?php echo json_encode([
                                         'user_id' => $user['user_id'],
@@ -246,27 +247,27 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                         'address' => $user['address'] ?? 'N/A',
                                         'age' => $user['age'],
                                         'contact_number' => $user['contact_number'],
-                                        'registration_date' => $formattedDate // ✅ Correct format
+                                        'registration_date' => $formattedDate
                                     ]); ?>'>View</button>
 
-                                                            <!-- Only show if active -->
-    <?php if ($user['account_status'] === 'active'): ?>
-        <form method="POST" action="terminated_user">
-            <input type="hidden" name="user_id" value="<?php echo $user['user_id']; ?>">
-<button type="button" class="deactivate-btn" onclick="showTerminateModal(<?php echo $user['user_id']; ?>)">Terminate</button>
-        </form>
+                                <?php if ($user['account_status'] === 'active'): ?>
+                                    <form method="POST" action="terminated_user" style="display:inline;">
+                                        <input type="hidden" name="user_id" value="<?php echo $user['user_id']; ?>">
+                                        <button type="button" class="deactivate-btn" onclick="showTerminateModal(<?php echo $user['user_id']; ?>)">Terminate</button>
+                                    </form>
 
-        <button class="reset-password-btn <?php echo ($user['reset_status'] == 'pending') ? 'pending-reset' : ''; ?>"
-    onclick="showResetPasswordModal(<?php echo $user['user_id']; ?>)">
-    <?php echo ($user['reset_status'] == 'pending') ? 'Pending Reset' : 'Change Password'; ?>
-</button>
-    <?php endif; ?>
-</td>
-
+                                    <button class="reset-password-btn <?php echo ($user['reset_status'] == 'pending') ? 'pending-reset' : ''; ?>"
+                                        onclick="showResetPasswordModal(<?php echo $user['user_id']; ?>)">
+                                        <?php echo ($user['reset_status'] == 'pending') ? 'Pending Reset' : 'Change Password'; ?>
+                                    </button>
+                                <?php endif; ?>
+                                </div>
+                            </td>
                         </tr>
                     <?php endforeach; ?>
                     </tbody>
                 </table>
+                </div><!-- /.um-card -->
 
                 <div class="pagination-container">
                     <div class="pagination-info">

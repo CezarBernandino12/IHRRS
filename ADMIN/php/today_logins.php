@@ -157,36 +157,43 @@ foreach ($users as &$user) {
             </div>
         </nav>
         <main>		
-        <div class="pending-approvals-container">	
+        <div class="pending-approvals-container">
 
-    <h2>Users Logged In Today (<?php echo $today; ?>)</h2>
-<table>
-    <thead>
-        <tr>
-            <th>Full Name</th>
-            <th>Role</th>
-            <th>Designated Barangay</th>
-            <th>Login Time</th>
-            <th>Duration</th>
-            <th>Status</th>
-        </tr>
-    </thead>
-    <tbody>
-        <?php foreach ($users as $user): ?>
-            <tr>
-                <td><?php echo htmlspecialchars($user['full_name']); ?></td>
-                <td><?php echo $user['role_display']; ?></td>
-                <td><?php echo !empty($user['barangay']) ? htmlspecialchars($user['barangay']) : 'N/A'; ?></td>
-                <td><?php echo date("h:i A", strtotime($user['login_time'])); ?></td>
-                <td><?php echo $user['duration_formatted']; ?></td>
-                <td><?php echo $user['status_badge']; ?></td>
-            </tr>
-        <?php endforeach; ?>
-        <?php if (empty($users)): ?>
-            <tr><td colspan="6">No users currently online.</td></tr>
-        <?php endif; ?>
-    </tbody>
-</table>
+            <div class="logs-table-card">
+                <div class="logs-table-card-header">
+                    <i class="bx bx-log-in"></i>
+                    <h3>Users Logged In Today</h3>
+                    <span class="logs-count"><?php echo date('F j, Y', strtotime($today)); ?> &mdash; <?php echo count($users); ?> online</span>
+                </div>
+
+                <table class="logs-table">
+                    <thead>
+                        <tr>
+                            <th>Full Name</th>
+                            <th>Role</th>
+                            <th>Designated Barangay</th>
+                            <th>Login Time</th>
+                            <th>Duration</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($users as $user): ?>
+                            <tr>
+                                <td><?php echo htmlspecialchars($user['full_name']); ?></td>
+                                <td><?php echo $user['role_display']; ?></td>
+                                <td><?php echo !empty($user['barangay']) ? htmlspecialchars($user['barangay']) : 'N/A'; ?></td>
+                                <td><?php echo date('h:i A', strtotime($user['login_time'])); ?></td>
+                                <td><?php echo $user['duration_formatted']; ?></td>
+                                <td><span class=\"tl-online\">Online</span></td>
+                            </tr>
+                        <?php endforeach; ?>
+                        <?php if (empty($users)): ?>
+                            <tr><td colspan="6" style="text-align:center;color:#999;">No users currently online.</td></tr>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div><!-- /.logs-table-card -->
 
 
 <div id="logoutModal" class="logout-modal">
