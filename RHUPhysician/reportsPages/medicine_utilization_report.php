@@ -1310,93 +1310,95 @@ usort($patient_meds, function($a, $b) {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
+
+<!-- SheetJS for proper Excel export -->
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script>
+/**
+ * Converts an HTML <table> element into a 2D array of cell values,
+ * handling colspan/rowspan by filling spanned cells with the same value.
+ */
+function tableToAoA(table) {
+    const rows = table.querySelectorAll('tr');
+    const grid = [];
+    rows.forEach((tr, ri) => {
+        if (!grid[ri]) grid[ri] = [];
+        let ci = 0;
+        tr.querySelectorAll('th, td').forEach(cell => {
+            // Skip cells already filled by a previous rowspan
+            while (grid[ri][ci] !== undefined) ci++;
+            const text = cell.innerText.trim();
+            const colspan = parseInt(cell.getAttribute('colspan') || '1');
+            const rowspan = parseInt(cell.getAttribute('rowspan') || '1');
+            for (let r = 0; r < rowspan; r++) {
+                for (let c = 0; c < colspan; c++) {
+                    if (!grid[ri + r]) grid[ri + r] = [];
+                    grid[ri + r][ci + c] = (r === 0 && c === 0) ? text : text;
+                }
+            }
+            ci += colspan;
+        });
+    });
+    return grid;
+}
+
 function exportTableToExcel(tableID, filename = 'Medicine Utilization Report') {
     try {
-        // Create a temporary div with the same content as print
-        const tempDiv = document.createElement('div');
-        tempDiv.style.position = 'absolute';
-        tempDiv.style.left = '-9999px';
-        tempDiv.style.top = '-9999px';
-        
-        // Clone the print header
-        const printHeader = document.querySelector('.print-header');
-        if (printHeader) {
-            const headerClone = printHeader.cloneNode(true);
-            // Remove any scripts or interactive elements
-            const scripts = headerClone.querySelectorAll('script');
-            scripts.forEach(script => script.remove());
-            tempDiv.appendChild(headerClone);
+        const wb = XLSX.utils.book_new();
+
+        // ── Sheet 1: Patient Dispensation Table ──────────────────────────────
+        const mainTable = document.getElementById(tableID);
+        if (!mainTable) { alert('Patient table not found!'); return; }
+        const mainAoA = tableToAoA(mainTable);
+        const ws1 = XLSX.utils.aoa_to_sheet(mainAoA);
+        // Auto column widths based on max content length
+        const colWidths1 = mainAoA[0] ? mainAoA[0].map((_, ci) => ({
+            wch: Math.min(40, Math.max(10, ...mainAoA.map(r => String(r[ci] ?? '').length)))
+        })) : [];
+        ws1['!cols'] = colWidths1;
+        XLSX.utils.book_append_sheet(wb, ws1, 'Patient Records');
+
+        // ── Sheet 2: Summary (Report Details + Sex/Age table) ─────────────────
+        const summaryData = [];
+
+        // Report meta info
+        summaryData.push(['MEDICINE UTILIZATION REPORT']);
+        summaryData.push(['<?php echo addslashes(htmlspecialchars_decode($rhu)); ?>']);
+        summaryData.push(['Report Generated On', '<?php echo date('F j, Y g:i:s A'); ?>']);
+        summaryData.push(['Total Patients in Report', <?php echo count($rows); ?>]);
+        summaryData.push([]);
+
+        // Sex / Age group summary table
+        const summaryTable = document.querySelector('.summary-table2');
+        if (summaryTable) {
+            summaryData.push(['Sex & Age Group Summary']);
+            const summaryAoA = tableToAoA(summaryTable);
+            summaryAoA.forEach(row => summaryData.push(row));
         }
-        
-        // Clone the summary section
-        const summary = document.querySelector('.summary-container');
-        if ($summary) {
-            const summaryClone = summary.cloneNode(true);
-            const summaryScripts = summaryClone.querySelectorAll('script');
-            summaryScripts.forEach(script => script.remove());
-            tempDiv.appendChild(summaryClone);
-        }
-        
-        // Clone and modify the table to include signature column
-        const originalTable = document.getElementById(tableID);
-        if (!originalTable) {
-            alert('Table not found!');
-            return;
-        }
-        
-        const tableClone = originalTable.cloneNode(true);
-        
-        // Add signature header if not present
-        const headerRow = tableClone.querySelector('thead tr');
-    
-        
-        tempDiv.appendChild(tableClone);
-        document.body.appendChild(tempDiv);
-        
-        // Create HTML content for Excel
-        const htmlContent = `
-            <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
-            <head>
-                <meta charset="UTF-8">
-                <!--[if gte mso 9]>
-                <xml>
-                    <x:ExcelWorkbook>
-                        <x:ExcelWorksheets>
-                            <x:ExcelWorksheet>
-                                <x:Name>Report</x:Name>
-                                <x:WorksheetOptions>
-                                    <x:DisplayGridlines/>
-                                </x:WorksheetOptions>
-                            </x:ExcelWorksheet>
-                        </x:ExcelWorksheets>
-                    </x:ExcelWorkbook>
-                </xml>
-                <![endif]-->
-            </head>
-            <body>
-                ${tempDiv.innerHTML}
-            </body>
-            </html>
-        `;
-        
-        // Create blob and download
-        const blob = new Blob([htmlContent], {
-            type: 'application/vnd.ms-excel'
+
+        summaryData.push([]);
+
+        // Dispensed Medicines totals table
+        const medTables = document.querySelectorAll('.summary-table');
+        medTables.forEach(mt => {
+            const firstHeader = mt.querySelector('th');
+            // The dispensed medicines table has "Medicine" as first header
+            if (firstHeader && firstHeader.innerText.trim() === 'Medicine') {
+                summaryData.push(['Dispensed Medicines Summary']);
+                const medAoA = tableToAoA(mt);
+                medAoA.forEach(row => summaryData.push(row));
+            }
         });
-        
-        const downloadLink = document.createElement('a');
-        downloadLink.href = URL.createObjectURL(blob);
-        downloadLink.download = filename + '.xls';
-        document.body.appendChild(downloadLink);
-        downloadLink.click();
-        
-        // Clean up
-        setTimeout(() => {
-            document.body.removeChild(downloadLink);
-            document.body.removeChild(tempDiv);
-            URL.revokeObjectURL(downloadLink.href);
-        }, 100);
+
+        const ws2 = XLSX.utils.aoa_to_sheet(summaryData);
+        const colWidths2 = [{ wch: 35 }, { wch: 25 }];
+        ws2['!cols'] = colWidths2;
+        XLSX.utils.book_append_sheet(wb, ws2, 'Summary');
+
+        // ── Download ──────────────────────────────────────────────────────────
+        const dateStr = new Date().toISOString().slice(0, 10);
+        XLSX.writeFile(wb, filename + ' ' + dateStr + '.xlsx');
+
         
     } catch (error) {
         console.error('Excel export error:', error);
