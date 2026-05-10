@@ -407,12 +407,257 @@ function escapeHtml(value) {
 function setupPrintButton() {
     const printButton = document.getElementById("printPrescriptionBtn");
 
-    if (!printButton) {
-        return;
-    }
+    if (!printButton) return;
 
     printButton.addEventListener("click", function () {
-        window.print();
+        const printArea = document.getElementById("printArea");
+
+        if (!printArea) {
+            alert("Prescription print area not found.");
+            return;
+        }
+
+        const iframe = document.createElement("iframe");
+        iframe.style.position = "fixed";
+        iframe.style.right = "0";
+        iframe.style.bottom = "0";
+        iframe.style.width = "0";
+        iframe.style.height = "0";
+        iframe.style.border = "0";
+        iframe.style.visibility = "hidden";
+
+        document.body.appendChild(iframe);
+
+        const iframeDoc = iframe.contentWindow.document;
+
+        const printStyles = `
+            @page {
+                size: A4 portrait;
+                margin: 12mm;
+            }
+
+            * {
+                box-sizing: border-box;
+            }
+
+            html, body {
+                margin: 0;
+                padding: 0;
+                background: #ffffff;
+                color: #000000;
+                font-family: Arial, Helvetica, sans-serif;
+            }
+
+            body {
+                width: 100%;
+                padding: 0;
+            }
+
+            .quarter-page {
+                width: 100%;
+                max-width: 420px;
+                min-height: auto;
+                margin: 0;
+                padding: 8px 12px;
+                border: none;
+                border-radius: 0;
+                box-shadow: none;
+                background: #ffffff;
+                color: #000000;
+            }
+
+            .rx-header {
+                text-align: center;
+                margin-bottom: 18px;
+            }
+
+            .print-logo {
+                height: 50px;
+                width: auto;
+                object-fit: contain;
+                display: inline-block;
+                margin-bottom: 8px;
+            }
+
+            .rx-header h3 {
+                margin: 4px 0;
+                font-size: 16px;
+                font-weight: 600;
+                line-height: 1.2;
+            }
+
+            .rx-header p {
+                margin: 0;
+                font-size: 13px;
+                line-height: 1.2;
+            }
+
+            .rx-rhu-name {
+                display: inline-block;
+                margin-top: 6px;
+                padding: 0;
+                color: #000000;
+                background: transparent;
+                font-size: 14px;
+                font-weight: 400;
+            }
+
+            .rx-title-row {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 12px;
+                margin-bottom: 12px;
+            }
+
+            .rx-title-row h2 {
+                margin: 0;
+                font-size: 24px;
+                font-weight: 700;
+            }
+
+            .rx-icon {
+                width: 70px;
+                height: auto;
+                display: block;
+            }
+
+            .rx-info-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 8px 12px;
+                margin-bottom: 14px;
+            }
+
+            .rx-info-item {
+                font-size: 14px;
+                line-height: 1.4;
+                word-break: break-word;
+            }
+
+            .rx-info-item.full-width {
+                grid-column: 1 / -1;
+            }
+
+            .rx-info-item .label {
+                font-weight: 700;
+                margin-right: 6px;
+            }
+
+            .rx-medicine-section {
+                margin-top: 10px;
+            }
+
+            .rx-medicine-section h5 {
+                margin: 0 0 8px;
+                font-size: 14px;
+                font-weight: 700;
+            }
+
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                font-size: 13px;
+                table-layout: fixed;
+            }
+
+            thead th {
+                text-align: left;
+                padding: 6px 8px;
+                border-bottom: 1px solid #cccccc;
+                font-weight: 700;
+            }
+
+            tbody td {
+                padding: 6px 8px;
+                border-bottom: 1px dashed #e0e0e0;
+                vertical-align: top;
+                word-break: break-word;
+            }
+
+            .rx-signature-area {
+                display: block;
+                margin-top: 34px;
+            }
+
+            .signature-line {
+                margin-bottom: 24px;
+                font-size: 13px;
+            }
+
+            .signature-line small {
+                display: block;
+                margin-bottom: 26px;
+                font-size: 13px;
+            }
+
+            .signature-line span {
+                display: block;
+                width: 220px;
+                border-bottom: 1px solid #000000;
+            }
+
+            .physician-details {
+                margin-top: 20px;
+            }
+
+            .physician-details .rx-info-item {
+                margin-bottom: 6px;
+            }
+        `;
+
+        iframeDoc.open();
+        iframeDoc.write(`
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="UTF-8">
+                <title>Print Prescription</title>
+                <style>${printStyles}</style>
+            </head>
+            <body>
+                ${printArea.outerHTML}
+            </body>
+            </html>
+        `);
+        iframeDoc.close();
+
+        const images = iframeDoc.images;
+        let loadedImages = 0;
+
+        function triggerPrint() {
+            setTimeout(() => {
+                iframe.contentWindow.focus();
+                iframe.contentWindow.print();
+
+                setTimeout(() => {
+                    document.body.removeChild(iframe);
+                }, 1000);
+            }, 300);
+        }
+
+        if (images.length === 0) {
+            triggerPrint();
+        } else {
+            for (let i = 0; i < images.length; i++) {
+                const img = images[i];
+
+                if (img.complete) {
+                    loadedImages++;
+                } else {
+                    img.onload = img.onerror = function () {
+                        loadedImages++;
+                        if (loadedImages === images.length) {
+                            triggerPrint();
+                        }
+                    };
+                }
+            }
+
+            if (loadedImages === images.length) {
+                triggerPrint();
+            }
+        }
     });
 }
 

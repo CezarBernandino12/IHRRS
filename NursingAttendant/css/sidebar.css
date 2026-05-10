@@ -67,6 +67,40 @@ body {
   min-height: 100vh;
 }
 
+
+#content main .head-title {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+#content main .head-title .left h1 {
+  color: var(--text);
+  font-size: clamp(24px, 2.8vw, 34px);
+  font-weight: 650;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+}
+
+#content main .head-title .left h1::after {
+  content: '';
+  display: block;
+  width: 44px;
+  height: 4px;
+  margin-top: 8px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--blue), var(--cyan));
+}
+
+#content main .head-title .left .breadcrumb li a.active {
+  color: var(--blue);
+  pointer-events: unset;
+}
+
+
 /* ─── Overlay (mobile backdrop) ─────────────────────────── */
 .sidebar-overlay {
   display: none;

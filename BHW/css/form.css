@@ -51,35 +51,6 @@ body {
 	max-height: calc(100vh - 56px);
 	overflow-y: auto;
 }
-#content main .head-title {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	grid-gap: 16px;
-	flex-wrap: wrap;
-}
-#content main .head-title .left h1 {
-	font-size: 36px;
-	font-weight: 600;
-	margin-bottom: 10px;
-	color: var(--dark);
-}
-#content main .head-title .left .breadcrumb {
-	display: flex;
-	align-items: center;
-	grid-gap: 16px;
-}
-#content main .head-title .left .breadcrumb li {
-	color: var(--dark);
-}
-#content main .head-title .left .breadcrumb li a {
-	color: var(--dark-grey);
-	pointer-events: none;
-}
-#content main .head-title .left .breadcrumb li a.active {
-	color: var(--blue);
-	pointer-events: unset;
-}
 
 #content main .table-data {
 	display: flex;
@@ -1784,30 +1755,6 @@ body {
   overflow-y: visible !important;
   padding: 20px 22px 28px !important;
   font-family: var(--poppins), 'Poppins', sans-serif !important;
-}
-
-#content main .head-title {
-  align-items: flex-end !important;
-  margin-bottom: 14px !important;
-}
-
-#content main .head-title .left h1 {
-  margin: 0 !important;
-  color: var(--itr-text) !important;
-  font-size: clamp(24px, 3vw, 36px) !important;
-  font-weight: 650 !important;
-  line-height: 1.1 !important;
-  letter-spacing: -0.03em !important;
-}
-
-#content main .head-title .left h1::after {
-  content: "";
-  display: block;
-  width: 48px;
-  height: 4px;
-  margin-top: 10px;
-  border-radius: 999px;
-  background: linear-gradient(90deg, var(--itr-blue), #12acc7);
 }
 
 /* Top guide */
