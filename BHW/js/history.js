@@ -60,7 +60,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function updatePagination(page, totalPages) {
-        const pagination = document.querySelector("#pagination");
+        const pagination = document.querySelector("#historyPagination");
+        if (!pagination) return;
         pagination.innerHTML = `<a href="#" class="prev">Previous</a>`;
         for (let i = 1; i <= totalPages; i++) {
             const activeClass = i === page ? "active" : "";
@@ -69,7 +70,8 @@ document.addEventListener("DOMContentLoaded", function () {
         pagination.innerHTML += `<a href="#" class="next">Next</a>`;
     }
 
-    document.querySelector("#pagination").addEventListener("click", function (e) {
+    const _histPagEl = document.querySelector("#historyPagination");
+    if (_histPagEl) _histPagEl.addEventListener("click", function (e) {
         e.preventDefault();
         if (e.target.classList.contains("prev") && currentPage > 1) {
             currentPage--;

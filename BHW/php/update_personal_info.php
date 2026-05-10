@@ -1,20 +1,19 @@
 <?php
+ob_start();
 session_start();
 require '../../php/db_connect.php';
 require '../../ADMIN/php/log_functions.php';
 
-session_start();
+error_reporting(E_ALL);
+ini_set('display_errors', 0);
+header('Content-Type: application/json');
 
 if (!isset($_SESSION['user_id'])) {
+    ob_clean();
     http_response_code(401);
-    exit("Unauthorized");
+    echo json_encode(['success' => false, 'error' => 'Unauthorized']);
+    exit;
 }
-
-
-ob_start();
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-header('Content-Type: application/json');
 
 $log_file = "../../logs/debug.log";
 

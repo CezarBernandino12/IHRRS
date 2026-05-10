@@ -3,29 +3,33 @@ document.addEventListener("DOMContentLoaded", function() {
     const plusBtn = document.querySelector('.btn-plus');
     const quantityInput = document.getElementById('quantity_given');
 
-    minusBtn.addEventListener('click', function() {
-        let value = parseInt(quantityInput.value);
-        if (value > 1) {
-            quantityInput.value = value - 1;
-        }
-    });
+    if (minusBtn && quantityInput) {
+        minusBtn.addEventListener('click', function() {
+            let value = parseInt(quantityInput.value);
+            if (value > 1) {
+                quantityInput.value = value - 1;
+            }
+        });
+    }
 
-    plusBtn.addEventListener('click', function() {
-        let value = parseInt(quantityInput.value);
-        quantityInput.value = value + 1;
-    });
+    if (plusBtn && quantityInput) {
+        plusBtn.addEventListener('click', function() {
+            let value = parseInt(quantityInput.value);
+            quantityInput.value = value + 1;
+        });
+    }
 });
 
-function calculateAge() {
+function calculateAge(dobArg) {
     const dobInput = document.getElementById("dob");
     const ageDisplay = document.getElementById("age-display");
     const ageInput = document.getElementById("age-input"); 
-    const dobValue = dobInput.value;
+    const dobValue = dobArg || (dobInput ? dobInput.value : '');
 
     if (!dobValue) {
-        ageDisplay.textContent = "Age: ";
-        ageInput.value = ""; 
-        return;
+        if (ageDisplay) ageDisplay.textContent = "Age: ";
+        if (ageInput) ageInput.value = ""; 
+        return "";
     }
 
     const dob = new Date(dobValue);
@@ -49,13 +53,14 @@ function calculateAge() {
 
     if (years === 0) {
         ageText = `Age: ${months} month${months !== 1 ? 's' : ''} old`;
-        ageInput.value = `0.${months}`;
+        if (ageInput) ageInput.value = `0.${months}`;
     } else {
         ageText = `Age: ${years} year${years !== 1 ? 's' : ''} old`;
-        ageInput.value = years;
+        if (ageInput) ageInput.value = years;
     }
 
-    ageDisplay.textContent = ageText;
+    if (ageDisplay) ageDisplay.textContent = ageText;
+    return ageText;
 }
 
 
@@ -71,7 +76,7 @@ let currentValue = 1;
 const targetValue = 75;
 
 function countToTarget() {
-    if (currentValue <= targetValue) {
+    if (progressText && currentValue <= targetValue) {
         progressText.textContent = currentValue;
         currentValue++;
         setTimeout(countToTarget, 20);
@@ -103,20 +108,24 @@ var closeBtn = document.getElementById("closeBtn");
 var noButton = document.getElementById("noButton");
 var yesButton = document.getElementById("yesButton");
 
-  btn.onclick = function() {
-    modal.style.display = "block";
-  }
+  // Only apply these handlers on pages that have the openModal trigger button.
+  // On ITR.html, these elements exist but belong to form.js' modal flow — don't override them.
+  if (btn) {
+    btn.onclick = function() {
+      modal.style.display = "block";
+    };
 
-  closeBtn.onclick = function() {
-    modal.style.display = "none";
-  }
+    if (closeBtn) closeBtn.onclick = function() {
+      modal.style.display = "none";
+    };
 
-  noButton.onclick = function() {
-    modal.style.display = "none";
-    window.location.href="ITR"; 
-  }
+    if (noButton) noButton.onclick = function() {
+      modal.style.display = "none";
+      window.location.href="ITR"; 
+    };
 
-  yesButton.onclick = function() {
-    modal.style.display = "none";
-    window.location.href="searchPatient"; 
+    if (yesButton) yesButton.onclick = function() {
+      modal.style.display = "none";
+      window.location.href="searchPatient"; 
+    };
   }

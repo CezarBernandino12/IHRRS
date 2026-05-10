@@ -1,25 +1,24 @@
 <?php
+ob_start();
+session_start();
 require '../../php/db_connect.php';
+
+ini_set('display_errors', 0);
+error_reporting(E_ALL);
 header('Content-Type: application/json');
 
-session_start();
-
 if (!isset($_SESSION['user_id'])) {
+    ob_clean();
     http_response_code(401);
-    exit("Unauthorized");
+    echo json_encode(['error' => 'Unauthorized']);
+    exit;
 }
-
 
 try {
     $date_stmt = $pdo->query("SELECT CURDATE()");
     $date = $date_stmt->fetchColumn();
 
-    session_start();
-    $user_id = $_SESSION['user_id'] ?? null;
-
-    if (!$user_id) {
-        throw new Exception('User not logged in');
-    }
+    $user_id = $_SESSION['user_id'];
 
     $stmt_user = $pdo->prepare("SELECT barangay FROM users WHERE user_id = :user_id");
     $stmt_user->execute([':user_id' => $user_id]);
@@ -55,5 +54,6 @@ try {
     ]);
 
 } catch (Exception $e) {
+    ob_clean();
     echo json_encode(['error' => $e->getMessage()]);
 }

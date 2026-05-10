@@ -173,29 +173,6 @@ fetch('php/getUserId.php')
 </section>
 <script>
 	document.addEventListener("DOMContentLoaded", () => {
-  const today = new Date().toISOString().split("T")[0];
-  const url = `php/fetch_dashboard_stats.php?date=${today}`;
-
-  // Show today's date in both containers
-  const formattedDate = new Date(today).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  });
-
-  document.querySelectorAll(".date").forEach(el => el.textContent = formattedDate);
-
-  fetch(url)
-    .then(response => response.json())
-    .then(data => {
-      console.log("Dashboard Data:", data);
-
-      // Update values
-      updateProgress("progress-ring-1", "progress-text-1", data.visits_today, 100);
-      updateProgress("progress-ring-2", "progress-text-2", data.pending_referrals, 100);
-    })
-    .catch(error => console.error("Error loading dashboard data:", error));
-
   const sidebarUserName = document.getElementById("sidebarUserName");
   fetch('php/getUserName.php')
     .then(response => response.json())
@@ -211,20 +188,6 @@ fetch('php/getUserId.php')
       }
     });
 });
-
-function updateProgress(ringId, textId, value, max = 100) {
-  const radius = 67;
-  const circumference = 2 * Math.PI * radius;
-  const percent = Math.min(value / max, 1);
-  const offset = circumference * (1 - percent);
-
-  const ring = document.getElementById(ringId);
-  const text = document.getElementById(textId);
-
-  ring.style.strokeDasharray = `${circumference}`;
-  ring.style.strokeDashoffset = `${offset}`;
-  text.textContent = value;
-}
 </script>
 	<script src="js/script.js"></script>
 
