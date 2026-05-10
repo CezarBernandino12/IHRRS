@@ -473,15 +473,6 @@
       modal.classList.add('open');
     }
 
-    // Error via URL param (JS fallback)
-    const errorMsg = params.get('error');
-    if (errorMsg) {
-      const box  = document.getElementById('error-box');
-      const text = document.getElementById('error-text');
-      if (text) text.textContent = errorMsg;
-      if (box)  box.classList.add('visible');
-    }
-
     // Close modal
     document.getElementById('modalCloseBtn').addEventListener('click', () => {
       document.getElementById('successModal').classList.remove('open');
