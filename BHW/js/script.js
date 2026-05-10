@@ -20,16 +20,16 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 });
 
-function calculateAge() {
+function calculateAge(dobArg) {
     const dobInput = document.getElementById("dob");
     const ageDisplay = document.getElementById("age-display");
     const ageInput = document.getElementById("age-input"); 
-    const dobValue = dobInput.value;
+    const dobValue = dobArg || (dobInput ? dobInput.value : '');
 
     if (!dobValue) {
-        ageDisplay.textContent = "Age: ";
-        ageInput.value = ""; 
-        return;
+        if (ageDisplay) ageDisplay.textContent = "Age: ";
+        if (ageInput) ageInput.value = ""; 
+        return "";
     }
 
     const dob = new Date(dobValue);
@@ -53,13 +53,14 @@ function calculateAge() {
 
     if (years === 0) {
         ageText = `Age: ${months} month${months !== 1 ? 's' : ''} old`;
-        ageInput.value = `0.${months}`;
+        if (ageInput) ageInput.value = `0.${months}`;
     } else {
         ageText = `Age: ${years} year${years !== 1 ? 's' : ''} old`;
-        ageInput.value = years;
+        if (ageInput) ageInput.value = years;
     }
 
-    ageDisplay.textContent = ageText;
+    if (ageDisplay) ageDisplay.textContent = ageText;
+    return ageText;
 }
 
 

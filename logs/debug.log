@@ -1213,3 +1213,54 @@
 
 [ROWS_AFFECTED] 1
 [COMMIT] Success!
+[RAW INPUT] Array
+(
+    [patient_id] => 535
+    [first_name] => Althea
+    [last_name] => Magana
+    [middle_name] => O
+    [extension] => 
+    [birthplace] => Tanay
+    [date_of_birth] => 2004-05-06
+    [address] => Purok 1 - Barangay Cobangbang Daet, Banlic, City of Cabuyao, Laguna, Region IV-A (CALABARZON)
+    [civil_status] => Single
+    [contact_number] => 09108987820
+    [religion] => Roman Catholic
+    [occupation] => Farmer
+    [educational_attainment] => Primary Education
+    [birth_weight] => 4
+    [philhealth_member_no] => 43
+    [category] => LGU
+    [family_serial_no] => 43
+    [sex] => Male
+    [fourps_status] => Yes
+)
+
+[PATIENT_ID] 535
+[USER_ID] 5
+[SUCCESS] Patient found, updating...
+[PARAMS] Array
+(
+    [first_name] => Althea
+    [last_name] => Magana
+    [middle_name] => O
+    [extension] => 
+    [birthplace] => Tanay
+    [date_of_birth] => 2004-05-06
+    [address] => Purok 1 - Barangay Cobangbang Daet, Banlic, City of Cabuyao, Laguna, Region IV-A (CALABARZON)
+    [civil_status] => Single
+    [contact_number] => 09108987820
+    [religion] => Roman Catholic
+    [occupation] => Farmer
+    [educational_attainment] => Primary Education
+    [birth_weight] => 4
+    [philhealth_member_no] => 43
+    [category] => LGU
+    [family_serial_no] => 43
+    [sex] => Male
+    [fourps_status] => Yes
+    [patient_id] => 535
+)
+
+[ROWS_AFFECTED] 1
+[COMMIT] Success!
