@@ -288,18 +288,20 @@ function updateProgress(ringId, textId, value, max = 100) {
   ring.style.strokeDashoffset = `${offset}`;
   text.textContent = value;
 }
+const sidebarUserName = document.getElementById('sidebarUserName');
+
 fetch('php/getUserName.php')
     .then(response => response.json())
     .then(data => {
-        if (data.full_name) {
-            document.getElementById('userGreeting').textContent = `Hello, ${data.full_name}!`;
-        } else {
-            document.getElementById('userGreeting').textContent = 'Hello, BHW!';
+        if (sidebarUserName) {
+            sidebarUserName.textContent = data.full_name || 'BHW User';
         }
     })
     .catch(error => {
         console.error('Error fetching user name:', error);
-        document.getElementById('userGreeting').textContent = 'Hello, BHW!';
+        if (sidebarUserName) {
+            sidebarUserName.textContent = 'BHW User';
+        }
     });
 		
 fetch('php/getUserId.php')

@@ -195,6 +195,21 @@ fetch('php/getUserId.php')
       updateProgress("progress-ring-2", "progress-text-2", data.pending_referrals, 100);
     })
     .catch(error => console.error("Error loading dashboard data:", error));
+
+  const sidebarUserName = document.getElementById("sidebarUserName");
+  fetch('php/getUserName.php')
+    .then(response => response.json())
+    .then(data => {
+      if (sidebarUserName) {
+        sidebarUserName.textContent = data.full_name || 'BHW User';
+      }
+    })
+    .catch(error => {
+      console.error('Error fetching user name:', error);
+      if (sidebarUserName) {
+        sidebarUserName.textContent = 'BHW User';
+      }
+    });
 });
 
 function updateProgress(ringId, textId, value, max = 100) {
@@ -249,19 +264,6 @@ window.onclick = function(event) {
         closeModal();
     }
 }
-fetch('php/getUserName.php')
-    .then(response => response.json())
-    .then(data => {
-        if (data.full_name) {
-            document.getElementById('userGreeting').textContent = `Hello, ${data.full_name}!`;
-        } else {
-            document.getElementById('userGreeting').textContent = 'Hello, BHW!';
-        }
-    })
-    .catch(error => {
-        console.error('Error fetching user name:', error);
-        document.getElementById('userGreeting').textContent = 'Hello, BHW!';
-    });
 </script>
 
 

@@ -172,6 +172,21 @@ fetch('php/getUserId.php')
                 searchPatient(); // Trigger the search function
             }
         });
+
+        const sidebarUserName = document.getElementById("sidebarUserName");
+        fetch('php/getUserName.php')
+            .then(response => response.json())
+            .then(data => {
+                if (sidebarUserName) {
+                    sidebarUserName.textContent = data.full_name || 'BHW User';
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching user name:', error);
+                if (sidebarUserName) {
+                    sidebarUserName.textContent = 'BHW User';
+                }
+            });
     });
 
     </script>
