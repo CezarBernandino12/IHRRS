@@ -298,23 +298,24 @@ $logs = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     </div>
                 </div>
 
-                <div id="logoutModal" class="logout-modal">
-                    <div class="logout-modal-content">
-                        <div class="logout-modal-header">
-                            <h3>Confirm Logout</h3>
-                        </div>
-                        <div class="logout-modal-body">
-                            <p>Are you sure you want to logout?</p>
-                        </div>
-                        <div class="logout-modal-footer">
-                            <button onclick="closeModal()" class="logout-cancel-btn">Cancel</button>
-                            <button onclick="proceedLogout()" class="logout-confirm-btn">Yes, Logout</button>
-                        </div>
-                    </div>
-                </div>
 
             </div>
         </main>
+
+        <div id="logoutModal" class="logout-modal">
+            <div class="logout-modal-content">
+                <div class="logout-modal-header">
+                    <h3>Confirm Logout</h3>
+                </div>
+                <div class="logout-modal-body">
+                    <p>Are you sure you want to logout?</p>
+                </div>
+                <div class="logout-modal-footer">
+                    <button onclick="closeModal()" class="logout-cancel-btn">Cancel</button>
+                    <button onclick="proceedLogout()" class="logout-confirm-btn">Yes, Logout</button>
+                </div>
+            </div>
+        </div>
     </section> 
 
     <script src="../js/activity_logs.js"></script>
@@ -343,22 +344,7 @@ $logs = $stmt->fetchAll(PDO::FETCH_ASSOC);
         }
 
         function closeModal() {
-            const logoutModal = document.getElementById('logoutModal');
-            const userModal = document.getElementById('userModal');
-            
-            // Close logout modal if open
-            if (logoutModal && logoutModal.style.display === 'block') {
-                logoutModal.style.display = 'none';
-            }
-            
-            // Close user modal if open
-            if (userModal && userModal.style.display === 'block') {
-                userModal.style.display = 'none';
-                const modalOverlay = document.getElementById('modalOverlay');
-                if (modalOverlay) {
-                    modalOverlay.style.display = 'none';
-                }
-            }
+            document.getElementById('logoutModal').style.display = 'none';
         }
 
         function proceedLogout() {
