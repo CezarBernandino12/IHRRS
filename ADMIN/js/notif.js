@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(response => response.json())
             .then(data => {
                 const badge = document.getElementById('notification-badge');
+                if (!badge) return;
                 if (data.unread_count > 0) {
                     badge.textContent = data.unread_count;
                     badge.style.display = 'block';

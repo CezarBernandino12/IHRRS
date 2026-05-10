@@ -1,6 +1,9 @@
-document.getElementById('roleFilter').addEventListener('change', function () {
-    this.form.submit();
-});
+const _roleFilterTop = document.getElementById('roleFilter');
+if (_roleFilterTop) {
+    _roleFilterTop.addEventListener('change', function () {
+        this.form.submit();
+    });
+}
 
 function resetPassword(userId) {
     let newPassword = prompt("Enter a new password (at least 1 uppercase letter and 1 number):");
@@ -40,9 +43,14 @@ function resetPassword(userId) {
 document.addEventListener("DOMContentLoaded", function() {
     const toggleBtn = document.getElementById('toggleFilterBtn');
     const filterForm = document.getElementById('filterForm');
+
+    if (!toggleBtn || !filterForm) return;
+
     const iconSpan = toggleBtn.querySelector('.icon');
     const labelSpan = toggleBtn.querySelector('.label');
-    
+
+    if (!iconSpan || !labelSpan) return;
+
     const roleFilter = document.getElementById('roleFilter');
     if (roleFilter) {
         roleFilter.addEventListener('change', function() {
