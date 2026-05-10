@@ -307,7 +307,7 @@ $logs = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <p>Are you sure you want to logout?</p>
                         </div>
                         <div class="logout-modal-footer">
-                            <button onclick="closeLogoutModal()" class="logout-cancel-btn">Cancel</button>
+                            <button onclick="closeModal()" class="logout-cancel-btn">Cancel</button>
                             <button onclick="proceedLogout()" class="logout-confirm-btn">Yes, Logout</button>
                         </div>
                     </div>
@@ -342,25 +342,35 @@ $logs = $stmt->fetchAll(PDO::FETCH_ASSOC);
             return false;
         }
 
-        function closeLogoutModal() {
-            document.getElementById('logoutModal').style.display = 'none';
-        }
-     
         function closeModal() {
-            document.getElementById('userModal').style.display = 'none';
-            document.getElementById('modalOverlay').style.display = 'none';
+            const logoutModal = document.getElementById('logoutModal');
+            const userModal = document.getElementById('userModal');
+            
+            // Close logout modal if open
+            if (logoutModal && logoutModal.style.display === 'block') {
+                logoutModal.style.display = 'none';
+            }
+            
+            // Close user modal if open
+            if (userModal && userModal.style.display === 'block') {
+                userModal.style.display = 'none';
+                const modalOverlay = document.getElementById('modalOverlay');
+                if (modalOverlay) {
+                    modalOverlay.style.display = 'none';
+                }
+            }
         }
 
         function proceedLogout() {
             window.location.href='logout';
         }
 
-        window.onclick = function(event) {
-            const modal = document.getElementById('logoutModal');
-            if (event.target == modal) {
-                closeLogoutModal();
+        window.addEventListener('click', function(event) {
+            const logoutModal = document.getElementById('logoutModal');
+            if (event.target === logoutModal) {
+                closeModal();
             }
-        };
+        });
     </script>
 
     <script>
