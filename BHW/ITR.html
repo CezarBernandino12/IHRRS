@@ -1040,31 +1040,6 @@ medicineSelects.forEach(select => {
     loadCustomOptions(select, 'medicine');
 });
 
-fetch('php/get_addresses.php')
-.then(response => response.json())
-    .then(data => {        
-        // Clear existing options except the first one (Select Address)
-        addressSelect.innerHTML = '<option value="">Select Address</option>';
-   // Add the "Other" option manually at the bottom
-   const otherOption = document.createElement('option');
-        otherOption.value = 'other';
-        otherOption.textContent = 'Other (Enter manually)';
-        addressSelect.appendChild(otherOption);
-        // Add the fetched addresses
-        data.forEach(address => {
-            const option = document.createElement('option');
-            option.value = address;
-            option.textContent = address;
-            addressSelect.appendChild(option);
-        });
-
-     
-    })
-    .catch(error => {
-        console.error('Error fetching addresses:', error);
-    });
-
-
 // For medicine-selects, you can loop each one
 medicineSelects.forEach(select => loadCustomOptions(select, 'medicine'));
                                  
@@ -1072,9 +1047,9 @@ medicineSelects.forEach(select => loadCustomOptions(select, 'medicine'));
                     const inputId = label.getAttribute('for');
                     const input = document.getElementById(inputId);
             
-                    if (input) {
+                    if (input && 'value' in input) {
                         input.addEventListener("input", function () {
-                            if (input.value.trim() !== "") {
+                            if ((input.value || '').trim() !== "") {
                                 label.classList.remove("required");
                             } else {
                                 label.classList.add("required");
@@ -1109,20 +1084,7 @@ medicineSelects.forEach(select => loadCustomOptions(select, 'medicine'));
     });
 }
 
-document.getElementById("add-medicine").addEventListener("click", function () {
-    const container = document.getElementById("medicine-container");
-    const template = document.querySelector("#medicine-template .medicine-entry");
-    const newEntry = template.cloneNode(true);
-
-    // Reset values
-    newEntry.querySelector(".medicine-given").value = "";
-    newEntry.querySelector(".quantity-given").value = "0";
-
-    container.appendChild(newEntry);
-    container.scrollIntoView({ behavior: 'smooth', block: 'end' });
-
-    updateRemoveButtons();
-});
+// add-medicine clone is handled by the cached medicine-options script below
 
 document.addEventListener("click", function (event) {
     if (event.target.classList.contains("btn-plus")) {
@@ -1807,7 +1769,6 @@ document.addEventListener("DOMContentLoaded", () => {
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>     
     <script src="js/form.js"></script>
     <script src="js/script.js"></script>
-    <script src="js/modal.js"></script>
 
 <script>
 /* Reliable Select2 dropdown enhancement.

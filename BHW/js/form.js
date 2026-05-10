@@ -261,7 +261,21 @@ function saveFormData(referralNeeded, callback) {
     .then(response => response.text()) 
     .then(text => {
         console.log("🔹 Raw Server Response:", text); 
-        const data = JSON.parse(text); 
+        let data;
+        try {
+            data = JSON.parse(text);
+        } catch (e) {
+            // PHP may have prepended HTML error output; try to extract JSON
+            const jsonStart = text.lastIndexOf('{');
+            if (jsonStart !== -1) {
+                try { data = JSON.parse(text.substring(jsonStart)); } catch (_) {}
+            }
+            if (!data) {
+                console.error("❌ JSON Parse Error:", e, "\nRaw response:", text);
+                if (errorModal) errorModal.style.display = 'block';
+                return;
+            }
+        }
         console.log("🔹 Parsed Server Response:", data);
     
         if (data.status === 'duplicate' && data.patient_id) {
@@ -271,12 +285,6 @@ function saveFormData(referralNeeded, callback) {
             console.log("✅ Saved Patient ID:", savedPatientId);
             localStorage.setItem("patient_id", savedPatientId);
             if (modal2 && modal2.style.display === "block") modal2.style.display = "none";
-    
-            if (referralNeeded === "yes") {
-                if (modal2) modal2.style.display = 'block';
-            } else {
-                if (modal4) modal4.style.display = 'block';
-            }
     
             if (typeof callback === "function") callback(data);
         } else {
@@ -296,6 +304,9 @@ function noButton1ClickHandler() {
 
     saveFormData("no", function () {
         if (modal4) modal4.style.display = 'block';
+        setTimeout(function () {
+            window.location.href = 'searchPatient';
+        }, 2000);
     });
 }
 
@@ -447,30 +458,30 @@ if (viewDetailsButton) {
     console.warn("⚠️ Warning: viewDetailsButton not found in the DOM.");
 }
 
-closeBtn4.addEventListener('click', function () {
+if (closeBtn4) closeBtn4.addEventListener('click', function () {
     modal4.style.display = 'none';
     window.location.href = `record?patient_id=${localStorage.getItem('patient_id')}`; 
   
 });
 
-cancelButton.addEventListener('click', function () {
+if (cancelButton) cancelButton.addEventListener('click', function () {
     modal4.style.display = 'none';
 });
 
-proceedButton.addEventListener('click', function () {
+if (proceedButton) proceedButton.addEventListener('click', function () {
     modal4.style.display = 'none';
     modal5.style.display = 'block';
 });
 
-closeBtn5.addEventListener('click', function () {
+if (closeBtn5) closeBtn5.addEventListener('click', function () {
     modal5.style.display = 'none';
 });
 
-exitButton.addEventListener('click', function () {
+if (exitButton) exitButton.addEventListener('click', function () {
     modal5.style.display = 'none';
 });
 
-closeBtnError.addEventListener('click', function () {
+if (closeBtnError) closeBtnError.addEventListener('click', function () {
     errorModal.style.display = 'none';
 });
 
