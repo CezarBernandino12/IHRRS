@@ -8,7 +8,7 @@ require_once __DIR__ . '/env.loader.php';
 
 // Get database credentials from environment
 $host = env('DB_HOST', 'localhost');
-$dbname = env('DB_NAME', 'ihrrs_database');
+$dbname = env('DB_NAME', 'ihrrs_dbase');
 $username = env('DB_USER', 'root');
 $password = env('DB_PASSWORD', '');
 $port = env('DB_PORT', '3306');

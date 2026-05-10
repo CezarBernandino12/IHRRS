@@ -8,7 +8,7 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
-
+ 
 $userId = $_SESSION['user_id']; // logged-in user ID
 
 // Fetch user info
@@ -625,9 +625,10 @@ $visits = $stmt->fetchAll();
 .summary-table tbody tr:hover th,
 .case-table tbody tr:hover td { background: var(--blue-pale, #f0f6ff); }
 
+
 #generated_by {
   display: block;
-  margin: 32px 0 0 4px;
+  margin: 48px 0 0 4px;
   color: var(--dark, #0f1d31);
 }
 #generated_by .sig-label {
@@ -636,23 +637,29 @@ $visits = $stmt->fetchAll();
   color: var(--grey-500, #8c96aa);
   text-transform: uppercase;
   letter-spacing: .08em;
-  margin-bottom: 20px;
+  margin-bottom: 60px;
+  display: block;
+}
+#generated_by .sig-block {
+  display: inline-block;
+  text-align: center;
+  min-width: 200px;
 }
 #generated_by .sig-line {
-  display: none;
-  width: 200px;
-  border: 0;
-  border-top: 1.5px solid var(--dark, #0f1d31);
-  margin: 26px 0 6px;
+  display: block;
+  border: none;
+  border-top: 1.5px solid #000;
+  width: 100%;
+  margin: 0 0 4px;
 }
 #generated_by .sig-name {
   font-weight: 700;
   font-size: 15px;
   color: var(--navy, #0d2d52);
-  margin-top: 4px;
+  white-space: nowrap;
 }
 #generated_by .sig-title {
-  font-size: 12.5px;
+  font-size: 12px;
   color: var(--grey-500, #8c96aa);
   margin-top: 2px;
 }
@@ -672,9 +679,6 @@ $visits = $stmt->fetchAll();
     border-radius: 0;
   }
   .chart-controls-panel,
-  .chart-toggle-group,
-  .chart-is-hidden,
-  [aria-hidden="true"],
   .form-submit,
   .btn-print,
   .btn-export,
@@ -682,7 +686,37 @@ $visits = $stmt->fetchAll();
   nav,
   #sidebar,
   .sidebar-overlay { display: none !important; }
-  .title { display: block !important; }
+
+  .chart-is-hidden,
+  .chart-card[aria-hidden="true"] {
+    display: none !important;
+    visibility: hidden !important;
+  }
+
+  .chart-card {
+    display: block !important;
+    box-shadow: none !important;
+    border: 1px solid #000 !important;
+    border-radius: 0 !important;
+    margin: 10px 0 16px !important;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  .chart-title {
+    display: block !important;
+    color: #000 !important;
+    font-size: 11pt !important;
+    margin: 6px 0 8px !important;
+  }
+  .title { display: block !important; text-align: center; }
+  .ph-line-4 { text-align: center; }
+  .print-sub { text-align: center; }
+  /* Consistent font */
+  body, table, th, td, #generated_by, .sig-label, .sig-name, .sig-title,
+  .ph-line-4, .print-sub { font-family: Arial, sans-serif !important; }
+  /* Hide charts */
+  .medical-chart-grid, .chart-is-hidden, canvas { display: none !important; }
   .print-letterhead { display: grid !important; }
   .print-rule { display: block !important; }
   .print-letterhead {
@@ -717,14 +751,14 @@ $visits = $stmt->fetchAll();
   #reportTable { min-width: unset; font-size: 10pt; }
   #reportTable thead tr,
   .case-table thead tr,
-  .summary-table thead tr { background: #d8e4f0 !important; print-color-adjust: exact; }
+  .summary-table thead tr { background: #fff !important; }
   #reportTable th,
   .case-table th {
     color: #000 !important;
     border: 1px solid #ccc;
     padding: 7px 10px;
     font-size: 9pt;
-    background: #d8e4f0 !important;
+    background: #fff !important;
   }
   #reportTable td,
   .case-table td,
@@ -744,11 +778,12 @@ $visits = $stmt->fetchAll();
     page-break-inside: avoid;
     break-inside: avoid;
   }
-  #generated_by { margin: 60mm 0 0 10mm; }
-  #generated_by .sig-label { font-size: 12pt; }
-  #generated_by .sig-name { font-size: 12pt; }
+  #generated_by { margin: 50mm 0 0 10mm !important; }
+  #generated_by .sig-label { font-size: 11px; margin-bottom: 60px; display: block; }
+  #generated_by .sig-block { display: inline-block; text-align: center; }
+  #generated_by .sig-line { display: block; border: none; border-top: 1.5px solid #000; width: 100%; margin: 0 0 4px; }
+  #generated_by .sig-name { font-weight: 700; font-size: 12pt; white-space: nowrap; }
   #generated_by .sig-title { font-size: 11pt; }
-  #generated_by .sig-line { display: block; width: 45mm; border-top-width: 1px; margin: 10mm 0 3mm; }
 }
 
 @media (max-width: 768px) {
@@ -2155,13 +2190,12 @@ function exportTableToExcel(tableID, filename = 'Medical Cases Report') {
 }
 
 
-
 function printDiv() {
   const headerEl = document.querySelector('.print-letterhead');
   const printHeader = headerEl ? headerEl.outerHTML : '';
+
   const area = document.querySelector('.print-area');
   if (!area) return;
-
   const clone = area.cloneNode(true);
 
   const headerInClone = clone.querySelector('.print-letterhead');
@@ -2170,51 +2204,8 @@ function printDiv() {
   const ruleInClone = clone.querySelector('.print-rule');
   if (ruleInClone) ruleInClone.remove();
 
-  // Hide chart controls from the printed layout.
-  clone.querySelectorAll('.chart-controls-panel, .chart-toggle-group').forEach(el => el.remove());
-
-  // Remove charts that are currently hidden/not selected so they do not print as titles or broken image icons.
-  clone.querySelectorAll('.chart-is-hidden, [aria-hidden="true"]').forEach(el => el.remove());
-
-  // Convert only visible charts to images. If a chart was never rendered, remove the card to avoid a blank/broken image.
-  ['casesLineChart', 'sexPieChart', 'ageGroupBarChart'].forEach(id => {
-    const live = document.getElementById(id);
-    const inClone = clone.querySelector('#' + id);
-    if (!inClone) return;
-
-    const liveCard = live ? live.closest('.chart-card, .report-chart-card, .chart') : null;
-    const isHidden = liveCard && (
-      liveCard.classList.contains('chart-is-hidden') ||
-      liveCard.getAttribute('aria-hidden') === 'true' ||
-      window.getComputedStyle(liveCard).display === 'none'
-    );
-
-    const chartInstance = (window.Chart && Chart.getChart && live) ? Chart.getChart(live) : null;
-    const cloneCard = inClone.closest('.chart-card, .report-chart-card, .chart');
-
-    if (!live || isHidden || !chartInstance || typeof live.toDataURL !== 'function') {
-      if (cloneCard) cloneCard.remove();
-      else inClone.remove();
-      return;
-    }
-
-    try {
-      const img = document.createElement('img');
-      img.src = live.toDataURL('image/png');
-      img.style.cssText = 'display:block;max-width:100%;height:auto;margin:8px auto 18px;';
-      inClone.parentNode.replaceChild(img, inClone);
-    } catch (error) {
-      if (cloneCard) cloneCard.remove();
-      else inClone.remove();
-    }
-  });
-
-  // Safety cleanup for any remaining canvases.
-  clone.querySelectorAll('canvas').forEach(canvas => {
-    const card = canvas.closest('.chart-card, .report-chart-card, .chart');
-    if (card) card.remove();
-    else canvas.remove();
-  });
+  /* Remove all chart/canvas elements from the clone */
+  clone.querySelectorAll('.chart-controls-panel, .chart-toggle-group, .medical-chart-grid, canvas').forEach(el => el.remove());
 
   const w = window.open('', '', 'height=900,width=1100');
   if (!w) { alert('Please allow pop-ups to print this report.'); return; }
@@ -2224,41 +2215,45 @@ function printDiv() {
         <title>Print Report</title>
         <meta charset="utf-8" />
         <style>
-          body { font-family:'Plus Jakarta Sans', Arial, sans-serif; font-size: 13px; color:#000; }
-          table { width:100%; border-collapse:collapse; }
-          th, td { border:1px solid #000; padding:5px 7px; text-align:left; }
-          thead { background:#d8e4f0; print-color-adjust:exact; }
-          img { display:block; max-width:100%; height:auto; margin:8px auto 18px; }
-          h3 { margin:10px 0 6px; color:#000; }
-          .print-letterhead{
-            display:grid; grid-template-columns:64px auto 64px;
-            align-items:center; justify-content:center; column-gap:60px;
-            margin:0 auto 10px; text-align:center; width:fit-content;
-          }
-          .print-logo{ width:64px; height:64px; object-fit:contain; }
-          .print-heading{ line-height:1.1; color:#000; }
-          .print-heading .ph-line-1{ font-size:12pt; font-weight:500; }
-          .print-heading .ph-line-2{ font-size:14pt; font-weight:800; }
-          .print-heading .ph-line-3{ font-size:11pt; font-weight:500; }
-          .ph-line-4{ font-size:12pt; font-weight:800; margin-top:4px; letter-spacing:.3px; }
-          .print-sub{ font-size:10.5pt; margin-top:4px; text-align:center; }
-          .print-rule{ height:1px; border:0; background:#cfd8e3; margin:8px 0 12px; }
-          .form-submit,.selected-filters,.chart-controls-panel,.chart-toggle-group,.chart-is-hidden,[aria-hidden="true"]{display:none!important;}
+          body{font-family:Arial,sans-serif;font-size:13px;color:#000;}
+          table{width:100%;border-collapse:collapse;font-family:Arial,sans-serif;font-size:12px;}
+          th,td{border:1px solid #000;padding:4px 6px;text-align:left;font-family:Arial,sans-serif;}
+          thead tr{background:#fff!important;}
+          thead th{background:#fff!important;color:#000!important;font-weight:700;}
+          img{display:block;margin:0 auto;max-width:100%;height:auto;}
+          h3{font-family:Arial,sans-serif;}
+          .print-letterhead{display:grid;grid-template-columns:64px auto 64px;align-items:center;justify-content:center;column-gap:14px;margin:0 auto 10px;text-align:center;width:fit-content;}
+          .print-logo{width:64px;height:64px;object-fit:contain;}
+          .print-heading{line-height:1.1;color:#000;font-family:Arial,sans-serif;}
+          .print-heading .ph-line-1{font-size:12pt;font-weight:500;}
+          .print-heading .ph-line-2{font-size:14pt;font-weight:800;}
+          .print-heading .ph-line-3{font-size:11pt;font-weight:500;}
+          .title{text-align:center;margin:8px 0;font-family:Arial,sans-serif;}
+          .ph-line-4{font-size:12pt;font-weight:800;margin-top:4px;text-align:center;font-family:Arial,sans-serif;}
+          .print-sub{font-size:10.5pt;margin-top:4px;text-align:center;font-family:Arial,sans-serif;}
+          .print-rule{height:1px;border:0;background:#cfd8e3;margin:8px 0 12px;}
+          .form-submit,.selected-filters,.chart-controls-panel,.chart-toggle-group,.btn-export,.btn-print,
+          .medical-chart-grid,canvas{display:none!important;}
           .report-table-scroll{overflow:visible!important;max-height:none!important;}
-          .chart-card,.report-chart-card{box-shadow:none!important;border:0!important;margin:10px 0 18px!important;padding:0!important;}
+          .report-table-container{box-shadow:none!important;border-radius:0!important;}
           .summary-table,.case-table{box-shadow:none!important;border-radius:0!important;}
+          #generated_by{margin-top:48px;font-family:Arial,sans-serif;}
+          .sig-label{font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:#666;margin-bottom:60px;display:block;}
+          .sig-block{display:inline-block;text-align:center;}
+          .sig-line{display:block;border:none;border-top:1.5px solid #000;margin:0 0 4px;}
+          .sig-name{font-weight:700;font-size:13px;white-space:nowrap;}
+          .sig-title{font-size:11px;color:#666;}
         </style>
       </head>
       <body>
         ${printHeader}
-        <hr class="print-rule">
         ${clone.innerHTML}
       </body>
     </html>
   `);
   w.document.close();
   w.focus();
-  setTimeout(() => { w.print(); w.close(); }, 500);
+  setTimeout(() => { w.print(); w.close(); }, 300);
 }
 document.addEventListener('DOMContentLoaded', () => {
   fetch('../php/getUserName.php')
@@ -2266,34 +2261,24 @@ document.addEventListener('DOMContentLoaded', () => {
     .then(data => {
       const fullName = (data && data.full_name) ? data.full_name : '';
 
-      // Sidebar user display
-      const sidebarNameEl = document.getElementById('sidebarUserName');
-      if (sidebarNameEl) {
-        sidebarNameEl.textContent = fullName || 'Physician';
-      }
+      // Greeting (keep current behavior)
+      const greetingEl = document.getElementById('userGreeting');
+      if (greetingEl) greetingEl.textContent = fullName ? `Hello, ${fullName}!` : 'Hello, User!';
 
       // Build the signature block
       const gb = document.getElementById('generated_by');
-      gb.innerHTML = `
-        <div class="sig-label">Report Generated by:</div>
-        <hr class="sig-line">
-        <div class="sig-name"></div>
-        <div class="sig-title">Physician</div>
-      `;
-      gb.querySelector('.sig-name').textContent = fullName || '________________';
+      const name = fullName || '________________';
+      gb.innerHTML = `<div class="sig-label">Report Generated by:</div><div class="sig-block"><span class="sig-line"></span><div class="sig-name"></div><div class="sig-title">Nursing Attendant</div></div>`;
+      gb.querySelector('.sig-name').textContent = name;
+      const nameEl = gb.querySelector('.sig-name');
+      const lineEl = gb.querySelector('.sig-line');
+      requestAnimationFrame(() => { lineEl.style.width = nameEl.offsetWidth + 'px'; });
     })
     .catch(() => {
-      const sidebarNameEl = document.getElementById('sidebarUserName');
-      if (sidebarNameEl) {
-        sidebarNameEl.textContent = 'Physician';
-      }
+      const greetingEl = document.getElementById('userGreeting');
+      if (greetingEl) greetingEl.textContent = 'Hello, User!';
       const gb = document.getElementById('generated_by');
-      gb.innerHTML = `
-        <div class="sig-label">Report Generated by:</div>
-        <hr class="sig-line">
-        <div class="sig-name">________________</div>
-        <div class="sig-title">Physician</div>
-      `;
+      gb.innerHTML = `<div class="sig-label">Report Generated by:</div><div class="sig-block"><span class="sig-line" style="width:180px;"></span><div class="sig-name">________________</div><div class="sig-title">Nursing Attendant</div></div>`;
     });
 });
 

@@ -5,7 +5,7 @@ session_start();
 if (!isset($_SESSION['user_id'])) {
     header("Location: ../../role");
     exit;
-}
+} 
 
 $userId = $_SESSION['user_id'];
 
@@ -580,10 +580,9 @@ $disp_stmt->execute(array_merge($ids, $medicine_list));
   color: var(--navy, #0d2d52);
   font-size: 14px !important;
 }
-
 #generated_by {
   display: block;
-  margin: 32px 0 0 4px;
+  margin: 48px 0 0 4px;
   color: var(--dark, #0f1d31);
 }
 
@@ -593,26 +592,33 @@ $disp_stmt->execute(array_merge($ids, $medicine_list));
   color: var(--grey-500, #8c96aa);
   text-transform: uppercase;
   letter-spacing: .08em;
-  margin-bottom: 20px;
+  margin-bottom: 60px;
+  display: block;
+}
+
+#generated_by .sig-block {
+  display: inline-block;
+  text-align: center;
+  min-width: 200px;
 }
 
 #generated_by .sig-line {
-  display: none;
-  width: 200px;
-  border: 0;
-  border-top: 1.5px solid var(--dark, #0f1d31);
-  margin: 26px 0 6px;
+  display: block;
+  border: none;
+  border-top: 1.5px solid #000;
+  width: 100%;
+  margin: 0 0 4px;
 }
 
 #generated_by .sig-name {
   font-weight: 700;
   font-size: 15px;
   color: var(--navy, #0d2d52);
-  margin-top: 4px;
+  white-space: nowrap;
 }
 
 #generated_by .sig-title {
-  font-size: 12.5px;
+  font-size: 12px;
   color: var(--grey-500, #8c96aa);
   margin-top: 2px;
 }
@@ -757,14 +763,21 @@ $disp_stmt->execute(array_merge($ids, $medicine_list));
 @media print {
   @page { size: landscape; margin: 1cm; }
 
-  .title { display: block !important; }
+  .title { display: block !important; text-align: center; }
+  .ph-line-4 { text-align: center; }
+  .print-sub { text-align: center; }
+  /* Consistent font */
+  body, table, th, td, #generated_by, .sig-label, .sig-name, .sig-title,
+  .ph-line-4, .print-sub { font-family: Arial, sans-serif !important; }
+  /* Remove thead color */
+  #reportTable thead tr { background: #fff !important; }
+  #reportTable th { background: #fff !important; color: #000 !important; }
   .print-letterhead { display: grid !important; }
   .form-submit,
   .selected-filters,
   .chart-controls-panel,
   .medicine-chart-controls,
   .chart-toggle-group,
-  .medicine-chart-hidden,
   .chart-card,
   nav,
   #sidebar,
@@ -826,11 +839,12 @@ $disp_stmt->execute(array_merge($ids, $medicine_list));
     background: transparent !important;
   }
 
-  #generated_by { margin: 20mm 0 0 0; }
-  #generated_by .sig-label { font-size: 12pt; }
-  #generated_by .sig-name { font-size: 12pt; }
+  #generated_by { margin: 50mm 0 0 10mm !important; }
+  #generated_by .sig-label { font-size: 11px; margin-bottom: 60px; display: block; }
+  #generated_by .sig-block { display: inline-block; text-align: center; }
+  #generated_by .sig-line { display: block; border: none; border-top: 1.5px solid #000; width: 100%; margin: 0 0 4px; }
+  #generated_by .sig-name { font-weight: 700; font-size: 12pt; white-space: nowrap; }
   #generated_by .sig-title { font-size: 11pt; }
-  #generated_by .sig-line { display: block; width: 45mm; border-top-width: 1px; margin: 10mm 0 3mm; }
 }
 
 @media (max-width: 768px) {
@@ -1938,6 +1952,7 @@ function exportTableToExcel(tableID, filename = 'Medicine Utilization Report') {
 })();
 
 //PRINT
+//PRINT
 function printDiv() {
   const headerEl = document.querySelector('.print-letterhead');
   const printHeader = headerEl ? headerEl.outerHTML : '';
@@ -1951,52 +1966,10 @@ function printDiv() {
   const ruleInClone = clone.querySelector('.print-rule');
   if (ruleInClone) ruleInClone.remove();
 
-  // Do not print chart controls/check boxes.
   clone.querySelectorAll('.chart-controls-panel, .medicine-chart-controls, .chart-toggle-group').forEach(el => el.remove());
 
-  // Remove charts that the user did not select/view before converting canvases.
-  const chartPairs = [
-    { canvasId: 'sexPieChart', wrapperId: 'sexChart' },
-    { canvasId: 'ageGroupBarChart', wrapperId: 'ageGroupChart' },
-    { canvasId: 'barangayBarChart', wrapperId: 'barangayChart' },
-    { canvasId: 'medicineLineChart', wrapperId: 'medicineLineChartWrap' }
-  ];
-
-  chartPairs.forEach(({ canvasId, wrapperId }) => {
-    const liveWrapper = document.getElementById(wrapperId);
-    const cloneWrapper = clone.querySelector('#' + wrapperId);
-    const liveCanvas = document.getElementById(canvasId);
-    const cloneCanvas = clone.querySelector('#' + canvasId);
-
-    const isHidden = !liveWrapper ||
-      liveWrapper.classList.contains('medicine-chart-hidden') ||
-      liveWrapper.getAttribute('aria-hidden') === 'true' ||
-      window.getComputedStyle(liveWrapper).display === 'none';
-
-    if (isHidden) {
-      if (cloneWrapper) cloneWrapper.remove();
-      return;
-    }
-
-    if (liveCanvas && cloneCanvas && typeof liveCanvas.toDataURL === 'function') {
-      try {
-        const img = document.createElement('img');
-        img.src = liveCanvas.toDataURL('image/png');
-        img.style.cssText = 'max-width:100%;height:auto;display:block;margin:0 auto 14px;';
-        cloneCanvas.parentNode.replaceChild(img, cloneCanvas);
-      } catch (error) {
-        if (cloneWrapper) cloneWrapper.remove();
-      }
-    } else if (cloneWrapper) {
-      cloneWrapper.remove();
-    }
-  });
-
-  // Safety cleanup: remove any remaining hidden/empty chart elements and canvases.
-  clone.querySelectorAll('.medicine-chart-hidden, [aria-hidden="true"], canvas').forEach(el => el.remove());
-  clone.querySelectorAll('.medicine-charts-grid').forEach(grid => {
-    if (!grid.querySelector('.chart-card')) grid.remove();
-  });
+  /* Remove all chart/canvas elements from the clone */
+  clone.querySelectorAll('.chart-controls-panel, .medicine-chart-controls, .chart-toggle-group, .medicine-charts-grid, canvas').forEach(el => el.remove());
 
   const w = window.open('', '', 'height=900,width=1100');
   if (!w) { alert('Please allow pop-ups to print this report.'); return; }
@@ -2006,25 +1979,33 @@ function printDiv() {
         <title>Print Report</title>
         <meta charset="utf-8" />
         <style>
-          body{font-family:'Plus Jakarta Sans',Arial,sans-serif;font-size:12px;color:#000;}
-          table{width:100%;border-collapse:collapse;}
-          th,td{border:1px solid #000;padding:4px 6px;text-align:left;}
-          thead{background:#d8e4f0;print-color-adjust:exact;}
+          body{font-family:Arial,sans-serif;font-size:13px;color:#000;}
+          table{width:100%;border-collapse:collapse;font-family:Arial,sans-serif;font-size:12px;}
+          th,td{border:1px solid #000;padding:4px 6px;text-align:left;font-family:Arial,sans-serif;}
+          thead tr{background:#fff!important;}
+          thead th{background:#fff!important;color:#000!important;font-weight:700;}
           img{display:block;margin:0 auto;max-width:100%;height:auto;}
-          h3{margin:10px 0 6px;color:#000;}
+          h3{margin:10px 0 6px;color:#000;font-family:Arial,sans-serif;}
           .print-letterhead{display:grid;grid-template-columns:64px auto 64px;align-items:center;justify-content:center;column-gap:60px;margin:0 auto 10px;text-align:center;width:fit-content;}
           .print-logo{width:64px;height:64px;object-fit:contain;}
-          .print-heading{line-height:1.1;color:#000;}
+          .print-heading{line-height:1.1;color:#000;font-family:Arial,sans-serif;}
           .print-heading .ph-line-1{font-size:12pt;font-weight:500;}
           .print-heading .ph-line-2{font-size:14pt;font-weight:800;}
           .print-heading .ph-line-3{font-size:12pt;font-weight:600;}
-          .print-sub{font-size:11pt;margin-top:4px;}
+          .title{text-align:center;margin:8px 0;font-family:Arial,sans-serif;}
+          .ph-line-4{font-size:12pt;font-weight:800;margin-top:4px;text-align:center;font-family:Arial,sans-serif;}
+          .print-sub{font-size:11pt;margin-top:4px;text-align:center;font-family:Arial,sans-serif;}
           .print-rule{height:1px;border:0;background:#cfd8e3;margin:8px 0 12px;}
-          .form-submit,.selected-filters,.chart-controls-panel,.medicine-chart-controls,.chart-toggle-group,.medicine-chart-hidden{display:none!important;}
-          .chart-card{break-inside:avoid;page-break-inside:avoid;margin:10px 0 18px;text-align:center;}
-          .medicine-charts-grid{display:block!important;margin:0 0 16px!important;}
+          .form-submit,.selected-filters,.chart-controls-panel,.medicine-chart-controls,.chart-toggle-group,
+          .medicine-charts-grid,canvas{display:none!important;}
           .report-table-scroll{overflow:visible!important;max-height:none!important;}
           .summary-table,.summary-table2{box-shadow:none!important;border-radius:0!important;}
+          #generated_by{margin-top:48px;font-family:Arial,sans-serif;}
+          .sig-label{font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:#666;margin-bottom:60px;display:block;}
+          .sig-block{display:inline-block;text-align:center;}
+          .sig-line{display:block;border:none;border-top:1.5px solid #000;margin:0 0 4px;}
+          .sig-name{font-weight:700;font-size:13px;white-space:nowrap;}
+          .sig-title{font-size:11px;color:#666;}
         </style>
       </head>
       <body>
@@ -2047,56 +2028,28 @@ document.addEventListener('DOMContentLoaded', () => {
     .then(data => {
       const fullName = (data && data.full_name) ? data.full_name : '';
 
-<<<<<<< HEAD
       // Greeting (keep current behavior)
       const greetingEl = document.getElementById('userGreeting');
       if (greetingEl) {
         greetingEl.textContent = fullName ? `Hello, ${fullName}!` : 'Hello, User!';
-=======
-      // Sidebar user display
-      const sidebarNameEl = document.getElementById('sidebarUserName');
-      if (sidebarNameEl) {
-        sidebarNameEl.textContent = fullName || 'Physician';
-      }
-
-      const legacyGreeting = document.getElementById('userGreeting');
-      if (legacyGreeting) {
-        legacyGreeting.textContent = fullName ? `Hello, ${fullName}!` : 'Hello, User!';
->>>>>>> 33fc5da55d190a4b262e16a6c8935100d5aecf81
       }
 
       // Build the signature block
       const gb = document.getElementById('generated_by');
-      gb.innerHTML = `
-        <div class="sig-label">Report Generated by:</div>
-        <hr class="sig-line">
-        <div class="sig-name"></div>
-        <div class="sig-title">Physician</div>
-      `;
-      gb.querySelector('.sig-name').textContent = fullName || '________________';
+      const name = fullName || '________________';
+      gb.innerHTML = `<div class="sig-label">Report Generated by:</div><div class="sig-block"><span class="sig-line"></span><div class="sig-name"></div><div class="sig-title">Nursing Attendant</div></div>`;
+      gb.querySelector('.sig-name').textContent = name;
+      const nameEl = gb.querySelector('.sig-name');
+      const lineEl = gb.querySelector('.sig-line');
+      requestAnimationFrame(() => { lineEl.style.width = nameEl.offsetWidth + 'px'; });
     })
     .catch(() => {
-<<<<<<< HEAD
       const greetingEl = document.getElementById('userGreeting');
       if (greetingEl) {
         greetingEl.textContent = 'Hello, User!';
-=======
-      const sidebarNameEl = document.getElementById('sidebarUserName');
-      if (sidebarNameEl) {
-        sidebarNameEl.textContent = 'Physician';
-      }
-      const legacyGreeting = document.getElementById('userGreeting');
-      if (legacyGreeting) {
-        legacyGreeting.textContent = 'Hello, User!';
->>>>>>> 33fc5da55d190a4b262e16a6c8935100d5aecf81
       }
       const gb = document.getElementById('generated_by');
-      gb.innerHTML = `
-        <div class="sig-label">Report Generated by:</div>
-        <hr class="sig-line">
-        <div class="sig-name">________________</div>
-        <div class="sig-title">Physician</div>
-      `;
+      gb.innerHTML = `<div class="sig-label">Report Generated by:</div><div class="sig-block"><span class="sig-line" style="width:180px;"></span><div class="sig-name">________________</div><div class="sig-title">Nursing Attendant</div></div>`;
     });
 });
 // Close modal when clicking outside
