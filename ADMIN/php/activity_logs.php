@@ -1,66 +1,152 @@
-, can <?php
+<?php
 require 'config.php';
 session_start();
 
-// Check if user is logged in and has admin role
 if (!isset($_SESSION['user_id']) || !isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
     session_destroy();
     header("Location: ../../role");
     exit();
 }
 
-// Fetch statistics
-// Total logs count
-$totalLogsStmt = $pdo->query("SELECT COUNT(*) as total FROM logs");
-$totalLogs = $totalLogsStmt->fetch(PDO::FETCH_ASSOC)['total'];
+function e($value) {
+    return htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8');
+}
 
-// Today's activities count
-$todayActivitiesStmt = $pdo->query("SELECT COUNT(*) as today FROM logs WHERE DATE(timestamp) = CURDATE()");
-$todayActivities = $todayActivitiesStmt->fetch(PDO::FETCH_ASSOC)['today'];
+function isValidDateYmd($date) {
+    $dt = DateTime::createFromFormat('Y-m-d', (string)$date);
+    return $dt && $dt->format('Y-m-d') === $date;
+}
 
-// Active users count (users with logs in the last 7 days)
-$activeUsersStmt = $pdo->query("SELECT COUNT(DISTINCT performed_by) as active FROM logs WHERE timestamp >= DATE_SUB(NOW(), INTERVAL 7 DAY)");
-$activeUsers = $activeUsersStmt->fetch(PDO::FETCH_ASSOC)['active'];
+function getInitials($name) {
+    $name = trim((string)$name);
 
-// Fetch activity logs with filtering
-$query = "SELECT logs.*, users.full_name AS performed_by_name,
-          DATE_FORMAT(logs.timestamp, '%M %e, %Y %l:%i %p') AS formatted_timestamp
-          FROM logs 
-          JOIN users ON logs.performed_by = users.user_id 
-          WHERE 1";
+    if ($name === '') {
+        return 'U';
+    }
 
+    $parts = preg_split('/\s+/', $name);
+    $first = substr($parts[0] ?? 'U', 0, 1);
+    $last = count($parts) > 1 ? substr(end($parts), 0, 1) : '';
+
+    return strtoupper($first . $last);
+}
+
+function actionTone($action) {
+    $action = strtolower((string)$action);
+
+    if (strpos($action, 'failed') !== false || strpos($action, 'error') !== false || strpos($action, 'unauthorized') !== false || strpos($action, 'cancelled') !== false || strpos($action, 'terminated') !== false) {
+        return 'tone-danger';
+    }
+
+    if (strpos($action, 'successful login') !== false || strpos($action, 'added') !== false || strpos($action, 'dispensed') !== false || strpos($action, 'forwarded') !== false) {
+        return 'tone-success';
+    }
+
+    if (strpos($action, 'updated') !== false || strpos($action, 'change') !== false || strpos($action, 'reset') !== false) {
+        return 'tone-warning';
+    }
+
+    if (strpos($action, 'generated') !== false || strpos($action, 'report') !== false || strpos($action, 'certificate') !== false || strpos($action, 'prescription') !== false) {
+        return 'tone-info';
+    }
+
+    if (strpos($action, 'logged out') !== false || strpos($action, 'logout') !== false) {
+        return 'tone-muted';
+    }
+
+    return 'tone-default';
+}
+
+/* Summary statistics */
+$totalLogsStmt = $pdo->query("SELECT COUNT(*) AS total FROM logs");
+$totalLogs = (int)$totalLogsStmt->fetch(PDO::FETCH_ASSOC)['total'];
+
+$todayActivitiesStmt = $pdo->query("SELECT COUNT(*) AS today FROM logs WHERE DATE(timestamp) = CURDATE()");
+$todayActivities = (int)$todayActivitiesStmt->fetch(PDO::FETCH_ASSOC)['today'];
+
+$activeUsersStmt = $pdo->query("SELECT COUNT(DISTINCT performed_by) AS active FROM logs WHERE timestamp >= DATE_SUB(NOW(), INTERVAL 7 DAY)");
+$activeUsers = (int)$activeUsersStmt->fetch(PDO::FETCH_ASSOC)['active'];
+
+/* Filters */
+$userFilter = $_GET['user'] ?? '';
+$actionFilter = $_GET['action'] ?? '';
+$fromDate = $_GET['from_date'] ?? '';
+$toDate = $_GET['to_date'] ?? '';
+
+if ($fromDate !== '' && !isValidDateYmd($fromDate)) {
+    $fromDate = '';
+}
+
+if ($toDate !== '' && !isValidDateYmd($toDate)) {
+    $toDate = '';
+}
+
+if ($fromDate !== '' && $toDate !== '' && $fromDate > $toDate) {
+    [$fromDate, $toDate] = [$toDate, $fromDate];
+}
+
+$page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
 $limit = 10;
-$offset = 0;
+$where = ["1 = 1"];
 $params = [];
 
-// Filter by User
-if (!empty($_GET['user'])) {
-    $query .= " AND logs.performed_by = :user"; 
-    $params[':user'] = $_GET['user'];
+if ($userFilter !== '') {
+    $where[] = "logs.performed_by = :user";
+    $params[':user'] = $userFilter;
 }
 
-// Filter by Action Type
-if (!empty($_GET['action'])) {
-    $query .= " AND logs.action LIKE :action";
-    $params[':action'] = '%' . $_GET['action'] . '%';
+if ($actionFilter !== '') {
+    $where[] = "logs.action LIKE :action";
+    $params[':action'] = '%' . $actionFilter . '%';
 }
 
-// Filter by Date Range
-if (!empty($_GET['from_date'])) {
-    $query .= " AND DATE(logs.timestamp) >= :from_date";
-    $params[':from_date'] = $_GET['from_date'];
+if ($fromDate !== '') {
+    $where[] = "logs.timestamp >= :from_date";
+    $params[':from_date'] = $fromDate . ' 00:00:00';
 }
 
-if (!empty($_GET['to_date'])) {
-    $query .= " AND DATE(logs.timestamp) <= :to_date";
-    $params[':to_date'] = $_GET['to_date'];
+if ($toDate !== '') {
+    $where[] = "logs.timestamp < :to_date";
+    $params[':to_date'] = date('Y-m-d', strtotime($toDate . ' +1 day')) . ' 00:00:00';
 }
 
-$query .= " ORDER BY logs.timestamp DESC LIMIT :limit OFFSET :offset";
+$whereSql = implode(' AND ', $where);
+
+function activityLogPageUrl($targetPage) {
+    $params = $_GET;
+    $params['page'] = max(1, (int)$targetPage);
+
+    return '?' . http_build_query($params) . '#activity-table-section';
+}
+
+$countQuery = "SELECT COUNT(*) AS total
+               FROM logs
+               LEFT JOIN users ON logs.performed_by = users.user_id
+               WHERE {$whereSql}";
+
+$countStmt = $pdo->prepare($countQuery);
+
+foreach ($params as $key => $value) {
+    $countStmt->bindValue($key, $value);
+}
+
+$countStmt->execute();
+$filteredLogs = (int)$countStmt->fetch(PDO::FETCH_ASSOC)['total'];
+$totalPages = max(1, (int)ceil($filteredLogs / $limit));
+$page = min($page, $totalPages);
+$offset = ($page - 1) * $limit;
+
+$query = "SELECT logs.*, users.full_name AS performed_by_name,
+          DATE_FORMAT(logs.timestamp, '%M %e, %Y %l:%i %p') AS formatted_timestamp
+          FROM logs
+          LEFT JOIN users ON logs.performed_by = users.user_id
+          WHERE {$whereSql}
+          ORDER BY logs.timestamp DESC
+          LIMIT :limit OFFSET :offset";
 
 $stmt = $pdo->prepare($query);
-$stmt->bindValue(':limit', (int) $limit, PDO::PARAM_INT);
-$stmt->bindValue(':offset', (int) $offset, PDO::PARAM_INT);
+$stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
+$stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
 
 foreach ($params as $key => $value) {
     $stmt->bindValue($key, $value);
@@ -68,179 +154,291 @@ foreach ($params as $key => $value) {
 
 $stmt->execute();
 $logs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$startRecord = $filteredLogs > 0 ? $offset + 1 : 0;
+$endRecord = $filteredLogs > 0 ? min($offset + count($logs), $filteredLogs) : 0;
+
+$userStmt = $pdo->query("SELECT user_id, full_name FROM users ORDER BY full_name ASC");
+
+$actionOptions = [
+    'Successful Login' => 'User Login',
+    'User Logged Out' => 'User Logout',
+    'Added New User' => 'Added New User',
+    'Terminated User' => 'Terminated User',
+    'Reset Password' => 'Password Change',
+    'Added New Patient' => 'Added New Patient',
+    'Added New Patient and Referred to RHU' => 'Added New Patient and Referred to RHU',
+    'Updated Patient Information' => 'Updated Patient Information',
+    'Dispensed Medicine to Patient' => 'Dispensed Medicine to Patient',
+    'Added Referral' => 'Added Referral',
+    'Cancelled Referral' => 'Cancelled Referral',
+    'Generated BHS Patient Visit Summary Report' => 'Generated BHS Patient Visit Summary Report',
+    'Generated BHS Referral Summary Report' => 'Generated BHS Referral Summary Report',
+    'Generated BHS Medicine Dispensation Report' => 'Generated BHS Medicine Dispensation Report',
+    'Generated BHS Medical Cases Report' => 'Generated BHS Medical Cases Report',
+    'Forwarded Referral to Physician' => 'Forwarded Referral to Physician',
+    'Added Patient Assessment Record' => 'Added Patient Assessment Record',
+    'Added Diagnosis/Consultation Record' => 'Added Diagnosis/Consultation Record',
+    'Dispensed Medicine to Patient (RHU)' => 'Dispensed Medicine to Patient (RHU)',
+    'Generated Prescription' => 'Generated Prescription',
+    'Generated Medical Certificate' => 'Generated Medical Certificate',
+];
+
+$hasFilters = $userFilter !== '' || $actionFilter !== '' || $fromDate !== '' || $toDate !== '';
 ?>
- 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activity Logs</title>
+
     <link rel="icon" href="../../img/logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="../css/approval.css">
+
     <link rel="stylesheet" href="../css/sidebar.css">
     <link rel="stylesheet" href="../css/logout.css">
+    <link rel="stylesheet" href="../css/logs.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-      <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <title>Activity Logs</title>
 </head>
+
 <body>
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-    <!-- Sidebar Section -->
-    <section id="sidebar">
-        <a href="#" class="sidebar-brand">
-            <img src="../../img/logo.png" alt="Admin Logo" class="brand-logo">
-            <div class="brand-text">
-                <span class="brand-name">Hello Admin</span>
-            </div>
-        </a>
+<section id="sidebar">
+    <a href="#" class="sidebar-brand">
+        <img src="../../img/logo.png" alt="Admin Logo" class="brand-logo">
 
-        <div class="sidebar-scroll">
-            <div class="sidebar-section-label">Main Menu</div>
-            <ul class="side-menu top">
-                <li>
-                    <a href="admin_dashboard2" data-tooltip="Dashboard">
-                        <i class="bx bxs-dashboard nav-icon"></i>
-                        <span class="nav-label">Dashboard</span>
-                    </a>
-                </li>
-                <li class="active">
-                    <a href="activity_logs" data-tooltip="Activity Logs">
-                        <i class="bx bxs-user nav-icon"></i>
-                        <span class="nav-label">Activity Logs</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="admin_user" data-tooltip="User Management">
-                        <i class="bx bxs-notepad nav-icon"></i>
-                        <span class="nav-label">User management</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="../reports" data-tooltip="Reports">
-                        <i class="bx bxs-report nav-icon"></i>
-                        <span class="nav-label">Reports</span>
-                    </a>
-                </li>
-            </ul>
-
-            <div class="sidebar-divider"></div>
-
-            <ul class="side-menu">
-                <li>
-                    <a href="#" class="logout" data-tooltip="Logout" onclick="return confirmLogout()">
-                        <i class="bx bxs-log-out-circle nav-icon"></i>
-                        <span class="nav-label">Logout</span>
-                    </a>
-                </li>
-            </ul>
+        <div class="brand-text">
+            <span class="brand-name">Hello Admin</span>
         </div>
+    </a>
 
-        <div class="sidebar-footer">
-            <div class="sidebar-user">
-                <img src="../../img/admin.png" alt="Admin User">
-                <div class="sidebar-user-info">
-                    <div class="user-name" id="sidebarUserName">Admin User</div>
-                    <div class="user-role">Administrator</div>
-                </div>
+    <div class="sidebar-scroll">
+        <div class="sidebar-section-label">Main Menu</div>
+
+        <ul class="side-menu top">
+            <li>
+                <a href="admin_dashboard2" data-tooltip="Dashboard">
+                    <i class="bx bxs-dashboard nav-icon"></i>
+                    <span class="nav-label">Dashboard</span>
+                </a>
+            </li>
+
+            <li class="active">
+                <a href="activity_logs" data-tooltip="Activity Logs">
+                    <i class="bx bxs-user nav-icon"></i>
+                    <span class="nav-label">Activity Logs</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="admin_user" data-tooltip="User Management">
+                    <i class="bx bxs-notepad nav-icon"></i>
+                    <span class="nav-label">User Management</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="../reports" data-tooltip="Reports">
+                    <i class="bx bxs-report nav-icon"></i>
+                    <span class="nav-label">Reports</span>
+                </a>
+            </li>
+        </ul>
+
+        <div class="sidebar-divider"></div>
+
+        <ul class="side-menu">
+            <li>
+                <a href="#" class="logout" data-tooltip="Logout" onclick="return confirmLogout()">
+                    <i class="bx bxs-log-out-circle nav-icon"></i>
+                    <span class="nav-label">Logout</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="sidebar-footer">
+        <div class="sidebar-user">
+            <img src="../../img/admin.png" alt="Admin User">
+
+            <div class="sidebar-user-info">
+                <div class="user-name" id="sidebarUserName">Admin User</div>
+                <div class="user-role">Administrator</div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- Main Content Section -->
-    <section id="content">
-                <nav>
-            <button class="nav-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
-                <i class="bx bx-menu"></i>
+<section id="content">
+    <nav>
+        <button type="button" class="nav-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+            <i class="bx bx-menu"></i>
+        </button>
+
+        <div class="nav-search">
+            <input type="search" id="patientSearch" placeholder="Search activity logs..." name="search" autocomplete="off">
+            <button type="button" id="searchButton" aria-label="Search">
+                <i class="bx bx-search"></i>
             </button>
+            <div id="resultDropdown" class="dropdown-content"></div>
+        </div>
+    </nav>
 
-            <div class="nav-search" style="position: relative;">
-                <input type="search" id="patientSearch" placeholder="Search activity logs..." name="search" autocomplete="off">
-                <button type="button" id="searchButton" aria-label="Search">
-                    <i class="bx bx-search"></i>
-                </button>
-                <div id="resultDropdown" class="dropdown-content"></div>
-            </div>
-        </nav>
+    <main>
+        <div class="activity-page">
+            <header class="activity-hero">
+                <div>
+                    <div class="eyebrow">Administrator Monitoring</div>
+                    <h1>System Activity Logs</h1>
+                    <p>Review user actions, system activity, security-related events, and record changes in one clean dashboard.</p>
 
-        <main> 
-            <div class="head-title">
-                <div class="left">
-                  <h1>System Activity Logs</h1>
-                  <ul class="breadcrumb">
-                    <li><a href="#">System Activity Logs</a></li>
-                    <li><i class="bx bx-chevron-right"></i></li>
-                    <li><a class="active" href="#" onclick="history.back(); return false;">Go back</a></li>
-                  </ul>
+                    <ul class="breadcrumb">
+                        <li><a href="admin_dashboard2">Dashboard</a></li>
+                        <li><i class="bx bx-chevron-right"></i></li>
+                        <li><a class="active" href="activity_logs">Activity Logs</a></li>
+                    </ul>
                 </div>
-              </div>
 
-            <div class="logs-container">
+                <a href="../reports" class="hero-action">
+                    <i class="bx bxs-report"></i>
+                    View Reports
+                </a>
+            </header>
 
+<<<<<<< HEAD
+            <section class="stats-grid">
+                <article class="stat-card">
+                    <div class="stat-icon">
+                        <i class="bx bx-list-ul"></i>
+                    </div>
+
+                    <div>
+                        <span>Total Logs</span>
+                        <strong><?= number_format($totalLogs); ?></strong>
+                    </div>
+                </article>
+
+                <article class="stat-card">
+                    <div class="stat-icon">
+                        <i class="bx bx-calendar-check"></i>
+                    </div>
+
+                    <div>
+                        <span>Today's Activities</span>
+                        <strong><?= number_format($todayActivities); ?></strong>
+                    </div>
+                </article>
+
+                <article class="stat-card">
+                    <div class="stat-icon">
+                        <i class="bx bx-user-check"></i>
+                    </div>
+
+                    <div>
+                        <span>Active Users</span>
+                        <strong><?= number_format($activeUsers); ?></strong>
+                    </div>
+                </article>
+
+                <article class="stat-card">
+                    <div class="stat-icon">
+                        <i class="bx bx-filter"></i>
+                    </div>
+
+                    <div>
+                        <span>Filtered Results</span>
+                        <strong><?= number_format($filteredLogs); ?></strong>
+                    </div>
+                </article>
+            </section>
+
+            <section class="logs-panel filter-panel">
+                <div class="panel-heading">
+                    <div class="panel-heading-left">
+                        <span class="panel-icon">
+                            <i class="bx bx-slider-alt"></i>
+                        </span>
+
+                        <div>
+                            <h2>Filter Activity Logs</h2>
+                            <p>Choose a user, action type, and date range to narrow the audit trail.</p>
+                        </div>
+                    </div>
+
+                    <?php if ($hasFilters): ?>
+                        <a href="activity_logs" class="clear-filter-top">
+                            <i class="bx bx-refresh"></i>
+                            Reset filters
+                        </a>
+                    <?php endif; ?>
+                </div>
+
+=======
                 <div class="logs-filter-card">
+>>>>>>> 23984592a94087055b071541e42a022dc90209a3
                 <form method="GET" action="" class="logs-filter-grid" id="logFilterForm">
                     <div class="form-group">
-                        <label for="user">Select User</label>
+                        <label for="userFilter">Select User</label>
                         <select name="user" id="userFilter" class="auto-submit">
                             <option value="">All Users</option>
-                            <?php
-                            $userStmt = $pdo->query("SELECT user_id, full_name FROM users");
-                            while ($user = $userStmt->fetch(PDO::FETCH_ASSOC)) {
-                                $selected = ($_GET['user'] ?? '') == $user['user_id'] ? 'selected' : '';
-                                echo '<option value="' . $user['user_id'] . '" ' . $selected . '>' . htmlspecialchars($user['full_name']) . '</option>';
-                            }
-                            ?>
+                            <?php while ($user = $userStmt->fetch(PDO::FETCH_ASSOC)): ?>
+                                <option value="<?= e($user['user_id']); ?>" <?= $userFilter == $user['user_id'] ? 'selected' : ''; ?>>
+                                    <?= e($user['full_name']); ?>
+                                </option>
+                            <?php endwhile; ?>
                         </select>
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group action-group">
                         <label for="action">Action Type</label>
                         <select name="action" id="action" class="auto-submit">
                             <option value="">All Actions</option>
-                            <option value="Successful Login" <?= ($_GET['action'] ?? '') === 'Successful Login' ? 'selected' : '' ?>>User Login</option>
-                            <option value="User Logged Out" <?= ($_GET['action'] ?? '') === 'User Logged Out' ? 'selected' : '' ?>>User Logout</option>
-                            <option value="Added New User" <?= ($_GET['action'] ?? '') === 'Added New User' ? 'selected' : '' ?>>Added New User</option>
-                            <option value="Terminated User" <?= ($_GET['action'] ?? '') === 'Terminated User' ? 'selected' : '' ?>>Terminated User</option>
-                            <option value="Reset Password" <?= ($_GET['action'] ?? '') === 'Reset Password' ? 'selected' : '' ?>>Password Change</option>
-                            <option value="Added New Patient" <?= ($_GET['action'] ?? '') === 'Added New Patient' ? 'selected' : '' ?>>Added New Patient</option>
-                            <option value="Added New Patient and Referred to RHU" <?= ($_GET['action'] ?? '') === 'Added New Patient and Referred to RHU' ? 'selected' : '' ?>>Added New Patient and Referred to RHU</option>
-                            <option value="Updated Patient Information" <?= ($_GET['action'] ?? '') === 'Updated Patient Information' ? 'selected' : '' ?>>Updated Patient Information</option>
-                            <option value="Dispensed Medicine to Patient">Dispensed Medicine to Patient</option>
-                            <option value="Added Referral" <?= ($_GET['action'] ?? '') === 'Added Referral' ? 'selected' : '' ?>>Added Referral</option>
-                            <option value="Cancelled Referral" <?= ($_GET['action'] ?? '') === 'Cancelled Referral' ? 'selected' : '' ?>>Cancelled Referral</option>
-                            <option value="Generated BHS Patient Visit Summary Report" <?= ($_GET['action'] ?? '') === 'Generated BHS Patient Visit Summary Report' ? 'selected' : '' ?>>Generated BHS Patient Visit Summary Report</option>
-                            <option value="Generated BHS Referral Summary Report" <?= ($_GET['action'] ?? '') === 'Generated BHS Referral Summary Report' ? 'selected' : '' ?>>Generated BHS Referral Summary Report</option>
-                            <option value="Generated BHS Medicine Dispensation Report" <?= ($_GET['action'] ?? '') === 'Generated BHS Medicine Dispensation Report' ? 'selected' : '' ?>>Generated BHS Medicine Dispensation Report</option>
-                            <option value="Generated BHS Medical Cases Report" <?= ($_GET['action'] ?? '') === 'Generated BHS Medical Cases Report' ? 'selected' : '' ?>>Generated BHS Medical Cases Report</option>
-                            <option value="Forwarded Referral to Physician" <?= ($_GET['action'] ?? '') === 'Forwarded Referral to Physician' ? 'selected' : '' ?>>Forwarded Referral to Physician</option>
-                            <option value="Added Patient Assessment Record" <?= ($_GET['action'] ?? '') === 'Added Patient Assessment Record' ? 'selected' : '' ?>>Added Patient Assessment Record</option>
-                            <option value="Added Diagnosis/Consultation Record" <?= ($_GET['action'] ?? '') === 'Added Diagnosis/Consultation Record' ? 'selected' : '' ?>>Added Diagnosis/Consultation Record</option>
-                            <option value="Dispensed Medicine to Patient (RHU)" <?= ($_GET['action'] ?? '') === 'Dispensed Medicine to Patient (RHU)' ? 'selected' : '' ?>>Dispensed Medicine to Patient (RHU)</option>
-                            <option value="Generated Prescription" <?= ($_GET['action'] ?? '') === 'Generated Prescription' ? 'selected' : '' ?>>Generated Prescription</option>
-                            <option value="Generated Medical Certificate" <?= ($_GET['action'] ?? '') === 'Generated Medical Certificate' ? 'selected' : '' ?>>Generated Medical Certificate</option>
+                            <?php foreach ($actionOptions as $value => $label): ?>
+                                <option value="<?= e($value); ?>" <?= $actionFilter === $value ? 'selected' : ''; ?>>
+                                    <?= e($label); ?>
+                                </option>
+                            <?php endforeach; ?>
                         </select>
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group date-group">
                         <label for="from_date">From</label>
-                        <input type="text" id="from_date" name="from_date" class="flatpickr" 
-                            placeholder="Select a date" value="<?= $_GET['from_date'] ?? '' ?>">
+                        <input type="text" id="from_date" name="from_date" class="flatpickr" placeholder="Start date" value="<?= e($fromDate); ?>">
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group date-group">
                         <label for="to_date">To</label>
-                        <input type="text" id="to_date" name="to_date" class="flatpickr" 
-                            placeholder="Select a date" value="<?= $_GET['to_date'] ?? '' ?>">
+                        <input type="text" id="to_date" name="to_date" class="flatpickr" placeholder="End date" value="<?= e($toDate); ?>">
                     </div>
 
-                    <div class="form-group">
-                        <label style="opacity: 0;">Filter</label>
-                        <button type="submit" id="filterButton">Filter</button>
+                    <div class="form-group filter-actions">
+                        <label aria-hidden="true">&nbsp;</label>
+
+                        <div class="filter-button-row">
+                            <button type="submit" id="filterButton">
+                                <i class="bx bx-check"></i>
+                                Apply
+                            </button>
+
+                            <?php if ($hasFilters): ?>
+                                <a href="activity_logs" class="reset-filter-link" aria-label="Clear filters">
+                                    <i class="bx bx-x"></i>
+                                </a>
+                            <?php endif; ?>
+                        </div>
                     </div>
                 </form>
+<<<<<<< HEAD
+            </section>
+=======
                 </div><!-- /.logs-filter-card -->
 
                 <div class="logs-table-card">
@@ -249,177 +447,378 @@ $logs = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <h3>System Activity Logs</h3>
                         <span class="logs-count">Total: <?= number_format($totalLogs) ?></span>
                     </div>
+>>>>>>> 23984592a94087055b071541e42a022dc90209a3
 
-                <table class="logs-table" id="logTable">
-                    <thead>
-                        <tr>
-                            <th>SUMMARY</th>
-                            <th>USER</th>
-                            <th>TIMESTAMP</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($logs as $log): ?>
-                            <tr>
-                                <td><?= htmlspecialchars($log['action']) ?></td>
-                                <td><a href="#" class="user-link" data-userid="<?= $log['performed_by'] ?>" data-action="<?= htmlspecialchars($log['action']) ?>"><?= htmlspecialchars($log['performed_by_name']) ?></a></td>
-                                <td><?= htmlspecialchars($log['formatted_timestamp']) ?></td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody> 
-                </table>
-                
-                <div class="pagination-container">
-                    <div class="pagination-buttons">
-                        <button id="prevBtn" class="pagination-btn prev-btn hidden">
-                            <i class="bx bx-chevron-left"></i> Previous
-                        </button>
-                        <button id="loadMoreBtn" class="pagination-btn load-more-btn">
-                            Load More <i class="bx bx-chevron-right"></i>
-                        </button>
+            <section class="logs-panel table-panel" id="activity-table-section">
+                <div class="panel-heading table-heading">
+                    <div class="panel-heading-left">
+                        <span class="panel-icon">
+                            <i class="bx bx-history"></i>
+                        </span>
+
+                        <div>
+                            <h2>Recent Activity</h2>
+                            <p>
+                                Showing <?= number_format($startRecord); ?>–<?= number_format($endRecord); ?> of <?= number_format($filteredLogs); ?> matching log<?= $filteredLogs === 1 ? '' : 's'; ?>.
+                            </p>
+                        </div>
                     </div>
+
+                    <span class="table-count">
+                        Latest first
+                    </span>
+                </div>
+
+                <div class="table-shell">
+                    <table class="logs-table" id="logTable">
+                        <thead>
+                            <tr>
+                                <th>Summary</th>
+                                <th>User</th>
+                                <th>Timestamp</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <?php foreach ($logs as $log): ?>
+                                <?php
+                                    $displayName = $log['performed_by_name'] ?? 'Unknown User';
+                                    $tone = actionTone($log['action'] ?? '');
+                                ?>
+                                <tr>
+                                    <td>
+                                        <span class="action-pill <?= e($tone); ?>">
+                                            <?= e($log['action'] ?? 'No action recorded'); ?>
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        <a href="#" class="user-link" data-userid="<?= e($log['performed_by'] ?? ''); ?>" data-fullname="<?= e($displayName); ?>" data-username="<?= e($log['performed_by'] ?? 'N/A'); ?>" data-role="N/A" data-action="<?= e($log['action'] ?? ''); ?>" data-timestamp="<?= e($log['formatted_timestamp'] ?? 'N/A'); ?>">
+                                            <span class="user-avatar"><?= e(getInitials($displayName)); ?></span>
+                                            <span class="user-name-text"><?= e($displayName); ?></span>
+                                        </a>
+                                    </td>
+
+                                    <td>
+                                        <span class="timestamp-text">
+                                            <i class="bx bx-time-five"></i>
+                                            <?= e($log['formatted_timestamp'] ?? 'N/A'); ?>
+                                        </span>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+
+                            <?php if (empty($logs)): ?>
+                                <tr>
+                                    <td colspan="3">
+                                        <div class="empty-state">
+                                            <i class="bx bx-search-alt"></i>
+                                            <strong>No activity logs found</strong>
+                                            <span>Try changing the selected user, action type, or date range.</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="pagination-container">
+                    <div class="pagination-info">
+                        <span>Showing <?= number_format($startRecord); ?>–<?= number_format($endRecord); ?> of <?= number_format($filteredLogs); ?> record<?= $filteredLogs === 1 ? '' : 's'; ?></span>
+                    </div>
+<<<<<<< HEAD
+
+                    <nav class="pagination-nav" aria-label="Activity logs pagination">
+                        <?php if ($page > 1): ?>
+                            <a class="pagination-control" data-preserve-scroll href="<?= e(activityLogPageUrl($page - 1)); ?>">
+                                <i class="bx bx-chevron-left"></i>
+                                Previous
+                            </a>
+                        <?php else: ?>
+                            <span class="pagination-control disabled">
+                                <i class="bx bx-chevron-left"></i>
+                                Previous
+                            </span>
+                        <?php endif; ?>
+=======
                 </div>
                 </div><!-- /.logs-table-card -->
+>>>>>>> 23984592a94087055b071541e42a022dc90209a3
 
-                <div id="modalOverlay"></div>
+                        <div class="pagination-pages">
+                            <?php
+                            $maxVisiblePages = 3;
+                            $pageStart = max(1, $page - 1);
+                            $pageEnd = min($totalPages, $pageStart + $maxVisiblePages - 1);
 
-                <div id="userModal" class="modal-box">
-                    <div class="modal-header">
-                        <h2>User Information and Activity</h2>
-                        <span class="close-btn" onclick="closeModal()">&times;</span>
-                    </div>
-                    <div class="modal-contents">
-                        <p><strong>Full Name:</strong> <span id="logUserFullName"></span></p>
-                        <p><strong>User Name:</strong> <span id="logUserName"></span></p>
-                        <p><strong>Role:</strong> <span id="logUserRole"></span></p>
-                        <p><strong>Action:</strong> <span id="logUserAction"></span></p>
-                        <p><strong>Timestamp:</strong> <span id="logUserTimestamp"></span></p>
-                    </div>
+                            if (($pageEnd - $pageStart + 1) < $maxVisiblePages) {
+                                $pageStart = max(1, $pageEnd - $maxVisiblePages + 1);
+                            }
+
+                            for ($pageNumber = $pageStart; $pageNumber <= $pageEnd; $pageNumber++):
+                                if ($pageNumber === $page):
+                            ?>
+                                    <span class="pagination-page active" aria-current="page"><?= $pageNumber; ?></span>
+                            <?php else: ?>
+                                    <a class="pagination-page" data-preserve-scroll href="<?= e(activityLogPageUrl($pageNumber)); ?>"><?= $pageNumber; ?></a>
+                            <?php
+                                endif;
+                            endfor;
+                            ?>
+                        </div>
+
+                        <?php if ($page < $totalPages): ?>
+                            <a class="pagination-control" data-preserve-scroll href="<?= e(activityLogPageUrl($page + 1)); ?>">
+                                Next
+                                <i class="bx bx-chevron-right"></i>
+                            </a>
+                        <?php else: ?>
+                            <span class="pagination-control disabled">
+                                Next
+                                <i class="bx bx-chevron-right"></i>
+                            </span>
+                        <?php endif; ?>
+                    </nav>
                 </div>
+            </section>
 
-
-            </div>
-        </main>
-
-        <div id="logoutModal" class="logout-modal">
-            <div class="logout-modal-content">
-                <div class="logout-modal-header">
-                    <h3>Confirm Logout</h3>
-                </div>
-                <div class="logout-modal-body">
-                    <p>Are you sure you want to logout?</p>
-                </div>
-                <div class="logout-modal-footer">
-                    <button onclick="closeModal()" class="logout-cancel-btn">Cancel</button>
-                    <button onclick="proceedLogout()" class="logout-confirm-btn">Yes, Logout</button>
-                </div>
+            <div class="logs-summary">
+                <p>Total Logs: <strong><?= number_format($totalLogs); ?></strong></p>
             </div>
         </div>
-    </section> 
+    </main>
 
-    <script src="../js/activity_logs.js"></script>
+    <div id="modalOverlay" class="modal-overlay"></div>
 
-    <script>
-        // Fetch and display user name in the BHW-style sidebar footer
-        fetch('getUserName')
-            .then(response => response.json())
-            .then(data => {
-                const sidebarNameEl = document.getElementById('sidebarUserName');
-                if (sidebarNameEl) {
-                    sidebarNameEl.textContent = data.full_name || 'Admin User';
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching user name:', error);
-                const sidebarNameEl = document.getElementById('sidebarUserName');
-                if (sidebarNameEl) {
-                    sidebarNameEl.textContent = 'Admin User';
-                }
-            });
+    <div id="userModal" class="modal-box">
+        <div class="modal-header">
+            <div>
+                <span>User Activity Details</span>
+                <h2>User Information</h2>
+            </div>
 
-        function confirmLogout() {
-            document.getElementById('logoutModal').style.display = 'block';
-            return false;
-        }
+            <button type="button" class="close-btn" onclick="closeModal()" aria-label="Close modal">
+                &times;
+            </button>
+        </div>
 
-        function closeModal() {
-            document.getElementById('logoutModal').style.display = 'none';
-        }
+        <div class="modal-contents">
+            <p><strong>Full Name:</strong> <span id="logUserFullName"></span></p>
+            <p><strong>User Name:</strong> <span id="logUserName"></span></p>
+            <p><strong>Role:</strong> <span id="logUserRole"></span></p>
+            <p><strong>Action:</strong> <span id="logUserAction"></span></p>
+            <p><strong>Timestamp:</strong> <span id="logUserTimestamp"></span></p>
+        </div>
+    </div>
 
-        function proceedLogout() {
-            window.location.href='logout';
-        }
+    <div id="logoutModal" class="logout-modal">
+        <div class="logout-modal-content">
+            <div class="logout-modal-header">
+                <h3>Confirm Logout</h3>
+            </div>
 
-        window.addEventListener('click', function(event) {
-            const logoutModal = document.getElementById('logoutModal');
-            if (event.target === logoutModal) {
-                closeModal();
+            <div class="logout-modal-body">
+                <p>Are you sure you want to logout?</p>
+            </div>
+
+            <div class="logout-modal-footer">
+                <button type="button" onclick="closeModal()" class="logout-cancel-btn">Cancel</button>
+                <button type="button" onclick="proceedLogout()" class="logout-confirm-btn">Yes, Logout</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    fetch("getUserName")
+        .then(response => response.json())
+        .then(data => {
+            const sidebarNameEl = document.getElementById("sidebarUserName");
+
+            if (sidebarNameEl) {
+                sidebarNameEl.textContent = data.full_name || "Admin User";
+            }
+        })
+        .catch(error => {
+            console.error("Error fetching user name:", error);
+
+            const sidebarNameEl = document.getElementById("sidebarUserName");
+
+            if (sidebarNameEl) {
+                sidebarNameEl.textContent = "Admin User";
             }
         });
-    </script>
 
-    <script>
-(function () {
-  const sidebar = document.getElementById('sidebar');
-  const toggle = document.getElementById('sidebarToggle');
-  const overlay = document.getElementById('sidebarOverlay');
-  const MOBILE_BP = 768;
-
-  if (!sidebar || !toggle || !overlay) return;
-
-  function isMobile() {
-    return window.innerWidth <= MOBILE_BP;
-  }
-
-  function closeMobileSidebar() {
-    sidebar.classList.remove('mobile-open');
-    overlay.classList.remove('active');
-    document.body.style.overflow = '';
-  }
-
-  toggle.addEventListener('click', function () {
-    if (isMobile()) {
-      const open = sidebar.classList.toggle('mobile-open');
-      overlay.classList.toggle('active', open);
-      document.body.style.overflow = open ? 'hidden' : '';
-    } else {
-      sidebar.classList.toggle('collapsed');
+    if (window.flatpickr) {
+        flatpickr(".flatpickr", {
+            dateFormat: "Y-m-d",
+            allowInput: true
+        });
     }
-  });
 
-  overlay.addEventListener('click', closeMobileSidebar);
-
-  window.addEventListener('resize', function () {
-    if (!isMobile()) {
-      closeMobileSidebar();
-    }
-  });
-})();
-
-// Keep the BHW-style navbar search local to this page so the activity log content remains intact.
-document.addEventListener("DOMContentLoaded", () => {
-  const searchInput = document.getElementById("patientSearch");
-  const searchButton = document.getElementById("searchButton");
-  const rows = () => Array.from(document.querySelectorAll("#logTable tbody tr"));
-
-  function filterActivityLogs() {
-    const term = (searchInput?.value || "").toLowerCase().trim();
-    rows().forEach(row => {
-      row.style.display = row.textContent.toLowerCase().includes(term) ? "" : "none";
-    });
-  }
-
-  if (searchInput && searchButton) {
-    searchInput.addEventListener("input", filterActivityLogs);
-    searchInput.addEventListener("keypress", function (event) {
-      if (event.key === "Enter") {
-        event.preventDefault();
-        filterActivityLogs();
-      }
-    });
-    searchButton.addEventListener("click", filterActivityLogs);
-  }
+    setupSidebar();
+    setupActivitySearch();
+    setupPaginationScroll();
+    setupUserModal();
 });
-    </script>
+
+function confirmLogout() {
+    const modal = document.getElementById("logoutModal");
+
+    if (modal) {
+        modal.style.display = "grid";
+    }
+
+    return false;
+}
+
+function closeModal() {
+    const logoutModal = document.getElementById("logoutModal");
+    const userModal = document.getElementById("userModal");
+    const modalOverlay = document.getElementById("modalOverlay");
+
+    if (logoutModal) {
+        logoutModal.style.display = "none";
+    }
+
+    if (userModal) {
+        userModal.style.display = "none";
+    }
+
+    if (modalOverlay) {
+        modalOverlay.style.display = "none";
+    }
+}
+
+function proceedLogout() {
+    window.location.href = "logout";
+}
+
+window.addEventListener("click", function (event) {
+    const logoutModal = document.getElementById("logoutModal");
+    const modalOverlay = document.getElementById("modalOverlay");
+
+    if (event.target === logoutModal || event.target === modalOverlay) {
+        closeModal();
+    }
+});
+
+function setupSidebar() {
+    const sidebar = document.getElementById("sidebar");
+    const toggle = document.getElementById("sidebarToggle");
+    const overlay = document.getElementById("sidebarOverlay");
+    const MOBILE_BP = 768;
+
+    if (!sidebar || !toggle || !overlay) {
+        return;
+    }
+
+    function isMobile() {
+        return window.innerWidth <= MOBILE_BP;
+    }
+
+    function closeMobileSidebar() {
+        sidebar.classList.remove("mobile-open");
+        overlay.classList.remove("active");
+        document.body.style.overflow = "";
+    }
+
+    toggle.addEventListener("click", function () {
+        if (isMobile()) {
+            const open = sidebar.classList.toggle("mobile-open");
+
+            overlay.classList.toggle("active", open);
+            document.body.style.overflow = open ? "hidden" : "";
+        } else {
+            sidebar.classList.toggle("collapsed");
+        }
+    });
+
+    overlay.addEventListener("click", closeMobileSidebar);
+
+    window.addEventListener("resize", function () {
+        if (!isMobile()) {
+            closeMobileSidebar();
+        }
+    });
+}
+
+function setupActivitySearch() {
+    const searchInput = document.getElementById("patientSearch");
+    const searchButton = document.getElementById("searchButton");
+
+    function rows() {
+        return Array.from(document.querySelectorAll("#logTable tbody tr"));
+    }
+
+    function filterActivityLogs() {
+        const term = (searchInput?.value || "").toLowerCase().trim();
+
+        rows().forEach(row => {
+            row.style.display = row.textContent.toLowerCase().includes(term) ? "" : "none";
+        });
+    }
+
+    if (searchInput) {
+        searchInput.addEventListener("input", filterActivityLogs);
+
+        searchInput.addEventListener("keypress", function (event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                filterActivityLogs();
+            }
+        });
+    }
+
+    if (searchButton) {
+        searchButton.addEventListener("click", filterActivityLogs);
+    }
+}
+
+function setupPaginationScroll() {
+    const savedScroll = sessionStorage.getItem("activityLogsScrollY");
+
+    if (savedScroll !== null) {
+        requestAnimationFrame(() => {
+            window.scrollTo({ top: Number(savedScroll), behavior: "auto" });
+            sessionStorage.removeItem("activityLogsScrollY");
+        });
+    }
+
+    document.querySelectorAll("[data-preserve-scroll]").forEach(link => {
+        link.addEventListener("click", function () {
+            sessionStorage.setItem("activityLogsScrollY", String(window.scrollY));
+        });
+    });
+}
+
+function setupUserModal() {
+    document.querySelectorAll(".user-link").forEach(link => {
+        link.addEventListener("click", function (event) {
+            event.preventDefault();
+
+            const overlay = document.getElementById("modalOverlay");
+            const modal = document.getElementById("userModal");
+
+            const fullName = document.getElementById("logUserFullName");
+            const userName = document.getElementById("logUserName");
+            const role = document.getElementById("logUserRole");
+            const action = document.getElementById("logUserAction");
+            const timestamp = document.getElementById("logUserTimestamp");
+
+            if (fullName) fullName.textContent = this.dataset.fullname || "N/A";
+            if (userName) userName.textContent = this.dataset.username || "N/A";
+            if (role) role.textContent = this.dataset.role || "N/A";
+            if (action) action.textContent = this.dataset.action || "N/A";
+            if (timestamp) timestamp.textContent = this.dataset.timestamp || "N/A";
+
+            if (overlay) overlay.style.display = "block";
+            if (modal) modal.style.display = "block";
+        });
+    });
+}
+</script>
 </body>
 </html>
