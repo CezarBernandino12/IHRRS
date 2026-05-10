@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="../img/logo.png">
     <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
-    <link rel="stylesheet" href="css/form.css">
+    <link rel="stylesheet" href="css/editinfo.css">
     <link rel="stylesheet" href="css/sidebar.css">
     <link rel="stylesheet" href="css/logout.css">
     <title>Edit Personal Information</title>
@@ -123,23 +123,13 @@ fetch('php/getUserId.php')
         <div class="head-title">
             <div class="left">
                 <h1>Edit Patient Personal Information</h1>
-                <ul class="breadcrumb">
-                    <li><a href="#">Edit Patient Information</a></li>
-                    <li><i class="bx bx-chevron-right"></i></li>
-                    <a class="active" href="#" onclick="history.back(); return false;">Go back</a>
-                </ul>
             </div>
         </div>
-    </main>
-</section>
+        <div class="edit-info-page-shell">
 
-    <div class="container-header">
-        <h2>PATIENT DETAILS</h2>
-    </div>
-
-<form id="updateReferralForm" method="POST">
+            <form id="updateReferralForm" method="POST">
     <div class="container">
-        <p><b>PERSONAL INFORMATION:</b></p>
+        <div class="form-section-title"><i class="bx bx-user"></i><b>PERSONAL INFORMATION:</b></div>
 
         <div class="form-container">
             <!-- Row 1: Last Name, First Name -->
@@ -159,7 +149,7 @@ fetch('php/getUserId.php')
                 <input type="text" class="patient-middle-name form-control" name="middle_name" placeholder="Enter Middle Name">
             </div>
 
-            <div class="form-group">
+            <div class="form-group extension-field">
                 <label for="extension">Ext:</label>
                 <select class="patient-extension form-control" name="extension">
                     <option value="">Select</option>
@@ -174,20 +164,33 @@ fetch('php/getUserId.php')
             </div>
 
             <!-- Row 3: Birth Place -->
-            <div class="form-group">
+            <div class="form-group birth-place-field">
                 <label for="birthPlace">Birth Place:</label>
                 <input type="text" class="patient-birth-place form-control" name="birthplace" placeholder="Enter Birth Place">
             </div>
 
             <!-- Row 4: Date of Birth, Age -->
-            <div class="form-group">
+            <div class="form-group dob-field">
                 <label for="dob">Date of Birth:</label>
                 <input type="text" class="date-of-birth form-control flatpickr-dob" name="date_of_birth" placeholder="Select date of birth" onchange="calculateAge()">
             </div>
 
-            <div class="form-group">
+            <div class="form-group age-field">
                 <label for="age">Age:</label>
-                <input type="text" class="age form-control" name="age" placeholder="Age" readonly>
+                <input type="text" class="age form-control" name="age" placeholder="Auto" readonly>
+            </div>
+
+            <!-- Row 5: Sex Option -->
+            <div class="form-group sex-field">
+                <label class="">Gender:</label>
+                <div class="radio-group">
+                    <label class="radio-option">
+                        <input type="radio" class="sex" name="sex" value="Male"> Male
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" class="sex" name="sex" value="Female"> Female
+                    </label>
+                </div>
             </div>
 
             <!-- Row 5: Address Section -->
@@ -305,26 +308,14 @@ fetch('php/getUserId.php')
             </div>
 
             <!-- Row 10: Family Serial Number -->
-            <div class="form-group">
+            <div class="form-group family-serial-field">
                 <label for="familySerialNo">Family Serial Number:</label>
                 <input type="text" class="family-serial-no form-control" name="family_serial_no" placeholder="Family Serial no.">
             </div>
 
-            <!-- Row 11: Gender (Radio Buttons) -->
-            <div class="form-group full-width">
-                <label class="">Gender:</label>
-                <div class="radio-group">
-                    <label class="radio-option">
-                        <input type="radio" class="sex" name="sex" value="Male"> Male
-                    </label>
-                    <label class="radio-option">
-                        <input type="radio" class="sex" name="sex" value="Female"> Female
-                    </label>
-                </div>
-            </div>
 
             <!-- Row 12: 4Ps Status (Radio Buttons) -->
-            <div class="form-group full-width">
+            <div class="form-group fourps-field">
                 <label>4Ps Status:</label>
                 <div class="radio-group">
                     <label class="radio-option">
@@ -343,13 +334,16 @@ fetch('php/getUserId.php')
             <button type="submit" class="submit-btn" id="submitButton">Submit</button>
         </div>
     </div>
-</form>
+            </form>
+        </div>
+    </main>
+</section>
 
 <!-- Modals -->
 <div id="myModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
-            <img src="../img/verify.png" alt="Checkmark" class="checkmark-image">
+            <div class="modal-icon modal-icon-question" aria-hidden="true"><i class="bx bx-edit-alt"></i></div>
             <h3>Confirmation</h3>
             <span class="close-btn" id="closeBtn">&times;</span>
         </div>
@@ -362,32 +356,29 @@ fetch('php/getUserId.php')
         </div>
     </div>
 </div>
+</div>
 
 <div id="myModal2" class="modal">
     <div class="modal-content">
         <div class="modal-header">
-            <img src="../img/check.png" alt="Checkmark" class="checkmark-image">
+            <div class="modal-icon modal-icon-success" aria-hidden="true"><i class="bx bx-check"></i></div>
+            <h3>Record successfully updated.</h3>
             <span class="close-btn" id="closeBtn2">&times;</span>
         </div>
-        <div class="modal-footer">
-            <div class="modal-header">
-                <h4 style="color: #033cad; font-size: large;">Record successfully updated.</h4>
-            </div>
-        </div>
+    </div>
+</div>
     </div>
 </div>
 
 <div id="myModal3" class="modal">
     <div class="modal-content">
         <div class="modal-header">
-            <img src="../img/error.jpg" alt="Checkmark" class="checkmark-image">
+            <div class="modal-icon modal-icon-error" aria-hidden="true"><i class="bx bx-error-circle"></i></div>
+            <h3>Saving failed.</h3>
             <span class="close-btn" id="closeBtn3">&times;</span>
         </div>
-        <div class="modal-footer">
-            <div class="modal-header">
-                <h3 style="color: #960f0f; font-size: large;">Saving failed.</h3>
-            </div>
-        </div>
+    </div>
+</div>
     </div>
 </div>
 
@@ -433,15 +424,17 @@ fetch('php/getUserId.php')
     fetch('php/getUserName.php')
     .then(response => response.json())
     .then(data => {
-        if (data.full_name) {
-            document.getElementById('userGreeting').textContent = `Hello, ${data.full_name}!`;
-        } else {
-            document.getElementById('userGreeting').textContent = 'Hello, BHW!';
+        const sidebarUserName = document.getElementById('sidebarUserName');
+        if (sidebarUserName) {
+            sidebarUserName.textContent = data.full_name || 'BHW User';
         }
     })
     .catch(error => {
         console.error('Error fetching user name:', error);
-        document.getElementById('userGreeting').textContent = 'Hello, BHW!';
+        const sidebarUserName = document.getElementById('sidebarUserName');
+        if (sidebarUserName) {
+            sidebarUserName.textContent = 'BHW User';
+        }
     });
 </script>
 
@@ -584,15 +577,228 @@ fetch('php/getUserId.php')
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const dob = document.querySelector(".flatpickr-dob");
+        const monthNames = [
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+        ];
+
+        function closePickerMenus(calendar) {
+            if (!calendar) return;
+            calendar.querySelectorAll(".custom-picker-menu.is-open").forEach(function (menu) {
+                menu.classList.remove("is-open");
+            });
+        }
+
+        function syncPickerHeader(instance) {
+            const calendar = instance.calendarContainer;
+            if (!calendar) return;
+
+            const monthLabel = calendar.querySelector(".custom-month-label");
+            const yearLabel = calendar.querySelector(".custom-year-label");
+
+            if (monthLabel) {
+                monthLabel.textContent = monthNames[instance.currentMonth];
+            }
+
+            if (yearLabel) {
+                yearLabel.textContent = String(instance.currentYear);
+            }
+
+            calendar.querySelectorAll(".custom-month-option").forEach(function (btn) {
+                btn.classList.toggle("is-active", Number(btn.dataset.month) === instance.currentMonth);
+            });
+
+            calendar.querySelectorAll(".custom-year-option").forEach(function (btn) {
+                btn.classList.toggle("is-active", Number(btn.dataset.year) === instance.currentYear);
+            });
+
+            const activeYear = calendar.querySelector(".custom-year-option.is-active");
+            if (activeYear && activeYear.parentElement) {
+                activeYear.parentElement.scrollTop = Math.max(0, activeYear.offsetTop - 62);
+            }
+        }
+
+        function setupCustomPickerHeader(instance) {
+            const calendar = instance.calendarContainer;
+            if (!calendar) return;
+
+            calendar.classList.add("custom-dropdown-date-picker");
+
+            const monthsContainer = calendar.querySelector(".flatpickr-months");
+            if (!monthsContainer) return;
+
+            if (!calendar.querySelector(".custom-date-picker-header")) {
+                const header = document.createElement("div");
+                header.className = "custom-date-picker-header";
+
+                const prevBtn = document.createElement("button");
+                prevBtn.type = "button";
+                prevBtn.className = "custom-picker-nav";
+                prevBtn.setAttribute("aria-label", "Previous month");
+                prevBtn.textContent = "‹";
+                prevBtn.addEventListener("click", function () {
+                    instance.changeMonth(-1);
+                    closePickerMenus(calendar);
+                    syncPickerHeader(instance);
+                });
+
+                const nextBtn = document.createElement("button");
+                nextBtn.type = "button";
+                nextBtn.className = "custom-picker-nav";
+                nextBtn.setAttribute("aria-label", "Next month");
+                nextBtn.textContent = "›";
+                nextBtn.addEventListener("click", function () {
+                    instance.changeMonth(1);
+                    closePickerMenus(calendar);
+                    syncPickerHeader(instance);
+                });
+
+                const monthMenu = document.createElement("div");
+                monthMenu.className = "custom-picker-menu custom-month-menu";
+
+                const monthTrigger = document.createElement("button");
+                monthTrigger.type = "button";
+                monthTrigger.className = "custom-picker-trigger";
+                monthTrigger.innerHTML = '<span class="custom-month-label"></span><span class="custom-picker-chevron">⌄</span>';
+
+                const monthOptions = document.createElement("div");
+                monthOptions.className = "custom-picker-options custom-month-options";
+
+                monthNames.forEach(function (month, index) {
+                    const option = document.createElement("button");
+                    option.type = "button";
+                    option.className = "custom-picker-option custom-month-option";
+                    option.dataset.month = String(index);
+                    option.textContent = month;
+                    option.addEventListener("click", function () {
+                        instance.changeMonth(index, false);
+                        closePickerMenus(calendar);
+                        syncPickerHeader(instance);
+                    });
+                    monthOptions.appendChild(option);
+                });
+
+                monthTrigger.addEventListener("click", function (event) {
+                    event.stopPropagation();
+                    const isOpen = monthMenu.classList.contains("is-open");
+                    closePickerMenus(calendar);
+                    monthMenu.classList.toggle("is-open", !isOpen);
+                });
+
+                monthMenu.appendChild(monthTrigger);
+                monthMenu.appendChild(monthOptions);
+
+                const yearMenu = document.createElement("div");
+                yearMenu.className = "custom-picker-menu custom-year-menu";
+
+                const yearTrigger = document.createElement("button");
+                yearTrigger.type = "button";
+                yearTrigger.className = "custom-picker-trigger";
+                yearTrigger.innerHTML = '<span class="custom-year-label"></span><span class="custom-picker-chevron">⌄</span>';
+
+                const yearOptions = document.createElement("div");
+                yearOptions.className = "custom-picker-options custom-year-options";
+
+                const currentYear = new Date().getFullYear();
+                for (let year = currentYear; year >= 1900; year--) {
+                    const option = document.createElement("button");
+                    option.type = "button";
+                    option.className = "custom-picker-option custom-year-option";
+                    option.dataset.year = String(year);
+                    option.textContent = String(year);
+                    option.addEventListener("click", function () {
+                        instance.changeYear(Number(this.dataset.year));
+                        closePickerMenus(calendar);
+                        syncPickerHeader(instance);
+                    });
+                    yearOptions.appendChild(option);
+                }
+
+                yearTrigger.addEventListener("click", function (event) {
+                    event.stopPropagation();
+                    const isOpen = yearMenu.classList.contains("is-open");
+                    closePickerMenus(calendar);
+                    yearMenu.classList.toggle("is-open", !isOpen);
+                    syncPickerHeader(instance);
+                });
+
+                yearMenu.appendChild(yearTrigger);
+                yearMenu.appendChild(yearOptions);
+
+                header.appendChild(prevBtn);
+                header.appendChild(monthMenu);
+                header.appendChild(yearMenu);
+                header.appendChild(nextBtn);
+
+                monthsContainer.innerHTML = "";
+                monthsContainer.appendChild(header);
+
+                calendar.addEventListener("click", function (event) {
+                    event.stopPropagation();
+                });
+
+                document.addEventListener("click", function () {
+                    closePickerMenus(calendar);
+                });
+            }
+
+            if (!calendar.querySelector(".custom-picker-footer")) {
+                const footer = document.createElement("div");
+                footer.className = "custom-picker-footer";
+
+                const cancelBtn = document.createElement("button");
+                cancelBtn.type = "button";
+                cancelBtn.className = "custom-picker-footer-btn";
+                cancelBtn.textContent = "Cancel";
+                cancelBtn.addEventListener("click", function () {
+                    closePickerMenus(calendar);
+                    instance.close();
+                });
+
+                const okBtn = document.createElement("button");
+                okBtn.type = "button";
+                okBtn.className = "custom-picker-footer-btn custom-picker-ok-btn";
+                okBtn.textContent = "OK";
+                okBtn.addEventListener("click", function () {
+                    closePickerMenus(calendar);
+                    instance.close();
+                });
+
+                footer.appendChild(cancelBtn);
+                footer.appendChild(okBtn);
+                calendar.appendChild(footer);
+            }
+
+            syncPickerHeader(instance);
+        }
+
         if (dob && window.flatpickr) {
+            if (dob._flatpickr) {
+                dob._flatpickr.destroy();
+            }
+
             flatpickr(dob, {
                 dateFormat: "Y-m-d",
                 altInput: true,
                 altFormat: "F j, Y",
                 maxDate: "today",
-                allowInput: false,
+                allowInput: true,
+                monthSelectorType: "static",
+                disableMobile: true,
                 clickOpens: true,
-                appendTo: document.body,
+                static: false,
+                onReady: function(selectedDates, dateStr, instance) {
+                    setupCustomPickerHeader(instance);
+                },
+                onOpen: function(selectedDates, dateStr, instance) {
+                    setupCustomPickerHeader(instance);
+                },
+                onMonthChange: function(selectedDates, dateStr, instance) {
+                    syncPickerHeader(instance);
+                },
+                onYearChange: function(selectedDates, dateStr, instance) {
+                    syncPickerHeader(instance);
+                },
                 onChange: function () {
                     if (typeof calculateAge === "function") {
                         calculateAge();
@@ -605,8 +811,11 @@ fetch('php/getUserId.php')
     function calculateAge() {
         const dobInput = document.querySelector(".date-of-birth");
         const ageInput = document.querySelector(".age");
-        
-        if (!dobInput || !dobInput.value) return;
+
+        if (!dobInput || !ageInput || !dobInput.value) {
+            if (ageInput) ageInput.value = "";
+            return;
+        }
 
         const dob = new Date(dobInput.value);
         const today = new Date();
@@ -648,6 +857,61 @@ fetch('php/getUserId.php')
         if (extensionSelect) handleOtherSelection(extensionSelect, 'extension');
         if (religionSelect) handleOtherSelection(religionSelect, 'religion');
     });
+</script>
+
+
+<script>
+/* Optimized Select2 dropdown enhancement.
+   Skips PSGC address dropdowns to prevent lag while region/province/city/barangay options are loading.
+   Keeps original select contents, names, IDs, and values unchanged. */
+(function () {
+    const skipSelectIds = new Set(["region", "province", "city", "barangay"]);
+
+    function shouldEnhance(select) {
+        if (!select) return false;
+        if (select.multiple) return false;
+        if (select.dataset.noSelect2 === "true") return false;
+        if (skipSelectIds.has(select.id)) return false;
+        return true;
+    }
+
+    function initOneSelect(select) {
+        if (!window.jQuery || !jQuery.fn || !jQuery.fn.select2 || !shouldEnhance(select)) return;
+
+        const $select = jQuery(select);
+
+        if ($select.hasClass("select2-hidden-accessible")) {
+            return;
+        }
+
+        const firstOption = select.options && select.options.length ? select.options[0] : null;
+        const placeholder = firstOption ? firstOption.textContent.trim() : "Select";
+
+        $select.select2({
+            width: "100%",
+            minimumResultsForSearch: Infinity,
+            dropdownAutoWidth: false,
+            dropdownCssClass: "reference-select-dropdown",
+            selectionCssClass: "reference-select-selection",
+            placeholder: placeholder,
+            dropdownParent: jQuery(document.body)
+        });
+
+        $select.on("select2:select select2:close", function () {
+            select.dispatchEvent(new Event("change", { bubbles: true }));
+            select.dispatchEvent(new Event("input", { bubbles: true }));
+        });
+    }
+
+    function bootSelectUI() {
+        document.querySelectorAll("select").forEach(initOneSelect);
+    }
+
+    document.addEventListener("DOMContentLoaded", bootSelectUI);
+    window.addEventListener("load", function () {
+        setTimeout(bootSelectUI, 100);
+    });
+})();
 </script>
 
 </body>

@@ -1,0 +1,310 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
+:root {
+  --reports-bg: #f5f8fc;
+  --reports-card: #ffffff;
+  --reports-text: #0f1f38;
+  --reports-muted: #64748b;
+  --reports-blue: #1f5b97;
+  --reports-blue-2: #2563eb;
+  --reports-cyan: #12acc7;
+  --reports-border: rgba(15, 23, 42, 0.10);
+  --reports-shadow: 0 14px 34px rgba(15, 23, 42, 0.08);
+  --reports-shadow-soft: 0 8px 22px rgba(15, 23, 42, 0.06);
+  --reports-radius: 22px;
+  --poppins: 'Poppins', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  overflow-x: hidden !important;
+}
+
+body {
+  min-height: 100vh !important;
+  color: var(--reports-text) !important;
+  background:
+    radial-gradient(circle at top left, rgba(37, 99, 235, 0.075), transparent 26%),
+    radial-gradient(circle at top right, rgba(18, 172, 199, 0.07), transparent 24%),
+    linear-gradient(180deg, #f8fbff 0%, var(--reports-bg) 100%) !important;
+  font-family: var(--poppins) !important;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+li {
+  list-style: none;
+}
+
+#content main {
+  width: 100% !important;
+  max-height: none !important;
+  min-height: calc(100vh - 64px) !important;
+  overflow-y: visible !important;
+  padding: 24px 26px 38px !important;
+  background: transparent !important;
+  font-family: var(--poppins) !important;
+}
+
+/* Header */
+#content main .head-title {
+  width: min(100%, 1180px) !important;
+  max-width: 1180px !important;
+  margin: 0 auto 18px !important;
+  padding: 0 !important;
+  display: flex !important;
+  align-items: flex-end !important;
+  justify-content: space-between !important;
+  gap: 16px !important;
+  flex-wrap: wrap !important;
+}
+
+#content main .head-title .left h1 {
+  position: relative !important;
+  margin: 0 !important;
+  color: var(--reports-text) !important;
+  font-size: clamp(28px, 3.5vw, 42px) !important;
+  font-weight: 700 !important;
+  line-height: 1.1 !important;
+  letter-spacing: -0.045em !important;
+  text-align: left !important;
+}
+
+#content main .head-title .left h1::after {
+  content: "" !important;
+  display: block !important;
+  width: 58px !important;
+  height: 4px !important;
+  margin-top: 12px !important;
+  border-radius: 999px !important;
+  background: linear-gradient(90deg, var(--reports-blue-2), var(--reports-cyan)) !important;
+}
+
+#content main .head-title .left .breadcrumb {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  margin-top: 12px !important;
+  padding: 0 !important;
+  flex-wrap: wrap !important;
+}
+
+#content main .head-title .left .breadcrumb li,
+#content main .head-title .left .breadcrumb a {
+  color: var(--reports-muted) !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+}
+
+#content main .head-title .left .breadcrumb a.active {
+  color: var(--reports-blue) !important;
+  font-weight: 800 !important;
+  pointer-events: auto !important;
+}
+
+/* Report grid */
+#content main .box-info {
+  width: min(100%, 1180px) !important;
+  max-width: 1180px !important;
+  margin: 0 auto !important;
+  padding: 6px 0 0 !important;
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 18px !important;
+  overflow: visible !important;
+  text-align: left !important;
+  animation: none !important;
+}
+
+#content main .box-info > a {
+  display: block !important;
+  width: 100% !important;
+  min-width: 0 !important;
+}
+
+/* Cards */
+#content main .box-info li,
+#content main .box-info li.mrr,
+.box-info .mrr {
+  position: relative !important;
+  width: 100% !important;
+  height: auto !important;
+  min-height: 176px !important;
+  margin: 0 !important;
+  padding: 22px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  align-items: flex-start !important;
+  gap: 18px !important;
+  border: 1px solid var(--reports-border) !important;
+  border-radius: var(--reports-radius) !important;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.96), rgba(248, 251, 255, 0.96)) !important;
+  color: var(--reports-text) !important;
+  box-shadow: var(--reports-shadow-soft) !important;
+  overflow: hidden !important;
+  opacity: 1 !important;
+  cursor: pointer !important;
+  transform: none !important;
+  animation: none !important;
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    border-color 0.18s ease,
+    background 0.18s ease !important;
+}
+
+#content main .box-info li::before {
+  content: "" !important;
+  position: absolute !important;
+  inset: 0 auto 0 0 !important;
+  width: 5px !important;
+  border-radius: var(--reports-radius) 0 0 var(--reports-radius) !important;
+  background: linear-gradient(180deg, var(--reports-blue-2), var(--reports-cyan)) !important;
+}
+
+#content main .box-info li::after {
+  content: "" !important;
+  position: absolute !important;
+  right: -34px !important;
+  top: -36px !important;
+  width: 112px !important;
+  height: 112px !important;
+  border-radius: 999px !important;
+  background: rgba(31, 91, 151, 0.075) !important;
+  pointer-events: none !important;
+}
+
+#content main .box-info li:hover,
+#content main .box-info li.mrr:hover,
+.box-info .mrr:hover {
+  transform: translateY(-4px) !important;
+  border-color: rgba(37, 99, 235, 0.24) !important;
+  box-shadow: var(--reports-shadow) !important;
+}
+
+/* Icon area */
+#content main .box-info li .icon-container,
+.box-info .mrr .icon-container {
+  position: relative !important;
+  z-index: 1 !important;
+  width: 58px !important;
+  height: 58px !important;
+  min-width: 58px !important;
+  min-height: 58px !important;
+  margin: 0 !important;
+  display: grid !important;
+  place-items: center !important;
+  border-radius: 18px !important;
+  background:
+    linear-gradient(135deg, rgba(37, 99, 235, 0.13), rgba(18, 172, 199, 0.10)) !important;
+  box-shadow: inset 0 0 0 1px rgba(31, 91, 151, 0.10) !important;
+}
+
+#content main .box-info li .report-card-icon,
+.box-info .mrr .report-card-icon {
+  display: block !important;
+  margin: 0 !important;
+  color: var(--reports-blue) !important;
+  font-size: 31px !important;
+  line-height: 1 !important;
+  transition: transform 0.18s ease !important;
+}
+
+#content main .box-info li:hover .report-card-icon,
+.box-info .mrr:hover .report-card-icon {
+  transform: scale(1.05) !important;
+}
+
+#content main .box-info li .icon-img,
+.box-info .mrr .icon-img {
+  display: none !important;
+}
+
+/* Text */
+#content main .box-info li .text,
+.box-info .mrr .text {
+  position: relative !important;
+  z-index: 1 !important;
+  width: 100% !important;
+  text-align: left !important;
+}
+
+#content main .box-info li .text h3,
+.box-info .mrr .text h3 {
+  margin: 0 !important;
+  color: var(--reports-text) !important;
+  font-family: var(--poppins) !important;
+  font-size: clamp(14.5px, 1.35vw, 17px) !important;
+  font-weight: 700 !important;
+  line-height: 1.35 !important;
+  letter-spacing: -0.015em !important;
+  text-align: left !important;
+}
+
+#content main .box-info > a li .text::after {
+  content: "Open report  →" !important;
+  display: inline-flex !important;
+  margin-top: 12px !important;
+  color: var(--reports-blue) !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.01em !important;
+}
+
+/* Logout modal consistency */
+.logout-modal-content {
+  border-radius: 22px !important;
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.22) !important;
+}
+
+/* Responsive */
+@media (max-width: 1180px) {
+  #content main .box-info {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 768px) {
+  #content main {
+    padding: 18px 14px 28px !important;
+  }
+
+  #content main .head-title {
+    margin-bottom: 16px !important;
+  }
+
+  #content main .box-info {
+    grid-template-columns: 1fr !important;
+    gap: 14px !important;
+  }
+
+  #content main .box-info li,
+  #content main .box-info li.mrr,
+  .box-info .mrr {
+    min-height: 150px !important;
+    padding: 18px !important;
+    border-radius: 18px !important;
+  }
+
+  #content main .box-info li .icon-container,
+  .box-info .mrr .icon-container {
+    width: 52px !important;
+    height: 52px !important;
+    min-width: 52px !important;
+    min-height: 52px !important;
+    border-radius: 16px !important;
+  }
+
+  #content main .box-info li .report-card-icon,
+  .box-info .mrr .report-card-icon {
+    font-size: 28px !important;
+  }
+}

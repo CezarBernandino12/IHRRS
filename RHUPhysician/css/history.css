@@ -659,3 +659,1060 @@ right: -5px;
   color: #fa4141;
 }
 
+
+
+/* =========================================================
+   PHYSICIAN REFERRAL HISTORY - MATCHED UI DESIGN
+   Same orientation/layout as the finalized 4-column history page.
+   Keeps existing content, fetch URL, filters, search, row click, sidebar, logout.
+   ========================================================= */
+
+:root {
+  --history-page-bg: #f5f8fc;
+  --history-card-bg: #ffffff;
+  --history-soft-bg: #f8fbff;
+  --history-text: #061a38;
+  --history-muted: #64748b;
+  --history-blue: #1f5b97;
+  --history-focus: #2563eb;
+  --history-border: rgba(15, 23, 42, 0.10);
+  --history-shadow: 0 14px 36px rgba(15, 23, 42, 0.08);
+}
+
+html,
+body,
+#content,
+#content main {
+  overflow-x: hidden !important;
+}
+
+body {
+  min-height: 100vh !important;
+  background: var(--history-page-bg) !important;
+  color: var(--history-text) !important;
+  font-family: var(--poppins, 'Poppins', sans-serif) !important;
+}
+
+#content main {
+  width: 100% !important;
+  max-height: none !important;
+  min-height: calc(100vh - 64px) !important;
+  overflow-y: visible !important;
+  padding: 22px 24px 36px !important;
+  background: var(--history-page-bg) !important;
+}
+
+/* Keep navbar search design controlled by shared nav/sidebar CSS */
+#content nav .nav-search,
+#content nav .nav-search input,
+#content nav .nav-search button,
+#content nav #searchButton {
+  /* no custom navbar search design here */
+}
+
+/* Keep sidebar safe from old global paragraph styles */
+#sidebar .sidebar-section-label,
+#sidebar p,
+#sidebar .nav-label,
+#sidebar .brand-name,
+#sidebar .user-name,
+#sidebar .user-role {
+  background: transparent !important;
+}
+
+/* Hidden accessible labels */
+.sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+/* Page title */
+#content main .head-title {
+  width: min(100%, 1440px) !important;
+  max-width: 1440px !important;
+  margin: 0 auto 18px !important;
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: space-between !important;
+  gap: 16px !important;
+}
+
+#content main .head-title .left h1 {
+  margin: 0 0 10px !important;
+  color: #0f1f38 !important;
+  font-family: var(--poppins, 'Poppins', sans-serif) !important;
+  font-size: clamp(30px, 3.2vw, 42px) !important;
+  font-weight: 800 !important;
+  line-height: 1.12 !important;
+  letter-spacing: -0.045em !important;
+}
+
+#content main .head-title .left h1::after {
+  content: "" !important;
+  display: block !important;
+  width: 58px !important;
+  height: 4px !important;
+  margin-top: 12px !important;
+  border-radius: 999px !important;
+  background: linear-gradient(90deg, var(--history-focus), #0ea5b7) !important;
+}
+
+#content main .head-title .left .breadcrumb {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  flex-wrap: wrap !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+#content main .head-title .left .breadcrumb li,
+#content main .head-title .left .breadcrumb a {
+  color: var(--history-muted) !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+}
+
+#content main .head-title .left .breadcrumb a.active {
+  color: var(--history-blue) !important;
+  font-weight: 800 !important;
+  pointer-events: auto !important;
+}
+
+/* Toolbar */
+.history-toolbar-card {
+  width: min(100%, 1440px) !important;
+  max-width: 1440px !important;
+  margin: 0 auto 18px !important;
+  padding: 2px 0 10px !important;
+  display: flex !important;
+  justify-content: flex-end !important;
+  align-items: center !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.history-toolbar-actions,
+.history-toolbar-actions-only {
+  display: flex !important;
+  justify-content: flex-end !important;
+  align-items: center !important;
+  gap: 12px !important;
+  flex-wrap: wrap !important;
+  width: auto !important;
+}
+
+.history-toolbar-field {
+  position: relative !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  width: 182px !important;
+  min-width: 182px !important;
+  height: 44px !important;
+  min-height: 44px !important;
+  border: 1px solid #d7dde8 !important;
+  border-radius: 16px !important;
+  background: #ffffff !important;
+  overflow: hidden !important;
+  box-shadow: none !important;
+}
+
+.history-toolbar-field i {
+  position: absolute !important;
+  left: 15px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  color: #70819a !important;
+  font-size: 16px !important;
+  pointer-events: none !important;
+  z-index: 2 !important;
+}
+
+.history-toolbar-field input,
+.history-toolbar-field select {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 100% !important;
+  margin: 0 !important;
+  padding: 0 14px 0 44px !important;
+  border: 0 !important;
+  border-radius: 16px !important;
+  background: transparent !important;
+  color: #11233d !important;
+  font-family: var(--poppins, 'Poppins', sans-serif) !important;
+  font-size: 12.8px !important;
+  font-weight: 500 !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.history-toolbar-field input::placeholder {
+  color: #6b7a90 !important;
+}
+
+.history-toolbar-field-date input {
+  cursor: pointer !important;
+}
+
+.history-toolbar-field-date input::-webkit-calendar-picker-indicator {
+  opacity: 0 !important;
+  cursor: pointer !important;
+}
+
+.history-toolbar-field-select select {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  padding-right: 40px !important;
+  cursor: pointer !important;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23061a38' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 16px center !important;
+  background-size: 14px !important;
+}
+
+.history-toolbar-field:focus-within {
+  border-color: rgba(31, 91, 151, 0.35) !important;
+  box-shadow: 0 0 0 3px rgba(31, 91, 151, 0.08) !important;
+}
+
+#applyFilter,
+.history-primary-btn {
+  position: static !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: auto !important;
+  min-width: 140px !important;
+  height: 44px !important;
+  min-height: 44px !important;
+  margin: 0 !important;
+  padding: 0 22px !important;
+  border: 0 !important;
+  border-radius: 16px !important;
+  color: #ffffff !important;
+  background: var(--history-blue) !important;
+  font-family: var(--poppins, 'Poppins', sans-serif) !important;
+  font-size: 12.8px !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+  cursor: pointer !important;
+  box-shadow: 0 10px 22px rgba(31, 91, 151, 0.16) !important;
+  transition: background 0.16s ease, transform 0.16s ease !important;
+}
+
+#applyFilter:hover,
+.history-primary-btn:hover {
+  background: #174d83 !important;
+  transform: translateY(-1px) !important;
+}
+
+/* Table card */
+.history-container.history-table-card,
+.history-table-card {
+  width: min(100%, 1440px) !important;
+  max-width: 1440px !important;
+  margin: 0 auto !important;
+  padding: 0 !important;
+  border-radius: 18px !important;
+  overflow: hidden !important;
+  background: #ffffff !important;
+  border: 1px solid rgba(15, 23, 42, 0.08) !important;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.05) !important;
+}
+
+#history-table.status,
+.history-container .status {
+  width: 100% !important;
+  margin: 0 !important;
+  table-layout: fixed !important;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+  border: none !important;
+  border-radius: 0 !important;
+  background: #ffffff !important;
+  box-shadow: none !important;
+}
+
+#history-table.status thead th,
+.history-container .status thead th {
+  padding: 14px 16px !important;
+  background: #eef3f8 !important;
+  color: #44566f !important;
+  font-family: var(--poppins, 'Poppins', sans-serif) !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  line-height: 1.25 !important;
+  text-align: left !important;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.06) !important;
+}
+
+#history-table.status tbody td,
+.history-container .status tbody td {
+  padding: 16px 16px !important;
+  color: #1f2f45 !important;
+  background: #ffffff !important;
+  font-family: var(--poppins, 'Poppins', sans-serif) !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  line-height: 1.35 !important;
+  text-align: left !important;
+  vertical-align: middle !important;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08) !important;
+}
+
+#history-table.status tbody tr:last-child td,
+.history-container .status tbody tr:last-child td {
+  border-bottom: none !important;
+}
+
+#history-table.status tbody tr:hover td,
+.history-container .status tbody tr:hover td {
+  background: #f8fbff !important;
+}
+
+/* 4-column layout */
+#history-table.status th:nth-child(1),
+#history-table.status td:nth-child(1) {
+  width: 22% !important;
+}
+
+#history-table.status th:nth-child(2),
+#history-table.status td:nth-child(2) {
+  width: 34% !important;
+}
+
+#history-table.status th:nth-child(3),
+#history-table.status td:nth-child(3) {
+  width: 28% !important;
+}
+
+#history-table.status th:nth-child(4),
+#history-table.status td:nth-child(4) {
+  width: 16% !important;
+}
+
+.patient-name-cell,
+#history-table.status td:nth-child(2) {
+  font-weight: 700 !important;
+  color: #0f2340 !important;
+}
+
+/* Status badges */
+.status-pill {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 7px !important;
+  min-height: 28px !important;
+  padding: 5px 11px !important;
+  border-radius: 999px !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  white-space: nowrap !important;
+  line-height: 1 !important;
+}
+
+.status-pill::before {
+  content: "" !important;
+  width: 7px !important;
+  height: 7px !important;
+  min-width: 7px !important;
+  border-radius: 50% !important;
+  background: currentColor !important;
+}
+
+.status-pill.completed {
+  color: #138a59 !important;
+  background: rgba(19, 138, 89, 0.12) !important;
+}
+
+.status-pill.uncompleted {
+  color: #ff4b4b !important;
+  background: rgba(255, 75, 75, 0.12) !important;
+}
+
+.status-pill.forwarded-to-physician,
+.status-pill.forwarded,
+.status-pill.forwarded-to-doctor {
+  color: #7c3aed !important;
+  background: rgba(124, 58, 237, 0.12) !important;
+}
+
+.status-pill.pending {
+  color: #d97706 !important;
+  background: rgba(245, 158, 11, 0.14) !important;
+}
+
+.status-pill.canceled,
+.status-pill.cancelled {
+  color: #be123c !important;
+  background: rgba(244, 63, 94, 0.12) !important;
+}
+
+.status-pill:not(.pending):not(.completed):not(.uncompleted):not(.canceled):not(.cancelled):not(.forwarded):not(.forwarded-to-physician):not(.forwarded-to-doctor) {
+  color: #475569 !important;
+  background: rgba(100, 116, 139, 0.12) !important;
+}
+
+/* Pagination */
+.history-pagination,
+#pagination.history-pagination,
+.pagination {
+  width: min(100%, 1440px) !important;
+  max-width: 1440px !important;
+  margin: 18px auto 24px !important;
+  padding: 0 !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 8px !important;
+  flex-wrap: wrap !important;
+  background: transparent !important;
+}
+
+.history-pagination:empty,
+#pagination:empty,
+.pagination:empty {
+  display: none !important;
+}
+
+.history-pagination button,
+#pagination button,
+.pagination button {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 34px !important;
+  min-width: 34px !important;
+  max-width: 34px !important;
+  height: 30px !important;
+  min-height: 30px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 1px solid #d8dee8 !important;
+  border-radius: 10px !important;
+  background: #ffffff !important;
+  color: #334155 !important;
+  font-family: var(--poppins, 'Poppins', sans-serif) !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+  cursor: pointer !important;
+  box-shadow: none !important;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease !important;
+}
+
+.history-pagination button:hover:not(:disabled),
+#pagination button:hover:not(:disabled),
+.pagination button:hover:not(:disabled) {
+  color: var(--history-blue) !important;
+  background: #f8fbff !important;
+  border-color: #cbd6e4 !important;
+  transform: none !important;
+}
+
+.history-pagination button.active,
+#pagination button.active,
+.pagination button.active {
+  background: #1f5b97 !important;
+  color: #ffffff !important;
+  border-color: #1f5b97 !important;
+}
+
+.history-pagination button:disabled,
+#pagination button:disabled,
+.pagination button:disabled {
+  color: #cbd5e1 !important;
+  background: #ffffff !important;
+  border-color: #d8dee8 !important;
+  opacity: 1 !important;
+  cursor: not-allowed !important;
+}
+
+/* Empty/error rows */
+.empty-state-row td {
+  text-align: center !important;
+  color: #64748b !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  padding: 18px 16px !important;
+}
+
+/* Logout/modal polish */
+.logout-modal-content,
+.modal-content {
+  border-radius: 22px !important;
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.22) !important;
+}
+
+/* Mobile */
+@media (max-width: 860px) {
+  #content main {
+    padding: 14px 10px 24px !important;
+  }
+
+  .history-toolbar-card {
+    justify-content: flex-start !important;
+  }
+
+  .history-toolbar-actions,
+  .history-toolbar-actions-only {
+    width: 100% !important;
+    justify-content: flex-start !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+
+  .history-toolbar-field,
+  #applyFilter,
+  .history-primary-btn {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .history-container.history-table-card {
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    overflow: visible !important;
+  }
+
+  #history-table.status thead {
+    display: none !important;
+  }
+
+  #history-table.status,
+  #history-table.status tbody,
+  #history-table.status tr,
+  #history-table.status td {
+    display: block !important;
+    width: 100% !important;
+  }
+
+  #history-table.status tr {
+    margin-bottom: 12px !important;
+    padding: 14px !important;
+    border: 1px solid rgba(15, 23, 42, 0.10) !important;
+    border-radius: 16px !important;
+    background: #ffffff !important;
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.05) !important;
+  }
+
+  #history-table.status td {
+    padding: 8px 0 !important;
+    border: none !important;
+  }
+
+  #history-table.status td::before {
+    content: attr(data-label) !important;
+    display: block !important;
+    margin-bottom: 4px !important;
+    color: #64748b !important;
+    font-size: 10px !important;
+    font-weight: 800 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.04em !important;
+  }
+
+  .status-pill {
+    width: fit-content !important;
+  }
+}
+
+
+
+/* =========================================================
+   DATE PICKER FIX + REFERENCE FILTER UI
+   Uses Flatpickr so the date picker opens reliably.
+   ========================================================= */
+
+.history-toolbar-card {
+  margin: 0 auto 20px !important;
+  padding: 8px 0 12px !important;
+}
+
+.history-toolbar-actions,
+.history-toolbar-actions-only {
+  gap: 16px !important;
+}
+
+.history-toolbar-field {
+  width: 228px !important;
+  min-width: 228px !important;
+  height: 56px !important;
+  min-height: 56px !important;
+  border: 1px solid #d6dde8 !important;
+  border-radius: 18px !important;
+  background: #ffffff !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+}
+
+.history-toolbar-field i {
+  left: 18px !important;
+  color: #6f8098 !important;
+  font-size: 18px !important;
+}
+
+.history-toolbar-field input,
+.history-toolbar-field select,
+.history-toolbar-field .filter-date-alt,
+.history-toolbar-field .flatpickr-date-input {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 100% !important;
+  margin: 0 !important;
+  padding: 0 18px 0 52px !important;
+  border: 0 !important;
+  border-radius: 18px !important;
+  background: transparent !important;
+  color: #25344a !important;
+  font-family: var(--poppins, 'Poppins', sans-serif) !important;
+  font-size: 15px !important;
+  font-weight: 500 !important;
+  line-height: 1 !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.history-toolbar-field .filter-date-alt::placeholder,
+.history-toolbar-field .flatpickr-date-input::placeholder {
+  color: #7f8ca2 !important;
+  opacity: 1 !important;
+}
+
+.history-toolbar-field-date {
+  cursor: pointer !important;
+}
+
+.history-toolbar-field-date .filter-date-alt {
+  cursor: pointer !important;
+}
+
+.history-toolbar-field-date input#date[type="hidden"] {
+  display: none !important;
+}
+
+.history-toolbar-field-select select {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  padding-right: 48px !important;
+  cursor: pointer !important;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%230f172a' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 18px center !important;
+  background-size: 16px !important;
+}
+
+#applyFilter,
+.history-primary-btn {
+  min-width: 176px !important;
+  height: 56px !important;
+  min-height: 56px !important;
+  padding: 0 30px !important;
+  border-radius: 18px !important;
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  background: #1f5b97 !important;
+  box-shadow: 0 12px 24px rgba(31, 91, 151, 0.18) !important;
+}
+
+.history-toolbar-field:focus-within {
+  border-color: rgba(31, 91, 151, 0.34) !important;
+  box-shadow: 0 0 0 4px rgba(31, 91, 151, 0.08) !important;
+}
+
+/* Compact Flatpickr calendar */
+.flatpickr-calendar {
+  width: min(92vw, 320px) !important;
+  padding: 12px !important;
+  border: 1px solid rgba(31, 91, 151, 0.12) !important;
+  border-radius: 18px !important;
+  background: #ffffff !important;
+  box-shadow: 0 18px 44px rgba(15, 23, 42, 0.18) !important;
+  font-family: var(--poppins, 'Poppins', sans-serif) !important;
+  overflow: hidden !important;
+}
+
+.flatpickr-calendar::before,
+.flatpickr-calendar::after {
+  display: none !important;
+}
+
+.flatpickr-months {
+  margin-bottom: 8px !important;
+}
+
+.flatpickr-current-month {
+  padding-top: 0 !important;
+  color: #10233f !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+}
+
+.flatpickr-current-month .flatpickr-monthDropdown-months,
+.flatpickr-current-month input.cur-year {
+  color: #10233f !important;
+  font-family: var(--poppins, 'Poppins', sans-serif) !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+}
+
+span.flatpickr-weekday {
+  color: #64748b !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+}
+
+.flatpickr-day {
+  max-width: 37px !important;
+  height: 32px !important;
+  border-radius: 10px !important;
+  color: #334155 !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  line-height: 32px !important;
+}
+
+.flatpickr-day:hover,
+.flatpickr-day:focus {
+  color: #1f5b97 !important;
+  background: rgba(31, 91, 151, 0.10) !important;
+}
+
+.flatpickr-day.today {
+  color: #1f5b97 !important;
+  border-color: rgba(31, 91, 151, 0.22) !important;
+  background: rgba(31, 91, 151, 0.08) !important;
+}
+
+.flatpickr-day.selected,
+.flatpickr-day.selected:hover,
+.flatpickr-day.startRange,
+.flatpickr-day.endRange {
+  color: #ffffff !important;
+  border-color: #1f5b97 !important;
+  background: #1f5b97 !important;
+  box-shadow: none !important;
+}
+
+.flatpickr-day.prevMonthDay,
+.flatpickr-day.nextMonthDay {
+  color: #cbd5e1 !important;
+}
+
+/* Responsive */
+@media (max-width: 860px) {
+  .history-toolbar-actions,
+  .history-toolbar-actions-only {
+    gap: 12px !important;
+  }
+
+  .history-toolbar-field,
+  #applyFilter,
+  .history-primary-btn {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+}
+
+
+
+/* =========================================================
+   FINAL COMPACT FILTER SIZE FIX
+   Makes date, status, and Apply Filter smaller and balanced.
+   ========================================================= */
+
+.history-toolbar-card {
+  margin: 0 auto 14px !important;
+  padding: 2px 0 8px !important;
+}
+
+.history-toolbar-actions,
+.history-toolbar-actions-only {
+  gap: 10px !important;
+  align-items: center !important;
+}
+
+.history-toolbar-field {
+  width: 180px !important;
+  min-width: 180px !important;
+  height: 44px !important;
+  min-height: 44px !important;
+  border-radius: 15px !important;
+}
+
+.history-toolbar-field i {
+  left: 15px !important;
+  font-size: 16px !important;
+}
+
+.history-toolbar-field input,
+.history-toolbar-field select,
+.history-toolbar-field .filter-date-alt,
+.history-toolbar-field .flatpickr-date-input {
+  height: 44px !important;
+  min-height: 44px !important;
+  padding: 0 14px 0 42px !important;
+  border-radius: 15px !important;
+  font-size: 12.5px !important;
+  font-weight: 500 !important;
+}
+
+.history-toolbar-field-select select {
+  padding-right: 38px !important;
+  background-position: right 14px center !important;
+  background-size: 13px !important;
+}
+
+#applyFilter,
+.history-primary-btn {
+  min-width: 126px !important;
+  width: auto !important;
+  height: 44px !important;
+  min-height: 44px !important;
+  padding: 0 20px !important;
+  border-radius: 15px !important;
+  font-size: 12.5px !important;
+  font-weight: 650 !important;
+  box-shadow: 0 8px 18px rgba(31, 91, 151, 0.14) !important;
+}
+
+#applyFilter:hover,
+.history-primary-btn:hover {
+  transform: translateY(-1px) !important;
+}
+
+/* Keep the compact sizing stable even if earlier rules target all three controls. */
+.history-toolbar-field-date,
+.history-toolbar-field-select {
+  flex: 0 0 180px !important;
+}
+
+#applyFilter {
+  flex: 0 0 auto !important;
+}
+
+/* Tablet/mobile responsiveness */
+@media (max-width: 860px) {
+  .history-toolbar-actions,
+  .history-toolbar-actions-only {
+    gap: 10px !important;
+  }
+
+  .history-toolbar-field,
+  .history-toolbar-field-date,
+  .history-toolbar-field-select,
+  #applyFilter,
+  .history-primary-btn {
+    width: 100% !important;
+    min-width: 0 !important;
+    flex: 1 1 auto !important;
+  }
+}
+
+
+
+/* =========================================================
+   FINAL FILTER BALANCE FIX - STRONG OVERRIDE
+   Smaller, balanced date/status fields and Apply Filter button.
+   ========================================================= */
+
+#content main .history-toolbar-card {
+  width: min(100%, 1440px) !important;
+  max-width: 1440px !important;
+  margin: 0 auto 14px !important;
+  padding: 0 0 8px !important;
+  display: flex !important;
+  justify-content: flex-end !important;
+  align-items: center !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+#content main .history-toolbar-actions,
+#content main .history-toolbar-actions-only {
+  display: flex !important;
+  justify-content: flex-end !important;
+  align-items: center !important;
+  gap: 10px !important;
+  flex-wrap: wrap !important;
+  width: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+#content main .history-toolbar-field,
+#content main .history-toolbar-field-date,
+#content main .history-toolbar-field-select {
+  position: relative !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  flex: 0 0 178px !important;
+  width: 178px !important;
+  min-width: 178px !important;
+  max-width: 178px !important;
+  height: 42px !important;
+  min-height: 42px !important;
+  max-height: 42px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 1px solid #d6dde8 !important;
+  border-radius: 14px !important;
+  background: #ffffff !important;
+  box-shadow: none !important;
+  overflow: hidden !important;
+}
+
+#content main .history-toolbar-field i {
+  position: absolute !important;
+  left: 14px !important;
+  top: 50% !important;
+  z-index: 2 !important;
+  transform: translateY(-50%) !important;
+  color: #6f8098 !important;
+  font-size: 15px !important;
+  line-height: 1 !important;
+  pointer-events: none !important;
+}
+
+#content main .history-toolbar-field input,
+#content main .history-toolbar-field select,
+#content main .history-toolbar-field .flatpickr-date-input,
+#content main .history-toolbar-field .filter-date-alt,
+#content main .history-toolbar-field .flatpickr-input,
+#content main .history-toolbar-field .flatpickr-input[readonly] {
+  display: block !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  height: 42px !important;
+  min-height: 42px !important;
+  max-height: 42px !important;
+  margin: 0 !important;
+  padding: 0 13px 0 39px !important;
+  border: 0 !important;
+  border-radius: 14px !important;
+  outline: 0 !important;
+  background-color: transparent !important;
+  color: #13243a !important;
+  font-family: var(--poppins, 'Poppins', sans-serif) !important;
+  font-size: 12.2px !important;
+  font-weight: 500 !important;
+  line-height: 42px !important;
+  box-shadow: none !important;
+}
+
+#content main .history-toolbar-field input::placeholder,
+#content main .history-toolbar-field .filter-date-alt::placeholder {
+  color: #7f8ca2 !important;
+  opacity: 1 !important;
+}
+
+#content main .history-toolbar-field-date,
+#content main .history-toolbar-field-date input,
+#content main .history-toolbar-field-date .filter-date-alt {
+  cursor: pointer !important;
+}
+
+#content main .history-toolbar-field-select select {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  padding-right: 35px !important;
+  cursor: pointer !important;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%230f172a' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 13px center !important;
+  background-size: 13px !important;
+}
+
+#content main .history-toolbar-field:focus-within {
+  border-color: rgba(31, 91, 151, 0.34) !important;
+  box-shadow: 0 0 0 3px rgba(31, 91, 151, 0.08) !important;
+}
+
+#content main #applyFilter,
+#content main .history-primary-btn {
+  position: static !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex: 0 0 auto !important;
+  width: auto !important;
+  min-width: 122px !important;
+  max-width: 140px !important;
+  height: 42px !important;
+  min-height: 42px !important;
+  max-height: 42px !important;
+  margin: 0 !important;
+  padding: 0 18px !important;
+  border: 0 !important;
+  border-radius: 14px !important;
+  color: #ffffff !important;
+  background: #1f5b97 !important;
+  font-family: var(--poppins, 'Poppins', sans-serif) !important;
+  font-size: 12.2px !important;
+  font-weight: 650 !important;
+  line-height: 1 !important;
+  letter-spacing: 0 !important;
+  white-space: nowrap !important;
+  cursor: pointer !important;
+  box-shadow: 0 7px 16px rgba(31, 91, 151, 0.14) !important;
+}
+
+#content main #applyFilter:hover,
+#content main .history-primary-btn:hover {
+  background: #174d83 !important;
+  transform: translateY(-1px) !important;
+}
+
+/* Hide original Flatpickr input if Flatpickr creates the alt input. */
+#content main .history-toolbar-field-date input#date.flatpickr-input[readonly]:not(.filter-date-alt) {
+  display: none !important;
+}
+
+/* Keep the popup compact and clean. */
+.flatpickr-calendar {
+  width: min(92vw, 310px) !important;
+  max-width: 310px !important;
+  padding: 10px !important;
+  border-radius: 16px !important;
+}
+
+/* Responsive: fields stack cleanly on small screens. */
+@media (max-width: 860px) {
+  #content main .history-toolbar-card {
+    justify-content: flex-start !important;
+  }
+
+  #content main .history-toolbar-actions,
+  #content main .history-toolbar-actions-only {
+    width: 100% !important;
+    justify-content: flex-start !important;
+    align-items: stretch !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+  }
+
+  #content main .history-toolbar-field,
+  #content main .history-toolbar-field-date,
+  #content main .history-toolbar-field-select,
+  #content main #applyFilter,
+  #content main .history-primary-btn {
+    flex: 1 1 auto !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+  }
+}

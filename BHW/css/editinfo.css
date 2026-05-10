@@ -1,0 +1,2309 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+a {
+  text-decoration: none;
+}
+
+li {
+  list-style: none;
+}
+
+:root {
+  --poppins: 'Poppins', sans-serif;
+  --edit-page: #f4f7fb;
+  --edit-card: #ffffff;
+  --edit-soft: #f8fbff;
+  --edit-field: #ffffff;
+  --edit-text: #18263d;
+  --edit-muted: #66758c;
+  --edit-blue: #2563eb;
+  --edit-blue-dark: #1f5b97;
+  --edit-green: #15915a;
+  --edit-red: #ef5b5b;
+  --edit-border: rgba(15, 23, 42, 0.10);
+  --edit-shadow: 0 10px 28px rgba(15, 23, 42, 0.08);
+  --edit-radius: 18px;
+}
+
+html {
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  overflow-x: hidden;
+  color: var(--edit-text);
+  background:
+    radial-gradient(circle at top left, rgba(37, 99, 235, 0.06), transparent 24%),
+    radial-gradient(circle at top right, rgba(18, 172, 199, 0.06), transparent 24%),
+    linear-gradient(180deg, #f8fbff, var(--edit-page));
+  font-family: var(--poppins);
+}
+
+/* Main content alignment */
+#content main {
+  width: 100%;
+  max-height: none;
+  overflow-y: visible;
+  padding: 20px 22px 28px;
+  font-family: var(--poppins);
+}
+
+#content main .head-title {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+  width: min(1180px, 100%);
+  margin: 0 auto 14px;
+}
+
+#content main .head-title .left h1 {
+  margin: 0;
+  color: var(--edit-text);
+  font-size: clamp(24px, 3vw, 36px);
+  font-weight: 650;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+}
+
+#content main .head-title .left h1::after {
+  content: "";
+  display: block;
+  width: 48px;
+  height: 4px;
+  margin-top: 10px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--edit-blue), #12acc7);
+}
+
+#content main .head-title .left .breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+#content main .head-title .left .breadcrumb li,
+#content main .head-title .left .breadcrumb li a,
+#content main .head-title .left .breadcrumb a {
+  color: var(--edit-muted);
+  font-size: 12px;
+}
+
+#content main .head-title .left .breadcrumb a.active,
+#content main .head-title .left .breadcrumb .active {
+  color: var(--edit-blue-dark);
+  font-weight: 650;
+}
+
+.edit-info-page-shell {
+  width: min(1180px, 100%);
+  margin: 0 auto;
+}
+
+/* Page cards */
+.container-header {
+  width: 100%;
+  margin: 0 auto 12px;
+  padding: 14px 18px;
+  border: 1px solid rgba(37, 99, 235, 0.12);
+  border-radius: 18px;
+  background: linear-gradient(135deg, #ffffff, #f8fbff);
+  box-shadow: 0 8px 22px rgba(15, 23, 42, 0.05);
+}
+
+.container-header h2 {
+  margin: 0;
+  color: var(--edit-text);
+  font-size: clamp(16px, 2vw, 20px);
+  font-weight: 650;
+  letter-spacing: -0.02em;
+}
+
+.container {
+  width: 100%;
+  margin: 0 auto;
+  padding: 22px;
+  border: 1px solid var(--edit-border);
+  border-radius: 22px;
+  background: var(--edit-card);
+  box-shadow: var(--edit-shadow);
+  overflow: visible;
+}
+
+/* Section title */
+.form-section-title {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  margin: 2px 0 14px;
+  padding: 12px 14px;
+  border: 1px solid rgba(37, 99, 235, 0.10);
+  border-radius: 14px;
+  color: var(--edit-text);
+  background: #f8fbff;
+}
+
+.form-section-title i {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  min-width: 28px;
+  border-radius: 10px;
+  color: var(--edit-blue);
+  background: rgba(37, 99, 235, 0.10);
+  font-size: 17px;
+}
+
+.form-section-title b {
+  font-size: 14px;
+  font-weight: 650;
+  letter-spacing: 0.02em;
+}
+
+/* Form grid */
+.form-container {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px 16px;
+  width: 100%;
+  margin: 0 0 18px;
+  align-items: start;
+}
+
+.form-group,
+.form-item {
+  min-width: 0;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin: 0;
+}
+
+.form-group.full-width {
+  grid-column: 1 / -1;
+}
+
+/* Labels */
+.form-group label,
+.form-item label {
+  display: block;
+  width: auto;
+  height: auto;
+  margin: 0 0 6px;
+  padding: 0;
+  color: var(--edit-text);
+  background: transparent;
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.35;
+  white-space: normal;
+}
+
+/* Fields */
+input,
+select,
+textarea,
+.form-control,
+.form-group input,
+.form-group select,
+.form-group textarea,
+.form-item input,
+.form-item select {
+  width: 100%;
+  min-width: 0;
+  min-height: 42px;
+  padding: 10px 12px;
+  border: 1px solid var(--edit-border);
+  border-radius: 12px;
+  outline: none;
+  color: var(--edit-text);
+  background: var(--edit-field);
+  font-family: var(--poppins);
+  font-size: 13px;
+  line-height: 1.35;
+  box-sizing: border-box;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #94a3b8;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--edit-blue);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.10);
+}
+
+input[readonly],
+select:disabled,
+input:disabled {
+  color: #64748b;
+  background-color: #f8fafc;
+  cursor: not-allowed;
+  opacity: 1;
+}
+
+/* Native select fallback chevrons */
+select,
+.form-group select,
+.form-item select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-color: #ffffff;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%2318263d' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 16px 16px;
+  padding-right: 42px;
+}
+
+/* DOB + Age */
+.dob-age-group {
+  grid-column: span 2;
+}
+
+.dob-age-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(120px, 150px);
+  gap: 10px;
+  align-items: end;
+}
+
+.age-display-field {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 6px;
+}
+
+.age-display-field span {
+  color: var(--edit-blue-dark);
+  font-size: 12px;
+  font-weight: 650;
+  line-height: 1;
+}
+
+.age-display-field .age {
+  text-align: center;
+  color: var(--edit-blue-dark);
+  background: #f8fbff;
+  border-color: rgba(37, 99, 235, 0.14);
+  font-weight: 700;
+}
+
+/* Address */
+.address-fieldset {
+  margin: 0;
+  padding: 16px;
+  border: 1px solid var(--edit-border);
+  border-radius: 16px;
+  background: #ffffff;
+}
+
+.address-fieldset > legend {
+  padding: 0 8px;
+  color: var(--edit-text);
+  font-size: 13px;
+  font-weight: 650;
+  letter-spacing: 0.04em;
+}
+
+.address-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 12px;
+}
+
+/* Clean radio options */
+.radio-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px 22px;
+  width: 100%;
+  margin-top: 4px;
+}
+
+.radio-option {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  min-height: auto;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  color: var(--edit-text);
+  font-size: 13.5px;
+  font-weight: 600;
+  line-height: 1.35;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.radio-option input[type="radio"],
+input[type="radio"] {
+  appearance: none;
+  -webkit-appearance: none;
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  min-width: 18px;
+  min-height: 18px;
+  flex: 0 0 18px;
+  margin: 0;
+  padding: 0;
+  border: 1.8px solid #94a3b8;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: none;
+  cursor: pointer;
+}
+
+.radio-option input[type="radio"]::before,
+input[type="radio"]::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ffffff;
+  opacity: 0;
+  transform: scale(0.75);
+  transition: opacity 0.14s ease, transform 0.14s ease;
+}
+
+.radio-option input[type="radio"]:checked,
+input[type="radio"]:checked {
+  border-color: var(--edit-blue);
+  background: var(--edit-blue);
+}
+
+.radio-option input[type="radio"]:checked::before,
+input[type="radio"]:checked::before {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Submit */
+.button-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 18px 0 4px;
+  padding: 0;
+}
+
+.submit-btn {
+  min-width: 180px;
+  min-height: 46px;
+  padding: 11px 24px;
+  border: 0;
+  border-radius: 999px;
+  color: #ffffff;
+  background: var(--edit-blue-dark);
+  font-family: var(--poppins);
+  font-size: 14px;
+  font-weight: 650;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(31, 91, 151, 0.20);
+  transition: background 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.submit-btn::after {
+  display: none;
+}
+
+.submit-btn:not(:disabled):hover {
+  background: #174d83;
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px rgba(31, 91, 151, 0.28);
+}
+
+#submitButton:disabled {
+  color: #ffffff;
+  background: #9aa4b2;
+  box-shadow: none;
+  cursor: not-allowed;
+  opacity: 1;
+}
+
+/* Reference-style Select2 dropdown UI */
+.select2-container {
+  width: 100% !important;
+  font-family: var(--poppins) !important;
+}
+
+.select2-container--default .select2-selection--single {
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  width: 100% !important;
+  min-height: 42px !important;
+  height: 42px !important;
+  padding: 0 40px 0 14px !important;
+  border: 1px solid rgba(15, 23, 42, 0.10) !important;
+  border-radius: 13px !important;
+  background: #ffffff !important;
+  box-shadow: none !important;
+}
+
+.select2-container--default.select2-container--open .select2-selection--single,
+.select2-container--default .select2-selection--single:focus {
+  border-color: var(--edit-blue) !important;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.10) !important;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+  width: 100% !important;
+  padding: 0 !important;
+  color: var(--edit-text) !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  line-height: 42px !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__placeholder {
+  color: #64748b !important;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+  position: absolute !important;
+  top: 0 !important;
+  right: 12px !important;
+  width: 20px !important;
+  height: 100% !important;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow b {
+  display: none !important;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow::before {
+  content: "" !important;
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  width: 7px !important;
+  height: 7px !important;
+  border-right: 2px solid #18263d !important;
+  border-bottom: 2px solid #18263d !important;
+  transform: translate(-50%, -65%) rotate(45deg) !important;
+}
+
+.select2-dropdown.reference-select-dropdown,
+.select2-container--default .select2-dropdown {
+  margin-top: 6px !important;
+  padding: 6px !important;
+  border: 1px solid rgba(15, 23, 42, 0.08) !important;
+  border-radius: 8px !important;
+  background: #ffffff !important;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.12) !important;
+  overflow: hidden !important;
+  z-index: 4000 !important;
+}
+
+.select2-search--dropdown {
+  display: none !important;
+}
+
+.select2-results__options {
+  max-height: 240px !important;
+  overflow-y: auto !important;
+  padding: 0 !important;
+}
+
+.select2-container--default .select2-results__option {
+  position: relative !important;
+  display: block !important;
+  min-height: 32px !important;
+  padding: 7px 30px 7px 12px !important;
+  border-radius: 4px !important;
+  color: #4b5563 !important;
+  background: transparent !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  line-height: 1.35 !important;
+  cursor: pointer !important;
+}
+
+.select2-container--default .select2-results__option--highlighted[aria-selected] {
+  color: #4b5563 !important;
+  background: #f5f5f5 !important;
+}
+
+.select2-container--default .select2-results__option[aria-selected="true"] {
+  color: #4b5563 !important;
+  background: #f3f4f6 !important;
+}
+
+.select2-container--default .select2-results__option[aria-selected="true"]::after {
+  content: "✓" !important;
+  position: absolute !important;
+  right: 11px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  color: #2f3747 !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+}
+
+.select2-container--default .select2-results__option[aria-disabled="true"] {
+  color: #9ca3af !important;
+  background: transparent !important;
+  cursor: not-allowed !important;
+}
+
+/* Compact system Flatpickr */
+.flatpickr-calendar.material-date-picker,
+.flatpickr-calendar {
+  width: min(92vw, 310px) !important;
+  padding: 12px !important;
+  border: 1px solid rgba(31, 91, 151, 0.12) !important;
+  border-radius: 15px !important;
+  background: #ffffff !important;
+  box-shadow: 0 14px 34px rgba(15, 23, 42, 0.14) !important;
+  font-family: var(--poppins) !important;
+  overflow: hidden !important;
+}
+
+.flatpickr-calendar::before,
+.flatpickr-calendar::after {
+  display: none !important;
+}
+
+.flatpickr-innerContainer,
+.flatpickr-rContainer,
+.flatpickr-weekdays,
+.flatpickr-weekdaycontainer,
+.flatpickr-days,
+.dayContainer {
+  width: 100% !important;
+  min-width: 100% !important;
+  max-width: 100% !important;
+}
+
+.flatpickr-months {
+  width: 100% !important;
+  height: auto !important;
+  margin: 0 0 10px !important;
+  padding: 0 !important;
+}
+
+.material-picker-header {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+  align-items: center !important;
+  gap: 9px !important;
+  width: 100% !important;
+}
+
+.material-picker-group {
+  display: grid !important;
+  grid-template-columns: 26px minmax(0, 1fr) 26px !important;
+  align-items: center !important;
+  gap: 5px !important;
+}
+
+.material-picker-nav {
+  display: grid !important;
+  place-items: center !important;
+  width: 26px !important;
+  height: 26px !important;
+  padding: 0 !important;
+  border: none !important;
+  border-radius: 9px !important;
+  color: var(--edit-blue-dark) !important;
+  background: rgba(31, 91, 151, 0.08) !important;
+  font-size: 20px !important;
+  font-weight: 500 !important;
+  line-height: 1 !important;
+  cursor: pointer !important;
+}
+
+.flatpickr-months .flatpickr-month,
+.flatpickr-current-month {
+  position: static !important;
+  width: auto !important;
+  height: auto !important;
+  padding: 0 !important;
+  overflow: visible !important;
+}
+
+.flatpickr-current-month {
+  display: contents !important;
+}
+
+.flatpickr-monthDropdown-months,
+.flatpickr-current-month .flatpickr-monthDropdown-months,
+.flatpickr-current-month .numInputWrapper {
+  width: 100% !important;
+  height: 34px !important;
+  min-width: 0 !important;
+  border: 1px solid rgba(31, 91, 151, 0.12) !important;
+  border-radius: 11px !important;
+  background-color: #f8fbff !important;
+  box-shadow: none !important;
+}
+
+.flatpickr-monthDropdown-months,
+.flatpickr-current-month .flatpickr-monthDropdown-months {
+  padding: 0 30px 0 11px !important;
+  color: #18263d !important;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%231f5b97' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 10px center !important;
+  background-size: 13px !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  line-height: 34px !important;
+}
+
+.flatpickr-current-month input.cur-year,
+.flatpickr-current-month .numInputWrapper input {
+  width: 100% !important;
+  height: 34px !important;
+  padding: 0 10px !important;
+  border: 0 !important;
+  border-radius: 11px !important;
+  color: #18263d !important;
+  background: transparent !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  line-height: 34px !important;
+  text-align: center !important;
+  box-shadow: none !important;
+}
+
+.flatpickr-current-month .numInputWrapper span {
+  display: none !important;
+}
+
+.flatpickr-weekdays {
+  height: auto !important;
+  margin: 0 0 5px !important;
+  padding: 0 !important;
+}
+
+.flatpickr-weekdaycontainer {
+  display: grid !important;
+  grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
+  gap: 2px !important;
+}
+
+span.flatpickr-weekday {
+  display: grid !important;
+  place-items: center !important;
+  width: 100% !important;
+  height: 24px !important;
+  color: #64748b !important;
+  font-size: 10.8px !important;
+  font-weight: 700 !important;
+  text-align: center !important;
+}
+
+.dayContainer {
+  display: grid !important;
+  grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
+  gap: 4px 3px !important;
+  justify-items: stretch !important;
+}
+
+.flatpickr-day {
+  display: grid !important;
+  place-items: center !important;
+  width: 100% !important;
+  max-width: none !important;
+  height: 31px !important;
+  margin: 0 !important;
+  border: none !important;
+  border-radius: 10px !important;
+  color: #334155 !important;
+  background: transparent !important;
+  font-size: 11.5px !important;
+  font-weight: 500 !important;
+  line-height: 31px !important;
+}
+
+.flatpickr-day:hover,
+.flatpickr-day:focus {
+  color: var(--edit-blue-dark) !important;
+  background: rgba(31, 91, 151, 0.10) !important;
+}
+
+.flatpickr-day.today {
+  color: var(--edit-blue-dark) !important;
+  background: rgba(31, 91, 151, 0.08) !important;
+  box-shadow: inset 0 0 0 1px rgba(31, 91, 151, 0.25) !important;
+}
+
+.flatpickr-day.selected,
+.flatpickr-day.selected:hover,
+.flatpickr-day.startRange,
+.flatpickr-day.endRange {
+  color: #ffffff !important;
+  background: var(--edit-blue-dark) !important;
+  box-shadow: 0 6px 12px rgba(31, 91, 151, 0.18) !important;
+}
+
+.flatpickr-day.prevMonthDay,
+.flatpickr-day.nextMonthDay {
+  color: #94a3b8 !important;
+}
+
+.flatpickr-day.flatpickr-disabled,
+.flatpickr-day.flatpickr-disabled:hover {
+  color: #d7dee8 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  cursor: not-allowed !important;
+}
+
+.material-picker-footer {
+  display: flex !important;
+  justify-content: flex-end !important;
+  align-items: center !important;
+  gap: 14px !important;
+  margin-top: 10px !important;
+  padding: 8px 0 0 !important;
+  border-top: 1px solid rgba(15, 23, 42, 0.08) !important;
+}
+
+.material-picker-footer button {
+  min-height: 26px !important;
+  padding: 4px 0 !important;
+  border: none !important;
+  border-radius: 0 !important;
+  color: var(--edit-blue-dark) !important;
+  background: transparent !important;
+  font-size: 11px !important;
+  font-weight: 650 !important;
+  cursor: pointer !important;
+}
+
+/* App modals */
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  width: 100%;
+  min-height: 100%;
+  padding: 18px;
+  overflow: auto;
+  place-items: center;
+  background: rgba(15, 23, 42, 0.48);
+  backdrop-filter: blur(7px);
+}
+
+.modal[style*="block"],
+.modal.open {
+  display: grid !important;
+}
+
+.modal-content {
+  position: relative;
+  width: min(94vw, 460px);
+  max-height: min(88vh, 760px);
+  overflow-y: auto;
+  margin: 0 auto;
+  padding: 26px 24px 22px;
+  border: 1px solid rgba(37, 99, 235, 0.12);
+  border-radius: 24px;
+  text-align: center;
+  background: #ffffff;
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.22);
+}
+
+.modal-header {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.modal-icon {
+  display: grid;
+  place-items: center;
+  width: 58px;
+  height: 58px;
+  min-width: 58px;
+  margin: 0 auto 12px;
+  border-radius: 18px;
+  color: #ffffff;
+  background: var(--edit-blue-dark);
+  box-shadow: 0 12px 24px rgba(37, 99, 235, 0.24);
+}
+
+.modal-icon-success {
+  background: var(--edit-green);
+}
+
+.modal-icon-error {
+  background: var(--edit-red);
+}
+
+.modal-icon i {
+  font-size: 32px;
+}
+
+.checkmark-image {
+  display: none !important;
+}
+
+.modal-header h3 {
+  margin: 0;
+  color: var(--edit-text);
+  font-size: 21px;
+  font-weight: 650;
+  line-height: 1.25;
+}
+
+.modal-body {
+  width: 100%;
+  margin: 12px auto 0;
+  padding: 0;
+  color: var(--edit-muted);
+  text-align: center;
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.modal-body p {
+  margin: 0;
+  color: var(--edit-muted);
+  background: transparent;
+  line-height: 1.55;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 22px;
+}
+
+.modal-footer .btn {
+  min-width: 106px;
+  min-height: 44px;
+  padding: 10px 18px;
+  border: 0;
+  border-radius: 999px;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.modal-footer .cancel,
+.modal-footer .no {
+  color: var(--edit-text);
+  background: #e5e7eb;
+}
+
+.modal-footer .yes {
+  background: var(--edit-blue-dark);
+}
+
+.close-btn {
+  position: absolute;
+  top: -8px;
+  right: -6px;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  color: #526176;
+  background: transparent;
+  cursor: pointer;
+  font-size: 28px;
+  line-height: 1;
+}
+
+.close-btn:hover {
+  color: var(--edit-red);
+  background: rgba(239, 91, 91, 0.08);
+}
+
+/* Logout modal cleanup */
+.logout-modal {
+  backdrop-filter: blur(7px);
+  background: rgba(15, 23, 42, 0.48) !important;
+}
+
+.logout-modal-content {
+  border: 1px solid rgba(37, 99, 235, 0.12) !important;
+  border-radius: 22px !important;
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.22) !important;
+}
+
+/* Responsive layout */
+@media (max-width: 1180px) {
+  .form-container {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .address-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  #content main {
+    padding: 16px;
+  }
+
+  .container {
+    padding: 16px;
+    border-radius: 18px;
+  }
+
+  .form-container,
+  .address-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dob-age-group {
+    grid-column: 1 / -1;
+  }
+
+  .dob-age-row {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .button-container {
+    justify-content: stretch;
+  }
+
+  .submit-btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+  #content main {
+    padding: 12px 10px 18px;
+  }
+
+  #content main .head-title .left h1 {
+    font-size: clamp(22px, 8vw, 30px);
+  }
+
+  .container-header {
+    padding: 12px 14px;
+    border-radius: 16px;
+  }
+
+  .container {
+    padding: 14px;
+  }
+
+  .form-section-title {
+    padding: 10px 12px;
+  }
+
+  .address-fieldset {
+    padding: 12px;
+    border-radius: 16px;
+  }
+
+  .modal-content {
+    width: min(94vw, 390px);
+    padding: 24px 18px 20px;
+    border-radius: 22px;
+  }
+
+  .modal-icon {
+    width: 52px;
+    height: 52px;
+    min-width: 52px;
+    border-radius: 16px;
+  }
+
+  .modal-header h3 {
+    font-size: 19px;
+  }
+
+  .modal-footer {
+    flex-direction: column;
+  }
+
+  .modal-footer .btn {
+    width: 100%;
+  }
+
+  .flatpickr-calendar.material-date-picker,
+  .flatpickr-calendar {
+    width: min(92vw, 300px) !important;
+    padding: 11px !important;
+    border-radius: 14px !important;
+  }
+
+  .material-picker-header {
+    grid-template-columns: 1fr !important;
+    gap: 7px !important;
+  }
+}
+
+
+
+/* =========================================================
+   PERFORMANCE FIX FOR EDIT PERSONAL INFORMATION PAGE
+   PSGC address dropdowns stay native because their options load dynamically.
+   This prevents Select2 re-render lag while keeping the same visual design.
+   ========================================================= */
+
+#region[data-no-select2="true"],
+#province[data-no-select2="true"],
+#city[data-no-select2="true"],
+#barangay[data-no-select2="true"] {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  background-color: #ffffff !important;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%2318263d' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 14px center !important;
+  background-size: 16px 16px !important;
+  padding-right: 42px !important;
+}
+
+#region[data-no-select2="true"]:disabled,
+#province[data-no-select2="true"]:disabled,
+#city[data-no-select2="true"]:disabled,
+#barangay[data-no-select2="true"]:disabled {
+  color: #94a3b8 !important;
+  background-color: #f8fafc !important;
+  cursor: not-allowed !important;
+  opacity: 1 !important;
+}
+
+/* Avoid expensive animations while users type/edit this page */
+.container,
+.container-header,
+.form-control,
+input,
+select,
+textarea,
+.select2-selection,
+.flatpickr-calendar {
+  transition-duration: 0.12s !important;
+}
+
+
+
+/* =========================================================
+   BIRTHPLACE + DOB + AGE ROW ALIGNMENT FIX
+   Places Birth Place, Date of Birth, and Age side-by-side in one row.
+   ========================================================= */
+
+.birth-place-field,
+.dob-field,
+.age-field {
+  min-width: 0 !important;
+}
+
+/* Remove the previous combined DOB+Age behavior if older markup/style exists */
+.dob-age-group {
+  grid-column: auto !important;
+}
+
+.dob-age-row {
+  display: contents !important;
+}
+
+.age-display-field {
+  display: contents !important;
+}
+
+/* Make the age field compact but aligned with DOB and Birth Place */
+.age-field input.age,
+.age {
+  color: var(--edit-blue-dark, #1f5b97) !important;
+  background: #f8fbff !important;
+  border-color: rgba(37, 99, 235, 0.14) !important;
+  font-weight: 700 !important;
+  text-align: center !important;
+}
+
+/* Desktop orientation:
+   Row 1: Last Name | First Name | Middle Name
+   Row 2: Ext
+   Row 3: Birth Place | Date of Birth | Age
+*/
+@media (min-width: 901px) {
+  .form-container {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+
+  .birth-place-field {
+    grid-column: 1 / 2 !important;
+  }
+
+  .dob-field {
+    grid-column: 2 / 3 !important;
+  }
+
+  .age-field {
+    grid-column: 3 / 4 !important;
+  }
+}
+
+/* Tablet: keep Birth Place and DOB side-by-side, Age below if space is limited */
+@media (min-width: 701px) and (max-width: 900px) {
+  .birth-place-field {
+    grid-column: 1 / 2 !important;
+  }
+
+  .dob-field {
+    grid-column: 2 / 3 !important;
+  }
+
+  .age-field {
+    grid-column: 1 / -1 !important;
+  }
+}
+
+/* Mobile: stack cleanly */
+@media (max-width: 700px) {
+  .birth-place-field,
+  .dob-field,
+  .age-field {
+    grid-column: 1 / -1 !important;
+  }
+}
+
+
+
+/* =========================================================
+   EXT + BIRTHPLACE + DOB + AGE SINGLE-ROW ALIGNMENT FIX
+   Aligns these four related fields in one clean row on desktop.
+   ========================================================= */
+
+.extension-field,
+.birth-place-field,
+.dob-field,
+.age-field {
+  min-width: 0 !important;
+}
+
+/* Desktop: one singular row */
+@media (min-width: 1001px) {
+  .form-container {
+    grid-template-columns:
+      minmax(170px, 0.75fr)
+      minmax(230px, 1fr)
+      minmax(230px, 1fr)
+      minmax(140px, 0.7fr) !important;
+  }
+
+  .extension-field {
+    grid-column: 1 / 2 !important;
+  }
+
+  .birth-place-field {
+    grid-column: 2 / 3 !important;
+  }
+
+  .dob-field {
+    grid-column: 3 / 4 !important;
+  }
+
+  .age-field {
+    grid-column: 4 / 5 !important;
+  }
+
+  .age-field input.age,
+  .age {
+    min-width: 0 !important;
+  }
+
+  .form-group.full-width {
+    grid-column: 1 / -1 !important;
+  }
+}
+
+/* Medium screens: keep it balanced in two columns */
+@media (min-width: 701px) and (max-width: 1000px) {
+  .form-container {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .extension-field,
+  .birth-place-field,
+  .dob-field,
+  .age-field {
+    grid-column: auto !important;
+  }
+}
+
+/* Small screens: stack cleanly */
+@media (max-width: 700px) {
+  .extension-field,
+  .birth-place-field,
+  .dob-field,
+  .age-field {
+    grid-column: 1 / -1 !important;
+  }
+}
+
+
+
+/* =========================================================
+   SEX OPTION BELOW EXT/BIRTHPLACE/DOB/AGE SECTION
+   Places the sex option directly below the aligned personal-info row.
+   ========================================================= */
+
+.sex-field {
+  grid-column: 1 / -1 !important;
+  margin-top: -2px !important;
+  padding: 12px 14px !important;
+  border: 1px solid rgba(37, 99, 235, 0.10) !important;
+  border-radius: 14px !important;
+  background: #f8fbff !important;
+}
+
+.sex-field > label {
+  margin-bottom: 8px !important;
+}
+
+.sex-field .radio-group {
+  margin-top: 0 !important;
+  gap: 14px 26px !important;
+}
+
+
+
+/* =========================================================
+   FINAL EDIT INFO LAYOUT + STABLE DATE PICKER FIX
+   - Fixes month selector usability
+   - Removes Gender section background
+   - Places 4Ps Status beside Family Serial Number
+   ========================================================= */
+
+/* Remove the older custom date-picker header layout that squeezed the month select */
+.material-picker-header,
+.material-picker-group,
+.material-picker-nav,
+.material-picker-footer {
+  all: unset !important;
+}
+
+/* Stable Flatpickr container */
+.flatpickr-calendar.stable-date-picker,
+.flatpickr-calendar {
+  width: min(92vw, 330px) !important;
+  padding: 12px !important;
+  border: 1px solid rgba(31, 91, 151, 0.12) !important;
+  border-radius: 16px !important;
+  background: #ffffff !important;
+  box-shadow: 0 14px 34px rgba(15, 23, 42, 0.14) !important;
+  font-family: var(--poppins, 'Poppins', sans-serif) !important;
+  overflow: hidden !important;
+}
+
+.flatpickr-calendar::before,
+.flatpickr-calendar::after {
+  display: none !important;
+}
+
+.flatpickr-months {
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  width: 100% !important;
+  height: 40px !important;
+  margin: 0 0 10px !important;
+  padding: 0 34px !important;
+}
+
+.flatpickr-months .flatpickr-prev-month,
+.flatpickr-months .flatpickr-next-month {
+  position: absolute !important;
+  top: 3px !important;
+  display: grid !important;
+  place-items: center !important;
+  width: 30px !important;
+  height: 30px !important;
+  padding: 0 !important;
+  border-radius: 10px !important;
+  color: var(--edit-blue-dark, #1f5b97) !important;
+  background: rgba(31, 91, 151, 0.08) !important;
+}
+
+.flatpickr-months .flatpickr-prev-month {
+  left: 0 !important;
+}
+
+.flatpickr-months .flatpickr-next-month {
+  right: 0 !important;
+}
+
+.flatpickr-months .flatpickr-prev-month:hover,
+.flatpickr-months .flatpickr-next-month:hover {
+  color: #ffffff !important;
+  background: var(--edit-blue-dark, #1f5b97) !important;
+}
+
+.flatpickr-months .flatpickr-prev-month svg,
+.flatpickr-months .flatpickr-next-month svg {
+  width: 15px !important;
+  height: 15px !important;
+  fill: currentColor !important;
+}
+
+.flatpickr-months .flatpickr-month {
+  flex: 1 1 auto !important;
+  width: 100% !important;
+  height: 40px !important;
+  overflow: visible !important;
+}
+
+.flatpickr-current-month {
+  position: static !important;
+  display: grid !important;
+  grid-template-columns: minmax(130px, 1fr) 82px !important;
+  align-items: center !important;
+  gap: 8px !important;
+  width: 100% !important;
+  height: 40px !important;
+  padding: 0 !important;
+  left: auto !important;
+  transform: none !important;
+}
+
+.flatpickr-current-month .flatpickr-monthDropdown-months,
+.flatpickr-current-month .numInputWrapper {
+  width: 100% !important;
+  min-width: 0 !important;
+  height: 36px !important;
+  border: 1px solid rgba(31, 91, 151, 0.12) !important;
+  border-radius: 12px !important;
+  background-color: #f8fbff !important;
+  box-shadow: none !important;
+}
+
+.flatpickr-current-month .flatpickr-monthDropdown-months {
+  padding: 0 30px 0 12px !important;
+  color: #18263d !important;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%231f5b97' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 10px center !important;
+  background-size: 13px !important;
+  font-size: 12px !important;
+  font-weight: 650 !important;
+  line-height: 36px !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+}
+
+.flatpickr-current-month .numInputWrapper {
+  overflow: hidden !important;
+}
+
+.flatpickr-current-month input.cur-year {
+  width: 100% !important;
+  height: 36px !important;
+  padding: 0 8px !important;
+  border: 0 !important;
+  color: #18263d !important;
+  background: transparent !important;
+  font-size: 12px !important;
+  font-weight: 650 !important;
+  line-height: 36px !important;
+  text-align: center !important;
+}
+
+.flatpickr-current-month .numInputWrapper span {
+  display: none !important;
+}
+
+.flatpickr-innerContainer,
+.flatpickr-rContainer,
+.flatpickr-weekdays,
+.flatpickr-weekdaycontainer,
+.flatpickr-days,
+.dayContainer {
+  width: 100% !important;
+  min-width: 100% !important;
+  max-width: 100% !important;
+}
+
+.flatpickr-weekdays {
+  height: auto !important;
+  margin: 0 0 5px !important;
+}
+
+.flatpickr-weekdaycontainer,
+.dayContainer {
+  display: grid !important;
+  grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
+}
+
+.flatpickr-weekdaycontainer {
+  gap: 2px !important;
+}
+
+.dayContainer {
+  gap: 4px 3px !important;
+}
+
+span.flatpickr-weekday {
+  display: grid !important;
+  place-items: center !important;
+  width: 100% !important;
+  height: 24px !important;
+  color: #64748b !important;
+  font-size: 10.8px !important;
+  font-weight: 700 !important;
+}
+
+.flatpickr-day {
+  display: grid !important;
+  place-items: center !important;
+  width: 100% !important;
+  max-width: none !important;
+  height: 31px !important;
+  margin: 0 !important;
+  border: none !important;
+  border-radius: 10px !important;
+  color: #334155 !important;
+  background: transparent !important;
+  font-size: 11.5px !important;
+  font-weight: 500 !important;
+  line-height: 31px !important;
+}
+
+.flatpickr-day:hover,
+.flatpickr-day:focus {
+  color: var(--edit-blue-dark, #1f5b97) !important;
+  background: rgba(31, 91, 151, 0.10) !important;
+}
+
+.flatpickr-day.today {
+  color: var(--edit-blue-dark, #1f5b97) !important;
+  background: rgba(31, 91, 151, 0.08) !important;
+  box-shadow: inset 0 0 0 1px rgba(31, 91, 151, 0.25) !important;
+}
+
+.flatpickr-day.selected,
+.flatpickr-day.selected:hover {
+  color: #ffffff !important;
+  background: var(--edit-blue-dark, #1f5b97) !important;
+  box-shadow: 0 6px 12px rgba(31, 91, 151, 0.18) !important;
+}
+
+.flatpickr-day.prevMonthDay,
+.flatpickr-day.nextMonthDay {
+  color: #94a3b8 !important;
+}
+
+.flatpickr-day.flatpickr-disabled,
+.flatpickr-day.flatpickr-disabled:hover {
+  color: #d7dee8 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  cursor: not-allowed !important;
+}
+
+/* Cancel / OK footer */
+.stable-picker-footer {
+  display: flex !important;
+  justify-content: flex-end !important;
+  align-items: center !important;
+  gap: 14px !important;
+  margin-top: 10px !important;
+  padding: 8px 0 0 !important;
+  border-top: 1px solid rgba(15, 23, 42, 0.08) !important;
+}
+
+.stable-picker-btn {
+  min-height: 26px !important;
+  padding: 4px 0 !important;
+  border: none !important;
+  border-radius: 0 !important;
+  color: var(--edit-blue-dark, #1f5b97) !important;
+  background: transparent !important;
+  font-family: var(--poppins, 'Poppins', sans-serif) !important;
+  font-size: 11px !important;
+  font-weight: 650 !important;
+  cursor: pointer !important;
+}
+
+/* Remove background/border from Gender section */
+.sex-field {
+  grid-column: 1 / -1 !important;
+  margin-top: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+}
+
+.sex-field > label {
+  margin-bottom: 8px !important;
+}
+
+.sex-field .radio-group {
+  margin-top: 0 !important;
+  gap: 14px 26px !important;
+}
+
+/* Family Serial Number + 4Ps side by side */
+.family-serial-field,
+.fourps-field {
+  min-width: 0 !important;
+}
+
+.fourps-field {
+  padding: 0 !important;
+  border: none !important;
+  background: transparent !important;
+}
+
+@media (min-width: 1001px) {
+  .family-serial-field {
+    grid-column: 1 / 3 !important;
+  }
+
+  .fourps-field {
+    grid-column: 3 / 5 !important;
+  }
+}
+
+@media (min-width: 701px) and (max-width: 1000px) {
+  .family-serial-field,
+  .fourps-field {
+    grid-column: auto !important;
+  }
+}
+
+@media (max-width: 700px) {
+  .family-serial-field,
+  .fourps-field {
+    grid-column: 1 / -1 !important;
+  }
+
+  .flatpickr-current-month {
+    grid-template-columns: minmax(120px, 1fr) 74px !important;
+  }
+}
+
+
+
+/* =========================================================
+   FINAL EDIT PERSONAL INFO ALIGNMENT + DATEPICKER DROPDOWN FIX
+   - Month dropdown is wide and clickable
+   - Year uses a real dropdown
+   - Ext aligns beside Middle Name
+   - Gender aligns beside Age
+   - Family Serial Number width reduced
+   - Submit has more top spacing
+   ========================================================= */
+
+/* Main desktop grid for this section */
+@media (min-width: 1101px) {
+  .form-container {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  }
+
+  /* Row 1 */
+  .patient-last-name,
+  .patient-first-name,
+  .patient-middle-name,
+  .patient-extension {
+    min-width: 0 !important;
+  }
+
+  .extension-field {
+    grid-column: 4 / 5 !important;
+  }
+
+  /* Row 2 */
+  .birth-place-field {
+    grid-column: 1 / 2 !important;
+  }
+
+  .dob-field {
+    grid-column: 2 / 3 !important;
+  }
+
+  .age-field {
+    grid-column: 3 / 4 !important;
+  }
+
+  .sex-field {
+    grid-column: 4 / 5 !important;
+    align-self: end !important;
+  }
+
+  .form-group.full-width {
+    grid-column: 1 / -1 !important;
+  }
+
+  .family-serial-field {
+    grid-column: 1 / 2 !important;
+  }
+
+  .fourps-field {
+    grid-column: 2 / 4 !important;
+  }
+}
+
+/* Tablet grid */
+@media (min-width: 701px) and (max-width: 1100px) {
+  .form-container {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .extension-field,
+  .birth-place-field,
+  .dob-field,
+  .age-field,
+  .sex-field,
+  .family-serial-field,
+  .fourps-field {
+    grid-column: auto !important;
+  }
+}
+
+/* Small screens */
+@media (max-width: 700px) {
+  .extension-field,
+  .birth-place-field,
+  .dob-field,
+  .age-field,
+  .sex-field,
+  .family-serial-field,
+  .fourps-field {
+    grid-column: 1 / -1 !important;
+  }
+}
+
+/* Gender should be plain and compact beside Age */
+.sex-field {
+  margin-top: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+}
+
+.sex-field > label {
+  margin-bottom: 8px !important;
+}
+
+.sex-field .radio-group {
+  min-height: 42px !important;
+  margin-top: 0 !important;
+  align-items: center !important;
+  gap: 12px 18px !important;
+}
+
+/* 4Ps beside Family Serial Number */
+.fourps-field {
+  margin-top: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  background: transparent !important;
+}
+
+.fourps-field .radio-group {
+  min-height: 42px !important;
+  align-items: center !important;
+}
+
+/* Reduced Family Serial Number width on desktop through grid placement */
+.family-serial-field {
+  min-width: 0 !important;
+}
+
+/* More space above Submit button */
+.button-container {
+  margin-top: 34px !important;
+}
+
+/* Stable usable date picker */
+.flatpickr-calendar.stable-date-picker,
+.flatpickr-calendar {
+  width: min(94vw, 350px) !important;
+  padding: 12px !important;
+  overflow: visible !important;
+}
+
+.flatpickr-months {
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  width: 100% !important;
+  height: 42px !important;
+  margin: 0 0 10px !important;
+  padding: 0 34px !important;
+  overflow: visible !important;
+}
+
+.flatpickr-months .flatpickr-prev-month,
+.flatpickr-months .flatpickr-next-month {
+  position: absolute !important;
+  top: 4px !important;
+  display: grid !important;
+  place-items: center !important;
+  width: 30px !important;
+  height: 30px !important;
+  padding: 0 !important;
+  border-radius: 10px !important;
+  color: var(--edit-blue-dark, #1f5b97) !important;
+  background: rgba(31, 91, 151, 0.08) !important;
+}
+
+.flatpickr-months .flatpickr-prev-month {
+  left: 0 !important;
+}
+
+.flatpickr-months .flatpickr-next-month {
+  right: 0 !important;
+}
+
+.flatpickr-months .flatpickr-month {
+  flex: 1 1 auto !important;
+  width: 100% !important;
+  height: 42px !important;
+  overflow: visible !important;
+}
+
+.flatpickr-current-month {
+  position: static !important;
+  display: grid !important;
+  grid-template-columns: minmax(150px, 1fr) 96px !important;
+  gap: 8px !important;
+  align-items: center !important;
+  width: 100% !important;
+  height: 42px !important;
+  left: auto !important;
+  padding: 0 !important;
+  transform: none !important;
+  overflow: visible !important;
+}
+
+/* Month dropdown */
+.flatpickr-current-month .flatpickr-monthDropdown-months {
+  width: 100% !important;
+  min-width: 150px !important;
+  height: 36px !important;
+  padding: 0 30px 0 12px !important;
+  border: 1px solid rgba(31, 91, 151, 0.12) !important;
+  border-radius: 12px !important;
+  color: #18263d !important;
+  background-color: #f8fbff !important;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%231f5b97' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 10px center !important;
+  background-size: 13px !important;
+  font-family: var(--poppins, 'Poppins', sans-serif) !important;
+  font-size: 12px !important;
+  font-weight: 650 !important;
+  line-height: 36px !important;
+  appearance: auto !important;
+  -webkit-appearance: menulist !important;
+  cursor: pointer !important;
+  z-index: 10 !important;
+}
+
+/* Hide Flatpickr number input and show our year dropdown */
+.flatpickr-current-month .numInputWrapper {
+  display: none !important;
+}
+
+.stable-year-select {
+  display: block !important;
+  width: 100% !important;
+  min-width: 88px !important;
+  height: 36px !important;
+  padding: 0 28px 0 10px !important;
+  border: 1px solid rgba(31, 91, 151, 0.12) !important;
+  border-radius: 12px !important;
+  color: #18263d !important;
+  background-color: #f8fbff !important;
+  font-family: var(--poppins, 'Poppins', sans-serif) !important;
+  font-size: 12px !important;
+  font-weight: 650 !important;
+  line-height: 36px !important;
+  appearance: auto !important;
+  -webkit-appearance: menulist !important;
+  cursor: pointer !important;
+  z-index: 10 !important;
+}
+
+.flatpickr-innerContainer,
+.flatpickr-rContainer,
+.flatpickr-weekdays,
+.flatpickr-weekdaycontainer,
+.flatpickr-days,
+.dayContainer {
+  width: 100% !important;
+  min-width: 100% !important;
+  max-width: 100% !important;
+}
+
+.flatpickr-weekdays {
+  height: auto !important;
+  margin: 0 0 5px !important;
+}
+
+.flatpickr-weekdaycontainer,
+.dayContainer {
+  display: grid !important;
+  grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
+}
+
+.dayContainer {
+  gap: 4px 3px !important;
+}
+
+span.flatpickr-weekday {
+  display: grid !important;
+  place-items: center !important;
+  width: 100% !important;
+  height: 24px !important;
+  color: #64748b !important;
+  font-size: 10.8px !important;
+  font-weight: 700 !important;
+}
+
+.flatpickr-day {
+  display: grid !important;
+  place-items: center !important;
+  width: 100% !important;
+  max-width: none !important;
+  height: 31px !important;
+  margin: 0 !important;
+  border: none !important;
+  border-radius: 10px !important;
+  color: #334155 !important;
+  background: transparent !important;
+  font-size: 11.5px !important;
+  font-weight: 500 !important;
+  line-height: 31px !important;
+}
+
+.flatpickr-day:hover,
+.flatpickr-day:focus {
+  color: var(--edit-blue-dark, #1f5b97) !important;
+  background: rgba(31, 91, 151, 0.10) !important;
+}
+
+.flatpickr-day.today {
+  color: var(--edit-blue-dark, #1f5b97) !important;
+  background: rgba(31, 91, 151, 0.08) !important;
+  box-shadow: inset 0 0 0 1px rgba(31, 91, 151, 0.25) !important;
+}
+
+.flatpickr-day.selected,
+.flatpickr-day.selected:hover {
+  color: #ffffff !important;
+  background: var(--edit-blue-dark, #1f5b97) !important;
+  box-shadow: 0 6px 12px rgba(31, 91, 151, 0.18) !important;
+}
+
+.stable-picker-footer {
+  display: flex !important;
+  justify-content: flex-end !important;
+  align-items: center !important;
+  gap: 14px !important;
+  margin-top: 10px !important;
+  padding: 8px 0 0 !important;
+  border-top: 1px solid rgba(15, 23, 42, 0.08) !important;
+}
+
+.stable-picker-btn {
+  min-height: 26px !important;
+  padding: 4px 0 !important;
+  border: none !important;
+  border-radius: 0 !important;
+  color: var(--edit-blue-dark, #1f5b97) !important;
+  background: transparent !important;
+  font-family: var(--poppins, 'Poppins', sans-serif) !important;
+  font-size: 11px !important;
+  font-weight: 650 !important;
+  cursor: pointer !important;
+}
+
+@media (max-width: 700px) {
+  .flatpickr-current-month {
+    grid-template-columns: minmax(140px, 1fr) 84px !important;
+  }
+
+  .flatpickr-current-month .flatpickr-monthDropdown-months {
+    min-width: 140px !important;
+  }
+
+  .button-container {
+    margin-top: 26px !important;
+  }
+}
+
+
+
+/* =========================================================
+   CUSTOM CALENDAR DROPDOWN + GENDER ALIGNMENT FIX
+   Uses custom month/year dropdown lists so options always appear.
+   ========================================================= */
+
+/* Gender beside Age on desktop */
+@media (min-width: 1101px) {
+  .form-container {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  }
+
+  .extension-field {
+    grid-column: 4 / 5 !important;
+  }
+
+  .birth-place-field {
+    grid-column: 1 / 2 !important;
+  }
+
+  .dob-field {
+    grid-column: 2 / 3 !important;
+  }
+
+  .age-field {
+    grid-column: 3 / 4 !important;
+  }
+
+  .sex-field,
+  .form-group.sex-field,
+  .form-group.full-width.sex-field {
+    grid-column: 4 / 5 !important;
+    align-self: end !important;
+  }
+
+  .family-serial-field {
+    grid-column: 1 / 2 !important;
+  }
+
+  .fourps-field {
+    grid-column: 2 / 4 !important;
+  }
+}
+
+.sex-field,
+.form-group.sex-field {
+  margin-top: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+}
+
+.sex-field .radio-group {
+  min-height: 42px !important;
+  align-items: center !important;
+  gap: 12px 18px !important;
+}
+
+/* Calendar container */
+.flatpickr-calendar.custom-dropdown-date-picker,
+.flatpickr-calendar {
+  width: min(94vw, 350px) !important;
+  padding: 12px !important;
+  border: 1px solid rgba(31, 91, 151, 0.12) !important;
+  border-radius: 16px !important;
+  background: #ffffff !important;
+  box-shadow: 0 14px 34px rgba(15, 23, 42, 0.14) !important;
+  font-family: var(--poppins, 'Poppins', sans-serif) !important;
+  overflow: visible !important;
+}
+
+.flatpickr-calendar::before,
+.flatpickr-calendar::after {
+  display: none !important;
+}
+
+/* Hide old Flatpickr/native month/year controls because custom controls are used */
+.flatpickr-calendar.custom-dropdown-date-picker .flatpickr-prev-month,
+.flatpickr-calendar.custom-dropdown-date-picker .flatpickr-next-month,
+.flatpickr-calendar.custom-dropdown-date-picker .flatpickr-current-month,
+.flatpickr-calendar.custom-dropdown-date-picker .flatpickr-monthDropdown-months,
+.flatpickr-calendar.custom-dropdown-date-picker .numInputWrapper,
+.flatpickr-calendar.custom-dropdown-date-picker .stable-year-select {
+  display: none !important;
+}
+
+.flatpickr-calendar.custom-dropdown-date-picker .flatpickr-months {
+  position: relative !important;
+  display: block !important;
+  width: 100% !important;
+  height: auto !important;
+  margin: 0 0 10px !important;
+  padding: 0 !important;
+  overflow: visible !important;
+}
+
+.custom-date-picker-header {
+  position: relative !important;
+  display: grid !important;
+  grid-template-columns: 30px minmax(0, 1fr) 90px 30px !important;
+  align-items: center !important;
+  gap: 8px !important;
+  width: 100% !important;
+  overflow: visible !important;
+  z-index: 20 !important;
+}
+
+.custom-picker-nav {
+  display: grid !important;
+  place-items: center !important;
+  width: 30px !important;
+  height: 30px !important;
+  padding: 0 !important;
+  border: none !important;
+  border-radius: 10px !important;
+  color: var(--edit-blue-dark, #1f5b97) !important;
+  background: rgba(31, 91, 151, 0.08) !important;
+  font-family: var(--poppins, 'Poppins', sans-serif) !important;
+  font-size: 22px !important;
+  font-weight: 600 !important;
+  line-height: 1 !important;
+  cursor: pointer !important;
+}
+
+.custom-picker-nav:hover {
+  color: #ffffff !important;
+  background: var(--edit-blue-dark, #1f5b97) !important;
+}
+
+.custom-picker-menu {
+  position: relative !important;
+  min-width: 0 !important;
+  z-index: 30 !important;
+}
+
+.custom-picker-trigger {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 8px !important;
+  width: 100% !important;
+  height: 36px !important;
+  padding: 0 11px !important;
+  border: 1px solid rgba(31, 91, 151, 0.12) !important;
+  border-radius: 12px !important;
+  color: #18263d !important;
+  background: #f8fbff !important;
+  font-family: var(--poppins, 'Poppins', sans-serif) !important;
+  font-size: 12px !important;
+  font-weight: 650 !important;
+  line-height: 1 !important;
+  cursor: pointer !important;
+}
+
+.custom-picker-trigger:hover,
+.custom-picker-menu.is-open .custom-picker-trigger {
+  border-color: rgba(31, 91, 151, 0.35) !important;
+  box-shadow: 0 0 0 3px rgba(31, 91, 151, 0.08) !important;
+}
+
+.custom-picker-chevron {
+  color: var(--edit-blue-dark, #1f5b97) !important;
+  font-size: 13px !important;
+  line-height: 1 !important;
+}
+
+.custom-picker-options {
+  display: none !important;
+  position: absolute !important;
+  top: calc(100% + 6px) !important;
+  left: 0 !important;
+  width: 100% !important;
+  max-height: 190px !important;
+  padding: 6px !important;
+  border: 1px solid rgba(15, 23, 42, 0.08) !important;
+  border-radius: 10px !important;
+  background: #ffffff !important;
+  box-shadow: 0 12px 26px rgba(15, 23, 42, 0.16) !important;
+  overflow-y: auto !important;
+  z-index: 9999 !important;
+}
+
+.custom-picker-menu.is-open .custom-picker-options {
+  display: block !important;
+}
+
+.custom-year-options {
+  max-height: 210px !important;
+}
+
+.custom-picker-option {
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  width: 100% !important;
+  min-height: 30px !important;
+  padding: 7px 10px !important;
+  border: none !important;
+  border-radius: 6px !important;
+  color: #4b5563 !important;
+  background: transparent !important;
+  font-family: var(--poppins, 'Poppins', sans-serif) !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  text-align: left !important;
+  cursor: pointer !important;
+}
+
+.custom-picker-option:hover,
+.custom-picker-option.is-active {
+  color: #18263d !important;
+  background: #f3f4f6 !important;
+}
+
+.custom-picker-option.is-active::after {
+  content: "✓" !important;
+  color: #2f3747 !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+}
+
+/* Day grid remains compact and full-width */
+.flatpickr-innerContainer,
+.flatpickr-rContainer,
+.flatpickr-weekdays,
+.flatpickr-weekdaycontainer,
+.flatpickr-days,
+.dayContainer {
+  width: 100% !important;
+  min-width: 100% !important;
+  max-width: 100% !important;
+}
+
+.flatpickr-weekdays {
+  height: auto !important;
+  margin: 0 0 5px !important;
+}
+
+.flatpickr-weekdaycontainer,
+.dayContainer {
+  display: grid !important;
+  grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
+}
+
+.dayContainer {
+  gap: 4px 3px !important;
+}
+
+span.flatpickr-weekday {
+  display: grid !important;
+  place-items: center !important;
+  width: 100% !important;
+  height: 24px !important;
+  color: #64748b !important;
+  font-size: 10.8px !important;
+  font-weight: 700 !important;
+}
+
+.flatpickr-day {
+  display: grid !important;
+  place-items: center !important;
+  width: 100% !important;
+  max-width: none !important;
+  height: 31px !important;
+  margin: 0 !important;
+  border: none !important;
+  border-radius: 10px !important;
+  color: #334155 !important;
+  background: transparent !important;
+  font-size: 11.5px !important;
+  font-weight: 500 !important;
+  line-height: 31px !important;
+}
+
+.flatpickr-day:hover,
+.flatpickr-day:focus {
+  color: var(--edit-blue-dark, #1f5b97) !important;
+  background: rgba(31, 91, 151, 0.10) !important;
+}
+
+.flatpickr-day.today {
+  color: var(--edit-blue-dark, #1f5b97) !important;
+  background: rgba(31, 91, 151, 0.08) !important;
+  box-shadow: inset 0 0 0 1px rgba(31, 91, 151, 0.25) !important;
+}
+
+.flatpickr-day.selected,
+.flatpickr-day.selected:hover {
+  color: #ffffff !important;
+  background: var(--edit-blue-dark, #1f5b97) !important;
+  box-shadow: 0 6px 12px rgba(31, 91, 151, 0.18) !important;
+}
+
+/* Footer */
+.custom-picker-footer {
+  display: flex !important;
+  justify-content: flex-end !important;
+  align-items: center !important;
+  gap: 14px !important;
+  margin-top: 10px !important;
+  padding: 8px 0 0 !important;
+  border-top: 1px solid rgba(15, 23, 42, 0.08) !important;
+}
+
+.custom-picker-footer-btn {
+  min-height: 26px !important;
+  padding: 4px 0 !important;
+  border: none !important;
+  border-radius: 0 !important;
+  color: var(--edit-blue-dark, #1f5b97) !important;
+  background: transparent !important;
+  font-family: var(--poppins, 'Poppins', sans-serif) !important;
+  font-size: 11px !important;
+  font-weight: 650 !important;
+  cursor: pointer !important;
+}
+
+@media (max-width: 700px) {
+  .custom-date-picker-header {
+    grid-template-columns: 30px minmax(0, 1fr) 78px 30px !important;
+    gap: 6px !important;
+  }
+
+  .custom-picker-trigger {
+    padding: 0 9px !important;
+    font-size: 11.5px !important;
+  }
+}

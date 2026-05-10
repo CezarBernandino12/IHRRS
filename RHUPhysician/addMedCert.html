@@ -3,145 +3,210 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Issue Medical Certificate</title>
+
     <link rel="icon" href="../img/logo.png">
     <link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
     <link rel="stylesheet" href="css/addmedcert.css">
     <link rel="stylesheet" href="css/logout.css">
     <link rel="stylesheet" href="css/sidebar.css">
-    <!-- Flatpickr CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    <title>Issue Medical Certificate</title>
 </head>
+
 <body>
-    <section id="sidebar">
-        <a href="#" class="brand">
-            <img src="../img/logo.png" alt="RHULogo" class="logo">
-            <span class="text">Hello Physician</span>
-        </a>
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<section id="sidebar">
+    <a href="#" class="sidebar-brand">
+        <img src="../img/logo.png" alt="RHU Logo" class="brand-logo">
+
+        <div class="brand-text">
+            <span class="brand-name">Hello Physician</span>
+        </div>
+    </a>
+
+    <div class="sidebar-scroll">
+        <div class="sidebar-section-label">Main Menu</div>
+
         <ul class="side-menu top">
             <li>
-                <a href="dashboard">
-                    <i class="bx bxs-dashboard"></i>
-                    <span class="text">Dashboard</span>
+                <a href="dashboard" data-tooltip="Dashboard">
+                    <i class="bx bxs-dashboard nav-icon"></i>
+                    <span class="nav-label">Dashboard</span>
                 </a>
             </li>
-      
+
             <li>
-                <a href="#" id="updateReferrals">
-                    <i class="bx bxs-user"></i>
-                    <span class="text">Pending Referrals</span>
+                <a href="#" id="updateReferrals" data-tooltip="Pending Referrals">
+                    <i class="bx bxs-user nav-icon"></i>
+                    <span class="nav-label">Pending Referrals</span>
                 </a>
             </li>
+
             <li>
-                <a href="followUpConsultations">
-                    <i class="bx bxs-user"></i>
-                    <span class="text">Follow-Up Visits</span>
+                <a href="followUpConsultations" data-tooltip="Follow-Up Visits">
+                    <i class="bx bxs-calendar-check nav-icon"></i>
+                    <span class="nav-label">Follow-Up Visits</span>
                 </a>
             </li>
+
             <li class="active">
-                <a href="searchPatient">
-                    <i class="bx bxs-search"></i>
-                    <span class="text">Patient Records</span>
+                <a href="searchPatient" data-tooltip="Patient Records">
+                    <i class="bx bxs-search nav-icon"></i>
+                    <span class="nav-label">Patient Records</span>
                 </a>
             </li>
+
             <li>
-                <a href="history">
-                    <i class="bx bx-history"></i>
-                    <span class="text">Referral History</span>
+                <a href="history" data-tooltip="Referral History">
+                    <i class="bx bx-history nav-icon"></i>
+                    <span class="nav-label">Referral History</span>
                 </a>
             </li>
+
             <li>
-                <a href="reports">
-                    <i class="bx bx-notepad"></i>
-                    <span class="text">Reports</span>
+                <a href="reports" data-tooltip="Reports">
+                    <i class="bx bx-notepad nav-icon"></i>
+                    <span class="nav-label">Reports</span>
                 </a>
             </li>
         </ul>
+
+        <div class="sidebar-divider"></div>
+
         <ul class="side-menu">
             <li>
-                <a href="#" class="logout" onclick="return confirmLogout()">
-                    <i class="bx bxs-log-out-circle"></i>
-                    <span class="text">Logout</span>
+                <a href="#" class="logout" data-tooltip="Logout" onclick="return confirmLogout()">
+                    <i class="bx bxs-log-out-circle nav-icon"></i>
+                    <span class="nav-label">Logout</span>
                 </a>
             </li>
         </ul>
-    </section>
+    </div>
 
-    <section id="content">
-        <nav>
-            <form action="#"></form>
-            <div class="greeting">
-                <span id="userGreeting">Hello Nurse!</span>
+    <div class="sidebar-footer">
+        <div class="sidebar-user">
+            <img src="../img/doctor.png" alt="Physician User">
+
+            <div class="sidebar-user-info">
+                <div class="user-name" id="sidebarUserName">Physician User</div>
+                <div class="user-role">RHU Physician</div>
             </div>
-            <a href="#" class="profile">
-                <img src="../img/nurse.png">
-            </a>
-        </nav>
+        </div>
+    </div>
+</section>
 
-        <main>
-            <div class="head-title">
-                <div class="left">
-                    <h1>Issue Medical Certificate</h1>
-                    <ul class="breadcrumb">
-                        <li><a href="searchPatient">Patient Records</a></li>
-                        <li><i class="bx bx-chevron-right"></i></li>
-                        <li><a class="active" href="#">Medical Certificate</a></li>
-                    </ul>
-                </div>
+<section id="content">
+    <nav>
+        <button class="nav-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+            <i class="bx bx-menu"></i>
+        </button>
+
+        <div class="nav-search">
+            <input 
+                type="search" 
+                id="patientSearch" 
+                placeholder="Enter patient name..." 
+                name="search" 
+                autocomplete="off"
+            >
+
+            <button type="button" id="searchButton" aria-label="Search">
+                <i class="bx bx-search"></i>
+            </button>
+        </div>
+    </nav>
+
+    <main>
+        <div class="head-title">
+            <div class="left">
+                <h1>Issue Medical Certificate</h1>
             </div>
+        </div>
 
+        <div class="medcert-page">
             <div class="patient-record-container">
-                <div class="patient-name-container" style="box-shadow:#05366e4b 0px 0px 8px; padding: 20px; border-radius: 8px;">
-                    <span class="patient-name-label">PATIENT NAME</span>
-                    <div class="patient-name" style="height: 40px; margin-top: 15px;">
+                <div class="patient-name-container">
+                    <div class="patient-label-row">
+                        <span class="patient-name-label">
+                            <i class="bx bx-user"></i>
+                            Patient Name
+                        </span>
+                    </div>
+
+                    <div class="patient-name">
                         <div class="name-part">
-                            <span class="patient-full-name" id="patientName" style="font-size: 25px;">Loading...</span>
+                            <span class="patient-full-name" id="patientName">Loading...</span>
                         </div>
                     </div>
                 </div>
 
                 <form id="medCertForm" class="medcert-form">
                     <input type="hidden" id="patient_id" name="patient_id">
+                    <input type="hidden" id="user_id" name="user_id">
 
                     <div class="form-section">
-                        <h3>Consultation Date - Diagnosis</h3>
-                       <div class="form-group">
- 
-    <select id="visitSelect" name="visit_id" required>
-        <option value="">Select a visit...</option>
-    </select>
+                        <div class="section-heading">
+                            <div class="section-icon">
+                                <i class="bx bx-calendar-check"></i>
+                            </div>
 
-    <!-- 🔹 This will display the chosen visit as plain text -->
-    <div id="visitDisplay" style="margin-top: 8px; font-weight: 600; font-size: 15px;"></div>
-</div>
+                            <div>
+                                <h3>Consultation Date - Diagnosis</h3>
+                                <p>Select the consultation connected to this certificate.</p>
+                            </div>
+                        </div>
 
+                        <div class="form-group">
+                            <label for="visitSelect">Visit / Consultation <span class="required">*</span></label>
+
+                            <select id="visitSelect" name="visit_id" required>
+                                <option value="">Select a visit...</option>
+                            </select>
+
+                            <div id="visitDisplay" class="visit-display"></div>
+                        </div>
                     </div>
-                    
 
                     <div class="form-section">
-                        <h3>Certificate Details</h3>
-                        
+                        <div class="section-heading">
+                            <div class="section-icon">
+                                <i class="bx bx-file"></i>
+                            </div>
+
+                            <div>
+                                <h3>Certificate Details</h3>
+                                <p>Enter the certificate issuance details.</p>
+                            </div>
+                        </div>
+
                         <div class="form-group">
                             <label for="issuance_date">Issuance Date <span class="required">*</span></label>
-                            <input type="text" id="issuance_date" name="issuance_date" required placeholder="Select date">
+                            <input type="text" id="issuance_date" name="issuance_date" required placeholder="Select date" readonly>
                         </div>
 
-                        <div class="form-group" style="display: none;">
-                            <label for="diagnosis">Diagnosis/Condition <span class="required">*</span></label>
-                            <textarea id="diagnosis" name="diagnosis" rows="3" required 
-                                placeholder="e.g., Acute Respiratory Infection" readonly></textarea>
-                        </div> 
-
-                        <div class="form-group" style="display: none;">
-                            <label for="findings">Findings/Examination Results</label>
-                            <textarea id="findings" name="findings" rows="3" 
-                                placeholder=""></textarea>
+                        <div class="form-group is-hidden">
+                            <label for="diagnosis">Diagnosis / Condition <span class="required">*</span></label>
+                            <textarea 
+                                id="diagnosis" 
+                                name="diagnosis" 
+                                rows="3" 
+                                required 
+                                placeholder="e.g., Acute Respiratory Infection" 
+                                readonly
+                            ></textarea>
                         </div>
 
-                        <div class="form-group" style="display: none;">
+                        <div class="form-group is-hidden">
+                            <label for="findings">Findings / Examination Results</label>
+                            <textarea id="findings" name="findings" rows="3"></textarea>
+                        </div>
+
+                        <div class="form-group is-hidden">
                             <label for="purpose">Purpose</label>
+
                             <select id="purpose" name="purpose" class="form-control">
                                 <option value="" disabled selected hidden>Select purpose...</option>
                                 <option value="For work requirement">For work requirement</option>
@@ -163,13 +228,22 @@
                         </div>
                     </div>
 
-                    <div class="form-section" style="display: none;">
-                        <h3>Rest Period (if applicable)</h3>
-                        
+                    <div class="form-section is-hidden">
+                        <div class="section-heading">
+                            <div class="section-icon">
+                                <i class="bx bx-bed"></i>
+                            </div>
+
+                            <div>
+                                <h3>Rest Period</h3>
+                                <p>Optional rest period details.</p>
+                            </div>
+                        </div>
+
                         <div class="form-group">
                             <label for="rest_period_days">Number of Days Rest</label>
-                            <select type="number" id="rest_period_days" name="rest_period_days" 
-                                min="0" placeholder="">
+
+                            <select id="rest_period_days" name="rest_period_days">
                                 <option value="" disabled selected hidden>Select days...</option>
                                 <option value="1">1 day</option>
                                 <option value="2">2 days</option>
@@ -191,7 +265,7 @@
                                 <option value="18">18 days</option>
                                 <option value="19">19 days</option>
                                 <option value="20">20 days</option>
-                                <option value="21">21 day</option>
+                                <option value="21">21 days</option>
                                 <option value="22">22 days</option>
                                 <option value="23">23 days</option>
                                 <option value="24">24 days</option>
@@ -207,228 +281,504 @@
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="rest_from_date">Rest From</label>
-                                <input type="text" id="rest_from_date" name="rest_from_date" placeholder="Select date">
+                                <input type="text" id="rest_from_date" name="rest_from_date" placeholder="Select date" readonly>
                             </div>
 
                             <div class="form-group">
                                 <label for="rest_to_date">Rest To</label>
-                                <input type="text" id="rest_to_date" name="rest_to_date" placeholder="Select date">
+                                <input type="text" id="rest_to_date" name="rest_to_date" placeholder="Select date" readonly>
                             </div>
                         </div>
                     </div>
 
-
-<div class="form-section">
-    <h3>Examination Details</h3>
-    
-    <div class="form-group">
-        <label for="date_of_examination">Date of Examination <span class="required">*</span></label>
-        <input type="text" id="date_of_examination" name="date_of_examination" required placeholder="Select date">
-    </div>
-
-    <div class="form-group">
-        <label>Fit Status <span class="required">*</span></label>
-        <div class="radio-group">
-            <label class="radio-label">
-                <input type="radio" name="fit_status" value="FIT" required>
-                <span class="radio-text">FIT</span>
-            </label>
-            <label class="radio-label">
-                <input type="radio" name="fit_status" value="UNFIT" required>
-                <span class="radio-text">UNFIT</span>
-            </label>
-        </div>
-    </div>
-
-    <div class="form-group">
-        <label for="remarks">Remarks</label>
-        <textarea id="remarks" name="remarks" rows="3" placeholder="Additional remarks..."></textarea>
-    </div>
-</div>
-
-<div class="form-section lab-results">
-    <h3>Laboratory Results</h3>
-    
-        <div class="form-group">
-            <label for="lab_cbc">CBC</label>
-            <input type="text" id="lab_cbc" name="lab_cbc" placeholder="Enter findings">
-      
-        </div>
-
-        <div class="form-group">
-            <label for="lab_urinalysis">URINALYSIS</label>
-            <input type="text" id="lab_urinalysis" name="lab_urinalysis" placeholder="Enter findings">
-            
-        </div>
-
-        <div class="form-group">
-            <label for="lab_fecalysis">FECALYSIS</label>
-             <input type="text" id="lab_fecalysis" name="lab_fecalysis" placeholder="Enter findings">
-           
-        </div>
-
-        <div class="form-group">
-            <label for="lab_hbsag">HBsAg</label>
-             <input type="text" id="lab_hbsag" name="lab_hbsag" placeholder="Enter findings">
-           
-        </div>
-
-        <div class="form-group">
-            <label for="lab_cxr">CXR</label>
-              <input type="text" id="lab_cxr" name="lab_cxr" placeholder="Enter findings">
-          
-        </div>
-
-        <div class="form-group">
-            <label for="lab_sputum_afb">SPUTUM AFB</label>
-             <input type="text" id="lab_sputum_afb" name="lab_sputum_afb"  placeholder="Enter findings">
-       
-        </div>
-
-    <div class="form-group">
-        <label for="lab_other">OTHER</label>
-        <input type="text" id="lab_other" name="lab_other" placeholder="Other laboratory results">
-    </div>
-</div>
-
-
-                    <!-- UPDATED PHYSICIAN SECTION -->
                     <div class="form-section">
-                        <h3>Physician</h3>
-                        
-                        <div class="form-group">
-                            <label for="physician_select">Physician Name <span class="required">*</span></label>
-                            <select id="physician_select" name="physician" required>
-                                <option value="" disabled selected hidden>Select a physician...</option>
-                            </select>
-                            <small id="rhu_info" style="color: #666; font-size: 12px; margin-top: 5px; display: block;"></small>
+                        <div class="section-heading">
+                            <div class="section-icon">
+                                <i class="bx bx-clipboard"></i>
+                            </div>
+
+                            <div>
+                                <h3>Examination Details</h3>
+                                <p>Record the examination date and fitness status.</p>
+                            </div>
+                        </div>
+
+                        <div class="exam-grid">
+                            <div class="form-group">
+                                <label for="date_of_examination">Date of Examination <span class="required">*</span></label>
+                                <input type="text" id="date_of_examination" name="date_of_examination" required placeholder="Select date" readonly>
+                            </div>
+
+                            <div class="form-group fit-status-group">
+                                <label class="fit-status-title">
+                                    Fit Status <span class="required">*</span>
+                                </label>
+
+                                <div class="fit-status-options">
+                                    <label class="fit-radio-option">
+                                        <input type="radio" name="fit_status" value="FIT" required>
+                                        <span>FIT</span>
+                                    </label>
+
+                                    <label class="fit-radio-option">
+                                        <input type="radio" name="fit_status" value="UNFIT" required>
+                                        <span>UNFIT</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group remarks-group">
+                            <label for="remarks">Remarks</label>
+                            <textarea id="remarks" name="remarks" rows="3" placeholder="Additional remarks..."></textarea>
                         </div>
                     </div>
 
-                    <input type="hidden" id="user_id" name="user_id">
+                    <div class="form-section lab-results">
+                        <div class="section-heading">
+                            <div class="section-icon">
+                                <i class="bx bx-test-tube"></i>
+                            </div>
 
-                    <div class="form-actions">
-                    <button type="button" class="button button-secondary" onclick="goBack()">Cancel</button>
-                    <button type="submit" class="button button-primary">Issue Certificate</button>
+                            <div>
+                                <h3>Laboratory Results</h3>
+                                <p>Enter available laboratory findings.</p>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="lab_cbc">CBC</label>
+                            <input type="text" id="lab_cbc" name="lab_cbc" placeholder="Enter findings">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="lab_urinalysis">Urinalysis</label>
+                            <input type="text" id="lab_urinalysis" name="lab_urinalysis" placeholder="Enter findings">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="lab_fecalysis">Fecalysis</label>
+                            <input type="text" id="lab_fecalysis" name="lab_fecalysis" placeholder="Enter findings">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="lab_hbsag">HBsAg</label>
+                            <input type="text" id="lab_hbsag" name="lab_hbsag" placeholder="Enter findings">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="lab_cxr">CXR</label>
+                            <input type="text" id="lab_cxr" name="lab_cxr" placeholder="Enter findings">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="lab_sputum_afb">Sputum AFB</label>
+                            <input type="text" id="lab_sputum_afb" name="lab_sputum_afb" placeholder="Enter findings">
+                        </div>
+
+                        <div class="form-group lab-other-field">
+                            <label for="lab_other">Other</label>
+                            <input type="text" id="lab_other" name="lab_other" placeholder="Other laboratory results">
+                        </div>
                     </div>
 
+                    <div class="form-section">
+                        <div class="section-heading">
+                            <div class="section-icon">
+                                <i class="bx bx-user-check"></i>
+                            </div>
+
+                            <div>
+                                <h3>Physician</h3>
+                                <p>Select the physician who will sign this certificate.</p>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="physician_select">Physician Name <span class="required">*</span></label>
+
+                            <select id="physician_select" name="physician" required>
+                                <option value="" disabled selected hidden>Select a physician...</option>
+                            </select>
+
+                            <small id="rhu_info" class="form-hint"></small>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="button button-secondary" onclick="goBack()">
+                            Cancel
+                        </button>
+
+                        <button type="submit" class="button button-primary">
+                            Issue Certificate
+                        </button>
+                    </div>
                 </form>
             </div>
-        </main>
-    </section>
+        </div>
+    </main>
+</section>
 
-    <div id="logoutModal" class="logout-modal">
-        <div class="logout-modal-content">
-            <div class="logout-modal-header">
-                <h3>Confirm Logout</h3>
-            </div>
-            <div class="logout-modal-body">
-                <p>Are you sure you want to logout?</p>
-            </div>
-            <div class="logout-modal-footer">
-                <button onclick="closeModal()" class="logout-cancel-btn">Cancel</button>
-                <button onclick="proceedLogout()" class="logout-confirm-btn">Yes, Logout</button>
-            </div>
+<div id="logoutModal" class="logout-modal">
+    <div class="logout-modal-content">
+        <div class="logout-modal-header">
+            <h3>Confirm Logout</h3>
+        </div>
+
+        <div class="logout-modal-body">
+            <p>Are you sure you want to logout?</p>
+        </div>
+
+        <div class="logout-modal-footer">
+            <button onclick="closeModal()" class="logout-cancel-btn">Cancel</button>
+            <button onclick="proceedLogout()" class="logout-confirm-btn">Yes, Logout</button>
         </div>
     </div>
+</div>
 
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
-    <script>
-        document.querySelectorAll('.radio-group input[name="fit_status"]').forEach(r=>{
-  r.addEventListener('change', ()=>{
-    document.querySelectorAll('.radio-label').forEach(l=>l.classList.remove('is-checked'));
-    r.closest('.radio-label')?.classList.add('is-checked');
-  });
-});
-
-  // Get patient_id and visit_id from URL
+<script>
 const urlParams = new URLSearchParams(window.location.search);
-const patientId = urlParams.get('patient_id');
-const visitId = urlParams.get('visit_id'); // NEW: capture visit_id
+const patientId = urlParams.get("patient_id");
+const visitId = urlParams.get("visit_id");
 
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize Flatpickr for all date fields
+document.addEventListener("DOMContentLoaded", function () {
+    const searchInput = document.getElementById("patientSearch");
+    const searchButton = document.getElementById("searchButton");
+    const updateReferrals = document.getElementById("updateReferrals");
+
     initializeDatePickers();
+    initializeFitStatus();
+    initializeTextareas();
+    initializeSearch(searchInput, searchButton);
+    initializeSidebar();
+    checkUserSession();
 
     if (patientId) {
-        document.getElementById('patient_id').value = patientId;
+        document.getElementById("patient_id").value = patientId;
         loadPatientInfo(patientId);
-        loadPatientVisits(patientId, visitId); // pass visitId for auto-select
+        loadPatientVisits(patientId, visitId);
         loadUserInfo();
     } else {
-        alert('No patient ID provided');
-        window.location.href='searchPatient';
+        alert("No patient ID provided");
+        window.location.href = "searchPatient";
     }
 
-    // Auto-calculate rest dates when days are entered
-    document.getElementById('rest_period_days').addEventListener('change', calculateRestDates);
-    document.getElementById('rest_from_date').addEventListener('change', calculateRestDates);
+    const restDays = document.getElementById("rest_period_days");
+    const restFromDate = document.getElementById("rest_from_date");
+
+    if (restDays) {
+        restDays.addEventListener("change", calculateRestDates);
+    }
+
+    if (restFromDate) {
+        restFromDate.addEventListener("change", calculateRestDates);
+    }
+
+    if (updateReferrals) {
+        updateReferrals.addEventListener("click", function (event) {
+            event.preventDefault();
+
+            fetch("php/update_referrals.php")
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data.message);
+                    window.location.href = "pending";
+                })
+                .catch(error => {
+                    console.error("Error updating referrals:", error);
+                    window.location.href = "pending";
+                });
+        });
+    }
+
+    document.getElementById("medCertForm").addEventListener("submit", handleFormSubmit);
 });
 
-(function(){
-  const maxLen = 1000; // tweak if you want limits, or set null for no limit
-  document.querySelectorAll('textarea').forEach(t => {
-    // Auto-resize
-    const autoresize = () => { t.style.height = 'auto'; t.style.height = (t.scrollHeight + 2) + 'px'; };
-    t.addEventListener('input', autoresize); autoresize();
-
-    // Counter
-    t.parentElement.classList.add('input-with-counter');
-    const counter = document.createElement('div');
-    counter.className = 'input-counter';
-    t.parentElement.appendChild(counter);
-    const update = () => {
-      const len = t.value.length;
-      if (maxLen){
-        counter.textContent = `${len}/${maxLen}`;
-        counter.classList.toggle('is-danger', len > maxLen);
-      } else {
-        counter.textContent = `${len} chars`;
-      }
-    };
-    t.addEventListener('input', update); update();
-  });
-})();
-
 function initializeDatePickers() {
-    // Initialize Flatpickr for Issuance Date (with default today's date)
-    flatpickr("#issuance_date", {
+    const baseConfig = {
         dateFormat: "Y-m-d",
-        defaultDate: new Date(),
-        allowInput: true,
+        allowInput: false,
         disableMobile: true,
-        maxDate: new Date() // Can't select future dates
-    });
+        clickOpens: true,
+        closeOnSelect: false,
+        monthSelectorType: "dropdown",
 
-    // Initialize Flatpickr for Date of Examination
-    flatpickr("#date_of_examination", {
-        dateFormat: "Y-m-d",
-        allowInput: true,
-        disableMobile: true,
+        onReady: function (selectedDates, dateStr, instance) {
+            instance.calendarContainer.classList.add("material-date-picker");
+            buildMaterialDatePickerHeader(instance);
+            buildMaterialDatePickerFooter(instance);
+        },
+
+        onOpen: function (selectedDates, dateStr, instance) {
+            instance.calendarContainer.classList.add("material-date-picker");
+        }
+    };
+
+    flatpickr("#issuance_date", {
+        ...baseConfig,
+        defaultDate: new Date(),
         maxDate: new Date()
     });
 
-    // Initialize Flatpickr for Rest From Date
+    flatpickr("#date_of_examination", {
+        ...baseConfig,
+        maxDate: new Date()
+    });
+
     flatpickr("#rest_from_date", {
-        dateFormat: "Y-m-d",
-        allowInput: true,
-        disableMobile: true,
-        onChange: function(selectedDates) {
-            const restToFlatpickr = document.getElementById('rest_to_date')._flatpickr;
+        ...baseConfig,
+
+        onChange: function (selectedDates) {
+            const restToFlatpickr = document.getElementById("rest_to_date")._flatpickr;
+
             if (restToFlatpickr && selectedDates[0]) {
-                restToFlatpickr.set('minDate', selectedDates[0]);
+                restToFlatpickr.set("minDate", selectedDates[0]);
             }
+
             calculateRestDates();
+        },
+
+        onReady: function (selectedDates, dateStr, instance) {
+            instance.calendarContainer.classList.add("material-date-picker");
+            buildMaterialDatePickerHeader(instance);
+            buildMaterialDatePickerFooter(instance);
+        },
+
+        onOpen: function (selectedDates, dateStr, instance) {
+            instance.calendarContainer.classList.add("material-date-picker");
         }
     });
 
-    // Initialize Flatpickr for Rest To Date
-    flatpickr("#rest_to_date", {
-        dateFormat: "Y-m-d",
-        allowInput: true,
-        disableMobile: true
+    flatpickr("#rest_to_date", baseConfig);
+}
+
+function buildMaterialDatePickerHeader(instance) {
+    const calendar = instance.calendarContainer;
+    const monthsContainer = calendar.querySelector(".flatpickr-months");
+    const monthSelect = calendar.querySelector(".flatpickr-monthDropdown-months");
+    const yearWrapper = calendar.querySelector(".numInputWrapper");
+
+    if (!monthsContainer || !monthSelect || !yearWrapper) {
+        return;
+    }
+
+    if (monthsContainer.querySelector(".material-picker-header")) {
+        return;
+    }
+
+    const header = document.createElement("div");
+    header.className = "material-picker-header";
+
+    const monthGroup = document.createElement("div");
+    monthGroup.className = "material-picker-group material-picker-month-group";
+
+    const yearGroup = document.createElement("div");
+    yearGroup.className = "material-picker-group material-picker-year-group";
+
+    const prevMonthBtn = createPickerNavButton("‹", "Previous month");
+    const nextMonthBtn = createPickerNavButton("›", "Next month");
+
+    const prevYearBtn = createPickerNavButton("‹", "Previous year");
+    const nextYearBtn = createPickerNavButton("›", "Next year");
+
+    prevMonthBtn.addEventListener("click", function () {
+        instance.changeMonth(-1);
     });
+
+    nextMonthBtn.addEventListener("click", function () {
+        instance.changeMonth(1);
+    });
+
+    prevYearBtn.addEventListener("click", function () {
+        instance.changeYear(instance.currentYear - 1);
+    });
+
+    nextYearBtn.addEventListener("click", function () {
+        instance.changeYear(instance.currentYear + 1);
+    });
+
+    monthGroup.appendChild(prevMonthBtn);
+    monthGroup.appendChild(monthSelect);
+    monthGroup.appendChild(nextMonthBtn);
+
+    yearGroup.appendChild(prevYearBtn);
+    yearGroup.appendChild(yearWrapper);
+    yearGroup.appendChild(nextYearBtn);
+
+    header.appendChild(monthGroup);
+    header.appendChild(yearGroup);
+
+    monthsContainer.innerHTML = "";
+    monthsContainer.appendChild(header);
+}
+
+function buildMaterialDatePickerFooter(instance) {
+    const calendar = instance.calendarContainer;
+
+    if (calendar.querySelector(".material-picker-footer")) {
+        return;
+    }
+
+    const footer = document.createElement("div");
+    footer.className = "material-picker-footer";
+
+    const cancelBtn = document.createElement("button");
+    cancelBtn.type = "button";
+    cancelBtn.textContent = "Cancel";
+
+    const okBtn = document.createElement("button");
+    okBtn.type = "button";
+    okBtn.textContent = "OK";
+
+    cancelBtn.addEventListener("click", function () {
+        instance.clear();
+        instance.close();
+    });
+
+    okBtn.addEventListener("click", function () {
+        instance.close();
+    });
+
+    footer.appendChild(cancelBtn);
+    footer.appendChild(okBtn);
+
+    calendar.appendChild(footer);
+}
+
+function createPickerNavButton(text, label) {
+    const button = document.createElement("button");
+
+    button.type = "button";
+    button.className = "material-picker-nav";
+    button.textContent = text;
+    button.setAttribute("aria-label", label);
+
+    return button;
+}
+
+function initializeFitStatus() {
+    document.querySelectorAll('input[name="fit_status"]').forEach(radio => {
+        radio.addEventListener("change", function () {
+            document.querySelectorAll(".fit-radio-option").forEach(label => {
+                label.classList.remove("is-checked");
+            });
+
+            radio.closest(".fit-radio-option")?.classList.add("is-checked");
+        });
+    });
+}
+
+function initializeTextareas() {
+    const maxLen = 1000;
+
+    document.querySelectorAll("textarea").forEach(textarea => {
+        const autoresize = () => {
+            textarea.style.height = "auto";
+            textarea.style.height = textarea.scrollHeight + 2 + "px";
+        };
+
+        textarea.addEventListener("input", autoresize);
+        autoresize();
+
+        textarea.parentElement.classList.add("input-with-counter");
+
+        const counter = document.createElement("div");
+        counter.className = "input-counter";
+
+        textarea.parentElement.appendChild(counter);
+
+        const update = () => {
+            const len = textarea.value.length;
+            counter.textContent = `${len}/${maxLen}`;
+            counter.classList.toggle("is-danger", len > maxLen);
+        };
+
+        textarea.addEventListener("input", update);
+        update();
+    });
+}
+
+function initializeSearch(searchInput, searchButton) {
+    if (!searchInput || !searchButton) {
+        return;
+    }
+
+    searchInput.addEventListener("keypress", function (event) {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            searchButton.click();
+        }
+    });
+
+    searchButton.addEventListener("click", function () {
+        const searchQuery = searchInput.value.trim();
+
+        if (searchQuery) {
+            sessionStorage.setItem("searchQuery", searchQuery);
+            window.location.href = "searchPatient";
+        } else {
+            alert("Please enter a patient name to search.");
+        }
+    });
+}
+
+function initializeSidebar() {
+    const sidebar = document.getElementById("sidebar");
+    const toggle = document.getElementById("sidebarToggle");
+    const overlay = document.getElementById("sidebarOverlay");
+    const MOBILE_BP = 768;
+
+    if (!sidebar || !toggle || !overlay) {
+        return;
+    }
+
+    function isMobile() {
+        return window.innerWidth <= MOBILE_BP;
+    }
+
+    function closeMobileSidebar() {
+        sidebar.classList.remove("mobile-open");
+        overlay.classList.remove("active");
+        document.body.style.overflow = "";
+    }
+
+    toggle.addEventListener("click", function () {
+        if (isMobile()) {
+            const open = sidebar.classList.toggle("mobile-open");
+
+            overlay.classList.toggle("active", open);
+            document.body.style.overflow = open ? "hidden" : "";
+        } else {
+            sidebar.classList.toggle("collapsed");
+        }
+    });
+
+    overlay.addEventListener("click", closeMobileSidebar);
+
+    window.addEventListener("resize", function () {
+        if (!isMobile()) {
+            closeMobileSidebar();
+        }
+    });
+}
+
+function checkUserSession() {
+    fetch("php/getUserId.php")
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                window.location.href = "../auth/role";
+            } else {
+                document.getElementById("user_id").value = data.user_id;
+            }
+        })
+        .catch(error => {
+            console.error("Error checking session:", error);
+            window.location.href = "../auth/role";
+        });
 }
 
 function loadPatientInfo(patientId) {
@@ -436,279 +786,252 @@ function loadPatientInfo(patientId) {
         .then(response => response.json())
         .then(data => {
             if (data.patient) {
-                const fullName = `${data.patient.first_name} ${data.patient.middle_name || ''} ${data.patient.last_name}`;
-                document.getElementById('patientName').textContent = fullName;
+                const fullName = `${data.patient.first_name} ${data.patient.middle_name || ""} ${data.patient.last_name}`;
+                document.getElementById("patientName").textContent = fullName;
             }
         })
         .catch(error => {
-            console.error('Error loading patient info:', error);
-            alert('Error loading patient information');
+            console.error("Error loading patient info:", error);
+            alert("Error loading patient information");
         });
 }
 
 function loadPatientVisits(patientId, visitId = null) {
-    console.log('Loading visits for patient:', patientId);
-    
     fetch(`php/get_patient_visits.php?patient_id=${patientId}`)
         .then(response => {
-            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
             return response.text();
         })
         .then(text => {
             try {
                 return JSON.parse(text);
-            } catch (e) {
-                console.error('JSON parse error:', e);
-                throw new Error('Invalid JSON response from server');
+            } catch (error) {
+                console.error("JSON parse error:", error);
+                throw new Error("Invalid JSON response from server");
             }
         })
         .then(data => {
-            const select = document.getElementById('visitSelect');
-            const display = document.getElementById('visitDisplay');
-            const diagnosisField = document.getElementById('diagnosis');
+            const select = document.getElementById("visitSelect");
+            const display = document.getElementById("visitDisplay");
+            const diagnosisField = document.getElementById("diagnosis");
 
             select.innerHTML = '<option value="" disabled selected hidden>Select a visit...</option>';
+
             const diagnosisMap = {};
 
             if (data.error) {
-                alert('Error: ' + data.error);
+                alert("Error: " + data.error);
                 select.innerHTML = '<option value="">Error loading visits</option>';
                 return;
             }
 
             if (data.visits && data.visits.length > 0) {
                 data.visits.forEach(visit => {
-                    const option = document.createElement('option');
-                    option.value = visit.visit_id;
+                    const option = document.createElement("option");
 
                     const visitDate = formatDate(visit.visit_date);
-                    const diagnosis = visit.diagnosis || 'No diagnosis recorded';
+                    const diagnosis = visit.diagnosis || "No diagnosis recorded";
 
+                    option.value = visit.visit_id;
                     option.textContent = `${visitDate} - ${diagnosis}`;
+
                     select.appendChild(option);
 
-                    // Store diagnosis for this visit
                     diagnosisMap[visit.visit_id] = diagnosis;
                 });
 
-                // ✅ Auto-select and display visit
+                select.addEventListener("change", function () {
+                    const selectedId = this.value;
+                    diagnosisField.value = diagnosisMap[selectedId] || "";
+                });
+
                 if (visitId) {
-                    const selectedVisit = data.visits.find(v => v.visit_id == visitId);
+                    const selectedVisit = data.visits.find(visit => visit.visit_id == visitId);
+
                     if (selectedVisit) {
                         select.value = visitId;
-                        select.dispatchEvent(new Event('change'));
+                        diagnosisField.value = selectedVisit.diagnosis || "";
+                        select.style.display = "none";
 
-                        // Hide select and show text
-                        select.style.display = 'none';
-                        display.textContent = `${formatDate(selectedVisit.visit_date)} - ${selectedVisit.diagnosis || 'No diagnosis recorded'}`;
-
-                        // ✅ Auto-fill diagnosis field
-                        diagnosisField.value = selectedVisit.diagnosis || '';
+                        display.textContent = `${formatDate(selectedVisit.visit_date)} - ${selectedVisit.diagnosis || "No diagnosis recorded"}`;
+                        display.classList.add("is-visible");
                     }
                 }
-
-                // ✅ Update diagnosis if user manually changes (fallback case)
-                select.addEventListener('change', function() {
-                    const selectedId = this.value;
-                    diagnosisField.value = diagnosisMap[selectedId] || '';
-                });
             } else {
                 select.innerHTML = '<option value="">No visits found for this patient</option>';
-                alert('No visits found for this patient. Please create a patient assessment first.');
+                alert("No visits found for this patient. Please create a patient assessment first.");
             }
         })
         .catch(error => {
-            console.error('Error loading visits:', error);
-            alert('Error loading patient visits. Please check the console for details.');
-            document.getElementById('visitSelect').innerHTML = '<option value="">Error loading visits</option>';
+            console.error("Error loading visits:", error);
+            alert("Error loading patient visits. Please check the console for details.");
+            document.getElementById("visitSelect").innerHTML = '<option value="">Error loading visits</option>';
         });
 }
 
+function loadUserInfo() {
+    fetch("php/getUserName.php")
+        .then(response => response.json())
+        .then(data => {
+            const sidebarUserName = document.getElementById("sidebarUserName");
 
-        // UPDATED FUNCTION
-        function loadUserInfo() {
-            // Get user's full name for greeting
-            fetch('php/getUserName.php')
-                .then(response => response.json())
-                .then(data => {
-                    if (data.full_name) {
-                        document.getElementById('userGreeting').textContent = `Hello, ${data.full_name}!`;
-                    }
-                })
-                .catch(error => {
-                    console.error('Error loading user info:', error);
-                });
-            
-            // Load doctors from the same RHU
-            loadRHUDoctors();
-        }
-
-        // NEW FUNCTION
-        function loadRHUDoctors() {
-            fetch('php/get_rhu_doctors.php')
-                .then(response => response.json())
-                .then(data => {
-                    if (data.error) {
-                        alert('Error loading doctors: ' + data.error);
-                        return;
-                    }
-
-                    const select = document.getElementById('physician_select');
-                    const rhuInfo = document.getElementById('rhu_info');
-                    
-                    select.innerHTML = '<option value="" disabled selected hidden>Select a physician...</option>';
-                    
-                    if (data.doctors && data.doctors.length > 0) {
-                        data.doctors.forEach(doctor => {
-                            const option = document.createElement('option');
-                            option.value = doctor.user_id;
-                            
-                            let displayText = doctor.full_name;
-                            if (doctor.license_number) {
-                                displayText += ` (Lic. #${doctor.license_number})`;
-                            }
-                            
-                            option.textContent = displayText;
-                            select.appendChild(option);
-                        });
-                        
-                        rhuInfo.textContent = `Showing doctors from ${data.user_rhu}`;
-                    } else {
-                        select.innerHTML = '<option value="">No doctors available in your RHU</option>';
-                        rhuInfo.textContent = `No doctors found in ${data.user_rhu}`;
-                        alert(`No doctors are currently available in ${data.user_rhu}. Please contact your administrator.`);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error loading doctors:', error);
-                    alert('Failed to load doctors list');
-                });
-        }
-
-        function calculateRestDates() {
-            const days = parseInt(document.getElementById('rest_period_days').value);
-            const fromDate = document.getElementById('rest_from_date').value;
-
-            if (days && fromDate) {
-                const from = new Date(fromDate);
-                const to = new Date(from);
-                to.setDate(to.getDate() + days - 1);
-                
-                const year = to.getFullYear();
-                const month = String(to.getMonth() + 1).padStart(2, '0');
-                const day = String(to.getDate()).padStart(2, '0');
-                
-                const restToDate = `${year}-${month}-${day}`;
-                document.getElementById('rest_to_date').value = restToDate;
-                
-                // Update Flatpickr instance
-                const restToFlatpickr = document.getElementById('rest_to_date')._flatpickr;
-                if (restToFlatpickr) {
-                    restToFlatpickr.setDate(restToDate);
-                }
+            if (sidebarUserName) {
+                sidebarUserName.textContent = data.full_name || "Physician User";
             }
-        }
+        })
+        .catch(error => {
+            console.error("Error loading user info:", error);
+        });
 
-        // UPDATED FORM SUBMISSION
-        document.getElementById('medCertForm').addEventListener('submit', function(e) {
-            e.preventDefault();
+    loadRHUDoctors();
+}
 
-            const visitId = document.getElementById('visitSelect').value;
-            if (!visitId) {
-                alert('Please select a visit/consultation');
+function loadRHUDoctors() {
+    fetch("php/get_rhu_doctors.php")
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                alert("Error loading doctors: " + data.error);
                 return;
             }
 
-            const physicianId = document.getElementById('physician_select').value;
-            if (!physicianId) {
-                alert('Please select a physician');
-                return;
+            const select = document.getElementById("physician_select");
+            const rhuInfo = document.getElementById("rhu_info");
+
+            select.innerHTML = '<option value="" disabled selected hidden>Select a physician...</option>';
+
+            if (data.doctors && data.doctors.length > 0) {
+                data.doctors.forEach(doctor => {
+                    const option = document.createElement("option");
+
+                    let displayText = doctor.full_name;
+
+                    if (doctor.license_number) {
+                        displayText += ` (Lic. #${doctor.license_number})`;
+                    }
+
+                    option.value = doctor.user_id;
+                    option.textContent = displayText;
+
+                    select.appendChild(option);
+                });
+
+                rhuInfo.textContent = `Showing doctors from ${data.user_rhu}`;
+            } else {
+                select.innerHTML = '<option value="">No doctors available in your RHU</option>';
+                rhuInfo.textContent = `No doctors found in ${data.user_rhu}`;
+
+                alert(`No doctors are currently available in ${data.user_rhu}. Please contact your administrator.`);
             }
-
-            const formData = new FormData(this);
-
-            console.log('Submitting form data...');
-            for (let pair of formData.entries()) {
-                console.log(pair[0] + ': ' + pair[1]);
-            }
-
-            fetch('php/save_medcert.php', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Response:', data);
-                if (data.success) {
-                    alert('Medical certificate issued successfully!');
-                    window.location.href = `viewMedCert?medcert_id=${data.medcert_id}`;
-                } else {
-                    alert('Error: ' + (data.message || 'Failed to issue certificate'));
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred while issuing the certificate');
-            });
+        })
+        .catch(error => {
+            console.error("Error loading doctors:", error);
+            alert("Failed to load doctors list");
         });
+}
 
-        function formatDate(dateString) {
-            const options = { year: 'numeric', month: 'long', day: 'numeric' };
-            return new Date(dateString).toLocaleDateString('en-US', options);
+function calculateRestDates() {
+    const days = parseInt(document.getElementById("rest_period_days").value);
+    const fromDate = document.getElementById("rest_from_date").value;
+
+    if (days && fromDate) {
+        const from = new Date(fromDate);
+        const to = new Date(from);
+
+        to.setDate(to.getDate() + days - 1);
+
+        const year = to.getFullYear();
+        const month = String(to.getMonth() + 1).padStart(2, "0");
+        const day = String(to.getDate()).padStart(2, "0");
+
+        const restToDate = `${year}-${month}-${day}`;
+
+        document.getElementById("rest_to_date").value = restToDate;
+
+        const restToFlatpickr = document.getElementById("rest_to_date")._flatpickr;
+
+        if (restToFlatpickr) {
+            restToFlatpickr.setDate(restToDate);
         }
+    }
+}
 
-        function goBack() {
-            window.history.back();
+function handleFormSubmit(event) {
+    event.preventDefault();
+
+    const visitIdValue = document.getElementById("visitSelect").value;
+
+    if (!visitIdValue) {
+        alert("Please select a visit/consultation");
+        return;
+    }
+
+    const physicianId = document.getElementById("physician_select").value;
+
+    if (!physicianId) {
+        alert("Please select a physician");
+        return;
+    }
+
+    const formData = new FormData(event.currentTarget);
+
+    fetch("php/save_medcert.php", {
+        method: "POST",
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert("Medical certificate issued successfully!");
+            window.location.href = `viewMedCert?medcert_id=${data.medcert_id}`;
+        } else {
+            alert("Error: " + (data.message || "Failed to issue certificate"));
         }
+    })
+    .catch(error => {
+        console.error("Error:", error);
+        alert("An error occurred while issuing the certificate");
+    });
+}
 
-        function confirmLogout() {
-            document.getElementById('logoutModal').style.display = 'block';
-            return false;
-        }
+function formatDate(dateString) {
+    const options = {
+        year: "numeric",
+        month: "long",
+        day: "numeric"
+    };
 
-        function closeModal() {
-            document.getElementById('logoutModal').style.display = 'none';
-        }
+    return new Date(dateString).toLocaleDateString("en-US", options);
+}
 
-        function proceedLogout() {
-            window.location.href='../ADMIN/php/logout';
-        }
+function goBack() {
+    window.history.back();
+}
 
-        window.onclick = function(event) {
-            const modal = document.getElementById('logoutModal');
-            if (event.target == modal) {
-                closeModal();
-            }
-        }
+function confirmLogout() {
+    document.getElementById("logoutModal").style.display = "block";
+    return false;
+}
 
-        document.getElementById("updateReferrals").addEventListener("click", function (event) {
-            event.preventDefault();
-            fetch("php/update_referrals.php")
-            .then(response => response.json())
-            .then(data => {
-                console.log(data.message);
-                window.location.href="pending";
-            })
-            .catch(error => {
-                console.error("Error updating referrals:", error);
-                window.location.href="pending";
-            });
-        });
+function closeModal() {
+    document.getElementById("logoutModal").style.display = "none";
+}
 
-        // Check if user is logged in
-        fetch('php/getUserId.php')
-            .then(response => response.json())
-            .then(data => {
-                if (data.error) {
-                    window.location.href='../auth/role';
-                } else {
-                    document.getElementById('user_id').value = data.user_id;
-                }
-            })
-            .catch(error => {
-                console.error('Error checking session:', error);
-                window.location.href='../auth/role';
-            });
-    </script>
+function proceedLogout() {
+    window.location.href = "../ADMIN/php/logout";
+}
+
+window.onclick = function (event) {
+    const modal = document.getElementById("logoutModal");
+
+    if (event.target === modal) {
+        closeModal();
+    }
+};
+</script>
+
 </body>
 </html>

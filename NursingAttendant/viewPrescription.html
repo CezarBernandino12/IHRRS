@@ -1,315 +1,327 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="icon" href="../img/logo.png">
-	<link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
-	<link rel="stylesheet" href="css/form.css">
-  <link rel="stylesheet" href="css/logout.css">
-  <link rel="stylesheet" href="css/sidebar.css">
-	<title>Issued Records</title> 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Issued Records</title>
 
+    <link rel="icon" href="../img/logo.png">
+    <link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
 
-     <style>
-
-    .quarter-page {
-      width: 100%;
-      max-width: 420px; 
-      border: 1px solid transparent;
-      padding: 12px;
-      box-sizing: border-box;
-    }
-
-    .header {
-      text-align: center;
-      margin-left: 130px;
-    }
-
-    .print-logo {
-      height: 50px;
-      width: auto;
-      display: inline-block;
-    }
-
-    h3 {
-      margin: 4px 0;
-      font-size: 16px;
-      font-weight: 600;
-    }
-
-    p {
-      margin: 0;
-      font-size: 13px;
-    }
-
-    .info {
-      margin: 6px 0;
-      font-size: 14px;
-    }
-
-    .info .label {
-      font-weight: 700;
-      margin-right: 6px;
-    }
-
-    .section h2 {
-      margin-top: 10px;
-      margin-bottom: 8px;
-      font-size: 18px;
-    }
-
-    .section img[alt="Rx"] {
-      width: 50px;
-      height: 50px;
-      display: block;
-      margin: 6px 0 12px 0;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 14px;
-      margin-top: 6px;
-    }
-
-    table thead th {
-      text-align: left;
-      padding: 6px 8px;
-      border-bottom: 1px solid #ccc;
-      font-weight: 700;
-    }
-
-    table tbody td {
-      padding: 6px 8px;
-      border-bottom: 1px dashed #e0e0e0;
-    }
-
-    /* small print spacing for signature area */
-    .signature {
-      margin-bottom: -23px;
-      margin-left: -17px;
-      font-size: 13px;
-    }
-
-    /* Print friendly adjustments */
-    @media print {
-      body { margin: 0; }
-      .quarter-page { box-shadow: none; border: none; padding: 8px; }
-    }
-  </style>
-
+    <link rel="stylesheet" href="css/prescription.css">
+    <link rel="stylesheet" href="css/sidebar.css">
+    <link rel="stylesheet" href="css/logout.css">
 </head>
+
 <body>
+
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-	<!-- Sidebar Section -->
-	<section id="sidebar">
-		<a href="#" class="sidebar-brand">
-			<img src="../img/logo.png" alt="RHU Logo" class="brand-logo">
-			<div class="brand-text">
-				<span class="brand-name">Hello Nurse</span>
-			</div>
-		</a>
+<section id="sidebar">
+    <a href="#" class="sidebar-brand">
+        <img src="../img/logo.png" alt="RHU Logo" class="brand-logo">
 
-		<div class="sidebar-scroll">
-			<div class="sidebar-section-label">Main Menu</div>
-			<ul class="side-menu top">
-				<li>
-					<a href="dashboard" data-tooltip="Dashboard">
-						<i class="bx bxs-dashboard nav-icon"></i>
-						<span class="nav-label">Dashboard</span>
-					</a>
-				</li>
-				<li>
-					<a href="ITR" data-tooltip="Add New ITR">
-						<i class="bx bxs-notepad nav-icon"></i>
-						<span class="nav-label">Add New ITR</span>
-					</a>
-				</li>
-				<li class="active">
-					<a href="#" id="updateReferrals" data-tooltip="Pending Referrals">
-						<i class="bx bxs-user nav-icon"></i>
-						<span class="nav-label">Pending Referrals</span>
-					</a>
-				</li>
-				<li>
-					<a href="followUpConsultations" data-tooltip="Follow-Up Visits">
-						<i class="bx bxs-user nav-icon"></i>
-						<span class="nav-label">Follow-Up Visits</span>
-					</a>
-				</li>
-				<li>
-					<a href="searchPatient" data-tooltip="Patient Records">
-						<i class="bx bxs-search nav-icon"></i>
-						<span class="nav-label">Patient Records</span>
-					</a>
-				</li>
-				<li>
-					<a href="history" data-tooltip="Referral History">
-						<i class="bx bx-history nav-icon"></i>
-						<span class="nav-label">Referral History</span>
-					</a>
-				</li>
-				<li>
-					<a href="reports" data-tooltip="Reports">
-						<i class="bx bx-notepad nav-icon"></i>
-						<span class="nav-label">Reports</span>
-					</a>
-				</li>
-			</ul>
+        <div class="brand-text">
+            <span class="brand-name">Hello Nurse</span>
+        </div>
+    </a>
 
-			<div class="sidebar-divider"></div>
+    <div class="sidebar-scroll">
+        <div class="sidebar-section-label">Main Menu</div>
 
-			<ul class="side-menu">
-				<li>
-					<a href="#" class="logout" data-tooltip="Logout" onclick="return confirmLogout()">
-						<i class="bx bxs-log-out-circle nav-icon"></i>
-						<span class="nav-label">Logout</span>
-					</a>
-				</li>
-			</ul>
-		</div>
+        <ul class="side-menu top">
+            <li>
+                <a href="dashboard" data-tooltip="Dashboard">
+                    <i class="bx bxs-dashboard nav-icon"></i>
+                    <span class="nav-label">Dashboard</span>
+                </a>
+            </li>
 
-		<div class="sidebar-footer">
-			<div class="sidebar-user">
-				<img src="../img/nurse.png" alt="Nurse User">
-				<div class="sidebar-user-info">
-					<div class="user-name" id="sidebarUserName">Nurse User</div>
-					<div class="user-role">RHU Nurse</div>
-				</div>
-			</div>
-		</div>
-	</section>
+            <li>
+                <a href="ITR" data-tooltip="Add New ITR">
+                    <i class="bx bxs-notepad nav-icon"></i>
+                    <span class="nav-label">Add New ITR</span>
+                </a>
+            </li>
 
-	<!-- Main Content Section -->
-	<section id="content">
-		<nav>
-			<button class="nav-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
-				<i class="bx bx-menu"></i>
-			</button>
+            <li class="active">
+                <a href="#" id="updateReferrals" data-tooltip="Pending Referrals">
+                    <i class="bx bxs-user nav-icon"></i>
+                    <span class="nav-label">Pending Referrals</span>
+                </a>
+            </li>
 
-			<div class="nav-search" style="position: relative;">
-				<input type="search" id="patientSearch" placeholder="Search issued records..." name="search" autocomplete="off">
-				<button type="button" id="searchButton" aria-label="Search">
-					<i class="bx bx-search"></i>
-				</button>
-				<div id="resultDropdown" class="dropdown-content"></div>
-			</div>
-		</nav> 
+            <li>
+                <a href="followUpConsultations" data-tooltip="Follow-Up Visits">
+                    <i class="bx bxs-calendar-check nav-icon"></i>
+                    <span class="nav-label">Follow-Up Visits</span>
+                </a>
+            </li>
 
+            <li>
+                <a href="searchPatient" data-tooltip="Patient Records">
+                    <i class="bx bxs-search nav-icon"></i>
+                    <span class="nav-label">Patient Records</span>
+                </a>
+            </li>
 
+            <li>
+                <a href="history" data-tooltip="Referral History">
+                    <i class="bx bx-history nav-icon"></i>
+                    <span class="nav-label">Referral History</span>
+                </a>
+            </li>
 
-		<main>
-            
-            <div class="head-title">
-                <div class="left">
-                  <h1>Issued Records</h1>
-                  <ul class="breadcrumb">
-                    <li><a href="#">Issued Records</a></li>
-                    <li><i class="bx bx-chevron-right"></i></li>
-                    <li><a class="active" href="#">Home</a></li>
-                  </ul>
-                </div>
-              </div>
+            <li>
+                <a href="reports" data-tooltip="Reports">
+                    <i class="bx bx-notepad nav-icon"></i>
+                    <span class="nav-label">Reports</span>
+                </a>
+            </li>
+        </ul>
 
-<br>
+        <div class="sidebar-divider"></div>
 
-            <div class="history-container" style="width: 600px;">
-             
-  <div class="quarter-page">
-   
-    <div class="header">
-      <img src="../img/RHUlogo.png" alt="RHU Logo" class="print-logo" />
-      <h3>Republic of the Philippines</h3>
-      <p style="margin-top: -5px; background-color: white;">Province of Camarines Norte</p>
-      <h3 style="margin-top: -5px;">Municipality of Daet</h3>
-
-      <div class="info">
-        <span class="label"></span>
-        
-        <span id="rhu-name">[RHU NAME]</span>
-      </div>
-      <br><br>
+        <ul class="side-menu">
+            <li>
+                <a href="#" class="logout" data-tooltip="Logout" onclick="return confirmLogout()">
+                    <i class="bx bxs-log-out-circle nav-icon"></i>
+                    <span class="nav-label">Logout</span>
+                </a>
+            </li>
+        </ul>
     </div>
 
-    <!-- Section -->
-    <div class="section">
-      <h2>Prescription</h2> <br>
+    <div class="sidebar-footer">
+        <div class="sidebar-user">
+            <img src="../img/nurse.png" alt="Nurse User">
 
-      <!-- Rx icon -->
-      <img src="../img/rx.png" alt="Rx" style="width: 70px; height: auto;" /> <br>
-
-      <!-- Patient info (replace placeholders) -->
-      <div class="info"><span class="label">Patient:</span> <span id="patient-name">[LAST, FIRST M]</span></div>
-      <div class="info"><span class="label">Address:</span> <span id="patient-address">[ADDRESS]</span></div>
-      <div class="info">
-        <span class="label">Age:</span> <span id="patient-age">[AGE]</span> |
-        <span class="label">Sex:</span> <span id="patient-sex">[SEX]</span>
-      </div>
-      <div class="info"><span class="label">Consultation Date:</span> <span id="consultation-date">[YYYY-MM-DD]</span></div>
-      <br>
-      <!-- Prescribed medicines table -->
-      <h5>Prescribed Medicines:</h5>
-      <table>
-        <thead>
-          <tr>
-            <th>Medicine Name</th>
-            <th>Quantity</th>
-            <th>Instruction</th>
-          </tr>
-        </thead>
-        <tbody id="medicines-tbody">
-
-          <tr>
-            <td>Amoxicillin 500mg</td>
-            <td>10</td>
-            <td>Take 1 tablet every 8 hours</td>
-          </tr>
-     
-        </tbody>
-      </table> <br> <br>
-
-       
-      <div class="signature">
-        <p style="background-color: white;"><small>Signature</small></p> <br> <br>
-        <p style="background-color: white;">______________________________</p>
-        
-      </div>
-     
-      <div class="info"><span class="label">Physician:</span> <span id="physician-name">[PHYSICIAN NAME]</span></div>
-      <div class="info"><span class="label">License No.:</span> <span id="physician-license">[LICENSE NO.]</span></div>
-
-    
+            <div class="sidebar-user-info">
+                <div class="user-name" id="sidebarUserName">Nurse User</div>
+                <div class="user-role">RHU Nurse</div>
+            </div>
+        </div>
     </div>
-  </div>
+</section>
 
+<section id="content">
+    <nav>
+        <button type="button" class="nav-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+            <i class="bx bx-menu"></i>
+        </button>
 
+        <div class="nav-search">
+            <input 
+                type="search" 
+                id="patientSearch" 
+                placeholder="Search issued records..." 
+                name="search" 
+                autocomplete="off"
+            >
+
+            <button type="button" id="searchButton" aria-label="Search">
+                <i class="bx bx-search"></i>
+            </button>
+
+            <div id="resultDropdown" class="dropdown-content"></div>
+        </div>
+    </nav>
+
+    <main>
+        <div class="page-title">
+            <div>
+                <h1>Issued Records</h1>
+                <p>Review and print the patient prescription record.</p>
             </div>
 
+            <div class="page-actions">
+                <button type="button" class="secondary-btn" onclick="history.back(); return false;">
+                    <i class="bx bx-arrow-back"></i>
+                    Go Back
+                </button>
 
-  
+                <button type="button" class="print-btn" id="printPrescriptionBtn">
+                    <i class="bx bxs-printer"></i>
+                    Print
+                </button>
+            </div>
+        </div>
+
+        <section class="prescription-page">
+            <section class="prescription-card">
+                <div class="section-heading">
+                    <div class="section-heading-left">
+                        <span class="section-icon">
+                            <i class="bx bx-receipt"></i>
+                        </span>
+
+                        <div>
+                            <h2>Prescription Preview</h2>
+                            <p>This is the printable prescription copy issued by the RHU physician.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="prescription-preview-shell">
+                    <div class="quarter-page prescription-print" id="printArea">
+                        <div class="rx-header">
+                            <img src="../img/RHUlogo.png" alt="RHU Logo" class="print-logo">
+
+                            <h3>Republic of the Philippines</h3>
+                            <p>Province of Camarines Norte</p>
+                            <h3>Municipality of Daet</h3>
+
+                            <div class="rx-rhu-name">
+                                <span id="rhu-name">[RHU NAME]</span>
+                            </div>
+                        </div>
+
+                        <div class="rx-section">
+                            <div class="rx-title-row">
+                                <h2>Prescription</h2>
+                                <img src="../img/rx.png" alt="Rx" class="rx-icon">
+                            </div>
+
+                            <div class="rx-info-grid">
+                                <div class="rx-info-item full-width">
+                                    <span class="label">Patient:</span>
+                                    <span id="patient-name">[LAST, FIRST M]</span>
+                                </div>
+
+                                <div class="rx-info-item full-width">
+                                    <span class="label">Address:</span>
+                                    <span id="patient-address">[ADDRESS]</span>
+                                </div>
+
+                                <div class="rx-info-item">
+                                    <span class="label">Age:</span>
+                                    <span id="patient-age">[AGE]</span>
+                                </div>
+
+                                <div class="rx-info-item">
+                                    <span class="label">Sex:</span>
+                                    <span id="patient-sex">[SEX]</span>
+                                </div>
+
+                                <div class="rx-info-item full-width">
+                                    <span class="label">Consultation Date:</span>
+                                    <span id="consultation-date">[YYYY-MM-DD]</span>
+                                </div>
+                            </div>
+
+                            <div class="rx-medicine-section">
+                                <h5>Prescribed Medicines</h5>
+
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Medicine Name</th>
+                                            <th>Quantity</th>
+                                            <th>Instruction</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody id="medicines-tbody">
+                                        <tr>
+                                            <td colspan="3">Loading prescribed medicines...</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="rx-signature-area">
+                                <div class="signature-line">
+                                    <small>Signature</small>
+                                    <span></span>
+                                </div>
+
+                                <div class="physician-details">
+                                    <div class="rx-info-item full-width">
+                                        <span class="label">Physician:</span>
+                                        <span id="physician-name">[PHYSICIAN NAME]</span>
+                                    </div>
+
+                                    <div class="rx-info-item full-width">
+                                        <span class="label">License No.:</span>
+                                        <span id="physician-license">[LICENSE NO.]</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </section>
+    </main>
+</section>
+
 <div id="logoutModal" class="logout-modal">
     <div class="logout-modal-content">
         <div class="logout-modal-header">
             <h3>Confirm Logout</h3>
         </div>
+
         <div class="logout-modal-body">
             <p>Are you sure you want to logout?</p>
         </div>
+
         <div class="logout-modal-footer">
             <button onclick="closeModal()" class="logout-cancel-btn">Cancel</button>
             <button onclick="proceedLogout()" class="logout-confirm-btn">Yes, Logout</button>
         </div>
     </div>
-</div>  
+</div>
 
-	   </main>	
-</section>
+<script src="js/script.js"></script>
+<script src="js/history.js"></script>
 
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-    // Get consultation_id from URL
+document.addEventListener("DOMContentLoaded", function () {
+    checkUserSession();
+    setupUserName();
+    setupPrescriptionData();
+    setupPrintButton();
+    setupResponsiveSidebar();
+    setupUpdateReferrals();
+    setupIssuedRecordSearch();
+});
+
+function checkUserSession() {
+    fetch("php/getUserId.php")
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                window.location.href = "../auth/role";
+            }
+        })
+        .catch(error => {
+            console.error("Error checking session:", error);
+            window.location.href = "../auth/role";
+        });
+}
+
+function setupUserName() {
+    fetch("php/getUserName.php")
+        .then(response => response.json())
+        .then(data => {
+            const sidebarUserName = document.getElementById("sidebarUserName");
+
+            if (sidebarUserName) {
+                sidebarUserName.textContent = data.full_name || "Nurse User";
+            }
+        })
+        .catch(error => {
+            console.error("Error fetching user name:", error);
+
+            const sidebarUserName = document.getElementById("sidebarUserName");
+
+            if (sidebarUserName) {
+                sidebarUserName.textContent = "Nurse User";
+            }
+        });
+}
+
+function setupPrescriptionData() {
     const urlParams = new URLSearchParams(window.location.search);
     const consultationId = urlParams.get("consultation_id");
 
@@ -318,8 +330,7 @@ document.addEventListener("DOMContentLoaded", function() {
         return;
     }
 
-    // Fetch data from PHP
-    fetch(`php/get_prescription.php?consultation_id=${consultationId}`)
+    fetch(`php/get_prescription.php?consultation_id=${encodeURIComponent(consultationId)}`)
         .then(response => response.json())
         .then(data => {
             if (data.error) {
@@ -328,152 +339,448 @@ document.addEventListener("DOMContentLoaded", function() {
                 return;
             }
 
-            console.log("Fetched data:", data);
+            const consultation = data.consultations && data.consultations.length
+                ? data.consultations[0]
+                : {};
 
-            const consultation = data.consultations[0];
-            const prescriptions = data.prescriptions;
+            const prescriptions = data.prescriptions || [];
 
-            // Populate fields
-            document.getElementById("rhu-name").textContent = consultation.rhu || "N/A";
-            document.getElementById("patient-name").textContent = consultation.patient_name || "N/A";
-            document.getElementById("patient-address").textContent = consultation.address || "N/A";
-            document.getElementById("patient-age").textContent = consultation.age || "N/A";
-            document.getElementById("patient-sex").textContent = consultation.sex || "N/A";
-            document.getElementById("consultation-date").textContent = consultation.consultation_date || "N/A";
-            document.getElementById("physician-name").textContent = consultation.physician_name || "N/A";
-            document.getElementById("physician-license").textContent = consultation.physician_license || "N/A";
+            setText("rhu-name", consultation.rhu || "N/A");
+            setText("patient-name", consultation.patient_name || "N/A");
+            setText("patient-address", consultation.address || "N/A");
+            setText("patient-age", consultation.age || "N/A");
+            setText("patient-sex", consultation.sex || "N/A");
+            setText("consultation-date", consultation.consultation_date || "N/A");
+            setText("physician-name", consultation.physician_name || "N/A");
+            setText("physician-license", consultation.physician_license || "N/A");
 
-            // Populate prescriptions table
             const tbody = document.getElementById("medicines-tbody");
+
+            if (!tbody) {
+                return;
+            }
+
             tbody.innerHTML = "";
+
+            if (!prescriptions.length) {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `<td colspan="3">No prescribed medicines recorded.</td>`;
+                tbody.appendChild(tr);
+                return;
+            }
 
             prescriptions.forEach(item => {
                 const tr = document.createElement("tr");
+
                 tr.innerHTML = `
-                    <td>${item.medicine_name || ""}</td>
-                    <td>${item.quantity || ""}</td>
-                    <td>${item.instruction || ""}</td>
+                    <td>${escapeHtml(item.medicine_name || "")}</td>
+                    <td>${escapeHtml(item.quantity || "")}</td>
+                    <td>${escapeHtml(item.instruction || "")}</td>
                 `;
+
                 tbody.appendChild(tr);
             });
         })
-        .catch(err => {
-            console.error("Fetch error:", err);
-            alert("Failed to load data.");
+        .catch(error => {
+            console.error("Fetch error:", error);
+            alert("Failed to load prescription data.");
         });
-});
+}
 
+function setText(id, value) {
+    const element = document.getElementById(id);
 
-fetch('php/getUserName.php')
-    .then(response => response.json())
-    .then(data => {
-        if (data.full_name) {
-            document.getElementById('userGreeting').textContent = `Hello, ${data.full_name}!`;
-        } else {
-            document.getElementById('userGreeting').textContent = 'Hello, BHW!';
+    if (element) {
+        element.textContent = value;
+    }
+}
+
+function escapeHtml(value) {
+    return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
+
+function setupPrintButton() {
+    const printButton = document.getElementById("printPrescriptionBtn");
+
+    if (!printButton) return;
+
+    printButton.addEventListener("click", function () {
+        const printArea = document.getElementById("printArea");
+
+        if (!printArea) {
+            alert("Prescription print area not found.");
+            return;
         }
-    })
-    .catch(error => {
-        console.error('Error fetching user name:', error);
-        document.getElementById('userGreeting').textContent = 'Hello, BHW!';
-    }); 
-    function confirmLogout() {
-            document.getElementById('logoutModal').style.display = 'block';
-            return false; // Prevent the default link behavior
-        }
-        
-        function closeModal() {
-            document.getElementById('logoutModal').style.display = 'none';
-        }
-        
-        function proceedLogout() {
-            window.location.href='../ADMIN/php/logout'; 
-        }
-        
-        // Close modal when clicking outside
-        window.onclick = function(event) {
-            const modal = document.getElementById('logoutModal');
-            if (event.target == modal) {
-                closeModal();
+
+        const iframe = document.createElement("iframe");
+        iframe.style.position = "fixed";
+        iframe.style.right = "0";
+        iframe.style.bottom = "0";
+        iframe.style.width = "0";
+        iframe.style.height = "0";
+        iframe.style.border = "0";
+        iframe.style.visibility = "hidden";
+
+        document.body.appendChild(iframe);
+
+        const iframeDoc = iframe.contentWindow.document;
+
+        const printStyles = `
+            @page {
+                size: A4 portrait;
+                margin: 12mm;
             }
-        } 
-              // Check if user is logged in
-              fetch('php/getUserId.php')
+
+            * {
+                box-sizing: border-box;
+            }
+
+            html, body {
+                margin: 0;
+                padding: 0;
+                background: #ffffff;
+                color: #000000;
+                font-family: Arial, Helvetica, sans-serif;
+            }
+
+            body {
+                width: 100%;
+                padding: 0;
+            }
+
+            .quarter-page {
+                width: 100%;
+                max-width: 420px;
+                min-height: auto;
+                margin: 0;
+                padding: 8px 12px;
+                border: none;
+                border-radius: 0;
+                box-shadow: none;
+                background: #ffffff;
+                color: #000000;
+            }
+
+            .rx-header {
+                text-align: center;
+                margin-bottom: 18px;
+            }
+
+            .print-logo {
+                height: 50px;
+                width: auto;
+                object-fit: contain;
+                display: inline-block;
+                margin-bottom: 8px;
+            }
+
+            .rx-header h3 {
+                margin: 4px 0;
+                font-size: 16px;
+                font-weight: 600;
+                line-height: 1.2;
+            }
+
+            .rx-header p {
+                margin: 0;
+                font-size: 13px;
+                line-height: 1.2;
+            }
+
+            .rx-rhu-name {
+                display: inline-block;
+                margin-top: 6px;
+                padding: 0;
+                color: #000000;
+                background: transparent;
+                font-size: 14px;
+                font-weight: 400;
+            }
+
+            .rx-title-row {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 12px;
+                margin-bottom: 12px;
+            }
+
+            .rx-title-row h2 {
+                margin: 0;
+                font-size: 24px;
+                font-weight: 700;
+            }
+
+            .rx-icon {
+                width: 70px;
+                height: auto;
+                display: block;
+            }
+
+            .rx-info-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 8px 12px;
+                margin-bottom: 14px;
+            }
+
+            .rx-info-item {
+                font-size: 14px;
+                line-height: 1.4;
+                word-break: break-word;
+            }
+
+            .rx-info-item.full-width {
+                grid-column: 1 / -1;
+            }
+
+            .rx-info-item .label {
+                font-weight: 700;
+                margin-right: 6px;
+            }
+
+            .rx-medicine-section {
+                margin-top: 10px;
+            }
+
+            .rx-medicine-section h5 {
+                margin: 0 0 8px;
+                font-size: 14px;
+                font-weight: 700;
+            }
+
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                font-size: 13px;
+                table-layout: fixed;
+            }
+
+            thead th {
+                text-align: left;
+                padding: 6px 8px;
+                border-bottom: 1px solid #cccccc;
+                font-weight: 700;
+            }
+
+            tbody td {
+                padding: 6px 8px;
+                border-bottom: 1px dashed #e0e0e0;
+                vertical-align: top;
+                word-break: break-word;
+            }
+
+            .rx-signature-area {
+                display: block;
+                margin-top: 34px;
+            }
+
+            .signature-line {
+                margin-bottom: 24px;
+                font-size: 13px;
+            }
+
+            .signature-line small {
+                display: block;
+                margin-bottom: 26px;
+                font-size: 13px;
+            }
+
+            .signature-line span {
+                display: block;
+                width: 220px;
+                border-bottom: 1px solid #000000;
+            }
+
+            .physician-details {
+                margin-top: 20px;
+            }
+
+            .physician-details .rx-info-item {
+                margin-bottom: 6px;
+            }
+        `;
+
+        iframeDoc.open();
+        iframeDoc.write(`
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="UTF-8">
+                <title>Print Prescription</title>
+                <style>${printStyles}</style>
+            </head>
+            <body>
+                ${printArea.outerHTML}
+            </body>
+            </html>
+        `);
+        iframeDoc.close();
+
+        const images = iframeDoc.images;
+        let loadedImages = 0;
+
+        function triggerPrint() {
+            setTimeout(() => {
+                iframe.contentWindow.focus();
+                iframe.contentWindow.print();
+
+                setTimeout(() => {
+                    document.body.removeChild(iframe);
+                }, 1000);
+            }, 300);
+        }
+
+        if (images.length === 0) {
+            triggerPrint();
+        } else {
+            for (let i = 0; i < images.length; i++) {
+                const img = images[i];
+
+                if (img.complete) {
+                    loadedImages++;
+                } else {
+                    img.onload = img.onerror = function () {
+                        loadedImages++;
+                        if (loadedImages === images.length) {
+                            triggerPrint();
+                        }
+                    };
+                }
+            }
+
+            if (loadedImages === images.length) {
+                triggerPrint();
+            }
+        }
+    });
+}
+
+function setupResponsiveSidebar() {
+    const sidebar = document.getElementById("sidebar");
+    const toggle = document.getElementById("sidebarToggle");
+    const overlay = document.getElementById("sidebarOverlay");
+    const MOBILE_BP = 768;
+
+    if (!sidebar || !toggle || !overlay) {
+        return;
+    }
+
+    function isMobile() {
+        return window.innerWidth <= MOBILE_BP;
+    }
+
+    function closeMobileSidebar() {
+        sidebar.classList.remove("mobile-open");
+        overlay.classList.remove("active");
+        document.body.style.overflow = "";
+    }
+
+    toggle.addEventListener("click", function () {
+        if (isMobile()) {
+            const open = sidebar.classList.toggle("mobile-open");
+
+            overlay.classList.toggle("active", open);
+            document.body.style.overflow = open ? "hidden" : "";
+        } else {
+            sidebar.classList.toggle("collapsed");
+        }
+    });
+
+    overlay.addEventListener("click", closeMobileSidebar);
+
+    window.addEventListener("resize", function () {
+        if (!isMobile()) {
+            closeMobileSidebar();
+        }
+    });
+}
+
+function setupUpdateReferrals() {
+    const updateReferrals = document.getElementById("updateReferrals");
+
+    if (!updateReferrals) {
+        return;
+    }
+
+    updateReferrals.addEventListener("click", function (event) {
+        event.preventDefault();
+
+        fetch("php/update_referrals.php")
             .then(response => response.json())
             .then(data => {
-                if (data.error) {
-                    // User is not logged in, redirect to role selection page
-                    window.location.href='../auth/role';
-                }
+                console.log(data.message);
+                window.location.href = "pending";
             })
             .catch(error => {
-                console.error('Error checking session:', error);
-                window.location.href='../auth/role';
+                console.error("Error updating referrals:", error);
+                window.location.href = "pending";
             });
-</script>
-	<script src="js/script.js"></script>
-    <script src="js/history.js"></script>
-
-<script>
-(function () {
-  const sidebar = document.getElementById('sidebar');
-  const toggle = document.getElementById('sidebarToggle');
-  const overlay = document.getElementById('sidebarOverlay');
-  const MOBILE_BP = 768;
-
-  if (!sidebar || !toggle || !overlay) return;
-
-  function isMobile() {
-    return window.innerWidth <= MOBILE_BP;
-  }
-
-  function closeMobileSidebar() {
-    sidebar.classList.remove('mobile-open');
-    overlay.classList.remove('active');
-    document.body.style.overflow = '';
-  }
-
-  toggle.addEventListener('click', function () {
-    if (isMobile()) {
-      const open = sidebar.classList.toggle('mobile-open');
-      overlay.classList.toggle('active', open);
-      document.body.style.overflow = open ? 'hidden' : '';
-    } else {
-      sidebar.classList.toggle('collapsed');
-    }
-  });
-
-  overlay.addEventListener('click', closeMobileSidebar);
-
-  window.addEventListener('resize', function () {
-    if (!isMobile()) {
-      closeMobileSidebar();
-    }
-  });
-})();
-
-document.addEventListener('DOMContentLoaded', function () {
-  const updateReferrals = document.getElementById('updateReferrals');
-
-  if (updateReferrals) {
-    updateReferrals.addEventListener('click', function (event) {
-      event.preventDefault();
-
-      fetch('php/update_referrals.php')
-        .then(response => response.json())
-        .then(data => {
-          console.log(data.message);
-          window.location.href = 'pending';
-        })
-        .catch(error => {
-          console.error('Error updating referrals:', error);
-          window.location.href = 'pending';
-        });
     });
-  }
+}
+
+function setupIssuedRecordSearch() {
+    const searchInput = document.getElementById("patientSearch");
+    const searchButton = document.getElementById("searchButton");
+
+    if (!searchInput || !searchButton) {
+        return;
+    }
+
+    searchInput.addEventListener("keypress", function (event) {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            searchButton.click();
+        }
+    });
+
+    searchButton.addEventListener("click", function () {
+        const searchQuery = searchInput.value.trim();
+
+        if (searchQuery) {
+            sessionStorage.setItem("searchQuery", searchQuery);
+            window.location.href = "searchPatient";
+        } else {
+            alert("Please enter a search keyword.");
+        }
+    });
+}
+
+function confirmLogout() {
+    const logoutModal = document.getElementById("logoutModal");
+
+    if (logoutModal) {
+        logoutModal.style.display = "block";
+    }
+
+    return false;
+}
+
+function closeModal() {
+    const logoutModal = document.getElementById("logoutModal");
+
+    if (logoutModal) {
+        logoutModal.style.display = "none";
+    }
+}
+
+function proceedLogout() {
+    window.location.href = "../ADMIN/php/logout";
+}
+
+window.addEventListener("click", function (event) {
+    const logoutModal = document.getElementById("logoutModal");
+
+    if (event.target === logoutModal) {
+        closeModal();
+    }
 });
 </script>
+
 </body>
 </html>
-
-

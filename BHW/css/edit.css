@@ -44,7 +44,6 @@ body.dark {
 }
 
 body {
-	background: url(img/body.png);
 	overflow-x: hidden;
 	background-size: cover;
     

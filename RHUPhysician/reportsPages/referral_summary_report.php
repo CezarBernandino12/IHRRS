@@ -1,6 +1,5 @@
 <?php
 // Connect to DB
-// Connect to DB
 require '../../php/db_connect.php';
 session_start();
 
@@ -41,9 +40,7 @@ $sql = "
       AND u.barangay IS NOT NULL 
       AND u.barangay != ''
 ";
-$params['rhu'] = $rhu;// Filter: same RHU as logged-in user
-
-
+$params['rhu'] = $rhu;
 
 // Add date filter if present
 if (!empty($from_date) && !empty($to_date)) {
@@ -63,9 +60,6 @@ if (!empty($barangay)) {
 // Final group and order clause (only add once!)
 $sql .= " GROUP BY u.barangay ORDER BY u.barangay";
 
-// For debugging
-// echo "<pre>$sql</pre>";
-
 $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -76,39 +70,52 @@ $total_completed = 0;
 $total_uncompleted = 0;
 $total_pending = 0;
 
+foreach ($rows as $row) {
+    $total_received += $row['total_referrals'];
+    $total_completed += $row['completed'];
+    $total_uncompleted += $row['uncompleted'];
+    $total_pending += $row['pending'];
+}
 
+$referral_counts = [
+    'Pending' => $total_pending,
+    'Completed' => $total_completed,
+    'Uncompleted' => $total_uncompleted
+];
 
-        //ADDED GENERATED REPORT FOR ACTIVITY LOG
-        $stmt_log = $pdo->prepare("INSERT INTO logs (
-            user_id, action, performed_by
-        ) VALUES (
-            :user_id, :action, :performed_by
-        )");
-        $stmt_log->execute([
-            ':user_id' => $_SESSION['user_id'],
-            ':action' => "Generated RHU Referral Summary Report",
-            ':performed_by' => $_SESSION['user_id']
-        ]);
+$barangay_labels = array_column($rows, 'barangay');
+$barangay_referrals = array_column($rows, 'total_referrals');
+
+// ADDED GENERATED REPORT FOR ACTIVITY LOG
+$stmt_log = $pdo->prepare("INSERT INTO logs (
+    user_id, action, performed_by
+) VALUES (
+    :user_id, :action, :performed_by
+)");
+$stmt_log->execute([
+    ':user_id' => $_SESSION['user_id'],
+    ':action' => "Generated RHU Referral Summary Report",
+    ':performed_by' => $_SESSION['user_id']
+]);
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="icon" href="../../img/logo.png">
-	<link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
-	<link rel="stylesheet" href="../css/reportsDesign.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="../../img/logo.png">
+    <link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/reportsDesign.css">
     <link rel="stylesheet" href="../css/logout.css">
     <link rel="stylesheet" href="../css/sidebar.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-
-	<title>Referral Summary Report</title>
+    <title>Referral Summary Report</title>
 </head>
 <body>
 
-  <style>
+<style>
   #reportTable th {
     cursor: pointer;
     position: relative;
@@ -119,13 +126,237 @@ $total_pending = 0;
     font-size: 11px;
     opacity: 0.7;
   }
-  #reportTable th.is-sorted-asc  .sort-indicator::after { content: "▲"; }
+  #reportTable th.is-sorted-asc .sort-indicator::after { content: "▲"; }
   #reportTable th.is-sorted-desc .sort-indicator::after { content: "▼"; }
+
+  .checkbox-list {
+    max-height: 170px;
+    overflow-y: auto;
+    border: 1.5px solid var(--border);
+    padding: 10px 12px;
+    border-radius: var(--r-sm);
+    background: var(--grey-100);
+  }
+
+  .checkbox-list label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--grey-700);
+    text-align: left;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  .chart-card {
+    max-width: 680px;
+    margin: 24px auto 0;
+    text-align: center;
+    background: var(--white);
+    border: 1px solid var(--border-soft);
+    border-radius: var(--r-lg);
+    padding: 20px;
+    box-shadow: var(--shadow-xs);
+  }
+
+  .chart-card.chart-card-sm { max-width: 420px; }
+
+  .chart-card h3 {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 12px;
+  }
+
+  .title { text-align: center; display: none; }
+  .print-only-letterhead { display: none; }
+
+  @media print {
+    .title { display: block !important; }
+    .print-only-letterhead { display: block !important; }
+    .summary > h3 { display: none !important; }
+    .chart-title,
+    .chart-controls-panel,
+    .form-submit,
+    .selected-filters,
+    nav,
+    #sidebar,
+    .sidebar-overlay { display: none !important; }
+
+    .print-letterhead {
+      display: grid !important;
+      grid-template-columns: 72px auto 72px;
+      align-items: center;
+      justify-content: center;
+      column-gap: 60px;
+      margin: 0 auto 18px;
+      text-align: center;
+      width: fit-content;
+    }
+
+    .print-logo { width: 64px; height: 64px; object-fit: contain; }
+    .print-heading { line-height: 1.1; color: #000; }
+    .print-heading .ph-line-1 { font-size: 12pt; font-weight: 500; margin-bottom: 3px; }
+    .print-heading .ph-line-2 { font-size: 14pt; font-weight: 500; margin-bottom: 3px; }
+    .print-heading .ph-line-3 { font-size: 11pt; font-weight: 500; margin-bottom: 3px; }
+    .print-heading .ph-line-4 { font-size: 12pt; font-weight: 600; margin-top: 15px; letter-spacing: .3px; }
+    .print-sub { font-size: 12pt; margin-top: 4px; }
+    .print-rule { height: 1px; border: 0; background: #cfd8e3; margin: 8px 0 12px; }
+
+    .summary-table th,
+    .summary-table td {
+      border: 1px solid #000 !important;
+      color: #000 !important;
+      background: transparent !important;
+    }
+
+    #generated_by { margin: 60mm 0 0 10mm; }
+    #generated_by .sig-label { font-size: 12pt; }
+    #generated_by .sig-name { font-size: 12pt; }
+    #generated_by .sig-title { font-size: 11pt; }
+    #generated_by .sig-line { display: block; width: 45mm; border-top-width: 1px; margin: 10mm 0 3mm; }
+  }
+
+  @media (max-width: 768px) {
+    .chart-card { padding: 16px 12px; }
+  }
+
+
+  /* Layout balance update: side-by-side chart grid with smooth entrance */
+  #content main {
+    width: 100%;
+    padding: 32px 28px;
+    max-height: calc(100vh - 56px);
+    overflow-y: auto;
+  }
+
+  .history-container,
+  .main-content,
+  .report-content {
+    width: 100%;
+  }
+
+  .filter-form,
+  .print-area {
+    border-radius: var(--r-lg, 16px);
+  }
+
+  .referral-summary-charts-grid {
+    display: grid;
+    grid-template-columns: minmax(280px, 420px) minmax(360px, 1fr);
+    gap: 24px;
+    align-items: stretch;
+    margin: 24px 0 30px;
+    transition: grid-template-columns .35s ease, gap .35s ease;
+  }
+
+  .referral-summary-charts-grid.single-chart {
+    grid-template-columns: minmax(320px, 760px);
+    justify-content: center;
+  }
+
+  .summary-chart-card {
+    width: 100%;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 20px 20px 16px;
+    text-align: center;
+    min-height: 350px;
+    border: 1px solid var(--border-soft, #edf0f7);
+    border-radius: var(--r-lg, 16px);
+    background: var(--white, #fff);
+    box-shadow: var(--shadow-xs, 0 1px 3px rgba(13,45,82,.07));
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    transition: opacity .28s ease, transform .28s ease, box-shadow .18s ease;
+    overflow: hidden;
+  }
+
+  .summary-chart-card:hover {
+    box-shadow: var(--shadow-sm, 0 2px 8px rgba(13,45,82,.09));
+  }
+
+  .summary-chart-card.is-hidden {
+    display: none !important;
+  }
+
+  .summary-chart-card canvas {
+    display: block;
+    width: 100% !important;
+    height: 280px !important;
+    max-height: 280px;
+  }
+
+  .summary-chart-card.bar-chart canvas {
+    height: 310px !important;
+    max-height: 310px;
+  }
+
+  .summary-chart-card h3 {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--navy, #0d2d52);
+    margin-bottom: 14px;
+  }
+
+  @keyframes softChartEntrance {
+    from { opacity: 0; transform: translateY(14px) scale(.985); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .summary-chart-card.chart-entering {
+    animation: softChartEntrance .36s ease both;
+  }
+
+  .chart-controls-panel {
+    margin-bottom: 0 !important;
+  }
+
+  .report-table-container {
+    margin-top: 24px !important;
+  }
+
+  @media (max-width: 980px) {
+    .referral-summary-charts-grid,
+    .referral-summary-charts-grid.single-chart {
+      grid-template-columns: 1fr;
+    }
+
+    .summary-chart-card {
+      max-width: 720px !important;
+      margin: 0 auto !important;
+    }
+  }
+
+  @media (max-width: 768px) {
+    #content main { padding: 20px 14px; }
+    .filter-form,
+    .print-area { padding: 20px 18px; }
+  }
+
+  @media (max-width: 480px) {
+    .summary-chart-card { min-height: 310px; padding: 16px 14px 12px; }
+    .summary-chart-card canvas,
+    .summary-chart-card.bar-chart canvas { height: 240px !important; max-height: 240px; }
+  }
+
 </style>
-  
+
 <!-- Sidebar Section -->
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
+<<<<<<< HEAD
+<section id="sidebar">
+    <a href="#" class="sidebar-brand">
+        <img src="../../img/logo.png" alt="RHU Logo" class="brand-logo">
+        <div class="brand-text">
+            <span class="brand-name">Hello Physician</span>
+        </div>
+    </a>
+=======
 	<section id="sidebar">
 		<a href="#" class="sidebar-brand">
 			<img src="../../img/logo.png" alt="RHU Logo" class="brand-logo">
@@ -133,60 +364,73 @@ $total_pending = 0;
 				<span class="brand-name">Physician</span>
 			</div>
 		</a>
+>>>>>>> 33fc5da55d190a4b262e16a6c8935100d5aecf81
 
-		<div class="sidebar-scroll">
-			<div class="sidebar-section-label">Main Menu</div>
-			<ul class="side-menu top">
-				<li>
-					<a href="../dashboard" data-tooltip="Dashboard">
-						<i class="bx bxs-dashboard nav-icon"></i>
-						<span class="nav-label">Dashboard</span>
-					</a>
-				</li>
-				<li>
-					<a href="../pending" id="updateReferrals" data-tooltip="Pending Referrals">
-						<i class="bx bxs-user nav-icon"></i>
-						<span class="nav-label">Pending Referrals</span>
-					</a>
-				</li>
-				<li>
-					<a href="../followUpConsultations" data-tooltip="Follow-Up Visits">
-						<i class="bx bxs-user nav-icon"></i>
-						<span class="nav-label">Follow-Up Visits</span>
-					</a>
-				</li>
-				<li>
-					<a href="../searchPatient" data-tooltip="Patient Records">
-						<i class="bx bxs-search nav-icon"></i>
-						<span class="nav-label">Patient Records</span>
-					</a>
-				</li>
-				<li>
-					<a href="../history" data-tooltip="Referral History">
-						<i class="bx bx-history nav-icon"></i>
-						<span class="nav-label">Referral History</span>
-					</a>
-				</li>
-				<li class="active">
-					<a href="../reports" data-tooltip="Reports">
-						<i class="bx bx-notepad nav-icon"></i>
-						<span class="nav-label">Reports</span>
-					</a>
-				</li>
-			</ul>
+    <div class="sidebar-scroll">
+        <div class="sidebar-section-label">Main Menu</div>
+        <ul class="side-menu top">
+            <li>
+                <a href="../dashboard" data-tooltip="Dashboard">
+                    <i class="bx bxs-dashboard nav-icon"></i>
+                    <span class="nav-label">Dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a href="../pending" id="updateReferrals" data-tooltip="Pending Referrals">
+                    <i class="bx bxs-user nav-icon"></i>
+                    <span class="nav-label">Pending Referrals</span>
+                </a>
+            </li>
+            <li>
+                <a href="../followUpConsultations" data-tooltip="Follow-Up Visits">
+                    <i class="bx bxs-user nav-icon"></i>
+                    <span class="nav-label">Follow-Up Visits</span>
+                </a>
+            </li>
+            <li>
+                <a href="../searchPatient" data-tooltip="Patient Records">
+                    <i class="bx bxs-search nav-icon"></i>
+                    <span class="nav-label">Patient Records</span>
+                </a>
+            </li>
+            <li>
+                <a href="../history" data-tooltip="Referral History">
+                    <i class="bx bx-history nav-icon"></i>
+                    <span class="nav-label">Referral History</span>
+                </a>
+            </li>
+            <li class="active">
+                <a href="../reports" data-tooltip="Reports">
+                    <i class="bx bx-notepad nav-icon"></i>
+                    <span class="nav-label">Reports</span>
+                </a>
+            </li>
+        </ul>
 
-			<div class="sidebar-divider"></div>
+        <div class="sidebar-divider"></div>
 
-			<ul class="side-menu">
-				<li>
-					<a href="#" class="logout" data-tooltip="Logout" onclick="return confirmLogout()">
-						<i class="bx bxs-log-out-circle nav-icon"></i>
-						<span class="nav-label">Logout</span>
-					</a>
-				</li>
-			</ul>
-		</div>
+        <ul class="side-menu">
+            <li>
+                <a href="#" class="logout" data-tooltip="Logout" onclick="return confirmLogout()">
+                    <i class="bx bxs-log-out-circle nav-icon"></i>
+                    <span class="nav-label">Logout</span>
+                </a>
+            </li>
+        </ul>
+    </div>
 
+<<<<<<< HEAD
+    <div class="sidebar-footer">
+        <div class="sidebar-user">
+            <img src="../../img/nurse.png" alt="Physician User">
+            <div class="sidebar-user-info">
+                <div class="user-name" id="sidebarUserName">Physician</div>
+                <div class="user-role">Physician</div>
+            </div>
+        </div>
+    </div>
+</section>
+=======
 		<div class="sidebar-footer">
 			<div class="sidebar-user">
 				<img src="../../img/doctor.png" alt="Physician User">
@@ -197,10 +441,11 @@ $total_pending = 0;
 			</div>
 		</div>
 	</section>
+>>>>>>> 33fc5da55d190a4b262e16a6c8935100d5aecf81
 
-	<!-- Main Content Section -->
-	<section id="content">
-	 <nav>
+<!-- Main Content Section -->
+<section id="content">
+    <nav>
         <button class="nav-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
             <i class="bx bx-menu"></i>
         </button>
@@ -214,633 +459,251 @@ $total_pending = 0;
         </div>
     </nav>
 
-
-		<main>
-            
-            <div class="head-title">
-                <div class="left">
-                  <h1>Referral Summary Report</h1>
-                  <ul class="breadcrumb">
+    <main>
+        <div class="head-title">
+            <div class="left">
+                <h1>Referral Summary Report</h1>
+                <ul class="breadcrumb">
                     <li><a href="#">Referral Intake Summary Report</a></li>
                     <li><i class="bx bx-chevron-right"></i></li>
                     <li><a class="active" href="#" onclick="history.back(); return false;">Go back</a></li>
-                  </ul>
-                </div>
-              </div>
-
-      <br> <br>
+                </ul>
             </div>
-
-<div class="history-container">
-	
-
-<!-- Filter Form -->
-<form method="GET" class="filter-form">
-
- <h2>Referral Intake Summary Report - <?php echo htmlspecialchars($rhu); ?></h2> <br>
-
-
- <!-- Filter Modal Trigger -->
-   
-        <div class="form-submit" style="margin-top: -10px;">
-               <button type="button" class="btn-export" id="openFilterModal">Select Filters</button>
-                <button type="button" class="btn-export" onclick="exportTableToExcel('reportTable')">Export to Excel</button>
-                <button type="button" class="btn-print" onclick="printDiv()">
-        <i class='bx bx-printer'></i>
-        Print Report
-    </button>
-    </div>
-
-    <!-- Modern Filter Tags Display -->
-    <div class="selected-filters" style="margin: 20px 0;">
-        <h3 style="margin-bottom: 10px;"><i class="bx bx-filter-alt"></i> Selected Filters:</h3>
-        <div id="filterTags" style="display: flex; flex-wrap: wrap; gap: 8px;">
-            <?php
-            // Helper for tag rendering
-            function renderTag($label, $param, $value) {
-                $display = htmlspecialchars($label . ': ' . $value);
-                $url = $_GET;
-                unset($url[$param]);
-                $query = http_build_query($url);
-                echo '<span class="filter-tag" style="background:#e3e6ea;color:#222;padding:6px 12px;border-radius:16px;display:inline-flex;align-items:center;font-size:14px;">';
-                echo $display;
-                echo ' <a href="?' . $query . '" style="margin-left:8px;color:#888;text-decoration:none;font-weight:bold;" title="Remove filter">&times;</a>';
-                echo '</span>';
-            }
-
-            // Render tags for each filter if set
-            if ($from_date) renderTag('From', 'from_date', $from_date);
-            if ($to_date) renderTag('To', 'to_date', $to_date);
-            if ($status) renderTag('Status', 'status', $status);
-            if ($barangay) renderTag('Barangay', 'barangay', $barangay);
-
-            // If no filters, show "None"
-            if (
-                !$from_date && !$to_date && !$status && !$barangay
-            ) {
-                echo '<span style="color:#888;">None</span>';
-            }
-            ?>
         </div>
-    </div>
-    <style>
-        .filter-tag a:hover { color: #e15759; }
-    </style>
 
+        <div class="history-container">
 
-  <!-- Filter Modal -->
-    <div id="filterModal" class="modal" style="display:none;">
-        <div class="modal-content" style="max-width: 600px;">
-            <div class="modal-header">
-                <h3>Apply Filters</h3>
-            </div>
-            <form method="GET" id="filterForm">
-                <div class="modal-body">
-                    <div class="form-row">
-                           <!-- From Date -->
-                        <div class="form-item">
-                            <label for="from_date">From:</label>
-                            <input type="text" name="from_date" id="from_date" class="form-control" value="<?= $from_date ? htmlspecialchars($from_date) : '' ?>"  placeholder="Select date">
-                        </div>
-                        <!-- To Date -->
-                        <div class="form-item">
-                            <label for="to_date">To:</label>
-                            <input type="text" name="to_date" id="to_date" class="form-control" value="<?= $to_date ? htmlspecialchars($to_date) : '' ?>"  placeholder="Select date">
-                        </div>
-                        <div class="form-item">
-                            <label for="status">Status:</label>
-                            <select name="status" id="status" class="form-control">
-                                <option value="" <?= $status == '' ? 'selected' : '' ?>>All</option>
-                                <option value="Pending" <?= $status == 'Pending' ? 'selected' : '' ?>>Pending</option>
-                                <option value="Completed" <?= $status == 'Completed' ? 'selected' : '' ?>>Completed</option>
-                                <option value="Uncompleted" <?= $status == 'Uncompleted' ? 'selected' : '' ?>>Uncompleted</option>
-                                <option value="Cancelled" <?= $status == 'Cancelled' ? 'selected' : '' ?>>Cancelled</option>
-                            </select>
-                        </div>
+            <!-- Filter Form Card -->
+            <div class="filter-form">
+                <h2>Referral Intake Summary Report - <?php echo htmlspecialchars($rhu); ?></h2>
 
-                        <div class="form-item">
-                            <label for="barangay">Barangay:</label>
-                            <select name="barangay" id="barangay" class="form-control">
-                                <option value="">All</option>
-                                <?php
-                                // Fetch puroks that match the barangay name in the value
-                                $barangay_stmt = $pdo->prepare("SELECT DISTINCT u.barangay AS value FROM referrals r LEFT JOIN users u ON r.referred_by = u.user_id WHERE u.barangay IS NOT NULL ORDER BY u.barangay;");
-                                $barangay_stmt->execute();     
+                <div class="form-submit">
+                    <button type="button" class="btn-export" id="openFilterModal">
+                        <i class="bx bx-filter-alt"></i> Select Filters
+                    </button>
+                    <button type="button" class="btn-export" onclick="exportTableToExcel('reportTable')">
+                        <i class="bx bx-spreadsheet"></i> Export to Excel
+                    </button>
+                    <button type="button" class="btn-print" onclick="printDiv()">
+                        <i class="bx bx-printer"></i> Print Report
+                    </button>
+                </div>
 
+                <div class="selected-filters" style="margin-top:20px;">
+                    <h3><i class="bx bx-filter-alt"></i> Selected Filters:</h3>
+                    <div id="filterTags" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;">
+                        <?php
+                        function renderTag($label, $param, $value) {
+                            $display = htmlspecialchars($label . ': ' . $value);
+                            $url = $_GET;
+                            unset($url[$param]);
+                            $query = http_build_query($url);
+                            echo '<span class="filter-tag">';
+                            echo $display;
+                            echo ' <a href="?' . $query . '" title="Remove filter">&times;</a>';
+                            echo '</span>';
+                        }
 
-                                $selected_barangay = $_GET['barangay'] ?? '';
-                                while ($row = $barangay_stmt->fetch()) {
-                                    $value = $row['value'];
-                                    $selected = ($selected_barangay === $value) ? 'selected' : '';
-                                    echo "<option value=\"" . htmlspecialchars($value) . "\" $selected>" . htmlspecialchars($value) . "</option>";
-                                }
-                                ?>
-                            </select>
-                        </div> 
-                         
-                            
-                        </div>
+                        if ($from_date) renderTag('From', 'from_date', $from_date);
+                        if ($to_date) renderTag('To', 'to_date', $to_date);
+                        if ($status) renderTag('Status', 'status', $status);
+                        if ($barangay) renderTag('Barangay', 'barangay', $barangay);
+
+                        if (!$from_date && !$to_date && !$status && !$barangay) {
+                            echo '<span style="color:var(--grey-500);font-size:13px;">None</span>';
+                        }
+                        ?>
                     </div>
-                     <div class="modal-footer" style="text-align:right;">
-                    <button type="button" class="btn" id="closeFilterModal">Cancel</button>
-                    <button type="submit" class="btn-submit">Apply Filter</button>
                 </div>
-              
-               
-            </form>
-              </div>
+
+                <!-- Filter Modal -->
+                <div id="filterModal" class="modal" style="display:none;">
+                    <div class="modal-content" style="max-width:600px;">
+                        <div class="modal-header">
+                            <h3><i class="bx bx-filter-alt" style="margin-right:8px;color:var(--blue);"></i>Apply Filters</h3>
+                        </div>
+                        <form method="GET" id="filterForm">
+                            <div class="modal-body">
+                                <div class="form-row">
+                                    <div class="form-item">
+                                        <label for="from_date">From:</label>
+                                        <input type="text" name="from_date" id="from_date" class="form-control" value="<?= $from_date ? htmlspecialchars($from_date) : '' ?>" placeholder="Select date">
+                                    </div>
+                                    <div class="form-item">
+                                        <label for="to_date">To:</label>
+                                        <input type="text" name="to_date" id="to_date" class="form-control" value="<?= $to_date ? htmlspecialchars($to_date) : '' ?>" placeholder="Select date">
+                                    </div>
+                                    <div class="form-item">
+                                        <label for="status">Status:</label>
+                                        <select name="status" id="status" class="form-control">
+                                            <option value="" <?= $status == '' ? 'selected' : '' ?>>All</option>
+                                            <option value="Pending" <?= $status == 'Pending' ? 'selected' : '' ?>>Pending</option>
+                                            <option value="Completed" <?= $status == 'Completed' ? 'selected' : '' ?>>Completed</option>
+                                            <option value="Uncompleted" <?= $status == 'Uncompleted' ? 'selected' : '' ?>>Uncompleted</option>
+                                            <option value="Cancelled" <?= $status == 'Cancelled' ? 'selected' : '' ?>>Cancelled</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-item">
+                                        <label for="barangay">Barangay:</label>
+                                        <select name="barangay" id="barangay" class="form-control">
+                                            <option value="">All</option>
+                                            <?php
+                                            $barangay_stmt = $pdo->prepare("SELECT DISTINCT u.barangay AS value FROM referrals r LEFT JOIN users u ON r.referred_by = u.user_id WHERE u.barangay IS NOT NULL ORDER BY u.barangay");
+                                            $barangay_stmt->execute();
+
+                                            $selected_barangay = $_GET['barangay'] ?? '';
+                                            while ($row = $barangay_stmt->fetch()) {
+                                                $value = $row['value'];
+                                                $selected = ($selected_barangay === $value) ? 'selected' : '';
+                                                echo "<option value=\"" . htmlspecialchars($value) . "\" $selected>" . htmlspecialchars($value) . "</option>";
+                                            }
+                                            ?>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn" id="closeFilterModal">Cancel</button>
+                                <button type="submit" class="btn-submit">Apply Filter</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="main-content">
+                <div class="print-area">
+                    <!-- PRINT-ONLY LETTERHEAD -->
+                    <div class="print-only-letterhead">
+                        <div class="print-letterhead">
+                            <img src="../../img/daet_logo.png" alt="Left Logo" class="print-logo">
+                            <div class="print-heading">
+                                <div class="ph-line-1">Republic of the Philippines</div>
+                                <div class="ph-line-1">Province of Camarines Norte</div>
+                                <div class="ph-line-2">Municipality of Daet</div>
+                                <div class="ph-line-3"><?= htmlspecialchars($rhu) ?></div>
+                            </div>
+                            <img src="../../img/mho_logo.png" alt="Right Logo" class="print-logo">
+                        </div>
+                        <hr class="print-rule">
+                    </div>
+
+                    <div class="report-content">
+                        <div class="title">
+                            <h2>REFERRAL INTAKE SUMMARY REPORT</h2>
+                            <div class="print-sub">
+                                (<?php
+                                $filters = [];
+
+                                if ($from_date || $to_date) {
+                                    $readable_from = $from_date ? date("F j, Y", strtotime($from_date)) : '';
+                                    $readable_to = $to_date ? date("F j, Y", strtotime($to_date)) : '';
+                                    $filters[] = "<strong>" . trim($readable_from . ($readable_to ? " — " . $readable_to : '')) . "</strong>";
+                                }
+                                if (!empty($status)) $filters[] = "Status: <strong>" . htmlspecialchars($status) . "</strong>";
+                                if (!empty($barangay)) $filters[] = "Barangay: <strong>" . htmlspecialchars($barangay) . "</strong>";
+                                echo $filters ? implode(" &nbsp;|&nbsp; ", $filters) : "All Records";
+                                ?>)
+                            </div>
+                        </div>
+
+                        <!-- Chart Visibility Controls -->
+                        <div class="chart-controls-panel">
+                            <h3>Charts:</h3>
+                            <div class="chart-toggle-group">
+                                <label><input type="checkbox" id="toggleStatusChart"> Referral Status</label>
+                                <label><input type="checkbox" id="toggleBarangayChart" checked> Referrals per Barangay</label>
+                            </div>
+                        </div>
+
+                        <!-- Charts Grid -->
+                        <div id="summaryChartsGrid" class="referral-summary-charts-grid single-chart">
+                            <!-- Status Pie Chart -->
+                            <div class="chart summary-chart-card pie-chart is-hidden" id="statusChartWrap">
+                                <h3>Referral Status Distribution</h3>
+                                <canvas id="statusPieChart"></canvas>
+                                <p id="noDataMessage" style="display:none;color:var(--grey-500);margin-top:10px;font-size:13px;">No data available</p>
+                            </div>
+
+                            <!-- Barangay Bar Chart -->
+                            <div class="chart summary-chart-card bar-chart" id="barangayChartWrap">
+                                <h3>Total Referrals Received per Barangay</h3>
+                                <canvas id="barangayBarChart"></canvas>
+                                <p id="noBarDataMessage" style="display:none;color:var(--grey-500);margin-top:10px;font-size:13px;">No data available</p>
+                            </div>
+                        </div>
+
+                        <div class="report-table-container">
+                            <div class="report-table-scroll">
+                                <table id="reportTable">
+                                    <thead>
+                                        <tr>
+                                            <th data-type="string">Barangay</th>
+                                            <th data-type="number">Total Referrals Received</th>
+                                            <th data-type="number">Completed</th>
+                                            <th data-type="number">Uncompleted</th>
+                                            <th data-type="number">Pending</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php foreach ($rows as $row): ?>
+                                            <tr>
+                                                <td data-label="Barangay"><?= htmlspecialchars($row['barangay']) ?></td>
+                                                <td data-label="Total Referrals Received"><?= (int)$row['total_referrals'] ?></td>
+                                                <td data-label="Completed"><?= (int)$row['completed'] ?></td>
+                                                <td data-label="Uncompleted"><?= (int)$row['uncompleted'] ?></td>
+                                                <td data-label="Pending"><?= (int)$row['pending'] ?></td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                        <?php if (empty($rows)): ?>
+                                            <tr><td colspan="5" class="no-records" style="text-align:center;padding:32px;">No referral records found for the selected filters.</td></tr>
+                                        <?php endif; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="summary-container">
+                            <div class="summary">
+                                <h3 class="summary-title"><i class="bx bx-file"></i> Report Details</h3>
+                                <table class="summary-table">
+                                    <colgroup>
+                                        <col style="width:40%">
+                                        <col style="width:60%">
+                                    </colgroup>
+                                    <tbody>
+                                        <tr>
+                                            <th>Report Generated On</th>
+                                            <td class="summary-mono"><?= date('F j, Y g:i:s A') ?></td>
+                                        </tr>
+                                        <tr>
+                                            <th>Total Referrals Received</th>
+                                            <td><strong><?= (int)$total_received ?></strong></td>
+                                        </tr>
+                                        <tr>
+                                            <th>Completed Referrals</th>
+                                            <td><?= (int)$total_completed ?></td>
+                                        </tr>
+                                        <tr>
+                                            <th>Uncompleted Referrals</th>
+                                            <td><?= (int)$total_uncompleted ?></td>
+                                        </tr>
+                                        <tr>
+                                            <th>Pending Referrals</th>
+                                            <td><?= (int)$total_pending ?></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <span id="generated_by"></span>
+                    </div>
+                </div>
+            </div>
         </div>
-
-
-  
-    </div>
-
-    <script>
-    // Modal logic for filter
-    document.getElementById('openFilterModal').onclick = function() {
-        document.getElementById('filterModal').style.display = 'block';
-    };
-
-       // Initialize Flatpickr AFTER the modal is visible
-    setTimeout(() => {
-        // Check if Flatpickr instances already exist, destroy them first
-        const fromDateInput = document.getElementById('from_date');
-        const toDateInput = document.getElementById('to_date');
-        
-        if (fromDateInput._flatpickr) {
-            fromDateInput._flatpickr.destroy();
-        }
-        if (toDateInput._flatpickr) {
-            toDateInput._flatpickr.destroy();
-        }
-        
-        // Initialize Flatpickr on visible elements
-        flatpickr("#from_date", {
-            dateFormat: "Y-m-d",
-            allowInput: true,
-            disableMobile: true
-        });
-        
-        flatpickr("#to_date", {
-            dateFormat: "Y-m-d",
-            allowInput: true,
-            disableMobile: true
-        });
-    }, 100); // Small delay to ensure modal is fully visible
-
-    document.getElementById('closeFilterModal').onclick = function() {
-        document.getElementById('filterModal').style.display = 'none';
-    };
-    // Submit modal form
-    document.getElementById('filterForm').onsubmit = function() {
-        document.getElementById('filterModal').style.display = 'none';
-        return true; // allow form submit
-    };
-    // Close modal when clicking outside
-    window.addEventListener('click', function(event) {
-        var modal = document.getElementById('filterModal');
-        if (event.target == modal) {
-            modal.style.display = 'none';
-        }
-    });
-    </script>
-
-</form>
-
-
-<div class="main-content">
-
-
-<div class="print-area">
-<!-- PRINT-ONLY LETTERHEAD (shows only when printing) -->
-<div class="print-only-letterhead">
-  <div class="print-letterhead">
-    <img src="../../img/daet_logo.png" alt="Left Logo" class="print-logo">
-    <div class="print-heading">
-      <div class="ph-line-1">Republic of the Philippines</div>
-      <div class="ph-line-1">Province of Camarines Norte</div>
-      <div class="ph-line-2">Municipality of Daet</div>
-      <div class="ph-line-3"><?= htmlspecialchars($rhu) ?></div>
- 
-    </div>
-    <img src="../../img/mho_logo.png" alt="Right Logo" class="print-logo">
-  </div>
-  <hr class="print-rule">
-</div>
-<!-- /PRINT-ONLY LETTERHEAD -->
-
-<div class="report-content">
-
-
-
-<div class="title">
-         <h2>REFERRAL INTAKE SUMMARY REPORT</h2>
-<div class="print-sub">
-(<?php
-  $filters = [];
-
-  if ($from_date || $to_date) {
-      $readable_from = $from_date ? date("F j, Y", strtotime($from_date)) : '';
-      $readable_to   = $to_date ? date("F j, Y", strtotime($to_date)) : '';
-
-      // Combine into a readable range
-      $filters[] = "<strong>" . trim($readable_from . ($readable_to ? " — " . $readable_to : '')) . "</strong>";
-  }
-
-  // Print the date range if available
-  if (!empty($filters)) {
-      echo implode(" ", $filters);  // ✅ actually outputs the date
-  }
-
-  if (!empty($status)) {
-      echo " &nbsp;|&nbsp; Status: <strong>" . htmlspecialchars($status) . "</strong>";
-  }
-
-  if (!empty($barangay)) {
-      echo " &nbsp;|&nbsp; Barangay: <strong>" . htmlspecialchars($barangay) . "</strong>";
-  }
-
-  if (empty($from_date) && empty($to_date) && empty($status) && empty($barangay)) {
-      echo "All Records";
-  }
-?>)
-</div>
-
-</div>
-
- <style>
-
-  .title { text-align: center; display: none;}
-    /* Space above the summary section */
-.summary-container {
-  margin-top: 32px;
-}
-
-/* Two-column table styling */
-.summary-table {
-  width: 100%;
-  border-collapse: collapse;
-  table-layout: fixed;
-  font-size: 16px;
-}
-
-.summary-table th,
-.summary-table td {
-  border: 1px solid #d5d7db;
-  padding: 8px 12px;
-  vertical-align: top;
-  text-align: left;
-  word-wrap: break-word;
-}
-
-.summary-table th {
-  background: #f2f4f7;
-  font-weight: 600;
-}
-
-/* Print-only tweaks: hide the Summary title, add a touch more space */
-@media print {
-  .summary > h3 {
-    display: none !important;
-  }
-  .summary-container {
-    margin-top: 40px;
-  }
-}
-
-    @media print {
-         .title {
-        display: block;
-    }
-        .chart-title { 
-           display: none;
-        }
-        .form-submit { 
-           display: none;
-        }
-        
- .report-table-container {
-      margin-top: 20px !important;
-      margin-bottom: 40px !important;
-    }
-    .summary-table th,
-.summary-table td {
-  border: 1px solid #000000ff;
-  padding: 8px 12px;
-  vertical-align: top;
-  text-align: left;
-  word-wrap: break-word;
-}
-
-    } 
-</style>
-
-<style>
-  /* Hide the print letterhead on screen */
-  .print-only-letterhead { display: none; }
-
-  @media print {
-    .print-only-letterhead { display: block; }
-
-    .print-letterhead{
-  display: grid;
-  grid-template-columns: 72px auto 72px;  /* widened logo columns */
-  align-items: center;
-  justify-content: center;
-  column-gap: 60px;                       /* increased space between logos and heading */
-  margin: 0 auto 18px;
-  text-align: center;
-  width: fit-content;
-    }
-    .print-logo{ width:64px; height:64px; object-fit:contain; }
-    .print-heading{ line-height:1.1; color:#000; }
-    .print-heading .ph-line-1{ font-size:12pt; font-weight:500; margin-bottom:3px;}
-    .print-heading .ph-line-2{ font-size:14pt; font-weight:500; margin-bottom:3px;}
-    .print-heading .ph-line-3{ font-size:11pt; font-weight:500; margin-bottom:3px;}
-    .print-heading .ph-line-4{ font-size:12pt; font-weight:600; margin-top:15px; letter-spacing:.3px; }
-    .print-sub{ font-size:12pt; margin-top:4px; }
-    .print-rule{ height:1px; border:0; background:#cfd8e3; margin:8px 0 12px; }
-
-    /* keep your existing print hides working */
-    .chart-title, .form-submit { display: none !important; }
-  }
-
-    #generated_by {
-  display: block;           
-  margin: 22px 0 0 48px;    
-  color: #000;
-}
-
-#generated_by .sig-label {
-  font-size: 14px;
-  margin-bottom: 16px;
-}
-
-#generated_by .sig-line {
-    display: none;
-  width: 200px;           
-  border: 0;
-  border-top: 1.5px solid #000;
-  margin: 26px 0 6px;       
-}
-
-#generated_by .sig-name {
-  font-weight: 600;
-  font-size: 16px;
-  margin-top: 4px;
-}
-
-#generated_by .sig-title {
-  font-size: 13px;
-  color: #333;
-}
-
-/* Print sizing (optional, nicer on paper) */
-@media print {
-  #generated_by {  margin: 60mm 0 0 10mm;}
-  #generated_by .sig-label { font-size: 12pt; }
-  #generated_by .sig-name  { font-size: 12pt; }
-  #generated_by .sig-title { font-size: 11pt; }
-  #generated_by .sig-line  { display: block; width: 45mm; border-top-width: 1px; margin: 10mm 0 3mm; }
-}
-</style>
-
-<!-- Chart Visibility Controls -->
-<div style="margin: 20px;" class="chart-title">
-    <h3>Charts:</h3>
-    <label><input type="checkbox" id="toggleStatusChart"> Show Referral Status</label> <br>
-
-
-</div>
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-    const chartMapping = {
-        toggleStatusChart: "statusChart"
-    };
-
-    Object.keys(chartMapping).forEach(toggleId => {
-        const checkbox = document.getElementById(toggleId);
-        const chartElement = document.getElementById(chartMapping[toggleId]);
-
-        if (checkbox && chartElement) {
-            checkbox.addEventListener("change", () => {
-                chartElement.style.display = checkbox.checked ? "block" : "none";
-            });
-
-            // Initialize state
-            chartElement.style.display = checkbox.checked ? "block" : "none";
-        }
-    });
-});
-</script>
-
-<br>
-<!-- Pie Chart Section -->
-<div id="statusChart" style="max-width: 400px; margin: 30px auto 0 auto; text-align:center; display: none;">
-    <h3 class="chart-title">Referral Status</h3>
-    <canvas id="statusPieChart"></canvas>
-    <p id="noDataMessage" style="display:none; color:#666; margin-top:10px;">No data available</p>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-    // Prepare data for the pie chart (referral distribution)
-    <?php
-        $total_received = 0;
-        $total_completed = 0;
-        $total_uncompleted = 0;
-        $total_pending = 0;
-
-        foreach ($rows as $row) {
-            $total_received += $row['total_referrals'];
-            $total_completed += $row['completed'];
-            $total_uncompleted += $row['uncompleted'];
-            $total_pending += $row['pending'];
-        }
-
-        $referral_counts = [
-            'Pending' => $total_pending,
-            'Completed' => $total_completed,
-            'Uncompleted' => $total_uncompleted
-        ];
-    ?>
-
-    const referralLabels = <?= json_encode(array_keys($referral_counts)) ?>;
-    const referralData   = <?= json_encode(array_values($referral_counts)) ?>;
-
-    const total = referralData.reduce((a, b) => a + b, 0);
-
-    if (total > 0) {
-        // Show chart, hide message
-        document.getElementById('statusPieChart').style.display = 'block';
-        document.getElementById('noDataMessage').style.display = 'none';
-
-        const ctx = document.getElementById('statusPieChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'pie',
-            data: {
-                labels: referralLabels,
-                datasets: [{
-                    data: referralData,
-                    backgroundColor: [
-                        '#4e79a7', '#59bd77ff', '#e15759'
-                    ],
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: { position: 'bottom' },
-                    title: { display: false }
-                }
-            }
-        });
-    } else {
-        // Hide chart, show message
-        document.getElementById('statusPieChart').style.display = 'none';
-        document.getElementById('noDataMessage').style.display = 'block';
-    }
-</script>
-
-<!-- Bar Chart Section -->
-<div style="max-width: 600px; margin: 30px auto; text-align:center;">
-    <h3 class="chart-title">Total Referrals Received Per Barangay</h3>
-    <canvas id="barangayBarChart"></canvas>
-    <p id="noBarDataMessage" style="display:none; color:#666; margin-top:10px;">No data available</p>
-</div>
-
-<script>
-    // Prepare data for the bar chart (referrals per barangay)
-    <?php
-        $barangay_labels = [];
-        $barangay_referrals = [];
-
-        foreach ($rows as $row) {
-            $barangay_labels[] = $row['barangay'];
-            $barangay_referrals[] = $row['total_referrals'];
-        }
-    ?>
-
-    const barangayLabels = <?= json_encode($barangay_labels) ?>;
-    const barangayData = <?= json_encode($barangay_referrals) ?>;
-
-    const totalBarangayReferrals = barangayData.reduce((a, b) => a + b, 0);
-
-    if (totalBarangayReferrals > 0) {
-        // Show chart, hide message
-        document.getElementById('barangayBarChart').style.display = 'block';
-        document.getElementById('noBarDataMessage').style.display = 'none';
-
-        const ctxBar = document.getElementById('barangayBarChart').getContext('2d');
-        new Chart(ctxBar, {
-            type: 'bar',
-            data: {
-                labels: barangayLabels,
-                datasets: [{
-                    label: 'Total Referrals',
-                    data: barangayData,
-                    backgroundColor: '#4e79a7',
-                    borderColor: '#4e79a7',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: { display: false },
-                    title: { display: false }
-                },
-                scales: {
-                    x: { title: { display: true, text: 'Barangay' } },
-                    y: { title: { display: true, text: 'Total Referrals' }, beginAtZero: true }
-                }
-            }
-        });
-    } else {
-        // Hide chart, show message
-        document.getElementById('barangayBarChart').style.display = 'none';
-        document.getElementById('noBarDataMessage').style.display = 'block';
-    }
-</script>
-
-<div class="report-table-container">
-<table id="reportTable"> 
-  <thead>
-    <tr>
-      <th data-type="string">Barangay</th>
-      <th data-type="number">Total Referrals Received</th>
-      <th data-type="number">Completed</th>
-      <th data-type="number">Uncompleted</th>
-      <th data-type="number">Pending</th>
-    </tr>
-  </thead>
-    <tbody>
-        <?php 
-        $total_received = 0;
-		$total_completed = 0;
-		$total_uncompleted = 0;
-        $total_pending = 0;
-        foreach ($rows as $row): 
-            $total_received += $row['total_referrals'];
-			$total_completed += $row['completed'];
-			$total_uncompleted += $row['uncompleted'];
-            $total_pending += $row['pending'];
-        ?>
-        <tr>
-            <td><?= htmlspecialchars($row['barangay']) ?></td>
-            <td><?= $row['total_referrals'] ?></td>
-            <td><?= $row['completed'] ?></td>
-            <td><?= $row['uncompleted'] ?></td>
-            <td><?= $row['pending'] ?></td>
-        </tr>
-        <?php endforeach; ?>
-    </tbody>
-</table>
-</div>
-
-<br> <br>
-<div class="summary-container">
-  <div class="summary">
-    <h3>Report Details</h3>
-
-    <table class="summary-table">
-      <colgroup>
-        <col style="width:40%">
-        <col style="width:60%">
-      </colgroup>
-      <tbody>
-        <tr>
-          <th>Report Generated On</th>
-          <td><?= date('F j, Y g:i:s A') ?></td>
-        </tr>
-        <tr>
-          <th>Total Referrals Received</th>
-          <td><?= $total_received ?></td>
-        </tr>
-        <tr>
-          <th>Completed Referrals</th>
-          <td><?= $total_completed ?></td>
-        </tr>
-        <tr>
-          <th>Uncompleted Referrals</th>
-          <td><?= $total_uncompleted ?></td>
-        </tr>
-        <tr>
-          <th>Pending Referrals</th>
-          <td><?= $total_pending ?></td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-</div>
-
-<span id="generated_by"></span>
-
-</div> 
-
-
-</div>
-
+    </main>
+</section>
 
 <div id="logoutModal" class="logout-modal">
     <div class="logout-modal-content">
@@ -857,56 +720,219 @@ document.addEventListener("DOMContentLoaded", () => {
     </div>
 </div>
 
-</div>
 <!-- jsPDF and html2canvas libraries -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+/* Chart data */
+const referralLabels = <?= json_encode(array_keys($referral_counts), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>;
+const referralData = <?= json_encode(array_values($referral_counts), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>;
+const barangayLabels = <?= json_encode($barangay_labels, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>;
+const barangayData = <?= json_encode($barangay_referrals, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>;
+
+const reportPalette = ['#0d2d52', '#22a06b', '#e53e3e', '#1c6fba', '#d97706'];
+
+/* Modal and date picker */
+document.getElementById('openFilterModal').onclick = function() {
+    document.getElementById('filterModal').style.display = 'block';
+
+    setTimeout(() => {
+        const fromDateInput = document.getElementById('from_date');
+        const toDateInput = document.getElementById('to_date');
+
+        if (fromDateInput._flatpickr) fromDateInput._flatpickr.destroy();
+        if (toDateInput._flatpickr) toDateInput._flatpickr.destroy();
+
+        flatpickr('#from_date', { dateFormat: 'Y-m-d', allowInput: true, disableMobile: true });
+        flatpickr('#to_date', { dateFormat: 'Y-m-d', allowInput: true, disableMobile: true });
+    }, 100);
+};
+
+document.getElementById('closeFilterModal').onclick = function() {
+    document.getElementById('filterModal').style.display = 'none';
+};
+
+document.getElementById('filterForm').onsubmit = function() {
+    document.getElementById('filterModal').style.display = 'none';
+    return true;
+};
+
+window.addEventListener('click', function(event) {
+    const filterModal = document.getElementById('filterModal');
+    const logoutModal = document.getElementById('logoutModal');
+    if (event.target === filterModal) filterModal.style.display = 'none';
+    if (event.target === logoutModal) closeModal();
+});
+
+/* Charts */
+document.addEventListener('DOMContentLoaded', () => {
+    const chartInstances = {};
+
+    function hasData(data) {
+        return data.reduce((a, b) => a + Number(b || 0), 0) > 0;
+    }
+
+    /* Referral status pie chart */
+    const statusCanvas = document.getElementById('statusPieChart');
+    if (statusCanvas && hasData(referralData)) {
+        document.getElementById('statusPieChart').style.display = 'block';
+        document.getElementById('noDataMessage').style.display = 'none';
+
+        chartInstances.status = new Chart(statusCanvas.getContext('2d'), {
+            type: 'pie',
+            data: {
+                labels: referralLabels,
+                datasets: [{
+                    data: referralData,
+                    backgroundColor: reportPalette,
+                    borderWidth: 2,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: { duration: 850, easing: 'easeOutQuart' },
+                layout: { padding: 8 },
+                plugins: {
+                    legend: { position: 'bottom', labels: { font: { family: 'Plus Jakarta Sans', size: 12 } } },
+                    title: { display: false },
+                    tooltip: { bodyFont: { family: 'Plus Jakarta Sans' }, titleFont: { family: 'Plus Jakarta Sans', weight: '700' } }
+                }
+            }
+        });
+    } else if (statusCanvas) {
+        document.getElementById('statusPieChart').style.display = 'none';
+        document.getElementById('noDataMessage').style.display = 'block';
+    }
+
+    /* Barangay bar chart */
+    const barangayCanvas = document.getElementById('barangayBarChart');
+    if (barangayCanvas && hasData(barangayData)) {
+        document.getElementById('barangayBarChart').style.display = 'block';
+        document.getElementById('noBarDataMessage').style.display = 'none';
+
+        chartInstances.barangay = new Chart(barangayCanvas.getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: barangayLabels,
+                datasets: [{
+                    label: 'Total Referrals',
+                    data: barangayData,
+                    backgroundColor: '#1c6fba',
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: { duration: 850, easing: 'easeOutQuart' },
+                layout: { padding: 8 },
+                plugins: {
+                    legend: { display: false },
+                    title: { display: false },
+                    tooltip: { bodyFont: { family: 'Plus Jakarta Sans' }, titleFont: { family: 'Plus Jakarta Sans', weight: '700' } }
+                },
+                scales: {
+                    x: {
+                        title: { display: true, text: 'Barangay', font: { family: 'Plus Jakarta Sans', size: 12 } },
+                        grid: { display: false },
+                        ticks: { font: { family: 'Plus Jakarta Sans', size: 11 }, maxRotation: 35, minRotation: 0, autoSkip: false }
+                    },
+                    y: {
+                        title: { display: true, text: 'Total Referrals', font: { family: 'Plus Jakarta Sans', size: 12 } },
+                        beginAtZero: true,
+                        grid: { color: 'rgba(0,0,0,.04)' },
+                        ticks: { font: { family: 'Plus Jakarta Sans', size: 11 } }
+                    }
+                }
+            }
+        });
+    } else if (barangayCanvas) {
+        document.getElementById('barangayBarChart').style.display = 'none';
+        document.getElementById('noBarDataMessage').style.display = 'block';
+    }
+
+    const chartMapping = {
+        toggleStatusChart: 'statusChartWrap',
+        toggleBarangayChart: 'barangayChartWrap'
+    };
+    const chartGrid = document.getElementById('summaryChartsGrid');
+
+    function animateIn(el) {
+        if (!el) return;
+        el.classList.remove('chart-entering');
+        void el.offsetWidth;
+        el.classList.add('chart-entering');
+        window.setTimeout(() => el.classList.remove('chart-entering'), 420);
+    }
+
+    function syncChartLayout(changedEl = null) {
+        const visibleCount = Object.keys(chartMapping).reduce((count, toggleId) => {
+            const checkbox = document.getElementById(toggleId);
+            const chartElement = document.getElementById(chartMapping[toggleId]);
+            const isVisible = !!(checkbox && checkbox.checked);
+            if (chartElement) chartElement.classList.toggle('is-hidden', !isVisible);
+            return count + (isVisible ? 1 : 0);
+        }, 0);
+
+        if (chartGrid) chartGrid.classList.toggle('single-chart', visibleCount <= 1);
+        if (changedEl && !changedEl.classList.contains('is-hidden')) animateIn(changedEl);
+
+        window.setTimeout(() => {
+            Object.values(chartInstances).forEach(chart => {
+                if (chart && typeof chart.resize === 'function') chart.resize();
+            });
+        }, 260);
+    }
+
+    Object.keys(chartMapping).forEach(toggleId => {
+        const checkbox = document.getElementById(toggleId);
+        const chartElement = document.getElementById(chartMapping[toggleId]);
+        if (checkbox && chartElement) {
+            checkbox.addEventListener('change', () => syncChartLayout(chartElement));
+        }
+    });
+
+    syncChartLayout();
+});
+</script>
 
 <script>
 function exportTableToExcel(tableID, filename = 'Referral Summary Report') {
     try {
-        // Create a temporary div with the same content as print
         const tempDiv = document.createElement('div');
         tempDiv.style.position = 'absolute';
         tempDiv.style.left = '-9999px';
         tempDiv.style.top = '-9999px';
-        
-        // Clone the print header
-        const printHeader = document.querySelector('.print-header');
+
+        const printHeader = document.querySelector('.print-only-letterhead');
         if (printHeader) {
             const headerClone = printHeader.cloneNode(true);
-            // Remove any scripts or interactive elements
-            const scripts = headerClone.querySelectorAll('script');
-            scripts.forEach(script => script.remove());
+            headerClone.style.display = 'block';
+            headerClone.querySelectorAll('script').forEach(script => script.remove());
             tempDiv.appendChild(headerClone);
         }
-        
-        // Clone the summary section
+
         const summary = document.querySelector('.summary-container');
         if (summary) {
             const summaryClone = summary.cloneNode(true);
-            const summaryScripts = summaryClone.querySelectorAll('script');
-            summaryScripts.forEach(script => script.remove());
+            summaryClone.querySelectorAll('script').forEach(script => script.remove());
             tempDiv.appendChild(summaryClone);
         }
-        
-        // Clone and modify the table to include signature column
+
         const originalTable = document.getElementById(tableID);
         if (!originalTable) {
             alert('Table not found!');
             return;
         }
-        
+
         const tableClone = originalTable.cloneNode(true);
-        
-        // Add signature header if not present
-        const headerRow = tableClone.querySelector('thead tr');
-       
-        
         tempDiv.appendChild(tableClone);
         document.body.appendChild(tempDiv);
-        
-        // Create HTML content for Excel
+
         const htmlContent = `
             <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
             <head>
@@ -926,138 +952,131 @@ function exportTableToExcel(tableID, filename = 'Referral Summary Report') {
                 </xml>
                 <![endif]-->
             </head>
-            <body>
-                ${tempDiv.innerHTML}
-            </body>
+            <body>${tempDiv.innerHTML}</body>
             </html>
         `;
-        
-        // Create blob and download
-        const blob = new Blob([htmlContent], {
-            type: 'application/vnd.ms-excel'
-        });
-        
+
+        const blob = new Blob([htmlContent], { type: 'application/vnd.ms-excel' });
         const downloadLink = document.createElement('a');
         downloadLink.href = URL.createObjectURL(blob);
         downloadLink.download = filename + '.xls';
         document.body.appendChild(downloadLink);
         downloadLink.click();
-        
-        // Clean up
+
         setTimeout(() => {
             document.body.removeChild(downloadLink);
             document.body.removeChild(tempDiv);
             URL.revokeObjectURL(downloadLink.href);
         }, 100);
-        
     } catch (error) {
         console.error('Excel export error:', error);
         alert('Error exporting to Excel: ' + error.message);
     }
 }
 
-
 (function() {
-  const table = document.getElementById('reportTable');
-  if (!table) return;
+    const table = document.getElementById('reportTable');
+    if (!table) return;
 
-  const thead = table.tHead || table.querySelector('thead');
-  const tbody = table.tBodies[0];
+    const thead = table.tHead || table.querySelector('thead');
+    const tbody = table.tBodies[0];
 
-  // Add arrow placeholders
-  [...thead.querySelectorAll('th')].forEach(th => {
-    const ind = document.createElement('span');
-    ind.className = 'sort-indicator';
-    th.appendChild(ind);
-  });
-
-  function parseDate(v) {
-    const t = (v || '').trim();
-    if (/^\d{4}-\d{2}-\d{2}(?:\s+\d{2}:\d{2}(?::\d{2})?)?$/.test(t)) {
-      return new Date(t.replace(' ', 'T'));
-    }
-    const d = new Date(t);
-    return isNaN(d.getTime()) ? null : d;
-  }
-
-  function detectType(colIdx) {
-    const th = thead.querySelectorAll('th')[colIdx];
-    if (th?.dataset?.type) return th.dataset.type;
-
-    for (const tr of tbody.rows) {
-      const txt = (tr.cells[colIdx]?.textContent || '').trim();
-      if (!txt) continue;
-
-      const d = parseDate(txt);
-      if (d) return 'date';
-
-      const n = txt.replace(/,/g, '');
-      if (!isNaN(n) && n !== '') return 'number';
-
-      return 'string';
-    }
-    return 'string';
-  }
-
-  function val(tr, idx, type) {
-    const raw = (tr.cells[idx]?.textContent || '').trim();
-    if (type === 'number') {
-      const n = parseFloat(raw.replace(/,/g, ''));
-      return isNaN(n) ? Number.NEGATIVE_INFINITY : n;
-    }
-    if (type === 'date') {
-      const d = parseDate(raw);
-      return d ? d.getTime() : Number.NEGATIVE_INFINITY;
-    }
-    return raw.toLowerCase();
-  }
-
-  function clearHeaderStates(exceptIdx) {
-    [...thead.querySelectorAll('th')].forEach((th, i) => {
-      if (i !== exceptIdx) th.classList.remove('is-sorted-asc', 'is-sorted-desc');
-    });
-  }
-
-  function sortBy(idx, dir) {
-    const type = detectType(idx);
-    const rows = [...tbody.rows];
-
-    rows.sort((a, b) => {
-      const va = val(a, idx, type);
-      const vb = val(b, idx, type);
-      if (va < vb) return dir === 'asc' ? -1 : 1;
-      if (va > vb) return dir === 'asc' ?  1 : -1;
-      return 0;
+    [...thead.querySelectorAll('th')].forEach(th => {
+        const ind = document.createElement('span');
+        ind.className = 'sort-indicator';
+        th.appendChild(ind);
     });
 
-    const frag = document.createDocumentFragment();
-    rows.forEach(r => frag.appendChild(r));
-    tbody.appendChild(frag);
-  }
+    function parseDate(v) {
+        const t = (v || '').trim();
+        if (/^\d{4}-\d{2}-\d{2}(?:\s+\d{2}:\d{2}(?::\d{2})?)?$/.test(t)) {
+            return new Date(t.replace(' ', 'T'));
+        }
+        const d = new Date(t);
+        return isNaN(d.getTime()) ? null : d;
+    }
 
-  // Click to toggle asc/desc
-  [...thead.querySelectorAll('th')].forEach((th, idx) => {
-    th.addEventListener('click', () => {
-      const isAsc = th.classList.contains('is-sorted-asc');
-      const nextDir = isAsc ? 'desc' : 'asc';
-      clearHeaderStates(idx);
-      th.classList.toggle('is-sorted-asc',  nextDir === 'asc');
-      th.classList.toggle('is-sorted-desc', nextDir === 'desc');
-      sortBy(idx, nextDir);
+    function detectType(colIdx) {
+        const th = thead.querySelectorAll('th')[colIdx];
+        if (th?.dataset?.type) return th.dataset.type;
+
+        for (const tr of tbody.rows) {
+            const txt = (tr.cells[colIdx]?.textContent || '').trim();
+            if (!txt) continue;
+
+            const d = parseDate(txt);
+            if (d) return 'date';
+
+            const n = txt.replace(/,/g, '');
+            if (!isNaN(n) && n !== '') return 'number';
+
+            return 'string';
+        }
+        return 'string';
+    }
+
+    function val(tr, idx, type) {
+        const raw = (tr.cells[idx]?.textContent || '').trim();
+        if (type === 'number') {
+            const n = parseFloat(raw.replace(/,/g, ''));
+            return isNaN(n) ? Number.NEGATIVE_INFINITY : n;
+        }
+        if (type === 'date') {
+            const d = parseDate(raw);
+            return d ? d.getTime() : Number.NEGATIVE_INFINITY;
+        }
+        return raw.toLowerCase();
+    }
+
+    function clearHeaderStates(exceptIdx) {
+        [...thead.querySelectorAll('th')].forEach((th, i) => {
+            if (i !== exceptIdx) th.classList.remove('is-sorted-asc', 'is-sorted-desc');
+        });
+    }
+
+    function sortBy(idx, dir) {
+        const type = detectType(idx);
+        const rows = [...tbody.rows];
+
+        rows.sort((a, b) => {
+            const va = val(a, idx, type);
+            const vb = val(b, idx, type);
+            if (va < vb) return dir === 'asc' ? -1 : 1;
+            if (va > vb) return dir === 'asc' ? 1 : -1;
+            return 0;
+        });
+
+        const frag = document.createDocumentFragment();
+        rows.forEach(r => frag.appendChild(r));
+        tbody.appendChild(frag);
+    }
+
+    [...thead.querySelectorAll('th')].forEach((th, idx) => {
+        th.addEventListener('click', () => {
+            const isAsc = th.classList.contains('is-sorted-asc');
+            const nextDir = isAsc ? 'desc' : 'asc';
+            clearHeaderStates(idx);
+            th.classList.toggle('is-sorted-asc', nextDir === 'asc');
+            th.classList.toggle('is-sorted-desc', nextDir === 'desc');
+            sortBy(idx, nextDir);
+        });
     });
-  });
 
-  // Default: sort by "Total Referrals Received" (col 1) DESC
-  const defaultCol = 1, defaultDir = 'desc';
-  const defaultTh = thead.querySelectorAll('th')[defaultCol];
-  if (defaultTh) {
-    defaultTh.classList.add(defaultDir === 'asc' ? 'is-sorted-asc' : 'is-sorted-desc');
-    sortBy(defaultCol, defaultDir);
-  }
+    const defaultCol = 1, defaultDir = 'desc';
+    const defaultTh = thead.querySelectorAll('th')[defaultCol];
+    if (defaultTh) {
+        defaultTh.classList.add(defaultDir === 'asc' ? 'is-sorted-asc' : 'is-sorted-desc');
+        sortBy(defaultCol, defaultDir);
+    }
 })();
 
-//PRINT
 function printDiv() {
+<<<<<<< HEAD
+    const originalArea = document.querySelector('.print-area');
+    if (!originalArea) {
+        alert('Error: Missing .print-area on page.');
+        return;
+=======
   const originalArea = document.querySelector(".print-area");
   if (!originalArea) {
     alert("Error: Missing .print-area on page.");
@@ -1151,12 +1170,65 @@ window.onclick = function(event) {
     const modal = document.getElementById('logoutModal');
     if (event.target == modal) {
         closeModal();
+>>>>>>> 33fc5da55d190a4b262e16a6c8935100d5aecf81
     }
+
+    const clone = originalArea.cloneNode(true);
+    clone.querySelectorAll('canvas').forEach(c => c.remove());
+    clone.querySelectorAll('.summary-chart-card, .chart-card, .chart-controls-panel').forEach(el => el.remove());
+
+    const w = window.open('', '', 'height=900,width=1100');
+    if (!w) {
+        alert('Please allow pop-ups to print this report.');
+        return;
+    }
+
+    w.document.write(`
+        <html>
+        <head>
+            <title>Print Report</title>
+            <meta charset="utf-8" />
+            <style>
+                body { font-family: Arial, sans-serif; font-size: 12px; color: black; }
+                table { width: 100%; border-collapse: collapse; }
+                th, td { border: 1px solid #000; padding: 4px; text-align: left; }
+                thead { background-color: #f0f0f0; }
+                img { display: block; margin: 0 auto; max-width: 100%; height: auto; }
+                h3 { margin: 10px 0 5px 0; }
+                .title { display: block; text-align: center; }
+                .print-only-letterhead { display: block; }
+                .print-letterhead {
+                    display: grid;
+                    grid-template-columns: 64px auto 64px;
+                    align-items: center;
+                    justify-content: center;
+                    column-gap: 14px;
+                    margin: 0 auto 10px;
+                    text-align: center;
+                    width: fit-content;
+                }
+                .print-logo { width: 64px; height: 64px; object-fit: contain; }
+                .print-heading { line-height: 1.1; color: #000; }
+                .print-heading .ph-line-1 { font-size: 12pt; font-weight: 500; }
+                .print-heading .ph-line-2 { font-size: 14pt; font-weight: 800; }
+                .print-heading .ph-line-3 { font-size: 11pt; font-weight: 500; }
+                .print-sub { font-size: 12pt; margin-top: 4px; }
+                .print-rule { height: 1px; border: 0; background: #cfd8e3; margin: 8px 0 12px; }
+                #generated_by { margin: 60mm 0 0 10mm; }
+                #generated_by .sig-line { display: block; width: 45mm; border: 0; border-top: 1px solid #000; margin: 10mm 0 3mm; }
+            </style>
+        </head>
+        <body>${clone.innerHTML}</body>
+        </html>
+    `);
+    w.document.close();
+    w.focus();
+    setTimeout(() => { w.print(); w.close(); }, 500);
 }
 
-    function confirmLogout() {
+function confirmLogout() {
     document.getElementById('logoutModal').style.display = 'block';
-    return false; // Prevent the default link behavior
+    return false;
 }
 
 function closeModal() {
@@ -1164,115 +1236,128 @@ function closeModal() {
 }
 
 function proceedLogout() {
-    window.location.href='../../ADMIN/php/logout'; 
+    window.location.href = '../../ADMIN/php/logout';
 }
 
-// Close modal when clicking outside
-window.onclick = function(event) {
-    const modal = document.getElementById('logoutModal');
-    if (event.target == modal) {
-        closeModal();
-    }
-}
+document.addEventListener('DOMContentLoaded', () => {
+    fetch('../php/getUserName.php')
+        .then(r => r.json())
+        .then(data => {
+            const fullName = (data && data.full_name) ? data.full_name : '';
 
+            const sidebarNameEl = document.getElementById('sidebarUserName');
+            if (sidebarNameEl) sidebarNameEl.textContent = fullName || 'Physician';
 
-	// Check if user is logged in
+            const gb = document.getElementById('generated_by');
+            if (gb) {
+                gb.innerHTML = `
+                    <div class="sig-label">Report Generated by:</div>
+                    <hr class="sig-line">
+                    <div class="sig-name"></div>
+                    <div class="sig-title">Physician</div>
+                `;
+                gb.querySelector('.sig-name').textContent = fullName || '________________';
+            }
+        })
+        .catch(() => {
+            const sidebarNameEl = document.getElementById('sidebarUserName');
+            if (sidebarNameEl) sidebarNameEl.textContent = 'Physician';
+
+            const gb = document.getElementById('generated_by');
+            if (gb) {
+                gb.innerHTML = `
+                    <div class="sig-label">Report Generated by:</div>
+                    <hr class="sig-line">
+                    <div class="sig-name">________________</div>
+                    <div class="sig-title">Physician</div>
+                `;
+            }
+        });
+});
+
 fetch('../php/getUserId.php')
     .then(response => response.json())
     .then(data => {
-        if (data.error) {
-            // User is not logged in, redirect to role selection page
-            window.location.href='../auth/role';
-        }
+        if (data.error) window.location.href = '../auth/role';
     })
     .catch(error => {
         console.error('Error checking session:', error);
-        window.location.href='../auth/role';
+        window.location.href = '../auth/role';
     });
-
 </script>
-
-
-
 
 <script>
 (function () {
-  const sidebar = document.getElementById('sidebar');
-  const toggle = document.getElementById('sidebarToggle');
-  const overlay = document.getElementById('sidebarOverlay');
-  const MOBILE_BP = 768;
+    const sidebar = document.getElementById('sidebar');
+    const toggle = document.getElementById('sidebarToggle');
+    const overlay = document.getElementById('sidebarOverlay');
+    const MOBILE_BP = 768;
 
-  if (!sidebar || !toggle || !overlay) return;
+    if (!sidebar || !toggle || !overlay) return;
 
-  function isMobile() {
-    return window.innerWidth <= MOBILE_BP;
-  }
+    function isMobile() { return window.innerWidth <= MOBILE_BP; }
 
-  function closeMobileSidebar() {
-    sidebar.classList.remove('mobile-open');
-    overlay.classList.remove('active');
-    document.body.style.overflow = '';
-  }
-
-  toggle.addEventListener('click', function () {
-    if (isMobile()) {
-      const open = sidebar.classList.toggle('mobile-open');
-      overlay.classList.toggle('active', open);
-      document.body.style.overflow = open ? 'hidden' : '';
-    } else {
-      sidebar.classList.toggle('collapsed');
+    function closeMobileSidebar() {
+        sidebar.classList.remove('mobile-open');
+        overlay.classList.remove('active');
+        document.body.style.overflow = '';
     }
-  });
 
-  overlay.addEventListener('click', closeMobileSidebar);
+    toggle.addEventListener('click', function () {
+        if (isMobile()) {
+            const open = sidebar.classList.toggle('mobile-open');
+            overlay.classList.toggle('active', open);
+            document.body.style.overflow = open ? 'hidden' : '';
+        } else {
+            sidebar.classList.toggle('collapsed');
+        }
+    });
 
-  window.addEventListener('resize', function () {
-    if (!isMobile()) {
-      closeMobileSidebar();
-    }
-  });
+    overlay.addEventListener('click', closeMobileSidebar);
+    window.addEventListener('resize', function () {
+        if (!isMobile()) closeMobileSidebar();
+    });
 })();
 
-document.addEventListener("DOMContentLoaded", () => {
-  const updateReferrals = document.getElementById("updateReferrals");
-  const searchInput = document.getElementById("patientSearch");
-  const searchButton = document.getElementById("searchButton");
+document.addEventListener('DOMContentLoaded', () => {
+    const updateReferrals = document.getElementById('updateReferrals');
+    const searchInput = document.getElementById('patientSearch');
+    const searchButton = document.getElementById('searchButton');
 
-  if (updateReferrals) {
-    updateReferrals.addEventListener("click", function (event) {
-      event.preventDefault();
-
-      fetch("../php/update_referrals.php")
-        .then(response => response.json())
-        .then(data => {
-          console.log(data.message);
-          window.location.href = "../pending";
-        })
-        .catch(error => {
-          console.error("Error updating referrals:", error);
-          window.location.href = "../pending";
+    if (updateReferrals) {
+        updateReferrals.addEventListener('click', function (event) {
+            event.preventDefault();
+            fetch('../php/update_referrals.php')
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data.message);
+                    window.location.href = '../pending';
+                })
+                .catch(error => {
+                    console.error('Error updating referrals:', error);
+                    window.location.href = '../pending';
+                });
         });
-    });
-  }
+    }
 
-  if (searchInput && searchButton) {
-    searchInput.addEventListener("keypress", function (event) {
-      if (event.key === "Enter") {
-        event.preventDefault();
-        searchButton.click();
-      }
-    });
+    if (searchInput && searchButton) {
+        searchInput.addEventListener('keypress', function (event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                searchButton.click();
+            }
+        });
 
-    searchButton.addEventListener("click", function () {
-      const searchQuery = searchInput.value.trim();
-      if (searchQuery) {
-        sessionStorage.setItem("searchQuery", searchQuery);
-        window.location.href = "../searchPatient";
-      } else {
-        alert("Please enter a patient name to search.");
-      }
-    });
-  }
+        searchButton.addEventListener('click', function () {
+            const searchQuery = searchInput.value.trim();
+            if (searchQuery) {
+                sessionStorage.setItem('searchQuery', searchQuery);
+                window.location.href = '../searchPatient';
+            } else {
+                alert('Please enter a patient name to search.');
+            }
+        });
+    }
 });
 </script>
 </body>

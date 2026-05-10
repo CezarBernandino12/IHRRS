@@ -8,7 +8,6 @@ if (!isset($_SESSION['user_id'])) {
     exit("Unauthorized");
 }
 
-
 if (isset($_POST['query'])) {
     $query = trim($_POST['query']);
 
@@ -24,46 +23,67 @@ if (isset($_POST['query'])) {
         OR SOUNDEX(first_name) = SOUNDEX(:sound)
         OR SOUNDEX(last_name)  = SOUNDEX(:sound)";
         
-$stmt = $pdo->prepare($sql);
+    $stmt = $pdo->prepare($sql);
 
-$searchTerm = "%$query%";
+    $searchTerm = "%$query%";
 
-$stmt->bindParam(':query', $searchTerm, PDO::PARAM_STR);
-$stmt->bindParam(':sound', $query, PDO::PARAM_STR);
+    $stmt->bindParam(':query', $searchTerm, PDO::PARAM_STR);
+    $stmt->bindParam(':sound', $query, PDO::PARAM_STR);
 
-$stmt->execute();
+    $stmt->execute();
 
-$results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     if ($results) { 
         foreach ($results as $row) {
-    
+            $patientId = (int) $row['patient_id'];
+
+            $fullName = trim(
+                $row['last_name'] . ', ' .
+                $row['first_name'] . ' ' .
+                $row['middle_name']
+            );
+
+            $sex = trim($row['sex']);
+            $sexLower = strtolower($sex);
+
+            $sexClass = '';
+            $sexIcon = 'bx-user';
+
+            if ($sexLower === 'male' || $sexLower === 'm' || strpos($sexLower, 'male') === 0) {
+                $sexClass = 'male';
+                $sexIcon = 'bx-male-sign';
+            } elseif ($sexLower === 'female' || $sexLower === 'f' || strpos($sexLower, 'female') === 0) {
+                $sexClass = 'female';
+                $sexIcon = 'bx-female-sign';
+            }
+
             $dob = date("F j, Y", strtotime($row['date_of_birth']));
-    
-            echo '<div class="result-info-section">
-                    <div class="search-result" onclick="selectPatient(' . $row['patient_id'] . ')">
-                        <div style="font-size: 17px;"> 
-                            <span class="icon">
-                                <img src="../img/person_icon.png" alt="person icon" style="width:35px; height:30px; vertical-align:middle; margin-bottom: 8px; margin-right: 10px;">
-                            </span>
-                            <strong>' . htmlspecialchars($row['last_name'] . ', ' . $row['first_name'] . ' ' . $row['middle_name']) . '</strong>
-                        </div>
-                        <div>' . htmlspecialchars($row['sex']) . '</div>
-                        <div>' . $dob . '</div>
+
+            echo '
+                <div class="result-info-section">
+                    <div class="search-result" onclick="selectPatient(' . $patientId . ')">
+                        <span class="patient-name-cell">
+                            <i class="bx bx-user patient-row-icon" aria-hidden="true"></i>
+                            <span class="patient-name-text">' . htmlspecialchars($fullName, ENT_QUOTES, 'UTF-8') . '</span>
+                        </span>
+
+                        <span class="patient-sex-cell ' . $sexClass . '">
+                            <i class="bx ' . $sexIcon . ' sex-icon ' . $sexClass . '" aria-hidden="true"></i>
+                            <span class="patient-sex-text">' . htmlspecialchars($sex, ENT_QUOTES, 'UTF-8') . '</span>
+                        </span>
+
+                        <span class="patient-birthday-cell">' . htmlspecialchars($dob, ENT_QUOTES, 'UTF-8') . '</span>
                     </div>
-                  </div><br>';
+                </div>
+            ';
         }
-    
-    
-        
     } else {
         echo '<div class="no-results-container">
-        <img src="../img/no.jpg" alt="No Results" class="no-results-img">
-        <h2 class="no-results-title">SORRY!</h2>
-        <p class="no-results-text">We Haven’t Found Any Document</p>
-      </div>';
-
+            <img src="../img/no.jpg" alt="No Results" class="no-results-img">
+            <h2 class="no-results-title">SORRY!</h2>
+            <p class="no-results-text">We Haven’t Found Any Document</p>
+        </div>';
     }
-    
 }
 ?>

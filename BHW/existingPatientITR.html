@@ -12,6 +12,36 @@
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <style>
+        /* Keep BHW-style sidebar/nav isolated from broad form rules */
+        #sidebar .sidebar-section-label {
+            background: transparent !important;
+            color: var(--text-muted, #a0abc0) !important;
+            padding: 0 22px 8px !important;
+            margin: 0 !important;
+            height: auto !important;
+            width: auto !important;
+            display: block !important;
+            font-family: var(--font-main, 'Plus Jakarta Sans', sans-serif) !important;
+        }
+
+        #sidebar p {
+            background: transparent !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            height: auto !important;
+            width: auto !important;
+        }
+
+        #sidebar .nav-label,
+        #sidebar .brand-name,
+        #sidebar .user-name,
+        #sidebar .user-role {
+            background: transparent !important;
+        }
+    </style>
+
 </head>
 
 <body>
@@ -112,123 +142,94 @@ fetch('php/getUserId.php')
             <div class="head-title">
 				<div class="left">
 					<h1>Add Individual Treatment Record</h1>
-					<ul class="breadcrumb">
-						<li><a href="#">Add ITR</a></li>
-						<li><i class="bx bx-chevron-right"></i></li>
-						<a class="active" href="#" onclick="history.back(); return false;">Go back</a>
-
-					</ul>
 				</div>
 			</div>
-        </main>
-    </section>
-
-
-    <!-- CONSENT Modal -->
-<div class="custom-modal-backdrop" id="consentModal">
-    <div class="custom-consent-box">
-        <h3><b>PATIENT CONSENT FOR COLLECTION AND USE OF PERSONAL HEALTH INFORMATION</b></h3> <br>
-         <h3><b>Basahin sa pasyente:</b></h3>
-            <h4>
-                 "Pumapayag ako, alinsunod sa Data Privacy Act of 2012, na itala ng health worker ang aking personal at medikal na impormasyon sa computer system upang ako ay mabigyan ng tamang gamutan at ma-refer kung kinakailangan. Naiintindihan ko na ang aking impormasyon ay gagamitin lamang para sa aking kalusugan at mananatiling pribado."
-            </h4>
-             <br>
-             <div class="custom-consent-checkbox">
-                <input type="checkbox" id="consentCheckbox">
-                <label for="consentCheckbox">Nagbigay ng pahintulot ang pasyente (pasalita)</label>
-            </div>
-             <br>
-                    <button id="declineBtn">Declined</button>
-                    <button id="continueBtn" disabled>Agree and Continue</button>
-    </div>
+</div>
 </div>
   
-    <div class="container-header">
+    <div class="itr-page-shell itr-existing-shell">
 
-        <h2>INDIVIDUAL TREATMENT RECORD (ITR)</h2>
-    </div>
-
-    <div class="container">
+    <div class="container itr-main-card itr-existing-card">
        
-        <p style="display: flex; justify-content: space-between; align-items: center;">
-            <b style="float: left;">PERSONAL INFORMATION:</b>
+        <p class="form-section-title personal-section-title" style="display: flex; justify-content: space-between; align-items: center;">
+            <span class="section-title-left"><span class="section-icon"><i class="bx bx-user"></i></span><b style="float: left;">PERSONAL INFORMATION:</b></span>
               <span class="see-all-btn" id="toggleInfo">SEE LESS</span>
           </p>
           
             
-          <div class="form-container" id="infoSection">
+          <div class="form-container personal-info-grid" id="infoSection">
         <!-- Row 1 -->
-        <div class="form-group">
+        <div class="form-group last-name-field">
             <label for="last-name">Last Name:</label>
             <input type="text" class="patient-last-name form-control" name="last_name" value="N/A" disabled>
         </div>
-        <div class="form-group">
+        <div class="form-group first-name-field">
             <label for="first-name">First Name:</label>
             <input type="text" class="patient-first-name form-control" name="first_name" value="N/A" disabled>
         </div>
-        <div class="form-group">
+        <div class="form-group middle-name-field">
             <label for="middle-name">Middle Name:</label>
             <input type="text" class="patient-middle-name form-control" name="middle_name" value="N/A" disabled>
         </div>
 
                 <!-- Row 2 -->
-                <div class="form-group">
+                <div class="form-group birth-place-field">
                     <label for="birth-place">Birth Place:</label>
                     <input type="text" class="patient-birth-place form-control" name="birthplace" value="N/A" disabled>
                 </div>
-                <div class="form-group">
+                <div class="form-group dob-field">
                     <label for="dob">Date of Birth:</label>
                     <input type="date" class="date-of-birth form-control" name="date_of_birth" disabled>
                 </div>
-                <div class="form-group">
+                <div class="form-group age-field">
                     <label for="age">Age:</label>
                     <input type="number" class="age form-control" name="age" value="N/A" disabled>
                 </div>
             
         <!-- Row 3 -->
-        <div class="form-group">
+        <div class="form-group address-field">
             <label for="address">Permanent Address:</label>
             <input type="text" class="address form-control" name="address" value="N/A" disabled>
         </div>
-        <div class="form-group">
+        <div class="form-group civil-status-field">
             <label for="civil-status">Civil Status:</label>
             <input type="text" class="civil-status form-control" name="civil_status" value="N/A" disabled>
         </div>
-        <div class="form-group">
+        <div class="form-group mobile-field">
             <label for="mobile-number">Mobile Number:</label>
             <input type="text" class="contact-number form-control" name="contact_number" value="N/A" disabled>
         </div>
             
 
             
-         <div class="form-group">
+         <div class="form-group religion-field">
             <label>Religion:</label>
             <input type="text" class="religion form-control" name="religion" value="N/A" disabled>
         </div>
                 
-        <div class="form-group">
+        <div class="form-group occupation-field">
             <label>Occupation:</label>
             <input type="text" class="occupation form-control" name="occupation" value="N/A" disabled>
         </div>
             
-                    <div class="form-group">
+                    <div class="form-group education-field">
                         <label>Educational Attainment:</label>
                         <input type="text" class="educational-attainment form-control" name="educational_attainment" value="N/A" disabled>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group philhealth-field">
                         <label>Philhealth Member Number:</label>
                         <input type="text" class="philhealth-member-no form-control" name="philhealth_member_no" value="N/A" disabled>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group family-serial-field">
                         <label>Family Serial Number:</label>
                         <input type="text" class="family-serial-no form-control" name="family_serial_no" value="N/A" disabled>
                     </div>
             
-                    <div class="form-group">
+                    <div class="form-group gender-field">
                         <label>Gender:</label>
                         <input type="text" class="sex form-control" name="sex" value="N/A" disabled>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group fourps-field">
                         <label>4Ps Status:</label>
                         <input type="text" class="fourps-status form-control" name="fourps_status" value="N/A" disabled>
                     </div>
@@ -245,14 +246,14 @@ fetch('php/getUserId.php')
 
             <br> <br> <br>
 
-            <form class="personal-info-form" id="individualRecordForm" action="php/saveInitialAssessment1" method="POST">
+            <form class="personal-info-form itr-record-form" id="individualRecordForm" action="php/saveInitialAssessment1" method="POST">
                 <input type="hidden" name="form_type" value="individual_record">
     
-            <p><b>PATIENT VISIT SUMMARY:</b></p>
+            <p class="form-section-title visit-summary-title"><span class="section-title-left"><span class="section-icon"><i class="bx bx-clipboard"></i></span><b>PATIENT VISIT SUMMARY:</b></span></p>
             <div class="additional-group box-group additional-fields">
                 <div class="additional-options">
                     
-                    <div class="form-group"  style ="width: 200px;">
+                    <div class="form-group patient-alert-field"  style ="width: 200px;">
                         <label for="alert">Patient Alert:</label>
                         <select name="patient_alert" id="patient_alert">
                             <option value="">Select (if any)</option>
@@ -296,14 +297,14 @@ document.addEventListener("DOMContentLoaded", function () {
                               .catch(error => console.error("Error fetching user ID:", error));
                           </script>
 
-                    <div class="additonal-group">
+                    <div class="additonal-group chief-complaints-field">
                         <label for="chief_complaints" class="required">Chief Complaints:</label>
                         <textarea type="text" name="chief_complaints" class="tall-input" placeholder="Enter complaints" value="test" required></textarea>
                     </div>
 
                     <label for="vitals"><b>Vital Signs:</b></label>
                     <div class="vitals-section box-group">
-        <div class="additional-group vitals-item" id="bmiContainer">
+        <div class="additional-group vitals-item bmi-field" id="bmiContainer">
         <label for="bmi">BMI:</label>
         <input type="number" step="any" name="bmi" id="bmi"
             placeholder="BMI will appear here"
@@ -315,34 +316,34 @@ document.addEventListener("DOMContentLoaded", function () {
                           
                         </div>
                         
-                        <div class="additional-group vitals-item">
+                        <div class="additional-group vitals-item height-field">
                             <label for="height" class="required">Height (cm):</label>
                             <input type="number" step="any" name="height" id="height" placeholder="Enter height (e.g, 160)" oninput="calculateBMI()" required>
                         </div>
                         
-                        <div class="additional-group vitals-item">
+                        <div class="additional-group vitals-item weight-field">
                             <label for="weight" class="required">Weight (kg):</label>
                             <input type="number" step="any" name="weight" id="weight" placeholder="Enter weight (e.g, 50.2)" oninput="calculateBMI()" required>
                         </div>
                         
-                        <div class="additional-group vitals-item">
+                        <div class="additional-group vitals-item temperature-field">
                             <label for="temp" class="required">Temperature (°C):</label>
                             <input type="number" step="any" id="temp" name="temp" placeholder="Enter temperature (e.g, 38.2)" required>
                         </div>
                         
-                        <div class="additional-group vitals-item">
+                        <div class="additional-group vitals-item blood-pressure-field">
                             <label for="bp" class="required">Blood Pressure (mm Hg):</label>
                             <input type="text" step="any" id="bp" name="bp" placeholder="Enter BP (e.g., 120/80)" required>
                         </div>
                        
                         
                         
-                        <div class="additional-group vitals-item">
+                        <div class="additional-group vitals-item pulse-rate-field">
                             <label for="pr">Chest Rate (per min.):</label>
                             <input type="number" step="any" name="pr">
                         </div>
                       
-                        <div class="additional-group vitals-item">
+                        <div class="additional-group vitals-item respiratory-rate-field">
                             <label for="rr">Respiratory Rate (per min.):</label>
                             <input type="number" step="any" name="rr">
                         </div>
@@ -358,8 +359,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 </div>
             </div>
 
-            <div class="form-group">
-                <div class="form-group">
+            <div class="form-group treatment-medicine-section">
+                <div class="form-group treatment-field">
                     <label for="treatment">Treatment:</label>
                     <select id="treatment" name="treatment">
                         <option value="">Select treatment (if no referral)</option>
@@ -371,11 +372,11 @@ document.addEventListener("DOMContentLoaded", function () {
                     </select>
                 </div> <br>
 
-                <div id="medicine-container">
-                    <div class="medicine-entry" style="display: flex; gap: 10px; align-items: center;">
-                        <div class="form-group" style="flex: 1;"> 
+                <div id="medicine-container" class="medicine-container">
+                    <div class="medicine-entry medication-card" style="display: flex; gap: 10px; align-items: center;">
+                        <div class="form-group medicine-name-field" style="flex: 1;"> 
                             <label for="medicine_given[]">Medication Given:</label>
-                            <select name="medicine_given[]" class="medicine-select" style="width: 200px;">
+                            <select name="medicine_given[]" class="medicine-select medicine-given form-control" style="width: 200px;">
                                 <option value="">Select</option>
                                 <option value="other">Other (Enter manually)</option>
                                 <option value="Paracetamol">Paracetamol</option>
@@ -384,15 +385,15 @@ document.addEventListener("DOMContentLoaded", function () {
                             </select>
                         </div>
                         
-                        <div class="form-group">
+                        <div class="form-group medicine-quantity-field">
                             <label for="quantity_given[]">Quantity:</label>
                             <div class="quantity-container" style="display: flex; gap: 5px;">
-                                <button type="button" class="btn-minus">−</button>
-                                <input type="number" name="quantity_given[]" value="0" min="0" style="height: 17px;">
-                                <button type="button" class="btn-plus">+</button>
+                                <button type="button" class="btn-minus quantity-btn quantity-btn-minus">−</button>
+                                <input type="number" name="quantity_given[]" value="0" min="0" class="quantity-given form-control" style="height: 17px;">
+                                <button type="button" class="btn-plus quantity-btn quantity-btn-plus">+</button>
                             </div>
                         </div>
-                        <button type="button" class="btn-remove" style="margin-top: 25px; background-color: #e6e6e6; color: rgb(0, 0, 0); border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; height: 35px;">
+                        <button type="button" class="btn-remove medicine-remove-btn" style="margin-top: 25px; background-color: #e6e6e6; color: rgb(0, 0, 0); border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; height: 35px;">
                             Remove
                         </button>
                     </div>
@@ -441,7 +442,7 @@ document.addEventListener("click", function(event) {
                 
             </div>
             
-            <div class="form-group">
+            <div class="form-group remarks-field">
                 <label for="remarks">Remarks:</label>
                 <textarea type="text" name="remarks" class="tall-input" placeholder="Enter Remarks" value="test"></textarea>
             </div>
@@ -457,16 +458,16 @@ document.addEventListener("click", function(event) {
             <input type="hidden" id="referral_needed" name="referral_needed">
             <input type="date" name="referral_date" id="referral_date" hidden>
         
-            <div class="button-container">
+            <div class="button-container form-action-row">
                 <button type="submit" class="submit-btn" id="submitButton" disabled>Submit</button>
             </div>
             
         </form>
         
-            <div id="myModal" class="modal">
+            <div id="myModal" class="modal itr-modal">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <img src="../img/verify.png" alt="Checkmark" class="checkmark-image">
+                        <div class="modal-icon modal-icon-question" aria-hidden="true"><i class="bx bx-help-circle"></i></div>
                         <h3>Confirmation</h3>
                         <span class="close-btn" id="closeBtn">&times;</span>
                     </div>
@@ -486,21 +487,21 @@ document.addEventListener("click", function(event) {
 
              <input type="hidden" name="referral_status" value="pending">
 
-       <div id="myModal2" class="modal">
+       <div id="myModal2" class="modal itr-modal">
                 <div class="modal-content">
                     <div class="modal-header">
-                         <img src="../img/verify.png" alt="Checkmark" class="checkmark-image">
+                         <div class="modal-icon modal-icon-question" aria-hidden="true"><i class="bx bx-calendar-check"></i></div>
                         <h3>Confirm</h3>
                         <span class="close-btn" id="closeBtn2">&times;</span>
                     </div>
                     <div class="modal-body">
                         <p>Select referral date: </p> <br> <br>
                   
-                <div class="custom-consent-checkbox" style="margin-top: -30px; margin-left: -300px;">
+                <div class="custom-consent-checkbox referral-date-option">
       <input type="checkbox" id="setToday">
                 <label for="setToday">Set for Today</label>
                 </div> 
-                  <div class="custom-consent-checkbox" style="margin-top: -10px;">
+                  <div class="custom-consent-checkbox referral-date-option">
       <input type="checkbox" id="setTomorrow">
                 <label for="setTomorrow">Set for Tomorrow (Select if physician is not available)</label>
                 </div> 
@@ -516,10 +517,10 @@ document.addEventListener("click", function(event) {
             </div>
 
 
-            <div id="myModal3" class="modal">
+            <div id="myModal3" class="modal itr-modal">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <img src="../img/check.png" alt="Checkmark" class="checkmark-image">
+                        <div class="modal-icon modal-icon-success" aria-hidden="true"><i class="bx bx-check"></i></div>
                         <span class="close-btn" id="closeBtn3">&times;</span>
                     </div>
                     <div class="modal-footer">
@@ -533,10 +534,10 @@ document.addEventListener("click", function(event) {
                 </div>
             </div>
         
-            <div id="myModal4" class="modal">
+            <div id="myModal4" class="modal itr-modal">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <img src="../img/check.png" alt="Checkmark" class="checkmark-image">
+                        <div class="modal-icon modal-icon-success" aria-hidden="true"><i class="bx bx-check"></i></div>
                         <h3></h3>
                         <span class="close-btn" id="closeBtn4">&times;</span>
                     </div>
@@ -548,10 +549,10 @@ document.addEventListener("click", function(event) {
                 </div>
             </div> 
             
-            <div id="myModal5" class="modal">
+            <div id="myModal5" class="modal itr-modal">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <img src="../img/error.jpg" alt="Checkmark" class="checkmark-image">
+                        <div class="modal-icon modal-icon-error" aria-hidden="true"><i class="bx bx-x"></i></div>
                         <h3>Unsuccessful</h3>
                         <span class="close-btn" id="closeBtn5">&times;</span>
                     </div>
@@ -563,12 +564,6 @@ document.addEventListener("click", function(event) {
                     </div>
                 </div>
             </div>
-
-
-
-
-
-
 
         
 
@@ -694,8 +689,6 @@ document.addEventListener("click", function(event) {
       
       });
 
-
-
     document.addEventListener("input", function () {
         const requiredFields = document.querySelectorAll("input[required], select[required], textarea[required]");
         const submitButton = document.getElementById("submitButton");
@@ -817,9 +810,6 @@ medicineSelects.forEach(select => {
     loadCustomOptions(select, 'medicine');
 });
 
-
-
-
 // For medicine-selects, you can loop each one
 medicineSelects.forEach(select => loadCustomOptions(select, 'medicine'));
                                  
@@ -858,21 +848,25 @@ medicineSelects.forEach(select => loadCustomOptions(select, 'medicine'));
     toggleBtn.textContent = isHidden ? "SEE MORE" : "SEE LESS";
   });
 
-  editBtn.addEventListener("click", function () {
-    const inputs = infoSection.querySelectorAll("input");
-    const isDisabled = inputs[0].disabled;
+  if (editBtn) {
+    editBtn.addEventListener("click", function () {
+      const inputs = infoSection.querySelectorAll("input");
+      const isDisabled = inputs[0].disabled;
 
-    inputs.forEach(input => {
-      input.disabled = !isDisabled;
+      inputs.forEach(input => {
+        input.disabled = !isDisabled;
+      });
+
+      editBtn.textContent = isDisabled ? "DONE" : "EDIT";
     });
-
-    editBtn.textContent = isDisabled ? "DONE" : "EDIT";
-  });
-
-
+  }
 
 </script>
     
+    </div><!-- /itr-page-shell -->
+        </main>
+    </section>
+
     <script src="js/form1.js"></script>
     <script src="js/script.js"></script>
     <script src="js/modal.js"></script>
@@ -894,12 +888,12 @@ medicineSelects.forEach(select => loadCustomOptions(select, 'medicine'));
 
 <script>
 function confirmLogout() {
-    document.getElementById('logoutModal').style.display = 'block';
+    document.getElementById('logoutModal').classList.add('open');
     return false; // Prevent the default link behavior
 }
 
 function closeModal() {
-    document.getElementById('logoutModal').style.display = 'none';
+    document.getElementById('logoutModal').classList.remove('open');
 }
 
 function proceedLogout() {
@@ -967,6 +961,153 @@ fetch('php/getUserName.php')
       closeMobileSidebar();
     }
   });
+})();
+</script>
+
+
+<script>
+/* UI enhancement only: keeps original medicine select values and existing add/remove behavior */
+document.addEventListener("DOMContentLoaded", function () {
+    function initMedicineSelects(scope) {
+        if (!window.jQuery || !jQuery.fn || !jQuery.fn.select2) return;
+        const root = scope || document;
+
+        jQuery(root).find("select.medicine-select").each(function () {
+            const $select = jQuery(this);
+            if ($select.hasClass("select2-hidden-accessible")) return;
+
+            $select.select2({
+                width: "100%",
+                placeholder: "Select",
+                allowClear: true,
+                dropdownParent: jQuery(document.body),
+                dropdownCssClass: "medicine-select-dropdown"
+            });
+        });
+    }
+
+    initMedicineSelects(document);
+
+    const medicineContainer = document.getElementById("medicine-container");
+    if (medicineContainer) {
+        const observer = new MutationObserver(function (mutations) {
+            mutations.forEach(function (mutation) {
+                mutation.addedNodes.forEach(function (node) {
+                    if (node.nodeType === 1) {
+                        initMedicineSelects(node);
+                    }
+                });
+            });
+        });
+
+        observer.observe(medicineContainer, { childList: true });
+    }
+});
+</script>
+
+
+<script>
+/* Layout safety for cloned medicine rows */
+document.addEventListener("DOMContentLoaded", function () {
+    const medicineContainer = document.getElementById("medicine-container");
+
+    if (!medicineContainer) return;
+
+    medicineContainer.addEventListener("click", function (event) {
+        if (!event.target.classList.contains("btn-remove")) return;
+
+        setTimeout(function () {
+            document.querySelectorAll(".medicine-entry").forEach(function (entry) {
+                entry.classList.add("medication-card");
+            });
+        }, 0);
+    });
+
+    const observer = new MutationObserver(function () {
+        document.querySelectorAll(".medicine-entry").forEach(function (entry) {
+            entry.classList.add("medication-card");
+
+            const select = entry.querySelector(".medicine-select");
+            if (select) {
+                select.classList.add("medicine-given", "form-control");
+            }
+
+            const qtyInput = entry.querySelector('input[name="quantity_given[]"]');
+            if (qtyInput) {
+                qtyInput.classList.add("quantity-given", "form-control");
+            }
+
+            const quantityField = entry.querySelector(".quantity-container")?.closest(".form-group");
+            if (quantityField) {
+                quantityField.classList.add("medicine-quantity-field");
+            }
+
+            const removeBtn = entry.querySelector(".btn-remove");
+            if (removeBtn) {
+                removeBtn.classList.add("medicine-remove-btn");
+            }
+        });
+    });
+
+    observer.observe(medicineContainer, { childList: true, subtree: true });
+});
+</script>
+
+<script>
+/* Medicine UI sync only: keeps cloned medicine rows visually consistent */
+(function () {
+    function syncMedicineCards() {
+        document.querySelectorAll(".medicine-entry").forEach(function (entry) {
+            entry.classList.add("medication-card");
+            entry.style.display = "";
+            entry.style.gap = "";
+            entry.style.alignItems = "";
+
+            const select = entry.querySelector('select[name="medicine_given[]"]');
+            if (select) {
+                select.classList.add("medicine-select", "medicine-given", "form-control");
+                select.style.width = "";
+            }
+
+            const quantity = entry.querySelector('input[name="quantity_given[]"]');
+            if (quantity) {
+                quantity.classList.add("quantity-given", "form-control");
+                quantity.style.height = "";
+            }
+
+            const removeBtn = entry.querySelector(".btn-remove");
+            if (removeBtn) {
+                removeBtn.classList.add("medicine-remove-btn");
+                removeBtn.removeAttribute("style");
+            }
+
+            const quantityContainer = entry.querySelector(".quantity-container");
+            if (quantityContainer) {
+                quantityContainer.style.display = "";
+                quantityContainer.style.gap = "";
+            }
+
+            entry.querySelectorAll(".btn-minus, .btn-plus").forEach(function (btn) {
+                btn.classList.add("quantity-btn");
+            });
+        });
+    }
+
+    function boot() {
+        syncMedicineCards();
+
+        const container = document.getElementById("medicine-container");
+        if (container) {
+            const observer = new MutationObserver(syncMedicineCards);
+            observer.observe(container, { childList: true, subtree: true });
+        }
+    }
+
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", boot);
+    } else {
+        boot();
+    }
 })();
 </script>
 

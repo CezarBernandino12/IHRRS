@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="css/logout.css">
     <link rel="stylesheet" href="css/sidebar.css">
     <link rel="stylesheet" href="css/history.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 	<title>Referral History</title>
 </head>
 <body>
@@ -108,31 +110,31 @@
             <div class="head-title">
                 <div class="left">
                   <h1>Referral History</h1>
-                  <ul class="breadcrumb">
-                    <li><a href="#">Referral History</a></li>
-                    <li><i class="bx bx-chevron-right"></i></li>
-                    <li><a class="active" href="#">Home</a></li>
-                  </ul>
                 </div>
               </div>
 
-            <div class="header">
-                <div class="date-picker">
-                    <label for="date">Select date:</label>
-            <input type="date" id="date" name="date" />
+            <div class="history-toolbar-card">
+                <div class="history-toolbar-actions history-toolbar-actions-only">
+                    <div class="history-toolbar-field history-toolbar-field-date">
+                        <label for="date" class="sr-only">Select date</label>
+                        <i class="bx bx-calendar"></i>
+                        <input type="text" id="date" name="date" class="flatpickr-date-input" placeholder="Select date" autocomplete="off" />
+                    </div>
 
-            <div class="filter-container">
-                <label for="status">Select Status:</label>
-                <select id="status" name="status">
+                    <div class="history-toolbar-field history-toolbar-field-select">
+                        <label for="status" class="sr-only">Select Status</label>
+                        <i class="bx bx-filter-alt"></i>
+                        <select id="status" name="status">
                   <option value="All">All</option>
                   <option value="Completed">Completed</option>
                   <option value="Uncompleted">Uncompleted</option>
                 </select>
-                <button id="applyFilter">Apply Filter</button>
-              </div>
-				
+                    </div>
+
+                    <button id="applyFilter" class="history-primary-btn">Apply Filter</button>
+                </div>
             </div>
-            <div class="history-container">
+            <div class="history-container history-table-card">
                 <table id="history-table" class="status">
                     <thead>
                         <tr>
@@ -147,6 +149,8 @@
 					
                 </table>
             </div>
+
+            <div class="history-pagination" id="pagination" aria-label="Referral history pagination"></div>
 
 <div id="logoutModal" class="logout-modal">
     <div class="logout-modal-content">
@@ -168,37 +172,156 @@
 </section>
 
 
-<script>document.addEventListener("DOMContentLoaded", function () {
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const statusSelect = document.getElementById("status");
+    const dateInput = document.getElementById("date");
+    const applyFilterButton = document.getElementById("applyFilter");
+    const searchInput = document.getElementById("searchInput");
+    const tableBody = document.querySelector("#history-table tbody");
+    const pagination = document.getElementById("pagination");
+
+
+    if (window.flatpickr && dateInput) {
+        flatpickr(dateInput, {
+            dateFormat: "Y-m-d",
+            altInput: true,
+            altInputClass: "filter-date-alt",
+            altFormat: "M j, Y",
+            allowInput: true,
+            disableMobile: true,
+            clickOpens: true
+        });
+    }
+
+    let allReferralRows = [];
+    let filteredReferralRows = [];
+    let currentPage = 1;
+    const rowsPerPage = 10;
+
     // Set default status to show both completed and uncompleted
-    document.getElementById("status").value = "All";
-    
+    if (statusSelect) statusSelect.value = "All";
+
     // Fetch referrals immediately when page loads
     fetchReferrals();
 
     // Add click event listener to the "applyFilter" button to fetch referrals
-    document.getElementById("applyFilter").addEventListener("click", fetchReferrals);
-
-    // Add search functionality
-    const searchInput = document.getElementById("searchInput");
-    searchInput.addEventListener("input", function() {
-        const searchTerm = this.value.toLowerCase();
-        const tableRows = document.querySelectorAll("#history-table tbody tr");
-        
-        tableRows.forEach(row => {
-            const patientName = row.querySelector("td:nth-child(2)").textContent.toLowerCase();
-            if (patientName.includes(searchTerm)) {
-                row.style.display = "";
-            } else {
-                row.style.display = "none";
-            }
+    if (applyFilterButton) {
+        applyFilterButton.addEventListener("click", function () {
+            currentPage = 1;
+            fetchReferrals();
         });
-    });
+    }
+
+    // Add search functionality while keeping pagination
+    if (searchInput) {
+        searchInput.addEventListener("input", function () {
+            currentPage = 1;
+            applySearchFilter();
+        });
+    }
+
+    function getStatusClass(status) {
+        return String(status || "")
+            .trim()
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, "-")
+            .replace(/^-+|-+$/g, "");
+    }
+
+    function applySearchFilter() {
+        const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : "";
+
+        if (!searchTerm) {
+            filteredReferralRows = [...allReferralRows];
+        } else {
+            filteredReferralRows = allReferralRows.filter(row => {
+                const patientNameCell = row.querySelector('[data-label="Patient Name"]');
+                const patientName = patientNameCell ? patientNameCell.textContent.toLowerCase() : "";
+                return patientName.includes(searchTerm);
+            });
+        }
+
+        renderTablePage();
+    }
+
+    function renderTablePage() {
+        if (!tableBody) return;
+
+        tableBody.innerHTML = "";
+
+        if (!filteredReferralRows.length) {
+            tableBody.innerHTML = `<tr class="empty-state-row"><td colspan="4">No referrals found</td></tr>`;
+            if (pagination) pagination.innerHTML = "";
+            return;
+        }
+
+        const totalPages = Math.ceil(filteredReferralRows.length / rowsPerPage);
+        if (currentPage > totalPages) currentPage = totalPages;
+        if (currentPage < 1) currentPage = 1;
+
+        const start = (currentPage - 1) * rowsPerPage;
+        const pageRows = filteredReferralRows.slice(start, start + rowsPerPage);
+
+        pageRows.forEach(row => tableBody.appendChild(row));
+        renderPagination(totalPages);
+    }
+
+    function renderPagination(totalPages) {
+        if (!pagination) return;
+
+        if (totalPages <= 1) {
+            pagination.innerHTML = "";
+            return;
+        }
+
+        let startPage = Math.max(1, currentPage - 1);
+        let endPage = Math.min(totalPages, startPage + 2);
+
+        if (endPage - startPage < 2) {
+            startPage = Math.max(1, endPage - 2);
+        }
+
+        const parts = [];
+
+        parts.push(`
+            <button type="button" class="pagination-btn pagination-prev" aria-label="Previous page" data-page="${Math.max(1, currentPage - 1)}" ${currentPage === 1 ? "disabled" : ""}>
+                ‹
+            </button>
+        `);
+
+        for (let page = startPage; page <= endPage; page++) {
+            parts.push(`
+                <button type="button" class="pagination-page ${page === currentPage ? "active" : ""}" data-page="${page}">
+                    ${page}
+                </button>
+            `);
+        }
+
+        parts.push(`
+            <button type="button" class="pagination-btn pagination-next" aria-label="Next page" data-page="${Math.min(totalPages, currentPage + 1)}" ${currentPage === totalPages ? "disabled" : ""}>
+                ›
+            </button>
+        `);
+
+        pagination.innerHTML = parts.join("");
+
+        pagination.querySelectorAll("button[data-page]").forEach(button => {
+            button.addEventListener("click", function () {
+                const nextPage = parseInt(this.dataset.page, 10);
+                if (!Number.isNaN(nextPage)) {
+                    currentPage = nextPage;
+                    renderTablePage();
+                }
+            });
+        });
+    }
 
     // Function to fetch referrals data from the server
     function fetchReferrals() {
         // Get selected date and status from filters
-        const selectedDate = document.getElementById("date").value;
-        const selectedStatus = document.getElementById("status").value;
+        const selectedDate = dateInput ? dateInput.value : "";
+        const selectedStatus = statusSelect ? statusSelect.value : "All";
 
         // Prepare query parameters
         const params = new URLSearchParams();
@@ -209,70 +332,75 @@
         fetch("php/fetch_referrals_history.php?" + params.toString())
             .then(response => response.json())
             .then(data => {
-                console.log("Fetched referrals:", data); // ✅ Debug log
-                const tableBody = document.querySelector("#history-table tbody");
-                tableBody.innerHTML = ""; // Clear any existing data in the table
+                console.log("Fetched referrals:", data);
+
+                allReferralRows = [];
+                filteredReferralRows = [];
+                if (tableBody) tableBody.innerHTML = "";
 
                 // Handle case where there's an error in the response
                 if (data.error) {
                     console.error(data.error);
-                    tableBody.innerHTML = `<tr><td colspan="4">Error fetching data</td></tr>`;
+                    if (tableBody) tableBody.innerHTML = `<tr class="empty-state-row"><td colspan="4">Error fetching data</td></tr>`;
+                    if (pagination) pagination.innerHTML = "";
                     return;
                 }
 
                 // Handle case where no referrals are found
-                if (data.length === 0) {
-                    tableBody.innerHTML = `<tr><td colspan="4">No referrals found</td></tr>`;
+                if (!data || data.length === 0) {
+                    applySearchFilter();
                     return;
                 }
 
                 // Loop through each referral and create a table row
                 data.forEach(referral => {
-                    console.log("Referral object:", referral); // ✅ Debug log
+                    console.log("Referral object:", referral);
 
                     const row = document.createElement("tr");
-                    row.style.cursor = "pointer"; // Change cursor to pointer on hover
+                    row.style.cursor = "pointer";
 
                     // Add click event listener for each row
                     row.addEventListener("click", () => {
                         if (referral.visit_id) {
-                            // If visit_id exists, redirect to visitInfo.html with visit_id as a query parameter
                             window.location.href = `visitInfo?visit_id=${referral.visit_id}`;
                         } else {
-                            // If visit_id is missing, show an alert and log the error
                             alert("Missing visit_id for this referral.");
                             console.error("Referral missing visit_id:", referral);
                         }
                     });
 
+                    const referralStatus = referral.referral_status || "";
+                    const statusClass = getStatusClass(referralStatus);
+
                     // Add row content (referral data) to the table
                     row.innerHTML = `
-                        <td style="padding: 18px 10px;">${formatDate(referral.referral_date)}</td>
-                        <td>${referral.patient_name}</td>
-                        <td>${referral.referred_by}</td>
-                        <td class="${referral.referral_status.toLowerCase()}">${referral.referral_status}</td>
+                        <td data-label="Date">${formatDate(referral.referral_date)}</td>
+                        <td data-label="Patient Name" class="patient-name-cell">${referral.patient_name}</td>
+                        <td data-label="Referred by">${referral.referred_by}</td>
+                        <td data-label="Status"><span class="status-pill ${statusClass}">${referralStatus}</span></td>
                     `;
 
-                    tableBody.appendChild(row); // Append the row to the table
+                    allReferralRows.push(row);
                 });
+
+                applySearchFilter();
             })
             .catch(error => {
-                // Handle any fetch errors
                 console.error("Error fetching referrals:", error);
+                if (tableBody) tableBody.innerHTML = `<tr class="empty-state-row"><td colspan="4">Error fetching data</td></tr>`;
+                if (pagination) pagination.innerHTML = "";
             });
     }
 
     // Helper function to format date in a readable way
     function formatDate(dateString) {
-    if (!dateString) return "N/A";
-    const date = new Date(dateString);
-    if (isNaN(date.getTime())) return "Invalid Date";
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    return date.toLocaleDateString('en-US', options);
-}
-
+        if (!dateString) return "N/A";
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) return "Invalid Date";
+        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+        return date.toLocaleDateString('en-US', options);
+    }
 });
-
 
 function confirmLogout() {
     document.getElementById('logoutModal').style.display = 'block';

@@ -1,133 +1,154 @@
 <!DOCTYPE html>
 <html lang="en">
-<head> 
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <link rel="icon" href="../img/logo.png">
     <link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
+
     <link rel="stylesheet" href="css/searchstyle.css">
     <link rel="stylesheet" href="css/sidebar.css">
     <link rel="stylesheet" href="css/logout.css">
+
     <title>Patient Records</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 </head>
 
 <body>
 
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-<script>
-// Check if user is logged in
-fetch('php/getUserId.php')
-    .then(response => response.json())
-    .then(data => {
-        if (data.error) {
-            // User is not logged in, redirect to role selection page
-            window.location.href='../auth/role';
-        }
-    })
-    .catch(error => {
-        console.error('Error checking session:', error);
-        window.location.href='../auth/role';
-    });
-</script>
-
-    <section id="sidebar">
-      <a href="#" class="sidebar-brand">
+<section id="sidebar">
+    <a href="#" class="sidebar-brand">
         <img src="../img/logo.png" alt="RHU Logo" class="brand-logo">
         <div class="brand-text">
-          <span class="brand-name">Hello BHW</span>
+            <span class="brand-name">Hello BHW</span>
         </div>
-      </a>
+    </a>
 
-      <div class="sidebar-scroll">
+    <div class="sidebar-scroll">
         <p class="sidebar-section-label">Main Menu</p>
 
         <ul class="side-menu top">
-          <li>
-            <a href="dashboard" data-tooltip="Dashboard">
-              <i class="bx bxs-dashboard nav-icon"></i>
-              <span class="nav-label">Dashboard</span>
-            </a>
-          </li>
-          <li>
-            <a href="ITR" data-tooltip="Add New ITR">
-              <i class="bx bxs-notepad nav-icon"></i>
-              <span class="nav-label">Add New ITR</span>
-            </a>
-          </li>
-          <li class="active">
-            <a href="searchPatient" data-tooltip="Patient Records">
-              <i class="bx bxs-search nav-icon"></i>
-              <span class="nav-label">Patient Records</span>
-            </a>
-          </li>
-          <li>
-            <a href="History" data-tooltip="Referral History">
-              <i class="bx bx-history nav-icon"></i>
-              <span class="nav-label">Referral History</span>
-            </a>
-          </li>
-          <li>
-            <a href="reports" data-tooltip="Reports">
-              <i class="bx bx-notepad nav-icon"></i>
-              <span class="nav-label">Reports</span>
-            </a>
-          </li>
+            <li>
+                <a href="dashboard" data-tooltip="Dashboard">
+                    <i class="bx bxs-dashboard nav-icon"></i>
+                    <span class="nav-label">Dashboard</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="ITR" data-tooltip="Add New ITR">
+                    <i class="bx bxs-notepad nav-icon"></i>
+                    <span class="nav-label">Add New ITR</span>
+                </a>
+            </li>
+
+            <li class="active">
+                <a href="searchPatient" data-tooltip="Patient Records">
+                    <i class="bx bxs-search nav-icon"></i>
+                    <span class="nav-label">Patient Records</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="History" data-tooltip="Referral History">
+                    <i class="bx bx-history nav-icon"></i>
+                    <span class="nav-label">Referral History</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="reports" data-tooltip="Reports">
+                    <i class="bx bx-notepad nav-icon"></i>
+                    <span class="nav-label">Reports</span>
+                </a>
+            </li>
         </ul>
 
         <div class="sidebar-divider"></div>
 
         <ul class="side-menu">
-          <li>
-            <a href="#" class="logout" data-tooltip="Logout" onclick="return confirmLogout()">
-              <i class="bx bxs-log-out-circle nav-icon"></i>
-              <span class="nav-label">Logout</span>
-            </a>
-          </li>
+            <li>
+                <a href="#" class="logout" data-tooltip="Logout" onclick="return confirmLogout()">
+                    <i class="bx bxs-log-out-circle nav-icon"></i>
+                    <span class="nav-label">Logout</span>
+                </a>
+            </li>
         </ul>
-      </div>
+    </div>
 
-      <div class="sidebar-footer">
+    <div class="sidebar-footer">
         <div class="sidebar-user">
-          <img src="../img/bhw.png" alt="BHW User">
-          <div class="sidebar-user-info">
-            <div class="user-name" id="sidebarUserName">BHW User</div>
-            <div class="user-role">Barangay Health Worker</div>
-          </div>
+            <img src="../img/bhw.png" alt="BHW User">
+            <div class="sidebar-user-info">
+                <div class="user-name" id="sidebarUserName">BHW User</div>
+                <div class="user-role">Barangay Health Worker</div>
+            </div>
         </div>
-      </div>
-    </section>
+    </div>
+</section>
 
-    <section id="content">
-      <nav>
+<section id="content">
+    <nav>
         <button class="nav-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
-          <i class="bx bx-menu"></i>
+            <i class="bx bx-menu"></i>
         </button>
 
-        <div class="nav-search" style="position: relative;">
-          <input type="search" id="patientSearch" placeholder="Enter patient name…" name="search" autocomplete="off">
-          <button type="button" id="searchButton" aria-label="Search" onclick="searchPatient()">
-            <i class="bx bx-search"></i>
-          </button>
-          <div id="resultDropdown" class="dropdown-content"></div>
-        </div>
-      </nav>
+        <div class="nav-search">
+            <input 
+                type="search" 
+                id="patientSearch" 
+                placeholder="Enter patient name..." 
+                name="search" 
+                autocomplete="off"
+            >
 
-      <main>
-            <div class="head-title">
-                <div class="left">
-                    <h1>Patient Records</h1>
+            <button type="button" id="searchButton" aria-label="Search" onclick="searchPatient()">
+                <i class="bx bx-search"></i>
+            </button>
+        </div>
+    </nav>
+
+    <main>
+        <div class="head-title">
+            <div class="left">
+                <h1>Patient Records</h1>
+            </div>
+        </div>
+
+        <div class="patient-record-container">
+            <div class="results-top">
+                <div class="results-header">
+                    <h3>
+                        <i class="bx bx-search-alt results-title-icon" aria-hidden="true"></i>
+                        <span>Results</span>
+                    </h3>
+                </div>
+
+                <div class="record-btn-container">
+                    <a href="recordHistory" class="btn">
+                        <i class="bx bxs-calendar"></i>
+                        Visit Summary
+                    </a>
                 </div>
             </div>
 
+            <div class="table-header">
+                <span class="column-title">Name</span>
+                <span class="column-title">Sex</span>
+                <span class="column-title">Birthday</span>
+            </div>
 
-    <div class="patient-record-container">
-        <div class="results-header">
-            <h3>Results:</h3>
+            <div id="results">
+                <p>Search patient's name to show results.</p>
+            </div>
         </div>
+    </main>
+</section>
 
+<<<<<<< HEAD
+=======
         <div class="record-btn-container">
         <a href="recordHistory" class="btn">
             <i class="bx bxs-calendar"></i> Visit Summary
@@ -191,260 +212,265 @@ fetch('php/getUserId.php')
 
     </script>
     
+>>>>>>> 33fc5da55d190a4b262e16a6c8935100d5aecf81
 <div id="logoutModal" class="logout-modal">
     <div class="logout-modal-content">
         <div class="logout-modal-header">
             <h3>Confirm Logout</h3>
         </div>
+
         <div class="logout-modal-body">
             <p>Are you sure you want to logout?</p>
         </div>
+
         <div class="logout-modal-footer">
             <button onclick="closeModal()" class="logout-cancel-btn">Cancel</button>
             <button onclick="proceedLogout()" class="logout-confirm-btn">Yes, Logout</button>
         </div>
     </div>
-</div>    
+</div>
 
-<style>
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-}
-
-.modal-content {
-    background-color: #fff;
-    margin: 15% auto;
-    padding: 20px;
-    border-radius: 8px;
-    width: 300px;
-    text-align: center;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.modal-buttons {
-    margin-top: 20px;
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-}
-
-.confirm-btn, .cancel-btn {
-    padding: 8px 20px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: 500;
-    transition: background-color 0.3s;
-}
-
-.confirm-btn {
-    background-color: #dc3545;
-    color: white;
-}
-
-.confirm-btn:hover {
-    background-color: #c82333;
-}
-
-.cancel-btn {
-    background-color: #6c757d;
-    color: white;
-}
-
-.cancel-btn:hover {
-    background-color: #5a6268;
-}
-</style>
 <script>
-function toggleSidebar() {
-    const sidebar = document.getElementById('sidebar');
-    sidebar.classList.toggle('hide');
-
-    // Save state to localStorage
-    if (sidebar.classList.contains('hide')) {
-        localStorage.setItem('sidebar-collapsed', 'true');
-    } else {
-        localStorage.setItem('sidebar-collapsed', 'false');
-    }
-}
-
-document.addEventListener("DOMContentLoaded", function () {
-    const sidebar = document.getElementById('sidebar');
-    const isCollapsed = localStorage.getItem('sidebar-collapsed');
-
-    if (isCollapsed === 'true') {
-        sidebar.classList.add('hide');
-    } else {
-        sidebar.classList.remove('hide');
-    }
-});
-
-    // Existing code for other functions
-    document.addEventListener("DOMContentLoaded", () => {
-        const today = new Date().toISOString().split("T")[0];
-        const url = `php/fetch_dashboard_stats.php?date=${today}`;
-        // Show today's date in both containers
-        const formattedDate = new Date(today).toLocaleDateString('en-US', { 
-            year: 'numeric', 
-            month: 'long', 
-            day: 'numeric' 
-        });
-        
-        document.querySelectorAll(".date").forEach(el => el.textContent = formattedDate);
-        
-        fetch(url)
-            .then(response => response.json())
-            .then(data => {
-                console.log("Dashboard Data:", data);
-                updateProgress("progress-ring-1", "progress-text-1", data.visits_today, 100);
-                updateProgress("progress-ring-2", "progress-text-2", data.pending_referrals, 100);
-            })
-            .catch(error => console.error("Error loading dashboard data:", error));
-    });
-
-    function updateProgress(ringId, textId, value, max = 100) {
-        const radius = 67;
-        const circumference = 2 * Math.PI * radius;
-        const percent = Math.min(value / max, 1);
-        const offset = circumference * (1 - percent);
-
-        const ring = document.getElementById(ringId);
-        const text = document.getElementById(textId);
-
-        ring.style.strokeDasharray = `${circumference}`;
-        ring.style.strokeDashoffset = `${offset}`;
-        text.textContent = value;
-    }
-</script>
-<script>
-function confirmLogout() {
-    document.getElementById('logoutModal').style.display = 'block';
-    return false; // Prevent the default link behavior
-}
-
-function closeModal() {
-    document.getElementById('logoutModal').style.display = 'none';
-}
-
-function proceedLogout() {
-		 window.location.href='../ADMIN/php/logout';
-}
-
-// Close modal when clicking outside
-window.onclick = function(event) {
-    const modal = document.getElementById('logoutModal');
-    if (event.target == modal) {
-        closeModal();
-    }
-}
-fetch('php/getUserName.php')
+/* Check if user is logged in */
+fetch("php/getUserId.php")
     .then(response => response.json())
     .then(data => {
-        if (data.full_name) {
-            document.getElementById('userGreeting').textContent = `Hello, ${data.full_name}!`;
-        } else {
-            document.getElementById('userGreeting').textContent = 'Hello, BHW!';
+        if (data.error) {
+            window.location.href = "../auth/role";
         }
     })
     .catch(error => {
-        console.error('Error fetching user name:', error);
-        document.getElementById('userGreeting').textContent = 'Hello, BHW!';
+        console.error("Error checking session:", error);
+        window.location.href = "../auth/role";
     });
-</script>
-<script>
-(function () {
-  const sidebar   = document.getElementById('sidebar');
-  const toggle    = document.getElementById('sidebarToggle');
-  const overlay   = document.getElementById('sidebarOverlay');
-  const MOBILE_BP = 768;
-  const LARGE_BP  = 1280;
- 
-  function isMobile() { return window.innerWidth <= MOBILE_BP; }
- 
-  function setDesktopState() {
-    sidebar.classList.remove('mobile-open');
-    overlay.classList.remove('active');
-    document.body.style.overflow = '';
-    // Let CSS handle collapsed via media query
-  }
- 
-  toggle.addEventListener('click', function () {
-    if (isMobile()) {
-      const open = sidebar.classList.toggle('mobile-open');
-      overlay.classList.toggle('active', open);
-      document.body.style.overflow = open ? 'hidden' : '';
-    } else {
-      sidebar.classList.toggle('collapsed');
+
+
+/* Search patient */
+function searchPatient() {
+    const searchInput = document.getElementById("patientSearch");
+    const resultsBox = document.getElementById("results");
+    const query = searchInput.value.trim();
+
+    if (query === "") {
+        resultsBox.innerHTML = "<p>Please enter a patient name.</p>";
+        return;
     }
-  });
- 
-  overlay.addEventListener('click', function () {
-    sidebar.classList.remove('mobile-open');
-    overlay.classList.remove('active');
-    document.body.style.overflow = '';
-  });
- 
-  window.addEventListener('resize', function () {
-    if (!isMobile()) { setDesktopState(); }
-  });
-})();
 
-document.addEventListener("DOMContentLoaded", () => {
-  const sidebar = document.getElementById("sidebar");
+    resultsBox.innerHTML = "<p>Searching...</p>";
 
-  function applyResponsiveSidebar() {
-    if (window.innerWidth <= 1024) {
-      sidebar.classList.add("hide");   // collapsed on small screens
-    } else {
-      sidebar.classList.remove("hide"); // expanded on larger screens
-    }
-  }
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", "php/search_patient.php", true);
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
-  applyResponsiveSidebar();
-  window.addEventListener("resize", applyResponsiveSidebar);
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+            if (xhr.status === 200) {
+                resultsBox.innerHTML = xhr.responseText;
+                enhancePatientResultRows();
+            } else {
+                resultsBox.innerHTML = "<p>Error loading patient records.</p>";
+            }
+        }
+    };
 
-  // keep the rest of your existing code (auth, stats, modals, etc.)
-});
-</script>
-<script>
+    xhr.send("query=" + encodeURIComponent(query));
+}
 
-    document.addEventListener("DOMContentLoaded", function () {
-    // Retrieve the search query from sessionStorage
-    const searchQuery = sessionStorage.getItem("searchQuery");
 
-    if (searchQuery) {
-        // Display the search query in the search input field
-        document.getElementById("patientSearch").value = searchQuery;
+/* Add icons and clean result rows */
+function enhancePatientResultRows() {
+    const rows = document.querySelectorAll("#results .search-result");
 
-        // Fetch search results from the server
+    rows.forEach(row => {
+        const cells = row.querySelectorAll("span");
+
+        const nameCell = cells[0];
+        const sexCell = cells[1];
+
+        if (nameCell && !nameCell.dataset.enhanced) {
+            const nameText = nameCell.textContent.trim();
+
+            nameCell.classList.add("patient-name-cell");
+            nameCell.innerHTML = "";
+
+            const icon = document.createElement("i");
+            icon.className = "bx bx-user patient-row-icon";
+            icon.setAttribute("aria-hidden", "true");
+
+            const text = document.createElement("span");
+            text.className = "patient-name-text";
+            text.textContent = nameText;
+
+            nameCell.appendChild(icon);
+            nameCell.appendChild(text);
+
+            nameCell.dataset.enhanced = "true";
+        }
+
+        if (sexCell && !sexCell.dataset.enhanced) {
+            const rawSex = sexCell.textContent.trim();
+            const normalizedSex = rawSex.toLowerCase();
+
+            sexCell.classList.add("patient-sex-cell");
+            sexCell.classList.remove("male", "female");
+            sexCell.innerHTML = "";
+
+            const icon = document.createElement("i");
+
+            if (
+                normalizedSex === "female" ||
+                normalizedSex === "f" ||
+                normalizedSex.startsWith("female")
+            ) {
+                sexCell.classList.add("female");
+                icon.className = "bx bx-female-sign sex-icon female";
+            } else if (
+                normalizedSex === "male" ||
+                normalizedSex === "m" ||
+                normalizedSex.startsWith("male")
+            ) {
+                sexCell.classList.add("male");
+                icon.className = "bx bx-male-sign sex-icon male";
+            } else {
+                icon.className = "bx bx-user sex-icon";
+            }
+
+            icon.setAttribute("aria-hidden", "true");
+
+            const text = document.createElement("span");
+            text.className = "patient-sex-text";
+            text.textContent = rawSex;
+
+            sexCell.appendChild(icon);
+            sexCell.appendChild(text);
+
+            sexCell.dataset.enhanced = "true";
+        }
+    });
+}
+
+
+/* Open selected patient record */
+function selectPatient(patient_id) {
+    window.location.href = "record?patient_id=" + encodeURIComponent(patient_id);
+}
+
+
+/* Enter key search and stored search */
+document.addEventListener("DOMContentLoaded", function () {
+    const searchInput = document.getElementById("patientSearch");
+    const storedSearchQuery = sessionStorage.getItem("searchQuery");
+
+    searchInput.addEventListener("keypress", function (event) {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            searchPatient();
+        }
+    });
+
+    if (storedSearchQuery) {
+        searchInput.value = storedSearchQuery;
+
         fetch("php/search_patient.php", {
             method: "POST",
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded",
             },
-            body: `query=${encodeURIComponent(searchQuery)}`,
+            body: "query=" + encodeURIComponent(storedSearchQuery),
         })
-            .then((response) => response.text())
-            .then((data) => {
-                // Display the results in the results container
-                document.getElementById("results").innerHTML = data;
-            })
-            .catch((error) => {
-                console.error("Error fetching search results:", error);
-                document.getElementById("results").innerHTML = "<p>Error fetching search results.</p>";
-            });
-    } else {
-        document.getElementById("results").innerHTML = "<p>No search query provided.</p>";
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById("results").innerHTML = data;
+            enhancePatientResultRows();
+        })
+        .catch(error => {
+            console.error("Error fetching search results:", error);
+            document.getElementById("results").innerHTML = "<p>Error fetching search results.</p>";
+        });
     }
 });
+
+
+/* Sidebar behavior */
+(function () {
+    const sidebar = document.getElementById("sidebar");
+    const toggle = document.getElementById("sidebarToggle");
+    const overlay = document.getElementById("sidebarOverlay");
+    const MOBILE_BP = 768;
+
+    function isMobile() {
+        return window.innerWidth <= MOBILE_BP;
+    }
+
+    function closeMobileSidebar() {
+        sidebar.classList.remove("mobile-open");
+        overlay.classList.remove("active");
+        document.body.style.overflow = "";
+    }
+
+    toggle.addEventListener("click", function () {
+        if (isMobile()) {
+            const open = sidebar.classList.toggle("mobile-open");
+            overlay.classList.toggle("active", open);
+            document.body.style.overflow = open ? "hidden" : "";
+        } else {
+            sidebar.classList.toggle("collapsed");
+        }
+    });
+
+    overlay.addEventListener("click", closeMobileSidebar);
+
+    window.addEventListener("resize", function () {
+        if (!isMobile()) {
+            closeMobileSidebar();
+        }
+    });
+})();
+
+
+/* Logout modal */
+function confirmLogout() {
+    document.getElementById("logoutModal").style.display = "block";
+    return false;
+}
+
+function closeModal() {
+    document.getElementById("logoutModal").style.display = "none";
+}
+
+function proceedLogout() {
+    window.location.href = "../ADMIN/php/logout";
+}
+
+window.onclick = function (event) {
+    const modal = document.getElementById("logoutModal");
+
+    if (event.target === modal) {
+        closeModal();
+    }
+};
+
+
+/* Load sidebar user name */
+fetch("php/getUserName.php")
+    .then(response => response.json())
+    .then(data => {
+        const sidebarUserName = document.getElementById("sidebarUserName");
+
+        if (sidebarUserName) {
+            sidebarUserName.textContent = data.full_name || "BHW User";
+        }
+    })
+    .catch(error => {
+        console.error("Error fetching user name:", error);
+
+        const sidebarUserName = document.getElementById("sidebarUserName");
+
+        if (sidebarUserName) {
+            sidebarUserName.textContent = "BHW User";
+        }
+    });
 </script>
+
 </body>
 </html>
-``` 

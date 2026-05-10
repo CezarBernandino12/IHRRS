@@ -10,9 +10,11 @@
     <link rel="stylesheet" href="css/sidebar.css">
     <title>Visit Information</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 </head>
 
 <body>
@@ -103,70 +105,68 @@
 
         <main>
             <div class="head-title">
-			</div>
+                <div class="left">
+                    <h1>Visit Information</h1>
+                </div>
+            </div>
 
-
-    <div class="container-header">
-        <h2>VISIT DETAILS</h2>
-    </div>
+            <div class="edit-record-page-shell">
     <div class="container">
      
         
+         <div class="form-section-title visit-section-title"><i class="bx bx-clipboard"></i><b>INITIAL ASSESSMENT / VISIT INFO</b></div>
          <!-- INITIAL ASSESSMENT / VISIT INFO -->
 <div class="additional-group box-group additional-fields">
     <div class="additional-options">
-        <div class="form-row">
-            <div class="form-group">
+        <div class="form-row assessment-top-row">
+            <div class="form-group visit-date-field" style="font-weight: bold;">
+                <label>Date of Visit:</label>
+                <input type="text" class="visit-date form-control flatpickr-date flatpickr-visit" name="visit_date" placeholder="Select date of visit">
+            </div>
+            <div class="form-group patient-alert-field">
                 <label>Patient Alert:</label>
                 <input type="text" class="patient-alert form-control" name="patient_alert" value="N/A">
             </div>
         </div>
 
-        <div class="form-row">
-            <div class="form-group" style="font-weight: bold;">
-                <label>Date of Visit:</label>
-                <input type="date" class="visit-date form-control" name="visit_date">
-            </div>
-        </div>
-
-        <div class="form-row">
-            <div class="form-group" style="font-weight: bold;">
+        <div class="form-row complaints-row">
+            <div class="form-group complaints-field" style="font-weight: bold;">
                 <label>Chief Complaints:</label>
                 <textarea class="chief-complaints form-control" name="chief_complaints">N/A</textarea>
             </div>
         </div>
 
-        <div class="form-row">
+        <div class="form-row vitals-row">
             <label for="vitals"><b>Vital Signs:</b></label>
             <div class="vitals-section">
-                <div class="form-group" style="font-weight: bold;">
+                <div class="form-group blood-pressure-field" style="font-weight: bold;">
                     <label>Blood Pressure (mm Hg):</label>
                     <input type="text" class="blood-pressure form-control"  name="blood_pressure" value="N/A">
                 </div>
-                <div class="form-group" style="font-weight: bold;">
+                <div class="form-group temperature-field" style="font-weight: bold;">
                     <label>Temperature (°C):</label>
                     <input type="number" step="0.1" class="temperature form-control"  name="temperature" value="N/A">
                 </div>
-                <div class="form-group" style="font-weight: bold;">
+                <div class="form-group weight-field" style="font-weight: bold;">
                     <label>Weight (kg):</label>
                     <input type="number" step="0.1" class="weight form-control"  name="weight" value="N/A">
                 </div>
-                <div class="form-group" style="font-weight: bold;">
+                <div class="form-group height-field" style="font-weight: bold;">
                     <label>Height (cm):</label>
                     <input type="number" step="0.1" class="height form-control"  name="height" value="N/A">
                 </div>
-                <div class="form-group" style="font-weight: bold;">
+                <div class="form-group pulse-rate-field" style="font-weight: bold;">
                     <label>Pulse Rate (per minute):</label>
                     <input type="number" class="chest-rate form-control"  name="chest_rate" value="N/A">
                 </div>
-                <div class="form-group" style="font-weight: bold;">
+                <div class="form-group respiratory-rate-field" style="font-weight: bold;">
                     <label>Respiratory Rate (per minute):</label>
                     <input type="number" class="respiratory-rate form-control"  name="respiratory_rate" value="N/A">
                 </div>
             </div>
         </div>
-        <div class="form-row">
-            <div class="form-group" style="font-weight: bold;">
+        <div class="form-row remarks-row">
+            <div class="form-group remarks-field" style="font-weight: bold;">
                 <label>Remarks:</label>
                 <textarea class="remarks form-control" name="remarks">N/A</textarea>
             </div>
@@ -176,108 +176,329 @@
 
 
 
-<form class="personal-info-form" id="individualRecordForm" action="php/updateConsultation" method="POST">
-    <div class="additional-group box-group additional-fields" style="background-color: rgb(255, 255, 255);">
+<form class="personal-info-form consultation-form" id="individualRecordForm" action="php/updateConsultation" method="POST">
+    <div class="form-section-title consultation-section-title"><i class="bx bx-plus-medical"></i><b>TREATMENT / CONSULTATION INFORMATION</b></div>
+    <div class="additional-group box-group additional-fields consultation-card" style="background-color: rgb(255, 255, 255);">
         
         <div class="additional-options">
-    
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
-<div class="form-group">
-<label for="diagnosis">Diagnosis:</label>
-<input name="diagnosis" id="diagnosis" class="diagnosis">
-
+<div class="form-row diagnosis-row">
+    <div class="form-group diagnosis-field">
+        <label for="diagnosis">Diagnosis:</label>
+        <input name="diagnosis" id="diagnosis" class="diagnosis form-control">
+    </div>
 </div>
 
 
-<div class="form-group">
+<div class="form-row medicine-row">
+    <div class="form-group medicine-list-field">
+        <div class="medicine-section-header">
+            <label>Medication Given:</label>
+        </div>
 
-    <div id="medicine-container">
-        <div class="medicine-entry">
-            <div class="form-group"> 
-                <label for="medicine_given[]">Medicine Given:</label>
-                <input name="medicine_given[]" class="medicine-given"> 
-            </div>
-
-            <div class="quantity-section">
-                <div class="form-group">
-                    <label for="quantity_given[]">Quantity:</label>
-                    <div class="quantity-container">
-                        <button type="button" class="btn-minus">−</button>
-                        <input type="number" name="quantity_given[]" value="0" min="0" class="quantity-given">
-                        <button type="button" class="btn-plus">+</button>
-                    </div>
+        <div id="medicine-container" class="medicine-container">
+            <div class="medicine-entry medication-card">
+                <div class="form-group medicine-name-field">
+                    <label for="medicine_given[]">Medication Given:</label>
+                    <select name="medicine_given[]" class="medicine-given form-control" data-placeholder="Select"><option value="">Select</option><option value="other">Other (Enter manually)</option></select>
                 </div>
-                <button type="button" class="remove-medicine">Remove</button>
+
+                <div class="quantity-section">
+                    <div class="form-group medicine-quantity-field">
+                        <label for="quantity_given[]">Quantity:</label>
+                        <div class="quantity-container">
+                            <button type="button" class="btn-minus quantity-btn quantity-btn-minus" aria-label="Decrease quantity">−</button>
+                            <input type="number" name="quantity_given[]" value="0" min="0" class="quantity-given form-control">
+                            <button type="button" class="btn-plus quantity-btn quantity-btn-plus" aria-label="Increase quantity">+</button>
+                        </div>
+                    </div>
+                    <button type="button" class="remove-medicine medicine-remove-btn">Remove</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="add-medicine-container medicine-add-row">
+            <button type="button" id="add-medicine" class="add-medicine medicine-add-btn">+ Add</button>
+        </div>
+
+        <div id="medicine-template" class="medicine-template" style="display: none;">
+            <div class="medicine-entry medication-card">
+                <div class="form-group medicine-name-field">
+                    <label>Medication Given:</label>
+                    <select name="medicine_given[]" class="medicine-given form-control" data-placeholder="Select"><option value="">Select</option><option value="other">Other (Enter manually)</option></select>
+                </div>
+
+                <div class="quantity-section">
+                    <div class="form-group medicine-quantity-field">
+                        <label>Quantity:</label>
+                        <div class="quantity-container">
+                            <button type="button" class="btn-minus quantity-btn quantity-btn-minus" aria-label="Decrease quantity">−</button>
+                            <input type="number" name="quantity_given[]" value="0" min="0" class="quantity-given form-control">
+                            <button type="button" class="btn-plus quantity-btn quantity-btn-plus" aria-label="Increase quantity">+</button>
+                        </div>
+                    </div>
+                    <button type="button" class="remove-medicine medicine-remove-btn">Remove</button>
+                </div>
             </div>
         </div>
     </div>
+</div>
 
-    <div class="add-medicine-container">
-        <button type="button" id="add-medicine" class="add-medicine">+ Add</button>
-    </div>
+<script>
+        /* Medication dropdowns use the same medicine list source as the ITR page:
+           php/get_custom_options.php?category=medicine */
+        function saveMedicineOption(value) {
+            if (!value || String(value).trim() === "" || value === "other") {
+                return Promise.resolve({ success: false });
+            }
 
-    <div id="medicine-template" style="display: none;">
-        <div class="medicine-entry">
-            <div class="form-group"> 
-                <label>Medicine Given:</label>
-                <input name="medicine_given[]" class="medicine-given"> 
-            </div>
-    
-            <div class="quantity-section">
-                <div class="form-group">
-                    <label>Quantity:</label>
-                    <div class="quantity-container">
-                        <button type="button" class="btn-minus">−</button>
-                        <input type="number" name="quantity_given[]" value="0" min="0" class="quantity-given">
-                        <button type="button" class="btn-plus">+</button>
-                    </div>
-                </div>
-                <button type="button" class="remove-medicine">Remove</button>
-            </div>
-        </div>
-    </div>
-    
+            return fetch("php/save_custom_option.php", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: "category=medicine&value=" + encodeURIComponent(value)
+            })
+            .then(function (response) { return response.json(); })
+            .catch(function (error) {
+                console.error("Error saving medicine option:", error);
+                return { success: false };
+            });
+        }
 
-    <script>
+        function appendMedicineOption(select, value, text, selected) {
+            if (!select || !value) return;
+
+            const exists = Array.from(select.options).some(function (option) {
+                return option.value === value;
+            });
+
+            if (!exists) {
+                select.appendChild(new Option(text || value, value, !!selected, !!selected));
+            } else if (selected) {
+                select.value = value;
+            }
+        }
+
+        function ensureMedicineBaseOptions(select) {
+            if (!select) return;
+
+            if (!Array.from(select.options).some(function (option) { return option.value === ""; })) {
+                select.insertBefore(new Option("Select", "", false, false), select.firstChild);
+            }
+
+            if (!Array.from(select.options).some(function (option) { return option.value === "other"; })) {
+                select.appendChild(new Option("Other (Enter manually)", "other"));
+            }
+        }
+
+        function loadMedicineOptions(select) {
+            if (!select) return Promise.resolve();
+
+            ensureMedicineBaseOptions(select);
+
+            if (select.dataset.medicineOptionsLoaded === "true" || select.dataset.medicineOptionsLoading === "true") {
+                return Promise.resolve();
+            }
+
+            select.dataset.medicineOptionsLoading = "true";
+
+            return fetch("php/get_custom_options.php?category=medicine")
+                .then(function (response) { return response.json(); })
+                .then(function (options) {
+                    const currentValue = select.value;
+
+                    if (Array.isArray(options)) {
+                        options.forEach(function (optionValue) {
+                            if (!optionValue || optionValue === "other") return;
+                            appendMedicineOption(select, optionValue, optionValue, false);
+                        });
+                    }
+
+                    ensureMedicineBaseOptions(select);
+
+                    if (currentValue) {
+                        select.value = currentValue;
+                    }
+
+                    select.dataset.medicineOptionsLoaded = "true";
+
+                    if (window.jQuery && jQuery.fn && jQuery.fn.select2) {
+                        jQuery(select).trigger("change.select2");
+                    }
+                })
+                .catch(function (error) {
+                    console.error("Error fetching medicine options:", error);
+                })
+                .finally(function () {
+                    delete select.dataset.medicineOptionsLoading;
+                });
+        }
+
+        function handleMedicineOtherSelection(select) {
+            if (!select || select.dataset.otherMedicineBound === "true") return;
+
+            select.dataset.otherMedicineBound = "true";
+
+            select.addEventListener("change", function () {
+                if (this.value === "other") {
+                    const userInput = prompt("Enter medicine name (dosage):");
+
+                    if (userInput && userInput.trim() !== "") {
+                        const cleanValue = userInput.trim();
+                        appendMedicineOption(this, cleanValue, cleanValue, true);
+
+                        saveMedicineOption(cleanValue).then(function (data) {
+                            if (!data || !data.success) {
+                                console.warn("Medicine option was added locally but may not have been saved.");
+                            }
+                        });
+
+                        if (window.jQuery && jQuery.fn && jQuery.fn.select2) {
+                            jQuery(this).val(cleanValue).trigger("change.select2");
+                        }
+
+                        this.dispatchEvent(new Event("input", { bubbles: true }));
+                    } else {
+                        this.value = "";
+                        if (window.jQuery && jQuery.fn && jQuery.fn.select2) {
+                            jQuery(this).val("").trigger("change.select2");
+                        }
+                    }
+                }
+            });
+        }
+
+        function initMedicineDropdowns(scope) {
+            if (!window.jQuery || !jQuery.fn || !jQuery.fn.select2) return;
+
+            const root = scope || document;
+
+            jQuery(root).find("select.medicine-given").each(function () {
+                const select = this;
+
+                // Do not initialize the hidden template select. It will be initialized after cloning.
+                if (select.closest("#medicine-template")) {
+                    ensureMedicineBaseOptions(select);
+                    return;
+                }
+
+                ensureMedicineBaseOptions(select);
+                handleMedicineOtherSelection(select);
+                loadMedicineOptions(select);
+
+                const $select = jQuery(select);
+
+                if (!$select.hasClass("select2-hidden-accessible")) {
+                    $select.select2({
+                        tags: true,
+                        width: "100%",
+                        placeholder: "Select",
+                        allowClear: true,
+                        dropdownAutoWidth: false,
+                        dropdownParent: jQuery(document.body),
+                        dropdownCssClass: "reference-select-dropdown medicine-select-dropdown",
+                        selectionCssClass: "reference-select-selection medicine-select-selection",
+                        createTag: function (params) {
+                            const term = jQuery.trim(params.term);
+
+                            if (term === "") {
+                                return null;
+                            }
+
+                            return {
+                                id: term,
+                                text: term,
+                                newTag: true
+                            };
+                        }
+                    });
+
+                    $select.on("select2:select", function (event) {
+                        const selected = event.params && event.params.data;
+
+                        if (selected && selected.newTag && selected.id !== "other") {
+                            appendMedicineOption(select, selected.id, selected.text, true);
+                            saveMedicineOption(selected.id);
+                        }
+
+                        select.dispatchEvent(new Event("change", { bubbles: true }));
+                        select.dispatchEvent(new Event("input", { bubbles: true }));
+                    });
+
+                    $select.on("select2:clear select2:close change", function () {
+                        select.dispatchEvent(new Event("input", { bubbles: true }));
+                    });
+                }
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            initMedicineDropdowns(document);
+        });
+
         document.getElementById("add-medicine").addEventListener("click", function () {
             const container = document.getElementById("medicine-container");
             const template = document.querySelector("#medicine-template .medicine-entry");
             const newEntry = template.cloneNode(true);
-    
-            // Reset values
-            newEntry.querySelector(".medicine-given").value = "";
-            newEntry.querySelector(".quantity-given").value = "0";
-    
+
+            // Remove any Select2 artifacts that may exist if browser/extensions touched the template.
+            newEntry.querySelectorAll(".select2, .select2-container").forEach(function (node) {
+                node.remove();
+            });
+
+            const medicineSelect = newEntry.querySelector(".medicine-given");
+            const quantityInput = newEntry.querySelector(".quantity-given");
+
+            if (medicineSelect) {
+                medicineSelect.value = "";
+                medicineSelect.classList.remove("select2-hidden-accessible");
+                medicineSelect.removeAttribute("data-select2-id");
+                medicineSelect.removeAttribute("aria-hidden");
+                medicineSelect.removeAttribute("tabindex");
+                medicineSelect.dataset.medicineOptionsLoaded = "";
+                ensureMedicineBaseOptions(medicineSelect);
+            }
+
+            if (quantityInput) {
+                quantityInput.value = "0";
+            }
+
             container.appendChild(newEntry);
-            container.scrollIntoView({ behavior: 'smooth', block: 'end' });
+            initMedicineDropdowns(newEntry);
+            container.scrollIntoView({ behavior: "smooth", block: "end" });
         });
-    
+
         document.addEventListener("click", function (event) {
             if (event.target.classList.contains("btn-plus")) {
                 const input = event.target.previousElementSibling;
-                input.value = parseInt(input.value) + 1;
+                input.value = parseInt(input.value || "0", 10) + 1;
+                input.dispatchEvent(new Event("change", { bubbles: true }));
             } else if (event.target.classList.contains("btn-minus")) {
                 const input = event.target.nextElementSibling;
-                if (parseInt(input.value) > 0) {
-                    input.value = parseInt(input.value) - 1;
+                if (parseInt(input.value || "0", 10) > 0) {
+                    input.value = parseInt(input.value || "0", 10) - 1;
+                    input.dispatchEvent(new Event("change", { bubbles: true }));
                 }
             } else if (event.target.classList.contains("remove-medicine")) {
                 const entry = event.target.closest(".medicine-entry");
+                if (!entry) return;
+
+                const select = entry.querySelector("select.medicine-given");
+                if (select && window.jQuery && jQuery.fn && jQuery.fn.select2) {
+                    const $select = jQuery(select);
+                    if ($select.hasClass("select2-hidden-accessible")) {
+                        $select.select2("destroy");
+                    }
+                }
+
                 entry.remove();
             }
         });
     </script>
-    
-</div>
 
-            <div class="form-group">
-                <label for="instruction">Instructions/Remarks:</label>
-                <textarea type="text" name="instruction" placeholder="Enter your instructions and remarks"  class="instruction"></textarea>
+            <div class="form-row instruction-row">
+                <div class="form-group instruction-field">
+                    <label for="instruction">Instructions/Remarks:</label>
+                    <textarea type="text" name="instruction" placeholder="Enter your instructions and remarks" class="instruction form-control"></textarea>
+                </div>
             </div>
 
             <input type="hidden" id="visitIdField" name="visit_id">
@@ -286,21 +507,23 @@
             </div> </div>
     
 
-    <div class="button-container">
-        
-   
+    <div class="form-action-row">
         <button type="submit" class="submit-btn" id="submitButton">Submit</button>
+        <button type="button" class="print-btn" id="printButton" aria-label="Print visit information">
+            <i class="bx bx-printer" aria-hidden="true"></i>
+            <span>Print</span>
+        </button>
     </div>
     
 <div id="myModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
-            <img src="../img/verify.png" alt="Checkmark" class="checkmark-image">
+            <div class="modal-icon modal-icon-question" aria-hidden="true"><i class="bx bx-edit-alt"></i></div>
             <h3>Confirmation</h3>
             <span class="close-btn" id="closeBtn">&times;</span>
         </div>
         <div class="modal-body">
-            <p>Save patient record?
+            <p>Save patient record?</p>
         </div>
         
         <div class="modal-footer">
@@ -310,18 +533,9 @@
 
     </div>
 </div>
-
-
-
-
-
-<br>
-<input type="hidden" id="visitIdField" name="visit_id">
-<input type="hidden" id="referralInput" />
-<input type="hidden" id="user_id" name="user_id">
-
 </div>
 </form>
+            </div>
         </main>
     </section>
 
@@ -329,7 +543,7 @@
 <div id="myModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
-            <img src="../img/verify.png" alt="Checkmark" class="checkmark-image">
+            <div class="modal-icon modal-icon-question" aria-hidden="true"><i class="bx bx-help-circle"></i></div>
             <h3>Confirmation</h3>
             <span class="close-btn" id="closeBtn">&times;</span>
         </div>
@@ -352,7 +566,7 @@
  <div id="myModal2" class="modal">
     <div class="modal-content">
         <div class="modal-header">
-             <img src="../img/verify.png" alt="Checkmark" class="checkmark-image">
+             <div class="modal-icon modal-icon-success" aria-hidden="true"><i class="bx bx-check"></i></div>
             <h3>Confirm</h3>
             <span class="close-btn" id="closeBtn2">&times;</span>
         </div>
@@ -369,7 +583,7 @@
 <div id="myModal3" class="modal">
     <div class="modal-content">
         <div class="modal-header">
-            <img src="../img/check.png" alt="Checkmark" class="checkmark-image">
+            <div class="modal-icon modal-icon-success" aria-hidden="true"><i class="bx bx-check"></i></div>
             <h3>Appointment Successful</h3>
             <span class="close-btn" id="closeBtn3" href="history">&times;</span>
         </div>
@@ -383,7 +597,7 @@
 <div id="myModal4" class="modal">
     <div class="modal-content">
         <div class="modal-header">
-            <img src="../img/check.png" alt="Checkmark" class="checkmark-image">
+            <div class="modal-icon modal-icon-success" aria-hidden="true"><i class="bx bx-check"></i></div>
             <h3></h3>
             <span class="close-btn" id="closeBtn4" href="history">&times;</span>
         </div>
@@ -403,7 +617,7 @@
 <div id="myModal5" class="modal">
     <div class="modal-content">
         <div class="modal-header">
-            <img src="../img/verify.png" alt="Checkmark" class="checkmark-image">
+            <div class="modal-icon modal-icon-success" aria-hidden="true"><i class="bx bx-check"></i></div>
             <h3>Record Successfully Updated</h3>
             <span class="close-btn" id="closeBtn5">&times;</span>
         </div>
@@ -419,7 +633,7 @@
 <div id="referralExistsModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
-            <img src="../img/warning.png" alt="Checkmark" class="checkmark-image">
+            <div class="modal-icon modal-icon-warning" aria-hidden="true"><i class="bx bx-error"></i></div>
             <h3>Referral already exists</h3>
             <span class="close-btn" id="closeBtn5">&times;</span>
         </div>
@@ -447,22 +661,15 @@
     </div>
 </div>
 
-            <div class="form-container">
-                <div class="print-section">
-                    <button class="print-btn" id="printButton">Print</button>
-                </div>
-            </div>
-      
-    </div>
 
     <script>
         function confirmLogout() {
-            document.getElementById('logoutModal').style.display = 'block';
+            document.getElementById('logoutModal').classList.add('open');
             return false; // Prevent the default link behavior
         }
         
         function closeModal() {
-            document.getElementById('logoutModal').style.display = 'none';
+            document.getElementById('logoutModal').classList.remove('open');
         }
         
         function proceedLogout() {
@@ -583,6 +790,255 @@ document.addEventListener('DOMContentLoaded', () => {
       allowClear: true
     });
   }
+});
+</script>
+
+
+<script>
+/* Custom calendar dropdown + print button fix */
+document.addEventListener("DOMContentLoaded", function () {
+    const monthNames = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+    ];
+
+    function closePickerMenus(calendar) {
+        if (!calendar) return;
+        calendar.querySelectorAll(".custom-picker-menu.is-open").forEach(function (menu) {
+            menu.classList.remove("is-open");
+        });
+    }
+
+    function syncPickerHeader(instance) {
+        const calendar = instance.calendarContainer;
+        if (!calendar) return;
+
+        const monthLabel = calendar.querySelector(".custom-month-label");
+        const yearLabel = calendar.querySelector(".custom-year-label");
+
+        if (monthLabel) monthLabel.textContent = monthNames[instance.currentMonth];
+        if (yearLabel) yearLabel.textContent = String(instance.currentYear);
+
+        calendar.querySelectorAll(".custom-month-option").forEach(function (btn) {
+            btn.classList.toggle("is-active", Number(btn.dataset.month) === instance.currentMonth);
+        });
+
+        calendar.querySelectorAll(".custom-year-option").forEach(function (btn) {
+            btn.classList.toggle("is-active", Number(btn.dataset.year) === instance.currentYear);
+        });
+
+        const activeYear = calendar.querySelector(".custom-year-option.is-active");
+        if (activeYear && activeYear.parentElement) {
+            activeYear.parentElement.scrollTop = Math.max(0, activeYear.offsetTop - 62);
+        }
+    }
+
+    function setupCustomPickerHeader(instance) {
+        const calendar = instance.calendarContainer;
+        if (!calendar) return;
+
+        calendar.classList.add("custom-dropdown-date-picker");
+
+        const monthsContainer = calendar.querySelector(".flatpickr-months");
+        if (!monthsContainer) return;
+
+        if (!calendar.querySelector(".custom-date-picker-header")) {
+            const header = document.createElement("div");
+            header.className = "custom-date-picker-header";
+
+            const prevBtn = document.createElement("button");
+            prevBtn.type = "button";
+            prevBtn.className = "custom-picker-nav";
+            prevBtn.setAttribute("aria-label", "Previous month");
+            prevBtn.textContent = "‹";
+            prevBtn.addEventListener("click", function () {
+                instance.changeMonth(-1);
+                closePickerMenus(calendar);
+                syncPickerHeader(instance);
+            });
+
+            const nextBtn = document.createElement("button");
+            nextBtn.type = "button";
+            nextBtn.className = "custom-picker-nav";
+            nextBtn.setAttribute("aria-label", "Next month");
+            nextBtn.textContent = "›";
+            nextBtn.addEventListener("click", function () {
+                instance.changeMonth(1);
+                closePickerMenus(calendar);
+                syncPickerHeader(instance);
+            });
+
+            const monthMenu = document.createElement("div");
+            monthMenu.className = "custom-picker-menu custom-month-menu";
+
+            const monthTrigger = document.createElement("button");
+            monthTrigger.type = "button";
+            monthTrigger.className = "custom-picker-trigger";
+            monthTrigger.innerHTML = '<span class="custom-month-label"></span><span class="custom-picker-chevron">⌄</span>';
+
+            const monthOptions = document.createElement("div");
+            monthOptions.className = "custom-picker-options custom-month-options";
+
+            monthNames.forEach(function (month, index) {
+                const option = document.createElement("button");
+                option.type = "button";
+                option.className = "custom-picker-option custom-month-option";
+                option.dataset.month = String(index);
+                option.textContent = month;
+                option.addEventListener("click", function () {
+                    instance.changeMonth(index, false);
+                    closePickerMenus(calendar);
+                    syncPickerHeader(instance);
+                });
+                monthOptions.appendChild(option);
+            });
+
+            monthTrigger.addEventListener("click", function (event) {
+                event.stopPropagation();
+                const isOpen = monthMenu.classList.contains("is-open");
+                closePickerMenus(calendar);
+                monthMenu.classList.toggle("is-open", !isOpen);
+            });
+
+            monthMenu.appendChild(monthTrigger);
+            monthMenu.appendChild(monthOptions);
+
+            const yearMenu = document.createElement("div");
+            yearMenu.className = "custom-picker-menu custom-year-menu";
+
+            const yearTrigger = document.createElement("button");
+            yearTrigger.type = "button";
+            yearTrigger.className = "custom-picker-trigger";
+            yearTrigger.innerHTML = '<span class="custom-year-label"></span><span class="custom-picker-chevron">⌄</span>';
+
+            const yearOptions = document.createElement("div");
+            yearOptions.className = "custom-picker-options custom-year-options";
+
+            const currentYear = new Date().getFullYear() + 5;
+            for (let year = currentYear; year >= 1900; year--) {
+                const option = document.createElement("button");
+                option.type = "button";
+                option.className = "custom-picker-option custom-year-option";
+                option.dataset.year = String(year);
+                option.textContent = String(year);
+                option.addEventListener("click", function () {
+                    instance.changeYear(Number(this.dataset.year));
+                    closePickerMenus(calendar);
+                    syncPickerHeader(instance);
+                });
+                yearOptions.appendChild(option);
+            }
+
+            yearTrigger.addEventListener("click", function (event) {
+                event.stopPropagation();
+                const isOpen = yearMenu.classList.contains("is-open");
+                closePickerMenus(calendar);
+                yearMenu.classList.toggle("is-open", !isOpen);
+                syncPickerHeader(instance);
+            });
+
+            yearMenu.appendChild(yearTrigger);
+            yearMenu.appendChild(yearOptions);
+
+            header.appendChild(prevBtn);
+            header.appendChild(monthMenu);
+            header.appendChild(yearMenu);
+            header.appendChild(nextBtn);
+
+            monthsContainer.innerHTML = "";
+            monthsContainer.appendChild(header);
+
+            calendar.addEventListener("click", function (event) {
+                event.stopPropagation();
+            });
+
+            document.addEventListener("click", function () {
+                closePickerMenus(calendar);
+            });
+        }
+
+        if (!calendar.querySelector(".custom-picker-footer")) {
+            const footer = document.createElement("div");
+            footer.className = "custom-picker-footer";
+
+            const cancelBtn = document.createElement("button");
+            cancelBtn.type = "button";
+            cancelBtn.className = "custom-picker-footer-btn";
+            cancelBtn.textContent = "Cancel";
+            cancelBtn.addEventListener("click", function () {
+                closePickerMenus(calendar);
+                instance.close();
+            });
+
+            const okBtn = document.createElement("button");
+            okBtn.type = "button";
+            okBtn.className = "custom-picker-footer-btn custom-picker-ok-btn";
+            okBtn.textContent = "OK";
+            okBtn.addEventListener("click", function () {
+                closePickerMenus(calendar);
+                instance.close();
+            });
+
+            footer.appendChild(cancelBtn);
+            footer.appendChild(okBtn);
+            calendar.appendChild(footer);
+        }
+
+        syncPickerHeader(instance);
+    }
+
+    function initDatePicker(input, options) {
+        if (!input || !window.flatpickr) return null;
+
+        if (input._flatpickr) {
+            input._flatpickr.destroy();
+        }
+
+        return flatpickr(input, Object.assign({
+            dateFormat: "Y-m-d",
+            altInput: true,
+            altFormat: "F j, Y",
+            allowInput: true,
+            monthSelectorType: "static",
+            disableMobile: true,
+            clickOpens: true,
+            static: false,
+            onReady: function (selectedDates, dateStr, fp) {
+                setupCustomPickerHeader(fp);
+            },
+            onOpen: function (selectedDates, dateStr, fp) {
+                setupCustomPickerHeader(fp);
+            },
+            onMonthChange: function (selectedDates, dateStr, fp) {
+                syncPickerHeader(fp);
+            },
+            onYearChange: function (selectedDates, dateStr, fp) {
+                syncPickerHeader(fp);
+            }
+        }, options || {}));
+    }
+
+    document.querySelectorAll(".visit-date").forEach(function (input) {
+        initDatePicker(input);
+    });
+
+    const printButton = document.getElementById("printButton");
+    if (printButton && !printButton.dataset.printFixed) {
+        printButton.dataset.printFixed = "true";
+        printButton.addEventListener("click", function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            document.body.classList.add("printing-consultation-page");
+            setTimeout(function () {
+                window.print();
+            }, 80);
+        });
+    }
+
+    window.addEventListener("afterprint", function () {
+        document.body.classList.remove("printing-consultation-page");
+    });
 });
 </script>
 

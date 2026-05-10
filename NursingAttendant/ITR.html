@@ -13,8 +13,6 @@
     <link rel="stylesheet" href="css/custom-input-modal.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     
@@ -165,33 +163,28 @@ fetch('php/getUserId.php')
             <div class="head-title">
 				<div class="left">
 					<h1>Add Individual Treatment Record</h1>
-					<ul class="breadcrumb">
-						<li><a href="#">Add ITR</a></li>
-						<li><i class="bx bx-chevron-right"></i></li>
-                        <li><a class="active" href="dashboard">Home</a></li>
-
-					</ul>
 				</div>
 			</div>
 
 
 
 <!-- CONSENT Modal -->
-<div class="custom-modal-backdrop" id="consentModal">
+<div class="custom-modal-backdrop" id="consentModal" style="display: grid;">
     <div class="custom-consent-box">
-        <h3><b>PATIENT CONSENT FOR COLLECTION AND USE OF PERSONAL HEALTH INFORMATION</b></h3> <br>
-         <h3><b>Basahin sa pasyente:</b></h3>
-            <h4>
-                 "Pumapayag ako, alinsunod sa Data Privacy Act of 2012, na itala ng health worker ang aking personal at medikal na impormasyon sa computer system upang ako ay mabigyan ng tamang gamutan at ma-refer kung kinakailangan. Naiintindihan ko na ang aking impormasyon ay gagamitin lamang para sa aking kalusugan at mananatiling pribado."
-            </h4>
-             <br>
-             <div class="custom-consent-checkbox">
-                <input type="checkbox" id="consentCheckbox">
-                <label for="consentCheckbox">Nagbigay ng pahintulot ang pasyente</label>
-            </div>
-             <br>
-                    <button id="declineBtn">Declined</button>
-                    <button id="continueBtn" disabled>Agree and Continue</button>
+        <div class="consent-icon" aria-hidden="true"><i class="bx bx-shield-quarter"></i></div>
+        <h3><b>PATIENT CONSENT FOR COLLECTION AND USE OF PERSONAL HEALTH INFORMATION</b></h3>
+        <div class="consent-read-label"><b>Basahin sa pasyente:</b></div>
+        <h4>
+            "Pumapayag ako, alinsunod sa Data Privacy Act of 2012, na itala ng health worker ang aking personal at medikal na impormasyon sa computer system upang ako ay mabigyan ng tamang gamutan at ma-refer kung kinakailangan. Naiintindihan ko na ang aking impormasyon ay gagamitin lamang para sa aking kalusugan at mananatiling pribado."
+        </h4>
+        <div class="custom-consent-checkbox">
+            <input type="checkbox" id="consentCheckbox">
+            <label for="consentCheckbox">Nagbigay ng pahintulot ang pasyente</label>
+        </div>
+        <div class="consent-actions">
+            <button id="declineBtn" type="button">Declined</button>
+            <button id="continueBtn" type="button" disabled>Agree and Continue</button>
+        </div>
     </div>
 </div>
 
@@ -203,7 +196,7 @@ fetch('php/getUserId.php')
         <form class="personal-info-form" id="individualRecordForm" action="php/saveInitialAssessment" method="POST">
             <input type="hidden" name="form_type" value="individual_record">
 
-            <p><b>PERSONAL INFORMATION:</b></p>
+            <div class="form-section-title"><i class="bx bx-user"></i><b>PERSONAL INFORMATION:</b></div>
 
             <div class="form-container">
                 <!-- Column 1 -->
@@ -244,7 +237,7 @@ fetch('php/getUserId.php')
                    <div class="form-group">
                     <label for="sex" class="required">Sex:</label>
                     <div id="sex" class="radio-group">
-                        <label class="radio-option" id="sex">
+                        <label class="radio-option">
                             <input type="radio" name="sex" value="Male"> 
                             Male
                         </label>
@@ -361,10 +354,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 <input type="hidden" name="permanent_address" id="permanent_address_combined">
                     
-                <div class="form-group">
+                <div class="form-group dob-age-group">
                     <label for="dob" class="required">Date of Birth:</label>
-                    <input type="text" id="dob" name="dob" class="flatpickr-dob" onchange="calculateAge()" required placeholder="Select date of birth">
-                    <label id="age-display" >Age: </label>
+                    <div class="dob-age-row">
+                        <input type="text" id="dob" name="dob" class="flatpickr-dob" onchange="calculateAge()" required placeholder="Select date of birth">
+                        <label id="age-display">Age: </label>
+                    </div>
                 </div>
                 <input type="hidden" id="age-input" name="age">
 
@@ -478,14 +473,16 @@ document.addEventListener("DOMContentLoaded", function () {
                     </div>
                 </div>
             </div>
-            <br> <br> <br>
-
-            <p><b>PATIENT ASSESSMENT:</b></p>
+            <div class="form-section-title"><i class="bx bx-clipboard"></i><b>PATIENT ASSESSMENT:</b></div>
             <div class="additional-group box-group additional-fields">
 
                 <div class="additional-options">
+                    <div class="form-group dov-field">
+                        <label for="dov">Date of Visit:</label>
+                        <input type="text" name="dov" id="dov" class="flatpickr-dov" required placeholder="Select date of visit">
+                    </div>
 
-                    <div class="form-group"  style ="width: 200px;">
+                    <div class="form-group patient-alert-field">
                         <label for="alert">Patient Alert:</label>
                         <select name="patient_alert" id="patient_alert">
                             <option value="">Select (if any)</option>
@@ -494,21 +491,9 @@ document.addEventListener("DOMContentLoaded", function () {
                             <option value="Allergic Reactions">Allergic Reactions</option>
                             <option value="Disability">Disability</option>
                             <option value="Drugs">Drugs</option>
-                           
+
                         </select>
                     </div>
-<br>
-<div class="date-visit-group" hidden>
-    <label for="dov">Date of Visit:</label>
-    <input 
-        type="text" 
-        name="dov" 
-        id="dov" 
-        class="flatpickr-dov" 
-        required 
-        placeholder="Select date of visit"
-    >
-</div>
 
 
                      <!-- Do not remove this -->    <input type="hidden" name="user_id" id="user_id" hidden>
@@ -536,9 +521,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     <label for="vitals"><b>Vital Signs:</b></label>
                     <div class="vitals-section box-group">
-                        <div class="additional-group vitals-item" id="bmiContainer">
+                        <div class="additional-group vitals-item bmi-result-card" id="bmiContainer">
                             <label for="bmi">BMI:</label>
-                            <input type="number" step="any" name="bmi" id="bmi" placeholder="BMI will appear here" style="background-color: #f9f9f9; color: #033cad; font-weight: bolder; border: none;" readonly>
+                            <input type="hidden" step="any" name="bmi" id="bmi">
+                            <div class="bmi-auto-display" id="bmiDisplay" aria-live="polite">BMI will appear here</div>
                         </div>
                      
                         
@@ -580,8 +566,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 </div>
             </div>
 
-            <div class="form-group" style="display: none;">
-                <div class="form-group">
+            <div class="form-group treatment-medicine-section" style="display: none;">
+                <div class="form-group treatment-field">
                     <label for="treatment">Treatment:</label>
                     <select id="treatment" name="treatment">
                         <option  disabled selected="">Select treatment (if no referral)</option>
@@ -591,13 +577,13 @@ document.addEventListener("DOMContentLoaded", function () {
                         <option value="BP only">BP only</option>
                        
                     </select>
-                </div> <br>
+                </div>
 
                 <div id="medicine-container">
-                    <div class="medicine-entry" style="display: flex; gap: 10px; align-items: center;">
-                        <div class="form-group" style="flex: 1;"> 
+                    <div class="medicine-entry">
+                        <div class="form-group medicine-name-field"> 
                             <label for="medicine_given[]">Medication Given:</label>
-                            <select name="medicine_given[]" class="medicine-select" style="width: 200px;">
+                            <select name="medicine_given[]" class="medicine-select">
                                 <option value="">Select</option>
                                 <option value="other">Other (Enter manually)</option>
                            
@@ -606,13 +592,13 @@ document.addEventListener("DOMContentLoaded", function () {
                         
                         <div class="form-group">
                             <label for="quantity_given[]">Quantity:</label>
-                            <div class="quantity-container" style="display: flex; gap: 5px;">
+                            <div class="quantity-container">
                                 <button type="button" class="btn-minus">−</button>
-                                <input type="number" name="quantity_given[]" value="0" min="0" style="height: 17px;">
+                                <input type="number" name="quantity_given[]" value="0" min="0">
                                 <button type="button" class="btn-plus">+</button>
                             </div>
                         </div>
-                        <button type="button" class="btn-remove" style="margin-top: 25px; background-color: #e6e6e6; color: rgb(0, 0, 0); border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; height: 35px;">
+                        <button type="button" class="btn-remove">
                             Remove
                         </button>
                     </div>
@@ -710,23 +696,47 @@ document.addEventListener("click", function(event) {
             
 
 
-                document.getElementById('consentCheckbox').addEventListener('change', function () {
-    document.getElementById('continueBtn').disabled = !this.checked;
-  });
-  
-  document.getElementById('continueBtn').addEventListener('click', function () {
-    // Fill hidden fields
-    document.getElementById('consentModal').style.display = 'none';
-    document.getElementById('consentGiven').value = "1";
-    document.getElementById('consentMethod').value = "verbal"; // change if needed
-    document.getElementById('consentDate').value = new Date().toISOString(); // timestamp
+                const consentModal = document.getElementById('consentModal');
+                const consentCheckbox = document.getElementById('consentCheckbox');
+                const continueBtn = document.getElementById('continueBtn');
+                const declineBtn = document.getElementById('declineBtn');
 
-  });
-  
-  document.getElementById('declineBtn').addEventListener('click', function () {
+                if (consentModal) {
+                    consentModal.style.display = 'grid';
+                    document.body.classList.add('consent-modal-open');
+                }
 
-    window.location.href="dashboard"; // or use history.back()
-  });
+                if (consentCheckbox && continueBtn) {
+                    continueBtn.disabled = !consentCheckbox.checked;
+
+                    consentCheckbox.addEventListener('change', function () {
+                        continueBtn.disabled = !this.checked;
+                    });
+
+                    continueBtn.addEventListener('click', function () {
+                        if (!consentCheckbox.checked) return;
+
+                        const consentGiven = document.getElementById('consent_given');
+                        const consentMethod = document.getElementById('consent_method');
+
+                        if (consentGiven) {
+                            consentGiven.value = "COLLECTION AND USE OF PERSONAL HEALTH INFORMATION";
+                        }
+
+                        if (consentMethod) {
+                            consentMethod.value = "verbal";
+                        }
+
+                        consentModal.style.display = 'none';
+                        document.body.classList.remove('consent-modal-open');
+                    });
+                }
+
+                if (declineBtn) {
+                    declineBtn.addEventListener('click', function () {
+                        window.location.href = "dashboard";
+                    });
+                }
   
 
 
@@ -735,18 +745,28 @@ document.addEventListener("click", function(event) {
                 const heightInput = document.getElementById('height').value;
                 const weightInput = document.getElementById('weight').value;
                 const bmiField = document.getElementById('bmi');
-            
+                const bmiDisplay = document.getElementById('bmiDisplay');
+
                 const height = parseFloat(heightInput);
                 const weight = parseFloat(weightInput);
 
-            
                 if (height > 0 && weight > 0) {
                     // Convert height from cm to meters
                     const heightInMeters = height / 100;
                     const bmi = weight / (heightInMeters * heightInMeters);
-                    bmiField.value = bmi.toFixed(2);
+                    const bmiValue = bmi.toFixed(2);
+
+                    if (bmiField) bmiField.value = bmiValue;
+                    if (bmiDisplay) {
+                        bmiDisplay.textContent = bmiValue;
+                        bmiDisplay.classList.add('has-value');
+                    }
                 } else {
-                    bmiField.value = '';
+                    if (bmiField) bmiField.value = '';
+                    if (bmiDisplay) {
+                        bmiDisplay.textContent = 'BMI will appear here';
+                        bmiDisplay.classList.remove('has-value');
+                    }
                 }
             }
             
@@ -972,26 +992,147 @@ document.addEventListener("click", function (event) {
 // Run on page load
 updateRemoveButtons();
 
-// Date of Birth picker (disable future dates)
-    flatpickr("#dob", {
-        dateFormat: "Y-m-d",
-        allowInput: true,
-        altInput: true,
-        altFormat: "F j, Y",
-        onChange: function() {
-            calculateAge();
-        }
-    });
+// Improved date pickers with the same compact system UI
+function setupMaterialDatePicker(instance, options = {}) {
+    const calendar = instance.calendarContainer;
+    if (!calendar) return;
 
-    // Date of Visit picker (default to today, disable future dates)
-    flatpickr("#dov", {
-        dateFormat: "Y-m-d",
-        maxDate: "today",
-        allowInput: true,
-        altInput: true,
-        altFormat: "F j, Y",
-        defaultDate: "today"
-    });
+    calendar.classList.add("material-date-picker");
+
+    const monthsContainer = calendar.querySelector(".flatpickr-months");
+    const currentMonth = calendar.querySelector(".flatpickr-current-month");
+    const monthSelect = calendar.querySelector(".flatpickr-monthDropdown-months");
+    const yearWrapper = calendar.querySelector(".numInputWrapper");
+
+    if (monthsContainer && currentMonth && monthSelect && yearWrapper && !calendar.querySelector(".material-picker-header")) {
+        const header = document.createElement("div");
+        header.className = "material-picker-header";
+
+        const monthGroup = document.createElement("div");
+        monthGroup.className = "material-picker-group material-picker-month-group";
+
+        const monthPrev = document.createElement("button");
+        monthPrev.type = "button";
+        monthPrev.className = "material-picker-nav";
+        monthPrev.setAttribute("aria-label", "Previous month");
+        monthPrev.innerHTML = "‹";
+        monthPrev.addEventListener("click", function () {
+            instance.changeMonth(-1);
+        });
+
+        const monthNext = document.createElement("button");
+        monthNext.type = "button";
+        monthNext.className = "material-picker-nav";
+        monthNext.setAttribute("aria-label", "Next month");
+        monthNext.innerHTML = "›";
+        monthNext.addEventListener("click", function () {
+            instance.changeMonth(1);
+        });
+
+        const yearGroup = document.createElement("div");
+        yearGroup.className = "material-picker-group material-picker-year-group";
+
+        const yearPrev = document.createElement("button");
+        yearPrev.type = "button";
+        yearPrev.className = "material-picker-nav";
+        yearPrev.setAttribute("aria-label", "Previous year");
+        yearPrev.innerHTML = "‹";
+        yearPrev.addEventListener("click", function () {
+            instance.changeYear(instance.currentYear - 1);
+        });
+
+        const yearNext = document.createElement("button");
+        yearNext.type = "button";
+        yearNext.className = "material-picker-nav";
+        yearNext.setAttribute("aria-label", "Next year");
+        yearNext.innerHTML = "›";
+        yearNext.addEventListener("click", function () {
+            instance.changeYear(instance.currentYear + 1);
+        });
+
+        monthGroup.appendChild(monthPrev);
+        monthGroup.appendChild(monthSelect);
+        monthGroup.appendChild(monthNext);
+
+        yearGroup.appendChild(yearPrev);
+        yearGroup.appendChild(yearWrapper);
+        yearGroup.appendChild(yearNext);
+
+        header.appendChild(monthGroup);
+        header.appendChild(yearGroup);
+
+        monthsContainer.innerHTML = "";
+        monthsContainer.appendChild(header);
+    }
+
+    if (!calendar.querySelector(".material-picker-footer")) {
+        const footer = document.createElement("div");
+        footer.className = "material-picker-footer";
+
+        const cancelBtn = document.createElement("button");
+        cancelBtn.type = "button";
+        cancelBtn.className = "material-picker-text-btn";
+        cancelBtn.textContent = "Cancel";
+        cancelBtn.addEventListener("click", function () {
+            instance.close();
+        });
+
+        const okBtn = document.createElement("button");
+        okBtn.type = "button";
+        okBtn.className = "material-picker-text-btn material-picker-ok-btn";
+        okBtn.textContent = "OK";
+        okBtn.addEventListener("click", function () {
+            if (typeof options.onOk === "function") options.onOk();
+            instance.close();
+        });
+
+        footer.appendChild(cancelBtn);
+        footer.appendChild(okBtn);
+        calendar.appendChild(footer);
+    }
+}
+
+// Date of Birth picker
+flatpickr("#dob", {
+    dateFormat: "Y-m-d",
+    maxDate: "today",
+    allowInput: true,
+    altInput: true,
+    altFormat: "F j, Y",
+    monthSelectorType: "dropdown",
+    disableMobile: true,
+    clickOpens: true,
+    static: false,
+    onReady: function(selectedDates, dateStr, instance) {
+        setupMaterialDatePicker(instance);
+    },
+    onOpen: function(selectedDates, dateStr, instance) {
+        setupMaterialDatePicker(instance);
+    },
+    onChange: function() {
+        calculateAge();
+    }
+});
+
+// Date of Visit picker
+flatpickr("#dov", {
+    dateFormat: "Y-m-d",
+    maxDate: "today",
+    allowInput: true,
+    altInput: true,
+    altFormat: "F j, Y",
+    defaultDate: "today",
+    monthSelectorType: "dropdown",
+    disableMobile: true,
+    clickOpens: true,
+    static: false,
+    onReady: function(selectedDates, dateStr, instance) {
+        setupMaterialDatePicker(instance);
+    },
+    onOpen: function(selectedDates, dateStr, instance) {
+        setupMaterialDatePicker(instance);
+    }
+});
 
 
             </script>            
@@ -1000,11 +1141,10 @@ updateRemoveButtons();
             <div id="myModal" class="modal">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <img src="../img/verify.png" alt="Checkmark" class="checkmark-image">
+                        <div class="modal-icon modal-icon-question" aria-hidden="true"><i class="bx bx-check"></i></div>
                         <h3>Confirmation</h3>
                         <span class="close-btn" id="closeBtn">&times;</span>
                     </div>
-             <br><br>
                     <div class="modal-footer">
                         <button id="cancelBtn" onclick="closeModal()" class="btn cancel" type="button">Cancel</button>
                          <button id="noButton" class="btn maybe" type="button">Save</button>
@@ -1021,7 +1161,7 @@ updateRemoveButtons();
              <div id="myModal2" class="modal">
                 <div class="modal-content">
                     <div class="modal-header">
-                         <img src="../img/verify.png" alt="Checkmark" class="checkmark-image">
+                         <div class="modal-icon modal-icon-question" aria-hidden="true"><i class="bx bx-check"></i></div>
                         <h3>Confirm</h3>
                         <span class="close-btn" id="closeBtn2">&times;</span>
                     </div>
@@ -1038,7 +1178,7 @@ updateRemoveButtons();
             <div id="myModal3" class="modal">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <img src="../img/check.png" alt="Checkmark" class="checkmark-image">
+                        <div class="modal-icon modal-icon-success" aria-hidden="true"><i class="bx bx-check"></i></div>
                         <h3></h3>
                         <span class="close-btn" id="closeBtn3">&times;</span>
                     </div>
@@ -1059,7 +1199,7 @@ updateRemoveButtons();
             <div id="myModal4" class="modal">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <img src="../img/check.png" alt="Checkmark" class="checkmark-image">
+                        <div class="modal-icon modal-icon-success" aria-hidden="true"><i class="bx bx-check"></i></div>
                         <h3></h3>
                         <span class="close-btn" id="closeBtn4">&times;</span>
                     </div>
@@ -1074,7 +1214,7 @@ updateRemoveButtons();
             <div id="myModal5" class="modal">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <img src="../img/verify.png" alt="Checkmark" class="checkmark-image">
+                        <div class="modal-icon modal-icon-question" aria-hidden="true"><i class="bx bx-check"></i></div>
                         <h3>Record Added</h3>
                         <span class="close-btn" id="closeBtn5">&times;</span>
                     </div>
@@ -1110,7 +1250,7 @@ updateRemoveButtons();
   <div id="errorModal" class="modal">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <img src="../img/error.jpg" alt="Checkmark" class="checkmark-image">
+                        <div class="modal-icon modal-icon-error" aria-hidden="true"><i class="bx bx-error-circle"></i></div>
                         <h3>Unexpected Error</h3>
                         <span class="close-btn" id="errorCloseBtn">&times;</span>
                     </div>
@@ -1132,7 +1272,6 @@ updateRemoveButtons();
                 Error saving data.
             </div>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>     
     <script src="js/form_nurse.js"></script>
     <script src="js/script_nurse.js"></script>
     <script src="js/modal.js"></script>
@@ -1365,38 +1504,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
 </script>
 <script>
-document.addEventListener("DOMContentLoaded", function () {
-  const dob = document.getElementById("dob");
-  if (!dob) return;
-
-  // Destroy any existing instance (defensive)
-  if (dob._flatpickr) { dob._flatpickr.destroy(); }
-
-  // Attach Flatpickr and render the calendar to <body> so it can't be clipped,
-  // and keep it above sticky elements.
-  if (window.flatpickr) {
-    flatpickr(dob, {
-      dateFormat: "Y-m-d",
-      altInput: true,
-      altFormat: "F j, Y",
-      maxDate: "today",
-      allowInput: false,   // avoids stray text breaking parsing
-      clickOpens: true,
-      appendTo: document.body, // <-- crucial to avoid overflow/stacking issues
-      onChange: function () {
-        if (typeof calculateAge === "function") {
-          calculateAge();
-        }
-      }
-    });
-  } else {
-    console.error("Flatpickr library not loaded");
-  }
-});
-</script>
-
-
-<script>
 (function () {
   const sidebar = document.getElementById('sidebar');
   const toggle = document.getElementById('sidebarToggle');
@@ -1476,5 +1583,114 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 });
 </script>
+
+<script>
+/* Reliable Select2 dropdown enhancement.
+   Keeps every original select option/content/value unchanged,
+   but renders a modern dropdown UI like the reference image. */
+(function () {
+  function shouldEnhance(select) {
+    if (!select) return false;
+    if (select.multiple) return false;
+    if (select.dataset.noSelect2 === "true") return false;
+    return true;
+  }
+
+  function initOneSelect(select) {
+    if (!window.jQuery || !jQuery.fn || !jQuery.fn.select2 || !shouldEnhance(select)) return;
+
+    const $select = jQuery(select);
+
+    if ($select.hasClass('select2-hidden-accessible')) {
+      return;
+    }
+
+    const firstOption = select.options && select.options.length ? select.options[0] : null;
+    const placeholder = firstOption ? firstOption.textContent.trim() : 'Select';
+
+    $select.select2({
+      width: '100%',
+      minimumResultsForSearch: Infinity,
+      dropdownAutoWidth: false,
+      dropdownCssClass: 'reference-select-dropdown',
+      selectionCssClass: 'reference-select-selection',
+      placeholder: placeholder,
+      dropdownParent: jQuery(document.body)
+    });
+
+    $select.on('select2:select select2:close', function () {
+      select.dispatchEvent(new Event('change', { bubbles: true }));
+      select.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+  }
+
+  function initAllSelects(root) {
+    const scope = root || document;
+    scope.querySelectorAll('select').forEach(initOneSelect);
+  }
+
+  function bootSelectUI() {
+    initAllSelects(document);
+
+    const medicineContainer = document.getElementById('medicine-container');
+    if (medicineContainer && !medicineContainer.dataset.selectObserverBound) {
+      const observer = new MutationObserver(function (mutations) {
+        mutations.forEach(function (mutation) {
+          mutation.addedNodes.forEach(function (node) {
+            if (node.nodeType === 1) {
+              initAllSelects(node);
+            }
+          });
+        });
+      });
+
+      observer.observe(medicineContainer, { childList: true, subtree: true });
+      medicineContainer.dataset.selectObserverBound = "true";
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', bootSelectUI);
+  window.addEventListener('load', function () {
+    bootSelectUI();
+    setTimeout(bootSelectUI, 150);
+    setTimeout(bootSelectUI, 500);
+  });
+
+  document.addEventListener('click', function (event) {
+    if (event.target && (event.target.id === 'add-medicine' || event.target.closest('#add-medicine'))) {
+      setTimeout(bootSelectUI, 50);
+      setTimeout(bootSelectUI, 200);
+    }
+  });
+})();
+</script>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const submitButton = document.getElementById("submitButton");
+
+    function updateSubmitAvailability() {
+        if (!submitButton) return;
+
+        const requiredFields = document.querySelectorAll("input[required], select[required], textarea[required]");
+        let allFilled = true;
+
+        requiredFields.forEach(field => {
+            if (field.disabled || field.type === "hidden") return;
+            if (!field.value || String(field.value).trim() === "") {
+                allFilled = false;
+            }
+        });
+
+        submitButton.disabled = !allFilled;
+    }
+
+    document.addEventListener("input", updateSubmitAvailability);
+    document.addEventListener("change", updateSubmitAvailability);
+    setTimeout(updateSubmitAvailability, 300);
+});
+</script>
+
 </body>
 </html>

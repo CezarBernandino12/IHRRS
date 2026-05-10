@@ -5,7 +5,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="icon" href="../img/logo.png">
 	<link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
-	<link rel="stylesheet" href="css/dashstyle.css">
+	<link rel="stylesheet" href="css/reports.css">
 	<link rel="stylesheet" href="css/logout.css">
 	<link rel="stylesheet" href="css/sidebar.css">
 	<title>Reports</title>
@@ -99,25 +99,12 @@
 			<button class="nav-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
 				<i class="bx bx-menu"></i>
 			</button>
-
-			<div class="nav-search" style="position: relative;">
-				<input type="search" id="patientSearch" placeholder="Enter patient name..." name="search" autocomplete="off">
-				<button type="button" id="searchButton" aria-label="Search">
-					<i class="bx bx-search"></i>
-				</button>
-				<div id="resultDropdown" class="dropdown-content"></div>
-			</div>
 		</nav>
 
 		<main>
 			<div class="head-title">
 				<div class="left">
 					<h1>Reports</h1>
-					<ul class="breadcrumb">
-						<li><a href="#">Reports</a></li>
-						<li><i class="bx bx-chevron-right"></i></li>
-						<li><a class="active" href="dashboard">Home</a></li>
-					</ul>
 				</div>
 			</div>
 
@@ -127,8 +114,8 @@
 					  
 				<a href="reportsPages/patient_summary_report">
 					<li class="mrr">
-					  <div class="">
-						<img src="../img/treatment.png" alt="Referrals" class="icon-img">
+					  <div class="icon-container">
+						<i class="bx bx-user-pin report-card-icon" aria-hidden="true"></i>
 					  </div>
 					  <div class="text">
 						<h3>Patient Summary Report</h3>
@@ -138,7 +125,7 @@
 				<a href="reportsPages/medicine_utilization_report">
 					<li class="mrr">
 					  <div class="icon-container">
-						<img src="../img/meds.png" alt="Medicines" class="icon-img">
+						<i class="bx bx-plus-medical report-card-icon" aria-hidden="true"></i>
 					  </div>
 					  <div class="text">
 						<h3>Medicine Utilization Report</h3>
@@ -150,10 +137,10 @@
 				<a href="reportsPages/referral_summary_report">
 				  <li class="mrr">
 					<div class="icon-container">
-					  <img src="../img/referred.png" alt="Visit Report" class="icon-img">
+					  <i class="bx bx-transfer-alt report-card-icon" aria-hidden="true"></i>
 					</div>
 					<div class="text">
-					  <h3>Referral Intake Summary Report</h3>
+					  <h3> Referral Summary Report</h3>
 					</div>
 				  </li>
 				</a>
@@ -161,7 +148,7 @@
 				<a href="reportsPages/medical_cases_report">
 				  <li class="mrr">
 					<div class="icon-container">
-					  <img src="../img/survey.png" alt="Referrals" class="icon-img">
+					  <i class="bx bx-clipboard report-card-icon" aria-hidden="true"></i>
 					</div>
 					<div class="text">
 					  <h3>Medical Cases Report</h3>
