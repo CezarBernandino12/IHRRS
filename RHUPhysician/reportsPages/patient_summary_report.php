@@ -7,7 +7,7 @@ if (!isset($_SESSION['user_id'])) {
     header("Location: ../../role");
     exit;
 }
-
+ 
 $userId = $_SESSION['user_id'];// or however you store the logged-in user's ID
 
 // Fetch user info
@@ -660,9 +660,10 @@ foreach ($visits as $visit) {
             color: var(--navy, #0d2d52);
         }
 
+      
         .patient-report-page #generated_by {
             display: block;
-            margin: 32px 0 0 4px;
+            margin: 48px 0 0 4px;
             color: var(--dark, #0f1d31);
         }
 
@@ -672,26 +673,33 @@ foreach ($visits as $visit) {
             color: var(--grey-500, #8c96aa);
             text-transform: uppercase;
             letter-spacing: .08em;
-            margin-bottom: 20px;
+            margin-bottom: 60px;
+            display: block;
+        }
+
+        .patient-report-page #generated_by .sig-block {
+            display: inline-block;
+            text-align: center;
+            min-width: 200px;
         }
 
         .patient-report-page #generated_by .sig-line {
-            display: none;
-            width: 200px;
-            border: 0;
-            border-top: 1.5px solid var(--dark, #0f1d31);
-            margin: 26px 0 6px;
+            display: block;
+            border: none;
+            border-top: 1.5px solid #000;
+            width: 100%;
+            margin: 0 0 4px;
         }
 
         .patient-report-page #generated_by .sig-name {
             font-weight: 700;
             font-size: 15px;
             color: var(--navy, #0d2d52);
-            margin-top: 4px;
+            white-space: nowrap;
         }
 
         .patient-report-page #generated_by .sig-title {
-            font-size: 12.5px;
+            font-size: 12px;
             color: var(--grey-500, #8c96aa);
             margin-top: 2px;
         }
@@ -727,7 +735,14 @@ foreach ($visits as $visit) {
                 display: none !important;
             }
 
-            .title { display: block !important; }
+            .title { display: block !important; text-align: center; }
+            .ph-line-4 { text-align: center; }
+            .print-sub { text-align: center; }
+            /* Consistent font */
+            body, table, th, td, #generated_by, .sig-label, .sig-name, .sig-title,
+            .ph-line-4, .print-sub { font-family: Arial, sans-serif !important; }
+            /* Hide charts */
+            .patient-chart-grid, .chart-controls-panel, canvas { display: none !important; }
             .print-letterhead { display: grid !important; }
 
             .print-letterhead {
@@ -768,8 +783,7 @@ foreach ($visits as $visit) {
             }
 
             .patient-report-page #reportTable thead tr {
-                background: #e0e8f5 !important;
-                print-color-adjust: exact;
+                background: #fff !important;
             }
 
             .patient-report-page #reportTable th {
@@ -777,7 +791,7 @@ foreach ($visits as $visit) {
                 border: 1px solid #ccc !important;
                 padding: 7px 10px !important;
                 font-size: 9pt !important;
-                background: #d8e4f0 !important;
+                background: #fff !important;
             }
 
             .patient-report-page #reportTable td {
@@ -806,11 +820,12 @@ foreach ($visits as $visit) {
                 color: #000 !important;
             }
 
-            .patient-report-page #generated_by { margin: 60mm 0 0 10mm; }
-            .patient-report-page #generated_by .sig-label { font-size: 12pt; }
-            .patient-report-page #generated_by .sig-name  { font-size: 12pt; }
-            .patient-report-page #generated_by .sig-title { font-size: 11pt; }
-            .patient-report-page #generated_by .sig-line  { display: block; width: 45mm; border-top-width: 1px; margin: 10mm 0 3mm; }
+            .patient-report-page #generated_by { margin: 50mm 0 0 10mm !important; }
+            #generated_by .sig-label { font-size: 11px; margin-bottom: 60px; display: block; }
+            #generated_by .sig-block { display: inline-block; text-align: center; }
+            #generated_by .sig-line { display: block; border: none; border-top: 1.5px solid #000; width: 100%; margin: 0 0 4px; }
+            #generated_by .sig-name { font-weight: 700; font-size: 12pt; white-space: nowrap; }
+            #generated_by .sig-title { font-size: 11pt; }
         }
 
         @media (max-width: 768px) {
@@ -1766,26 +1781,14 @@ function printDiv() {
 
     const clone = originalArea.cloneNode(true);
 
-    // Convert live charts to images before printing
-    ['sexPieChart', 'ageGroupBarChart', 'bmiPieChart', 'barangayBarChart'].forEach(id => {
-        const live = document.getElementById(id);
-        const inClone = clone.querySelector('#' + id);
-        if (live && inClone && typeof live.toDataURL === 'function') {
-            const img = document.createElement('img');
-            img.src = live.toDataURL('image/png');
-            img.style.cssText = 'max-width:100%;height:auto;';
-            inClone.parentNode.replaceChild(img, inClone);
-        }
-    });
+    // Remove all chart/canvas elements and controls from the clone
+    clone.querySelectorAll('.chart-controls-panel, .patient-chart-grid, canvas').forEach(el => el.remove());
 
     // Remove header duplication in the clone
     const headerInClone = clone.querySelector('.print-letterhead');
     if (headerInClone) headerInClone.remove();
     const ruleInClone = clone.querySelector('.print-rule');
     if (ruleInClone) ruleInClone.remove();
-
-    // Remove controls in the clone
-    clone.querySelectorAll('.chart-controls-panel').forEach(el => el.remove());
 
     const w = window.open('', '', 'height=900,width=1100');
     if (!w) {
@@ -1799,30 +1802,30 @@ function printDiv() {
                 <title>Print Report</title>
                 <meta charset="utf-8" />
                 <style>
-                    body{font-family:'Plus Jakarta Sans',Arial,sans-serif;font-size:12px;color:#000;}
-                    table{width:100%;border-collapse:collapse;}
-                    th,td{border:1px solid #000;padding:5px 8px;text-align:left;}
-                    thead{background:#d8e4f0;print-color-adjust:exact;}
+                    body{font-family:Arial,sans-serif;font-size:13px;color:#000;}
+                    table{width:100%;border-collapse:collapse;font-family:Arial,sans-serif;font-size:12px;}
+                    th,td{border:1px solid #000;padding:5px 8px;text-align:left;font-family:Arial,sans-serif;}
+                    thead tr{background:#fff!important;}
+                    thead th{background:#fff!important;color:#000!important;font-weight:700;}
                     img{display:block;margin:0 auto;max-width:100%;height:auto;}
-
-                    .print-letterhead{
-                        display:grid;grid-template-columns:64px auto 64px;
-                        align-items:center;justify-content:center;column-gap:60px;
-                        margin:0 auto 10px;text-align:center;width:fit-content;
-                    }
+                    .print-letterhead{display:grid;grid-template-columns:64px auto 64px;align-items:center;justify-content:center;column-gap:60px;margin:0 auto 10px;text-align:center;width:fit-content;}
                     .print-logo{width:64px;height:64px;object-fit:contain;}
-                    .print-heading{line-height:1.1;color:#000;}
+                    .print-heading{line-height:1.1;color:#000;font-family:Arial,sans-serif;}
                     .print-heading .ph-line-1{font-size:12pt;font-weight:500;}
                     .print-heading .ph-line-2{font-size:14pt;font-weight:800;}
                     .print-heading .ph-line-3{font-size:11pt;font-weight:500;}
-                    .print-sub{font-size:11pt;margin-top:4px;}
+                    .title{display:block;text-align:center;margin:8px 0;font-family:Arial,sans-serif;}
+                    .ph-line-4{font-size:12pt;font-weight:800;margin-top:4px;text-align:center;font-family:Arial,sans-serif;}
+                    .print-sub{font-size:11pt;margin-top:4px;text-align:center;font-family:Arial,sans-serif;}
                     .print-rule{height:1px;border:0;background:#cfd8e3;margin:8px 0 12px;}
-                    .title{display:block;text-align:center;}
-                    .chart-card{max-width:620px;margin:18px auto;text-align:center;page-break-inside:avoid;}
-                    .chart-title{font-size:12pt;margin:8px 0;}
+                    .chart-controls-panel,.patient-chart-grid,canvas{display:none!important;}
                     .summary-title{display:none;}
-                    #generated_by{margin:60mm 0 0 10mm;}
-                    #generated_by .sig-line{display:block;width:45mm;border:0;border-top:1px solid #000;margin:10mm 0 3mm;}
+                    #generated_by{margin:50mm 0 0 10mm;font-family:Arial,sans-serif;}
+                    .sig-label{font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:#666;margin-bottom:60px;display:block;}
+                    .sig-block{display:inline-block;text-align:center;}
+                    .sig-line{display:block;border:none;border-top:1.5px solid #000;margin:0 0 4px;}
+                    .sig-name{font-weight:700;font-size:13px;white-space:nowrap;}
+                    .sig-title{font-size:11px;color:#666;}
                 </style>
             </head>
             <body>
@@ -2040,7 +2043,6 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(data => {
             const fullName = (data && data.full_name) ? data.full_name : '';
 
-<<<<<<< HEAD
             // Greeting (keep current behavior)
             const greetingEl = document.getElementById('userGreeting');
             if (greetingEl) {
@@ -2049,19 +2051,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const sidebarNameEl = document.getElementById('sidebarUserName');
             if (sidebarNameEl) {
-                sidebarNameEl.textContent = fullName || 'Physician';
+                sidebarNameEl.textContent = fullName || 'Nurse';
             }
 
             // Build the signature block
             const gb = document.getElementById('generated_by');
             if (gb) {
-                gb.innerHTML = `
-                    <div class="sig-label">Report Generated by:</div>
-                    <hr class="sig-line">
-                    <div class="sig-name"></div>
-                    <div class="sig-title">Physician</div>
-                `;
-                gb.querySelector('.sig-name').textContent = fullName || '________________';
+                const name = fullName || '________________';
+                gb.innerHTML = `<div class="sig-label">Report Generated by:</div><div class="sig-block"><span class="sig-line"></span><div class="sig-name"></div><div class="sig-title">Nursing Attendant</div></div>`;
+                gb.querySelector('.sig-name').textContent = name;
+                const nameEl = gb.querySelector('.sig-name');
+                const lineEl = gb.querySelector('.sig-line');
+                requestAnimationFrame(() => { lineEl.style.width = nameEl.offsetWidth + 'px'; });
             }
         })
         .catch(() => {
@@ -2071,49 +2072,13 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             const sidebarNameEl = document.getElementById('sidebarUserName');
             if (sidebarNameEl) {
-                sidebarNameEl.textContent = 'Physician';
+                sidebarNameEl.textContent = 'Nurse';
             }
             const gb = document.getElementById('generated_by');
             if (gb) {
-                gb.innerHTML = `
-                    <div class="sig-label">Report Generated by:</div>
-                    <hr class="sig-line">
-                    <div class="sig-name">________________</div>
-                    <div class="sig-title">Physician</div>
-                `;
+                gb.innerHTML = `<div class="sig-label">Report Generated by:</div><div class="sig-block"><span class="sig-line" style="width:180px;"></span><div class="sig-name">________________</div><div class="sig-title">Nursing Attendant</div></div>`;
             }
         });
-=======
-      // Sidebar user display
-      const sidebarNameEl = document.getElementById('sidebarUserName');
-      if (sidebarNameEl) {
-        sidebarNameEl.textContent = fullName || 'Physician';
-      }
-
-      // Build the signature block
-      const gb = document.getElementById('generated_by');
-      gb.innerHTML = `
-        <div class="sig-label">Report Generated by:</div>
-        <hr class="sig-line">
-        <div class="sig-name"></div>
-        <div class="sig-title">Physician</div>
-      `;
-      gb.querySelector('.sig-name').textContent = fullName || '________________';
-    })
-    .catch(() => {
-      const sidebarNameEl = document.getElementById('sidebarUserName');
-      if (sidebarNameEl) {
-        sidebarNameEl.textContent = 'Physician';
-      }
-      const gb = document.getElementById('generated_by');
-      gb.innerHTML = `
-        <div class="sig-label">Report Generated by:</div>
-        <hr class="sig-line">
-        <div class="sig-name">________________</div>
-        <div class="sig-title">Physician</div>
-      `;
-    });
->>>>>>> 33fc5da55d190a4b262e16a6c8935100d5aecf81
 });
 
 // Check if user is logged in

@@ -1109,7 +1109,7 @@ if ($from_date || $to_date) {
 
 #generated_by {
   display: block;
-  margin: 32px 0 0 4px !important;
+  margin: 48px 0 0 4px !important;
   color: var(--dark) !important;
 }
 #generated_by .sig-label {
@@ -1118,16 +1118,29 @@ if ($from_date || $to_date) {
   color: var(--grey-500);
   text-transform: uppercase;
   letter-spacing: .08em;
-  margin-bottom: 20px;
+  margin-bottom: 60px;
+  display: block;
 }
-#generated_by .sig-line { display: none; }
+#generated_by .sig-block {
+  display: inline-block;
+  text-align: center;
+  min-width: 200px;
+}
+#generated_by .sig-line {
+  display: block;
+  border: none;
+  border-top: 1.5px solid #000;
+  width: 100%;
+  margin: 0 0 4px;
+}
 #generated_by .sig-name {
   font-weight: 700;
   font-size: 15px !important;
   color: var(--navy);
+  white-space: nowrap;
 }
 #generated_by .sig-title {
-  font-size: 12.5px !important;
+  font-size: 12px !important;
   color: var(--grey-500) !important;
 }
 
@@ -1144,14 +1157,25 @@ if ($from_date || $to_date) {
     padding: 0;
     border-radius: 0;
   }
-  .title { display: block !important; }
+  .title { display: block !important; text-align: center; }
+  .ph-line-4, .print-sub { text-align: center; }
   .print-letterhead { display: grid !important; }
   .chart-controls-panel,
   .chart-title,
   .report-chart-card,
+  .line-chart-card,
+  canvas,
+  .report-charts-grid,
   .form-submit,
   nav,
   #sidebar { display: none !important; }
+  /* Remove thead color */
+  #reportTable thead tr { background: #fff !important; }
+  #reportTable th { background: #fff !important; color: #000 !important; }
+  /* Consistent font */
+  body, table, th, td,
+  #generated_by, .sig-label, .sig-name, .sig-title,
+  .ph-line-4, .print-sub { font-family: Arial, sans-serif !important; }
   .report-table-container {
     box-shadow: none;
     border: 1px solid #000;
@@ -1187,7 +1211,11 @@ if ($from_date || $to_date) {
     border: 1px solid #000 !important;
   }
   #generated_by { margin: 50mm 0 0 10mm !important; }
-  #generated_by .sig-line { display: block; width: 45mm; border: 0; border-top: 1px solid #000; margin: 10mm 0 3mm; }
+  #generated_by .sig-label { font-size: 11px; margin-bottom: 60px; display: block; }
+  #generated_by .sig-block { display: inline-block; text-align: center; }
+  #generated_by .sig-line { display: block; border: none; border-top: 1.5px solid #000; width: 100%; margin: 0 0 4px; }
+  #generated_by .sig-name { font-weight: 700; font-size: 12pt; white-space: nowrap; }
+  #generated_by .sig-title { font-size: 11pt; }
 }
 
 @media (max-width: 900px) {
@@ -1941,8 +1969,8 @@ function printDiv() {
   const headerInClone = originalArea.querySelector('.print-letterhead, .print-header');
   if (headerInClone) headerInClone.remove();
 
-  // Remove canvases (we’ll print charts as they appear on the page, not live canvases)
-  originalArea.querySelectorAll('canvas').forEach(c => c.remove());
+  // Remove canvases and all chart elements from the clone
+  originalArea.querySelectorAll('canvas, .chart-controls-panel, .report-chart-card, .line-chart-card, .report-charts-grid').forEach(el => el.remove());
 
   // Open print window
   const w = window.open('', '', 'height=900,width=1100');
@@ -1953,34 +1981,36 @@ function printDiv() {
       <head>
         <title>Print Report</title>
         <style>
-          body { font-family: Arial, sans-serif; font-size: 16px; color: #000; }
-          table { width: 100%; border-collapse: collapse; }
-          th, td { border: 1px solid #000; padding: 4px; text-align: left; }
-          thead { background-color: #f0f0f0; }
+          body { font-family: Arial, sans-serif; font-size: 13px; color: #000; }
+          table { width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; font-size: 12px; }
+          th, td { border: 1px solid #000; padding: 4px 6px; text-align: left; font-family: Arial, sans-serif; }
+          thead tr { background: #fff !important; }
+          thead th { background: #fff !important; color: #000 !important; font-weight: 700; }
           img { display:block; margin:0 auto; max-width:100%; height:auto; }
-          h3 { margin:10px 0 5px 0; }
+          h3 { margin:10px 0 5px 0; font-family: Arial, sans-serif; }
+          .chart-controls-panel, .report-chart-card, .line-chart-card,
+          canvas, img[src^="data:"], .report-charts-grid { display: none !important; }
 
-          /* Letterhead styles in print window */
-          .print-letterhead{
-            display:grid;
-            grid-template-columns:64px auto 64px;
-            align-items:center;
-            justify-content:center;
-            column-gap:14px;
-            margin:0 auto 14px;
-            text-align:center;
-            width:fit-content;
-          }
+          /* Letterhead */
+          .print-letterhead{display:grid;grid-template-columns:64px auto 64px;align-items:center;justify-content:center;column-gap:14px;margin:0 auto 14px;text-align:center;width:fit-content;}
           .print-logo{ width:80px; height:80px; object-fit:contain; }
-          .print-heading{ line-height:1.1;  color: #000;; }
+          .print-heading{ line-height:1.1; color:#000; font-family:Arial,sans-serif; }
           .print-heading > *{ margin:0; }
           .ph-line-1{ font-size:12pt; font-weight:500; }
           .ph-line-2{ font-size:16pt; font-weight:500; }
           .ph-line-3{ font-size:12pt; font-weight:500; }
-          .ph-line-4{ font-size:12pt; font-weight:500; margin-top:2px; }
+          .ph-line-4{ font-size:12pt; font-weight:800; margin-top:4px; text-align:center; font-family:Arial,sans-serif; }
           .print-rule{ height:1px; border:0; background:#cfd8e3; margin:8px 0 10px; }
-          .print-title{ font-size:14pt; font-weight:500; letter-spacing:.3px; color:#000; }
-          .print-sub{ font-size:11pt;}
+          .title{ text-align:center; margin:8px 0; font-family:Arial,sans-serif; }
+          .print-sub{ font-size:11pt; text-align:center; font-family:Arial,sans-serif; }
+
+          /* Signature */
+          #generated_by { margin-top: 48px; font-family: Arial, sans-serif; }
+          .sig-label { font-size:11px; text-transform:uppercase; letter-spacing:.07em; color:#666; margin-bottom:60px; display:block; }
+          .sig-block { display:inline-block; text-align:center; }
+          .sig-line { display:block; border:none; border-top:1.5px solid #000; margin:0 0 4px; }
+          .sig-name { font-weight:700; font-size:13px; white-space:nowrap; }
+          .sig-title { font-size:11px; color:#666; }
         </style>
       </head>
       <body>
@@ -2004,15 +2034,17 @@ fetch('../php/getUserName.php')
 
     // Build the signature block
     const gb = document.getElementById('generated_by');
-    gb.innerHTML = `
-      <div class="sig-label">Report Generated by:</div>
-      <hr class="sig-line">
-      <div class="sig-name"></div>
-      <div class="sig-title">Barangay Health Worker</div>
-    `;
-
-    // Set name safely as text
-    gb.querySelector('.sig-name').textContent = fullName || '________________';
+    const name = fullName || '________________';
+    gb.innerHTML = `<div class="sig-label">Report Generated by:</div>
+      <div class="sig-block">
+        <span class="sig-line"></span>
+        <div class="sig-name"></div>
+        <div class="sig-title">Barangay Health Worker</div>
+      </div>`;
+    gb.querySelector('.sig-name').textContent = name;
+    const nameEl = gb.querySelector('.sig-name');
+    const lineEl = gb.querySelector('.sig-line');
+    requestAnimationFrame(() => { lineEl.style.width = nameEl.offsetWidth + 'px'; });
 
     const sidebarName = document.getElementById('sidebarUserName');
     if (sidebarName) {
@@ -2028,12 +2060,12 @@ fetch('../php/getUserName.php')
     }
 
     const gb = document.getElementById('generated_by');
-    gb.innerHTML = `
-      <div class="sig-label">Report Generated by:</div>
-      <hr class="sig-line">
-      <div class="sig-name">________________</div>
-      <div class="sig-title">Barangay Health Worker</div>
-    `;
+    gb.innerHTML = `<div class="sig-label">Report Generated by:</div>
+      <div class="sig-block">
+        <span class="sig-line" style="width:180px;"></span>
+        <div class="sig-name">________________</div>
+        <div class="sig-title">Barangay Health Worker</div>
+      </div>`;
   });
 
 function confirmLogout() {

@@ -175,16 +175,22 @@ $stmt_log->execute([
   .print-only-letterhead { display: none; }
 
   @media print {
-    .title { display: block !important; }
+    .title { display: block !important; text-align: center; }
+    .ph-line-4 { text-align: center; }
+    .print-sub { text-align: center; }
     .print-only-letterhead { display: block !important; }
     .summary > h3 { display: none !important; }
-    .chart-title,
-    .chart-controls-panel,
-    .form-submit,
-    .selected-filters,
-    nav,
-    #sidebar,
-    .sidebar-overlay { display: none !important; }
+    /* Hide charts */
+    .chart-title, .chart-controls-panel, .summary-chart-card,
+    .referral-summary-charts-grid, canvas,
+    .form-submit, .selected-filters,
+    nav, #sidebar, .sidebar-overlay { display: none !important; }
+    /* Remove thead color */
+    thead tr { background: #fff !important; }
+    thead th { background: #fff !important; color: #000 !important; }
+    /* Consistent font */
+    body, table, th, td, #generated_by, .sig-label, .sig-name, .sig-title,
+    .ph-line-4, .print-sub { font-family: Arial, sans-serif !important; }
 
     .print-letterhead {
       display: grid !important;
@@ -213,11 +219,12 @@ $stmt_log->execute([
       background: transparent !important;
     }
 
-    #generated_by { margin: 60mm 0 0 10mm; }
-    #generated_by .sig-label { font-size: 12pt; }
-    #generated_by .sig-name { font-size: 12pt; }
+    #generated_by { margin: 50mm 0 0 10mm !important; }
+    #generated_by .sig-label { font-size: 11px; margin-bottom: 60px; display: block; }
+    #generated_by .sig-block { display: inline-block; text-align: center; }
+    #generated_by .sig-line { display: block; border: none; border-top: 1.5px solid #000; width: 100%; margin: 0 0 4px; }
+    #generated_by .sig-name { font-weight: 700; font-size: 12pt; white-space: nowrap; }
     #generated_by .sig-title { font-size: 11pt; }
-    #generated_by .sig-line { display: block; width: 45mm; border-top-width: 1px; margin: 10mm 0 3mm; }
   }
 
   @media (max-width: 768px) {
@@ -348,7 +355,6 @@ $stmt_log->execute([
 <!-- Sidebar Section -->
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-<<<<<<< HEAD
 <section id="sidebar">
     <a href="#" class="sidebar-brand">
         <img src="../../img/logo.png" alt="RHU Logo" class="brand-logo">
@@ -356,15 +362,6 @@ $stmt_log->execute([
             <span class="brand-name">Hello Physician</span>
         </div>
     </a>
-=======
-	<section id="sidebar">
-		<a href="#" class="sidebar-brand">
-			<img src="../../img/logo.png" alt="RHU Logo" class="brand-logo">
-			<div class="brand-text">
-				<span class="brand-name">Physician</span>
-			</div>
-		</a>
->>>>>>> 33fc5da55d190a4b262e16a6c8935100d5aecf81
 
     <div class="sidebar-scroll">
         <div class="sidebar-section-label">Main Menu</div>
@@ -419,7 +416,6 @@ $stmt_log->execute([
         </ul>
     </div>
 
-<<<<<<< HEAD
     <div class="sidebar-footer">
         <div class="sidebar-user">
             <img src="../../img/nurse.png" alt="Physician User">
@@ -430,18 +426,7 @@ $stmt_log->execute([
         </div>
     </div>
 </section>
-=======
-		<div class="sidebar-footer">
-			<div class="sidebar-user">
-				<img src="../../img/doctor.png" alt="Physician User">
-				<div class="sidebar-user-info">
-					<div class="user-name" id="sidebarUserName">Physician</div>
-					<div class="user-role">Physician</div>
-				</div>
-			</div>
-		</div>
-	</section>
->>>>>>> 33fc5da55d190a4b262e16a6c8935100d5aecf81
+
 
 <!-- Main Content Section -->
 <section id="content">
@@ -1071,111 +1056,15 @@ function exportTableToExcel(tableID, filename = 'Referral Summary Report') {
 })();
 
 function printDiv() {
-<<<<<<< HEAD
     const originalArea = document.querySelector('.print-area');
     if (!originalArea) {
         alert('Error: Missing .print-area on page.');
         return;
-=======
-  const originalArea = document.querySelector(".print-area");
-  if (!originalArea) {
-    alert("Error: Missing .print-area on page.");
-    return;
-  }
-
-  const clone = originalArea.cloneNode(true);
-
-  // Remove all charts/controls in the clone
-  clone.querySelectorAll('canvas').forEach(c => c.remove());
-  clone.querySelectorAll('.chart-title').forEach(el => el.remove());
-
-  const w = window.open('', '', 'height=900,width=1100');
-  w.document.write(`
-    <html>
-      <head>
-        <title>Print Report</title>
-        <meta charset="utf-8" />
-        <style>
-          body { font-family: Arial, sans-serif; font-size: 12px; color: black; }
-          table { width: 100%; border-collapse: collapse; }
-          th, td { border: 1px solid #000; padding: 4px; text-align: left; }
-          thead { background-color: #f0f0f0; }
-          img { display: block; margin: 0 auto; max-width: 100%; height: auto; }
-          h3 { margin: 10px 0 5px 0; }
-
-          /* same print-only rules inside the print window */
-          .print-only { display: block; }
-          .print-letterhead{
-            display:grid; grid-template-columns:64px auto 64px;
-            align-items:center; justify-content:center; column-gap:14px;
-            margin:0 auto 10px; text-align:center; width:fit-content;
-          }
-          .print-logo{ width:64px; height:64px; object-fit:contain; }
-          .print-heading{ line-height:1.1; color:#000; }
-          .print-heading .ph-line-1{ font-size:12pt; font-weight:500; }
-          .print-heading .ph-line-2{ font-size:14pt; font-weight:800; }
-          .print-heading .ph-line-3{ font-size:11pt; font-weight:500; }
-          .print-heading .ph-line-4{ font-size:12pt; font-weight:800; margin-top:4px; letter-spacing:.3px; }
-          .print-sub{ font-size:12pt; margin-top:4px; }
-          .print-rule{ height:1px; border:0; background:#cfd8e3; margin:8px 0 12px; }
-        </style>
-      </head>
-      <body>${clone.innerHTML}</body>
-    </html>
-  `);
-  w.document.close();
-  w.focus();
-  setTimeout(() => { w.print(); w.close(); }, 500);
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-  fetch('../php/getUserName.php')
-    .then(r => r.json())
-    .then(data => {
-      const fullName = (data && data.full_name) ? data.full_name : '';
-
-      // Sidebar user display
-      const sidebarNameEl = document.getElementById('sidebarUserName');
-      if (sidebarNameEl) {
-        sidebarNameEl.textContent = fullName || 'Physician';
-      }
-
-      // Build the signature block
-      const gb = document.getElementById('generated_by');
-      gb.innerHTML = `
-        <div class="sig-label">Report Generated by:</div>
-        <hr class="sig-line">
-        <div class="sig-name"></div>
-        <div class="sig-title">Physician</div>
-      `;
-      gb.querySelector('.sig-name').textContent = fullName || '________________';
-    })
-    .catch(() => {
-      const sidebarNameEl = document.getElementById('sidebarUserName');
-      if (sidebarNameEl) {
-        sidebarNameEl.textContent = 'Physician';
-      }
-      const gb = document.getElementById('generated_by');
-      gb.innerHTML = `
-        <div class="sig-label">Report Generated by:</div>
-        <hr class="sig-line">
-        <div class="sig-name">________________</div>
-        <div class="sig-title">Physician</div>
-      `;
-    });
-});
-
-// Close modal when clicking outside
-window.onclick = function(event) {
-    const modal = document.getElementById('logoutModal');
-    if (event.target == modal) {
-        closeModal();
->>>>>>> 33fc5da55d190a4b262e16a6c8935100d5aecf81
     }
 
     const clone = originalArea.cloneNode(true);
-    clone.querySelectorAll('canvas').forEach(c => c.remove());
-    clone.querySelectorAll('.summary-chart-card, .chart-card, .chart-controls-panel').forEach(el => el.remove());
+    /* Remove all chart/canvas elements from the clone */
+    clone.querySelectorAll('.summary-chart-card, .chart-card, .chart-controls-panel, .referral-summary-charts-grid, canvas').forEach(el => el.remove());
 
     const w = window.open('', '', 'height=900,width=1100');
     if (!w) {
@@ -1189,33 +1078,31 @@ window.onclick = function(event) {
             <title>Print Report</title>
             <meta charset="utf-8" />
             <style>
-                body { font-family: Arial, sans-serif; font-size: 12px; color: black; }
-                table { width: 100%; border-collapse: collapse; }
-                th, td { border: 1px solid #000; padding: 4px; text-align: left; }
-                thead { background-color: #f0f0f0; }
-                img { display: block; margin: 0 auto; max-width: 100%; height: auto; }
-                h3 { margin: 10px 0 5px 0; }
-                .title { display: block; text-align: center; }
-                .print-only-letterhead { display: block; }
-                .print-letterhead {
-                    display: grid;
-                    grid-template-columns: 64px auto 64px;
-                    align-items: center;
-                    justify-content: center;
-                    column-gap: 14px;
-                    margin: 0 auto 10px;
-                    text-align: center;
-                    width: fit-content;
-                }
-                .print-logo { width: 64px; height: 64px; object-fit: contain; }
-                .print-heading { line-height: 1.1; color: #000; }
-                .print-heading .ph-line-1 { font-size: 12pt; font-weight: 500; }
-                .print-heading .ph-line-2 { font-size: 14pt; font-weight: 800; }
-                .print-heading .ph-line-3 { font-size: 11pt; font-weight: 500; }
-                .print-sub { font-size: 12pt; margin-top: 4px; }
-                .print-rule { height: 1px; border: 0; background: #cfd8e3; margin: 8px 0 12px; }
-                #generated_by { margin: 60mm 0 0 10mm; }
-                #generated_by .sig-line { display: block; width: 45mm; border: 0; border-top: 1px solid #000; margin: 10mm 0 3mm; }
+                body{font-family:Arial,sans-serif;font-size:13px;color:#000;}
+                table{width:100%;border-collapse:collapse;font-family:Arial,sans-serif;font-size:12px;}
+                th,td{border:1px solid #000;padding:4px 6px;text-align:left;font-family:Arial,sans-serif;}
+                thead tr{background:#fff!important;}
+                thead th{background:#fff!important;color:#000!important;font-weight:700;}
+                img{display:block;margin:0 auto;max-width:100%;height:auto;}
+                h3{margin:10px 0 5px 0;font-family:Arial,sans-serif;}
+                .title{display:block;text-align:center;margin:8px 0;font-family:Arial,sans-serif;}
+                .ph-line-4{font-size:12pt;font-weight:800;margin-top:4px;text-align:center;font-family:Arial,sans-serif;}
+                .print-only-letterhead{display:block;}
+                .print-letterhead{display:grid;grid-template-columns:64px auto 64px;align-items:center;justify-content:center;column-gap:14px;margin:0 auto 10px;text-align:center;width:fit-content;}
+                .print-logo{width:64px;height:64px;object-fit:contain;}
+                .print-heading{line-height:1.1;color:#000;font-family:Arial,sans-serif;}
+                .print-heading .ph-line-1{font-size:12pt;font-weight:500;}
+                .print-heading .ph-line-2{font-size:14pt;font-weight:800;}
+                .print-heading .ph-line-3{font-size:11pt;font-weight:500;}
+                .print-sub{font-size:12pt;margin-top:4px;text-align:center;font-family:Arial,sans-serif;}
+                .print-rule{height:1px;border:0;background:#cfd8e3;margin:8px 0 12px;}
+                .summary-chart-card,.referral-summary-charts-grid,.chart-controls-panel,canvas{display:none!important;}
+                #generated_by{margin:50mm 0 0 10mm;font-family:Arial,sans-serif;}
+                .sig-label{font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:#666;margin-bottom:60px;display:block;}
+                .sig-block{display:inline-block;text-align:center;}
+                .sig-line{display:block;border:none;border-top:1.5px solid #000;margin:0 0 4px;}
+                .sig-name{font-weight:700;font-size:13px;white-space:nowrap;}
+                .sig-title{font-size:11px;color:#666;}
             </style>
         </head>
         <body>${clone.innerHTML}</body>
@@ -1250,13 +1137,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const gb = document.getElementById('generated_by');
             if (gb) {
-                gb.innerHTML = `
-                    <div class="sig-label">Report Generated by:</div>
-                    <hr class="sig-line">
-                    <div class="sig-name"></div>
-                    <div class="sig-title">Physician</div>
-                `;
-                gb.querySelector('.sig-name').textContent = fullName || '________________';
+                const name2 = fullName || '________________';
+                gb.innerHTML = `<div class="sig-label">Report Generated by:</div><div class="sig-block"><span class="sig-line"></span><div class="sig-name"></div><div class="sig-title">Physician</div></div>`;
+                gb.querySelector('.sig-name').textContent = name2;
+                const nameEl2 = gb.querySelector('.sig-name');
+                const lineEl2 = gb.querySelector('.sig-line');
+                requestAnimationFrame(() => { lineEl2.style.width = nameEl2.offsetWidth + 'px'; });
             }
         })
         .catch(() => {
@@ -1265,12 +1151,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const gb = document.getElementById('generated_by');
             if (gb) {
-                gb.innerHTML = `
-                    <div class="sig-label">Report Generated by:</div>
-                    <hr class="sig-line">
-                    <div class="sig-name">________________</div>
-                    <div class="sig-title">Physician</div>
-                `;
+                gb.innerHTML = `<div class="sig-label">Report Generated by:</div><div class="sig-block"><span class="sig-line" style="width:180px;"></span><div class="sig-name">________________</div><div class="sig-title">Physician</div></div>`;
             }
         });
 });

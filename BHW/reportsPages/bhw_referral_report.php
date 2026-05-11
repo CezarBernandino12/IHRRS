@@ -569,7 +569,7 @@ foreach ($rows as $row) {
 
     .bhw-referral-layout-page #generated_by {
         display: block;
-        margin: 32px 0 0 4px;
+        margin: 48px 0 0 4px;
         color: var(--dark, #0f1d31);
     }
 
@@ -579,17 +579,30 @@ foreach ($rows as $row) {
         color: var(--grey-500, #8c96aa);
         text-transform: uppercase;
         letter-spacing: .08em;
-        margin-bottom: 20px;
+        margin-bottom: 60px;
+        display: block;
     }
 
-    .bhw-referral-layout-page #generated_by .sig-line { display: none; }
+    .bhw-referral-layout-page #generated_by .sig-block {
+        display: inline-block;
+        text-align: center;
+        min-width: 200px;
+    }
+    .bhw-referral-layout-page #generated_by .sig-line {
+        display: block;
+        border: none;
+        border-top: 1.5px solid #000;
+        width: 100%;
+        margin: 0 0 4px;
+    }
     .bhw-referral-layout-page #generated_by .sig-name {
         font-weight: 700;
         font-size: 15px;
         color: var(--navy, #0d2d52);
+        white-space: nowrap;
     }
     .bhw-referral-layout-page #generated_by .sig-title {
-        font-size: 12.5px;
+        font-size: 12px;
         color: var(--grey-500, #8c96aa);
         margin-top: 2px;
     }
@@ -667,14 +680,27 @@ foreach ($rows as $row) {
             background: transparent !important;
             padding: 6px 8px !important;
         }
+        /* Title centered */
+        .title { text-align: center !important; }
+        .ph-line-4, .print-sub { text-align: center; }
+        /* Hide charts */
+        .chart-controls-panel, .referral-charts-grid, .chart,
+        canvas { display: none !important; }
+        /* Remove thead color */
+        .bhw-referral-layout-page #reportTable thead tr { background: #fff !important; }
+        .bhw-referral-layout-page #reportTable th { background: #fff !important; color: #000 !important; }
+        .status-breakdown-table thead tr { background: #fff !important; }
+        .status-breakdown-table thead th { background: #fff !important; color: #000 !important; }
+        /* Consistent font */
+        body, table, th, td, #generated_by, .sig-label, .sig-name, .sig-title,
+        .ph-line-4, .print-sub { font-family: Arial, sans-serif !important; }
+        /* Signature */
         .bhw-referral-layout-page #generated_by { margin: 50mm 0 0 10mm !important; }
-        .bhw-referral-layout-page #generated_by .sig-line {
-            display: block;
-            width: 45mm;
-            border: 0;
-            border-top: 1px solid #000;
-            margin: 10mm 0 3mm;
-        }
+        #generated_by .sig-label { font-size: 11px; margin-bottom: 60px; display: block; }
+        #generated_by .sig-block { display: inline-block; text-align: center; }
+        #generated_by .sig-line { display: block; border: none; border-top: 1.5px solid #000; width: 100%; margin: 0 0 4px; }
+        #generated_by .sig-name { font-weight: 700; font-size: 12pt; white-space: nowrap; }
+        #generated_by .sig-title { font-size: 11pt; }
     }
 
     @media print {
@@ -683,7 +709,7 @@ foreach ($rows as $row) {
             border: 1px solid #000 !important;
             background: transparent !important;
         }
-        .status-breakdown-table thead th { background: #d8e4f0 !important; }
+        .status-breakdown-table thead th { background: #fff !important; color: #000 !important; }
     }
     </style>
 </head>
@@ -1317,16 +1343,8 @@ function printDiv() {
     if (!area) return;
     const clone = area.cloneNode(true);
 
-    ['referralPieChart','statusPieChart'].forEach(id => {
-        const live = document.getElementById(id);
-        const inClone = clone.querySelector('#' + id);
-        if (live && inClone && typeof live.toDataURL === 'function') {
-            const img = document.createElement('img');
-            img.src = live.toDataURL('image/png'); img.style.cssText='max-width:100%;height:auto;';
-            inClone.parentNode.replaceChild(img, inClone);
-        }
-    });
-    clone.querySelectorAll('canvas').forEach(c=>c.remove());
+    /* Remove all chart/canvas elements from the clone */
+    clone.querySelectorAll('canvas, .chart-controls-panel, .chart, .referral-charts-grid').forEach(el => el.remove());
     const hInClone = clone.querySelector('.print-letterhead, .print-header');
     if (hInClone) hInClone.remove();
 
@@ -1334,21 +1352,31 @@ function printDiv() {
     if (!w) { alert('Please allow pop-ups to print this report.'); return; }
     w.document.write(`<html><head><title>Print Report</title><meta charset="utf-8"/>
     <style>
-      body{font-family:'Plus Jakarta Sans',Arial,sans-serif;font-size:15px;color:#000;}
-      table{width:100%;border-collapse:collapse;}
-      th,td{border:1px solid #000;padding:5px 8px;text-align:left;}
-      thead{background:#d8e4f0;print-color-adjust:exact;}
+      body{font-family:Arial,sans-serif;font-size:13px;color:#000;}
+      table{width:100%;border-collapse:collapse;font-family:Arial,sans-serif;font-size:12px;}
+      th,td{border:1px solid #000;padding:5px 8px;text-align:left;font-family:Arial,sans-serif;}
+      thead tr{background:#fff!important;}
+      thead th{background:#fff!important;color:#000!important;font-weight:700;}
       .print-letterhead{display:grid;grid-template-columns:64px auto 64px;align-items:center;column-gap:60px;margin:0 auto 10px;text-align:center;width:fit-content;}
       .print-logo{width:64px;height:64px;object-fit:contain;}
+      .print-heading{font-family:Arial,sans-serif;}
       .print-heading .ph-line-1{font-size:12pt;font-weight:500;}
       .print-heading .ph-line-2{font-size:14pt;font-weight:800;}
       .print-heading .ph-line-3{font-size:12pt;font-weight:500;}
-      .ph-line-4{font-size:12pt;font-weight:800;margin-top:4px;}
-      .print-sub{font-size:11pt;margin-top:4px;}
+      .title{text-align:center;margin:8px 0;font-family:Arial,sans-serif;}
+      .ph-line-4{font-size:12pt;font-weight:800;margin-top:4px;text-align:center;font-family:Arial,sans-serif;}
+      .print-sub{font-size:11pt;margin-top:4px;text-align:center;font-family:Arial,sans-serif;}
       .print-rule{height:1px;border:0;background:#ccc;margin:8px 0 12px;}
-      .chart-controls-panel,.btn-export,.btn-print,.selected-filters{display:none!important;}
+      .chart-controls-panel,.btn-export,.btn-print,.selected-filters,
+      .chart,.referral-charts-grid,canvas{display:none!important;}
       .referral-status{display:inline-block;padding:2px 8px;border-radius:10px;font-weight:700;font-size:11pt;}
       .status-pending{color:#1d4ed8;}.status-completed{color:#15803d;}.status-uncompleted{color:#b91c1c;}.status-canceled{color:#6b7280;}
+      #generated_by{margin-top:48px;font-family:Arial,sans-serif;}
+      .sig-label{font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:#666;margin-bottom:60px;display:block;}
+      .sig-block{display:inline-block;text-align:center;}
+      .sig-line{display:block;border:none;border-top:1.5px solid #000;margin:0 0 4px;}
+      .sig-name{font-weight:700;font-size:13px;white-space:nowrap;}
+      .sig-title{font-size:11px;color:#666;}
     </style></head>
     <body>${printHeader}${clone.innerHTML}</body></html>`);
     w.document.close(); w.focus();
@@ -1364,15 +1392,19 @@ fetch('../php/getUserName.php')
         if (sn) sn.textContent = fullName || 'BHW User';
         const gb = document.getElementById('generated_by');
         if (gb) {
-            gb.innerHTML = `<div class="sig-label">Report Generated by:</div><hr class="sig-line"><div class="sig-name"></div><div class="sig-title">Barangay Health Worker</div>`;
-            gb.querySelector('.sig-name').textContent = fullName || '________________';
+            const name = fullName || '________________';
+            gb.innerHTML = `<div class="sig-label">Report Generated by:</div><div class="sig-block"><span class="sig-line"></span><div class="sig-name"></div><div class="sig-title">Barangay Health Worker</div></div>`;
+            gb.querySelector('.sig-name').textContent = name;
+            const nameEl = gb.querySelector('.sig-name');
+            const lineEl = gb.querySelector('.sig-line');
+            requestAnimationFrame(() => { lineEl.style.width = nameEl.offsetWidth + 'px'; });
         }
     })
     .catch(() => {
         const sn = document.getElementById('sidebarUserName');
         if (sn) sn.textContent = 'BHW User';
         const gb = document.getElementById('generated_by');
-        if (gb) gb.innerHTML = `<div class="sig-label">Report Generated by:</div><hr class="sig-line"><div class="sig-name">________________</div><div class="sig-title">Barangay Health Worker</div>`;
+        if (gb) gb.innerHTML = `<div class="sig-label">Report Generated by:</div><div class="sig-block"><span class="sig-line" style="width:180px;"></span><div class="sig-name">________________</div><div class="sig-title">Barangay Health Worker</div></div>`;
     });
 
 /* ─── Logout ─── */
