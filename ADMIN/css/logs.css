@@ -539,43 +539,35 @@ body {
 }
 
 .action-pill {
-    display: inline-flex;
-    align-items: center;
-    width: fit-content;
-    max-width: 100%;
-    padding: 7px 10px;
-    border-radius: 12px;
+    display: inline;
+    padding: 0;
+    border-radius: 0;
+    background: transparent;
     color: var(--text-main);
-    background: var(--gray-bg);
     font-size: 12px;
     font-weight: 800;
-    line-height: 1.35;
+    line-height: 1.5;
 }
 
 .action-pill.tone-success {
     color: var(--green);
-    background: var(--green-bg);
 }
 
 .action-pill.tone-danger {
     color: var(--red);
-    background: var(--red-bg);
 }
 
 .action-pill.tone-warning {
     color: var(--orange);
-    background: var(--orange-bg);
 }
 
 .action-pill.tone-info {
     color: var(--blue);
-    background: rgba(31, 91, 151, 0.09);
 }
 
 .action-pill.tone-muted,
 .action-pill.tone-default {
     color: var(--gray);
-    background: var(--gray-bg);
 }
 
 .user-link {
@@ -1255,9 +1247,7 @@ body {
     width: 26%;
 }
 
-.action-pill {
-    white-space: normal;
-}
+
 
 @media (max-width: 768px) {
     .pagination-container {

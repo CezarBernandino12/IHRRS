@@ -60,9 +60,9 @@ $pendingResetTotal = (int)$pdo->query("SELECT COUNT(DISTINCT user_id) FROM forgo
 
 $countQuery = "SELECT COUNT(*) AS total
                FROM users u
-               WHERE (u.full_name LIKE :search OR u.username LIKE :search)
+               WHERE (u.full_name LIKE :search_name OR u.username LIKE :search_user)
                AND u.status = 'approved'";
-$countParams = [':search' => '%' . $search . '%'];
+$countParams = [':search_name' => '%' . $search . '%', ':search_user' => '%' . $search . '%'];
 
 if ($roleFilter !== '') {
     $countQuery .= " AND u.role = :role";
@@ -85,9 +85,9 @@ $query = "SELECT u.*,
               WHERE status = 'pending'
               GROUP BY user_id
           ) fpr ON u.user_id = fpr.user_id
-          WHERE (u.full_name LIKE :search OR u.username LIKE :search)
+          WHERE (u.full_name LIKE :search_name OR u.username LIKE :search_user)
           AND u.status = 'approved'";
-$params = [':search' => '%' . $search . '%'];
+$params = [':search_name' => '%' . $search . '%', ':search_user' => '%' . $search . '%'];
 
 if ($roleFilter !== '') {
     $query .= " AND u.role = :role";
@@ -100,7 +100,8 @@ $query .= " ORDER BY
             LIMIT :limit OFFSET :offset";
 
 $stmt = $pdo->prepare($query);
-$stmt->bindValue(':search', $params[':search'], PDO::PARAM_STR);
+$stmt->bindValue(':search_name', $params[':search_name'], PDO::PARAM_STR);
+$stmt->bindValue(':search_user', $params[':search_user'], PDO::PARAM_STR);
 if (isset($params[':role'])) {
     $stmt->bindValue(':role', $params[':role'], PDO::PARAM_STR);
 }
@@ -923,10 +924,37 @@ window.addEventListener('click', function(event) {
 
   window.confirmChangePassword = function () {
     const form = document.getElementById("resetPasswordForm");
-    if (form) {
-      form.dataset.confirmed = "true";
-      form.submit();
-    }
+    if (!form) return;
+
+    hideBox("changePasswordConfirmModal");
+
+    fetch("reset_password", {
+      method: "POST",
+      body: new FormData(form)
+    })
+      .then(r => r.json())
+      .then(data => {
+        if (data.success) {
+          hideBox("resetPasswordModal");
+          form.reset();
+          showBox("resetSuccessModal");
+        } else {
+          const error = document.getElementById("resetPasswordError");
+          if (error) {
+            error.textContent = data.error || "An error occurred. Please try again.";
+            error.style.display = "block";
+          }
+          showBox("resetPasswordModal");
+        }
+      })
+      .catch(() => {
+        const error = document.getElementById("resetPasswordError");
+        if (error) {
+          error.textContent = "An error occurred. Please try again.";
+          error.style.display = "block";
+        }
+        showBox("resetPasswordModal");
+      });
   };
 
   window.toggleBarangayDropdown = function () {
@@ -1076,19 +1104,9 @@ window.addEventListener('click', function(event) {
       });
     });
 
-    document.querySelectorAll(".password-toggle").forEach(icon => {
-      icon.addEventListener("click", function () {
-        const input = icon.parentElement?.querySelector("input");
-        if (!input) return;
-        input.type = input.type === "password" ? "text" : "password";
-        icon.classList.toggle("bx-hide", input.type === "password");
-        icon.classList.toggle("bx-show", input.type === "text");
-      });
-    });
-
     if (resetForm) {
       resetForm.addEventListener("submit", function (event) {
-        if (resetForm.dataset.confirmed === "true") return;
+        event.preventDefault();
 
         const password = document.getElementById("newPassword")?.value || "";
         const confirm = document.getElementById("confirmNewPassword")?.value || "";
@@ -1096,7 +1114,6 @@ window.addEventListener('click', function(event) {
         const valid = password.length >= 8 && /[A-Z]/.test(password) && /\d/.test(password);
 
         if (!valid || password !== confirm) {
-          event.preventDefault();
           if (error) {
             error.textContent = !valid
               ? "Password must be at least 8 characters and include one uppercase letter and one number."
@@ -1106,7 +1123,6 @@ window.addEventListener('click', function(event) {
           return;
         }
 
-        event.preventDefault();
         showBox("changePasswordConfirmModal");
       });
     }
