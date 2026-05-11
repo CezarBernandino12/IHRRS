@@ -3,17 +3,21 @@ document.addEventListener("DOMContentLoaded", function() {
     const plusBtn = document.querySelector('.btn-plus');
     const quantityInput = document.getElementById('quantity_given');
 
-    minusBtn.addEventListener('click', function() {
-        let value = parseInt(quantityInput.value);
-        if (value > 1) {
-            quantityInput.value = value - 1;
-        }
-    });
+    if (minusBtn && quantityInput) {
+        minusBtn.addEventListener('click', function() {
+            let value = parseInt(quantityInput.value);
+            if (value > 1) {
+                quantityInput.value = value - 1;
+            }
+        });
+    }
 
-    plusBtn.addEventListener('click', function() {
-        let value = parseInt(quantityInput.value);
-        quantityInput.value = value + 1;
-    });
+    if (plusBtn && quantityInput) {
+        plusBtn.addEventListener('click', function() {
+            let value = parseInt(quantityInput.value);
+            quantityInput.value = value + 1;
+        });
+    }
 });
 
 function calculateAge() {
@@ -74,6 +78,7 @@ let currentValue = 1;
 const targetValue = 75;
 
 function countToTarget() {
+    if (!progressText) return;
     if (currentValue <= targetValue) {
         progressText.textContent = currentValue;
         currentValue++;
@@ -109,20 +114,20 @@ var closeBtn = document.getElementById("closeBtn");
 var noButton = document.getElementById("noButton");
 var yesButton = document.getElementById("yesButton");
 
-  btn.onclick = function() {
+  if (btn) btn.onclick = function() {
     modal.style.display = "block";
   }
 
-  closeBtn.onclick = function() {
+  if (closeBtn) closeBtn.onclick = function() {
     modal.style.display = "none";
   }
 
-  noButton.onclick = function() {
+  if (noButton) noButton.onclick = function() {
     modal.style.display = "none";
     window.location.href="ITR"; 
   }
 
-  yesButton.onclick = function() {
+  if (yesButton) yesButton.onclick = function() {
     modal.style.display = "none";
     window.location.href="searchPatient"; 
   }
