@@ -1,5 +1,5 @@
 <?php
-session_start(); // Required to get the admin session user_id
+require_once __DIR__ . '/session_config.php';
 require 'config.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {

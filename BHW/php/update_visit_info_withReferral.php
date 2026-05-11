@@ -6,7 +6,7 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 header('Content-Type: application/json');
 
-session_start();
+require_once __DIR__ . '/session_config.php';
 
 if (!isset($_SESSION['user_id'])) {
     http_response_code(401);

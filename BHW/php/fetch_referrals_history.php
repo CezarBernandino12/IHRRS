@@ -6,7 +6,7 @@ try {
     $date = $_GET['date'] ?? '';
     $status = $_GET['status'] ?? 'All';
 
-    session_start();
+    require_once __DIR__ . '/session_config.php';
     $user_id = $_SESSION['user_id'] ?? null;
 
     if (!$user_id) {

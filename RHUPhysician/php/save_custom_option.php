@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once __DIR__ . '/session_config.php';
 require '../../php/db_connect.php'; // Adjust path as needed
 header('Content-Type: application/json');
 

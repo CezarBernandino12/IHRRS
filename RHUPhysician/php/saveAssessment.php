@@ -17,7 +17,7 @@ if ($DEBUG) {
 
 header('Content-Type: application/json; charset=utf-8');
 
-session_start();
+require_once __DIR__ . '/session_config.php';
 
 if (!isset($_SESSION['user_id'])) {
     http_response_code(401);

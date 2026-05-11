@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once __DIR__ . '/session_config.php';
 header('Content-Type: application/json');
 
 $dsn = "mysql:host=localhost;dbname=ihrrs_dbase;charset=utf8mb4";

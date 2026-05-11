@@ -1,6 +1,6 @@
 <?php
 ob_start();
-session_start();
+require_once __DIR__ . '/session_config.php';
 require '../../php/db_connect.php';
 require '../../ADMIN/php/log_functions.php';
 

@@ -1,4 +1,5 @@
 <?php
+session_name('IHRRS_DOCTOR');
 session_start();
 require '../../ADMIN/php/config.php';
 

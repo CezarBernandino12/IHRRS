@@ -5,7 +5,7 @@ $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $limit = 9;
 $offset = ($page - 1) * $limit;
  
-session_start();
+require_once __DIR__ . '/session_config.php';
 
 if (!isset($_SESSION['user_id'])) {
     http_response_code(401);

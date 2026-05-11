@@ -1,9 +1,7 @@
 <?php
-session_start();
+require_once __DIR__ . '/session_config.php';
 require '../../php/db_connect.php'; 
 header('Content-Type: application/json');
-
-session_start();
 
 if (!isset($_SESSION['user_id'])) {
     http_response_code(401);
