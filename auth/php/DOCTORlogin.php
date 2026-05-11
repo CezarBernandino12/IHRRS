@@ -60,6 +60,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $_SESSION['user_id'] = $user['user_id'];
         $_SESSION['role'] = $user['role'];
         $_SESSION['full_name'] = $user['full_name'];
+        $_SESSION['rhu'] = $user['rhu']; 
 
         logActivity($pdo, $user['user_id'], "Successful Login");
         logUserLogin($pdo, $user['user_id']);

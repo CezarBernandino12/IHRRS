@@ -107,6 +107,9 @@ fetch('php/getUserId.php')
 			<button class="nav-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
 				<i class="bx bx-menu"></i>
 			</button>
+                 <div class="nav-rhu" id="navRhu" style="margin-left:auto; display:flex; align-items:center; gap:6px; font-weight:600; color:#333333; white-space:nowrap;">
+				<span id="barangayLabel" class="brand-name">-</span>
+			</div>
 		</nav>
         <main>
             <div class="head-title">
@@ -311,6 +314,10 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById('sidebarUserName').textContent = data.full_name;
         } else {
             document.getElementById('sidebarUserName').textContent = 'BHW User';
+        }
+        const barangayLabel = document.getElementById('barangayLabel');
+        if (barangayLabel && data.barangay) {
+            barangayLabel.textContent = data.barangay;
         }
     })
     .catch(error => {
@@ -529,6 +536,10 @@ fetch('php/getUserName.php')
             document.getElementById('bhwName').textContent = data.full_name; // Update BHW name in details
         } else {
             document.getElementById('sidebarUserName').textContent = 'BHW User';
+        }
+        const barangayLabel = document.getElementById('barangayLabel');
+        if (barangayLabel && data.barangay) {
+            barangayLabel.textContent = data.barangay;
         }
     })
     .catch(error => {
