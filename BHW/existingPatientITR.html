@@ -183,7 +183,7 @@ fetch('php/getUserId.php')
                 </div>
                 <div class="form-group age-field">
                     <label for="age">Age:</label>
-                    <input type="number" class="age form-control" name="age" value="N/A" disabled>
+                    <input type="number" class="age form-control" name="age" value="" disabled>
                 </div>
             
         <!-- Row 3 -->
@@ -869,7 +869,6 @@ medicineSelects.forEach(select => loadCustomOptions(select, 'medicine'));
 
     <script src="js/form1.js"></script>
     <script src="js/script.js"></script>
-    <script src="js/modal.js"></script>
 
 <div id="logoutModal" class="logout-modal">
     <div class="logout-modal-content">
@@ -910,15 +909,11 @@ window.onclick = function(event) {
 fetch('php/getUserName.php')
     .then(response => response.json())
     .then(data => {
-        if (data.full_name) {
-            document.getElementById('userGreeting').textContent = `Hello, ${data.full_name}!`;
-        } else {
-            document.getElementById('userGreeting').textContent = 'Hello, BHW!';
-        }
+        const el = document.getElementById('sidebarUserName');
+        if (el) el.textContent = data.full_name || 'BHW User';
     })
     .catch(error => {
         console.error('Error fetching user name:', error);
-        document.getElementById('userGreeting').textContent = 'Hello, BHW!';
     });
 </script>
 
