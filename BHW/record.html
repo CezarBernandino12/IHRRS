@@ -810,8 +810,8 @@ fetch('php/getUserName.php')
             userGreeting.textContent = data.full_name ? `Hello, ${data.full_name}!` : 'Hello, BHW!';
         }
         const barangayLabel = document.getElementById('barangayLabel');
-        if (barangayLabel && data.barangay) {
-            barangayLabel.textContent = data.barangay;
+        if (barangayLabel) {
+            barangayLabel.textContent = data.barangay || '';
         }
     })
     .catch(error => {

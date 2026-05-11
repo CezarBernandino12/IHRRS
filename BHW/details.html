@@ -316,8 +316,8 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById('sidebarUserName').textContent = 'BHW User';
         }
         const barangayLabel = document.getElementById('barangayLabel');
-        if (barangayLabel && data.barangay) {
-            barangayLabel.textContent = data.barangay;
+        if (barangayLabel) {
+            barangayLabel.textContent = data.barangay || '';
         }
     })
     .catch(error => {
@@ -538,8 +538,8 @@ fetch('php/getUserName.php')
             document.getElementById('sidebarUserName').textContent = 'BHW User';
         }
         const barangayLabel = document.getElementById('barangayLabel');
-        if (barangayLabel && data.barangay) {
-            barangayLabel.textContent = data.barangay;
+        if (barangayLabel) {
+            barangayLabel.textContent = data.barangay || '';
         }
     })
     .catch(error => {
