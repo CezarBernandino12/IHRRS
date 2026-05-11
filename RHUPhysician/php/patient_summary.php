@@ -7,7 +7,7 @@ error_reporting(E_ALL);
 require '../../php/db_connect.php';
 
 header('Content-Type: application/json');
-session_start();
+require_once __DIR__ . '/session_config.php';
 
 if (!isset($_SESSION['user_id'])) {
     http_response_code(401);

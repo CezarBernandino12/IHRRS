@@ -1,6 +1,7 @@
 <?php
 // filepath: c:\xampp\htdocs\capstone6\LOGIN\NursingAttendant.php
 
+session_name('IHRRS_NURSE');
 session_start();
 require '../../ADMIN/php/config.php'; 
 

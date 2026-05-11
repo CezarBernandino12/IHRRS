@@ -20,15 +20,15 @@ document.addEventListener('DOMContentLoaded', function() {
 		fetch('php/getUserName.php')
         .then(response => response.json())
         .then(data => {
-            if (data.full_name) {
-                document.getElementById('userGreeting').textContent = `Hello, ${data.full_name}!`;
-            } else {
-                document.getElementById('userGreeting').textContent = 'Hello, BHW!';
+            const userGreeting = document.getElementById('userGreeting');
+            if (userGreeting) {
+                userGreeting.textContent = data.full_name ? `Hello, ${data.full_name}!` : 'Hello, BHW!';
             }
         })
         .catch(error => {
             console.error('Error fetching user name:', error);
-            document.getElementById('userGreeting').textContent = 'Hello, BHW!';
+            const userGreeting = document.getElementById('userGreeting');
+            if (userGreeting) userGreeting.textContent = 'Hello, BHW!';
         });
 
 });

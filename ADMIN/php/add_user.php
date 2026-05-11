@@ -1,5 +1,5 @@
 <?php
-session_start(); // Make sure session is started
+require_once __DIR__ . '/session_config.php';
 require 'config.php';
 
 // Check if the form was submitted

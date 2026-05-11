@@ -1,6 +1,6 @@
 <?php
 require '../../php/db_connect.php';
-session_start();
+require_once __DIR__ . '/../php/session_config.php';
 
 if (!isset($_SESSION['user_id'])) {
     header("Location: ../../role");

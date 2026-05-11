@@ -1,6 +1,6 @@
 <?php
 ob_start();
-session_start();
+require_once __DIR__ . '/session_config.php';
 ob_end_clean();
 
 header('Content-Type: application/json');

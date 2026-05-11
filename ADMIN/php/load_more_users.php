@@ -1,6 +1,6 @@
 <?php
 require 'config.php';
-session_start();
+require_once __DIR__ . '/session_config.php';
 
 // Check if admin is logged in
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {

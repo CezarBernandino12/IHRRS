@@ -78,7 +78,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     // ✅ Resume Button
 const resumeBtn = document.getElementById("resumeBtn");
 
-if (data.consultation.diagnosis_status !== "Ongoing") {
+if (resumeBtn && data.consultation.diagnosis_status !== "Ongoing") {
         resumeBtn.disabled = true;
         resumeBtn.style.opacity = "0.6";   // make it look disabled
         resumeBtn.style.cursor = "not-allowed";
@@ -87,7 +87,7 @@ if (data.consultation.diagnosis_status !== "Ongoing") {
                       // ✅ Resume Button
 const addMedCertBtn = document.getElementById("addMedCertBtn");
 
-if (data.consultation.diagnosis_status !== "Ongoing") {
+if (addMedCertBtn && data.consultation.diagnosis_status !== "Ongoing") {
         addMedCertBtn.disabled = true;
         addMedCertBtn.style.opacity = "0.6";   // make it look disabled
         addMedCertBtn.style.cursor = "not-allowed";
@@ -96,7 +96,7 @@ if (data.consultation.diagnosis_status !== "Ongoing") {
 
 
 
-if (data.consultation.diagnosis_status === "") {
+if (addMedCertBtn && data.consultation.diagnosis_status === "") {
         addMedCertBtn.disabled = false;
         addMedCertBtn.style.opacity = "1";   
         addMedCertBtn.style.cursor = "pointer";
@@ -249,7 +249,7 @@ if (addMedCertBtn) {
 
 const container = document.getElementById("lab-file-container");
 
-if (visit_id) {
+if (container && visit_id) {
     fetch(`php/get_file.php?visit_id=${visit_id}`)
         .then(response => response.json())
         .then(data => {
@@ -290,7 +290,7 @@ if (visit_id) {
             console.error("Error fetching file:", error);
             container.textContent = "Error loading file.";
         });
-} else {
+} else if (container) {
     container.textContent = "No visit_id selected.";
 }
 

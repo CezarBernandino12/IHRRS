@@ -1,6 +1,6 @@
 <?php
 require 'config.php';
-session_start(); // Start session to track the logged-in admin
+require_once __DIR__ . '/session_config.php';
 
 header('Content-Type: application/json'); // Ensure responses are JSON format
 
