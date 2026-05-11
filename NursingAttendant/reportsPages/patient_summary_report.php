@@ -454,6 +454,7 @@ foreach ($visits as $visit) {
             box-shadow: var(--shadow-md, 0 4px 20px rgba(13,45,82,.10));
             background: var(--white, #ffffff);
             margin-top: 24px;
+            margin-bottom: 40px; /* ← ADDED: space between table and summary */
         }
 
         .patient-report-page .report-table-scroll {
@@ -769,6 +770,7 @@ foreach ($visits as $visit) {
                 max-height: none !important;
                 overflow: visible !important;
                 margin-top: 18px !important;
+                margin-bottom: 40pt !important; /* ← ADDED: print gap between table and summary */
             }
 
             .patient-report-page .report-table-scroll {
@@ -1797,6 +1799,7 @@ function printDiv() {
                     .print-rule{height:1px;border:0;background:#cfd8e3;margin:8px 0 12px;}
                     .chart-controls-panel,.patient-chart-grid,canvas{display:none!important;}
                     .summary-title{display:none;}
+                    .report-table-container{margin-bottom:40pt;} /* ← ADDED: pop-up print gap */
                     #generated_by{margin:50mm 0 0 10mm;font-family:Arial,sans-serif;}
                     .sig-label{font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:#666;margin-bottom:60px;display:block;}
                     .sig-block{display:inline-block;text-align:center;}

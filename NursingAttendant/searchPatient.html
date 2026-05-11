@@ -106,6 +106,10 @@
                 </button>
                 <div id="resultDropdown" class="dropdown-content"></div>
             </div>
+            
+           <div class="nav-rhu" id="navRhu" style="margin-left:auto; display:flex; align-items:center; gap:6px; font-weight:600; color:#333333; white-space:nowrap;">
+				<span id="rhuLabel" class="brand-name">-</span>
+			</div>
         </nav>
 
         <main>
@@ -181,6 +185,10 @@ fetch('php/getUserName.php')
             if (sidebarUserName) sidebarUserName.textContent = data.full_name;
         } else {
             document.getElementById('userGreeting') && (document.getElementById('userGreeting').textContent = 'Hello, BHW!');
+        }
+        const rhuLabel = document.getElementById('rhuLabel');
+        if (rhuLabel && data.rhu) {
+            rhuLabel.textContent = data.rhu;
         }
     })
     .catch(error => {
