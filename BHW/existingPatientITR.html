@@ -136,6 +136,10 @@ fetch('php/getUserId.php')
                 <i class="bx bx-menu"></i>
             </button>
             <form action="#" class="nav-form"></form>
+
+                       <div class="nav-rhu" id="navRhu" style="margin-left:auto; display:flex; align-items:center; gap:6px; font-weight:600; color:#333333; white-space:nowrap;">
+				<span id="barangayLabel" class="brand-name">-</span>
+			</div>
         </nav>
 
         <main>
@@ -909,8 +913,15 @@ window.onclick = function(event) {
 fetch('php/getUserName.php')
     .then(response => response.json())
     .then(data => {
-        const el = document.getElementById('sidebarUserName');
-        if (el) el.textContent = data.full_name || 'BHW User';
+        if (data.full_name) {
+            document.getElementById('userGreeting').textContent = `Hello, ${data.full_name}!`;
+        } else {
+            document.getElementById('userGreeting').textContent = 'Hello, BHW!';
+        }
+        const barangayLabel = document.getElementById('barangayLabel');
+        if (barangayLabel && data.barangay) {
+            barangayLabel.textContent = data.barangay;
+        }
     })
     .catch(error => {
         console.error('Error fetching user name:', error);
