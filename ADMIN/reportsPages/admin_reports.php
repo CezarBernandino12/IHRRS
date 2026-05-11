@@ -260,6 +260,7 @@ $adminName = htmlspecialchars($_SESSION['full_name'] ?? 'Admin User', ENT_QUOTES
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 </head>
 
 <body>
@@ -1074,57 +1075,209 @@ function exportToExcel() {
     XLSX.writeFile(workbook, "admin_audit_reports.xlsx");
 }
 
-function exportToPDF() {
+async function exportToPDF() {
     const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
+    const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
 
-    doc.setFontSize(16);
-    doc.text("System Activity Logs Report", 20, 20);
+    const pageW  = doc.internal.pageSize.getWidth();   // 297mm
+    const pageH  = doc.internal.pageSize.getHeight();  // 210mm
+    const margin = 10;
+    const usableW = pageW - margin * 2;
+    const centerX = pageW / 2;
 
-    doc.setFontSize(11);
-    doc.text("Date Range: <?php echo e($start_date . ' to ' . $end_date); ?>", 20, 30);
+    // Load logos as base64 via canvas
+    const [leftLogo, rightLogo] = await Promise.all([
+        loadImageAsBase64('../../img/daet_logo.png'),
+        loadImageAsBase64('../../img/mho_logo.png')
+    ]);
 
-    let yPosition = 46;
+    let y = margin;
 
-    document.querySelectorAll(".report-section-card").forEach(section => {
-        const header = section.querySelector(".card-header h3");
+    // ---- LETTERHEAD ----
+    const logoSize = 18;
 
-        if (header) {
-            doc.setFontSize(13);
-            doc.text(header.textContent.trim(), 20, yPosition);
-            yPosition += 8;
+    if (leftLogo)  doc.addImage(leftLogo,  'PNG', margin,                    y, logoSize, logoSize);
+    if (rightLogo) doc.addImage(rightLogo, 'PNG', pageW - margin - logoSize, y, logoSize, logoSize);
+
+    const phLines = [
+        { text: 'Republic of the Philippines', size: 9.5, style: 'normal' },
+        { text: 'Department of Health',        size: 9.5, style: 'normal' },
+        { text: 'Province of Camarines Norte', size: 9.5, style: 'normal' },
+        { text: 'Municipality of Daet',        size: 12,  style: 'bold'   },
+        { text: 'Admin Reports',               size: 9.5, style: 'normal' }
+    ];
+
+    let ht = y + 2;
+    phLines.forEach(line => {
+        doc.setFont('helvetica', line.style);
+        doc.setFontSize(line.size);
+        doc.setTextColor(0, 0, 0);
+        doc.text(line.text, centerX, ht, { align: 'center' });
+        ht += line.size * 0.353 * 1.35;
+    });
+
+    y = Math.max(y + logoSize, ht) + 4;
+
+    // ---- HORIZONTAL RULE ----
+    doc.setDrawColor(207, 216, 227);
+    doc.setLineWidth(0.3);
+    doc.line(margin, y, pageW - margin, y);
+    y += 7;
+
+    // ---- TITLE ----
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(14);
+    doc.setTextColor(0, 0, 0);
+    doc.text('System Activity Logs Report', centerX, y, { align: 'center' });
+    y += 5;
+
+    const startDate = document.getElementById('start-date')?.value || '';
+    const endDate   = document.getElementById('end-date')?.value   || '';
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9.5);
+    doc.setTextColor(80, 80, 80);
+    doc.text('(' + startDate + ' to ' + endDate + ')', centerX, y, { align: 'center' });
+    y += 8;
+
+    // ---- REPORT SECTIONS ----
+    const sectionIds = [
+        'all-actions',
+        'user-management-actions',
+        'security-events',
+        'data-modifications',
+        'admin-activities'
+    ];
+
+    sectionIds.forEach((id, idx) => {
+        const card = document.getElementById(id);
+        if (!card) return;
+
+        const table = card.querySelector('.data-table');
+        if (!table) return;
+
+        const sectionTitle    = card.querySelector('.card-header h3')?.textContent.trim()  || '';
+        const sectionSubtitle = card.querySelector('.card-header small')?.textContent.trim() || '';
+
+        // Section heading
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(11);
+        doc.setTextColor(0, 0, 0);
+        doc.text(sectionTitle, margin, y);
+        y += 4.5;
+
+        if (sectionSubtitle) {
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(8);
+            doc.setTextColor(100, 100, 100);
+            doc.text(sectionSubtitle, margin, y);
+            y += 4;
+            doc.setTextColor(0, 0, 0);
         }
 
-        const rows = section.querySelectorAll("table tr");
+        // Table headers
+        const headers = Array.from(table.querySelectorAll('thead th'))
+            .map(th => th.textContent.trim());
 
-        rows.forEach(row => {
-            const cells = row.querySelectorAll("th, td");
-            let xPosition = 20;
+        // Table data rows (exclude empty-state rows)
+        const bodyRows = Array.from(table.querySelectorAll('tbody tr'))
+            .filter(tr => !tr.querySelector('td.empty-table'))
+            .map(tr => Array.from(tr.querySelectorAll('td')).map(td => td.textContent.trim()));
 
-            cells.forEach(cell => {
-                const text = cell.textContent.trim().substring(0, 28);
-                doc.setFontSize(8);
-                doc.text(text, xPosition, yPosition);
-                xPosition += 58;
-            });
+        const emptyMsg = table.querySelector('tbody td.empty-table')?.textContent.trim()
+            || 'No data available in selected period.';
+        const tableBody = bodyRows.length > 0
+            ? bodyRows
+            : [headers.map((_, i) => (i === 0 ? emptyMsg : ''))];
 
-            yPosition += 6;
-
-            if (yPosition > 280) {
-                doc.addPage();
-                yPosition = 20;
-            }
+        doc.autoTable({
+            startY: y,
+            head:   [headers],
+            body:   tableBody,
+            theme:  'grid',
+            styles: {
+                fontSize:    7.6,
+                cellPadding: { top: 1.5, right: 2, bottom: 1.5, left: 2 },
+                overflow:    'linebreak',
+                lineColor:   [0, 0, 0],
+                lineWidth:   0.2,
+                textColor:   [0, 0, 0],
+                valign:      'top',
+                font:        'helvetica'
+            },
+            headStyles: {
+                fillColor:  [229, 231, 235],
+                textColor:  [0, 0, 0],
+                fontStyle:  'bold',
+                fontSize:   7.6
+            },
+            bodyStyles:         { fillColor: [255, 255, 255], fontStyle: 'normal' },
+            alternateRowStyles: { fillColor: [255, 255, 255] },
+            margin:     { left: margin, right: margin },
+            tableWidth: usableW
         });
 
-        yPosition += 10;
+        y = doc.lastAutoTable.finalY + 7;
 
-        if (yPosition > 280) {
+        if (idx < sectionIds.length - 1 && y > pageH - 35) {
             doc.addPage();
-            yPosition = 20;
+            y = margin + 5;
         }
     });
 
-    doc.save("admin_audit_reports.pdf");
+    // ---- SIGNATURE BLOCK ----
+    if (y > pageH - 38) {
+        doc.addPage();
+        y = margin + 5;
+    }
+
+    y += 8;
+
+    const sigName = document.querySelector('#generated_by .sig-name')?.textContent.trim() || '';
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8.5);
+    doc.setTextColor(100, 100, 100);
+    doc.text('Report Generated by:', margin, y);
+    y += 10;
+
+    doc.setDrawColor(0, 0, 0);
+    doc.setLineWidth(0.3);
+    doc.line(margin, y, margin + 42, y);
+    y += 4;
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(10);
+    doc.setTextColor(0, 0, 0);
+    doc.text(sigName || '________________', margin, y);
+    y += 4.5;
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9);
+    doc.setTextColor(100, 100, 100);
+    doc.text('Administrator', margin, y);
+
+    doc.save('admin_audit_reports.pdf');
+}
+
+function loadImageAsBase64(url) {
+    return new Promise((resolve) => {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = function () {
+            const canvas = document.createElement('canvas');
+            canvas.width  = img.naturalWidth;
+            canvas.height = img.naturalHeight;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0);
+            try {
+                resolve(canvas.toDataURL('image/png'));
+            } catch {
+                resolve(null);
+            }
+        };
+        img.onerror = () => resolve(null);
+        img.src = url;
+    });
 }
 </script>
 
