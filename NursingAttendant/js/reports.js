@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Add event listeners to all delete icons
- 	fetch('php/getUserName.php')
+ 	fetch('../php/getUserName.php')
         .then(response => response.json())
         .then(data => {
             if (data.full_name) {
