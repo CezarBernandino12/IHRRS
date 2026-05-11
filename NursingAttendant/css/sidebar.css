@@ -151,7 +151,12 @@ li {
   font-weight: 700;
   line-height: 1.2;
 }
-
+.brand-name {
+  color: var(--blue);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.2;
+}
 .sidebar-brand .brand-sub {
   color: var(--text-muted);
   font-size: 10px;

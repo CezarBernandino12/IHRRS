@@ -153,6 +153,10 @@ fetch('php/getUserId.php')
             <button class="nav-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
                 <i class="bx bx-menu"></i>
             </button>
+            
+           <div class="nav-rhu" id="navRhu" style="margin-left:auto; display:flex; align-items:center; gap:6px; font-weight:600; color:#333333; white-space:nowrap;">
+				<span id="rhuLabel" class="brand-name">-</span>
+			</div>
         </nav>
 
         <main>
@@ -1024,6 +1028,10 @@ fetch('php/getUserName.php')
             document.getElementById('sidebarUserName').textContent = data.full_name;
         } else {
             document.getElementById('sidebarUserName').textContent = 'Physician User';
+        }
+                const rhuLabel = document.getElementById('rhuLabel');
+        if (rhuLabel && data.rhu) {
+            rhuLabel.textContent = data.rhu;
         }
     })
     .catch(error => {

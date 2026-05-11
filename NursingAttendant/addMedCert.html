@@ -123,6 +123,10 @@
                 <i class="bx bx-search"></i>
             </button>
         </div>
+        
+           <div class="nav-rhu" id="navRhu" style="margin-left:auto; display:flex; align-items:center; gap:6px; font-weight:600; color:#333333; white-space:nowrap;">
+				<span id="rhuLabel" class="brand-name">-</span>
+			</div>
     </nav>
 
     <main>
@@ -880,6 +884,10 @@ function loadUserInfo() {
             if (sidebarUserName) {
                 sidebarUserName.textContent = data.full_name || "Nurse User";
             }
+        const rhuLabel = document.getElementById('rhuLabel');
+        if (rhuLabel && data.rhu) {
+            rhuLabel.textContent = data.rhu;
+        }
         })
         .catch(error => {
             console.error("Error loading user info:", error);
