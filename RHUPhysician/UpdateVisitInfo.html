@@ -27,7 +27,7 @@
         <img src="../img/logo.png" alt="RHU Logo" class="brand-logo">
 
         <div class="brand-text">
-            <span class="brand-name">Hello Nurse</span>
+            <span class="brand-name">Hello Physician</span>
         </div>
     </a>
 
@@ -99,11 +99,11 @@
 
     <div class="sidebar-footer">
         <div class="sidebar-user">
-            <img src="../img/nurse.png" alt="Nurse User">
+            <img src="../img/doctor.png" alt="Physician User">
 
             <div class="sidebar-user-info">
-                <div class="user-name" id="sidebarUserName">Nurse User</div>
-                <div class="user-role">RHU Nurse</div>
+                <div class="user-name" id="sidebarUserName">Physician User</div>
+                <div class="user-role">RHU Physician</div>
             </div>
         </div>
     </div>
@@ -139,8 +139,8 @@
     <main>
         <div class="page-title">
             <div>
-                <h1>Individual Treatment Record</h1>
-                <p>Review patient visit details, add RHU treatment, medication, remarks, and prescription if needed.</p>
+                <h1>Referral Details</h1>
+                <p>View-only — referral and patient visit information submitted by the BHW.</p>
             </div>
         </div>
 
@@ -351,266 +351,17 @@
                 </div>
             </section>
 
-            <form class="update-card update-form" id="individualRecordForm" action="php/saveConsultation.php" method="POST" enctype="multipart/form-data">
-                <div class="section-heading">
-                    <div class="section-heading-left">
-                        <span class="section-icon">
-                            <i class="bx bx-plus-medical"></i>
-                        </span>
-
-                        <div>
-                            <h2>Patient Treatment</h2>
-                            <p>Add laboratory result, diagnosis, medication, remarks, follow-up, and prescription.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-section">
-                    <div class="subsection-title">
-                        <i class="bx bx-file"></i>
-                        <span>Laboratory Result</span>
-                    </div>
-
-                    <div class="form-group full-width">
-                        <label for="photo">Upload Laboratory Result</label>
-                        <input type="file" id="photo" name="photo" accept="image/*,.pdf" capture="environment">
-                    </div>
-                </div>
-
-                <div class="form-section">
-                    <div class="subsection-title">
-                        <i class="bx bx-plus-medical"></i>
-                        <span>Diagnosis</span>
-                    </div>
-
-                    <div class="diagnosis-grid">
-                        <div class="form-group">
-                            <label for="diagnosis" class="required">Diagnosis</label>
-
-                            <select id="diagnosis" name="diagnosis" class="select2">
-                                <option value="">Select diagnosis</option>
-                                <option value="other">Other (Enter manually)</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group is-hidden" id="diagnosis-status-wrapper" hidden aria-hidden="true">
-                            <label for="status">Diagnosis Status</label>
-
-                            <select id="status" name="status" class="select2">
-                                <option value="Ongoing">Ongoing</option>
-                                <option value="Treated">Treated</option>
-                                <option value="Referred">Referred</option>
-                                <option value="Deceased">Deceased</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-section">
-                    <div class="subsection-title">
-                        <i class="bx bx-capsule"></i>
-                        <span>Medication Given</span>
-                    </div>
-
-                    <div id="medicine-container" class="medicine-editor-list">
-                        <div class="medicine-entry">
-                            <div class="form-group medicine-field">
-                                <label>Medication Given</label>
-
-                                <select name="medicine_given[]" class="medicine-select select2">
-                                    <option value="">Select</option>
-                                    <option value="other">Other (Enter manually)</option>
-                                </select>
-                            </div>
-
-                            <div class="form-group quantity-field">
-                                <label>Quantity</label>
-
-                                <div class="quantity-container">
-                                    <button type="button" class="btn-minus">−</button>
-                                    <input type="number" name="quantity_given[]" value="0" min="0">
-                                    <button type="button" class="btn-plus">+</button>
-                                </div>
-                            </div>
-
-                            <div class="form-group instruction-field">
-                                <label>Instruction</label>
-
-                                <select name="med_instruction[]" class="med-instruction select2">
-                                    <option value="">Select</option>
-                                    <option value="other">Other (Enter manually)</option>
-                                </select>
-                            </div>
-
-                            <button type="button" class="btn-remove">Remove</button>
-                        </div>
-                    </div>
-
-                    <div class="add-medicine-container">
-                        <button type="button" id="add-medicine" class="add-medicine">+ Add</button>
-                    </div>
-                </div>
-
-                <div class="form-section">
-                    <div class="subsection-title">
-                        <i class="bx bx-message-square-detail"></i>
-                        <span>Remarks and Follow-Up</span>
-                    </div>
-
-                    <div class="remarks-grid">
-                        <div class="form-group">
-                            <label for="rhu_remarks" class="required">Remarks</label>
-
-                            <select id="rhu_remarks" name="rhu_remarks" class="select2">
-                                <option value="">Select</option>
-                                <option value="other">Other (Enter manually)</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="physician2" class="required">Physician</label>
-
-                            <select id="physician2" name="physician2" class="select2">
-                                <option value="">Select Physician</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group full-width">
-                            <label for="followup">Schedule Follow-up Consultation</label>
-                            <input type="date" id="followup" name="followup" class="date-input">
-                        </div>
-                    </div>
-                </div>
-
-                <input type="hidden" id="visit_id" name="visit_id">
-                <input type="hidden" name="user_id" id="user_id" value="">
-
-                <div class="form-section prescription-section">
-                    <div class="prescription-toggle-card">
-                        <div class="prescription-icon">
-                            <i class="bx bx-question-mark"></i>
-                        </div>
-
-                        <div>
-                            <h3>No medicine available?</h3>
-
-                            <label class="prescription-option" for="prescriptionCheckbox">
-                                <input type="checkbox" id="prescriptionCheckbox">
-                                <span>Generate Prescription (Rx)</span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="prescription-container is-hidden" id="prescriptionContainer" hidden aria-hidden="true">
-                        <div class="subsection-title">
-                            <i class="bx bx-receipt"></i>
-                            <span>Prescription Details</span>
-                        </div>
-
-                        <p class="helper-text">Ensure to fill out all fields before submitting.</p>
-
-                        <div id="medicine-container2" class="prescription-list">
-                            <div class="prescription-group">
-                                <div class="medicine-entry prescription-entry">
-                                    <div class="form-group medicine-field">
-                                        <label>Medicine Name</label>
-
-                                        <select name="medicine_prescription[]" class="medicine-select2 select2">
-                                            <option value="">Select</option>
-                                            <option value="other">Other (Enter manually)</option>
-                                        </select>
-                                    </div>
-
-                                    <div class="form-group quantity-field">
-                                        <label>Quantity</label>
-
-                                        <div class="quantity-container">
-                                            <button type="button" class="btn-minus">−</button>
-                                            <input type="number" name="quantity_prescription[]" value="0" min="0">
-                                            <button type="button" class="btn-plus">+</button>
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group instruction-field">
-                                        <label>Dosage Instruction</label>
-
-                                        <select name="prescription_instruction[]" class="med-instruction select2">
-                                            <option value="">Select</option>
-                                            <option value="other">Other (Enter manually)</option>
-                                        </select>
-                                    </div>
-
-                                    <button type="button" class="btn-remove">Remove</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="add-medicine-container">
-                            <button type="button" id="add-prescription" class="add-medicine">+ Add</button>
-                        </div>
-
-                        <div class="form-group full-width">
-                            <label for="physician">Prescribed by</label>
-
-                            <select id="physician" name="physician" class="select2">
-                                <option value="">Select Physician</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
+            <div class="update-card">
                 <div class="button-container">
-                    <button type="button" class="submit-btn" id="submitButton">
-                        Submit
+                    <button type="button" class="submit-btn" onclick="window.location.href='pending'">
+                        &larr; Back to Pending Referrals
                     </button>
                 </div>
+            </div>
 
-                <div id="myModal" class="modal">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <div class="modal-icon">
-                                <i class="bx bx-help-circle"></i>
-                            </div>
-
-                            <h3>Confirmation</h3>
-                            <span class="close-btn" id="closeBtn">&times;</span>
-                        </div>
-
-                        <div class="modal-body">
-                            <p>Save patient record?</p>
-                        </div>
-
-                        <div class="modal-footer">
-                            <button id="cancelButton" class="btn no" type="button">Cancel</button>
-                            <button id="confirmBtn" class="btn yes" type="button">Save</button>
-                        </div>
-                    </div>
-                </div>
-            </form>
         </section>
     </main>
 </section>
-
-<div id="responseModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <div class="modal-icon modal-icon-response">
-                <i class="bx bx-info-circle"></i>
-            </div>
-
-            <h3 id="responseTitle">Notice</h3>
-            <span class="close-btn" id="closeResponseModal">&times;</span>
-        </div>
-
-        <div class="modal-body">
-            <p id="responseMessage">Record saved successfully!</p>
-        </div>
-
-        <div class="modal-footer">
-            <button id="okButton" class="btn yes" type="button">OK</button>
-        </div>
-    </div>
-</div>
 
 <div id="logoutModal" class="logout-modal">
     <div class="logout-modal-content">
@@ -635,19 +386,25 @@
 document.addEventListener("DOMContentLoaded", function () {
     setupInitialValues();
     setupPersonalInfoToggle();
-    setupDateInput();
-    setupDiagnosisStatus();
-    setupSelectFields();
-    setupMedicineControls();
-    setupPrescriptionControls();
-    setupFormSubmit();
-    setupModals();
     setupUserInfo();
-    setupUserId();
+    checkPhysicianSession();
     setupResponsiveSidebar();
     setupUpdateReferrals();
     setupPatientSearch();
 });
+
+function checkPhysicianSession() {
+    fetch("php/getUserId.php")
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                window.location.href = "../auth/role";
+            }
+        })
+        .catch(() => {
+            window.location.href = "../auth/role";
+        });
+}
 
 function getPersonalInfoColumns() {
     if (window.innerWidth <= 768) {
@@ -725,7 +482,8 @@ function setupInitialValues() {
     const visitId = params.get("visit_id");
 
     if (visitId) {
-        document.getElementById("visit_id").value = visitId;
+        const visitIdField = document.getElementById("visit_id");
+        if (visitIdField) visitIdField.value = visitId;
     }
 
     forceHideElement(document.getElementById("hiddenPersonalInfo"));
@@ -1239,7 +997,7 @@ function setupUserInfo() {
             const name = document.getElementById("sidebarUserName");
 
             if (name) {
-                name.textContent = data.full_name || "Nurse User";
+                name.textContent = data.full_name || "Physician User";
             }
                     const rhuLabel = document.getElementById('rhuLabel');
         if (rhuLabel && data.rhu) {
@@ -1252,7 +1010,7 @@ function setupUserInfo() {
             const name = document.getElementById("sidebarUserName");
 
             if (name) {
-                name.textContent = "Nurse User";
+                name.textContent = "Physician User";
             }
         });
 }
