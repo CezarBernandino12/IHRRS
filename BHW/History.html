@@ -354,7 +354,7 @@ fetch('php/getUserId.php')
                     if (data.error) {
                         console.error(data.error);
                         if (tableBody) {
-                            tableBody.innerHTML = `<tr class="empty-state-row"><td colspan="5">Error fetching data</td></tr>`;
+                            tableBody.innerHTML = `<tr class="empty-state-row"><td colspan="4">Error fetching data</td></tr>`;
                         }
                         if (paginationContainer) paginationContainer.innerHTML = "";
                         return;
@@ -408,7 +408,7 @@ fetch('php/getUserId.php')
                     allReferralRows = [];
                     filteredReferralRows = [];
                     if (tableBody) {
-                        tableBody.innerHTML = `<tr class="empty-state-row"><td colspan="5">Error fetching data</td></tr>`;
+                        tableBody.innerHTML = `<tr class="empty-state-row"><td colspan="4">Error fetching data</td></tr>`;
                     }
                     if (paginationContainer) paginationContainer.innerHTML = "";
                 });
@@ -442,7 +442,11 @@ fetch('php/getUserId.php')
 
         function formatDate(dateString) {
             if (!dateString) return "N/A";
-            const date = new Date(dateString);
+            // Parse only the date part to avoid timezone shifts showing a time
+            const datePart = String(dateString).split(/[T ]/)[0];
+            const parts = datePart.split('-');
+            if (parts.length !== 3) return "Invalid Date";
+            const date = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
             if (isNaN(date.getTime())) return "Invalid Date";
             const options = { year: 'numeric', month: 'long', day: 'numeric' };
             return date.toLocaleDateString('en-US', options);
