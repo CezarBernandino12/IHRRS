@@ -151,11 +151,6 @@ $stmt_log->execute([
     </nav>
 
     <main>
-        <div class="head-title">
-            <div class="left">
-                <h1>Medicine Dispensation</h1>
-            </div>
-        </div>
 
         <br>
 

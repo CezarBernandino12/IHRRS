@@ -763,13 +763,6 @@ foreach ($rows as $row) {
     </nav>
 
     <main class="bhw-referral-layout-page">
-        <div class="head-title">
-            <div class="left">
-                <h1>Referrals</h1>
-            </div>
-        </div>
-
-        <br>
 
         <div class="history-container">
 
