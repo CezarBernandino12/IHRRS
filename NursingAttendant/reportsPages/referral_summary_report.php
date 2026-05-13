@@ -267,14 +267,6 @@ $stmt_log->execute([
     </nav>
 
     <main>
-        <div class="head-title">
-            <div class="left">
-                <h1>Referral Summary Report</h1>
-            </div>
-        </div>
-
-        <br>
-
         <div class="history-container">
 
             <!-- ─── Filter Form Card ─── -->

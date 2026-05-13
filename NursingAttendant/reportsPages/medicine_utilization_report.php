@@ -957,12 +957,6 @@ $disp_stmt->execute(array_merge($ids, $medicine_list));
 
 
 		<main>
-            
-            <div class="head-title">
-                <div class="left">
-                  <h1>Medicine Utilization</h1>
-                </div>
-              </div>
 
 <div class="history-container">
 
