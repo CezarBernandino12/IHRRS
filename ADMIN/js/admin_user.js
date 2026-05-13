@@ -104,38 +104,26 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 function setupPasswordToggles() {
-    const passwordToggle = document.getElementById('passwordToggle');
-    const confirmPasswordToggle = document.getElementById('confirmPasswordToggle');
-    const passwordField = document.getElementById('password');
-    const confirmPasswordField = document.getElementById('confirmPassword');
+    const pairs = [
+        { toggleId: 'passwordToggle',        fieldId: 'password' },
+        { toggleId: 'confirmPasswordToggle', fieldId: 'confirmPassword' },
+        { toggleId: 'toggleNewPassword',     fieldId: 'newPassword' },
+        { toggleId: 'toggleConfirmPassword', fieldId: 'confirmNewPassword' },
+    ];
 
-    if (passwordToggle && passwordField) {
-        passwordToggle.addEventListener('click', function() {
-            if (passwordField.type === 'password') {
-                passwordField.type = 'text';
-                passwordToggle.classList.remove('bx-hide');
-                passwordToggle.classList.add('bx-show');
-            } else {
-                passwordField.type = 'password';
-                passwordToggle.classList.remove('bx-show');
-                passwordToggle.classList.add('bx-hide');
-            }
-        });
-    }
+    pairs.forEach(function ({ toggleId, fieldId }) {
+        const toggle = document.getElementById(toggleId);
+        const field  = document.getElementById(fieldId);
 
-    if (confirmPasswordToggle && confirmPasswordField) {
-        confirmPasswordToggle.addEventListener('click', function() {
-            if (confirmPasswordField.type === 'password') {
-                confirmPasswordField.type = 'text';
-                confirmPasswordToggle.classList.remove('bx-hide');
-                confirmPasswordToggle.classList.add('bx-show');
-            } else {
-                confirmPasswordField.type = 'password';
-                confirmPasswordToggle.classList.remove('bx-show');
-                confirmPasswordToggle.classList.add('bx-hide');
-            }
+        if (!toggle || !field) return;
+
+        toggle.addEventListener('click', function () {
+            const isPassword = field.type === 'password';
+            field.type = isPassword ? 'text' : 'password';
+            toggle.classList.toggle('bx-hide', !isPassword);
+            toggle.classList.toggle('bx-show', isPassword);
         });
-    }
+    });
 }
 
 const userTableBody = document.getElementById('userTableBody');

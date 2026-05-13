@@ -317,9 +317,9 @@
 			} else {
 				sidebarUserName.textContent = 'BHW User';
 			}
-		const barangayLabel = document.getElementById('barangayLabel');
-        if (barangayLabel && data.barangay) {
-            barangayLabel.textContent = data.barangay;
+        const barangayLabel = document.getElementById('barangayLabel');
+        if (barangayLabel) {
+            barangayLabel.textContent = data.barangay || '';
         }
 		})
 		.catch(error => {

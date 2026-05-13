@@ -990,13 +990,6 @@ foreach ($visits as $visit) {
     </nav>
 
     <main class="patient-report-page">
-        <div class="head-title">
-            <div class="left">
-                <h1>Patient Summary</h1>
-            </div>
-        </div>
-
-        <br>
 
         <div class="history-container">
 

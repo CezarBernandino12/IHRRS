@@ -70,8 +70,9 @@ document.addEventListener("DOMContentLoaded", function () {
                     updateElement(".doctor", data.consultation.full_name);
                     updateElement(".licenseNo", data.consultation.license_number);
                     updateElement(".rhu", data.consultation.rhu);
-                    
-                      document.getElementById("diagnosis").value = data.consultation.diagnosis || "";
+
+                    const diagnosisEl = document.getElementById("diagnosis");
+                    if (diagnosisEl) diagnosisEl.value = data.consultation.diagnosis || "";
 
                     // Store consultation_id in a hidden field if it exists
                     const consultationField = document.getElementById("consultation_id");

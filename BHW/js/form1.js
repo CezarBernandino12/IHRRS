@@ -1,20 +1,25 @@
-document.getElementById('consentCheckbox').addEventListener('change', function () {
-    document.getElementById('continueBtn').disabled = !this.checked;
+const _consentCheckbox = document.getElementById('consentCheckbox');
+const _continueBtn = document.getElementById('continueBtn');
+const _declineBtn = document.getElementById('declineBtn');
+
+if (_consentCheckbox && _continueBtn) {
+  _consentCheckbox.addEventListener('change', function () {
+    _continueBtn.disabled = !this.checked;
   });
-  
-  document.getElementById('continueBtn').addEventListener('click', function () {
-    
+
+  _continueBtn.addEventListener('click', function () {
     document.getElementById('consentModal').style.display = 'none';
     document.getElementById('consentGiven').value = "1";
     document.getElementById('consentMethod').value = "verbal";
-    document.getElementById('consentDate').value = new Date().toISOString(); 
-
+    document.getElementById('consentDate').value = new Date().toISOString();
   });
-  
-  document.getElementById('declineBtn').addEventListener('click', function () {
+}
 
-    window.location.href="dashboard"; 
+if (_declineBtn) {
+  _declineBtn.addEventListener('click', function () {
+    window.location.href = "dashboard";
   });
+}
   
 
 
@@ -311,31 +316,26 @@ if (viewDetailsButton) {
     console.warn("⚠️ Warning: viewDetailsButton not found in the DOM.");
 }
 
-closeBtn4.addEventListener("click", () => {
-const urlParams = new URLSearchParams(window.location.search);
-const patientId = urlParams.get('patient_id');
-
-
-        window.location.href = `record?patient_id=${encodeURIComponent(patientId)}`;
-  
+if (closeBtn4) closeBtn4.addEventListener("click", () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const patientId = urlParams.get('patient_id');
+    window.location.href = `record?patient_id=${encodeURIComponent(patientId)}`;
 });
 
-
-cancelButton.addEventListener('click', function () {
+if (cancelButton) cancelButton.addEventListener('click', function () {
     modal4.style.display = 'none';
 });
 
-proceedButton.addEventListener('click', function () {
+if (proceedButton) proceedButton.addEventListener('click', function () {
     modal4.style.display = 'none';
     modal5.style.display = 'block';
 });
 
-closeBtn5.addEventListener('click', function () {
+if (closeBtn5) closeBtn5.addEventListener('click', function () {
     modal5.style.display = 'none';
-
 });
 
-exitButton.addEventListener('click', function () {
+if (exitButton) exitButton.addEventListener('click', function () {
     modal5.style.display = 'none';
 });
 

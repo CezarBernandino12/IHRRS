@@ -814,24 +814,23 @@ select {
 .modal-content p,
 .change-password-modal-body p {
     margin: 0;
-    padding: 13px 14px;
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    background: var(--soft-bg);
+    padding: 5px 0;
+    border: none;
+    background: transparent;
     color: #334155;
     font-size: 13px;
-    line-height: 1.45;
+    line-height: 1.55;
 }
 
 .modal-content p strong,
 .change-password-modal-body p strong {
-    display: block;
-    margin-bottom: 4px;
+    display: inline;
+    margin-right: 4px;
     color: var(--text-muted);
-    font-size: 11.5px;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: none;
+    letter-spacing: 0;
 }
 
 .form-section {
@@ -1167,9 +1166,9 @@ select {
 .reset-password-btn {
     min-height: 32px;
     padding: 7px 10px;
-    border: 1px solid var(--border-strong);
+    border: none;
     border-radius: 10px;
-    background: #ffffff;
+    background: transparent;
     color: #334155;
     box-shadow: none;
     font-size: 11.5px;
@@ -1183,8 +1182,7 @@ select {
 .deactivate-btn:hover,
 .reset-password-btn:hover {
     color: var(--blue);
-    border-color: rgba(31, 91, 151, 0.35);
-    background: #f8fbff;
+    background: transparent;
     transform: none;
 }
 
@@ -1192,22 +1190,19 @@ select {
 .action-btn.danger,
 .deactivate-btn {
     color: var(--red);
-    background: #ffffff;
-    border-color: rgba(220, 38, 38, 0.22);
+    background: transparent;
 }
 
 .simple-action-btn.danger:hover,
 .action-btn.danger:hover,
 .deactivate-btn:hover {
     color: #b91c1c;
-    background: rgba(220, 38, 38, 0.05);
-    border-color: rgba(220, 38, 38, 0.38);
+    background: transparent;
 }
 
 .reset-password-btn.pending-reset {
     color: var(--orange);
-    background: rgba(249, 115, 22, 0.06);
-    border-color: rgba(249, 115, 22, 0.28);
+    background: transparent;
 }
 
 .inline-action-form {

@@ -64,9 +64,6 @@ $totalLogs = (int)$totalLogsStmt->fetch(PDO::FETCH_ASSOC)['total'];
 $todayActivitiesStmt = $pdo->query("SELECT COUNT(*) AS today FROM logs WHERE DATE(timestamp) = CURDATE()");
 $todayActivities = (int)$todayActivitiesStmt->fetch(PDO::FETCH_ASSOC)['today'];
 
-$activeUsersStmt = $pdo->query("SELECT COUNT(DISTINCT performed_by) AS active FROM logs WHERE timestamp >= DATE_SUB(NOW(), INTERVAL 7 DAY)");
-$activeUsers = (int)$activeUsersStmt->fetch(PDO::FETCH_ASSOC)['active'];
-
 /* Filters */
 $userFilter = $_GET['user'] ?? '';
 $actionFilter = $_GET['action'] ?? '';
@@ -329,28 +326,6 @@ $hasFilters = $userFilter !== '' || $actionFilter !== '' || $fromDate !== '' || 
                         <strong><?= number_format($todayActivities); ?></strong>
                     </div>
                 </article>
-
-                <article class="stat-card">
-                    <div class="stat-icon">
-                        <i class="bx bx-user-check"></i>
-                    </div>
-
-                    <div>
-                        <span>Active Users</span>
-                        <strong><?= number_format($activeUsers); ?></strong>
-                    </div>
-                </article>
-
-                <article class="stat-card">
-                    <div class="stat-icon">
-                        <i class="bx bx-filter"></i>
-                    </div>
-
-                    <div>
-                        <span>Filtered Results</span>
-                        <strong><?= number_format($filteredLogs); ?></strong>
-                    </div>
-                </article>
             </section>
 
             <section class="logs-panel filter-panel">
@@ -409,22 +384,7 @@ $hasFilters = $userFilter !== '' || $actionFilter !== '' || $fromDate !== '' || 
                         <input type="text" id="to_date" name="to_date" class="flatpickr" placeholder="End date" value="<?= e($toDate); ?>">
                     </div>
 
-                    <div class="form-group filter-actions">
-                        <label aria-hidden="true">&nbsp;</label>
 
-                        <div class="filter-button-row">
-                            <button type="submit" id="filterButton">
-                                <i class="bx bx-check"></i>
-                                Apply
-                            </button>
-
-                            <?php if ($hasFilters): ?>
-                                <a href="activity_logs" class="reset-filter-link" aria-label="Clear filters">
-                                    <i class="bx bx-x"></i>
-                                </a>
-                            <?php endif; ?>
-                        </div>
-                    </div>
                 </form>
             </section>
 
@@ -626,11 +586,35 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
     if (window.flatpickr) {
-        flatpickr(".flatpickr", {
+        flatpickr("#from_date", {
             dateFormat: "Y-m-d",
-            allowInput: true
+            allowInput: true,
+            onClose: function (selectedDates, dateStr) {
+                if (dateStr) {
+                    const form = document.getElementById("logFilterForm");
+                    if (form) form.submit();
+                }
+            }
+        });
+
+        flatpickr("#to_date", {
+            dateFormat: "Y-m-d",
+            allowInput: true,
+            onClose: function (selectedDates, dateStr) {
+                if (dateStr) {
+                    const form = document.getElementById("logFilterForm");
+                    if (form) form.submit();
+                }
+            }
         });
     }
+
+    document.querySelectorAll(".auto-submit").forEach(function (el) {
+        el.addEventListener("change", function () {
+            const form = document.getElementById("logFilterForm");
+            if (form) form.submit();
+        });
+    });
 
     setupSidebar();
     setupActivitySearch();

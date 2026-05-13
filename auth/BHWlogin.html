@@ -36,17 +36,6 @@
       overflow-x: hidden;
     }
 
-    /* ── GRID BG ── */
-    body::before {
-      content: '';
-      position: fixed; inset: 0;
-      background-image:
-        linear-gradient(rgba(21,96,212,0.04) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(21,96,212,0.04) 1px, transparent 1px);
-      background-size: 48px 48px;
-      z-index: 0; pointer-events: none;
-    }
-
     /* ── BLOBS ── */
     .blob { position: fixed; border-radius: 50%; filter: blur(90px); pointer-events: none; z-index: 0; }
     .blob-1 {

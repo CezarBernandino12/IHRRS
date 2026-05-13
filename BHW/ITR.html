@@ -1759,9 +1759,9 @@ document.addEventListener("DOMContentLoaded", () => {
         sidebarUserName.textContent = data.full_name || 'BHW User';
       }
       const barangayLabel = document.getElementById('barangayLabel');
-        if (barangayLabel && data.barangay) {
-            barangayLabel.textContent = data.barangay;
-        }
+      if (barangayLabel) {
+          barangayLabel.textContent = data.barangay || '';
+      }
     })
     .catch(error => {
       console.error('Error fetching user name:', error);
