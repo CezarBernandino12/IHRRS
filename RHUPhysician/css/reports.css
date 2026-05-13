@@ -65,16 +65,6 @@ li {
   flex-wrap: wrap !important;
 }
 
-#content main .head-title .left h1 {
-  position: relative !important;
-  margin: 0 !important;
-  color: var(--reports-text) !important;
-  font-size: clamp(28px, 3.5vw, 42px) !important;
-  font-weight: 700 !important;
-  line-height: 1.1 !important;
-  letter-spacing: -0.045em !important;
-  text-align: left !important;
-}
 
 #content main .head-title .left h1::after {
   content: "" !important;
@@ -86,27 +76,6 @@ li {
   background: linear-gradient(90deg, var(--reports-blue-2), var(--reports-cyan)) !important;
 }
 
-#content main .head-title .left .breadcrumb {
-  display: flex !important;
-  align-items: center !important;
-  gap: 10px !important;
-  margin-top: 12px !important;
-  padding: 0 !important;
-  flex-wrap: wrap !important;
-}
-
-#content main .head-title .left .breadcrumb li,
-#content main .head-title .left .breadcrumb a {
-  color: var(--reports-muted) !important;
-  font-size: 13px !important;
-  font-weight: 500 !important;
-}
-
-#content main .head-title .left .breadcrumb a.active {
-  color: var(--reports-blue) !important;
-  font-weight: 800 !important;
-  pointer-events: auto !important;
-}
 
 /* Report grid */
 #content main .box-info {
