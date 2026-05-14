@@ -357,7 +357,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         // Update the View Record link with visit_id
                         if (data.visit_id) {
                             const viewRecordLink = document.getElementById('viewRecordLink');
-                            viewRecordLink.href = `visitInfo.html?visit_id=${data.visit_id}`;
+                            viewRecordLink.href = `visitInfo?visit_id=${data.visit_id}`;
                         } else {
                             console.error('No visit_id found in referral data');
                             document.getElementById("viewRecordLink").style.display = 'none'; // Hide link if no visit_id
