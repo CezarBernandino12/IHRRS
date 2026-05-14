@@ -1315,3 +1315,54 @@
 
 [ROWS_AFFECTED] 1
 [COMMIT] Success!
+[RAW INPUT] Array
+(
+    [patient_id] => 545
+    [first_name] => Genelyn
+    [last_name] => Zaleta
+    [middle_name] => Liacao
+    [extension] => 
+    [birthplace] => Malolos Bulacan
+    [date_of_birth] => 2003-05-01
+    [address] => Purok 4, Calangcawan Norte, Vinzons, Camarines Norte, Region V (Bicol Region)
+    [civil_status] => Single
+    [contact_number] => 09630257890
+    [religion] => Roman Catholic
+    [occupation] => Student
+    [educational_attainment] => Postgraduate
+    [birth_weight] => 12
+    [philhealth_member_no] => 21221421412
+    [category] => Private
+    [family_serial_no] => 1233431
+    [sex] => Female
+    [fourps_status] => No
+)
+
+[PATIENT_ID] 545
+[USER_ID] 5
+[SUCCESS] Patient found, updating...
+[PARAMS] Array
+(
+    [first_name] => Genelyn
+    [last_name] => Zaleta
+    [middle_name] => Liacao
+    [extension] => 
+    [birthplace] => Malolos Bulacan
+    [date_of_birth] => 2003-05-01
+    [address] => Purok 4, Calangcawan Norte, Vinzons, Camarines Norte, Region V (Bicol Region)
+    [civil_status] => Single
+    [contact_number] => 09630257890
+    [religion] => Roman Catholic
+    [occupation] => Student
+    [educational_attainment] => Postgraduate
+    [birth_weight] => 12
+    [philhealth_member_no] => 21221421412
+    [category] => Private
+    [family_serial_no] => 1233431
+    [sex] => Female
+    [fourps_status] => No
+    [patient_id] => 545
+)
+
+[ROWS_AFFECTED] 1
+[COMMIT] Success!

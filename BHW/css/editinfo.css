@@ -2257,3 +2257,397 @@ span.flatpickr-weekday {
     font-size: 11.5px !important;
   }
 }
+
+/* =========================================================
+   SAFE UI-ONLY RESTORE PATCH
+   Keeps the original Edit Personal Information page functions intact.
+   - Does not initialize Select2 on PSGC address selects
+   - Keeps original search/update/edit scripts untouched
+   - Calendar uses month + year dropdown only
+   - Removes selected check mark from calendar dropdown only
+   ========================================================= */
+
+/* Keep PSGC address dropdowns native/lightweight to preserve cascading function and avoid lag */
+#region,
+#province,
+#city,
+#barangay {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  width: 100% !important;
+  min-height: 42px !important;
+  padding: 10px 42px 10px 12px !important;
+  border: 1px solid var(--edit-border, rgba(15, 23, 42, 0.10)) !important;
+  border-radius: 12px !important;
+  color: var(--edit-text, #18263d) !important;
+  background-color: #ffffff !important;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%2318263d' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 14px center !important;
+  background-size: 16px 16px !important;
+  font-family: var(--poppins, 'Poppins', sans-serif) !important;
+  font-size: 13px !important;
+  line-height: 1.35 !important;
+  box-sizing: border-box !important;
+  cursor: pointer !important;
+}
+
+#region:disabled,
+#province:disabled,
+#city:disabled,
+#barangay:disabled {
+  color: #94a3b8 !important;
+  background-color: #f8fafc !important;
+  cursor: not-allowed !important;
+  opacity: 1 !important;
+}
+
+/* Hide the calendar < > buttons without removing the original JS/functionality */
+.flatpickr-calendar.custom-dropdown-date-picker .custom-picker-nav {
+  display: none !important;
+}
+
+/* Calendar header: month dropdown + compact year dropdown only */
+.flatpickr-calendar.custom-dropdown-date-picker .custom-date-picker-header {
+  display: grid !important;
+  grid-template-columns: 134px 88px !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 8px !important;
+  width: 100% !important;
+  margin: 0 auto !important;
+  overflow: visible !important;
+  z-index: 20 !important;
+}
+
+/* Month width sized for longest month text, September */
+.flatpickr-calendar.custom-dropdown-date-picker .custom-month-menu {
+  width: 134px !important;
+  min-width: 134px !important;
+  max-width: 134px !important;
+}
+
+.flatpickr-calendar.custom-dropdown-date-picker .custom-year-menu {
+  width: 88px !important;
+  min-width: 88px !important;
+  max-width: 88px !important;
+}
+
+.flatpickr-calendar.custom-dropdown-date-picker .custom-picker-trigger {
+  height: 34px !important;
+  min-height: 34px !important;
+  padding: 0 10px !important;
+  border: 1px solid rgba(31, 91, 151, 0.12) !important;
+  border-radius: 11px !important;
+  color: #18263d !important;
+  background: #f8fbff !important;
+  font-size: 12px !important;
+  font-weight: 650 !important;
+  line-height: 1 !important;
+  box-shadow: none !important;
+}
+
+.flatpickr-calendar.custom-dropdown-date-picker .custom-month-label,
+.flatpickr-calendar.custom-dropdown-date-picker .custom-year-label {
+  display: inline-block !important;
+  overflow: hidden !important;
+  white-space: nowrap !important;
+  text-overflow: ellipsis !important;
+}
+
+/* Dropdown option panels */
+.flatpickr-calendar.custom-dropdown-date-picker .custom-picker-options {
+  top: calc(100% + 6px) !important;
+  padding: 6px !important;
+  border: 1px solid rgba(15, 23, 42, 0.08) !important;
+  border-radius: 10px !important;
+  background: #ffffff !important;
+  box-shadow: 0 12px 26px rgba(15, 23, 42, 0.16) !important;
+  overflow-y: auto !important;
+  z-index: 9999 !important;
+}
+
+.flatpickr-calendar.custom-dropdown-date-picker .custom-picker-option {
+  justify-content: flex-start !important;
+  min-height: 30px !important;
+  padding: 7px 10px !important;
+  border-radius: 6px !important;
+  color: #4b5563 !important;
+  background: transparent !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+}
+
+.flatpickr-calendar.custom-dropdown-date-picker .custom-picker-option:hover,
+.flatpickr-calendar.custom-dropdown-date-picker .custom-picker-option.is-active {
+  color: #18263d !important;
+  background: #f3f4f6 !important;
+}
+
+/* Remove the calendar selected check icon/text only */
+.flatpickr-calendar.custom-dropdown-date-picker .custom-picker-option.is-active::after {
+  content: none !important;
+  display: none !important;
+}
+
+/* Keep day grid stable after header change */
+.flatpickr-calendar.custom-dropdown-date-picker,
+.flatpickr-calendar {
+  width: min(94vw, 330px) !important;
+  overflow: visible !important;
+}
+
+.flatpickr-innerContainer,
+.flatpickr-rContainer,
+.flatpickr-weekdays,
+.flatpickr-weekdaycontainer,
+.flatpickr-days,
+.dayContainer {
+  width: 100% !important;
+  min-width: 100% !important;
+  max-width: 100% !important;
+}
+
+.flatpickr-weekdaycontainer,
+.dayContainer {
+  display: grid !important;
+  grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
+}
+
+.dayContainer {
+  gap: 4px 3px !important;
+}
+
+.flatpickr-day {
+  display: grid !important;
+  place-items: center !important;
+  width: 100% !important;
+  max-width: none !important;
+  height: 31px !important;
+  margin: 0 !important;
+  line-height: 31px !important;
+}
+
+@media (max-width: 700px) {
+  .flatpickr-calendar.custom-dropdown-date-picker .custom-date-picker-header {
+    grid-template-columns: 128px 82px !important;
+    gap: 6px !important;
+  }
+
+  .flatpickr-calendar.custom-dropdown-date-picker .custom-month-menu {
+    width: 128px !important;
+    min-width: 128px !important;
+    max-width: 128px !important;
+  }
+
+  .flatpickr-calendar.custom-dropdown-date-picker .custom-year-menu {
+    width: 82px !important;
+    min-width: 82px !important;
+    max-width: 82px !important;
+  }
+}
+
+
+/* =========================================================
+   LIGHTWEIGHT ADDRESS DROPDOWN OPTION UI
+   UI only for Region, Province, Municipality/City, Barangay.
+   Keeps original PSGC select functions intact.
+   ========================================================= */
+.address-select-shell {
+  position: relative !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  font-family: var(--poppins, 'Poppins', sans-serif) !important;
+}
+
+.address-select-shell .address-native-select {
+  position: absolute !important;
+  inset: 0 auto auto 0 !important;
+  width: 1px !important;
+  height: 1px !important;
+  min-height: 1px !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  padding: 0 !important;
+  border: 0 !important;
+  overflow: hidden !important;
+}
+
+.address-select-trigger {
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 42px !important;
+  height: 42px !important;
+  padding: 10px 42px 10px 12px !important;
+  border: 1px solid var(--edit-border, rgba(15, 23, 42, 0.10)) !important;
+  border-radius: 12px !important;
+  outline: none !important;
+  color: var(--edit-text, #18263d) !important;
+  background: #ffffff !important;
+  font-family: var(--poppins, 'Poppins', sans-serif) !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  line-height: 1.35 !important;
+  text-align: left !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  cursor: pointer !important;
+  box-sizing: border-box !important;
+}
+
+.address-select-trigger::after {
+  content: "" !important;
+  position: absolute !important;
+  top: 50% !important;
+  right: 16px !important;
+  width: 7px !important;
+  height: 7px !important;
+  border-right: 2px solid #18263d !important;
+  border-bottom: 2px solid #18263d !important;
+  transform: translateY(-65%) rotate(45deg) !important;
+  pointer-events: none !important;
+}
+
+.address-select-shell.is-open .address-select-trigger,
+.address-select-trigger:focus-visible {
+  border-color: var(--edit-blue, #2563eb) !important;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.10) !important;
+}
+
+.address-select-shell.is-disabled .address-select-trigger,
+.address-select-trigger:disabled {
+  color: #94a3b8 !important;
+  background: #f8fafc !important;
+  cursor: not-allowed !important;
+  opacity: 1 !important;
+}
+
+.address-select-shell.is-disabled .address-select-trigger::after,
+.address-select-trigger:disabled::after {
+  border-color: #94a3b8 !important;
+}
+
+.address-select-menu {
+  display: none !important;
+  position: absolute !important;
+  top: calc(100% + 6px) !important;
+  left: 0 !important;
+  right: 0 !important;
+  z-index: 4500 !important;
+  max-height: 240px !important;
+  padding: 6px !important;
+  border: 1px solid rgba(15, 23, 42, 0.08) !important;
+  border-radius: 8px !important;
+  background: #ffffff !important;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.12) !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain !important;
+}
+
+.address-select-shell.is-open .address-select-menu {
+  display: block !important;
+}
+
+.address-select-option {
+  position: relative !important;
+  display: block !important;
+  width: 100% !important;
+  min-height: 32px !important;
+  padding: 7px 30px 7px 12px !important;
+  border: 0 !important;
+  border-radius: 4px !important;
+  color: #4b5563 !important;
+  background: transparent !important;
+  font-family: var(--poppins, 'Poppins', sans-serif) !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  line-height: 1.35 !important;
+  text-align: left !important;
+  cursor: pointer !important;
+}
+
+.address-select-option:hover,
+.address-select-option:focus-visible {
+  color: #18263d !important;
+  background: #f5f5f5 !important;
+  outline: none !important;
+}
+
+.address-select-option.is-selected {
+  color: #18263d !important;
+  background: #f3f4f6 !important;
+}
+
+.address-select-option.is-selected::after {
+  content: "✓" !important;
+  position: absolute !important;
+  right: 11px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  color: #2f3747 !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+}
+
+.address-select-option.is-disabled,
+.address-select-option:disabled {
+  color: #9ca3af !important;
+  background: transparent !important;
+  cursor: not-allowed !important;
+}
+
+.address-fieldset,
+.address-grid,
+.form-item {
+  overflow: visible !important;
+}
+
+
+/* =========================================================
+   CALENDAR CHEVRON FIX
+   UI-only: makes month/year calendar chevrons match the other
+   dropdown arrows and removes the small text-style "v" look.
+   ========================================================= */
+.flatpickr-calendar.custom-dropdown-date-picker .custom-picker-trigger {
+  position: relative !important;
+  padding-right: 30px !important;
+}
+
+.flatpickr-calendar.custom-dropdown-date-picker .custom-picker-chevron {
+  position: absolute !important;
+  top: 50% !important;
+  right: 11px !important;
+  display: block !important;
+  width: 12px !important;
+  height: 12px !important;
+  flex: 0 0 12px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  color: transparent !important;
+  font-size: 0 !important;
+  line-height: 0 !important;
+  transform: translateY(-50%) !important;
+  pointer-events: none !important;
+}
+
+.flatpickr-calendar.custom-dropdown-date-picker .custom-picker-chevron::before {
+  content: "" !important;
+  position: absolute !important;
+  top: 48% !important;
+  left: 50% !important;
+  width: 7px !important;
+  height: 7px !important;
+  border-right: 2px solid var(--edit-blue-dark, #1f5b97) !important;
+  border-bottom: 2px solid var(--edit-blue-dark, #1f5b97) !important;
+  transform: translate(-50%, -65%) rotate(45deg) !important;
+}
+
+.flatpickr-calendar.custom-dropdown-date-picker .custom-picker-menu.is-open .custom-picker-chevron::before {
+  transform: translate(-50%, -35%) rotate(225deg) !important;
+}
