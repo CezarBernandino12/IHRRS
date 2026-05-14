@@ -574,127 +574,198 @@ fetch('php/getUserName.php')
         if (userGreeting) userGreeting.textContent = 'Hello, BHW!';
     });
 
-     // Initialize Flatpickr
-    function setupReferralDatePicker(instance) {
-        const calendar = instance.calendarContainer;
-        if (!calendar) return;
+     // Initialize Flatpickr - UI only, preserves date filter behavior
+    (function () {
+        const monthNames = [
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+        ];
 
-        calendar.classList.add("material-date-picker", "compact-referral-picker");
-
-        const monthsContainer = calendar.querySelector(".flatpickr-months");
-        const monthSelect = calendar.querySelector(".flatpickr-monthDropdown-months");
-        const yearWrapper = calendar.querySelector(".numInputWrapper");
-
-        if (monthsContainer && monthSelect && yearWrapper && !calendar.querySelector(".material-picker-header")) {
-            const header = document.createElement("div");
-            header.className = "material-picker-header";
-
-            const monthGroup = document.createElement("div");
-            monthGroup.className = "material-picker-group material-picker-month-group";
-
-            const monthPrev = document.createElement("button");
-            monthPrev.type = "button";
-            monthPrev.className = "material-picker-nav";
-            monthPrev.setAttribute("aria-label", "Previous month");
-            monthPrev.innerHTML = "‹";
-            monthPrev.addEventListener("click", function () {
-                instance.changeMonth(-1);
+        function closePickerMenus(calendar) {
+            if (!calendar) return;
+            calendar.querySelectorAll(".custom-picker-menu.is-open").forEach(function (menu) {
+                menu.classList.remove("is-open");
             });
-
-            const monthNext = document.createElement("button");
-            monthNext.type = "button";
-            monthNext.className = "material-picker-nav";
-            monthNext.setAttribute("aria-label", "Next month");
-            monthNext.innerHTML = "›";
-            monthNext.addEventListener("click", function () {
-                instance.changeMonth(1);
-            });
-
-            const yearGroup = document.createElement("div");
-            yearGroup.className = "material-picker-group material-picker-year-group";
-
-            const yearPrev = document.createElement("button");
-            yearPrev.type = "button";
-            yearPrev.className = "material-picker-nav";
-            yearPrev.setAttribute("aria-label", "Previous year");
-            yearPrev.innerHTML = "‹";
-            yearPrev.addEventListener("click", function () {
-                instance.changeYear(instance.currentYear - 1);
-            });
-
-            const yearNext = document.createElement("button");
-            yearNext.type = "button";
-            yearNext.className = "material-picker-nav";
-            yearNext.setAttribute("aria-label", "Next year");
-            yearNext.innerHTML = "›";
-            yearNext.addEventListener("click", function () {
-                instance.changeYear(instance.currentYear + 1);
-            });
-
-            monthGroup.appendChild(monthPrev);
-            monthGroup.appendChild(monthSelect);
-            monthGroup.appendChild(monthNext);
-
-            yearGroup.appendChild(yearPrev);
-            yearGroup.appendChild(yearWrapper);
-            yearGroup.appendChild(yearNext);
-
-            header.appendChild(monthGroup);
-            header.appendChild(yearGroup);
-
-            monthsContainer.innerHTML = "";
-            monthsContainer.appendChild(header);
         }
 
-        if (!calendar.querySelector(".material-picker-footer")) {
-            const footer = document.createElement("div");
-            footer.className = "material-picker-footer";
+        function syncPickerHeader(instance) {
+            const calendar = instance.calendarContainer;
+            if (!calendar) return;
 
-            const cancelBtn = document.createElement("button");
-            cancelBtn.type = "button";
-            cancelBtn.className = "material-picker-text-btn";
-            cancelBtn.textContent = "Cancel";
-            cancelBtn.addEventListener("click", function () {
-                instance.close();
+            const monthLabel = calendar.querySelector(".custom-month-label");
+            const yearLabel = calendar.querySelector(".custom-year-label");
+
+            if (monthLabel) monthLabel.textContent = monthNames[instance.currentMonth];
+            if (yearLabel) yearLabel.textContent = String(instance.currentYear);
+
+            calendar.querySelectorAll(".custom-month-option").forEach(function (btn) {
+                btn.classList.toggle("is-active", Number(btn.dataset.month) === instance.currentMonth);
             });
 
-            const okBtn = document.createElement("button");
-            okBtn.type = "button";
-            okBtn.className = "material-picker-text-btn material-picker-ok-btn";
-            okBtn.textContent = "OK";
-            okBtn.addEventListener("click", function () {
-                instance.close();
+            calendar.querySelectorAll(".custom-year-option").forEach(function (btn) {
+                btn.classList.toggle("is-active", Number(btn.dataset.year) === instance.currentYear);
             });
 
-            footer.appendChild(cancelBtn);
-            footer.appendChild(okBtn);
-            calendar.appendChild(footer);
+            const activeYear = calendar.querySelector(".custom-year-option.is-active");
+            if (activeYear && activeYear.parentElement) {
+                activeYear.parentElement.scrollTop = Math.max(0, activeYear.offsetTop - 62);
+            }
         }
-    }
 
-    flatpickr(".flatpickr", {
-        dateFormat: "Y-m-d",
-        allowInput: true,
-        altInput: true,
-        altFormat: "M j, Y",
-        disableMobile: true,
-        maxDate: "today",
-        monthSelectorType: "dropdown",
-        clickOpens: true,
-        static: false,
-        onReady: function(selectedDates, dateStr, instance) {
-            setupReferralDatePicker(instance);
-        },
-        onOpen: function(selectedDates, dateStr, instance) {
-            setupReferralDatePicker(instance);
-        },
-        onMonthChange: function(selectedDates, dateStr, instance) {
-            setupReferralDatePicker(instance);
-        },
-        onYearChange: function(selectedDates, dateStr, instance) {
-            setupReferralDatePicker(instance);
+        function setupReferralDatePicker(instance) {
+            const calendar = instance.calendarContainer;
+            if (!calendar) return;
+
+            calendar.classList.add("custom-dropdown-date-picker", "compact-referral-picker");
+
+            const monthsContainer = calendar.querySelector(".flatpickr-months");
+            if (!monthsContainer) return;
+
+            if (!calendar.querySelector(".custom-date-picker-header")) {
+                const header = document.createElement("div");
+                header.className = "custom-date-picker-header";
+
+                const monthMenu = document.createElement("div");
+                monthMenu.className = "custom-picker-menu custom-month-menu";
+
+                const monthTrigger = document.createElement("button");
+                monthTrigger.type = "button";
+                monthTrigger.className = "custom-picker-trigger";
+                monthTrigger.innerHTML = '<span class="custom-month-label"></span><span class="custom-picker-chevron" aria-hidden="true"></span>';
+
+                const monthOptions = document.createElement("div");
+                monthOptions.className = "custom-picker-options custom-month-options";
+
+                monthNames.forEach(function (month, index) {
+                    const option = document.createElement("button");
+                    option.type = "button";
+                    option.className = "custom-picker-option custom-month-option";
+                    option.dataset.month = String(index);
+                    option.textContent = month;
+                    option.addEventListener("click", function () {
+                        instance.changeMonth(index, false);
+                        closePickerMenus(calendar);
+                        syncPickerHeader(instance);
+                    });
+                    monthOptions.appendChild(option);
+                });
+
+                monthTrigger.addEventListener("click", function (event) {
+                    event.stopPropagation();
+                    const isOpen = monthMenu.classList.contains("is-open");
+                    closePickerMenus(calendar);
+                    monthMenu.classList.toggle("is-open", !isOpen);
+                });
+
+                monthMenu.appendChild(monthTrigger);
+                monthMenu.appendChild(monthOptions);
+
+                const yearMenu = document.createElement("div");
+                yearMenu.className = "custom-picker-menu custom-year-menu";
+
+                const yearTrigger = document.createElement("button");
+                yearTrigger.type = "button";
+                yearTrigger.className = "custom-picker-trigger";
+                yearTrigger.innerHTML = '<span class="custom-year-label"></span><span class="custom-picker-chevron" aria-hidden="true"></span>';
+
+                const yearOptions = document.createElement("div");
+                yearOptions.className = "custom-picker-options custom-year-options";
+
+                const currentYear = new Date().getFullYear();
+                for (let year = currentYear; year >= 1900; year--) {
+                    const option = document.createElement("button");
+                    option.type = "button";
+                    option.className = "custom-picker-option custom-year-option";
+                    option.dataset.year = String(year);
+                    option.textContent = String(year);
+                    option.addEventListener("click", function () {
+                        instance.changeYear(Number(this.dataset.year));
+                        closePickerMenus(calendar);
+                        syncPickerHeader(instance);
+                    });
+                    yearOptions.appendChild(option);
+                }
+
+                yearTrigger.addEventListener("click", function (event) {
+                    event.stopPropagation();
+                    const isOpen = yearMenu.classList.contains("is-open");
+                    closePickerMenus(calendar);
+                    yearMenu.classList.toggle("is-open", !isOpen);
+                    syncPickerHeader(instance);
+                });
+
+                yearMenu.appendChild(yearTrigger);
+                yearMenu.appendChild(yearOptions);
+
+                header.appendChild(monthMenu);
+                header.appendChild(yearMenu);
+
+                monthsContainer.innerHTML = "";
+                monthsContainer.appendChild(header);
+
+                calendar.addEventListener("click", function (event) {
+                    event.stopPropagation();
+                });
+
+                document.addEventListener("click", function () {
+                    closePickerMenus(calendar);
+                });
+            }
+
+            if (!calendar.querySelector(".custom-picker-footer")) {
+                const footer = document.createElement("div");
+                footer.className = "custom-picker-footer";
+
+                const cancelBtn = document.createElement("button");
+                cancelBtn.type = "button";
+                cancelBtn.className = "custom-picker-footer-btn";
+                cancelBtn.textContent = "Cancel";
+                cancelBtn.addEventListener("click", function () {
+                    closePickerMenus(calendar);
+                    instance.close();
+                });
+
+                const okBtn = document.createElement("button");
+                okBtn.type = "button";
+                okBtn.className = "custom-picker-footer-btn custom-picker-ok-btn";
+                okBtn.textContent = "OK";
+                okBtn.addEventListener("click", function () {
+                    closePickerMenus(calendar);
+                    instance.close();
+                });
+
+                footer.appendChild(cancelBtn);
+                footer.appendChild(okBtn);
+                calendar.appendChild(footer);
+            }
+
+            syncPickerHeader(instance);
         }
-    });
+
+        flatpickr(".flatpickr", {
+            dateFormat: "Y-m-d",
+            allowInput: true,
+            altInput: true,
+            altFormat: "M j, Y",
+            disableMobile: true,
+            maxDate: "today",
+            monthSelectorType: "static",
+            clickOpens: true,
+            static: false,
+            onReady: function(selectedDates, dateStr, instance) {
+                setupReferralDatePicker(instance);
+            },
+            onOpen: function(selectedDates, dateStr, instance) {
+                setupReferralDatePicker(instance);
+            },
+            onMonthChange: function(selectedDates, dateStr, instance) {
+                syncPickerHeader(instance);
+            },
+            onYearChange: function(selectedDates, dateStr, instance) {
+                syncPickerHeader(instance);
+            }
+        });
+    })();
 
 </script>
 
@@ -752,6 +823,74 @@ document.addEventListener("DOMContentLoaded", () => {
   window.addEventListener("resize", applyResponsiveSidebar);
 
   // keep the rest of your existing code (auth, stats, modals, etc.)
+});
+</script>
+
+
+<script>
+/* UI only: custom status dropdown while preserving the original #status select value/function. */
+document.addEventListener("DOMContentLoaded", function () {
+  const statusSelect = document.getElementById("status");
+  if (!statusSelect || statusSelect.dataset.customUiReady === "true") return;
+
+  const parent = statusSelect.closest(".history-toolbar-field-select") || statusSelect.parentElement;
+  if (!parent) return;
+
+  parent.classList.add("history-status-enhanced");
+  statusSelect.classList.add("native-status-select");
+  statusSelect.dataset.customUiReady = "true";
+
+  const custom = document.createElement("div");
+  custom.className = "history-status-dropdown";
+
+  const trigger = document.createElement("button");
+  trigger.type = "button";
+  trigger.className = "history-status-trigger";
+  trigger.innerHTML = '<span class="history-status-label"></span><span class="history-status-chevron" aria-hidden="true"></span>';
+
+  const menu = document.createElement("div");
+  menu.className = "history-status-options";
+
+  function syncStatusUI() {
+    const label = trigger.querySelector(".history-status-label");
+    const selectedOption = statusSelect.options[statusSelect.selectedIndex];
+    if (label) label.textContent = selectedOption ? selectedOption.textContent : "Select";
+
+    menu.querySelectorAll(".history-status-option").forEach(function (button) {
+      button.classList.toggle("is-active", button.dataset.value === statusSelect.value);
+    });
+  }
+
+  Array.from(statusSelect.options).forEach(function (option) {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "history-status-option";
+    button.dataset.value = option.value;
+    button.textContent = option.textContent;
+    button.addEventListener("click", function () {
+      statusSelect.value = this.dataset.value;
+      statusSelect.dispatchEvent(new Event("change", { bubbles: true }));
+      statusSelect.dispatchEvent(new Event("input", { bubbles: true }));
+      custom.classList.remove("is-open");
+      syncStatusUI();
+    });
+    menu.appendChild(button);
+  });
+
+  trigger.addEventListener("click", function (event) {
+    event.stopPropagation();
+    custom.classList.toggle("is-open");
+  });
+
+  document.addEventListener("click", function () {
+    custom.classList.remove("is-open");
+  });
+
+  statusSelect.addEventListener("change", syncStatusUI);
+  custom.appendChild(trigger);
+  custom.appendChild(menu);
+  parent.appendChild(custom);
+  syncStatusUI();
 });
 </script>
 

@@ -579,8 +579,6 @@ document.addEventListener("click", function(event) {
             <div id="errorMessage" style="display: none; color: red;">
                 Error saving data.
             </div>
-            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-          
 
 
 <script>
@@ -1107,6 +1105,180 @@ document.addEventListener("DOMContentLoaded", function () {
             const observer = new MutationObserver(syncMedicineCards);
             observer.observe(container, { childList: true, subtree: true });
         }
+    }
+
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", boot);
+    } else {
+        boot();
+    }
+})();
+</script>
+
+
+
+<script>
+/* =========================================================
+   FINAL DROPDOWN UI ENHANCEMENT - UI ONLY
+   Preserves original names, values, handlers, form submit, add/remove medicine.
+   Applies the same clean dropdown option design to Patient Alert,
+   Treatment, and Medication Given fields without changing content.
+   ========================================================= */
+(function () {
+    const SELECTOR = "#patient_alert, #treatment, select.medicine-select, select.medicine-given";
+
+    function canUseSelect2() {
+        return window.jQuery && jQuery.fn && typeof jQuery.fn.select2 === "function";
+    }
+
+    function shouldEnhance(select) {
+        if (!select) return false;
+        if (select.multiple) return false;
+        if (select.hidden) return false;
+        if (select.type === "hidden") return false;
+        if (select.id === "diagnosis") return false;
+        if (select.offsetParent === null && !select.classList.contains("medicine-select")) return false;
+        return select.matches(SELECTOR);
+    }
+
+    function removeClonedSelect2Artifacts(root) {
+        const scope = root || document;
+        scope.querySelectorAll(".medicine-entry, .medication-card").forEach(function (entry) {
+            entry.querySelectorAll(".select2.select2-container").forEach(function (el) {
+                el.remove();
+            });
+
+            entry.querySelectorAll("select").forEach(function (select) {
+                select.classList.remove("select2-hidden-accessible");
+                select.removeAttribute("data-select2-id");
+                select.removeAttribute("aria-hidden");
+                select.removeAttribute("tabindex");
+
+                Array.from(select.options || []).forEach(function (option) {
+                    option.removeAttribute("data-select2-id");
+                });
+            });
+        });
+    }
+
+    function initSelect(select) {
+        if (!canUseSelect2() || !shouldEnhance(select)) return;
+
+        const $select = jQuery(select);
+
+        if ($select.hasClass("select2-hidden-accessible")) {
+            $select.trigger("change.select2");
+            return;
+        }
+
+        const firstOption = select.options && select.options.length ? select.options[0] : null;
+        const placeholderText = firstOption ? firstOption.textContent.trim() : "Select";
+
+        $select.select2({
+            width: "100%",
+            minimumResultsForSearch: Infinity,
+            dropdownAutoWidth: false,
+            dropdownCssClass: "reference-select-dropdown itr-existing-select-dropdown",
+            selectionCssClass: "reference-select-selection itr-existing-select-selection",
+            placeholder: placeholderText,
+            dropdownParent: jQuery(document.body)
+        });
+
+        /* Keep original native listeners working, including Other prompts and validation. */
+        $select.on("select2:select select2:clear", function () {
+            this.dispatchEvent(new Event("change", { bubbles: true }));
+            this.dispatchEvent(new Event("input", { bubbles: true }));
+        });
+
+        $select.on("change", function () {
+            const nativeSelect = this;
+            setTimeout(function () {
+                if (canUseSelect2() && jQuery(nativeSelect).hasClass("select2-hidden-accessible")) {
+                    jQuery(nativeSelect).trigger("change.select2");
+                }
+            }, 0);
+        });
+    }
+
+    function syncMedicineClasses(root) {
+        const scope = root || document;
+        scope.querySelectorAll(".medicine-entry").forEach(function (entry) {
+            entry.classList.add("medication-card");
+            entry.style.display = "";
+            entry.style.gap = "";
+            entry.style.alignItems = "";
+
+            const select = entry.querySelector('select[name="medicine_given[]"]');
+            if (select) {
+                select.classList.add("medicine-select", "medicine-given", "form-control");
+                select.style.width = "";
+            }
+
+            const qtyInput = entry.querySelector('input[name="quantity_given[]"]');
+            if (qtyInput) {
+                qtyInput.classList.add("quantity-given", "form-control");
+                qtyInput.style.height = "";
+            }
+
+            const quantityField = entry.querySelector(".quantity-container")?.closest(".form-group");
+            if (quantityField) {
+                quantityField.classList.add("medicine-quantity-field");
+            }
+
+            const removeBtn = entry.querySelector(".btn-remove");
+            if (removeBtn) {
+                removeBtn.classList.add("medicine-remove-btn");
+                removeBtn.removeAttribute("style");
+            }
+
+            entry.querySelectorAll(".btn-minus, .btn-plus").forEach(function (btn) {
+                btn.classList.add("quantity-btn");
+            });
+        });
+    }
+
+    function initAll(root) {
+        removeClonedSelect2Artifacts(root);
+        syncMedicineClasses(root);
+        const scope = root || document;
+        scope.querySelectorAll(SELECTOR).forEach(initSelect);
+    }
+
+    function boot() {
+        if (!canUseSelect2()) {
+            console.error("Select2 is not loaded. Check jQuery/Select2 script order.");
+            return;
+        }
+
+        initAll(document);
+
+        const medicineContainer = document.getElementById("medicine-container");
+        if (medicineContainer && !medicineContainer.dataset.finalUiObserver) {
+            medicineContainer.dataset.finalUiObserver = "true";
+            const observer = new MutationObserver(function (mutations) {
+                mutations.forEach(function (mutation) {
+                    mutation.addedNodes.forEach(function (node) {
+                        if (node.nodeType === 1) {
+                            initAll(node);
+                        }
+                    });
+                });
+            });
+            observer.observe(medicineContainer, { childList: true, subtree: true });
+        }
+
+        /* Refresh after async custom options are loaded from DB. */
+        [150, 500, 1000, 1800].forEach(function (delay) {
+            setTimeout(function () {
+                document.querySelectorAll(SELECTOR).forEach(function (select) {
+                    if (canUseSelect2() && jQuery(select).hasClass("select2-hidden-accessible")) {
+                        jQuery(select).trigger("change.select2");
+                    } else {
+                        initSelect(select);
+                    }
+                });
+            }, delay);
+        });
     }
 
     if (document.readyState === "loading") {

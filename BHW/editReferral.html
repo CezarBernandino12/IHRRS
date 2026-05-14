@@ -104,23 +104,24 @@ fetch('php/getUserId.php')
     </section>
 
     <section id="content">
-        <nav>
-            <button class="nav-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
-                <i class="bx bx-menu"></i>
-            </button>
-            <form action="#" class="nav-form">
-                <div class="form-input">
-                    <input type="search" id="patientSearch" placeholder="Enter patient name..." name="search" autocomplete="off">
-                    <button type="button" class="search-btn" id="searchButton">
-                        <i class='bx bx-search'></i>
-                    </button>
-                    <div id="resultDropdown" class="dropdown-content"></div>
-                </div>
-            </form>
-                       <div class="nav-rhu" id="navRhu" style="margin-left:auto; display:flex; align-items:center; gap:6px; font-weight:600; color:#333333; white-space:nowrap;">
+		<nav>
+			<button class="nav-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+				<i class="bx bx-menu"></i>
+			</button>
+
+			<div class="nav-search" style="position: relative;">
+				<input type="search" id="patientSearch" placeholder="Enter patient name..." name="search" autocomplete="off">
+				<button type="button" id="searchButton" aria-label="Search">
+					<i class="bx bx-search"></i>
+				</button>
+				<div id="resultDropdown" class="dropdown-content"></div>
+			</div>
+
+			
+           <div class="nav-rhu" id="navRhu" style="margin-left:auto; display:flex; align-items:center; gap:6px; font-weight:600; color:#333333; white-space:nowrap;">
 				<span id="barangayLabel" class="brand-name">-</span>
 			</div>
-        </nav>
+		</nav>
 
         <main>
             <div class="head-title">
