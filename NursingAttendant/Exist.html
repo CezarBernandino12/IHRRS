@@ -546,5 +546,63 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 </script>
 
+
+<script>
+/* =========================================================
+   UI-only dropdown enhancement
+   Preserves existing select names, IDs, values, submit behavior,
+   and all page functions. Only updates the visual dropdown layer.
+   ========================================================= */
+(function () {
+  function canUseSelect2() {
+    return window.jQuery && jQuery.fn && typeof jQuery.fn.select2 === 'function';
+  }
+
+  function shouldEnhance(select) {
+    if (!select) return false;
+    if (select.multiple) return false;
+    if (select.dataset.noSelect2 === 'true') return false;
+    return true;
+  }
+
+  function enhanceSelect(select) {
+    if (!canUseSelect2() || !shouldEnhance(select)) return;
+
+    var $select = jQuery(select);
+    if ($select.hasClass('select2-hidden-accessible')) {
+      $select.trigger('change.select2');
+      return;
+    }
+
+    var firstOption = select.options && select.options.length ? select.options[0] : null;
+    var placeholder = select.getAttribute('data-placeholder') || (firstOption ? firstOption.textContent.trim() : 'Select');
+
+    $select.select2({
+      width: '100%',
+      minimumResultsForSearch: Infinity,
+      dropdownAutoWidth: false,
+      dropdownCssClass: 'reference-select-dropdown',
+      selectionCssClass: 'reference-select-selection',
+      placeholder: placeholder,
+      dropdownParent: jQuery(document.body)
+    });
+
+    $select.on('select2:select select2:clear select2:close', function () {
+      select.dispatchEvent(new Event('change', { bubbles: true }));
+      select.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+  }
+
+  function enhanceAllDropdowns() {
+    document.querySelectorAll('select').forEach(enhanceSelect);
+  }
+
+  document.addEventListener('DOMContentLoaded', enhanceAllDropdowns);
+  window.addEventListener('load', function () {
+    setTimeout(enhanceAllDropdowns, 100);
+  });
+})();
+</script>
+
 </body>
 </html>

@@ -1022,3 +1022,314 @@ span.flatpickr-weekday {
         background: #ffffff !important;
     }
 }
+
+/* =========================================================
+   FINAL SAME UI DROPDOWN + CALENDAR OVERRIDES
+   UI only: keeps all IDs, names, values, form submission, fetches,
+   physician/visit loading, rest-date calculation, and existing functions intact.
+   ========================================================= */
+
+/* Native select fields: same compact field/chevron style as the other pages. */
+.medcert-form select {
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    cursor: pointer !important;
+    padding-right: 42px !important;
+    background-color: var(--soft-bg) !important;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%231f5b97' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 14px center !important;
+    background-size: 15px 15px !important;
+}
+
+.medcert-form select:focus {
+    border-color: rgba(31, 91, 151, 0.42) !important;
+    background-color: #ffffff !important;
+    box-shadow: 0 0 0 3px rgba(31, 91, 151, 0.08) !important;
+}
+
+/* Calendar shell */
+.flatpickr-calendar.material-date-picker,
+.flatpickr-calendar.medcert-dropdown-date-picker,
+.flatpickr-calendar {
+    width: min(94vw, 330px) !important;
+    max-width: 330px !important;
+    padding: 12px 12px 0 !important;
+    border: 1px solid rgba(31, 91, 151, 0.12) !important;
+    border-radius: 16px !important;
+    background: #ffffff !important;
+    box-shadow: 0 16px 36px rgba(15, 23, 42, 0.16) !important;
+    font-family: var(--font-main, "Poppins", sans-serif) !important;
+    overflow: visible !important;
+    z-index: 99999 !important;
+}
+
+.flatpickr-calendar::before,
+.flatpickr-calendar::after {
+    display: none !important;
+}
+
+.flatpickr-calendar .flatpickr-prev-month,
+.flatpickr-calendar .flatpickr-next-month,
+.flatpickr-calendar .flatpickr-current-month,
+.flatpickr-calendar .flatpickr-monthDropdown-months,
+.flatpickr-calendar .numInputWrapper,
+.flatpickr-calendar .material-picker-nav {
+    display: none !important;
+}
+
+.flatpickr-calendar .flatpickr-months {
+    position: relative !important;
+    display: block !important;
+    width: 100% !important;
+    height: auto !important;
+    margin: 0 0 10px !important;
+    padding: 0 !important;
+    overflow: visible !important;
+}
+
+/* Month + year dropdowns only. No < > buttons. */
+.flatpickr-calendar .material-picker-header {
+    position: relative !important;
+    display: grid !important;
+    grid-template-columns: 146px 88px !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 8px !important;
+    width: 100% !important;
+    overflow: visible !important;
+    z-index: 30 !important;
+}
+
+.flatpickr-calendar .material-picker-menu {
+    position: relative !important;
+    min-width: 0 !important;
+    z-index: 40 !important;
+}
+
+.flatpickr-calendar .material-picker-trigger {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 8px !important;
+    width: 100% !important;
+    height: 36px !important;
+    min-height: 36px !important;
+    padding: 0 10px !important;
+    border: 1px solid rgba(31, 91, 151, 0.12) !important;
+    border-radius: 11px !important;
+    color: #18263d !important;
+    background: #f8fbff !important;
+    font-family: var(--font-main, "Poppins", sans-serif) !important;
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    line-height: 1 !important;
+    text-align: left !important;
+    cursor: pointer !important;
+    box-shadow: none !important;
+}
+
+.flatpickr-calendar .material-picker-trigger:hover,
+.flatpickr-calendar .material-picker-menu.is-open .material-picker-trigger {
+    border-color: rgba(31, 91, 151, 0.32) !important;
+    background: #ffffff !important;
+    box-shadow: 0 0 0 3px rgba(31, 91, 151, 0.08) !important;
+}
+
+.flatpickr-calendar .material-picker-chevron {
+    position: relative !important;
+    width: 12px !important;
+    height: 12px !important;
+    flex: 0 0 12px !important;
+}
+
+.flatpickr-calendar .material-picker-chevron::before {
+    content: "" !important;
+    position: absolute !important;
+    top: 44% !important;
+    left: 50% !important;
+    width: 7px !important;
+    height: 7px !important;
+    border-right: 2px solid #1f5b97 !important;
+    border-bottom: 2px solid #1f5b97 !important;
+    transform: translate(-50%, -60%) rotate(45deg) !important;
+}
+
+.flatpickr-calendar .material-picker-options {
+    display: none !important;
+    position: absolute !important;
+    top: calc(100% + 6px) !important;
+    left: 0 !important;
+    width: 100% !important;
+    max-height: 188px !important;
+    padding: 6px !important;
+    border: 1px solid rgba(15, 23, 42, 0.08) !important;
+    border-radius: 10px !important;
+    background: #ffffff !important;
+    box-shadow: 0 12px 26px rgba(15, 23, 42, 0.16) !important;
+    overflow-y: auto !important;
+    z-index: 999999 !important;
+}
+
+.flatpickr-calendar .material-picker-menu.is-open .material-picker-options {
+    display: block !important;
+}
+
+.flatpickr-calendar .material-year-options {
+    max-height: 210px !important;
+}
+
+.flatpickr-calendar .material-picker-option {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    width: 100% !important;
+    min-height: 30px !important;
+    padding: 7px 9px !important;
+    border: none !important;
+    border-radius: 6px !important;
+    color: #4b5563 !important;
+    background: transparent !important;
+    font-family: var(--font-main, "Poppins", sans-serif) !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    line-height: 1.2 !important;
+    text-align: left !important;
+    cursor: pointer !important;
+}
+
+.flatpickr-calendar .material-picker-option:hover,
+.flatpickr-calendar .material-picker-option.is-active {
+    color: #18263d !important;
+    background: #f3f4f6 !important;
+}
+
+/* Calendar dropdown only: remove selected check icon/text. */
+.flatpickr-calendar .material-picker-option::after,
+.flatpickr-calendar .material-picker-option.is-active::after {
+    content: none !important;
+    display: none !important;
+}
+
+/* Date layout */
+.flatpickr-innerContainer,
+.flatpickr-rContainer,
+.flatpickr-weekdays,
+.flatpickr-weekdaycontainer,
+.flatpickr-days,
+.dayContainer {
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+}
+
+.flatpickr-weekdays {
+    height: auto !important;
+    margin: 6px 0 4px !important;
+}
+
+.flatpickr-weekdaycontainer,
+.dayContainer {
+    display: grid !important;
+    grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
+}
+
+span.flatpickr-weekday {
+    display: grid !important;
+    place-items: center !important;
+    width: 100% !important;
+    height: 26px !important;
+    color: #5f6f85 !important;
+    font-size: 11px !important;
+    font-weight: 800 !important;
+}
+
+.dayContainer {
+    gap: 4px 3px !important;
+    padding-bottom: 12px !important;
+}
+
+.flatpickr-day {
+    display: grid !important;
+    place-items: center !important;
+    width: 100% !important;
+    max-width: none !important;
+    height: 32px !important;
+    margin: 0 !important;
+    border: none !important;
+    border-radius: 10px !important;
+    color: #27364a !important;
+    background: transparent !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    line-height: 32px !important;
+}
+
+.flatpickr-day:hover,
+.flatpickr-day:focus {
+    color: var(--blue, #1f5b97) !important;
+    background: rgba(31, 91, 151, 0.08) !important;
+}
+
+.flatpickr-day.today {
+    color: var(--blue, #1f5b97) !important;
+    background: rgba(31, 91, 151, 0.06) !important;
+    box-shadow: inset 0 0 0 1px rgba(31, 91, 151, 0.18) !important;
+}
+
+.flatpickr-day.selected,
+.flatpickr-day.selected:hover {
+    color: var(--blue, #1f5b97) !important;
+    background: rgba(31, 91, 151, 0.10) !important;
+    box-shadow: inset 0 0 0 1px rgba(31, 91, 151, 0.35) !important;
+}
+
+.flatpickr-day.prevMonthDay,
+.flatpickr-day.nextMonthDay,
+.flatpickr-day.flatpickr-disabled {
+    color: #cbd5e1 !important;
+}
+
+.material-picker-footer {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    gap: 16px !important;
+    margin: 0 -12px !important;
+    padding: 11px 12px !important;
+    border-top: 1px solid rgba(15, 23, 42, 0.08) !important;
+    background: #ffffff !important;
+}
+
+.material-picker-footer button {
+    min-height: 24px !important;
+    padding: 4px 0 !important;
+    border: none !important;
+    color: var(--blue, #1f5b97) !important;
+    background: transparent !important;
+    font-family: var(--font-main, "Poppins", sans-serif) !important;
+    font-size: 12px !important;
+    font-weight: 800 !important;
+    cursor: pointer !important;
+}
+
+@media (max-width: 480px) {
+    .flatpickr-calendar.material-date-picker,
+    .flatpickr-calendar.medcert-dropdown-date-picker,
+    .flatpickr-calendar {
+        width: min(94vw, 318px) !important;
+        max-width: 318px !important;
+        padding: 10px 10px 0 !important;
+    }
+
+    .flatpickr-calendar .material-picker-header {
+        grid-template-columns: 146px 88px !important;
+        gap: 7px !important;
+    }
+
+    .material-picker-footer {
+        margin: 0 -10px !important;
+        padding: 10px !important;
+    }
+}

@@ -1588,6 +1588,8 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!select) return false;
     if (select.multiple) return false;
     if (select.dataset.noSelect2 === "true") return false;
+    if (select.closest && select.closest(".flatpickr-calendar")) return false;
+    if (select.classList && select.classList.contains("flatpickr-monthDropdown-months")) return false;
     return true;
   }
 
@@ -1685,6 +1687,267 @@ document.addEventListener("DOMContentLoaded", function () {
     document.addEventListener("change", updateSubmitAvailability);
     setTimeout(updateSubmitAvailability, 300);
 });
+</script>
+
+
+
+<script>
+/* =========================================================
+   FINAL UI-ONLY SAFETY LAYER
+   Restores original page contents/functions and only applies
+   the same calendar/dropdown look used on the previous pages.
+   ========================================================= */
+(function () {
+  const monthNames = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+  ];
+
+  function closePickerMenus(calendar) {
+    if (!calendar) return;
+    calendar.querySelectorAll(".custom-picker-menu.is-open").forEach(function (menu) {
+      menu.classList.remove("is-open");
+    });
+  }
+
+  function syncPickerHeader(instance) {
+    const calendar = instance && instance.calendarContainer;
+    if (!calendar) return;
+
+    const monthLabel = calendar.querySelector(".custom-month-label");
+    const yearLabel = calendar.querySelector(".custom-year-label");
+
+    if (monthLabel) monthLabel.textContent = monthNames[instance.currentMonth];
+    if (yearLabel) yearLabel.textContent = String(instance.currentYear);
+
+    calendar.querySelectorAll(".custom-month-option").forEach(function (btn) {
+      btn.classList.toggle("is-active", Number(btn.dataset.month) === instance.currentMonth);
+    });
+
+    calendar.querySelectorAll(".custom-year-option").forEach(function (btn) {
+      btn.classList.toggle("is-active", Number(btn.dataset.year) === instance.currentYear);
+    });
+
+    const activeYear = calendar.querySelector(".custom-year-option.is-active");
+    if (activeYear && activeYear.parentElement) {
+      activeYear.parentElement.scrollTop = Math.max(0, activeYear.offsetTop - 62);
+    }
+  }
+
+  function setupCustomPickerHeader(instance) {
+    const calendar = instance && instance.calendarContainer;
+    if (!calendar) return;
+
+    calendar.classList.add("custom-dropdown-date-picker");
+
+    const monthsContainer = calendar.querySelector(".flatpickr-months");
+    if (!monthsContainer) return;
+
+    if (!calendar.querySelector(".custom-date-picker-header")) {
+      const header = document.createElement("div");
+      header.className = "custom-date-picker-header";
+
+      const monthMenu = document.createElement("div");
+      monthMenu.className = "custom-picker-menu custom-month-menu";
+
+      const monthTrigger = document.createElement("button");
+      monthTrigger.type = "button";
+      monthTrigger.className = "custom-picker-trigger";
+      monthTrigger.innerHTML = '<span class="custom-month-label"></span><span class="custom-picker-chevron" aria-hidden="true"></span>';
+
+      const monthOptions = document.createElement("div");
+      monthOptions.className = "custom-picker-options custom-month-options";
+
+      monthNames.forEach(function (month, index) {
+        const option = document.createElement("button");
+        option.type = "button";
+        option.className = "custom-picker-option custom-month-option";
+        option.dataset.month = String(index);
+        option.textContent = month;
+        option.addEventListener("click", function () {
+          instance.changeMonth(index, false);
+          closePickerMenus(calendar);
+          syncPickerHeader(instance);
+        });
+        monthOptions.appendChild(option);
+      });
+
+      monthTrigger.addEventListener("click", function (event) {
+        event.stopPropagation();
+        const isOpen = monthMenu.classList.contains("is-open");
+        closePickerMenus(calendar);
+        monthMenu.classList.toggle("is-open", !isOpen);
+      });
+
+      monthMenu.appendChild(monthTrigger);
+      monthMenu.appendChild(monthOptions);
+
+      const yearMenu = document.createElement("div");
+      yearMenu.className = "custom-picker-menu custom-year-menu";
+
+      const yearTrigger = document.createElement("button");
+      yearTrigger.type = "button";
+      yearTrigger.className = "custom-picker-trigger";
+      yearTrigger.innerHTML = '<span class="custom-year-label"></span><span class="custom-picker-chevron" aria-hidden="true"></span>';
+
+      const yearOptions = document.createElement("div");
+      yearOptions.className = "custom-picker-options custom-year-options";
+
+      const currentYear = new Date().getFullYear() + 5;
+      for (let year = currentYear; year >= 1900; year--) {
+        const option = document.createElement("button");
+        option.type = "button";
+        option.className = "custom-picker-option custom-year-option";
+        option.dataset.year = String(year);
+        option.textContent = String(year);
+        option.addEventListener("click", function () {
+          instance.changeYear(Number(this.dataset.year));
+          closePickerMenus(calendar);
+          syncPickerHeader(instance);
+        });
+        yearOptions.appendChild(option);
+      }
+
+      yearTrigger.addEventListener("click", function (event) {
+        event.stopPropagation();
+        const isOpen = yearMenu.classList.contains("is-open");
+        closePickerMenus(calendar);
+        yearMenu.classList.toggle("is-open", !isOpen);
+        syncPickerHeader(instance);
+      });
+
+      yearMenu.appendChild(yearTrigger);
+      yearMenu.appendChild(yearOptions);
+
+      header.appendChild(monthMenu);
+      header.appendChild(yearMenu);
+
+      monthsContainer.innerHTML = "";
+      monthsContainer.appendChild(header);
+
+      calendar.addEventListener("click", function (event) {
+        event.stopPropagation();
+      });
+
+      document.addEventListener("click", function () {
+        closePickerMenus(calendar);
+      });
+    }
+
+    if (!calendar.querySelector(".custom-picker-footer")) {
+      const footer = document.createElement("div");
+      footer.className = "custom-picker-footer";
+
+      const cancelBtn = document.createElement("button");
+      cancelBtn.type = "button";
+      cancelBtn.className = "custom-picker-footer-btn";
+      cancelBtn.textContent = "Cancel";
+      cancelBtn.addEventListener("click", function () {
+        closePickerMenus(calendar);
+        instance.close();
+      });
+
+      const okBtn = document.createElement("button");
+      okBtn.type = "button";
+      okBtn.className = "custom-picker-footer-btn custom-picker-ok-btn";
+      okBtn.textContent = "OK";
+      okBtn.addEventListener("click", function () {
+        closePickerMenus(calendar);
+        instance.close();
+      });
+
+      footer.appendChild(cancelBtn);
+      footer.appendChild(okBtn);
+      calendar.appendChild(footer);
+    }
+
+    syncPickerHeader(instance);
+  }
+
+  function initFinalDatePicker(selector, extraOptions) {
+    const input = document.querySelector(selector);
+    if (!input || !window.flatpickr) return;
+
+    if (input._flatpickr) {
+      input._flatpickr.destroy();
+    }
+
+    flatpickr(input, Object.assign({
+      dateFormat: "Y-m-d",
+      maxDate: "today",
+      allowInput: true,
+      altInput: true,
+      altFormat: "F j, Y",
+      monthSelectorType: "static",
+      disableMobile: true,
+      clickOpens: true,
+      static: false,
+      onReady: function (selectedDates, dateStr, instance) {
+        setupCustomPickerHeader(instance);
+      },
+      onOpen: function (selectedDates, dateStr, instance) {
+        setupCustomPickerHeader(instance);
+      },
+      onMonthChange: function (selectedDates, dateStr, instance) {
+        syncPickerHeader(instance);
+      },
+      onYearChange: function (selectedDates, dateStr, instance) {
+        syncPickerHeader(instance);
+      }
+    }, extraOptions || {}));
+  }
+
+  function refreshSelect2Display(select) {
+    if (!select || !window.jQuery || !jQuery.fn || !jQuery.fn.select2) return;
+    const $select = jQuery(select);
+    if ($select.hasClass("select2-hidden-accessible")) {
+      $select.trigger("change.select2");
+    }
+  }
+
+  function watchDynamicSelectOptions() {
+    document.querySelectorAll("select").forEach(function (select) {
+      if (select.dataset.finalUiOptionWatch === "true") return;
+      select.dataset.finalUiOptionWatch = "true";
+
+      const observer = new MutationObserver(function () {
+        refreshSelect2Display(select);
+      });
+
+      observer.observe(select, {
+        childList: true,
+        attributes: true,
+        attributeFilter: ["disabled"]
+      });
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", function () {
+    initFinalDatePicker("#dob", {
+      onChange: function () {
+        if (typeof calculateAge === "function") calculateAge();
+      }
+    });
+
+    initFinalDatePicker("#dov", {
+      defaultDate: "today"
+    });
+
+    watchDynamicSelectOptions();
+
+    ["region", "province", "city", "barangay"].forEach(function (id) {
+      const select = document.getElementById(id);
+      if (!select) return;
+      select.addEventListener("change", function () {
+        setTimeout(function () {
+          ["region", "province", "city", "barangay"].forEach(function (sid) {
+            refreshSelect2Display(document.getElementById(sid));
+          });
+        }, 80);
+      });
+    });
+  });
+})();
 </script>
 
 </body>
