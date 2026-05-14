@@ -58,7 +58,7 @@ try {
         $query .= " AND " . implode(" AND ", $conditions);
     }
 
-    $query .= " ORDER BY r.referral_date DESC";
+    $query .= " ORDER BY r.referral_date DESC, r.referral_id DESC";
 
     $stmt = $pdo->prepare($query);
     $stmt->execute($params);
