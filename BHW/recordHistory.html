@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
     <!-- Page CSS -->
-    <link rel="stylesheet" href="css/history.css">
+    <link rel="stylesheet" href="css/recordhistory.css">
     <link rel="stylesheet" href="css/sidebar.css">
     <link rel="stylesheet" href="css/logout.css">
 
@@ -356,64 +356,78 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    function renderPagination() {
-        pagination.innerHTML = "";
+function renderPagination() {
+    pagination.innerHTML = "";
 
-        const totalPages = Math.ceil(visibleData.length / rowsPerPage);
+    const totalPages = Math.ceil(visibleData.length / rowsPerPage);
 
-        if (totalPages <= 1) {
+    if (totalPages <= 1) {
+        return;
+    }
+
+    if (currentPage > totalPages) {
+        currentPage = totalPages;
+    }
+
+    function goToPage(page) {
+        if (page < 1 || page > totalPages || page === currentPage) {
             return;
         }
 
-        const previousBtn = document.createElement("button");
-        previousBtn.type = "button";
-        previousBtn.textContent = "Previous";
-        previousBtn.disabled = currentPage === 1;
-
-        previousBtn.addEventListener("click", () => {
-            if (currentPage > 1) {
-                currentPage--;
-                renderTable();
-                renderPagination();
-            }
-        });
-
-        pagination.appendChild(previousBtn);
-
-        for (let page = 1; page <= totalPages; page++) {
-            const pageBtn = document.createElement("button");
-            pageBtn.type = "button";
-            pageBtn.textContent = page;
-
-            if (page === currentPage) {
-                pageBtn.classList.add("active");
-            }
-
-            pageBtn.addEventListener("click", () => {
-                currentPage = page;
-                renderTable();
-                renderPagination();
-            });
-
-            pagination.appendChild(pageBtn);
-        }
-
-        const nextBtn = document.createElement("button");
-        nextBtn.type = "button";
-        nextBtn.textContent = "Next";
-        nextBtn.disabled = currentPage === totalPages;
-
-        nextBtn.addEventListener("click", () => {
-            if (currentPage < totalPages) {
-                currentPage++;
-                renderTable();
-                renderPagination();
-            }
-        });
-
-        pagination.appendChild(nextBtn);
+        currentPage = page;
+        renderTable();
+        renderPagination();
     }
 
+    function createButton(text, page, isActive = false, isDisabled = false, extraClass = "") {
+        const button = document.createElement("button");
+
+        button.type = "button";
+        button.textContent = text;
+
+        if (extraClass) {
+            button.classList.add(extraClass);
+        }
+
+        if (isActive) {
+            button.classList.add("active");
+        }
+
+        button.disabled = isDisabled;
+
+        button.addEventListener("click", function () {
+            goToPage(page);
+        });
+
+        return button;
+    }
+
+    const prevBtn = createButton("‹", currentPage - 1, false, currentPage === 1, "pagination-arrow");
+    pagination.appendChild(prevBtn);
+
+    let startPage = Math.max(1, currentPage - 1);
+    let endPage = startPage + 2;
+
+    if (endPage > totalPages) {
+        endPage = totalPages;
+        startPage = Math.max(1, endPage - 2);
+    }
+
+    for (let page = startPage; page <= endPage; page++) {
+        const pageBtn = createButton(
+            String(page),
+            page,
+            page === currentPage,
+            false,
+            "pagination-number"
+        );
+
+        pagination.appendChild(pageBtn);
+    }
+
+    const nextBtn = createButton("›", currentPage + 1, false, currentPage === totalPages, "pagination-arrow");
+    pagination.appendChild(nextBtn);
+}
     function initializeDatePicker() {
         if (!dateInput || typeof flatpickr === "undefined") {
             return;
