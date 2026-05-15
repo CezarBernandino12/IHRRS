@@ -3644,3 +3644,280 @@ input[type="radio"]:checked::before {
   font-size: 12px !important;
   padding: 8px 12px !important;
 }
+
+
+/* =========================================================
+   SAME CALENDAR / DROPDOWN UI UPDATE
+   UI-only: preserve all page content, field names, IDs, scripts,
+   submit/update flow, Select2 medicine function, print button,
+   and existing PHP actions.
+   ========================================================= */
+
+/* Native select fallback chevrons for fields that are not Select2 */
+select,
+.form-group select,
+.form-control select,
+select.form-control {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  background-color: #ffffff !important;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%2318263d' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 14px center !important;
+  background-size: 16px 16px !important;
+  padding-right: 42px !important;
+}
+
+/* Calendar: month dropdown + compact year dropdown only */
+.flatpickr-calendar.custom-dropdown-date-picker,
+.flatpickr-calendar {
+  width: min(94vw, 332px) !important;
+  padding: 12px !important;
+  border: 1px solid rgba(31, 91, 151, 0.12) !important;
+  border-radius: 16px !important;
+  background: #ffffff !important;
+  box-shadow: 0 14px 34px rgba(15, 23, 42, 0.14) !important;
+  font-family: var(--poppins, 'Poppins', sans-serif) !important;
+  overflow: visible !important;
+  z-index: 9999 !important;
+}
+
+.custom-date-picker-header {
+  position: relative !important;
+  display: grid !important;
+  grid-template-columns: 124px 88px !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 8px !important;
+  width: 100% !important;
+  margin: 0 auto !important;
+  overflow: visible !important;
+  z-index: 20 !important;
+}
+
+.custom-picker-nav {
+  display: none !important;
+}
+
+.custom-month-menu {
+  width: 124px !important;
+  min-width: 124px !important;
+  max-width: 124px !important;
+}
+
+.custom-year-menu {
+  width: 88px !important;
+  min-width: 88px !important;
+  max-width: 88px !important;
+}
+
+.custom-picker-trigger {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 8px !important;
+  width: 100% !important;
+  height: 34px !important;
+  padding: 0 30px 0 11px !important;
+  border: 1px solid rgba(31, 91, 151, 0.12) !important;
+  border-radius: 11px !important;
+  color: #18263d !important;
+  background: #f8fbff !important;
+  font-family: var(--poppins, 'Poppins', sans-serif) !important;
+  font-size: 12px !important;
+  font-weight: 650 !important;
+  line-height: 1 !important;
+  cursor: pointer !important;
+  position: relative !important;
+}
+
+.custom-picker-chevron {
+  position: absolute !important;
+  top: 50% !important;
+  right: 12px !important;
+  width: 7px !important;
+  height: 7px !important;
+  border-right: 2px solid var(--record-blue-dark, #1f5b97) !important;
+  border-bottom: 2px solid var(--record-blue-dark, #1f5b97) !important;
+  transform: translateY(-65%) rotate(45deg) !important;
+  color: transparent !important;
+  font-size: 0 !important;
+  line-height: 0 !important;
+  pointer-events: none !important;
+}
+
+.custom-picker-options {
+  width: 100% !important;
+  max-height: 210px !important;
+  padding: 6px !important;
+  border: 1px solid rgba(15, 23, 42, 0.08) !important;
+  border-radius: 10px !important;
+  background: #ffffff !important;
+  box-shadow: 0 12px 26px rgba(15, 23, 42, 0.16) !important;
+  overflow-y: auto !important;
+  z-index: 99999 !important;
+}
+
+.custom-picker-option {
+  min-height: 30px !important;
+  padding: 7px 10px !important;
+  border-radius: 6px !important;
+  color: #4b5563 !important;
+  background: transparent !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+}
+
+.custom-picker-option:hover,
+.custom-picker-option.is-active {
+  color: #18263d !important;
+  background: #f3f4f6 !important;
+}
+
+/* Remove the selected check mark only from calendar month/year dropdowns */
+.custom-picker-option.is-active::after {
+  content: none !important;
+  display: none !important;
+}
+
+.flatpickr-innerContainer,
+.flatpickr-rContainer,
+.flatpickr-weekdays,
+.flatpickr-weekdaycontainer,
+.flatpickr-days,
+.dayContainer {
+  width: 100% !important;
+  min-width: 100% !important;
+  max-width: 100% !important;
+}
+
+.flatpickr-weekdaycontainer,
+.dayContainer {
+  display: grid !important;
+  grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
+}
+
+.dayContainer {
+  gap: 4px 3px !important;
+}
+
+span.flatpickr-weekday {
+  display: grid !important;
+  place-items: center !important;
+  width: 100% !important;
+  height: 24px !important;
+  color: #64748b !important;
+  font-size: 10.8px !important;
+  font-weight: 700 !important;
+}
+
+.flatpickr-day {
+  display: grid !important;
+  place-items: center !important;
+  width: 100% !important;
+  max-width: none !important;
+  height: 31px !important;
+  margin: 0 !important;
+  border: none !important;
+  border-radius: 10px !important;
+  color: #334155 !important;
+  background: transparent !important;
+  font-size: 11.5px !important;
+  font-weight: 500 !important;
+  line-height: 31px !important;
+}
+
+.flatpickr-day.today {
+  color: var(--record-blue-dark, #1f5b97) !important;
+  background: rgba(31, 91, 151, 0.08) !important;
+  box-shadow: inset 0 0 0 1px rgba(31, 91, 151, 0.25) !important;
+}
+
+.flatpickr-day.selected,
+.flatpickr-day.selected:hover {
+  color: #ffffff !important;
+  background: var(--record-blue-dark, #1f5b97) !important;
+  box-shadow: 0 6px 12px rgba(31, 91, 151, 0.18) !important;
+}
+
+.custom-picker-footer {
+  display: flex !important;
+  justify-content: flex-end !important;
+  align-items: center !important;
+  gap: 14px !important;
+  margin-top: 10px !important;
+  padding: 8px 0 0 !important;
+  border-top: 1px solid rgba(15, 23, 42, 0.08) !important;
+}
+
+.custom-picker-footer-btn {
+  min-height: 26px !important;
+  padding: 4px 0 !important;
+  border: none !important;
+  border-radius: 0 !important;
+  color: var(--record-blue-dark, #1f5b97) !important;
+  background: transparent !important;
+  font-family: var(--poppins, 'Poppins', sans-serif) !important;
+  font-size: 11px !important;
+  font-weight: 650 !important;
+  cursor: pointer !important;
+}
+
+/* Select2 dropdown appearance, without changing values/functions */
+.select2-container--default .select2-selection--single .select2-selection__arrow b {
+  display: none !important;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow::before {
+  content: "" !important;
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  width: 7px !important;
+  height: 7px !important;
+  border-right: 2px solid #18263d !important;
+  border-bottom: 2px solid #18263d !important;
+  transform: translate(-50%, -65%) rotate(45deg) !important;
+}
+
+.select2-dropdown.reference-select-dropdown,
+.select2-dropdown.medicine-select-dropdown,
+.select2-container--default .select2-dropdown {
+  margin-top: 6px !important;
+  padding: 6px !important;
+  border: 1px solid rgba(15, 23, 42, 0.08) !important;
+  border-radius: 8px !important;
+  background: #ffffff !important;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.12) !important;
+  overflow: hidden !important;
+  z-index: 99999 !important;
+}
+
+.select2-container--default .select2-results__option,
+.select2-dropdown.medicine-select-dropdown .select2-results__option {
+  position: relative !important;
+  min-height: 32px !important;
+  padding: 7px 30px 7px 12px !important;
+  border-radius: 4px !important;
+  color: #4b5563 !important;
+  background: transparent !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  line-height: 1.35 !important;
+  cursor: pointer !important;
+}
+
+.select2-container--default .select2-results__option--highlighted[aria-selected],
+.select2-dropdown.medicine-select-dropdown .select2-results__option--highlighted[aria-selected] {
+  color: #4b5563 !important;
+  background: #f5f5f5 !important;
+}
+
+@media (max-width: 600px) {
+  .custom-date-picker-header {
+    grid-template-columns: 124px 88px !important;
+    justify-content: center !important;
+    gap: 7px !important;
+  }
+}

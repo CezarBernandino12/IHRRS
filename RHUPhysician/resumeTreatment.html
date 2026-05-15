@@ -883,7 +883,7 @@ function setupDatePicker() {
         disableMobile: true,
         clickOpens: true,
         closeOnSelect: false,
-        monthSelectorType: "dropdown",
+        monthSelectorType: "static",
         minDate: new Date(),
 
         onReady: function (selectedDates, dateStr, instance) {
@@ -894,56 +894,181 @@ function setupDatePicker() {
 
         onOpen: function (selectedDates, dateStr, instance) {
             instance.calendarContainer.classList.add("material-date-picker");
+            buildDatePickerHeader(instance);
+            syncMaterialPickerHeader(instance);
+        },
+
+        onMonthChange: function (selectedDates, dateStr, instance) {
+            syncMaterialPickerHeader(instance);
+        },
+
+        onYearChange: function (selectedDates, dateStr, instance) {
+            syncMaterialPickerHeader(instance);
         }
     });
+}
+
+function closeMaterialPickerMenus(calendar) {
+    if (!calendar) {
+        return;
+    }
+
+    calendar.querySelectorAll(".material-picker-menu.is-open").forEach(function (menu) {
+        menu.classList.remove("is-open");
+    });
+}
+
+function syncMaterialPickerHeader(instance) {
+    const calendar = instance.calendarContainer;
+
+    if (!calendar) {
+        return;
+    }
+
+    const monthNames = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+    ];
+
+    const monthLabel = calendar.querySelector(".material-month-label");
+    const yearLabel = calendar.querySelector(".material-year-label");
+
+    if (monthLabel) {
+        monthLabel.textContent = monthNames[instance.currentMonth];
+    }
+
+    if (yearLabel) {
+        yearLabel.textContent = String(instance.currentYear);
+    }
+
+    calendar.querySelectorAll(".material-month-option").forEach(function (option) {
+        option.classList.toggle("is-active", Number(option.dataset.month) === instance.currentMonth);
+    });
+
+    calendar.querySelectorAll(".material-year-option").forEach(function (option) {
+        option.classList.toggle("is-active", Number(option.dataset.year) === instance.currentYear);
+    });
+
+    const activeYear = calendar.querySelector(".material-year-option.is-active");
+
+    if (activeYear && activeYear.parentElement) {
+        activeYear.parentElement.scrollTop = Math.max(0, activeYear.offsetTop - 70);
+    }
 }
 
 function buildDatePickerHeader(instance) {
     const calendar = instance.calendarContainer;
     const monthsContainer = calendar.querySelector(".flatpickr-months");
-    const monthSelect = calendar.querySelector(".flatpickr-monthDropdown-months");
-    const yearWrapper = calendar.querySelector(".numInputWrapper");
 
-    if (!monthsContainer || !monthSelect || !yearWrapper) {
+    if (!monthsContainer) {
         return;
     }
 
     if (monthsContainer.querySelector(".material-picker-header")) {
+        syncMaterialPickerHeader(instance);
         return;
     }
+
+    calendar.classList.add("material-calendar-dropdown-only");
+
+    const monthNames = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+    ];
 
     const header = document.createElement("div");
     header.className = "material-picker-header";
 
-    const monthGroup = document.createElement("div");
-    monthGroup.className = "material-picker-group";
+    const monthMenu = document.createElement("div");
+    monthMenu.className = "material-picker-menu material-month-menu";
 
-    const yearGroup = document.createElement("div");
-    yearGroup.className = "material-picker-group";
+    const monthTrigger = document.createElement("button");
+    monthTrigger.type = "button";
+    monthTrigger.className = "material-picker-trigger";
+    monthTrigger.innerHTML = '<span class="material-month-label"></span><span class="material-picker-chevron" aria-hidden="true"></span>';
 
-    const prevMonthBtn = createDateNavButton("‹", "Previous month");
-    const nextMonthBtn = createDateNavButton("›", "Next month");
-    const prevYearBtn = createDateNavButton("‹", "Previous year");
-    const nextYearBtn = createDateNavButton("›", "Next year");
+    const monthOptions = document.createElement("div");
+    monthOptions.className = "material-picker-options material-month-options";
 
-    prevMonthBtn.addEventListener("click", () => instance.changeMonth(-1));
-    nextMonthBtn.addEventListener("click", () => instance.changeMonth(1));
-    prevYearBtn.addEventListener("click", () => instance.changeYear(instance.currentYear - 1));
-    nextYearBtn.addEventListener("click", () => instance.changeYear(instance.currentYear + 1));
+    monthNames.forEach(function (month, index) {
+        const option = document.createElement("button");
+        option.type = "button";
+        option.className = "material-picker-option material-month-option";
+        option.dataset.month = String(index);
+        option.textContent = month;
+        option.addEventListener("click", function () {
+            instance.changeMonth(Number(this.dataset.month), false);
+            closeMaterialPickerMenus(calendar);
+            syncMaterialPickerHeader(instance);
+        });
+        monthOptions.appendChild(option);
+    });
 
-    monthGroup.appendChild(prevMonthBtn);
-    monthGroup.appendChild(monthSelect);
-    monthGroup.appendChild(nextMonthBtn);
+    monthTrigger.addEventListener("click", function (event) {
+        event.stopPropagation();
+        const isOpen = monthMenu.classList.contains("is-open");
+        closeMaterialPickerMenus(calendar);
+        monthMenu.classList.toggle("is-open", !isOpen);
+    });
 
-    yearGroup.appendChild(prevYearBtn);
-    yearGroup.appendChild(yearWrapper);
-    yearGroup.appendChild(nextYearBtn);
+    monthMenu.appendChild(monthTrigger);
+    monthMenu.appendChild(monthOptions);
 
-    header.appendChild(monthGroup);
-    header.appendChild(yearGroup);
+    const yearMenu = document.createElement("div");
+    yearMenu.className = "material-picker-menu material-year-menu";
+
+    const yearTrigger = document.createElement("button");
+    yearTrigger.type = "button";
+    yearTrigger.className = "material-picker-trigger";
+    yearTrigger.innerHTML = '<span class="material-year-label"></span><span class="material-picker-chevron" aria-hidden="true"></span>';
+
+    const yearOptions = document.createElement("div");
+    yearOptions.className = "material-picker-options material-year-options";
+
+    const todayYear = new Date().getFullYear();
+    const maxYear = todayYear + 30;
+    const minYear = 1900;
+
+    for (let year = maxYear; year >= minYear; year--) {
+        const option = document.createElement("button");
+        option.type = "button";
+        option.className = "material-picker-option material-year-option";
+        option.dataset.year = String(year);
+        option.textContent = String(year);
+        option.addEventListener("click", function () {
+            instance.changeYear(Number(this.dataset.year));
+            closeMaterialPickerMenus(calendar);
+            syncMaterialPickerHeader(instance);
+        });
+        yearOptions.appendChild(option);
+    }
+
+    yearTrigger.addEventListener("click", function (event) {
+        event.stopPropagation();
+        const isOpen = yearMenu.classList.contains("is-open");
+        closeMaterialPickerMenus(calendar);
+        yearMenu.classList.toggle("is-open", !isOpen);
+        syncMaterialPickerHeader(instance);
+    });
+
+    yearMenu.appendChild(yearTrigger);
+    yearMenu.appendChild(yearOptions);
+
+    header.appendChild(monthMenu);
+    header.appendChild(yearMenu);
 
     monthsContainer.innerHTML = "";
     monthsContainer.appendChild(header);
+
+    calendar.addEventListener("click", function (event) {
+        event.stopPropagation();
+    });
+
+    document.addEventListener("click", function () {
+        closeMaterialPickerMenus(calendar);
+    });
+
+    syncMaterialPickerHeader(instance);
 }
 
 function buildDatePickerFooter(instance) {

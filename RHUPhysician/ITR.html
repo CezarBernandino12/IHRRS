@@ -837,11 +837,21 @@ medicineSelects.forEach(select => loadCustomOptions(select, 'medicine'));
 document.getElementById("add-medicine").addEventListener("click", function () {
     const container = document.getElementById("medicine-container");
     const template = document.querySelector("#medicine-template .medicine-entry");
+
+    // This page uses the original inline medicine-entry clone above.
+    // If no hidden template exists, do nothing here to keep the original add function intact.
+    if (!container || !template) {
+        return;
+    }
+
     const newEntry = template.cloneNode(true);
 
     // Reset values
-    newEntry.querySelector(".medicine-given").value = "";
-    newEntry.querySelector(".quantity-given").value = "0";
+    const medicineInput = newEntry.querySelector(".medicine-given, .medicine-select");
+    const quantityInput = newEntry.querySelector(".quantity-given, input[type='number']");
+
+    if (medicineInput) medicineInput.value = "";
+    if (quantityInput) quantityInput.value = "0";
 
     container.appendChild(newEntry);
     container.scrollIntoView({ behavior: 'smooth', block: 'end' });
@@ -966,7 +976,6 @@ updateRemoveButtons();
                 Error saving data.
             </div>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>     
     <script src="js/form_physician.js"></script>
     <script src="js/script_physician.js"></script>
     <script src="js/modal.js"></script>
@@ -1135,6 +1144,34 @@ document.addEventListener("DOMContentLoaded", function () {
         const monthSelect = calendar.querySelector(".flatpickr-monthDropdown-months");
         const yearWrapper = calendar.querySelector(".numInputWrapper");
 
+        function getYearLimit(value, fallback) {
+            if (value instanceof Date && !isNaN(value)) {
+                return value.getFullYear();
+            }
+
+            if (typeof value === "string" && value) {
+                const parsed = new Date(value);
+                if (!isNaN(parsed)) {
+                    return parsed.getFullYear();
+                }
+            }
+
+            return fallback;
+        }
+
+        function syncMaterialPickerHeader() {
+            const activeMonthSelect = calendar.querySelector(".flatpickr-monthDropdown-months");
+            const activeYearSelect = calendar.querySelector(".material-picker-year-select");
+
+            if (activeMonthSelect) {
+                activeMonthSelect.value = String(instance.currentMonth);
+            }
+
+            if (activeYearSelect) {
+                activeYearSelect.value = String(instance.currentYear);
+            }
+        }
+
         if (monthsContainer && currentMonth && monthSelect && yearWrapper && !calendar.querySelector(".material-picker-header")) {
             const header = document.createElement("div");
             header.className = "material-picker-header";
@@ -1142,52 +1179,41 @@ document.addEventListener("DOMContentLoaded", function () {
             const monthGroup = document.createElement("div");
             monthGroup.className = "material-picker-group material-picker-month-group";
 
-            const monthPrev = document.createElement("button");
-            monthPrev.type = "button";
-            monthPrev.className = "material-picker-nav";
-            monthPrev.setAttribute("aria-label", "Previous month");
-            monthPrev.innerHTML = "‹";
-            monthPrev.addEventListener("click", function () {
-                instance.changeMonth(-1);
-            });
+            monthSelect.classList.add("material-picker-month-select");
+            monthSelect.setAttribute("aria-label", "Select month");
 
-            const monthNext = document.createElement("button");
-            monthNext.type = "button";
-            monthNext.className = "material-picker-nav";
-            monthNext.setAttribute("aria-label", "Next month");
-            monthNext.innerHTML = "›";
-            monthNext.addEventListener("click", function () {
-                instance.changeMonth(1);
-            });
+            if (monthSelect.dataset.materialPickerBound !== "true") {
+                monthSelect.dataset.materialPickerBound = "true";
+                monthSelect.addEventListener("change", function () {
+                    instance.changeMonth(Number(this.value), false);
+                    syncMaterialPickerHeader();
+                });
+            }
 
             const yearGroup = document.createElement("div");
             yearGroup.className = "material-picker-group material-picker-year-group";
 
-            const yearPrev = document.createElement("button");
-            yearPrev.type = "button";
-            yearPrev.className = "material-picker-nav";
-            yearPrev.setAttribute("aria-label", "Previous year");
-            yearPrev.innerHTML = "‹";
-            yearPrev.addEventListener("click", function () {
-                instance.changeYear(instance.currentYear - 1);
+            const yearSelect = document.createElement("select");
+            yearSelect.type = "button";
+            yearSelect.className = "material-picker-year-select";
+            yearSelect.setAttribute("aria-label", "Select year");
+
+            const currentYear = new Date().getFullYear();
+            const maxYear = getYearLimit(instance.config.maxDate, currentYear + 5);
+            const minYear = getYearLimit(instance.config.minDate, 1900);
+
+            for (let year = maxYear; year >= minYear; year--) {
+                yearSelect.appendChild(new Option(String(year), String(year)));
+            }
+
+            yearSelect.value = String(instance.currentYear);
+            yearSelect.addEventListener("change", function () {
+                instance.changeYear(Number(this.value));
+                syncMaterialPickerHeader();
             });
 
-            const yearNext = document.createElement("button");
-            yearNext.type = "button";
-            yearNext.className = "material-picker-nav";
-            yearNext.setAttribute("aria-label", "Next year");
-            yearNext.innerHTML = "›";
-            yearNext.addEventListener("click", function () {
-                instance.changeYear(instance.currentYear + 1);
-            });
-
-            monthGroup.appendChild(monthPrev);
             monthGroup.appendChild(monthSelect);
-            monthGroup.appendChild(monthNext);
-
-            yearGroup.appendChild(yearPrev);
-            yearGroup.appendChild(yearWrapper);
-            yearGroup.appendChild(yearNext);
+            yearGroup.appendChild(yearSelect);
 
             header.appendChild(monthGroup);
             header.appendChild(yearGroup);
@@ -1195,6 +1221,8 @@ document.addEventListener("DOMContentLoaded", function () {
             monthsContainer.innerHTML = "";
             monthsContainer.appendChild(header);
         }
+
+        syncMaterialPickerHeader();
 
         if (!calendar.querySelector(".material-picker-footer")) {
             const footer = document.createElement("div");
