@@ -1869,14 +1869,6 @@ body,
   padding: 22px 24px 36px !important;
 }
 
-/* Keep navbar search untouched: it uses sidebar/nav CSS */
-#content nav .nav-search,
-#content nav .nav-search input,
-#content nav .nav-search button,
-#content nav #searchButton {
-  /* intentionally no custom navbar-search design here */
-}
-
 /* Page title */
 #content main .head-title {
   width: min(100%, 1440px) !important;

@@ -3037,4 +3037,78 @@ span.flatpickr-weekday {
     height: 29px !important;
     line-height: 29px !important;
   }
+} 
+
+.history-toolbar-field:hover,
+.history-toolbar-field-date:hover,
+.history-toolbar-field-select:hover {
+  border-color: #9aa8ba !important;
+  box-shadow: none !important;
+}
+
+.history-toolbar-field:focus-within,
+.history-toolbar-field.is-active,
+.history-toolbar-field-date:focus-within,
+.history-toolbar-field-date.is-active,
+.history-toolbar-field-select:focus-within,
+.history-toolbar-field-select.is-active,
+.history-toolbar-field-select.history-status-enhanced:has(.history-status-dropdown.is-open) {
+  border-color:#69768a !important;
+  box-shadow: none !important;
+  background: #ffffff !important;
+}
+
+.history-toolbar-field input,
+.history-toolbar-field select,
+.history-toolbar-field .flatpickr-input,
+.history-toolbar-field-date input,
+.history-toolbar-field-date .flatpickr-input,
+.history-toolbar-field-date .form-control,
+.history-status-trigger {
+  height: 48px !important;
+  min-height: 48px !important;
+  background: transparent !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.history-toolbar-field i,
+.history-toolbar-field-date i,
+.history-toolbar-field-select i {
+  color: #69768a !important;
+}
+
+.history-toolbar-field input,
+.history-toolbar-field-date input,
+.history-status-label,
+.history-status-trigger {
+  color: #69768a !important;
+  font-weight: 500 !important;
+}
+
+/* Placeholder color like screenshot */
+.history-toolbar-field input::placeholder,
+.history-toolbar-field-date input::placeholder {
+  color: #66748a !important;
+  opacity: 1 !important;
+}
+
+/* Status dropdown open state */
+.history-toolbar-field-select.history-status-enhanced:has(.history-status-dropdown.is-open) {
+  border-color: #1f2937 !important;
+  box-shadow: none !important;
+}
+
+/* Optional: make selected field slightly wider like screenshot */
+.history-toolbar-field-date input {
+  width: 175px !important;
+}
+
+.history-status-dropdown {
+  height: 48px !important;
+}
+
+.history-status-trigger {
+  height: 48px !important;
 }
