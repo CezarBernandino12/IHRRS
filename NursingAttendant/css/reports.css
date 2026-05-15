@@ -201,9 +201,6 @@ li {
     padding: 18px 14px 28px !important;
   }
 
-  #content main .head-title {
-    margin-bottom: 16px !important;
-  }
 
   #content main .box-info {
     grid-template-columns: 1fr !important;

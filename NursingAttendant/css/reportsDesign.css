@@ -119,27 +119,6 @@ strong {
 }
 
 /* =========================================================
-   PAGE HEADER
-========================================================= */
-
-#content main .head-title {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  flex-wrap: wrap;
-  margin-bottom: 8px;
-}
-
-#content main .head-title .left h1 {
-  font-size: 30px;
-  font-weight: 800;
-  color: var(--navy);
-  letter-spacing: -0.4px;
-  margin-bottom: 6px;
-}
-
-/* =========================================================
    FILTER / REPORT TITLE CARD
 ========================================================= */
 
@@ -1407,10 +1386,6 @@ td {
     padding: 20px 14px;
   }
 
-  #content main .head-title .left h1 {
-    font-size: 24px;
-  }
-
   .filter-form {
     padding: 22px 18px;
   }
@@ -1499,9 +1474,6 @@ td {
 }
 
 @media (max-width: 480px) {
-  #content main .head-title .left h1 {
-    font-size: 22px;
-  }
 
   .print-area {
     padding: 16px 14px;

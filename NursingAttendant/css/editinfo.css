@@ -74,16 +74,6 @@ body {
   letter-spacing: -0.03em;
 }
 
-#content main .head-title .left h1::after {
-  content: "";
-  display: block;
-  width: 48px;
-  height: 4px;
-  margin-top: 10px;
-  border-radius: 999px;
-  background: linear-gradient(90deg, var(--edit-blue), #12acc7);
-}
-
 #content main .head-title .left .breadcrumb {
   display: flex;
   align-items: center;
