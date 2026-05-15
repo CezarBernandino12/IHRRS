@@ -55,55 +55,6 @@ body {
   font-family: var(--poppins);
 }
 
-#content main .head-title {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 14px;
-  flex-wrap: wrap;
-  width: min(1180px, 100%);
-  margin: 0 auto 14px;
-}
-
-#content main .head-title .left h1 {
-  margin: 0;
-  color: var(--edit-text);
-  font-size: clamp(24px, 3vw, 36px);
-  font-weight: 650;
-  line-height: 1.1;
-  letter-spacing: -0.03em;
-}
-
-#content main .head-title .left h1::after {
-  content: "";
-  display: block;
-  width: 48px;
-  height: 4px;
-  margin-top: 10px;
-  border-radius: 999px;
-  background: linear-gradient(90deg, var(--edit-blue), #12acc7);
-}
-
-#content main .head-title .left .breadcrumb {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  flex-wrap: wrap;
-  margin-top: 8px;
-}
-
-#content main .head-title .left .breadcrumb li,
-#content main .head-title .left .breadcrumb li a,
-#content main .head-title .left .breadcrumb a {
-  color: var(--edit-muted);
-  font-size: 12px;
-}
-
-#content main .head-title .left .breadcrumb a.active,
-#content main .head-title .left .breadcrumb .active {
-  color: var(--edit-blue-dark);
-  font-weight: 650;
-}
 
 .edit-info-page-shell {
   width: min(1180px, 100%);
@@ -1086,10 +1037,6 @@ span.flatpickr-weekday {
 @media (max-width: 600px) {
   #content main {
     padding: 12px 10px 18px;
-  }
-
-  #content main .head-title .left h1 {
-    font-size: clamp(22px, 8vw, 30px);
   }
 
   .container-header {

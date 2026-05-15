@@ -76,59 +76,6 @@ li {
   font-family: var(--poppins);
 }
 
-#content main .head-title {
-  width: 100%;
-  max-width: 1180px;
-  margin: 0 auto 28px;
-  padding: 0;
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 16px;
-  flex-wrap: wrap;
-}
-
-#content main .head-title .left h1 {
-  position: relative;
-  margin: 0;
-  color: var(--record-text);
-  font-family: var(--poppins);
-  font-size: clamp(28px, 3vw, 42px);
-  font-weight: 800;
-  line-height: 1.1;
-  letter-spacing: -0.045em;
-}
-
-#content main .head-title .left h1::after {
-  content: "";
-  display: block;
-  width: 64px;
-  height: 4px;
-  margin-top: 14px;
-  border-radius: 999px;
-  background: linear-gradient(90deg, var(--record-blue), var(--record-cyan));
-}
-
-#content main .head-title .left .breadcrumb {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-top: 10px;
-}
-
-#content main .head-title .left .breadcrumb li,
-#content main .head-title .left .breadcrumb li a {
-  color: var(--record-muted);
-  font-size: 13px;
-}
-
-#content main .head-title .left .breadcrumb li a.active {
-  color: var(--record-blue);
-}
-
-/* =========================================================
-   PATIENT NAME HEADER
-   ========================================================= */
 
 #content main .patient-header-container {
   display: block;
@@ -649,25 +596,7 @@ li {
   display: none !important;
 }
 
-/* =========================================================
-   FONT SIZE + WEIGHT REDUCTION
-   Paste at the very bottom of record.css
-   ========================================================= */
 
-/* Page title - slightly smaller and lighter */
-#content main .head-title .left h1 {
-  font-size: clamp(24px, 2.5vw, 34px) !important;
-  font-weight: 700 !important;
-  letter-spacing: -0.035em !important;
-}
-
-#content main .head-title .left h1::after {
-  width: 52px !important;
-  height: 3px !important;
-  margin-top: 10px !important;
-}
-
-/* Patient name container - more compact */
 #content main .patient-name-container {
   padding: 20px 22px !important;
   border-radius: 20px !important;
@@ -815,13 +744,6 @@ li {
     padding: 18px 14px 28px;
   }
 
-  #content main .head-title {
-    margin-bottom: 20px;
-  }
-
-  #content main .head-title .left h1 {
-    font-size: 26px;
-  }
 
   #content main .patient-header-container,
   #content main .patient-record-container {

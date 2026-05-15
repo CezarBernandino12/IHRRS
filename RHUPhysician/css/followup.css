@@ -78,53 +78,6 @@ li {
     font-family: var(--font-main);
 }
 
-#content main .head-title {
-    width: min(100%, 1180px);
-    margin: 0 auto 22px;
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 16px;
-    flex-wrap: wrap;
-}
-
-#content main .head-title .left h1 {
-    position: relative;
-    margin: 0;
-    color: var(--text-main);
-    font-size: clamp(26px, 3vw, 38px);
-    font-weight: 750;
-    line-height: 1.1;
-    letter-spacing: -0.04em;
-}
-
-#content main .head-title .left h1::after {
-    content: "";
-    display: block;
-    width: 58px;
-    height: 4px;
-    margin-top: 12px;
-    border-radius: 999px;
-    background: linear-gradient(90deg, var(--blue), var(--cyan));
-}
-
-#content main .head-title .left .breadcrumb {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-top: 10px;
-}
-
-#content main .head-title .left .breadcrumb li,
-#content main .head-title .left .breadcrumb li a {
-    color: var(--text-muted);
-    font-size: 12px;
-}
-
-#content main .head-title .left .breadcrumb li a.active {
-    color: var(--blue);
-}
-
 /* Follow-up Layout */
 .followup-page {
     width: min(100%, 1180px);
@@ -462,10 +415,6 @@ li {
 @media (max-width: 768px) {
     #content main {
         padding: 18px 14px 28px;
-    }
-
-    #content main .head-title .left h1 {
-        font-size: 26px;
     }
 
     .followup-summary-card {

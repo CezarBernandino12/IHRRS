@@ -50,56 +50,6 @@ body {
   font-family: var(--poppins);
 }
 
-#content main .head-title {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 14px;
-  flex-wrap: wrap;
-  width: min(1180px, 100%);
-  margin: 0 auto 14px;
-}
-
-#content main .head-title .left h1 {
-  margin: 0;
-  color: var(--record-text);
-  font-size: clamp(24px, 3vw, 36px);
-  font-weight: 650;
-  line-height: 1.1;
-  letter-spacing: -0.03em;
-}
-
-#content main .head-title .left h1::after {
-  content: "";
-  display: block;
-  width: 48px;
-  height: 4px;
-  margin-top: 10px;
-  border-radius: 999px;
-  background: linear-gradient(90deg, var(--record-blue), #12acc7);
-}
-
-#content main .head-title .left .breadcrumb {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  flex-wrap: wrap;
-  margin-top: 8px;
-}
-
-#content main .head-title .left .breadcrumb li,
-#content main .head-title .left .breadcrumb li a,
-#content main .head-title .left .breadcrumb a {
-  color: var(--record-muted);
-  font-size: 12px;
-}
-
-#content main .head-title .left .breadcrumb a.active,
-#content main .head-title .left .breadcrumb .active {
-  color: var(--record-blue-dark);
-  font-weight: 650;
-}
-
 .edit-record-page-shell {
   width: min(1180px, 100%);
   margin: 0 auto;
@@ -725,9 +675,6 @@ select:disabled {
     padding: 12px 10px 18px;
   }
 
-  #content main .head-title .left h1 {
-    font-size: clamp(22px, 8vw, 30px);
-  }
 
   .container-header {
     padding: 12px 14px;
@@ -1062,7 +1009,6 @@ span.flatpickr-weekday {
   #sidebar,
   .sidebar-overlay,
   #content nav,
-  #content .head-title,
   .button-container,
   .utility-action-row,
   .modal,
@@ -1211,7 +1157,6 @@ span.flatpickr-weekday {
   #sidebar,
   .sidebar-overlay,
   #content nav,
-  #content .head-title,
   .button-container,
   .utility-action-row,
   .modal,
@@ -1630,7 +1575,6 @@ input[type="radio"]:checked::before {
   #sidebar,
   .sidebar-overlay,
   #content nav,
-  #content .head-title,
   .button-container,
   .utility-action-row,
   .modal,
@@ -2313,27 +2257,6 @@ input[type="radio"]:checked::before {
   }
 }
 
-
-
-/* =========================================================
-   ITR-LIKE MEDICINE SECTION ORIENTATION FIX
-   ========================================================= */
-
-/* Head title added to this page */
-#content main .head-title {
-  min-height: auto !important;
-}
-
-#content main .head-title .left {
-  min-width: 0 !important;
-}
-
-#content main .head-title .breadcrumb i {
-  color: var(--record-muted, #66758c) !important;
-  font-size: 16px !important;
-}
-
-/* Medicine section must be its own clean row, not nested with Instructions */
 .medicine-row {
   display: grid !important;
   grid-template-columns: 1fr !important;
@@ -3203,7 +3126,6 @@ input[type="radio"]:checked::before {
   #sidebar,
   .sidebar-overlay,
   #content nav,
-  #content .head-title,
   .container-header,
   .form-action-row,
   .button-container,
