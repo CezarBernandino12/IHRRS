@@ -52,18 +52,6 @@ li {
   font-family: var(--poppins) !important;
 }
 
-
-#content main .head-title .left h1::after {
-  content: "" !important;
-  display: block !important;
-  width: 58px !important;
-  height: 4px !important;
-  margin-top: 12px !important;
-  border-radius: 999px !important;
-  background: linear-gradient(90deg, var(--reports-blue-2), var(--reports-cyan)) !important;
-}
-
-
 /* Report grid */
 #content main .box-info {
   width: min(100%, 1180px) !important;

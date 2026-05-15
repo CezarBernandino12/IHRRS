@@ -62,13 +62,6 @@ li {
     font-family: var(--font-main, var(--poppins)) !important;
 }
 
-#sidebar .nav-label,
-#sidebar .brand-name,
-#sidebar .user-name,
-#sidebar .user-role {
-    background: transparent !important;
-}
-
 /* =========================================================
    MAIN CONTENT
    ========================================================= */

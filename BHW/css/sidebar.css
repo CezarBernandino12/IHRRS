@@ -175,7 +175,7 @@ li {
 .sidebar-brand .brand-name {
   color: var(--blue);
   font-size: 17px;
-  font-weight: 800;
+  font-weight: 700 !important;
   line-height: 1;
   letter-spacing: 0.3px;
 }
@@ -643,30 +643,20 @@ li {
 }
 
 #content main .head-title {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 12px;
-  flex-wrap: wrap;
-  margin-bottom: 14px;
+  display: flex !important;
+  align-items: flex-end !important;
+  justify-content: space-between !important;
+  gap: 12px !important;
+  flex-wrap: wrap !important;
+  margin-bottom: 14px !important;
 }
 
 #content main .head-title .left h1 {
-  color: var(--text-primary);
-  font-size: clamp(24px, 2.8vw, 34px);
-  font-weight: 600;
-  line-height: 1.05;
-  letter-spacing: -0.03em;
-}
-
-#content main .head-title .left h1::after {
-  content: '';
-  display: block;
-  width: 44px;
-  height: 4px;
-  margin-top: 8px;
-  border-radius: 999px;
-  background: linear-gradient(90deg, var(--blue), var(--cyan));
+  color: var(--text-primary) !important;
+  font-size: clamp(24px, 2.8vw, 34px)!important;
+  font-weight: 600 !important;
+  line-height: 1.05 !important;
+  letter-spacing: -0.03em !important;
 }
 /* =========================================================
    PROFILE AVATAR INSIDE NAV
