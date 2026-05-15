@@ -52,19 +52,6 @@ li {
   font-family: var(--poppins) !important;
 }
 
-/* Header */
-#content main .head-title {
-  width: min(100%, 1180px) !important;
-  max-width: 1180px !important;
-  margin: 0 auto 18px !important;
-  padding: 0 !important;
-  display: flex !important;
-  align-items: flex-end !important;
-  justify-content: space-between !important;
-  gap: 16px !important;
-  flex-wrap: wrap !important;
-}
-
 
 #content main .head-title .left h1::after {
   content: "" !important;
