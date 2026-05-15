@@ -1006,3 +1006,89 @@ li {
 .logout-confirm-btn:hover {
   background: #c94444;
 }
+
+/* =========================================================
+   FIX LOGO LAYOUT ON COLLAPSED SIDEBAR
+========================================================= */
+
+#sidebar.collapsed .sidebar-brand {
+  justify-content: center;
+  align-items: center;
+  gap: 0;
+  padding: 0;
+  height: 72px;
+  min-height: 72px;
+  overflow: hidden;
+}
+
+#sidebar.collapsed .sidebar-brand .brand-logo {
+  width: 42px;
+  height: 42px;
+  min-width: 42px;
+  min-height: 42px;
+  padding: 3px;
+  margin: 0;
+  object-fit: contain;
+}
+
+#sidebar.collapsed .sidebar-brand .brand-text {
+  width: 0;
+  opacity: 0;
+  transform: translateX(-8px);
+  pointer-events: none;
+}
+
+#sidebar.collapsed .sidebar-brand::before {
+  top: -45px;
+  right: -55px;
+}
+
+#sidebar.collapsed .sidebar-brand::after {
+  display: none;
+}
+
+@media (max-width: 1280px) and (min-width: 769px) {
+  #sidebar .sidebar-brand {
+    justify-content: center;
+    align-items: center;
+    gap: 0;
+    padding: 0;
+    height: 72px;
+    min-height: 72px;
+    overflow: hidden;
+  }
+
+  #sidebar .sidebar-brand .brand-logo {
+    width: 42px;
+    height: 42px;
+    min-width: 42px;
+    min-height: 42px;
+    padding: 3px;
+    margin: 0;
+    object-fit: contain;
+  }
+
+  #sidebar .sidebar-brand::after {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  #sidebar.mobile-open .sidebar-brand {
+    justify-content: flex-start;
+    gap: 12px;
+    padding: 0 20px;
+  }
+
+  #sidebar.mobile-open .sidebar-brand .brand-logo {
+    width: 50px;
+    height: 50px;
+    min-width: 44px;
+    min-height: 44px;
+    padding: 4px;
+  }
+
+  #sidebar.mobile-open .sidebar-brand::after {
+    display: block;
+  }
+}

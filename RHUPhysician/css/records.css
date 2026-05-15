@@ -151,16 +151,6 @@ li {
   white-space: normal;
 }
 
-#content main .patient-name-container::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 5px;
-  height: 100%;
-  background: linear-gradient(180deg, var(--record-blue), var(--record-cyan));
-}
-
 #content main .patient-name-label {
   display: inline-flex;
   align-items: center;
