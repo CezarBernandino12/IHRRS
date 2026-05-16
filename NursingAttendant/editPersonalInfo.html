@@ -37,71 +37,83 @@ fetch('php/getUserId.php')
     });
 </script>
 
-<section id="sidebar">
-    <a href="#" class="sidebar-brand">
-        <img src="../img/logo.png" alt="RHU Logo" class="brand-logo">
-        <div class="brand-text">
-            <span class="brand-name">Hello Nurse</span>
-        </div>
-    </a>
+	<section id="sidebar">
+		<a href="#" class="sidebar-brand">
+			<img src="../img/logo.png" alt="RHU Logo" class="brand-logo">
+			<div class="brand-text">
+				<span class="brand-name">IHRRS</span>
+			</div>
+		</a>
 
-    <div class="sidebar-scroll">
-        <div class="sidebar-section-label">Main Menu</div>
-        <ul class="side-menu top">
-            <li>
-                <a href="dashboard" data-tooltip="Dashboard">
-                    <i class="bx bxs-dashboard nav-icon"></i>
-                    <span class="nav-label">Dashboard</span>
-                </a>
-            </li>
-            <li>
-                <a href="ITR" data-tooltip="Add New ITR">
-                    <i class="bx bxs-user nav-icon"></i>
-                    <span class="nav-label">Add New ITR</span>
-                </a>
-            </li>
-            <li class="active">
-                <a href="searchPatient" data-tooltip="Patient Records">
-                    <i class="bx bxs-notepad nav-icon"></i>
-                    <span class="nav-label">Patient Records</span>
-                </a>
-            </li>
-            <li>
-                <a href="History" data-tooltip="Referral History">
-                    <i class="bx bx-history nav-icon"></i>
-                    <span class="nav-label">Referral History</span>
-                </a>
-            </li>
-            <li>
-                <a href="reports" data-tooltip="Reports">
-                    <i class="bx bx-notepad nav-icon"></i>
-                    <span class="nav-label">Reports</span>
-                </a>
-            </li>
-        </ul>
+		<div class="sidebar-scroll">
+			<div class="sidebar-section-label">Main Menu</div>
+			<ul class="side-menu top">
+				<li>
+					<a href="dashboard" data-tooltip="Dashboard">
+						<i class="bx bxs-dashboard nav-icon"></i>
+						<span class="nav-label">Dashboard</span>
+					</a>
+				</li>
+				<li>
+					<a href="ITR" data-tooltip="Add New ITR">
+						<i class="bx bxs-notepad nav-icon"></i>
+						<span class="nav-label">Add New ITR</span>
+					</a>
+				</li>
+				<li>
+					<a href="#" id="updateReferrals" data-tooltip="Pending Referrals">
+						<i class="bx bxs-user nav-icon"></i>
+						<span class="nav-label">Pending Referrals</span>
+					</a>
+				</li>
+				<li>
+					<a href="followUpConsultations" data-tooltip="Follow-Up Visits">
+						<i class="bx bxs-calendar-check nav-icon"></i>
+						<span class="nav-label">Follow-Up Visits</span>
+					</a>
+				</li>
+				<li>
+					<a href="searchPatient" data-tooltip="Patient Records">
+						<i class="bx bxs-search nav-icon"></i>
+						<span class="nav-label">Patient Records</span>
+					</a>
+				</li>
+				<li>
+					<a href="history" data-tooltip="Referral History">
+						<i class="bx bx-history nav-icon"></i>
+						<span class="nav-label">Referral History</span>
+					</a>
+				</li>
+				<li>
+					<a href="reports" data-tooltip="Reports">
+						<i class="bx bx-notepad nav-icon"></i>
+						<span class="nav-label">Reports</span>
+					</a>
+				</li>
+			</ul>
 
-        <div class="sidebar-divider"></div>
+			<div class="sidebar-divider"></div>
 
-        <ul class="side-menu">
-            <li>
-                <a href="#" class="logout" data-tooltip="Logout" onclick="return confirmLogout()">
-                    <i class="bx bxs-log-out-circle nav-icon"></i>
-                    <span class="nav-label">Logout</span>
-                </a>
-            </li>
-        </ul>
-    </div>
+			<ul class="side-menu">
+				<li>
+					<a href="#" class="logout" data-tooltip="Logout" onclick="return confirmLogout()">
+						<i class="bx bxs-log-out-circle nav-icon"></i>
+						<span class="nav-label">Logout</span>
+					</a>
+				</li>
+			</ul>
+		</div>
 
-    <div class="sidebar-footer">
-        <div class="sidebar-user">
-            <img src="../img/nurse.png" alt="Nurse User">
-            <div class="sidebar-user-info">
-                <div class="user-name" id="sidebarUserName">Nurse User</div>
-                <div class="user-role">RHU Nurse</div>
-            </div>
-        </div>
-    </div>
-</section>
+		<div class="sidebar-footer">
+			<div class="sidebar-user">
+				<img src="../img/nurse.png" alt="Nurse User">
+				<div class="sidebar-user-info">
+					<div class="user-name" id="sidebarUserName">Nurse User</div>
+					<div class="user-role">RHU Nurse</div>
+				</div>
+			</div>
+		</div>
+	</section>
 
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
@@ -646,35 +658,13 @@ fetch('php/getUserId.php')
                 const header = document.createElement("div");
                 header.className = "custom-date-picker-header";
 
-                const prevBtn = document.createElement("button");
-                prevBtn.type = "button";
-                prevBtn.className = "custom-picker-nav";
-                prevBtn.setAttribute("aria-label", "Previous month");
-                prevBtn.textContent = "‹";
-                prevBtn.addEventListener("click", function () {
-                    instance.changeMonth(-1);
-                    closePickerMenus(calendar);
-                    syncPickerHeader(instance);
-                });
-
-                const nextBtn = document.createElement("button");
-                nextBtn.type = "button";
-                nextBtn.className = "custom-picker-nav";
-                nextBtn.setAttribute("aria-label", "Next month");
-                nextBtn.textContent = "›";
-                nextBtn.addEventListener("click", function () {
-                    instance.changeMonth(1);
-                    closePickerMenus(calendar);
-                    syncPickerHeader(instance);
-                });
-
                 const monthMenu = document.createElement("div");
                 monthMenu.className = "custom-picker-menu custom-month-menu";
 
                 const monthTrigger = document.createElement("button");
                 monthTrigger.type = "button";
                 monthTrigger.className = "custom-picker-trigger";
-                monthTrigger.innerHTML = '<span class="custom-month-label"></span><span class="custom-picker-chevron">⌄</span>';
+                monthTrigger.innerHTML = '<span class="custom-month-label"></span><span class="custom-picker-chevron" aria-hidden="true"></span>';
 
                 const monthOptions = document.createElement("div");
                 monthOptions.className = "custom-picker-options custom-month-options";
@@ -698,6 +688,7 @@ fetch('php/getUserId.php')
                     const isOpen = monthMenu.classList.contains("is-open");
                     closePickerMenus(calendar);
                     monthMenu.classList.toggle("is-open", !isOpen);
+                    syncPickerHeader(instance);
                 });
 
                 monthMenu.appendChild(monthTrigger);
@@ -709,7 +700,7 @@ fetch('php/getUserId.php')
                 const yearTrigger = document.createElement("button");
                 yearTrigger.type = "button";
                 yearTrigger.className = "custom-picker-trigger";
-                yearTrigger.innerHTML = '<span class="custom-year-label"></span><span class="custom-picker-chevron">⌄</span>';
+                yearTrigger.innerHTML = '<span class="custom-year-label"></span><span class="custom-picker-chevron" aria-hidden="true"></span>';
 
                 const yearOptions = document.createElement("div");
                 yearOptions.className = "custom-picker-options custom-year-options";
@@ -740,10 +731,8 @@ fetch('php/getUserId.php')
                 yearMenu.appendChild(yearTrigger);
                 yearMenu.appendChild(yearOptions);
 
-                header.appendChild(prevBtn);
                 header.appendChild(monthMenu);
                 header.appendChild(yearMenu);
-                header.appendChild(nextBtn);
 
                 monthsContainer.innerHTML = "";
                 monthsContainer.appendChild(header);
@@ -871,6 +860,197 @@ fetch('php/getUserId.php')
         if (extensionSelect) handleOtherSelection(extensionSelect, 'extension');
         if (religionSelect) handleOtherSelection(religionSelect, 'religion');
     });
+</script>
+
+
+
+<script>
+/* Lightweight address dropdown UI.
+   Preserves original PSGC select IDs, values, change events, and form submission. */
+(function () {
+    const addressSelectIds = ["region", "province", "city", "barangay"];
+
+    function ready(fn) {
+        if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", fn);
+        } else {
+            fn();
+        }
+    }
+
+    function closeAll(exceptShell) {
+        document.querySelectorAll(".address-select-shell.is-open").forEach(function (shell) {
+            if (shell !== exceptShell) {
+                shell.classList.remove("is-open");
+                const trigger = shell.querySelector(".address-select-trigger");
+                if (trigger) trigger.setAttribute("aria-expanded", "false");
+            }
+        });
+    }
+
+    function getSelectedText(select) {
+        const selected = select.options[select.selectedIndex];
+        if (selected && selected.textContent.trim()) return selected.textContent.trim();
+        const first = select.options[0];
+        return first ? first.textContent.trim() : "Select";
+    }
+
+    function syncAddressDropdown(select) {
+        if (!select) return;
+
+        const shell = select.closest(".address-select-shell");
+        if (!shell) return;
+
+        const trigger = shell.querySelector(".address-select-trigger");
+        if (!trigger) return;
+
+        trigger.textContent = getSelectedText(select);
+        trigger.disabled = select.disabled;
+        shell.classList.toggle("is-disabled", select.disabled);
+
+        shell.querySelectorAll(".address-select-option").forEach(function (optionButton) {
+            const isSelected = optionButton.dataset.value === select.value;
+            optionButton.classList.toggle("is-selected", isSelected);
+            optionButton.setAttribute("aria-selected", isSelected ? "true" : "false");
+        });
+    }
+
+    function buildOptions(select, shell) {
+        const menu = shell.querySelector(".address-select-menu");
+        if (!menu) return;
+
+        menu.innerHTML = "";
+
+        Array.from(select.options).forEach(function (option) {
+            const optionButton = document.createElement("button");
+            optionButton.type = "button";
+            optionButton.className = "address-select-option";
+            optionButton.dataset.value = option.value;
+            optionButton.textContent = option.textContent.trim() || "Select";
+            optionButton.setAttribute("role", "option");
+
+            if (option.disabled) {
+                optionButton.disabled = true;
+                optionButton.classList.add("is-disabled");
+            }
+
+            if (option.value === select.value) {
+                optionButton.classList.add("is-selected");
+                optionButton.setAttribute("aria-selected", "true");
+            } else {
+                optionButton.setAttribute("aria-selected", "false");
+            }
+
+            optionButton.addEventListener("click", function () {
+                if (optionButton.disabled) return;
+
+                const previousValue = select.value;
+                select.value = option.value;
+                syncAddressDropdown(select);
+                closeAll();
+
+                if (previousValue !== select.value) {
+                    select.dispatchEvent(new Event("change", { bubbles: true }));
+                    select.dispatchEvent(new Event("input", { bubbles: true }));
+                }
+            });
+
+            menu.appendChild(optionButton);
+        });
+    }
+
+    function enhanceAddressSelect(select) {
+        if (!select || select.dataset.addressUiReady === "true") return;
+
+        select.dataset.addressUiReady = "true";
+        select.dataset.noSelect2 = "true";
+        select.classList.add("address-native-select");
+
+        const shell = document.createElement("div");
+        shell.className = "address-select-shell";
+
+        const trigger = document.createElement("button");
+        trigger.type = "button";
+        trigger.className = "address-select-trigger";
+        trigger.setAttribute("aria-haspopup", "listbox");
+        trigger.setAttribute("aria-expanded", "false");
+
+        const menu = document.createElement("div");
+        menu.className = "address-select-menu";
+        menu.setAttribute("role", "listbox");
+
+        const parent = select.parentNode;
+        parent.insertBefore(shell, select);
+        shell.appendChild(select);
+        shell.appendChild(trigger);
+        shell.appendChild(menu);
+
+        trigger.addEventListener("click", function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            if (select.disabled) {
+                syncAddressDropdown(select);
+                return;
+            }
+
+            const willOpen = !shell.classList.contains("is-open");
+            closeAll(shell);
+
+            if (willOpen) {
+                buildOptions(select, shell);
+                shell.classList.add("is-open");
+                trigger.setAttribute("aria-expanded", "true");
+            } else {
+                shell.classList.remove("is-open");
+                trigger.setAttribute("aria-expanded", "false");
+            }
+        });
+
+        select.addEventListener("change", function () {
+            syncAddressDropdown(select);
+        });
+
+        select.addEventListener("input", function () {
+            syncAddressDropdown(select);
+        });
+
+        const observer = new MutationObserver(function () {
+            syncAddressDropdown(select);
+            if (shell.classList.contains("is-open")) {
+                buildOptions(select, shell);
+            }
+        });
+
+        observer.observe(select, {
+            childList: true,
+            attributes: true,
+            attributeFilter: ["disabled"]
+        });
+
+        syncAddressDropdown(select);
+    }
+
+    ready(function () {
+        addressSelectIds.forEach(function (id) {
+            enhanceAddressSelect(document.getElementById(id));
+        });
+
+        document.addEventListener("click", function () {
+            closeAll();
+        });
+
+        document.addEventListener("keydown", function (event) {
+            if (event.key === "Escape") closeAll();
+        });
+
+        setTimeout(function () {
+            addressSelectIds.forEach(function (id) {
+                syncAddressDropdown(document.getElementById(id));
+            });
+        }, 600);
+    });
+})();
 </script>
 
 

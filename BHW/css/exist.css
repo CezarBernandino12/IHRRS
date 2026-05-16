@@ -1674,16 +1674,6 @@ body {
   letter-spacing: -0.03em !important;
 }
 
-#content main .head-title .left h1::after {
-  content: "" !important;
-  display: block !important;
-  width: 48px !important;
-  height: 4px !important;
-  margin-top: 10px !important;
-  border-radius: 999px !important;
-  background: linear-gradient(90deg, var(--itr-blue-2), #12acc7) !important;
-}
-
 #content main .head-title .left .breadcrumb,
 #content main .head-title .left .breadcrumb li,
 #content main .head-title .left .breadcrumb a {

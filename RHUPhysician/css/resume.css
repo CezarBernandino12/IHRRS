@@ -802,3 +802,434 @@ input[type="file"]::file-selector-button {
         background: #ffffff !important;
     }
 }
+
+/* =========================================================
+   FINAL SAME UI UPDATE - PHYSICIAN RESUME TREATMENT PAGE
+   UI-only overrides. Keeps original HTML IDs, names, scripts,
+   form behavior, dynamic dropdown loading, medicine controls,
+   modal flow, print button, sidebar, and search functions intact.
+   ========================================================= */
+
+/* Reference dropdown field and option panel */
+.select2-container {
+    width: 100% !important;
+    font-family: var(--font-main) !important;
+}
+
+.select2-container--default .select2-selection--single {
+    position: relative !important;
+    display: flex !important;
+    align-items: center !important;
+    width: 100% !important;
+    min-height: 50px !important;
+    height: 50px !important;
+    padding: 0 42px 0 15px !important;
+    border: 1px solid var(--border-strong) !important;
+    border-radius: 14px !important;
+    background: #ffffff !important;
+    box-shadow: none !important;
+}
+
+.select2-container--default.select2-container--open .select2-selection--single,
+.select2-container--default .select2-selection--single:focus {
+    border-color: rgba(31, 91, 151, 0.42) !important;
+    box-shadow: 0 0 0 3px rgba(31, 91, 151, 0.08) !important;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    width: 100% !important;
+    padding: 0 !important;
+    color: var(--text-main) !important;
+    font-size: 13.5px !important;
+    font-weight: 500 !important;
+    line-height: 50px !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__placeholder {
+    color: #64748b !important;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__clear {
+    margin-right: 8px !important;
+    color: #64748b !important;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    position: absolute !important;
+    top: 0 !important;
+    right: 13px !important;
+    width: 20px !important;
+    height: 100% !important;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow b {
+    display: none !important;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow::before {
+    content: "" !important;
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    width: 7px !important;
+    height: 7px !important;
+    border-right: 2px solid #18263d !important;
+    border-bottom: 2px solid #18263d !important;
+    transform: translate(-50%, -65%) rotate(45deg) !important;
+}
+
+.select2-dropdown {
+    margin-top: 6px !important;
+    padding: 6px !important;
+    border: 1px solid rgba(15, 23, 42, 0.08) !important;
+    border-radius: 8px !important;
+    background: #ffffff !important;
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.12) !important;
+    overflow: hidden !important;
+    z-index: 4000 !important;
+    font-family: var(--font-main) !important;
+}
+
+.select2-search--dropdown {
+    padding: 4px !important;
+}
+
+.select2-search--dropdown .select2-search__field {
+    min-height: 34px !important;
+    padding: 7px 10px !important;
+    border: 1px solid rgba(15, 23, 42, 0.10) !important;
+    border-radius: 8px !important;
+    outline: none !important;
+    font-size: 12px !important;
+    font-family: var(--font-main) !important;
+}
+
+.select2-results {
+    padding: 0 !important;
+}
+
+.select2-results__options {
+    max-height: 240px !important;
+    overflow-y: auto !important;
+    padding: 0 !important;
+}
+
+.select2-container--default .select2-results__option {
+    position: relative !important;
+    display: block !important;
+    min-height: 32px !important;
+    padding: 7px 30px 7px 12px !important;
+    border-radius: 4px !important;
+    color: #4b5563 !important;
+    background: transparent !important;
+    font-family: var(--font-main) !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    line-height: 1.35 !important;
+    cursor: pointer !important;
+}
+
+.select2-container--default .select2-results__option--highlighted[aria-selected] {
+    color: #4b5563 !important;
+    background: #f5f5f5 !important;
+}
+
+.select2-container--default .select2-results__option[aria-selected="true"] {
+    color: #4b5563 !important;
+    background: #f3f4f6 !important;
+}
+
+.select2-container--default .select2-results__option[aria-selected="true"]::after {
+    content: "✓" !important;
+    position: absolute !important;
+    right: 11px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    color: #2f3747 !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    line-height: 1 !important;
+}
+
+/* Calendar: month dropdown + compact year dropdown only */
+.flatpickr-calendar.material-date-picker,
+.flatpickr-calendar.material-calendar-dropdown-only {
+    width: min(94vw, 350px) !important;
+    padding: 12px !important;
+    border: 1px solid rgba(31, 91, 151, 0.12) !important;
+    border-radius: 16px !important;
+    background: #ffffff !important;
+    box-shadow: 0 14px 34px rgba(15, 23, 42, 0.14) !important;
+    font-family: var(--font-main) !important;
+    overflow: visible !important;
+    z-index: 9999 !important;
+}
+
+.flatpickr-calendar.material-date-picker::before,
+.flatpickr-calendar.material-date-picker::after,
+.flatpickr-calendar.material-calendar-dropdown-only::before,
+.flatpickr-calendar.material-calendar-dropdown-only::after,
+.flatpickr-calendar.material-date-picker .flatpickr-prev-month,
+.flatpickr-calendar.material-date-picker .flatpickr-next-month,
+.flatpickr-calendar.material-calendar-dropdown-only .flatpickr-prev-month,
+.flatpickr-calendar.material-calendar-dropdown-only .flatpickr-next-month {
+    display: none !important;
+}
+
+.flatpickr-calendar.material-date-picker .flatpickr-months,
+.flatpickr-calendar.material-calendar-dropdown-only .flatpickr-months {
+    position: relative !important;
+    display: block !important;
+    width: 100% !important;
+    height: auto !important;
+    margin: 0 0 10px !important;
+    padding: 0 !important;
+    overflow: visible !important;
+}
+
+.material-picker-header {
+    position: relative !important;
+    display: grid !important;
+    grid-template-columns: 132px 88px !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 8px !important;
+    width: 100% !important;
+    margin: 0 0 10px !important;
+    overflow: visible !important;
+    z-index: 20 !important;
+}
+
+.material-picker-group,
+.material-picker-nav {
+    display: none !important;
+}
+
+.material-picker-menu {
+    position: relative !important;
+    min-width: 0 !important;
+    z-index: 30 !important;
+}
+
+.material-month-menu {
+    width: 132px !important;
+}
+
+.material-year-menu {
+    width: 88px !important;
+}
+
+.material-picker-trigger {
+    position: relative !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 8px !important;
+    width: 100% !important;
+    height: 36px !important;
+    padding: 0 12px !important;
+    border: 1px solid rgba(31, 91, 151, 0.12) !important;
+    border-radius: 12px !important;
+    color: #18263d !important;
+    background: #f8fbff !important;
+    font-family: var(--font-main) !important;
+    font-size: 12px !important;
+    font-weight: 650 !important;
+    line-height: 1 !important;
+    cursor: pointer !important;
+}
+
+.material-picker-trigger:hover,
+.material-picker-menu.is-open .material-picker-trigger {
+    border-color: rgba(31, 91, 151, 0.35) !important;
+    box-shadow: 0 0 0 3px rgba(31, 91, 151, 0.08) !important;
+}
+
+.material-picker-chevron {
+    display: inline-block !important;
+    width: 7px !important;
+    height: 7px !important;
+    min-width: 7px !important;
+    border-right: 2px solid var(--blue) !important;
+    border-bottom: 2px solid var(--blue) !important;
+    transform: translateY(-2px) rotate(45deg) !important;
+}
+
+.material-picker-options {
+    display: none !important;
+    position: absolute !important;
+    top: calc(100% + 6px) !important;
+    left: 0 !important;
+    width: 100% !important;
+    max-height: 190px !important;
+    padding: 6px !important;
+    border: 1px solid rgba(15, 23, 42, 0.08) !important;
+    border-radius: 8px !important;
+    background: #ffffff !important;
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.12) !important;
+    overflow-y: auto !important;
+    z-index: 99999 !important;
+}
+
+.material-picker-menu.is-open .material-picker-options {
+    display: block !important;
+}
+
+.material-year-options {
+    max-height: 210px !important;
+}
+
+.material-picker-option {
+    position: relative !important;
+    display: flex !important;
+    align-items: center !important;
+    width: 100% !important;
+    min-height: 32px !important;
+    padding: 7px 10px !important;
+    border: none !important;
+    border-radius: 4px !important;
+    color: #4b5563 !important;
+    background: transparent !important;
+    font-family: var(--font-main) !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    text-align: left !important;
+    line-height: 1.35 !important;
+    cursor: pointer !important;
+}
+
+.material-picker-option:hover,
+.material-picker-option.is-active {
+    color: #4b5563 !important;
+    background: #f3f4f6 !important;
+}
+
+/* Calendar dropdown selected item intentionally has no check icon/text. */
+.material-picker-option.is-active::after {
+    content: none !important;
+    display: none !important;
+}
+
+.flatpickr-calendar.material-date-picker .flatpickr-innerContainer,
+.flatpickr-calendar.material-date-picker .flatpickr-rContainer,
+.flatpickr-calendar.material-date-picker .flatpickr-weekdays,
+.flatpickr-calendar.material-date-picker .flatpickr-weekdaycontainer,
+.flatpickr-calendar.material-date-picker .flatpickr-days,
+.flatpickr-calendar.material-date-picker .dayContainer,
+.flatpickr-calendar.material-calendar-dropdown-only .flatpickr-innerContainer,
+.flatpickr-calendar.material-calendar-dropdown-only .flatpickr-rContainer,
+.flatpickr-calendar.material-calendar-dropdown-only .flatpickr-weekdays,
+.flatpickr-calendar.material-calendar-dropdown-only .flatpickr-weekdaycontainer,
+.flatpickr-calendar.material-calendar-dropdown-only .flatpickr-days,
+.flatpickr-calendar.material-calendar-dropdown-only .dayContainer {
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+}
+
+.flatpickr-calendar.material-date-picker .flatpickr-weekdays,
+.flatpickr-calendar.material-calendar-dropdown-only .flatpickr-weekdays {
+    height: auto !important;
+    margin: 0 0 5px !important;
+}
+
+.flatpickr-calendar.material-date-picker .flatpickr-weekdaycontainer,
+.flatpickr-calendar.material-date-picker .dayContainer,
+.flatpickr-calendar.material-calendar-dropdown-only .flatpickr-weekdaycontainer,
+.flatpickr-calendar.material-calendar-dropdown-only .dayContainer {
+    display: grid !important;
+    grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
+}
+
+.flatpickr-calendar.material-date-picker .dayContainer,
+.flatpickr-calendar.material-calendar-dropdown-only .dayContainer {
+    gap: 4px 3px !important;
+}
+
+.flatpickr-calendar.material-date-picker span.flatpickr-weekday,
+.flatpickr-calendar.material-calendar-dropdown-only span.flatpickr-weekday {
+    display: grid !important;
+    place-items: center !important;
+    width: 100% !important;
+    height: 24px !important;
+    color: #64748b !important;
+    font-size: 10.8px !important;
+    font-weight: 700 !important;
+}
+
+.flatpickr-calendar.material-date-picker .flatpickr-day,
+.flatpickr-calendar.material-calendar-dropdown-only .flatpickr-day {
+    display: grid !important;
+    place-items: center !important;
+    width: 100% !important;
+    max-width: none !important;
+    height: 31px !important;
+    margin: 0 !important;
+    border: none !important;
+    border-radius: 10px !important;
+    color: #334155 !important;
+    background: transparent !important;
+    font-size: 11.5px !important;
+    font-weight: 500 !important;
+    line-height: 31px !important;
+}
+
+.flatpickr-calendar.material-date-picker .flatpickr-day:hover,
+.flatpickr-calendar.material-date-picker .flatpickr-day:focus,
+.flatpickr-calendar.material-calendar-dropdown-only .flatpickr-day:hover,
+.flatpickr-calendar.material-calendar-dropdown-only .flatpickr-day:focus {
+    color: var(--blue) !important;
+    background: rgba(31, 91, 151, 0.10) !important;
+}
+
+.flatpickr-calendar.material-date-picker .flatpickr-day.today,
+.flatpickr-calendar.material-calendar-dropdown-only .flatpickr-day.today {
+    color: var(--blue) !important;
+    background: rgba(31, 91, 151, 0.08) !important;
+    box-shadow: inset 0 0 0 1px rgba(31, 91, 151, 0.25) !important;
+}
+
+.flatpickr-calendar.material-date-picker .flatpickr-day.selected,
+.flatpickr-calendar.material-date-picker .flatpickr-day.selected:hover,
+.flatpickr-calendar.material-calendar-dropdown-only .flatpickr-day.selected,
+.flatpickr-calendar.material-calendar-dropdown-only .flatpickr-day.selected:hover {
+    color: #ffffff !important;
+    background: var(--blue) !important;
+    box-shadow: 0 6px 12px rgba(31, 91, 151, 0.18) !important;
+}
+
+.material-picker-footer {
+    display: flex !important;
+    justify-content: flex-end !important;
+    align-items: center !important;
+    gap: 14px !important;
+    margin-top: 10px !important;
+    padding: 8px 0 0 !important;
+    border-top: 1px solid rgba(15, 23, 42, 0.08) !important;
+}
+
+.material-picker-footer button {
+    min-height: 26px !important;
+    padding: 4px 0 !important;
+    border: none !important;
+    border-radius: 0 !important;
+    color: var(--blue) !important;
+    background: transparent !important;
+    font-family: var(--font-main) !important;
+    font-size: 11px !important;
+    font-weight: 650 !important;
+    cursor: pointer !important;
+}
+
+@media (max-width: 480px) {
+    .material-picker-header {
+        grid-template-columns: 132px 82px !important;
+        gap: 6px !important;
+    }
+
+    .material-year-menu {
+        width: 82px !important;
+    }
+}

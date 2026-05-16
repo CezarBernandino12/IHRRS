@@ -57,35 +57,6 @@ body {
 	max-height: calc(100vh - 56px);
 	overflow-y: auto;
 }
-#content main .head-title {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	grid-gap: 16px;
-	flex-wrap: wrap;
-}
-#content main .head-title .left h1 {
-	font-size: 36px;
-	font-weight: 600;
-	margin-bottom: 10px;
-	color: var(--dark);
-}
-#content main .head-title .left .breadcrumb {
-	display: flex;
-	align-items: center;
-	grid-gap: 16px;
-}
-#content main .head-title .left .breadcrumb li {
-	color: var(--dark);
-}
-#content main .head-title .left .breadcrumb li a {
-	color: var(--dark-grey);
-	pointer-events: none;
-}
-#content main .head-title .left .breadcrumb li a.active {
-	color: var(--blue);
-	pointer-events: unset;
-}
 
 #content main .table-data {
 	display: flex;
@@ -714,67 +685,6 @@ body {
   background: transparent !important;
 }
 
-/* Page title */
-#content main .head-title,
-#content main .header,
-#content main .history-container,
-#content main .pagination {
-  width: min(100%, 1440px) !important;
-  max-width: 1440px !important;
-  margin-left: auto !important;
-  margin-right: auto !important;
-  box-sizing: border-box !important;
-}
-
-#content main .head-title {
-  display: flex !important;
-  align-items: flex-start !important;
-  justify-content: space-between !important;
-  gap: 16px !important;
-  margin-bottom: 18px !important;
-}
-
-#content main .head-title .left h1 {
-  margin: 0 0 10px !important;
-  color: #0f1f38 !important;
-  font-family: var(--poppins, 'Poppins', sans-serif) !important;
-  font-size: clamp(30px, 3.2vw, 42px) !important;
-  font-weight: 800 !important;
-  line-height: 1.12 !important;
-  letter-spacing: -0.045em !important;
-}
-
-#content main .head-title .left h1::after {
-  content: "" !important;
-  display: block !important;
-  width: 58px !important;
-  height: 4px !important;
-  margin-top: 12px !important;
-  border-radius: 999px !important;
-  background: linear-gradient(90deg, var(--history-focus), #0ea5b7) !important;
-}
-
-#content main .head-title .breadcrumb {
-  display: flex !important;
-  align-items: center !important;
-  gap: 10px !important;
-  flex-wrap: wrap !important;
-  margin: 0 !important;
-  padding: 0 !important;
-}
-
-#content main .head-title .breadcrumb li,
-#content main .head-title .breadcrumb a {
-  color: var(--history-muted) !important;
-  font-size: 13px !important;
-  font-weight: 500 !important;
-}
-
-#content main .head-title .breadcrumb a.active {
-  color: var(--history-blue) !important;
-  font-weight: 800 !important;
-  pointer-events: auto !important;
-}
 
 /* Filter toolbar */
 .header {
@@ -1869,39 +1779,6 @@ body,
   padding: 22px 24px 36px !important;
 }
 
-/* Keep navbar search untouched: it uses sidebar/nav CSS */
-#content nav .nav-search,
-#content nav .nav-search input,
-#content nav .nav-search button,
-#content nav #searchButton {
-  /* intentionally no custom navbar-search design here */
-}
-
-/* Page title */
-#content main .head-title {
-  width: min(100%, 1440px) !important;
-  max-width: 1440px !important;
-  margin: 0 auto 18px !important;
-}
-
-#content main .head-title .left h1 {
-  margin: 0 0 10px !important;
-  color: #0f1f38 !important;
-  font-size: clamp(30px, 3.2vw, 42px) !important;
-  font-weight: 800 !important;
-  line-height: 1.12 !important;
-  letter-spacing: -0.045em !important;
-}
-
-#content main .head-title .left h1::after {
-  content: "" !important;
-  display: block !important;
-  width: 58px !important;
-  height: 4px !important;
-  margin-top: 12px !important;
-  border-radius: 999px !important;
-  background: linear-gradient(90deg, var(--history-focus), #0ea5b7) !important;
-}
 
 /* Reference toolbar */
 .history-toolbar-card {

@@ -1315,3 +1315,382 @@
 
 [ROWS_AFFECTED] 1
 [COMMIT] Success!
+[RAW INPUT] Array
+(
+    [patient_id] => 545
+    [first_name] => Genelyn
+    [last_name] => Zaleta
+    [middle_name] => Liacao
+    [extension] => 
+    [birthplace] => Malolos Bulacan
+    [date_of_birth] => 2003-05-01
+    [address] => Purok 4, Calangcawan Norte, Vinzons, Camarines Norte, Region V (Bicol Region)
+    [civil_status] => Single
+    [contact_number] => 09630257890
+    [religion] => Roman Catholic
+    [occupation] => Student
+    [educational_attainment] => Postgraduate
+    [birth_weight] => 12
+    [philhealth_member_no] => 21221421412
+    [category] => Private
+    [family_serial_no] => 1233431
+    [sex] => Female
+    [fourps_status] => No
+)
+
+[PATIENT_ID] 545
+[USER_ID] 5
+[SUCCESS] Patient found, updating...
+[PARAMS] Array
+(
+    [first_name] => Genelyn
+    [last_name] => Zaleta
+    [middle_name] => Liacao
+    [extension] => 
+    [birthplace] => Malolos Bulacan
+    [date_of_birth] => 2003-05-01
+    [address] => Purok 4, Calangcawan Norte, Vinzons, Camarines Norte, Region V (Bicol Region)
+    [civil_status] => Single
+    [contact_number] => 09630257890
+    [religion] => Roman Catholic
+    [occupation] => Student
+    [educational_attainment] => Postgraduate
+    [birth_weight] => 12
+    [philhealth_member_no] => 21221421412
+    [category] => Private
+    [family_serial_no] => 1233431
+    [sex] => Female
+    [fourps_status] => No
+    [patient_id] => 545
+)
+
+[ROWS_AFFECTED] 1
+[COMMIT] Success!
+[RAW INPUT] Array
+(
+    [visit_id] => 742
+    [visit_date] => 2026-05-14
+    [patient_alert] => Patient Alert
+    [chief_complaints] => safasfgasa sad
+    [blood_pressure] => 120/80
+    [temperature] => 38.0
+    [weight] => 50.00
+    [height] => 160.00
+    [pulse_rate] => N/A
+    [respiratory_rate] => 21
+    [remarks] => Patient needs urgent care
+    [first_name] => John Paul
+    [last_name] => Gabo
+    [middle_name] => Jesman
+    [extension] => 
+    [birthplace] => Malolos Bulacan
+    [date_of_birth] => 2003-05-08
+    [address] => Purok 1 - Barangay Calangcawan Norte Vinzons, Camarines Norte, Region V (Bicol Region)
+    [civil_status] => Single
+    [contact_number] => 09630257890
+    [religion] => Roman Catholic
+    [occupation] => Student
+    [birth_weight] => 12
+    [educational_attainment] => College Education
+    [philhealth_member_no] => 21221421412
+    [category] => Private
+    [family_serial_no] => 1233431
+    [sex] => Male
+    [fourps_status] => Yes
+)
+
+[RAW INPUT] Array
+(
+    [visit_id] => 742
+    [visit_date] => 2026-05-14
+    [patient_alert] => Patient Alert
+    [chief_complaints] => saffgagasasda
+    [blood_pressure] => 120/80
+    [temperature] => 38.0
+    [weight] => 50.00
+    [height] => 160.00
+    [pulse_rate] => N/A
+    [respiratory_rate] => 21
+    [remarks] => Patient needs urgent care
+    [first_name] => John Paul
+    [last_name] => Gabo
+    [middle_name] => Jesman
+    [extension] => 
+    [birthplace] => Malolos Bulacan
+    [date_of_birth] => 2003-05-08
+    [address] => Purok 1 - Barangay Calangcawan Norte Vinzons, Camarines Norte, Region V (Bicol Region)
+    [civil_status] => Single
+    [contact_number] => 09630257890
+    [religion] => Roman Catholic
+    [occupation] => Student
+    [birth_weight] => 12
+    [educational_attainment] => College Education
+    [philhealth_member_no] => 21221421412
+    [category] => Private
+    [family_serial_no] => 1233431
+    [sex] => Male
+    [fourps_status] => Yes
+)
+
+[RAW INPUT] Array
+(
+    [visit_id] => 742
+    [visit_date] => 2026-05-01
+    [patient_alert] => Patient Alert
+    [chief_complaints] => saffgagasasda
+    [blood_pressure] => 120/80
+    [temperature] => 38.0
+    [weight] => 50.00
+    [height] => 160.00
+    [pulse_rate] => N/A
+    [respiratory_rate] => 21
+    [remarks] => Patient needs urgent care
+    [first_name] => John Paul
+    [last_name] => Gabo
+    [middle_name] => Jesman
+    [extension] => 
+    [birthplace] => Malolos Bulacan
+    [date_of_birth] => 2002-05-21
+    [address] => Purok 1 - Barangay Calangcawan Norte Vinzons, Camarines Norte, Region V (Bicol Region)
+    [civil_status] => Single
+    [contact_number] => 09630257890
+    [religion] => Roman Catholic
+    [occupation] => Student
+    [birth_weight] => 12
+    [educational_attainment] => College Education
+    [philhealth_member_no] => 21221421412
+    [category] => Private
+    [family_serial_no] => 1233431
+    [sex] => Male
+    [fourps_status] => Yes
+)
+
+[RAW INPUT] Array
+(
+    [visit_id] => 742
+    [visit_date] => 2026-05-01
+    [patient_alert] => Patient Alert
+    [chief_complaints] => saffgagasasdaasdasd
+    [blood_pressure] => 120/80
+    [temperature] => 38.0
+    [weight] => 50.00
+    [height] => 160.00
+    [pulse_rate] => N/A
+    [respiratory_rate] => 21
+    [remarks] => Patient needs urgent care
+    [first_name] => John Paul
+    [last_name] => Gabo
+    [middle_name] => Jesman
+    [extension] => 
+    [birthplace] => Malolos Bulacan
+    [date_of_birth] => 2002-05-21
+    [address] => Purok 1 - Barangay Calangcawan Norte Vinzons, Camarines Norte, Region V (Bicol Region)
+    [civil_status] => Single
+    [contact_number] => 09630257890
+    [religion] => Roman Catholic
+    [occupation] => Student
+    [birth_weight] => 12
+    [educational_attainment] => College Education
+    [philhealth_member_no] => 21221421412
+    [category] => Private
+    [family_serial_no] => 1233431
+    [sex] => Male
+    [fourps_status] => Yes
+)
+
+[RAW INPUT] Array
+(
+    [visit_id] => 742
+    [visit_date] => 2026-05-01
+    [patient_alert] => Patient Alert
+    [chief_complaints] => saffgagasasdaasdasd
+    [blood_pressure] => 120/80
+    [temperature] => 38.0
+    [weight] => 50.00
+    [height] => 160.00
+    [pulse_rate] => N/A
+    [respiratory_rate] => 21
+    [remarks] => Patient needs urgent care
+    [first_name] => John Paul
+    [last_name] => Gabo
+    [middle_name] => Jesman
+    [extension] => 
+    [birthplace] => Malolos Bulacan
+    [date_of_birth] => 2002-05-21
+    [address] => Purok 1 - Barangay Calangcawan Norte Vinzons, Camarines Norte, Region V (Bicol Region)
+    [civil_status] => Single
+    [contact_number] => 09630257890
+    [religion] => Roman Catholic
+    [occupation] => Student
+    [birth_weight] => 12
+    [educational_attainment] => College Education
+    [philhealth_member_no] => 21221421412
+    [category] => Private
+    [family_serial_no] => 1233431
+    [sex] => Male
+    [fourps_status] => Yes
+)
+
+[RAW INPUT] Array
+(
+    [visit_id] => 742
+    [visit_date] => 2026-05-01
+    [patient_alert] => Patient Alert
+    [chief_complaints] => saffgagasasdaasdasd
+    [blood_pressure] => 120/80
+    [temperature] => 38.0
+    [weight] => 50.00
+    [height] => 160.00
+    [pulse_rate] => N/A
+    [respiratory_rate] => 21
+    [remarks] => Patient needs urgent care
+    [first_name] => John Paul
+    [last_name] => Gabo
+    [middle_name] => Jesman
+    [extension] => 
+    [birthplace] => Malolos Bulacan
+    [date_of_birth] => 2002-05-21
+    [address] => Purok 1 - Barangay Calangcawan Norte Vinzons, Camarines Norte, Region V (Bicol Region)
+    [civil_status] => Single
+    [contact_number] => 09630257890
+    [religion] => Roman Catholic
+    [occupation] => Student
+    [birth_weight] => 12
+    [educational_attainment] => College Education
+    [philhealth_member_no] => 21221421412
+    [category] => Private
+    [family_serial_no] => 1233431
+    [sex] => Male
+    [fourps_status] => Yes
+)
+
+[RAW INPUT] Array
+(
+    [visit_id] => 742
+    [visit_date] => 2026-05-01
+    [patient_alert] => Patient Alert
+    [chief_complaints] => saffgagasasdaasdasd
+    [blood_pressure] => 120/80
+    [temperature] => 38.0
+    [weight] => 50.00
+    [height] => 160.00
+    [pulse_rate] => N/A
+    [respiratory_rate] => 21
+    [remarks] => Patient needs urgent care
+    [first_name] => John Paul
+    [last_name] => Gabo
+    [middle_name] => Jesman
+    [extension] => 
+    [birthplace] => Malolos Bulacan
+    [date_of_birth] => 2002-05-21
+    [address] => Purok 1 - Barangay Calangcawan Norte Vinzons, Camarines Norte, Region V (Bicol Region)
+    [civil_status] => Single
+    [contact_number] => 09630257890
+    [religion] => Roman Catholic
+    [occupation] => Student
+    [birth_weight] => 12
+    [educational_attainment] => College Education
+    [philhealth_member_no] => 21221421412
+    [category] => Private
+    [family_serial_no] => 1233431
+    [sex] => Male
+    [fourps_status] => Yes
+)
+
+[RAW INPUT] Array
+(
+    [patient_id] => 545
+    [first_name] => Genelyn
+    [last_name] => Zaleta
+    [middle_name] => Liacao
+    [extension] => 
+    [birthplace] => Malolos Bulacan
+    [date_of_birth] => 
+    [address] => Purok 4, Calangcawan Norte, Vinzons, Camarines Norte, Region V (Bicol Region)
+    [civil_status] => Single
+    [contact_number] => 09630257890
+    [religion] => Roman Catholic
+    [occupation] => Student
+    [educational_attainment] => Postgraduate
+    [birth_weight] => 12
+    [philhealth_member_no] => 21221421412
+    [category] => Self-Employed
+    [family_serial_no] => 1233431
+    [sex] => Female
+    [fourps_status] => No
+)
+
+[ERROR] Missing required fields: date_of_birth | Input: Array
+(
+    [patient_id] => 545
+    [first_name] => Genelyn
+    [last_name] => Zaleta
+    [middle_name] => Liacao
+    [extension] => 
+    [birthplace] => Malolos Bulacan
+    [date_of_birth] => 
+    [address] => Purok 4, Calangcawan Norte, Vinzons, Camarines Norte, Region V (Bicol Region)
+    [civil_status] => Single
+    [contact_number] => 09630257890
+    [religion] => Roman Catholic
+    [occupation] => Student
+    [educational_attainment] => Postgraduate
+    [birth_weight] => 12
+    [philhealth_member_no] => 21221421412
+    [category] => Self-Employed
+    [family_serial_no] => 1233431
+    [sex] => Female
+    [fourps_status] => No
+)
+
+[RAW INPUT] Array
+(
+    [patient_id] => 545
+    [first_name] => Genelyn
+    [last_name] => Zaleta
+    [middle_name] => Liacao
+    [extension] => 
+    [birthplace] => Malolos Bulacan
+    [date_of_birth] => 2003-05-08
+    [address] => Purok 4, Calangcawan Norte, Vinzons, Camarines Norte, Region V (Bicol Region)
+    [civil_status] => Single
+    [contact_number] => 09630257890
+    [religion] => Roman Catholic
+    [occupation] => Student
+    [educational_attainment] => Postgraduate
+    [birth_weight] => 12
+    [philhealth_member_no] => 21221421412
+    [category] => Self-Employed
+    [family_serial_no] => 1233431
+    [sex] => Female
+    [fourps_status] => No
+)
+
+[PATIENT_ID] 545
+[USER_ID] 3
+[SUCCESS] Patient found, updating...
+[PARAMS] Array
+(
+    [first_name] => Genelyn
+    [last_name] => Zaleta
+    [middle_name] => Liacao
+    [extension] => 
+    [birthplace] => Malolos Bulacan
+    [date_of_birth] => 2003-05-08
+    [address] => Purok 4, Calangcawan Norte, Vinzons, Camarines Norte, Region V (Bicol Region)
+    [civil_status] => Single
+    [contact_number] => 09630257890
+    [religion] => Roman Catholic
+    [occupation] => Student
+    [educational_attainment] => Postgraduate
+    [birth_weight] => 12
+    [philhealth_member_no] => 21221421412
+    [category] => Self-Employed
+    [family_serial_no] => 1233431
+    [sex] => Female
+    [fourps_status] => No
+    [patient_id] => 545
+)
+
+[ROWS_AFFECTED] 1
+[COMMIT] Success!

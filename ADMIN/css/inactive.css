@@ -102,16 +102,6 @@ body {
     line-height: 1.08;
 }
 
-.head-title h1::after {
-    content: "";
-    display: block;
-    width: 58px;
-    height: 4px;
-    margin-top: 12px;
-    border-radius: var(--radius-pill);
-    background: linear-gradient(90deg, var(--blue), var(--cyan));
-}
-
 .head-title p {
     max-width: 680px;
     margin: 12px 0 0;

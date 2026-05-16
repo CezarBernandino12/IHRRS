@@ -11,9 +11,15 @@ if (!isset($_SESSION['user_id'])) {
     http_response_code(401);
     exit("Unauthorized");
 }
+$barangay = $_SESSION['barangay'] ?? null;
 
 try {
-    $totalStmt = $pdo->prepare("SELECT COUNT(*) FROM referrals");
+    $totalStmt = $pdo->prepare("
+        SELECT COUNT(*) FROM referrals r
+        JOIN users u ON r.referred_by = u.user_id
+        WHERE u.barangay = :barangay
+    ");
+    $totalStmt->bindParam(':barangay', $barangay);
     $totalStmt->execute();
     $totalReferrals = $totalStmt->fetchColumn();
     $totalPages = ceil($totalReferrals / $limit);
@@ -26,9 +32,11 @@ try {
         FROM referrals r
         JOIN patients p ON r.patient_id = p.patient_id
         JOIN users u ON r.referred_by = u.user_id
+        WHERE u.barangay = :barangay
         ORDER BY r.referral_date DESC
         LIMIT :limit OFFSET :offset
     ");
+    $stmt->bindParam(':barangay', $barangay);
     $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
     $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
     $stmt->execute();

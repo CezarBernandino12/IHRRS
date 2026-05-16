@@ -776,7 +776,7 @@ $stmt_log->execute([
     <a href="#" class="sidebar-brand">
         <img src="../../img/logo.png" alt="RHU Logo" class="brand-logo">
         <div class="brand-text">
-            <span class="brand-name">Hello BHW</span>
+            <span class="brand-name">IHRRS</span>
         </div>
     </a>
 
@@ -817,13 +817,6 @@ $stmt_log->execute([
     </nav>
 
     <main>
-        <div class="head-title">
-            <div class="left">
-                <h1>Patient Visits Summary</h1>
-            </div>
-        </div>
-
-        <br>
 
         <div class="history-container">
 

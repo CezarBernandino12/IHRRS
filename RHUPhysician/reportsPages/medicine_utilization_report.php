@@ -863,7 +863,7 @@ $disp_stmt->execute(array_merge($ids, $medicine_list));
 		<a href="#" class="sidebar-brand">
 			<img src="../../img/logo.png" alt="RHU Logo" class="brand-logo">
 			<div class="brand-text">
-				<span class="brand-name">Hello Physician</span>
+				<span class="brand-name">IHRRS</span>
 			</div>
 		</a>
 
@@ -884,7 +884,7 @@ $disp_stmt->execute(array_merge($ids, $medicine_list));
 				</li>
 				<li>
 					<a href="../followUpConsultations" data-tooltip="Follow-Up Visits">
-						<i class="bx bxs-user nav-icon"></i>
+						<i class="bx bxs-calendar-check nav-icon"></i>
 						<span class="nav-label">Follow-Up Visits</span>
 					</a>
 				</li>
@@ -950,17 +950,6 @@ $disp_stmt->execute(array_merge($ids, $medicine_list));
 
 
 		<main>
-            
-            <div class="head-title">
-                <div class="left">
-                  <h1>Medicine Utilization</h1>
-                  <ul class="breadcrumb">
-                    <li><a href="#">Referral Intake Summary Report</a></li>
-                    <li><i class="bx bx-chevron-right"></i></li>
-                    <li><a class="active" href="#" onclick="history.back(); return false;">Go back</a></li>
-                  </ul>
-                </div>
-              </div>
 
 <div class="history-container">
 

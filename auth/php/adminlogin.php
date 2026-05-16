@@ -415,7 +415,7 @@
 
     <!-- FOOTER -->
     <footer>
-      <span class="footer-copy">© 2025 IHRRS — Integrated Health Records & Reporting System</span>
+      <span class="footer-copy">© 2025 IHRRS — Integrated Health Referral & Records System</span>
     </footer>
   </div>
 

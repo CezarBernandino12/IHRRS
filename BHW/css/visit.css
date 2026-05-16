@@ -74,13 +74,6 @@ li {
     width: auto !important;
 }
 
-#sidebar .nav-label,
-#sidebar .brand-name,
-#sidebar .user-name,
-#sidebar .user-role {
-    background: transparent !important;
-}
-
 /* Main */
 #content main {
     width: 100%;

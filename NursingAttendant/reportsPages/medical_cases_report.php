@@ -946,7 +946,7 @@ $visits = $stmt->fetchAll();
 		<a href="#" class="sidebar-brand">
 			<img src="../../img/logo.png" alt="RHU Logo" class="brand-logo">
 			<div class="brand-text">
-				<span class="brand-name">Hello Nurse</span>
+				<span class="brand-name">IHRRS</span>
 			</div>
 		</a>
 
@@ -973,7 +973,7 @@ $visits = $stmt->fetchAll();
 				</li>
 				<li>
 					<a href="../followUpConsultations" data-tooltip="Follow-Up Visits">
-						<i class="bx bxs-user nav-icon"></i>
+						<i class="bx bxs-calendar-check nav-icon"></i>
 						<span class="nav-label">Follow-Up Visits</span>
 					</a>
 				</li>
@@ -1039,17 +1039,6 @@ $visits = $stmt->fetchAll();
 
 
 		<main>
-            
-            <div class="head-title">
-                <div class="left">
-                  <h1>Medical Cases</h1>
-                  <ul class="breadcrumb">
-                    <li><a href="#">MC Report</a></li>
-                    <li><i class="bx bx-chevron-right"></i></li>
-                    <li><a class="active" href="#" onclick="history.back(); return false;">Go back</a></li>
-                  </ul>
-                </div>
-              </div>
 
 <div class="history-container">
 

@@ -52,61 +52,6 @@ li {
   font-family: var(--poppins) !important;
 }
 
-/* Header */
-#content main .head-title {
-  width: min(100%, 1180px) !important;
-  max-width: 1180px !important;
-  margin: 0 auto 18px !important;
-  padding: 0 !important;
-  display: flex !important;
-  align-items: flex-end !important;
-  justify-content: space-between !important;
-  gap: 16px !important;
-  flex-wrap: wrap !important;
-}
-
-#content main .head-title .left h1 {
-  position: relative !important;
-  margin: 0 !important;
-  color: var(--reports-text) !important;
-  font-size: clamp(28px, 3.5vw, 42px) !important;
-  font-weight: 700 !important;
-  line-height: 1.1 !important;
-  letter-spacing: -0.045em !important;
-  text-align: left !important;
-}
-
-#content main .head-title .left h1::after {
-  content: "" !important;
-  display: block !important;
-  width: 58px !important;
-  height: 4px !important;
-  margin-top: 12px !important;
-  border-radius: 999px !important;
-  background: linear-gradient(90deg, var(--reports-blue-2), var(--reports-cyan)) !important;
-}
-
-#content main .head-title .left .breadcrumb {
-  display: flex !important;
-  align-items: center !important;
-  gap: 10px !important;
-  margin-top: 12px !important;
-  padding: 0 !important;
-  flex-wrap: wrap !important;
-}
-
-#content main .head-title .left .breadcrumb li,
-#content main .head-title .left .breadcrumb a {
-  color: var(--reports-muted) !important;
-  font-size: 13px !important;
-  font-weight: 500 !important;
-}
-
-#content main .head-title .left .breadcrumb a.active {
-  color: var(--reports-blue) !important;
-  font-weight: 800 !important;
-  pointer-events: auto !important;
-}
 
 /* Report grid */
 #content main .box-info {
@@ -159,27 +104,6 @@ li {
     box-shadow 0.18s ease,
     border-color 0.18s ease,
     background 0.18s ease !important;
-}
-
-#content main .box-info li::before {
-  content: "" !important;
-  position: absolute !important;
-  inset: 0 auto 0 0 !important;
-  width: 5px !important;
-  border-radius: var(--reports-radius) 0 0 var(--reports-radius) !important;
-  background: linear-gradient(180deg, var(--reports-blue-2), var(--reports-cyan)) !important;
-}
-
-#content main .box-info li::after {
-  content: "" !important;
-  position: absolute !important;
-  right: -34px !important;
-  top: -36px !important;
-  width: 112px !important;
-  height: 112px !important;
-  border-radius: 999px !important;
-  background: rgba(31, 91, 151, 0.075) !important;
-  pointer-events: none !important;
 }
 
 #content main .box-info li:hover,
@@ -275,10 +199,6 @@ li {
 @media (max-width: 768px) {
   #content main {
     padding: 18px 14px 28px !important;
-  }
-
-  #content main .head-title {
-    margin-bottom: 16px !important;
   }
 
   #content main .box-info {
