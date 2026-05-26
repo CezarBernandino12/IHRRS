@@ -984,7 +984,7 @@ $visits = $stmt->fetchAll();
 		<a href="#" class="sidebar-brand">
 			<img src="../../img/logo.png" alt="RHU Logo" class="brand-logo">
 			<div class="brand-text">
-				<span class="brand-name">Hello Physician</span>
+				<span class="brand-name">IHRRS</span>
 			</div>
 		</a>
 
@@ -1005,7 +1005,7 @@ $visits = $stmt->fetchAll();
 				</li>
 				<li>
 					<a href="../followUpConsultations" data-tooltip="Follow-Up Visits">
-						<i class="bx bxs-user nav-icon"></i>
+						<i class="bx bxs-calendar-check nav-icon"></i>
 						<span class="nav-label">Follow-Up Visits</span>
 					</a>
 				</li>

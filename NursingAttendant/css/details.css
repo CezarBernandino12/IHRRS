@@ -1462,15 +1462,6 @@ select {
     letter-spacing: -0.03em !important;
   }
 
-  #content main .head-title .left h1::after {
-    content: "";
-    display: block;
-    width: 48px;
-    height: 4px;
-    margin-top: 10px;
-    border-radius: 999px;
-    background: linear-gradient(90deg, var(--preview-blue-2), #12acc7);
-  }
 
   #content main .head-title .left .breadcrumb {
     margin-top: 8px !important;

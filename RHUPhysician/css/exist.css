@@ -68,45 +68,13 @@ li {
     font-family: var(--font-main);
 }
 
-.head-title,
+
 .container-header,
 .container {
     width: min(100%, 1120px);
     margin-left: auto;
     margin-right: auto;
 }
-
-.head-title {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 16px;
-    margin-bottom: 22px;
-}
-
-.head-title .left h1 {
-    position: relative;
-    margin: 0;
-    color: var(--text-main);
-    font-size: clamp(26px, 3vw, 38px);
-    font-weight: 750;
-    line-height: 1.1;
-    letter-spacing: -0.04em;
-}
-
-.head-title .left h1::after {
-    content: "";
-    display: block;
-    width: 58px;
-    height: 4px;
-    margin-top: 12px;
-    border-radius: 999px;
-    background: linear-gradient(90deg, var(--blue), var(--cyan));
-}
-
-/* =========================================================
-   HEADER CARD
-   ========================================================= */
 
 .container-header,
 .record-header-card,
@@ -801,10 +769,6 @@ input[type="number"] {
 @media (max-width: 768px) {
     #content main {
         padding: 18px 14px 28px;
-    }
-
-    .head-title .left h1 {
-        font-size: 26px;
     }
 
     .container-header,

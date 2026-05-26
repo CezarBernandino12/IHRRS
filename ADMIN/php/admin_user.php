@@ -137,7 +137,7 @@ $visibleEndPage = min($totalPages, $visibleStartPage + 2);
     <a href="#" class="sidebar-brand">
         <img src="../../img/logo.png" alt="Admin Logo" class="brand-logo">
         <div class="brand-text">
-            <span class="brand-name">Hello Admin</span>
+            <span class="brand-name">IHRRS</span>
         </div>
     </a>
 
@@ -481,8 +481,28 @@ $visibleEndPage = min($totalPages, $visibleStartPage + 2);
                 <div class="change-password-modal-body">
                     <div id="pendingResetInfo" class="pending-reset-info" style="display:none;">
                         <h3><i class="bx bx-info-circle"></i> Pending Password Reset Request</h3>
-                        <p>This user has requested a password reset. Please contact them at:</p>
+                        <p>This user has requested a password reset. Approve the request to generate a secure reset link, then share it with them.</p>
                         <p class="contact-line"><i class="bx bx-phone"></i> <span id="userContactNumber"></span></p>
+
+                        <div id="resetLinkSection" style="display:none; margin-top:14px;">
+                            <p><strong>Reset link generated.</strong> It expires in <strong>24 hours</strong>. Copy and share it with the user:</p>
+                            <div style="display:flex; gap:8px; align-items:center; margin-top:6px;">
+                                <input type="text" id="generatedResetLink" readonly
+                                       style="flex:1; padding:6px 10px; border:1px solid #ccc; border-radius:4px; font-size:13px; background:#f9f9f9;">
+                                <button type="button" id="copyLinkBtn" onclick="copyResetLink()" class="change-password-confirm-btn" style="padding:6px 14px; white-space:nowrap;">
+                                    <i class="bx bx-copy"></i> Copy
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="approveResetError" class="form-error" style="display:none; margin-top:8px;"></div>
+
+                        <div style="margin-top:16px; display:flex; gap:8px; flex-wrap:wrap;">
+                            <button type="button" id="approveResetBtn" onclick="approveResetRequest()" class="change-password-confirm-btn">
+                                <i class="bx bx-check-circle"></i> Approve &amp; Generate Reset Link
+                            </button>
+                            <button type="button" onclick="closeResetPasswordModal()" class="change-password-cancel-btn">Cancel</button>
+                        </div>
                     </div>
 
                     <form id="resetPasswordForm" method="POST" action="reset_password">
@@ -872,12 +892,19 @@ window.addEventListener('click', function(event) {
 
   window.closeResetPasswordModal = function () {
     hideBox("resetPasswordModal");
-    const form = document.getElementById("resetPasswordForm");
-    const error = document.getElementById("resetPasswordError");
-    if (form) form.reset();
-    if (error) {
-      error.textContent = "";
-      error.style.display = "none";
+    const form            = document.getElementById("resetPasswordForm");
+    const error           = document.getElementById("resetPasswordError");
+    const resetLinkSection  = document.getElementById("resetLinkSection");
+    const approveResetBtn   = document.getElementById("approveResetBtn");
+    const approveResetError = document.getElementById("approveResetError");
+    if (form)  form.reset();
+    if (error) { error.textContent = ""; error.style.display = "none"; }
+    if (resetLinkSection)  resetLinkSection.style.display  = "none";
+    if (approveResetError) { approveResetError.textContent = ""; approveResetError.style.display = "none"; }
+    if (approveResetBtn) {
+      approveResetBtn.style.display = "inline-flex";
+      approveResetBtn.disabled      = false;
+      approveResetBtn.innerHTML     = '<i class="bx bx-check-circle"></i> Approve &amp; Generate Reset Link';
     }
   };
 
@@ -906,20 +933,86 @@ window.addEventListener('click', function(event) {
   };
 
   window.showResetPasswordModal = function (userId) {
-    const input = document.getElementById("resetPasswordUserId");
-    const pendingInfo = document.getElementById("pendingResetInfo");
-    const contactEl = document.getElementById("userContactNumber");
-    const title = document.getElementById("resetModalTitle");
+    const input           = document.getElementById("resetPasswordUserId");
+    const pendingInfo     = document.getElementById("pendingResetInfo");
+    const contactEl       = document.getElementById("userContactNumber");
+    const title           = document.getElementById("resetModalTitle");
+    const form            = document.getElementById("resetPasswordForm");
+    const resetLinkSection  = document.getElementById("resetLinkSection");
+    const approveResetBtn   = document.getElementById("approveResetBtn");
+    const approveResetError = document.getElementById("approveResetError");
     const btn = document.querySelector(`.reset-password-btn[data-userid="${userId}"]`);
 
     if (input) input.value = userId;
 
     const isPending = btn && btn.dataset.resetStatus === "pending";
-    if (title) title.textContent = isPending ? "Complete Password Reset" : "Change User Password";
+
+    if (title)       title.textContent = isPending ? "Process Password Reset Request" : "Change User Password";
     if (pendingInfo) pendingInfo.style.display = isPending ? "block" : "none";
-    if (contactEl) contactEl.textContent = (btn && btn.dataset.contact) ? btn.dataset.contact : "No contact number saved";
+    if (form)        form.style.display        = isPending ? "none"  : "block";
+    if (contactEl)   contactEl.textContent = (btn && btn.dataset.contact) ? btn.dataset.contact : "No contact number saved";
+
+    // Reset approve section to initial state
+    if (resetLinkSection)  resetLinkSection.style.display  = "none";
+    if (approveResetBtn) {
+      approveResetBtn.style.display = "inline-flex";
+      approveResetBtn.disabled      = false;
+      approveResetBtn.innerHTML     = '<i class="bx bx-check-circle"></i> Approve &amp; Generate Reset Link';
+    }
+    if (approveResetError) { approveResetError.textContent = ""; approveResetError.style.display = "none"; }
 
     showBox("resetPasswordModal");
+  };
+
+  window.approveResetRequest = function () {
+    const userId        = document.getElementById("resetPasswordUserId").value;
+    const btn           = document.getElementById("approveResetBtn");
+    const errorDiv      = document.getElementById("approveResetError");
+    const linkSection   = document.getElementById("resetLinkSection");
+
+    if (!userId) return;
+
+    btn.disabled      = true;
+    btn.innerHTML     = '<i class="bx bx-loader-alt bx-spin"></i> Processing...';
+    errorDiv.style.display = "none";
+
+    const formData = new FormData();
+    formData.append("user_id", userId);
+
+    fetch("approve_reset", { method: "POST", body: formData })
+      .then(r => r.json())
+      .then(data => {
+        if (data.success) {
+          document.getElementById("generatedResetLink").value = data.reset_url;
+          linkSection.style.display   = "block";
+          btn.style.display           = "none";
+        } else {
+          errorDiv.textContent       = data.error || "An error occurred.";
+          errorDiv.style.display     = "block";
+          btn.disabled               = false;
+          btn.innerHTML              = '<i class="bx bx-check-circle"></i> Approve &amp; Generate Reset Link';
+        }
+      })
+      .catch(() => {
+        errorDiv.textContent   = "A network error occurred. Please try again.";
+        errorDiv.style.display = "block";
+        btn.disabled           = false;
+        btn.innerHTML          = '<i class="bx bx-check-circle"></i> Approve &amp; Generate Reset Link';
+      });
+  };
+
+  window.copyResetLink = function () {
+    const linkInput = document.getElementById("generatedResetLink");
+    linkInput.select();
+    linkInput.setSelectionRange(0, 99999);
+    const copyBtn = document.getElementById("copyLinkBtn");
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(linkInput.value).catch(() => document.execCommand("copy"));
+    } else {
+      document.execCommand("copy");
+    }
+    copyBtn.innerHTML = '<i class="bx bx-check"></i> Copied!';
+    setTimeout(() => { copyBtn.innerHTML = '<i class="bx bx-copy"></i> Copy'; }, 2000);
   };
 
   window.confirmChangePassword = function () {

@@ -117,16 +117,6 @@ li {
     letter-spacing: -0.04em;
 }
 
-.page-title h1::after {
-    content: "";
-    display: block;
-    width: 58px;
-    height: 4px;
-    margin-top: 12px;
-    border-radius: 999px;
-    background: linear-gradient(90deg, var(--blue), var(--cyan));
-}
-
 .breadcrumb {
     display: flex;
     align-items: center;

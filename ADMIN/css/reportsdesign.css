@@ -110,17 +110,7 @@ li {
     line-height: 1.1;
     letter-spacing: -0.045em;
 }
-
-.page-title h1::after {
-    content: "";
-    display: block;
-    width: 58px;
-    height: 4px;
-    margin-top: 12px;
-    border-radius: var(--radius-pill);
-    background: linear-gradient(90deg, var(--blue), var(--cyan));
-}
-
+    
 .page-title p {
     margin-top: 12px;
     color: var(--text-muted);

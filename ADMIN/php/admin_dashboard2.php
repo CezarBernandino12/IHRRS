@@ -144,7 +144,7 @@ $unreadCount = 0;
     <a href="#" class="sidebar-brand">
         <img src="../../img/logo.png" alt="Admin Logo" class="brand-logo">
         <div class="brand-text">
-            <span class="brand-name">Hello Admin</span>
+            <span class="brand-name">IHRRS</span>
         </div>
     </a>
 

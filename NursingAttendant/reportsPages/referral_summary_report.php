@@ -218,7 +218,7 @@ $stmt_log->execute([
     <a href="#" class="sidebar-brand">
         <img src="../../img/logo.png" alt="RHU Logo" class="brand-logo">
         <div class="brand-text">
-            <span class="brand-name">Hello Nurse</span>
+            <span class="brand-name">IHRRS</span>
         </div>
     </a>
 
@@ -228,7 +228,7 @@ $stmt_log->execute([
             <li><a href="../dashboard" data-tooltip="Dashboard"><i class="bx bxs-dashboard nav-icon"></i><span class="nav-label">Dashboard</span></a></li>
             <li><a href="../ITR" data-tooltip="Add New ITR"><i class="bx bxs-notepad nav-icon"></i><span class="nav-label">Add New ITR</span></a></li>
             <li><a href="../pending" id="updateReferrals" data-tooltip="Pending Referrals"><i class="bx bxs-user nav-icon"></i><span class="nav-label">Pending Referrals</span></a></li>
-            <li><a href="../followUpConsultations" data-tooltip="Follow-Up Visits"><i class="bx bxs-user nav-icon"></i><span class="nav-label">Follow-Up Visits</span></a></li>
+            <li><a href="../followUpConsultations" data-tooltip="Follow-Up Visits"><i class="bx bxs-calendar-check nav-icon"></i></i><span class="nav-label">Follow-Up Visits</span></a></li>
             <li><a href="../searchPatient" data-tooltip="Patient Records"><i class="bx bxs-search nav-icon"></i><span class="nav-label">Patient Records</span></a></li>
             <li><a href="../history" data-tooltip="Referral History"><i class="bx bx-history nav-icon"></i><span class="nav-label">Referral History</span></a></li>
             <li class="active"><a href="../reports" data-tooltip="Reports"><i class="bx bx-notepad nav-icon"></i><span class="nav-label">Reports</span></a></li>

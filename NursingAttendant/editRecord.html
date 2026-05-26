@@ -30,71 +30,83 @@
 </style>
 
 
-    <section id="sidebar">
-        <a href="#" class="sidebar-brand">
-            <img src="../img/logo.png" alt="RHU Logo" class="brand-logo">
-            <div class="brand-text">
-                <span class="brand-name">Hello Nurse</span>
-            </div>
-        </a>
+	<section id="sidebar">
+		<a href="#" class="sidebar-brand">
+			<img src="../img/logo.png" alt="RHU Logo" class="brand-logo">
+			<div class="brand-text">
+				<span class="brand-name">IHRRS</span>
+			</div>
+		</a>
 
-        <div class="sidebar-scroll">
-            <div class="sidebar-section-label">Main Menu</div>
-            <ul class="side-menu top">
-                <li>
-                    <a href="dashboard" data-tooltip="Dashboard">
-                        <i class="bx bxs-dashboard nav-icon"></i>
-                        <span class="nav-label">Dashboard</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="ITR" data-tooltip="Add New ITR">
-                        <i class="bx bxs-user nav-icon"></i>
-                        <span class="nav-label">Add New ITR</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="searchPatient" data-tooltip="Patient Records">
-                        <i class="bx bxs-notepad nav-icon"></i>
-                        <span class="nav-label">Patient Records</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="history" data-tooltip="Referral History">
-                        <i class="bx bx-history nav-icon"></i>
-                        <span class="nav-label">Referral History</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="reports" data-tooltip="Reports">
-                        <i class="bx bx-notepad nav-icon"></i>
-                        <span class="nav-label">Reports</span>
-                    </a>
-                </li>
-            </ul>
+		<div class="sidebar-scroll">
+			<div class="sidebar-section-label">Main Menu</div>
+			<ul class="side-menu top">
+				<li>
+					<a href="dashboard" data-tooltip="Dashboard">
+						<i class="bx bxs-dashboard nav-icon"></i>
+						<span class="nav-label">Dashboard</span>
+					</a>
+				</li>
+				<li>
+					<a href="ITR" data-tooltip="Add New ITR">
+						<i class="bx bxs-notepad nav-icon"></i>
+						<span class="nav-label">Add New ITR</span>
+					</a>
+				</li>
+				<li>
+					<a href="#" id="updateReferrals" data-tooltip="Pending Referrals">
+						<i class="bx bxs-user nav-icon"></i>
+						<span class="nav-label">Pending Referrals</span>
+					</a>
+				</li>
+				<li>
+					<a href="followUpConsultations" data-tooltip="Follow-Up Visits">
+						<i class="bx bxs-calendar-check nav-icon"></i>
+						<span class="nav-label">Follow-Up Visits</span>
+					</a>
+				</li>
+				<li>
+					<a href="searchPatient" data-tooltip="Patient Records">
+						<i class="bx bxs-search nav-icon"></i>
+						<span class="nav-label">Patient Records</span>
+					</a>
+				</li>
+				<li>
+					<a href="history" data-tooltip="Referral History">
+						<i class="bx bx-history nav-icon"></i>
+						<span class="nav-label">Referral History</span>
+					</a>
+				</li>
+				<li>
+					<a href="reports" data-tooltip="Reports">
+						<i class="bx bx-notepad nav-icon"></i>
+						<span class="nav-label">Reports</span>
+					</a>
+				</li>
+			</ul>
 
-            <div class="sidebar-divider"></div>
+			<div class="sidebar-divider"></div>
 
-            <ul class="side-menu">
-                <li>
-                    <a href="#" class="logout" data-tooltip="Logout" onclick="return confirmLogout()">
-                        <i class="bx bxs-log-out-circle nav-icon"></i>
-                        <span class="nav-label">Logout</span>
-                    </a>
-                </li>
-            </ul>
-        </div>
+			<ul class="side-menu">
+				<li>
+					<a href="#" class="logout" data-tooltip="Logout" onclick="return confirmLogout()">
+						<i class="bx bxs-log-out-circle nav-icon"></i>
+						<span class="nav-label">Logout</span>
+					</a>
+				</li>
+			</ul>
+		</div>
 
-        <div class="sidebar-footer">
-            <div class="sidebar-user">
-                <img src="../img/nurse.png" alt="Nurse User">
-                <div class="sidebar-user-info">
-                    <div class="user-name" id="sidebarUserName">Nurse User</div>
-                    <div class="user-role">RHU Nurse</div>
-                </div>
-            </div>
-        </div>
-    </section>
+		<div class="sidebar-footer">
+			<div class="sidebar-user">
+				<img src="../img/nurse.png" alt="Nurse User">
+				<div class="sidebar-user-info">
+					<div class="user-name" id="sidebarUserName">Nurse User</div>
+					<div class="user-role">RHU Nurse</div>
+				</div>
+			</div>
+		</div>
+	</section>
 
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
@@ -523,10 +535,6 @@
 
     <div class="form-action-row">
         <button type="submit" class="submit-btn" id="submitButton">Submit</button>
-        <button type="button" class="print-btn" id="printButton" aria-label="Print visit information">
-            <i class="bx bx-printer" aria-hidden="true"></i>
-            <span>Print</span>
-        </button>
     </div>
     
 <div id="myModal" class="modal">
@@ -848,29 +856,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (!calendar.querySelector(".custom-date-picker-header")) {
             const header = document.createElement("div");
-            header.className = "custom-date-picker-header";
-
-            const prevBtn = document.createElement("button");
-            prevBtn.type = "button";
-            prevBtn.className = "custom-picker-nav";
-            prevBtn.setAttribute("aria-label", "Previous month");
-            prevBtn.textContent = "‹";
-            prevBtn.addEventListener("click", function () {
-                instance.changeMonth(-1);
-                closePickerMenus(calendar);
-                syncPickerHeader(instance);
-            });
-
-            const nextBtn = document.createElement("button");
-            nextBtn.type = "button";
-            nextBtn.className = "custom-picker-nav";
-            nextBtn.setAttribute("aria-label", "Next month");
-            nextBtn.textContent = "›";
-            nextBtn.addEventListener("click", function () {
-                instance.changeMonth(1);
-                closePickerMenus(calendar);
-                syncPickerHeader(instance);
-            });
+            header.className = "custom-date-picker-header custom-date-picker-header-dropdown-only";
 
             const monthMenu = document.createElement("div");
             monthMenu.className = "custom-picker-menu custom-month-menu";
@@ -878,7 +864,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const monthTrigger = document.createElement("button");
             monthTrigger.type = "button";
             monthTrigger.className = "custom-picker-trigger";
-            monthTrigger.innerHTML = '<span class="custom-month-label"></span><span class="custom-picker-chevron">⌄</span>';
+            monthTrigger.innerHTML = '<span class="custom-month-label"></span><span class="custom-picker-chevron" aria-hidden="true"></span>';
 
             const monthOptions = document.createElement("div");
             monthOptions.className = "custom-picker-options custom-month-options";
@@ -913,7 +899,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const yearTrigger = document.createElement("button");
             yearTrigger.type = "button";
             yearTrigger.className = "custom-picker-trigger";
-            yearTrigger.innerHTML = '<span class="custom-year-label"></span><span class="custom-picker-chevron">⌄</span>';
+            yearTrigger.innerHTML = '<span class="custom-year-label"></span><span class="custom-picker-chevron" aria-hidden="true"></span>';
 
             const yearOptions = document.createElement("div");
             yearOptions.className = "custom-picker-options custom-year-options";
@@ -944,10 +930,8 @@ document.addEventListener("DOMContentLoaded", function () {
             yearMenu.appendChild(yearTrigger);
             yearMenu.appendChild(yearOptions);
 
-            header.appendChild(prevBtn);
             header.appendChild(monthMenu);
             header.appendChild(yearMenu);
-            header.appendChild(nextBtn);
 
             monthsContainer.innerHTML = "";
             monthsContainer.appendChild(header);
@@ -1040,33 +1024,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     window.addEventListener("afterprint", function () {
         document.body.classList.remove("printing-edit-record");
-    });
-});
-</script>
-
-
-<script>
-/* Defensive print preview handler */
-document.addEventListener("DOMContentLoaded", function () {
-    const printButton = document.getElementById("printButton");
-
-    if (printButton && !printButton.dataset.printFixed) {
-        printButton.dataset.printFixed = "true";
-
-        printButton.addEventListener("click", function (event) {
-            event.preventDefault();
-            event.stopPropagation();
-
-            document.body.classList.add("printing-consultation-page");
-
-            setTimeout(function () {
-                window.print();
-            }, 80);
-        });
-    }
-
-    window.addEventListener("afterprint", function () {
-        document.body.classList.remove("printing-consultation-page");
     });
 });
 </script>

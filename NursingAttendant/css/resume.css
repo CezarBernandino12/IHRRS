@@ -1241,3 +1241,432 @@ span.flatpickr-weekday {
         background: #ffffff !important;
     }
 }
+
+/* =========================================================
+   FINAL SAME UI-ONLY UPDATE FOR RESUME TREATMENT PAGE
+   Preserves page contents/functions. Updates Select2 + calendar UI only.
+   ========================================================= */
+
+/* Reference-style Select2 dropdown UI */
+.select2-container {
+    width: 100% !important;
+    font-family: var(--font-main, "Poppins", sans-serif) !important;
+}
+
+.select2-container--default .select2-selection--single {
+    position: relative !important;
+    display: flex !important;
+    align-items: center !important;
+    width: 100% !important;
+    min-height: 42px !important;
+    height: 42px !important;
+    padding: 0 40px 0 14px !important;
+    border: 1px solid rgba(15, 23, 42, 0.10) !important;
+    border-radius: 13px !important;
+    background: #ffffff !important;
+    box-shadow: none !important;
+}
+
+.select2-container--default.select2-container--open .select2-selection--single,
+.select2-container--default .select2-selection--single:focus {
+    border-color: var(--blue, #2563eb) !important;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.10) !important;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    width: 100% !important;
+    padding: 0 !important;
+    color: var(--text-main, #18263d) !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    line-height: 42px !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__placeholder {
+    color: #64748b !important;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__clear {
+    margin-right: 8px !important;
+    color: #64748b !important;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    position: absolute !important;
+    top: 0 !important;
+    right: 12px !important;
+    width: 20px !important;
+    height: 100% !important;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow b {
+    display: none !important;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow::before,
+.custom-picker-chevron::before {
+    content: "" !important;
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    width: 7px !important;
+    height: 7px !important;
+    border-right: 2px solid #18263d !important;
+    border-bottom: 2px solid #18263d !important;
+    transform: translate(-50%, -65%) rotate(45deg) !important;
+}
+
+.select2-dropdown,
+.select2-dropdown.reference-select-dropdown,
+.select2-container--default .select2-dropdown {
+    margin-top: 6px !important;
+    padding: 6px !important;
+    border: 1px solid rgba(15, 23, 42, 0.08) !important;
+    border-radius: 8px !important;
+    background: #ffffff !important;
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.12) !important;
+    overflow: hidden !important;
+    z-index: 99999 !important;
+}
+
+.select2-results {
+    padding: 0 !important;
+}
+
+.select2-results__options {
+    max-height: 240px !important;
+    overflow-y: auto !important;
+    padding: 0 !important;
+}
+
+.select2-container--default .select2-results__option {
+    position: relative !important;
+    display: block !important;
+    min-height: 32px !important;
+    padding: 7px 30px 7px 12px !important;
+    border-radius: 4px !important;
+    color: #4b5563 !important;
+    background: transparent !important;
+    font-family: var(--font-main, "Poppins", sans-serif) !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    line-height: 1.35 !important;
+    cursor: pointer !important;
+}
+
+.select2-container--default .select2-results__option--highlighted[aria-selected] {
+    color: #4b5563 !important;
+    background: #f5f5f5 !important;
+}
+
+.select2-container--default .select2-results__option[aria-selected="true"] {
+    color: #4b5563 !important;
+    background: #f3f4f6 !important;
+}
+
+.select2-container--default .select2-results__option[aria-selected="true"]::after {
+    content: "✓" !important;
+    position: absolute !important;
+    right: 11px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    color: #2f3747 !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    line-height: 1 !important;
+}
+
+.select2-container--default .select2-results__option--highlighted[aria-selected="false"]::after,
+.select2-container--default .select2-results__option[aria-selected="false"]::after {
+    content: none !important;
+}
+
+.select2-container--default .select2-results__option[aria-disabled="true"] {
+    color: #9ca3af !important;
+    background: transparent !important;
+    cursor: not-allowed !important;
+}
+
+/* Calendar month/year dropdown UI */
+.flatpickr-calendar.custom-dropdown-date-picker,
+.flatpickr-calendar.material-date-picker,
+.flatpickr-calendar {
+    width: min(94vw, 350px) !important;
+    padding: 12px !important;
+    border: 1px solid rgba(31, 91, 151, 0.12) !important;
+    border-radius: 16px !important;
+    background: #ffffff !important;
+    box-shadow: 0 14px 34px rgba(15, 23, 42, 0.14) !important;
+    font-family: var(--font-main, "Poppins", sans-serif) !important;
+    overflow: visible !important;
+    z-index: 99999 !important;
+}
+
+.flatpickr-calendar::before,
+.flatpickr-calendar::after,
+.flatpickr-calendar.custom-dropdown-date-picker .flatpickr-prev-month,
+.flatpickr-calendar.custom-dropdown-date-picker .flatpickr-next-month,
+.flatpickr-calendar.custom-dropdown-date-picker .flatpickr-current-month,
+.flatpickr-calendar.custom-dropdown-date-picker .flatpickr-monthDropdown-months,
+.flatpickr-calendar.custom-dropdown-date-picker .numInputWrapper,
+.material-picker-nav {
+    display: none !important;
+}
+
+.flatpickr-calendar.custom-dropdown-date-picker .flatpickr-months,
+.flatpickr-calendar .flatpickr-months {
+    position: relative !important;
+    display: block !important;
+    width: 100% !important;
+    height: auto !important;
+    margin: 0 0 10px !important;
+    padding: 0 !important;
+    overflow: visible !important;
+}
+
+.custom-date-picker-header {
+    position: relative !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    width: 100% !important;
+    overflow: visible !important;
+    z-index: 20 !important;
+}
+
+.custom-picker-menu {
+    position: relative !important;
+    min-width: 0 !important;
+    z-index: 30 !important;
+}
+
+.custom-month-menu {
+    width: 112px !important;
+    flex: 0 0 112px !important;
+}
+
+.custom-year-menu {
+    width: 78px !important;
+    flex: 0 0 78px !important;
+}
+
+.custom-picker-trigger {
+    position: relative !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 8px !important;
+    width: 100% !important;
+    height: 36px !important;
+    padding: 0 31px 0 11px !important;
+    border: 1px solid rgba(31, 91, 151, 0.12) !important;
+    border-radius: 12px !important;
+    color: #18263d !important;
+    background: #f8fbff !important;
+    font-family: var(--font-main, "Poppins", sans-serif) !important;
+    font-size: 12px !important;
+    font-weight: 650 !important;
+    line-height: 1 !important;
+    cursor: pointer !important;
+}
+
+.custom-picker-trigger:hover,
+.custom-picker-menu.is-open .custom-picker-trigger {
+    border-color: rgba(31, 91, 151, 0.35) !important;
+    box-shadow: 0 0 0 3px rgba(31, 91, 151, 0.08) !important;
+}
+
+.custom-picker-chevron {
+    position: absolute !important;
+    top: 0 !important;
+    right: 11px !important;
+    width: 18px !important;
+    height: 100% !important;
+    color: var(--blue, #1f5b97) !important;
+}
+
+.custom-picker-options {
+    display: none !important;
+    position: absolute !important;
+    top: calc(100% + 6px) !important;
+    left: 0 !important;
+    width: 100% !important;
+    max-height: 190px !important;
+    padding: 6px !important;
+    border: 1px solid rgba(15, 23, 42, 0.08) !important;
+    border-radius: 10px !important;
+    background: #ffffff !important;
+    box-shadow: 0 12px 26px rgba(15, 23, 42, 0.16) !important;
+    overflow-y: auto !important;
+    z-index: 999999 !important;
+}
+
+.custom-picker-menu.is-open .custom-picker-options {
+    display: block !important;
+}
+
+.custom-year-options {
+    max-height: 210px !important;
+}
+
+.custom-picker-option {
+    position: relative !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    width: 100% !important;
+    min-height: 30px !important;
+    padding: 7px 10px !important;
+    border: none !important;
+    border-radius: 6px !important;
+    color: #4b5563 !important;
+    background: transparent !important;
+    font-family: var(--font-main, "Poppins", sans-serif) !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    text-align: left !important;
+    cursor: pointer !important;
+}
+
+.custom-picker-option:hover,
+.custom-picker-option.is-active {
+    color: #18263d !important;
+    background: #f3f4f6 !important;
+}
+
+/* No check icon/text inside calendar dropdown only */
+.custom-picker-option.is-active::after {
+    content: none !important;
+    display: none !important;
+}
+
+.flatpickr-innerContainer,
+.flatpickr-rContainer,
+.flatpickr-weekdays,
+.flatpickr-weekdaycontainer,
+.flatpickr-days,
+.dayContainer {
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+}
+
+.flatpickr-weekdays {
+    height: auto !important;
+    margin: 0 0 5px !important;
+    padding: 0 !important;
+}
+
+.flatpickr-weekdaycontainer,
+.dayContainer {
+    display: grid !important;
+    grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
+}
+
+.dayContainer {
+    gap: 4px 3px !important;
+    padding-bottom: 0 !important;
+}
+
+span.flatpickr-weekday {
+    display: grid !important;
+    place-items: center !important;
+    width: 100% !important;
+    height: 24px !important;
+    color: #64748b !important;
+    font-size: 10.8px !important;
+    font-weight: 700 !important;
+}
+
+.flatpickr-day {
+    display: grid !important;
+    place-items: center !important;
+    width: 100% !important;
+    max-width: none !important;
+    height: 31px !important;
+    margin: 0 !important;
+    border: none !important;
+    border-radius: 10px !important;
+    color: #334155 !important;
+    background: transparent !important;
+    font-size: 11.5px !important;
+    font-weight: 500 !important;
+    line-height: 31px !important;
+}
+
+.flatpickr-day:hover,
+.flatpickr-day:focus {
+    color: var(--blue-dark, #1f5b97) !important;
+    background: rgba(31, 91, 151, 0.10) !important;
+}
+
+.flatpickr-day.today {
+    color: var(--blue-dark, #1f5b97) !important;
+    background: rgba(31, 91, 151, 0.08) !important;
+    box-shadow: inset 0 0 0 1px rgba(31, 91, 151, 0.25) !important;
+}
+
+.flatpickr-day.selected,
+.flatpickr-day.selected:hover,
+.flatpickr-day.startRange,
+.flatpickr-day.endRange {
+    color: #ffffff !important;
+    background: var(--blue-dark, #1f5b97) !important;
+    box-shadow: 0 6px 12px rgba(31, 91, 151, 0.18) !important;
+}
+
+.flatpickr-day.flatpickr-disabled,
+.flatpickr-day.flatpickr-disabled:hover,
+.flatpickr-day.prevMonthDay,
+.flatpickr-day.nextMonthDay {
+    color: #94a3b8 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+.custom-picker-footer,
+.material-picker-footer {
+    display: flex !important;
+    justify-content: flex-end !important;
+    align-items: center !important;
+    gap: 14px !important;
+    margin: 10px 0 0 !important;
+    padding: 8px 0 0 !important;
+    border-top: 1px solid rgba(15, 23, 42, 0.08) !important;
+    background: transparent !important;
+}
+
+.custom-picker-footer-btn,
+.custom-picker-footer button,
+.material-picker-footer button {
+    min-height: 26px !important;
+    padding: 4px 0 !important;
+    border: none !important;
+    border-radius: 0 !important;
+    color: var(--blue-dark, #1f5b97) !important;
+    background: transparent !important;
+    font-family: var(--font-main, "Poppins", sans-serif) !important;
+    font-size: 11px !important;
+    font-weight: 650 !important;
+    cursor: pointer !important;
+}
+
+@media (max-width: 480px) {
+    .custom-month-menu {
+        width: 108px !important;
+        flex-basis: 108px !important;
+    }
+
+    .custom-year-menu {
+        width: 74px !important;
+        flex-basis: 74px !important;
+    }
+
+    .custom-picker-trigger {
+        padding: 0 29px 0 9px !important;
+        font-size: 11.5px !important;
+    }
+}
