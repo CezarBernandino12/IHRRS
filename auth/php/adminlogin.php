@@ -366,7 +366,7 @@
         <?php endif; ?>
 
         <!-- Form -->
-        <form action="/IHRRS/auth/php/admin_login.php" method="POST">
+        <form action="/auth/php/admin_login.php" method="POST">
 
           <!-- Username -->
           <div class="form-group">
