@@ -1,8 +1,4 @@
 <?php
-/**
- * Environment Configuration Loader
- * Loads environment variables from .env file
- */
 
 // Load environment variables
 function loadEnv($path = __DIR__) {

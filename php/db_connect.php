@@ -1,7 +1,5 @@
 <?php
-/**
- * Database Connection using Environment Variables
- */
+
  
 // Load environment variables
 require_once __DIR__ . '/env.loader.php';
